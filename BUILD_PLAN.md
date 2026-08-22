@@ -93,29 +93,84 @@ trivially, then restored it.
 
 ---
 
-## Phase 2 — Templates (config-driven)
+## Phase 2 — Templates (config-driven) ✅ done (homepage excepted — see note)
 
 **Goal:** every route in the URL architecture renders from Phase 1 config
 through a shared template — no hand-authored near-duplicate pages.
 
-- [ ] Homepage — **reuses the section order and content already approved
-      on the live Jekyll site** (Hero → QuoteReady + Live Data Proof → How
+- [ ] Homepage — **not built this round.** The user's Phase 2 go-ahead
+      listed 14 service pages, both hubs, data catalog/detail, methodology,
+      and the 3 PPC pages specifically, and did not include the homepage.
+      Left as the Phase 0 placeholder at `/` until explicitly requested.
+      When it is: reuse the section order and content already approved on
+      the live Jekyll site (Hero → QuoteReady + Live Data Proof → How
       QuoteReady Works → Something on Your Mind? → Austin Home Data
       dashboard → Texas Homeowner Guides → Methodology → Sources →
-      QuoteReady CTA → FAQ). Re-implemented in Astro/Tailwind, not
-      redesigned.
-- [ ] 2 location hubs from one template + `locations` config
-- [ ] 14 location×service pages from one template + `services`/`locations`
-      config (top ~30–40% conversion, live-metric slots, H2 direct-answer
-      blocks, dataset links, FAQ)
-- [ ] 3 PPC landing pages (`/lp/roofing-austin/`, `/lp/hvac-austin/`,
-      `/lp/plumbing-austin/` — supplied-copy services only for now),
-      `noindex` by per-page config flag
-- [ ] Data catalog (`/data/`) + one representative data-detail page
-      (`/data/austin/roofing/`), ported from the existing Jekyll version:
-      value/scope/period/comparison/updated/source/interpretation as
-      static HTML + HTML table
-- [ ] Methodology page
+      QuoteReady CTA → FAQ) — re-implemented, not redesigned.
+- [x] 2 location hubs from one template (`src/layouts/LocationHub.astro`)
+      driven by `src/pages/[location]/index.astro` + `locations` config
+- [x] 14 location×service pages from **one** template
+      (`src/layouts/ServicePage.astro`) driven by
+      `src/pages/[location]/[service]/index.astro` — a single file
+      generating all 14 routes via `getStaticPaths`, not 14 hand-authored
+      pages. Hero (with city substitution), data-note card, body sections,
+      FAQ (with FAQPage JSON-LD), cross-links to the other city.
+- [x] 3 PPC landing pages (`/lp/roofing-austin/`, `/lp/hvac-austin/`,
+      `/lp/plumbing-austin/`) from one template (`src/layouts/PPCPage.astro`)
+      driven by `src/pages/lp/[slug]/index.astro`, filtered to
+      `copyStatus: supplied` services only. `noindex` via a `Base.astro`
+      prop, and excluded from the sitemap via the sitemap integration's
+      `filter` option — not just noindexed, actually absent from
+      `sitemap.xml`.
+- [x] Data catalog (`/data/`) + one representative data-detail page
+      (`/data/austin/roofing/`), ported from the Jekyll version:
+      value/scope/period/source/interpretation as static HTML + an HTML
+      `<table>` (not chart-only), plus a CSV download and Dataset JSON-LD.
+- [x] Methodology page
+
+**Supporting work not itemized above:**
+- `DataStatus.astro` — the one generic component every data card renders
+  through (SAMPLE/STALE/LIVE/UNAVAILABLE badge + source + last-updated),
+  driven purely by Phase 1's shared `{status, asOf, source}` shape. Added
+  an `error` status to that Phase 1 enum (was `sample|stale|live`) since
+  "stale/error state" needs a true fourth state — a feed that has never
+  had a valid value is a different thing from one that's gone stale. The
+  Austin roofing data page demonstrates it live (one metric card is
+  deliberately `status: error` to prove the state renders, not just the
+  happy path).
+- Ported the Jekyll build's approved CSS component classes (nav, hero,
+  cards, data-card, faq-item, cta-band, etc.) into the Astro global
+  stylesheet as a component layer on top of the Tailwind v4 token theme,
+  instead of re-deriving the design in raw utility classes — zero
+  visual-regression risk, confirmed by screenshot comparison against the
+  live site.
+- Draft-copy visibility: a `draft-flag` banner renders on the 4 draft
+  services' hero (`svc.copyStatus === "draft"`) and is absent on
+  roofing/HVAC/plumbing — confirmed in generated HTML, not just visually.
+
+**How I verified it:** `npm run build` generates exactly 23 pages (14
+service + 2 hubs + 3 PPC + data catalog + data detail + methodology +
+the Phase 0 homepage placeholder) — matches the expected count exactly;
+`npx astro check` clean (0/0/0); grepped every generated page for
+unrendered template syntax and double-escaped HTML entities (found and
+fixed a real bug this way — see below); validated every JSON-LD block on
+a sample of page types with `json.loads` (Organization+BreadcrumbList+FAQPage
+on SEO pages, Organization+BreadcrumbList+Dataset on the data page,
+Organization+FAQPage only — no breadcrumbs — on PPC pages, by design);
+confirmed the 4 draft services show the draft flag and the 3 supplied
+ones don't; confirmed PPC pages carry `noindex` and are absent from
+`sitemap.xml` (20 URLs, not 23); screenshot-checked a hub, a supplied
+service page, a draft service page, a PPC page, and the data-detail page.
+
+**Bug found and fixed during verification:** several YAML copy fields used
+HTML entity codes (`&mdash;`, `&rsquo;`, etc.) — correct under Jekyll/Liquid,
+which passes template output through unescaped, but wrong under Astro,
+which HTML-escapes plain `{expression}` interpolation by default. The
+entities were rendering as literal visible text (e.g. "Isn&rsquo;t") on
+the draft-copy pages. Fixed by replacing every HTML entity in the service
+YAML files with its real Unicode character, confirmed with a targeted
+grep for double-escaped patterns across the full build output, and
+re-verified visually via screenshot.
 
 **How I'll verify it:** build all routes, assert route count matches
 2 hubs + 14 service pages + 3 PPC + data catalog + 1 data-detail +

@@ -1,0 +1,107 @@
+---
+import Base from "./Base.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import DataStatus from "../components/DataStatus.astro";
+import { getEntry, getCollection } from "astro:content";
+
+interface Props {
+  locationSlug: string;
+}
+
+const { locationSlug } = Astro.props;
+const locEntry = await getEntry("locations", locationSlug);
+if (!locEntry) throw new Error(`LocationHub: unknown location "${locationSlug}"`);
+const loc = locEntry.data;
+
+const serviceOrder = [
+  "roofing",
+  "hvac",
+  "plumbing",
+  "fire-damage-restoration",
+  "mold-remediation",
+  "electrical",
+  "tree-trimming",
+];
+const allServices = await getCollection("services");
+const services = serviceOrder
+  .map((slug) => allServices.find((s) => s.id === slug))
+  .filter((s) => s !== undefined);
+
+const title = `${loc.name} Home Intelligence | Texas Home Intelligence`;
+const description = `Local homeowner intelligence and free QuoteReady Project Briefs for ${loc.name}, TX homeowners across roofing, HVAC, plumbing, and more.`;
+---
+
+<Base title={title} description={description}>
+  <Breadcrumbs crumbs={[{ name: "Home", url: "/" }, { name: loc.name, url: `/${locationSlug}/` }]} />
+
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow">{loc.region}</span>
+      <h1>{loc.name} Home Intelligence</h1>
+      <p class="lede">{loc.hubIntro}</p>
+      <a class="btn" href={`/start/?location=${locationSlug}`}>Build My QuoteReady Brief</a>
+      <p class="microcopy">Free &bull; Takes about 3&ndash;5 minutes &bull; No phone number required to start</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <h2>Current {loc.name} Homeowner Conditions</h2>
+      <p style="max-width:44em;">
+        A snapshot of the conditions Texas Home Intelligence tracks for {loc.name} homeowners.
+        These figures are placeholders until live public-data feeds are connected &mdash; see the{" "}
+        <a href={`/data/${locationSlug}/`}>{loc.name} data catalog</a>.
+      </p>
+      <div class="grid-4">
+        {loc.conditions.map((c) => (
+          <div class="card data-card">
+            <DataStatus status={c.value.status} asOf={c.value.asOf} source={c.value.source} />
+            <p class="metric-label" style="margin-top:8px;">{c.label}</p>
+            <p class="metric-note">{c.note}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <h2>{loc.name} Home Services</h2>
+      <p style="max-width:44em;">
+        Build a free QuoteReady Project Brief for any of these {loc.name} home-service categories.
+      </p>
+      <div class="grid-4">
+        {services.map((svc) => (
+          <a class="card" style="text-decoration:none;" href={`/${locationSlug}/${svc.id}/`}>
+            <div class="icon-badge">{svc.data.name.slice(0, 1)}</div>
+            <h3 style="color:var(--ink);">{svc.data.name}</h3>
+            <p>{svc.data.intakeFocus}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width:760px;">
+      <h2>About {loc.name} Home Intelligence</h2>
+      <p>
+        Texas Home Intelligence publishes continuously updated homeowner intelligence for{" "}
+        {loc.name} &mdash; covering {loc.counties} &mdash; alongside the free QuoteReady Project
+        Brief tool. See our <a href="/methodology/">methodology</a> for how data is sourced,
+        updated, and labeled.
+      </p>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <div class="wrap">
+      <h2>Get Your {loc.name} Project Clear Before You Call Anyone.</h2>
+      <p style="max-width:40em;margin:0 auto 20px;">
+        Tell us what's going on once. Get a QuoteReady Project Brief you can use with any
+        contractor in {loc.name}.
+      </p>
+      <a class="btn" href={`/start/?location=${locationSlug}`}>Build My QuoteReady Brief</a>
+    </div>
+  </section>
+</Base>

@@ -8,7 +8,7 @@ import { z } from "astro/zod";
  * never need their own per-value "is this real?" logic.
  */
 const sampleValue = z.object({
-  status: z.enum(["sample", "stale", "live"]),
+  status: z.enum(["sample", "stale", "live", "error"]),
   asOf: z.string().optional(),
   source: z.string().optional(),
 });

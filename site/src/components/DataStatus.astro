@@ -1,0 +1,49 @@
+---
+/**
+ * Generic status/source/last-updated renderer for any data card, driven
+ * entirely by the shared `sampleValue` shape from content.config.ts
+ * ({status, asOf, source}). No page should need its own "is this real?"
+ * conditional — this component is the single place that logic lives.
+ *
+ * status:
+ *  - "sample"  → illustrative placeholder, not a live fact yet
+ *  - "stale"   → last known-good value, preserved rather than zeroed out
+ *  - "error"   → feed failed and no valid value has ever been obtained
+ *  - "live"    → a real, currently-fresh value
+ */
+interface Props {
+  status: "sample" | "stale" | "live" | "error";
+  asOf?: string;
+  source?: string;
+}
+
+const { status, asOf, source } = Astro.props;
+
+const badgeClass = {
+  sample: "sample-badge",
+  stale: "stale-badge",
+  error: "error-badge",
+  live: "live-badge",
+}[status];
+
+const badgeLabel = {
+  sample: "SAMPLE",
+  stale: "STALE",
+  error: "UNAVAILABLE",
+  live: "LIVE",
+}[status];
+---
+
+<span class={badgeClass}>{badgeLabel}</span>
+{status === "error" ? (
+  <p class="metric-note">
+    This feed is temporarily unavailable and no prior value has been
+    recorded yet. We do not substitute a zero or blank value for missing
+    data.
+  </p>
+) : (
+  <p class="data-meta">
+    {asOf && <span>{status === "stale" ? "Last known value:" : "Updated:"} {asOf}</span>}
+    {source && <span>Source: {source}</span>}
+  </p>
+)}

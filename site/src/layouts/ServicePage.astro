@@ -1,0 +1,122 @@
+---
+import Base from "./Base.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import DataStatus from "../components/DataStatus.astro";
+import FaqAccordion from "../components/FaqAccordion.astro";
+import { getEntry } from "astro:content";
+
+interface Props {
+  serviceSlug: string;
+  locationSlug: string;
+}
+
+const { serviceSlug, locationSlug } = Astro.props;
+
+const svcEntry = await getEntry("services", serviceSlug);
+const locEntry = await getEntry("locations", locationSlug);
+if (!svcEntry || !locEntry) {
+  throw new Error(`ServicePage: unknown service "${serviceSlug}" or location "${locationSlug}"`);
+}
+const svc = svcEntry.data;
+const loc = locEntry.data;
+
+const cityName = loc.name;
+const heroTagline = svc.heroTagline.replace(/\{CITY\}/g, cityName);
+const eyebrow = svc.eyebrow.replace(/\{CITY\}/g, cityName);
+
+const otherLocationSlug = locationSlug === "austin" ? "san-antonio" : "austin";
+const otherLocationEntry = await getEntry("locations", otherLocationSlug);
+const otherLocationName = otherLocationEntry?.data.name ?? "";
+
+const title = `${cityName} ${svc.name} Quotes | Free QuoteReady Project Brief`;
+const description = `Build a free QuoteReady ${svc.name} Brief for your ${cityName} project and get quotes that are easier to compare.`;
+---
+
+<Base title={title} description={description}>
+  <Breadcrumbs
+    crumbs={[
+      { name: "Home", url: "/" },
+      { name: cityName, url: `/${locationSlug}/` },
+      { name: svc.name, url: `/${locationSlug}/${serviceSlug}/` },
+    ]}
+  />
+
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        {svc.copyStatus === "draft" && (
+          <>
+            <span class="draft-flag">Draft copy &mdash; pending final editorial review</span>
+            <br />
+          </>
+        )}
+        <span class="eyebrow">{eyebrow}</span>
+        <h1>{heroTagline}</h1>
+        <p class="lede">{svc.heroBody}</p>
+        <a class="btn" href={`/start/?service=${serviceSlug}&location=${locationSlug}`}>
+          Build My QuoteReady Brief
+        </a>
+        <p class="microcopy" set:html={svc.heroMicrocopy} />
+        {svc.safetyNote && <p class="disclaimer-note">{svc.safetyNote}</p>}
+        {svc.licensingNote && <p class="disclaimer-note">{svc.licensingNote}</p>}
+        {svc.permitNote && <p class="disclaimer-note">{svc.permitNote}</p>}
+      </div>
+      <div class="brief-preview">
+        <span class="tag-ready">Sample output</span>
+        <h4>{cityName} {svc.name} &mdash; QuoteReady Brief</h4>
+        <div class="row"><span>Project type</span><b>{svc.name}</b></div>
+        <div class="row"><span>Location</span><b>{cityName}, TX</b></div>
+        <div class="row"><span>Priorities</span><b>Homeowner-ranked</b></div>
+        <div class="row"><span>Questions for contractor</span><b>Included</b></div>
+        <div class="row"><span>Status</span><b>Ready to share</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="card data-card">
+        <DataStatus status="sample" />
+        <p class="metric-note">
+          {svc.dataNote} A dedicated <a href={`/data/${locationSlug}/`}>{cityName} data page</a> for {svc.name.toLowerCase()} will replace this note once a live feed is connected.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {svc.sections.map((s, i) => (
+    <section class={`block ${i % 2 === 1 ? "alt" : ""}`}>
+      <div class="wrap" style="max-width: 760px;">
+        <h2>{s.heading}</h2>
+        <Fragment set:html={s.body} />
+      </div>
+    </section>
+  ))}
+
+  <section class="cta-band">
+    <div class="wrap">
+      <h2>{svc.closingHeading}</h2>
+      <p style="max-width:40em;margin:0 auto 20px;">{svc.closingBody}</p>
+      <a class="btn" href={`/start/?service=${serviceSlug}&location=${locationSlug}`}>
+        Build My QuoteReady Brief
+      </a>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width: 760px;">
+      <FaqAccordion heading={`${svc.name} FAQ`} items={svc.faq} />
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap center">
+      <p style="margin:0;">
+        Also see {svc.name} in{" "}
+        <a href={`/${otherLocationSlug}/${serviceSlug}/`}>{otherLocationName}</a>
+        {" "}&bull;{" "}
+        <a href={`/${locationSlug}/`}>All {cityName} services</a>
+      </p>
+    </div>
+  </section>
+</Base>

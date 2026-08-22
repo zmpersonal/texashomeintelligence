@@ -1,0 +1,62 @@
+---
+import { getCollection } from "astro:content";
+
+const services = await getCollection("services");
+const serviceOrder = [
+  "roofing",
+  "hvac",
+  "plumbing",
+  "fire-damage-restoration",
+  "mold-remediation",
+  "electrical",
+  "tree-trimming",
+];
+const orderedServices = serviceOrder
+  .map((slug) => services.find((s) => s.id === slug))
+  .filter((s) => s !== undefined);
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <h4>Texas Home Intelligence</h4>
+        <p style="color:#c6d6e4; max-width: 34em;">
+          A free QuoteReady Project Brief tool for Texas homeowners, plus
+          continuously updated local homeowner intelligence for Austin, San
+          Antonio, and beyond. Contractor introductions are optional and
+          never required to use the brief.
+        </p>
+      </div>
+      <div>
+        <h4>Locations</h4>
+        <ul>
+          <li><a href="/austin/">Austin</a></li>
+          <li><a href="/san-antonio/">San Antonio</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          {orderedServices.map((svc) => (
+            <li><a href={`/austin/${svc.id}/`}>{svc.data.name}</a></li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/data/">Data Catalog</a></li>
+          <li><a href="/methodology/">Methodology</a></li>
+          <li><a href="/start/">Build My Brief</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; {new Date().getFullYear()} Texas Home Intelligence. QuoteReady
+      Project Briefs organize homeowner-reported information and public
+      data &mdash; they are not an inspection, diagnosis, or professional
+      evaluation.
+    </div>
+  </div>
+</footer>

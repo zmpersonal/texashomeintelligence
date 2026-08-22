@@ -1,0 +1,32 @@
+---
+interface FaqItem {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  items: FaqItem[];
+  heading?: string;
+}
+
+const { items, heading } = Astro.props;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: items.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+---
+
+{heading && <h2>{heading}</h2>}
+{items.map((item) => (
+  <details class="faq-item">
+    <summary>{item.q}</summary>
+    <p set:html={item.a} />
+  </details>
+))}
+<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />

@@ -7,7 +7,7 @@ heroBody: >-
   QuoteReady HVAC Brief you can use with any HVAC company. It makes getting
   multiple estimates easier and helps you compare what each company is
   actually recommending.
-heroMicrocopy: "Free &bull; Takes about 3&ndash;5 minutes &bull; Use it with any HVAC company &bull; No phone number required to start"
+heroMicrocopy: "Free • Takes about 3–5 minutes • Use it with any HVAC company • No phone number required to start"
 
 ppcHero:
   eyebrow: "FREE HVAC QUOTE TOOL FOR TEXAS HOMEOWNERS"
@@ -17,7 +17,7 @@ ppcHero:
     QuoteReady HVAC Brief you can use with any HVAC company. It makes
     getting multiple estimates easier and helps you compare what each
     company is actually recommending.
-  microcopy: "Free &bull; Takes about 3&ndash;5 minutes &bull; Use it with any HVAC company &bull; Local pro introductions are optional"
+  microcopy: "Free • Takes about 3–5 minutes • Use it with any HVAC company • Local pro introductions are optional"
 
 intakeFocus: "Cooling/heating symptoms, whether the system runs, affected rooms, thermostat behavior, time of day, system age & type, prior repairs, and an equipment label photo."
 dataNote: "Live local metrics for this page will draw on NWS/NOAA heat and humidity data, mechanical permit activity, EIA electricity pricing, AirNow air quality, and BLS trade-wage indexes."
@@ -28,7 +28,7 @@ sections:
       <p>One company recommends a repair.</p>
       <p>Another says replace the system.</p>
       <p>A third recommends different equipment, efficiency, ductwork, or electrical work.</p>
-      <p>Now you have three prices &mdash; but more questions than answers.</p>
+      <p>Now you have three prices — but more questions than answers.</p>
 
   - heading: "Tell Us What Your System Is Doing. Not What You Think Is Wrong."
     body: |
@@ -56,7 +56,7 @@ sections:
 
 closingHeading: "Your AC Problem Is Hard Enough."
 closingBody: >-
-  Getting several quotes shouldn&rsquo;t make it harder. Build the project
+  Getting several quotes shouldn’t make it harder. Build the project
   once. Give each HVAC company the same clear starting point. Then compare
   your options.
 

@@ -1,0 +1,15 @@
+---
+import { getCollection } from "astro:content";
+import LocationHub from "../../layouts/LocationHub.astro";
+
+export async function getStaticPaths() {
+  const locations = await getCollection("locations");
+  return locations.map((loc) => ({
+    params: { location: loc.id },
+  }));
+}
+
+const { location } = Astro.params;
+---
+
+<LocationHub locationSlug={location} />

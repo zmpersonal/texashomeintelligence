@@ -4,19 +4,19 @@ eyebrow: "FREE ROOFING QUOTE TOOL FOR {CITY} HOMEOWNERS"
 heroTagline: "Get 3 {CITY} Roofing Quotes Without Starting From Scratch 3 Times."
 heroBody: >-
   Tell us about your roof once. Your free QuoteReady Roofing Brief organizes
-  the job into one clear request you can use with multiple roofers &mdash;
+  the job into one clear request you can use with multiple roofers —
   making it easier to get quotes faster and compare what each roofer is
   actually offering.
-heroMicrocopy: "Free &bull; Takes about 3&ndash;5 minutes &bull; Use it with any roofer &bull; No phone number required to start"
+heroMicrocopy: "Free • Takes about 3–5 minutes • Use it with any roofer • No phone number required to start"
 
 ppcHero:
   eyebrow: "FREE ROOFING QUOTE TOOL FOR TEXAS HOMEOWNERS"
   headline: "Get Better Roofing Quotes, Faster."
   body: >-
     Tell us about your roof once. Get a clear QuoteReady Roofing Brief you
-    can send to any roofer. It makes getting multiple quotes easier&mdash;and
+    can send to any roofer. It makes getting multiple quotes easier—and
     makes it much easier to see what each roofer is actually offering.
-  microcopy: "Free &bull; Takes about 3&ndash;5 minutes &bull; Use it with any roofer &bull; Local pro introductions are optional"
+  microcopy: "Free • Takes about 3–5 minutes • Use it with any roofer • Local pro introductions are optional"
 
 intakeFocus: "Storm/hail history, leak location, roof age & type, visible damage, interior water evidence, prior repairs, insurance context, and roof photos."
 dataNote: "Live local metrics for this page will draw on NOAA/NWS storm and hail history, municipal roofing permit activity, and Texas Department of Insurance wind/hail loss data."
@@ -26,7 +26,7 @@ sections:
     body: |
       <p>One roofer may include decking. Another may charge for it later.</p>
       <p>One may specify underlayment, flashing, ventilation, cleanup, and warranties. Another may give you little more than a total price.</p>
-      <p>If the scopes are different, the prices aren&rsquo;t truly apples to apples.</p>
+      <p>If the scopes are different, the prices aren’t truly apples to apples.</p>
 
   - heading: "Give Every Roofer the Same Starting Point."
     body: |
@@ -36,7 +36,7 @@ sections:
 
   - heading: "What Is a Roofing Project Brief?"
     body: |
-      <p>A roofing project brief is a standardized document that summarizes a homeowner&rsquo;s roofing problem or planned project before contractors prepare estimates.</p>
+      <p>A roofing project brief is a standardized document that summarizes a homeowner’s roofing problem or planned project before contractors prepare estimates.</p>
       <p>A useful roofing brief can include reported damage or leaks, roof information, prior repairs, photos, homeowner priorities, known project history, and questions each roofer should address.</p>
       <p>The brief is not a roof inspection or diagnosis. It gives roofing professionals a clearer and more consistent starting point.</p>
 

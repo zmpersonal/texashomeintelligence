@@ -6,7 +6,7 @@ heroBody: >-
   Tell us about the plumbing problem once. Get a clear QuoteReady Plumbing
   Brief you can use with any plumber. It helps you spend less time repeating
   the problem and makes larger plumbing quotes easier to compare.
-heroMicrocopy: "Free &bull; Takes about 3&ndash;5 minutes &bull; Use it with any plumber &bull; No phone number required to start"
+heroMicrocopy: "Free • Takes about 3–5 minutes • Use it with any plumber • No phone number required to start"
 
 ppcHero:
   eyebrow: "FREE PLUMBING QUOTE TOOL FOR TEXAS HOMEOWNERS"
@@ -16,15 +16,15 @@ ppcHero:
     Plumbing Brief you can use with any plumber. It helps you spend less
     time repeating the problem and makes larger plumbing quotes easier to
     compare.
-  microcopy: "Free &bull; Takes about 3&ndash;5 minutes &bull; Use it with any plumber &bull; Local pro introductions are optional"
+  microcopy: "Free • Takes about 3–5 minutes • Use it with any plumber • Local pro introductions are optional"
 
 intakeFocus: "Leak/clog/pressure/sewer/water-heater symptoms, location, active damage, hot or cold water, duration, and prior repair or access history."
 dataNote: "Live local metrics for this page will draw on freeze/weather context, municipal plumbing permit activity, FEMA/TWDB water data, and BLS trade-wage indexes."
 
 sections:
-  - heading: "Plumbing Problems Are Messy. Your Quote Request Doesn&rsquo;t Have to Be."
+  - heading: "Plumbing Problems Are Messy. Your Quote Request Doesn’t Have to Be."
     body: |
-      <p>&ldquo;There&rsquo;s a leak somewhere.&rdquo; &ldquo;The water pressure dropped.&rdquo; &ldquo;The water heater keeps acting up.&rdquo;</p>
+      <p>“There’s a leak somewhere.” “The water pressure dropped.” “The water heater keeps acting up.”</p>
       <p>That may be all you know.</p>
       <p>You do not need to know the right plumbing terms. Start with what you see, hear, or experience. QuoteReady organizes the rest.</p>
 
@@ -45,7 +45,7 @@ sections:
       <p>Include the location of the problem, when it started, whether it is constant or intermittent, whether hot or cold water is involved, visible water damage, affected fixtures, previous repairs, equipment age if known, photos, and any access limitations.</p>
       <p>For larger projects, also explain what outcome matters most to you.</p>
 
-  - heading: "Compare What the Plumber Will Do &mdash; Then Compare Price."
+  - heading: "Compare What the Plumber Will Do — Then Compare Price."
     body: |
       <p>Plumbing estimates can differ in materials, labor, permits, access work, cleanup, restoration, warranties, exclusions, and change-order terms.</p>
       <p>A low number does not tell you which of those things are included. Get clear on the proposed work first. Then compare the total.</p>

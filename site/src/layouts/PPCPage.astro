@@ -1,0 +1,71 @@
+---
+import Base from "./Base.astro";
+import FaqAccordion from "../components/FaqAccordion.astro";
+import { getEntry } from "astro:content";
+
+interface Props {
+  serviceSlug: string;
+  locationSlug: string;
+}
+
+const { serviceSlug, locationSlug } = Astro.props;
+const svcEntry = await getEntry("services", serviceSlug);
+const locEntry = await getEntry("locations", locationSlug);
+if (!svcEntry || !locEntry) {
+  throw new Error(`PPCPage: unknown service "${serviceSlug}" or location "${locationSlug}"`);
+}
+const svc = svcEntry.data;
+const loc = locEntry.data;
+
+if (!svc.ppcHero) {
+  throw new Error(`PPCPage: service "${serviceSlug}" has no ppcHero — no PPC copy supplied for it`);
+}
+const ppc = svc.ppcHero;
+
+const title = `${svc.name} Quotes in ${loc.name}, TX | QuoteReady`;
+const description = ppc.body.replace(/<[^>]+>/g, "").slice(0, 155);
+---
+
+<!--
+  Conversion-pure per CLAUDE.md's two-page-family rule: no data modules,
+  no internal-linking footer, single action. noindex avoids
+  duplicate-content collision with the equivalent SEO page.
+-->
+<Base title={title} description={description} noindex={true}>
+  <section class="hero">
+    <div class="wrap" style="max-width: 760px; margin: 0 auto; text-align: center;">
+      <span class="eyebrow">{ppc.eyebrow}</span>
+      <h1>{ppc.headline}</h1>
+      <p class="lede" style="margin-left:auto;margin-right:auto;">{ppc.body}</p>
+      <a class="btn" href={`/start/?service=${serviceSlug}&location=${locationSlug}&src=lp`}>
+        Build My QuoteReady Brief
+      </a>
+      <p class="microcopy" set:html={ppc.microcopy} />
+    </div>
+  </section>
+
+  {svc.sections.map((s, i) => (
+    <section class={`block ${i % 2 === 1 ? "alt" : ""}`}>
+      <div class="wrap" style="max-width: 760px;">
+        <h2>{s.heading}</h2>
+        <Fragment set:html={s.body} />
+      </div>
+    </section>
+  ))}
+
+  <section class="cta-band">
+    <div class="wrap">
+      <h2>{svc.closingHeading}</h2>
+      <p style="max-width:40em;margin:0 auto 20px;">{svc.closingBody}</p>
+      <a class="btn" href={`/start/?service=${serviceSlug}&location=${locationSlug}&src=lp`}>
+        Build My QuoteReady Brief
+      </a>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width: 760px;">
+      <FaqAccordion items={svc.faq} />
+    </div>
+  </section>
+</Base>

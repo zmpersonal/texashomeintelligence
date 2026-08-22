@@ -1,0 +1,22 @@
+---
+import { getCollection } from "astro:content";
+import ServicePage from "../../../layouts/ServicePage.astro";
+
+// Generates all 14 location×service pages from config — this one file
+// replaces what would otherwise be 14 hand-authored duplicate pages.
+export async function getStaticPaths() {
+  const locations = await getCollection("locations");
+  const services = await getCollection("services");
+  const paths = [];
+  for (const loc of locations) {
+    for (const svc of services) {
+      paths.push({ params: { location: loc.id, service: svc.id } });
+    }
+  }
+  return paths;
+}
+
+const { location, service } = Astro.params;
+---
+
+<ServicePage locationSlug={location} serviceSlug={service} />

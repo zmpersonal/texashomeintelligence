@@ -1,0 +1,21 @@
+---
+import { getCollection } from "astro:content";
+import PPCPage from "../../../layouts/PPCPage.astro";
+
+// Per BUILD_PLAN Phase 2: 3 PPC pages, supplied-copy services only,
+// Austin only for now. /lp/{service}-{location}/ per CLAUDE.md's URL
+// architecture.
+export async function getStaticPaths() {
+  const ppcLocation = "austin";
+  const services = await getCollection("services");
+  const supplied = services.filter((s) => s.data.copyStatus === "supplied");
+  return supplied.map((svc) => ({
+    params: { slug: `${svc.id}-${ppcLocation}` },
+    props: { serviceSlug: svc.id, locationSlug: ppcLocation },
+  }));
+}
+
+const { serviceSlug, locationSlug } = Astro.props;
+---
+
+<PPCPage serviceSlug={serviceSlug} locationSlug={locationSlug} />

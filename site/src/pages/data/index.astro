@@ -1,0 +1,62 @@
+---
+import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import { getCollection } from "astro:content";
+
+const locations = await getCollection("locations");
+const locationOrder = ["austin", "san-antonio"];
+const orderedLocations = locationOrder
+  .map((id) => locations.find((l) => l.id === id))
+  .filter((l) => l !== undefined);
+
+const title = "Texas Homeowner Data Catalog | Texas Home Intelligence";
+const description =
+  "The statewide catalog of local homeowner data Texas Home Intelligence tracks, by location and topic.";
+---
+
+<Base title={title} description={description}>
+  <Breadcrumbs crumbs={[{ name: "Home", url: "/" }, { name: "Data", url: "/data/" }]} />
+
+  <section class="hero">
+    <div class="wrap" style="max-width:760px;">
+      <h1>Texas Homeowner Data Catalog</h1>
+      <p class="lede">
+        A statewide index of the local homeowner data Texas Home Intelligence tracks. Each entry
+        links to a stable, source-attributed data page.
+      </p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width:760px;">
+      <h2>By location</h2>
+      <div class="grid-2">
+        {orderedLocations.map((loc) => (
+          <div class="card">
+            <h3>{loc.data.name}</h3>
+            <p>
+              Weather &amp; storm exposure, permit activity, drought conditions, and more for{" "}
+              {loc.data.counties}.
+            </p>
+            {loc.id === "austin" ? (
+              <p>
+                <a href="/data/austin/roofing/">Austin Roofing data &rarr;</a>{" "}
+                <span class="sample-badge">SAMPLE</span>
+              </p>
+            ) : (
+              <p style="color:var(--ink-soft);font-size:0.9rem;">Data pages coming soon.</p>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <h2 style="margin-top:32px;">How to read a data page</h2>
+      <p>
+        Every data page separates observed <strong>Data</strong> from{" "}
+        <strong>THI Interpretation</strong>, states its update cadence and last-updated date, and
+        links to our <a href="/methodology/">methodology</a>. Figures currently marked SAMPLE are
+        illustrative placeholders, not live facts.
+      </p>
+    </div>
+  </section>
+</Base>

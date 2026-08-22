@@ -1,12 +1,18 @@
 ---
 import "../styles/global.css";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
 
 interface Props {
   title: string;
   description: string;
+  /** PPC landing pages set this true — noindex to avoid duplicate-content
+   * collision with the equivalent SEO page, per CLAUDE.md's two-page-family
+   * rule. Defaults to indexable. */
+  noindex?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, noindex = false } = Astro.props;
 const siteName = "Texas Home Intelligence";
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -19,6 +25,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <link rel="canonical" href={canonicalURL} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
 
     <script type="application/ld+json" is:inline set:html={JSON.stringify({
       "@context": "https://schema.org",
@@ -32,27 +39,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     />
   </head>
   <body>
-    <!--
-      Phase 0: layout shell only. Real nav/footer content, and the
-      homepage's approved section order, land in Phase 2 per
-      BUILD_PLAN.md. Not redesigning what's already been approved.
-    -->
-    <header class="border-b border-line">
-      <div class="mx-auto max-w-[1120px] px-5 py-4">
-        <span class="text-lg font-extrabold text-brand-dark">
-          Texas Home<span class="text-accent">Intelligence</span>
-        </span>
-      </div>
-    </header>
-
+    <Nav />
     <main>
       <slot />
     </main>
-
-    <footer class="mt-10 bg-brand-dark px-5 py-8 text-sm text-[#c6d6e4]">
-      <div class="mx-auto max-w-[1120px]">
-        &copy; {new Date().getFullYear()} Texas Home Intelligence.
-      </div>
-    </footer>
+    <Footer />
   </body>
 </html>
