@@ -45,34 +45,51 @@ Phase 1 without explicit go-ahead.**
 
 ---
 
-## Phase 1 — Data model + structured config
+## Phase 1 — Data model + structured config ✅ done
 
 **Goal:** every piece of copy/structure that varies by location or service
 lives in typed config, not in page markup.
 
-- [ ] `src/content/config.ts` collections: `locations`, `services`,
+- [x] `src/content.config.ts` collections: `locations`, `services`,
       `intakeQuestions` (per service), `dataSources` (registry — name, org,
-      URL, cadence, feed status), `faq` (tagged product vs. authority)
-- [ ] `locations`: Austin, San Antonio — name, counties, hub intro
-- [ ] `services`: 7 services with `copyStatus: supplied | draft`, hero
+      primary use, THI output, status), `faq` (tagged product vs.
+      authority) — Astro 7's Content Layer API (`glob`/`file` loaders +
+      Zod schemas), not the legacy `src/content/config.ts` path
+- [x] `locations`: Austin, San Antonio — name, region, counties, hub
+      intro, dashboard conditions (`src/data/locations/*.yaml`)
+- [x] `services`: 7 services with `copyStatus: supplied | draft`, hero
       copy, section copy, FAQ — ported verbatim from
       `docs/source/THI-Copywriter_Output.txt` for roofing/HVAC/plumbing;
-      draft copy for the other 4 (already written once for the Jekyll
-      build — port and mark DRAFT, don't rewrite from scratch)
-  - [ ] PPC (`/lp/`) copy variant kept separate from SEO-page copy per
-        service, both sourced from the same copywriter doc where supplied
-- [ ] `intake-question-map`: per-service field list from handoff §10,
-      typed
-- [ ] `data-source-registry`: every feed in handoff §11, with a
-      `status: stub | sample | live` field (all `stub`/`sample` in this
-      phase — nothing is `live`)
-- [ ] Every sample value in config is tagged so the UI layer can render the
-      SAMPLE badge/stale-state without per-page logic
+      draft copy for the other 4, ported from the Jekyll build and marked
+      `draft` (`src/data/services/*.yaml`)
+  - [x] PPC hero (`ppcHero`) kept separate from the SEO-page hero for the
+        3 supplied services — the copywriter doc supplies one body-copy
+        block per service (labeled "PPC" in the source) which both page
+        families share; only the *hero* differs (wireframe's city-specific
+        hero for SEO pages vs. the copywriter's generic hero for `/lp/`)
+- [x] `intake-questions`: per-service field list from handoff §10, typed
+      (`id`/`label`/`kind`/`options`) — `src/data/intake-questions/*.yaml`
+- [x] `data-sources`: all 14 feeds from handoff §11, `status: stub |
+      sample | live` (the 4 rows behind CLAUDE.md's "go deep on three"
+      groups — NWS, NOAA Storm Events, municipal permits, EIA — are
+      `sample`; the other 10 are `stub`; nothing is `live`)
+- [x] Every sample value uses the shared `sampleValue` schema
+      (`status`/`asOf`/`source`) so the UI layer can render the SAMPLE
+      badge/stale-state generically, without per-page logic
 
-**How I'll verify it:** a small script or test that loads every collection
-and asserts required fields are present for all 7 services × 2 locations
-(14 combinations) and fails loudly if one is missing — config completeness
-is the whole point of this phase.
+**How I verified it:** `npx astro sync` — Zod-validates every entry
+against its collection schema (this is what actually caught and forced the
+fix of a stray `z` import deprecation, see below); `npm run build` and
+`npx astro check` both clean (0 errors/warnings/hints); a standalone
+completeness script (`site/scripts/verify-content.mjs`, run via `npm run
+verify-content`) checks the cross-cutting rules the per-file schema can't
+— exactly 2 locations and 7 services present, the 3 supplied services have
+`ppcHero` and the 4 draft ones don't, every service has a matching
+intake-questions file, the 4 priority data sources are `sample` and none
+are `live`, the FAQ has both tags represented within 6–8 entries. I
+deliberately broke one rule (flipped `electrical`'s `copyStatus` to
+`supplied`) to confirm the script actually fails loudly instead of passing
+trivially, then restored it.
 
 ---
 

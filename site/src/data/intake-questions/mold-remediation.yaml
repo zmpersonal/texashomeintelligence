@@ -1,0 +1,20 @@
+service: mold-remediation
+fields:
+  - id: visible-conditions
+    label: "What do you see or smell?"
+    kind: textarea
+  - id: moisture-source
+    label: "Is there a known moisture source?"
+    kind: text
+  - id: water-event
+    label: "Was there a prior leak or flood?"
+    kind: boolean
+  - id: affected-area
+    label: "Approximate size of the affected area"
+    kind: text
+  - id: testing
+    label: "Has anyone tested or assessed the area already?"
+    kind: boolean
+  - id: prior-remediation
+    label: "Any prior remediation work?"
+    kind: textarea

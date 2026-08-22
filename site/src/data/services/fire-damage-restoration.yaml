@@ -1,0 +1,58 @@
+name: Fire Damage Restoration
+copyStatus: draft
+eyebrow: "FREE FIRE & SMOKE DAMAGE QUOTE TOOL FOR {CITY} HOMEOWNERS"
+heroTagline: "Get Fire & Smoke Restoration Quotes, Faster."
+heroBody: >-
+  Tell us what happened once. Get a clear QuoteReady Fire Damage Brief you
+  can use with any restoration company &mdash; so you spend less time
+  repeating the details and can compare scope, not just price.
+heroMicrocopy: "Free &bull; Takes about 3&ndash;5 minutes &bull; Use it with any restoration company &bull; No phone number required to start"
+
+safetyNote: >-
+  If a fire is active or you smell smoke right now, call 911 first. Only
+  return to a fire-damaged property once your local fire department confirms
+  it is safe to enter.
+
+intakeFocus: "Event date, responding fire department, affected areas, smoke/soot spread, water used during suppression, utility status, occupancy, and insurance context."
+dataNote: "Live local metrics for this page will draw on fire-weather conditions, AirNow smoke/air-quality data, Texas Department of Insurance fire-loss data, and FEMA disaster context."
+
+sections:
+  - heading: "After a Fire, Every Restoration Company Seems to See a Different Job."
+    body: |
+      <p>One company scopes only what burned. Another accounts for smoke and soot spread through the whole HVAC system. A third includes water damage from suppression efforts, and a fourth doesn&rsquo;t mention it at all.</p>
+      <p>The damage is the same. The proposals aren&rsquo;t.</p>
+
+  - heading: "Tell Us What Happened. We&rsquo;ll Organize the Rest."
+    body: |
+      <p>You don&rsquo;t need restoration-industry vocabulary to describe a fire.</p>
+      <p>QuoteReady organizes the event date, what was affected, whether water was used to put it out, which utilities are on or off, and whether the home is currently livable &mdash; into a brief a restoration company can act on quickly.</p>
+
+  - heading: "What Is a Fire Damage Project Brief?"
+    body: |
+      <p>A fire damage project brief is a standardized summary of a fire, smoke, or soot event and the restoration work being considered.</p>
+      <p>It can include the event details, affected areas, smoke and water exposure, occupancy status, prior stabilization work, photos, insurance context, and questions a restoration company should answer.</p>
+      <p>The brief does not replace a fire marshal&rsquo;s report, an insurance adjuster&rsquo;s assessment, or a restoration company&rsquo;s own on-site evaluation.</p>
+
+  - heading: "What Information Helps When Getting Restoration Quotes?"
+    body: |
+      <p>Useful information includes when the event happened, which rooms or areas were affected, whether smoke odor has spread beyond the fire area, whether water was used during suppression, whether the home has power and water restored, any temporary board-up or stabilization already done, and your insurance situation.</p>
+      <p>Photos of both the damage and any temporary repairs already made are especially useful.</p>
+
+  - heading: "Compare the Scope Before You Compare the Price."
+    body: |
+      <p>Fire and smoke restoration estimates can vary widely depending on whether they include soot cleaning beyond the visibly burned area, HVAC system cleaning, odor treatment, water-damage drying, contents cleaning or storage, and reconstruction.</p>
+      <p>Ask what each proposal actually covers before comparing totals.</p>
+
+closingHeading: "Get the Fire Damage Job Clear Before You Choose a Restoration Company."
+closingBody: >-
+  Tell us what happened once. Get your Project Brief. Use it with your
+  insurance-preferred vendor, a company you already trust, or ask Texas Home
+  Intelligence for optional help finding local pros.
+
+faq:
+  - q: "Does QuoteReady replace an insurance adjuster&rsquo;s assessment?"
+    a: "No. Your Project Brief organizes what you know so a restoration company and your insurer have clearer starting information. It does not replace a professional damage assessment or insurance claim process."
+  - q: "Should you get more than one fire restoration quote?"
+    a: "It can help, especially for larger losses, but timing matters. If your insurer has a preferred-vendor program, ask how that interacts with getting independent quotes before you commit to a company."
+  - q: "Can you use your Fire Damage Brief with a company outside the Texas Home Intelligence network?"
+    a: "Yes. Use it with any restoration company you choose, including one recommended by your insurer. Help finding local professionals is optional."

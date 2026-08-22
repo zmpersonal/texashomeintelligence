@@ -1,0 +1,26 @@
+service: fire-damage-restoration
+fields:
+  - id: event-date
+    label: "When did the event happen?"
+    kind: text
+  - id: fire-department
+    label: "Did a fire department respond?"
+    kind: boolean
+  - id: affected-areas
+    label: "Which areas were affected?"
+    kind: textarea
+  - id: smoke-soot
+    label: "Is there smoke or soot spread beyond the immediate area?"
+    kind: boolean
+  - id: water-damage
+    label: "Was water used during suppression, causing additional damage?"
+    kind: boolean
+  - id: utilities
+    label: "Are power and water currently on?"
+    kind: text
+  - id: occupancy
+    label: "Is the home currently livable / occupied?"
+    kind: boolean
+  - id: insurance-context
+    label: "Is an insurance claim involved?"
+    kind: boolean

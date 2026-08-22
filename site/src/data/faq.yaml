@@ -1,0 +1,39 @@
+- id: what-is-a-brief
+  tag: product
+  q: "What is a QuoteReady Project Brief?"
+  a: "A standardized summary of your home project — the problem, property context, priorities, and questions a contractor should answer — built from what you tell us."
+
+- id: is-it-free
+  tag: product
+  q: "Is QuoteReady really free?"
+  a: "Yes. You can create your Project Brief for free and use it with any contractor."
+
+- id: use-with-own-contractor
+  tag: product
+  q: "Can I use the brief with my own contractor?"
+  a: "Yes. Your Project Brief is yours to use with anyone — a contractor you already trust, one you find yourself, or one Texas Home Intelligence introduces you to."
+
+- id: does-it-diagnose
+  tag: product
+  q: "Does Texas Home Intelligence diagnose my home?"
+  a: "No. It organizes the information you provide and identifies questions or items a qualified professional may need to evaluate. It does not replace an inspection or professional diagnosis."
+
+- id: must-use-thi-contractors
+  tag: product
+  q: "Do I have to talk to contractors through Texas Home Intelligence?"
+  a: "No. Contractor introductions through Texas Home Intelligence are optional and never required to use your brief."
+
+- id: how-many-quotes
+  tag: authority
+  q: "How many contractor quotes should I get?"
+  a: "For most non-emergency projects, two or three is common practice. It matters more that each contractor is quoting the same scope of work than exactly how many quotes you collect."
+
+- id: where-data-comes-from
+  tag: authority
+  q: "Where does Texas Home Intelligence get its data?"
+  a: "From public sources including NWS/NOAA weather data, municipal permit systems, TWDB drought data, and other government and utility sources."
+
+- id: how-often-updated
+  tag: authority
+  q: "How often is Texas Home Intelligence data updated?"
+  a: "Update cadence depends on the source and is stated on each data page once a live feed is connected. Figures currently marked SAMPLE are placeholders, not live data yet."

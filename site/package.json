@@ -7,17 +7,19 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "verify-content": "node scripts/verify-content.mjs"
   },
   "dependencies": {
-    "astro": "^7.2.4",
     "@astrojs/cloudflare": "^14.2.3",
     "@astrojs/sitemap": "^3.7.3",
-    "tailwindcss": "^4.3.3",
-    "@tailwindcss/vite": "^4.3.3"
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.2.4",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
     "typescript": "5.9.3",
-    "@astrojs/check": "^0.9.10"
+    "yaml": "^2.9.0"
   }
 }

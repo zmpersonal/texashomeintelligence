@@ -1,0 +1,26 @@
+service: roofing
+fields:
+  - id: storm-hail-history
+    label: "Has there been a recent storm, hail, or wind event?"
+    kind: boolean
+  - id: leak-location
+    label: "Where is the leak or damage, if any?"
+    kind: text
+  - id: roof-age-type
+    label: "Roof age and material, if known"
+    kind: text
+  - id: visible-damage
+    label: "What visible damage do you see?"
+    kind: textarea
+  - id: interior-water
+    label: "Any interior water staining or evidence?"
+    kind: boolean
+  - id: prior-repair
+    label: "Any prior roof repairs?"
+    kind: textarea
+  - id: insurance-context
+    label: "Is an insurance claim involved?"
+    kind: boolean
+  - id: photos
+    label: "Photos of the damage"
+    kind: photo

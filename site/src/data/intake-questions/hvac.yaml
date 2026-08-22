@@ -1,0 +1,27 @@
+service: hvac
+fields:
+  - id: symptom
+    label: "What's the system doing? (cooling, heating, neither)"
+    kind: select
+    options: ["Not cooling", "Not heating", "Running nonstop", "Weak airflow", "Strange noise", "Other"]
+  - id: is-running
+    label: "Is the system running at all?"
+    kind: boolean
+  - id: affected-area
+    label: "Which rooms or areas are affected?"
+    kind: text
+  - id: thermostat-behavior
+    label: "What is the thermostat set to, and what's actually happening?"
+    kind: text
+  - id: time-of-day
+    label: "Does it happen at a particular time of day?"
+    kind: text
+  - id: system-age
+    label: "System age, if known"
+    kind: text
+  - id: prior-repair
+    label: "Any prior repairs?"
+    kind: textarea
+  - id: label-photo
+    label: "Photo of the equipment label"
+    kind: photo

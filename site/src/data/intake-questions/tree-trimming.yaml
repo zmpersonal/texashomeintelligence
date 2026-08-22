@@ -1,0 +1,27 @@
+service: tree-trimming
+fields:
+  - id: size-type
+    label: "Tree size and type, if known"
+    kind: text
+  - id: proximity
+    label: "How close is it to your home, fence, or power lines?"
+    kind: text
+  - id: dead-limbs
+    label: "Any dead limbs or visible damage?"
+    kind: boolean
+  - id: storm-damage-lean
+    label: "Recent storm damage, or is the tree leaning?"
+    kind: boolean
+  - id: access
+    label: "Any access constraints for equipment?"
+    kind: text
+  - id: trim-or-remove
+    label: "Do you want it trimmed or removed?"
+    kind: select
+    options: ["Trim", "Remove", "Not sure yet"]
+  - id: stump
+    label: "If removing, do you want the stump ground out?"
+    kind: boolean
+  - id: photos
+    label: "Photos of the tree"
+    kind: photo

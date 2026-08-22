@@ -1,0 +1,22 @@
+service: plumbing
+fields:
+  - id: symptom
+    label: "What's going on?"
+    kind: select
+    options: ["Leak", "Clog", "Low pressure", "Sewer issue", "Water heater problem", "Other"]
+  - id: location
+    label: "Where is the problem located?"
+    kind: text
+  - id: active-damage
+    label: "Is there visible water damage right now?"
+    kind: boolean
+  - id: hot-or-cold
+    label: "Is hot water, cold water, or both affected?"
+    kind: select
+    options: ["Hot", "Cold", "Both", "Not applicable"]
+  - id: duration
+    label: "How long has this been going on?"
+    kind: text
+  - id: prior-repair-access
+    label: "Any prior repairs, or access limitations we should know about?"
+    kind: textarea

@@ -1,0 +1,18 @@
+service: electrical
+fields:
+  - id: symptom
+    label: "What's happening?"
+    kind: select
+    options: ["Outage", "Breaker tripping", "Flickering lights", "Dead outlet(s)", "Panel issue", "Other"]
+  - id: affected-area
+    label: "Which circuits, outlets, or fixtures are affected?"
+    kind: text
+  - id: burning-heat-sparking
+    label: "Any burning smell, heat, or sparking?"
+    kind: boolean
+  - id: panel-context
+    label: "Panel age / amperage, if known"
+    kind: text
+  - id: prior-work
+    label: "Any prior electrical work or permits?"
+    kind: textarea

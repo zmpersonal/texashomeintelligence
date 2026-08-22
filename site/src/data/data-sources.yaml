@@ -1,0 +1,111 @@
+- id: nws-api
+  name: "NWS API"
+  org: "National Weather Service"
+  primaryUse: "Current forecast, observations, alerts"
+  thiOutput: "Fast-changing weather context and derived heat/freeze/storm indicators"
+  status: sample
+  priority: true
+
+- id: noaa-climate
+  name: "NOAA Climate"
+  org: "NOAA"
+  primaryUse: "Historical normals/extremes"
+  thiOutput: "Current-vs-normal comparisons"
+  status: stub
+  priority: false
+
+- id: noaa-storm-events
+  name: "NOAA Storm Events"
+  org: "NOAA"
+  primaryUse: "Hail, wind, tornado, severe event history"
+  thiOutput: "Roof/storm exposure and event context"
+  status: sample
+  priority: true
+
+- id: fema-nfhl
+  name: "FEMA / NFHL"
+  org: "FEMA"
+  primaryUse: "Flood hazard context"
+  thiOutput: "Flood/water/mold context; do not overstate probability"
+  status: stub
+  priority: false
+
+- id: municipal-permits
+  name: "Local Municipal Permit Feeds"
+  org: "City of Austin / City of San Antonio (Socrata)"
+  primaryUse: "Mechanical, plumbing, electrical, building, roofing/tree where available"
+  thiOutput: "Service activity, permit trends, and timing proxies"
+  status: sample
+  priority: true
+
+- id: tdi-losses
+  name: "Texas Department of Insurance"
+  org: "TDI"
+  primaryUse: "County homeowners paid losses"
+  thiOutput: "Wind/hail, water, and fire loss context"
+  status: stub
+  priority: false
+
+- id: twdb-texmesonet
+  name: "TWDB / TexMesonet"
+  org: "Texas Water Development Board"
+  primaryUse: "Drought, rainfall, water/weather observations"
+  thiOutput: "Tree, foundation, moisture, and water context"
+  status: stub
+  priority: false
+
+- id: usda-soil
+  name: "USDA Soil Data Access"
+  org: "USDA"
+  primaryUse: "Soil/drainage/interpretations"
+  thiOutput: "Tree/foundation/landscape context"
+  status: stub
+  priority: false
+
+- id: airnow
+  name: "AirNow"
+  org: "EPA"
+  primaryUse: "Air Quality Index / smoke"
+  thiOutput: "HVAC/filtration and fire/smoke context"
+  status: stub
+  priority: false
+
+- id: census-acs
+  name: "Census ACS"
+  org: "US Census Bureau"
+  primaryUse: "Housing stock / age / structure"
+  thiOutput: "Local housing context"
+  status: stub
+  priority: false
+
+- id: bls
+  name: "BLS"
+  org: "Bureau of Labor Statistics"
+  primaryUse: "Trade wages / cost indicators"
+  thiOutput: "Repair-cost pressure indexes"
+  status: stub
+  priority: false
+
+- id: eia-electricity
+  name: "EIA"
+  org: "US Energy Information Administration"
+  primaryUse: "Texas residential electricity prices"
+  thiOutput: "HVAC operating-cost context"
+  status: sample
+  priority: true
+
+- id: ercot
+  name: "ERCOT"
+  org: "ERCOT"
+  primaryUse: "Grid/demand conditions"
+  thiOutput: "HVAC/electrical statewide context where useful"
+  status: stub
+  priority: false
+
+- id: tx-forest-service
+  name: "Texas A&M Forest Service"
+  org: "Texas A&M Forest Service"
+  primaryUse: "Wildfire/fire danger/tree context"
+  thiOutput: "Fire and tree intelligence"
+  status: stub
+  priority: false
