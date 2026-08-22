@@ -4,7 +4,7 @@ fields:
     label: "What's going on?"
     kind: select
     options: ["Leak", "Clog", "Low pressure", "Sewer issue", "Water heater problem", "Other"]
-  - id: location
+  - id: problem-location
     label: "Where is the problem located?"
     kind: text
   - id: active-damage

@@ -1,0 +1,139 @@
+---
+import Base from "../../../layouts/Base.astro";
+import { getProject, resolveToken } from "../../../lib/kv";
+
+export const prerender = false;
+
+const projectId = Astro.params.project_id!;
+const token = Astro.url.searchParams.get("token");
+
+const resolved = token ? await resolveToken(token) : null;
+const authorized = resolved === projectId;
+const project = authorized ? await getProject(projectId) : null;
+
+const title = "Your QuoteReady Project Brief | Texas Home Intelligence";
+const description = "Your generated QuoteReady Project Brief.";
+---
+
+<Base title={title} description={description} noindex={true}>
+  <section class="block">
+    <div class="wrap" style="max-width:760px;">
+      {!authorized && (
+        <div class="disclaimer-note">
+          This link is invalid or has expired. If you started a Project Brief, use the return
+          link from your email, or <a href="/start/">start a new one</a>.
+        </div>
+      )}
+
+      {authorized && !project && (
+        <div class="disclaimer-note">We couldn't find this project. It may have expired.</div>
+      )}
+
+      {authorized && project && !project.brief && (
+        <div class="disclaimer-note">
+          This project hasn't generated a brief yet. <a href={`/start/?resume=${projectId}&token=${token}`}>Continue your intake</a>.
+        </div>
+      )}
+
+      {authorized && project?.brief && (
+        <>
+          <span class="tag-ready" style="margin-bottom:14px;display:inline-block;">Ready to share</span>
+          <h1 class="mt-0">Your QuoteReady Project Brief</h1>
+
+          <div class="brief-doc" style="margin-top:24px;">
+            <header>
+              <h2>{project.brief.projectSummary.split(".")[0]}</h2>
+              <p style="margin:0;color:#cfe0ee;">Generated from your intake &mdash; {new Date(project.brief.generatedAt).toLocaleDateString()}</p>
+            </header>
+
+            <div class="brief-section">
+              <h3>Project Summary</h3>
+              <p>{project.brief.projectSummary}</p>
+            </div>
+
+            <div class="brief-section">
+              <h3>Reported Problem / Conditions</h3>
+              {project.brief.reportedProblem.length > 0 ? (
+                <ul>{project.brief.reportedProblem.map((line) => <li>{line}</li>)}</ul>
+              ) : (
+                <p>No specific details were reported beyond the project summary above.</p>
+              )}
+            </div>
+
+            <div class="brief-section">
+              <h3>Property &amp; Local Context</h3>
+              <ul>
+                {project.brief.externalContext.map((c) => (
+                  <li>
+                    {c.label}: {c.value}{" "}
+                    <span class="sample-badge">{c.status.toUpperCase()}</span>
+                    {" "}<span style="font-size:0.78rem;color:var(--ink-soft);">(Source: {c.source})</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div class="brief-section">
+              <h3>Work Already Performed / Prior Quotes</h3>
+              <p>{project.brief.priorWork}</p>
+            </div>
+
+            <div class="brief-section">
+              <h3>Homeowner Objectives</h3>
+              <p>{project.brief.objectives}</p>
+            </div>
+
+            <div class="brief-section">
+              <h3>Items a Professional Should Evaluate</h3>
+              <ul>{project.brief.itemsToEvaluate.map((item) => <li>{item}</li>)}</ul>
+            </div>
+
+            <div class="brief-section">
+              <h3>Questions the Written Estimate Should Answer</h3>
+              <ul>{project.brief.estimateQuestions.map((q) => <li>{q}</li>)}</ul>
+            </div>
+
+            <div class="brief-section">
+              <h3>Attachments / Notes</h3>
+              <p>{project.brief.attachmentsNote}</p>
+            </div>
+
+            <div class="brief-section">
+              <h3>Information Still Needed / Unknowns</h3>
+              {project.brief.unknowns.length > 0 ? (
+                <ul>{project.brief.unknowns.map((u) => <li>{u}</li>)}</ul>
+              ) : (
+                <p>Every applicable question for this service was answered.</p>
+              )}
+            </div>
+
+            <div class="brief-section">
+              <div class="disclaimer-note" style="margin:0;">{project.brief.limitation}</div>
+            </div>
+          </div>
+
+          <div id="contractor-help" style="margin-top:32px;" data-project-id={projectId} data-token={token}>
+            <h2>Have Something Going On With Your Home?</h2>
+            <p>
+              Your brief is yours to use with any contractor. If you&rsquo;d like optional help
+              finding local pros, tell us how many companies you&rsquo;d like an introduction to.
+            </p>
+            <div class="choice-grid" id="contractor-count-choices" style="max-width:360px;">
+              <div class="choice-card" data-value="1">1 company</div>
+              <div class="choice-card" data-value="2">2 companies</div>
+              <div class="choice-card" data-value="3">3 companies</div>
+            </div>
+            <div class="field" style="max-width:320px;margin-top:14px;">
+              <label for="contractor-phone">Phone (optional)</label>
+              <input type="tel" id="contractor-phone" placeholder="(512) 555-0100" />
+            </div>
+            <button type="button" class="btn" id="contractor-submit">Request Introductions</button>
+            <p id="contractor-status" style="margin-top:10px;font-size:0.88rem;"></p>
+          </div>
+        </>
+      )}
+    </div>
+  </section>
+</Base>
+
+<script src="../../../scripts/contractor-request.ts"></script>

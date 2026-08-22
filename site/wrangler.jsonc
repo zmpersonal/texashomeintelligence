@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "texas-home-intelligence",
+  "compatibility_date": "2026-04-15",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Seam 3 (HANDOFF.md): real bindings for local/dev testing via Miniflare.
+  // The IDs below are LOCAL PLACEHOLDERS ONLY — replace with real Cloudflare
+  // KV namespace / D1 database IDs before deploying, per HANDOFF.md.
+  "kv_namespaces": [
+    { "binding": "PROJECTS_KV", "id": "local-placeholder-projects-kv" }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "texas-home-intelligence-db",
+      "database_id": "local-placeholder-d1-database"
+    }
+  ]
+}

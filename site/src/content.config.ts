@@ -79,6 +79,13 @@ const services = defineCollection({
     safetyNote: z.string().optional(),
     licensingNote: z.string().optional(),
     permitNote: z.string().optional(),
+    // Phase 3: drives the deterministic generated-brief sections
+    // "Items a Professional Should Evaluate" and "Questions the Written
+    // Estimate Should Answer" — config-driven, not hardcoded in the brief
+    // generator, so adding/editing a service's brief content stays a
+    // data change, not a code change.
+    evaluationItems: z.array(z.string()).min(1),
+    estimateQuestions: z.array(z.string()).min(1),
     sections: z.array(copySection),
     closingHeading: z.string(),
     closingBody: z.string(),

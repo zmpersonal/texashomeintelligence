@@ -1,0 +1,160 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection } from "astro:content";
+
+const serviceOrder = [
+  "roofing",
+  "hvac",
+  "plumbing",
+  "fire-damage-restoration",
+  "mold-remediation",
+  "electrical",
+  "tree-trimming",
+];
+const allServices = await getCollection("services");
+const services = serviceOrder
+  .map((slug) => allServices.find((s) => s.id === slug))
+  .filter((s) => s !== undefined)
+  .map((s) => ({ slug: s.id, name: s.data.name }));
+
+const allLocations = await getCollection("locations");
+const locationOrder = ["austin", "san-antonio"];
+const locations = locationOrder
+  .map((slug) => allLocations.find((l) => l.id === slug))
+  .filter((l) => l !== undefined)
+  .map((l) => ({ slug: l.id, name: l.data.name }));
+
+const intakeQuestions = await getCollection("intakeQuestions");
+const questionsByService = Object.fromEntries(
+  intakeQuestions.map((q) => [q.id, q.data.fields]),
+);
+
+const title = "Build My QuoteReady Brief | Texas Home Intelligence";
+const description =
+  "Tell us about your home project once and get a free QuoteReady Project Brief you can use with any contractor.";
+---
+
+<Base title={title} description={description}>
+  <section class="block">
+    <div class="wrap">
+      <div class="step-shell">
+        <div class="progress-track" id="progress">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+
+        <form id="intake-form" onsubmit="return false;">
+          <div class="intake-step" data-step="1">
+            <h2 class="mt-0">Let&rsquo;s start with the basics.</h2>
+            <p>
+              First name and email only &mdash; no phone number required to start. We&rsquo;ll
+              create a secure link so you can come back anytime without losing your progress.
+            </p>
+            <div class="field">
+              <label for="first-name">First name</label>
+              <input type="text" id="first-name" placeholder="Jamie" />
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input type="email" id="email" placeholder="you@example.com" />
+            </div>
+            <p class="disclaimer-note" id="step1-error" style="display:none;"></p>
+          </div>
+
+          <div class="intake-step" data-step="2">
+            <h2 class="mt-0">Where is the property, and what kind of project is this?</h2>
+            <p style="font-size:0.9rem;">City</p>
+            <div class="choice-grid" id="location-choices">
+              {locations.map((loc) => (
+                <div class="choice-card" data-value={loc.slug}>{loc.name}</div>
+              ))}
+            </div>
+            <p style="font-size:0.9rem;margin-top:16px;">Project type</p>
+            <div class="choice-grid" id="service-choices">
+              {services.map((svc) => (
+                <div class="choice-card" data-value={svc.slug}>{svc.name}</div>
+              ))}
+            </div>
+          </div>
+
+          <div class="intake-step" data-step="3">
+            <h2 class="mt-0">Tell us what&rsquo;s going on.</h2>
+            <div class="field">
+              <label for="overview">Describe the problem in your own words</label>
+              <textarea
+                id="overview"
+                placeholder="e.g. There's a stain spreading across the ceiling in the upstairs bathroom..."
+              ></textarea>
+            </div>
+            <div class="field">
+              <label for="urgency">How urgent is this?</label>
+              <select id="urgency">
+                <option>Emergency &mdash; needs attention now</option>
+                <option>Soon &mdash; within the next couple weeks</option>
+                <option>Planning ahead &mdash; no rush</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="address">Property address</label>
+              <input type="text" id="address" placeholder="Street address, city, ZIP" />
+              <p style="font-size:0.8rem;color:var(--ink-soft);margin-top:6px;">
+                We use your address to pull relevant public data (weather, permits, flood zone) so
+                you don&rsquo;t have to answer questions we can already look up.
+              </p>
+            </div>
+          </div>
+
+          <div class="intake-step" data-step="4">
+            <h2 class="mt-0">A few details about this specific job.</h2>
+            <p id="service-specific-note" style="font-size:0.9rem;">
+              Select a service in step 2 to see relevant questions.
+            </p>
+            <div id="service-specific-fields"></div>
+          </div>
+
+          <div class="intake-step" data-step="5">
+            <h2 class="mt-0">Anything else that helps?</h2>
+            <div class="field">
+              <label for="prior-work">Prior repairs, quotes, or inspections (optional)</label>
+              <textarea
+                id="prior-work"
+                placeholder="e.g. A plumber looked at this in 2024 and replaced a section of pipe..."
+              ></textarea>
+            </div>
+            <div class="field">
+              <label for="objectives">What matters most to you? (optional)</label>
+              <input type="text" id="objectives" placeholder="e.g. Fix it permanently, lowest cost, fastest timeline..." />
+            </div>
+            <div class="field">
+              <label for="photos">Photos (optional &mdash; not yet implemented)</label>
+              <input type="file" id="photos" multiple disabled />
+              <p style="font-size:0.8rem;color:var(--ink-soft);margin-top:6px;">
+                Photo upload/storage isn&rsquo;t built yet — your brief will note that no
+                attachments are included.
+              </p>
+            </div>
+          </div>
+
+          <div class="intake-step" data-step="6">
+            <h2 class="mt-0">Review &amp; generate your brief.</h2>
+            <p>Once you generate your brief, these answers are locked in and can&rsquo;t be edited.</p>
+            <div class="disclaimer-note">
+              No 1, 2, or 3 contractor choice appears before your brief is generated &mdash; that
+              choice only comes up afterward, and only if you want it.
+            </div>
+            <p id="review-summary" style="font-size:0.9rem;"></p>
+          </div>
+
+          <p class="disclaimer-note" id="form-error" style="display:none;"></p>
+
+          <div class="step-actions">
+            <button type="button" class="link-btn" id="back-btn">&larr; Back</button>
+            <button type="button" class="btn" id="next-btn">Continue</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script type="application/json" id="intake-questions-data" is:inline set:html={JSON.stringify(questionsByService)} />
+<script src="../../scripts/intake.ts"></script>

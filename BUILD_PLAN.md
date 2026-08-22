@@ -181,38 +181,71 @@ zero raw unrendered template syntax.
 
 ---
 
-## Phase 3 — Intake flow, generated brief, submission stub, KV/D1 scaffold
+## Phase 3 — Intake flow, generated brief, submission stub, KV/D1 scaffold ✅ done
 
 **Goal:** a working, resumable, deterministic intake → brief pipeline on
 sample data, with the three reserved seams stubbed and documented.
 
-- [ ] `/start/` multi-step intake (name+email first, no phone; service
+- [x] `/start/` multi-step intake (name+email first, no phone; service
       picker; project overview; service-specific questions from Phase 1's
       intake-question-map; prior work/photos; review) — an Astro
       island, not full-page JS
-- [ ] Pages Function: `POST /api/intake/start` creates `project_id` +
+- [x] Pages Function: `POST /api/intake/start` creates `project_id` +
       secure return token, **stub**-sends return-link email (logged, not
       sent)
-- [ ] Pages Function: `PATCH /api/intake/:project_id` updates the project
+- [x] Pages Function: `PATCH /api/intake/:project_id` updates the project
       record as steps complete
-- [ ] Deterministic brief generator: template keyed to structured intake
+- [x] Deterministic brief generator: template keyed to structured intake
       fields → the 10 brief sections + limitation statement. No LLM
       inference of facts (an optional off-by-default prose-smoothing hook
       may be stubbed, never wired live)
-- [ ] `/brief/:project_id/` token-gated brief view
-- [ ] Cloudflare KV binding scaffold (project state + return tokens) —
+- [x] `/brief/:project_id/` token-gated brief view
+- [x] Cloudflare KV binding scaffold (project state + return tokens) —
       documented shape, sample read/write, real binding left to you
-- [ ] Cloudflare D1 schema (SQL) for structured project/lead records —
+- [x] Cloudflare D1 schema (SQL) for structured project/lead records —
       migration file + seed script with sample rows, no production data
-- [ ] Post-brief screen offers optional contractor help (1/2/3 choice) —
+- [x] Post-brief screen offers optional contractor help (1/2/3 choice) —
       confirmed to never appear before the brief exists
 
-**How I'll verify it:** walk the intake flow start-to-finish against the
-local dev server (KV/D1 local emulation via `wrangler`), confirm a
-resumed project via the return token preserves prior answers, confirm the
-generated brief's fields trace back to specific intake inputs (no
-invented facts), confirm no secret/key ever appears in client-shipped JS
-(`grep` the client bundle).
+**How I verified it:** ran the entire pipeline against a real local
+Workers runtime (`wrangler dev` with real Miniflare-backed KV + D1, no
+mocks) two ways:
+
+- Curl-driven API tests: start → PATCH (service/location, then
+  service-specific answers) → complete → contractor-request, checking
+  each response and then querying D1 directly (`wrangler d1 execute
+  --local`) to confirm the durable mirror matches KV exactly, including
+  after a fix (`updateProjectServiceLocation`) for a sync bug D1
+  inspection caught (service/location were staying blank in D1 after
+  being set via PATCH — KV had them, D1 didn't).
+- A real headless-Chromium (Playwright) walk of the actual `/start/` UI —
+  filled every step including the plumbing-specific field, generated the
+  brief, and confirmed the browser redirected to
+  `/brief/:project_id/?token=...` and rendered all 10 sections with a
+  correct reported/external/unknown split (unknowns exactly matched the
+  fields left blank) plus the post-brief 1/2/3 + phone contractor-request
+  UI. This caught a real bug: plumbing's intake field was also named
+  `id: location` ("Where is the problem located?"), colliding with the
+  PATCH route's reserved `location` key (the project's city) — the
+  client's attempt to save "Kitchen sink" was rejected as an invalid city.
+  Fixed by renaming the field to `problem-location` in
+  `src/data/intake-questions/plumbing.yaml`; audited all 6 other
+  services' intake-question ids against every reserved key (`service`,
+  `location`, and the brief's `GENERIC_FIELDS`: `overview`, `urgency`,
+  `address`, `priorWork`, `objectives`) — no other collisions exist.
+- Resume: started a second project, partially answered it, fetched it
+  back via `GET /api/intake/:id?token=...` and confirmed the exact
+  answers/service/location came back; confirmed a wrong token gets a 403.
+- Confirmed the "brief locks answers" rule: `PATCH` after
+  `status: "brief_generated"` returns 409, and the brief itself never
+  invents a fact — every unknown listed is an intake field with no entry
+  in `answers`, checked field-by-field against what was left blank.
+- `grep`-ed `dist/client` for `DB.prepare`, `PROJECTS_KV`,
+  `cloudflare:workers`, and the binding/config keywords — none present;
+  the only client-shipped JS is the `/start/` and post-brief islands, and
+  neither embeds any secret or server binding.
+- `npx astro check` → 0 errors / 0 warnings / 0 hints; `npm run build`
+  clean.
 
 ---
 

@@ -21,6 +21,17 @@ ppcHero:
 intakeFocus: "Leak/clog/pressure/sewer/water-heater symptoms, location, active damage, hot or cold water, duration, and prior repair or access history."
 dataNote: "Live local metrics for this page will draw on freeze/weather context, municipal plumbing permit activity, FEMA/TWDB water data, and BLS trade-wage indexes."
 
+evaluationItems:
+  - "Source and extent of the reported leak or clog"
+  - "Condition of the affected fixture or equipment"
+  - "Any visible water damage from the reported issue"
+  - "Access requirements for the affected area"
+estimateQuestions:
+  - "What is causing the problem, specifically?"
+  - "What materials and labor are included?"
+  - "Are permits, access work, or restoration included?"
+  - "What warranty applies?"
+
 sections:
   - heading: "Plumbing Problems Are Messy. Your Quote Request Doesn’t Have to Be."
     body: |

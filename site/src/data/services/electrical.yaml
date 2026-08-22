@@ -16,6 +16,17 @@ safetyNote: >-
 intakeFocus: "Outage or breaker/panel symptoms, affected circuits, burning smell/heat/sparking, panel age and context, and prior electrical work."
 dataNote: "Live local metrics for this page will draw on municipal electrical permit activity, severe-storm history, local housing-age data, and BLS trade-wage indexes."
 
+evaluationItems:
+  - "Panel age, capacity, and condition"
+  - "Affected circuits and whether the issue is isolated or systemic"
+  - "Any burning smell, heat, or sparking reported"
+  - "Prior electrical work or permits on file"
+estimateQuestions:
+  - "What is causing the reported symptom?"
+  - "Does the estimate include a permit?"
+  - "Is this a targeted repair or a panel/code upgrade?"
+  - "What warranty applies?"
+
 sections:
   - heading: "Electrical Quotes Range Wildly — Because the Diagnosis Isn’t the Same."
     body: |

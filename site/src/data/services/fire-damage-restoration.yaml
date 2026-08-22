@@ -16,6 +16,17 @@ safetyNote: >-
 intakeFocus: "Event date, responding fire department, affected areas, smoke/soot spread, water used during suppression, utility status, occupancy, and insurance context."
 dataNote: "Live local metrics for this page will draw on fire-weather conditions, AirNow smoke/air-quality data, Texas Department of Insurance fire-loss data, and FEMA disaster context."
 
+evaluationItems:
+  - "Extent of fire, smoke, and soot spread beyond the visibly burned area"
+  - "Water damage from suppression efforts"
+  - "HVAC system contamination from smoke"
+  - "Structural stabilization already performed"
+estimateQuestions:
+  - "What is the full scope of affected areas?"
+  - "Does the estimate include soot cleaning, odor treatment, and HVAC cleaning?"
+  - "Is reconstruction included, or handled separately?"
+  - "What does the timeline look like?"
+
 sections:
   - heading: "After a Fire, Every Restoration Company Seems to See a Different Job."
     body: |

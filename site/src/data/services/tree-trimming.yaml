@@ -17,6 +17,17 @@ permitNote: >-
 intakeFocus: "Tree size and type if known, proximity to structures, dead limbs, storm damage, lean, access constraints, whether you want trimming or removal, stump handling, and photos."
 dataNote: "Live local metrics for this page will draw on drought and rainfall data, wind and storm history, soil data, and municipal tree-permit activity."
 
+evaluationItems:
+  - "Tree health, lean, and any visible dead limbs"
+  - "Proximity to structures or power lines"
+  - "Root or soil conditions near the tree"
+  - "Access constraints for equipment"
+estimateQuestions:
+  - "Is this a trim, or a full removal?"
+  - "Is stump grinding and haul-away included?"
+  - "Is a permit needed, and is it included?"
+  - "What is the timeline?"
+
 sections:
   - heading: "One Tree Company Wants to Trim It. Another Wants to Take It Down."
     body: |

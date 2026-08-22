@@ -17,6 +17,17 @@ licensingNote: >-
 intakeFocus: "Visible conditions, suspected moisture source, any prior water event, approximate affected area, whether testing or assessment has occurred, and prior remediation history."
 dataNote: "Live local metrics for this page will draw on rainfall and humidity data, flood context, Texas Department of Insurance water-loss data, and local housing-age data."
 
+evaluationItems:
+  - "Suspected moisture source and whether it has been resolved"
+  - "Extent of visible growth versus hidden or suspected growth"
+  - "Whether prior testing or assessment has occurred"
+  - "Health concerns raised by the household"
+estimateQuestions:
+  - "What containment and air-filtration approach is proposed?"
+  - "Is post-remediation testing included?"
+  - "Is the moisture-source repair included, or handled separately?"
+  - "What warranty applies?"
+
 sections:
   - heading: "Mold Quotes Are Hard to Compare When You Don’t Know the Scope Yet."
     body: |

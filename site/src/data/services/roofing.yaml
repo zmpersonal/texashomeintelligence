@@ -21,6 +21,18 @@ ppcHero:
 intakeFocus: "Storm/hail history, leak location, roof age & type, visible damage, interior water evidence, prior repairs, insurance context, and roof photos."
 dataNote: "Live local metrics for this page will draw on NOAA/NWS storm and hail history, municipal roofing permit activity, and Texas Department of Insurance wind/hail loss data."
 
+evaluationItems:
+  - "Source and extent of any water intrusion"
+  - "Hail or wind damage to shingles, flashing, and vents"
+  - "Whether decking has sustained water damage"
+  - "Attic insulation or ventilation affected by a leak"
+estimateQuestions:
+  - "What materials are included?"
+  - "What happens if damaged decking or hidden problems are found?"
+  - "Are permits, disposal, and cleanup included?"
+  - "What warranties apply?"
+  - "What could cause the final price to change?"
+
 sections:
   - heading: "Three Roofing Quotes Can Still Be Three Different Jobs."
     body: |

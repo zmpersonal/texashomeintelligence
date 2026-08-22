@@ -22,6 +22,17 @@ ppcHero:
 intakeFocus: "Cooling/heating symptoms, whether the system runs, affected rooms, thermostat behavior, time of day, system age & type, prior repairs, and an equipment label photo."
 dataNote: "Live local metrics for this page will draw on NWS/NOAA heat and humidity data, mechanical permit activity, EIA electricity pricing, AirNow air quality, and BLS trade-wage indexes."
 
+evaluationItems:
+  - "Whether the system is a repair or replacement candidate"
+  - "Refrigerant charge and airflow across the affected rooms"
+  - "Ductwork condition in the affected areas"
+  - "Thermostat and electrical connections related to the reported symptom"
+estimateQuestions:
+  - "What is the proposed repair or replacement scope?"
+  - "What equipment and efficiency rating are included?"
+  - "What warranty applies to labor and equipment?"
+  - "Does the estimate include duct, electrical, or thermostat work?"
+
 sections:
   - heading: "HVAC Quotes Get Confusing Fast."
     body: |
