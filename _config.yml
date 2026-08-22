@@ -30,6 +30,10 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - node_modules
+  - site
+  - CLAUDE.md
+  - BUILD_PLAN.md
+  - HANDOFF.md
 
 # Product-level names used throughout copy/layouts
 product_name: "QuoteReady Project Brief"

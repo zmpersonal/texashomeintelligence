@@ -1,0 +1,49 @@
+User-agent: *
+Allow: /
+
+# --- Live citation / answer-engine crawlers — must stay allowed ---
+# (These are the crawlers that can actually cite this site in an answer.
+# Do not block these without discussing it first.)
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# --- Training crawlers — allowed for V1 to maximize visibility ---
+# Toggle this block off independently if that changes later.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# --- Low-value scrapers — blocked. Remove these two blocks to allow them again. ---
+User-agent: CCBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+Sitemap: https://texashomeintelligence.com/sitemap-index.xml

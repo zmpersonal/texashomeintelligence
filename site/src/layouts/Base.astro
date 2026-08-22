@@ -1,0 +1,58 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const siteName = "Texas Home Intelligence";
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="canonical" href={canonicalURL} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: siteName,
+      url: Astro.site?.toString(),
+      description:
+        "Free QuoteReady Project Brief tool and local homeowner intelligence for Texas homeowners.",
+      areaServed: { "@type": "State", name: "Texas" },
+    })}
+    />
+  </head>
+  <body>
+    <!--
+      Phase 0: layout shell only. Real nav/footer content, and the
+      homepage's approved section order, land in Phase 2 per
+      BUILD_PLAN.md. Not redesigning what's already been approved.
+    -->
+    <header class="border-b border-line">
+      <div class="mx-auto max-w-[1120px] px-5 py-4">
+        <span class="text-lg font-extrabold text-brand-dark">
+          Texas Home<span class="text-accent">Intelligence</span>
+        </span>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="mt-10 bg-brand-dark px-5 py-8 text-sm text-[#c6d6e4]">
+      <div class="mx-auto max-w-[1120px]">
+        &copy; {new Date().getFullYear()} Texas Home Intelligence.
+      </div>
+    </footer>
+  </body>
+</html>

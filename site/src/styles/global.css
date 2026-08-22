@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — Phase 0.
+ * Carries over the palette already validated on the live Jekyll site
+ * (navy/slate + amber accent) rather than introducing a new look.
+ * Tailwind v4 CSS-first theme: these become utilities like
+ * `bg-brand`, `text-ink-soft`, `border-line`, etc.
+ */
+@theme {
+  --color-ink: #101826;
+  --color-ink-soft: #3a4557;
+  --color-paper: #ffffff;
+  --color-paper-alt: #f5f7fa;
+  --color-line: #e2e6ec;
+  --color-brand: #0f3d5c;
+  --color-brand-dark: #0a2740;
+  --color-accent: #d97b29;
+  --color-accent-dark: #b5611c;
+  --color-good: #1e7a4c;
+  --color-sample: #8a5a00;
+  --color-sample-bg: #fff3dc;
+
+  --font-sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+
+  --radius-brand: 10px;
+
+  --shadow-brand: 0 1px 2px rgba(16, 24, 38, 0.06), 0 8px 24px rgba(16, 24, 38, 0.06);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-paper text-ink;
+  font-family: var(--font-sans);
+  line-height: 1.55;
+}
