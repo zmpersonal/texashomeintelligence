@@ -235,6 +235,55 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; m
 table.data-table th, table.data-table td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); }
 table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-soft); }
 
+/* ---- Homepage: "Something on your mind?" service picker ---- */
+.pick-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.pick-card h3 { font-size: 1rem; margin-bottom: 6px; }
+.pick-card p { font-size: 0.88rem; margin-bottom: 10px; }
+.pick-card a.pick-link { font-size: 0.88rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.pick-card a.pick-link:hover { text-decoration: underline; }
+
+/* ---- Homepage: Austin data dashboard modules ---- */
+.dash-module {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--brand);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.dash-module h3 { font-size: 0.98rem; margin-bottom: 10px; }
+.dash-value { font-size: 1.15rem; font-weight: 800; margin: 0 0 4px; }
+.dash-detail { font-size: 0.88rem; color: var(--ink-soft); margin: 0 0 10px; }
+.dash-meta { font-size: 0.78rem; color: var(--ink-soft); border-top: 1px dashed var(--line); padding-top: 8px; margin-bottom: 10px; }
+.dash-meta span { display: inline-block; margin-right: 10px; }
+.dash-interpretation { font-size: 0.86rem; background: var(--paper-alt); border-radius: 8px; padding: 10px 12px; margin: 0; }
+.dash-interpretation b { color: var(--ink); }
+.dash-module .pick-link { font-size: 0.82rem; font-weight: 700; text-decoration: none; display: inline-block; margin-top: 10px; }
+
+/* ---- Homepage: Texas Homeowner Guides ---- */
+.guide-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 32px; }
+@media (max-width: 700px) { .guide-list { grid-template-columns: 1fr; } }
+.guide-list li { border-bottom: 1px solid var(--line); padding: 12px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.guide-list a { font-weight: 700; font-size: 0.94rem; text-decoration: none; }
+.guide-list a:hover { text-decoration: underline; }
+.guide-list .guide-title-soon { font-weight: 700; font-size: 0.94rem; color: var(--ink-soft); }
+.tag-soon {
+  font-size: 0.68rem; font-weight: 800; letter-spacing: 0.03em;
+  color: var(--ink-soft); background: var(--paper-alt); border: 1px solid var(--line);
+  padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+}
+
+/* ---- Homepage: Methodology + Sources ---- */
+.method-card h3 { font-size: 0.96rem; }
+.method-card p { font-size: 0.88rem; }
+.source-col h4 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--brand); margin-bottom: 8px; }
+.source-col ul { list-style: none; margin: 0; padding: 0; font-size: 0.9rem; }
+.source-col li { margin-bottom: 4px; }
+
 /* ---- FAQ ---- */
 .faq-item { border-bottom: 1px solid var(--line); padding: 14px 0; }
 .faq-item summary { cursor: pointer; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
