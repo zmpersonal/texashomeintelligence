@@ -1,0 +1,59 @@
+name: HVAC
+copy_status: supplied
+eyebrow: "FREE HVAC QUOTE TOOL FOR {CITY} HOMEOWNERS"
+hero_tagline: "Get Better HVAC Quotes, Faster."
+hero_body: >-
+  Tell us what your AC or heating system is doing once. Get a clear
+  QuoteReady HVAC Brief you can use with any HVAC company. It makes getting
+  multiple estimates easier and helps you compare what each company is
+  actually recommending.
+hero_microcopy: "Free &bull; Takes about 3&ndash;5 minutes &bull; Use it with any HVAC company &bull; No phone number required to start"
+
+intake_focus: "Cooling/heating symptoms, whether the system runs, affected rooms, thermostat behavior, time of day, system age &amp; type, prior repairs, and an equipment label photo."
+data_note: "Live local metrics for this page will draw on NWS/NOAA heat and humidity data, mechanical permit activity, EIA electricity pricing, AirNow air quality, and BLS trade-wage indexes."
+
+sections:
+  - heading: "HVAC Quotes Get Confusing Fast."
+    body: |
+      <p>One company recommends a repair.</p>
+      <p>Another says replace the system.</p>
+      <p>A third recommends different equipment, efficiency, ductwork, or electrical work.</p>
+      <p>Now you have three prices &mdash; but more questions than answers.</p>
+
+  - heading: "Tell Us What Your System Is Doing. Not What You Think Is Wrong."
+    body: |
+      <p>Not cooling? Running nonstop? Weak airflow upstairs? Making a strange noise?</p>
+      <p>You do not need to diagnose it yourself.</p>
+      <p>QuoteReady organizes the symptoms, timing, system information, previous work, photos, and priorities into a brief an HVAC professional can quickly understand.</p>
+
+  - heading: "What Is an HVAC Project Brief?"
+    body: |
+      <p>An HVAC project brief is a standardized summary of a heating or cooling problem, repair, replacement, or installation project.</p>
+      <p>It can include homeowner-reported symptoms, affected rooms, timing, known equipment details, system history, previous repairs, property context, photos, priorities, and questions an HVAC contractor should address.</p>
+      <p>An HVAC project brief does not diagnose the system. It gives qualified professionals better organized information before they evaluate the equipment.</p>
+
+  - heading: "What Information Helps When Getting HVAC Quotes?"
+    body: |
+      <p>Useful information depends on the project, but it may include whether the system runs, whether air is moving through the vents, which rooms are affected, when the problem happens, thermostat settings, system age, previous repairs, equipment model information, and photos.</p>
+      <p>For replacement projects, the brief can also capture comfort problems, energy-efficiency goals, existing equipment, and homeowner priorities.</p>
+      <p>Better input makes it easier for contractors to understand what needs to be evaluated.</p>
+
+  - heading: "Compare the Recommendation Before You Compare the Price."
+    body: |
+      <p>HVAC estimates can vary because companies are not always proposing the same solution.</p>
+      <p>Compare the diagnosis or reasoning, repair scope, proposed equipment, efficiency, capacity, duct or electrical work, installation work, warranties, exclusions, and total price.</p>
+      <p>If one company recommends replacement and another recommends repair, ask each one to explain why.</p>
+
+closing_heading: "Your AC Problem Is Hard Enough."
+closing_body: >-
+  Getting several quotes shouldn&rsquo;t make it harder. Build the project
+  once. Give each HVAC company the same clear starting point. Then compare
+  your options.
+
+faq:
+  - q: "Can QuoteReady tell you what is wrong with your AC?"
+    a: "No. QuoteReady organizes what you report so an HVAC professional has better information to start with. Diagnosis may require an on-site inspection, testing, or measurements."
+  - q: "What should you compare in HVAC quotes?"
+    a: "Compare what each company recommends, the equipment and work included, warranties, exclusions, timing, and total price. For replacement projects, also compare equipment specifications and any duct, electrical, thermostat, or related work."
+  - q: "Can you use your HVAC Brief with any company?"
+    a: "Yes. Use it with your current HVAC company, several companies you find yourself, or ask Texas Home Intelligence for optional help finding local professionals."

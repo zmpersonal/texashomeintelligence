@@ -1,0 +1,5 @@
+date,event_type,reported_size_or_gust,area_affected,status
+SAMPLE,Hail,1.75in,North Austin,placeholder - live feed not yet connected
+SAMPLE,Wind,62 mph gust,South Austin,placeholder - live feed not yet connected
+SAMPLE,Hail,1.00in,Round Rock corridor,placeholder - live feed not yet connected
+SAMPLE,Hail,0.75in,East Austin,placeholder - live feed not yet connected

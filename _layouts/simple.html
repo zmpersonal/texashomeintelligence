@@ -1,0 +1,14 @@
+---
+layout: default
+---
+<section class="hero">
+  <div class="wrap" style="max-width:760px;">
+    <h1>{{ page.h1 | default: page.title }}</h1>
+    {% if page.lede %}<p class="lede">{{ page.lede }}</p>{% endif %}
+  </div>
+</section>
+<section class="block">
+  <div class="wrap" style="max-width:760px;">
+    {{ content }}
+  </div>
+</section>

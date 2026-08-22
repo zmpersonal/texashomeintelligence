@@ -1,0 +1,101 @@
+---
+layout: default
+---
+{% assign svc = site.data.services[page.service] %}
+{% assign loc = site.data.locations[page.location] %}
+{% assign hero_tag = svc.hero_tagline | replace: '{CITY}', loc.name %}
+{% assign eyebrow_tag = svc.eyebrow | replace: '{CITY}', loc.name %}
+
+<nav class="breadcrumbs wrap" aria-label="Breadcrumb">
+  <a href="{{ '/' | relative_url }}">Home</a> &rsaquo;
+  <a href="{{ '/' | append: page.location | append: '/' | relative_url }}">{{ loc.name }}</a> &rsaquo;
+  <span>{{ svc.name }}</span>
+</nav>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ '/' | absolute_url }}" },
+    { "@type": "ListItem", "position": 2, "name": "{{ loc.name }}", "item": "{{ '/' | append: page.location | append: '/' | absolute_url }}" },
+    { "@type": "ListItem", "position": 3, "name": "{{ svc.name }}", "item": "{{ page.url | absolute_url }}" }
+  ]
+}
+</script>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      {% if svc.copy_status == "draft" %}<span class="draft-flag">Draft copy &mdash; pending final editorial review</span><br>{% endif %}
+      {% if eyebrow_tag %}<span class="eyebrow">{{ eyebrow_tag }}</span>{% endif %}
+      <h1>{{ hero_tag }}</h1>
+      <p class="lede">{{ svc.hero_body }}</p>
+      <a class="btn" href="{{ '/start/?service=' | append: page.service | append: '&location=' | append: page.location | relative_url }}">{{ site.cta_label }}</a>
+      <p class="microcopy">{{ svc.hero_microcopy }}</p>
+      {% if svc.safety_note %}<p class="disclaimer-note">{{ svc.safety_note }}</p>{% endif %}
+      {% if svc.licensing_note %}<p class="disclaimer-note">{{ svc.licensing_note }}</p>{% endif %}
+      {% if svc.permit_note %}<p class="disclaimer-note">{{ svc.permit_note }}</p>{% endif %}
+    </div>
+    <div class="brief-preview">
+      <span class="tag-ready">Sample output</span>
+      <h4>{{ loc.name }} {{ svc.name }} &mdash; QuoteReady Brief</h4>
+      <div class="row"><span>Project type</span><b>{{ svc.name }}</b></div>
+      <div class="row"><span>Location</span><b>{{ loc.name }}, TX</b></div>
+      <div class="row"><span>Priorities</span><b>Homeowner-ranked</b></div>
+      <div class="row"><span>Questions for contractor</span><b>Included</b></div>
+      <div class="row"><span>Status</span><b>Ready to share</b></div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <div class="card data-card">
+      <span class="sample-badge">SAMPLE &mdash; illustrative only</span>
+      <p class="metric-note">{{ svc.data_note }} A dedicated <a href="{{ '/data/' | append: page.location | append: '/' | relative_url }}">{{ loc.name }} data page</a> for {{ svc.name | downcase }} will replace this note once a live feed is connected.</p>
+    </div>
+  </div>
+</section>
+
+{% for s in svc.sections %}
+<section class="block{% cycle 'a': '', 'alt' %}">
+  <div class="wrap" style="max-width: 760px;">
+    <h2>{{ s.heading }}</h2>
+    {{ s.body }}
+  </div>
+</section>
+{% endfor %}
+
+<section class="cta-band">
+  <div class="wrap">
+    <h2>{{ svc.closing_heading }}</h2>
+    <p style="max-width:40em;margin:0 auto 20px;">{{ svc.closing_body }}</p>
+    <a class="btn" href="{{ '/start/?service=' | append: page.service | append: '&location=' | append: page.location | relative_url }}">{{ site.cta_label }}</a>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap" style="max-width: 760px;">
+    <h2>{{ svc.name }} FAQ</h2>
+    {% for item in svc.faq %}
+    <details class="faq-item">
+      <summary>{{ item.q }}</summary>
+      <p>{{ item.a }}</p>
+    </details>
+    {% endfor %}
+  </div>
+</section>
+{% include faq-schema.html faq=svc.faq %}
+
+<section class="block alt">
+  <div class="wrap center">
+    <p style="margin:0;">Also see {{ svc.name }} in
+      {% if page.location == "austin" %}
+      <a href="{{ '/san-antonio/' | append: page.service | append: '/' | relative_url }}">San Antonio</a>
+      {% else %}
+      <a href="{{ '/austin/' | append: page.service | append: '/' | relative_url }}">Austin</a>
+      {% endif %}
+      &nbsp;&bull;&nbsp; <a href="{{ '/' | append: page.location | append: '/' | relative_url }}">All {{ loc.name }} services</a>
+    </p>
+  </div>
+</section>

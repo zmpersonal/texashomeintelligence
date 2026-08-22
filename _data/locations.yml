@@ -1,0 +1,47 @@
+austin:
+  name: Austin
+  slug: austin
+  region: "Central Texas"
+  counties: "Travis, Williamson, and Hays counties"
+  hub_intro: >-
+    Austin homeowners deal with intense summer heat, sudden hail and wind
+    events, drought-stressed trees and foundations, and a fast-moving permit
+    and construction market. Texas Home Intelligence tracks the local
+    conditions that actually affect Austin home-service decisions.
+  conditions:
+    - label: "Cooling-degree-day stress"
+      status: "SAMPLE — illustrative only"
+      note: "Will track NWS/NOAA heat data once the live feed is connected."
+    - label: "Recent hail / wind events"
+      status: "SAMPLE — illustrative only"
+      note: "Will track NOAA Storm Events once the live feed is connected."
+    - label: "Drought / tree & foundation stress"
+      status: "SAMPLE — illustrative only"
+      note: "Will track TWDB/TexMesonet drought data once the live feed is connected."
+    - label: "Mechanical & roofing permit activity"
+      status: "SAMPLE — illustrative only"
+      note: "Will track City of Austin permit data once the live feed is connected."
+
+san-antonio:
+  name: San Antonio
+  slug: san-antonio
+  region: "South Central Texas"
+  counties: "Bexar, Comal, and Guadalupe counties"
+  hub_intro: >-
+    San Antonio homeowners face long, humid cooling seasons, periodic flash
+    flooding, aging housing stock in some corridors, and a growing metro
+    permit market. Texas Home Intelligence tracks the local conditions that
+    actually affect San Antonio home-service decisions.
+  conditions:
+    - label: "Cooling-degree-day stress"
+      status: "SAMPLE — illustrative only"
+      note: "Will track NWS/NOAA heat data once the live feed is connected."
+    - label: "Flash-flood / heavy-rain events"
+      status: "SAMPLE — illustrative only"
+      note: "Will track FEMA/NFHL and NOAA data once the live feed is connected."
+    - label: "Housing stock age"
+      status: "SAMPLE — illustrative only"
+      note: "Will track Census ACS data once the live feed is connected."
+    - label: "Mechanical & roofing permit activity"
+      status: "SAMPLE — illustrative only"
+      note: "Will track City of San Antonio permit data once the live feed is connected."

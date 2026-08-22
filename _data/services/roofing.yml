@@ -1,0 +1,71 @@
+name: Roofing
+copy_status: supplied
+eyebrow: "FREE ROOFING QUOTE TOOL FOR {CITY} HOMEOWNERS"
+hero_tagline: "Get 3 {CITY} Roofing Quotes Without Starting From Scratch 3 Times."
+hero_body: >-
+  Tell us about your roof once. Your free QuoteReady Roofing Brief organizes
+  the job into one clear request you can use with multiple roofers &mdash;
+  making it easier to get quotes faster and compare what each roofer is
+  actually offering.
+hero_microcopy: "Free &bull; Takes about 3&ndash;5 minutes &bull; Use it with any roofer &bull; No phone number required to start"
+
+intake_focus: "Storm/hail history, leak location, roof age &amp; type, visible damage, interior water evidence, prior repairs, insurance context, and roof photos."
+data_note: "Live local metrics for this page will draw on NOAA/NWS storm and hail history, municipal roofing permit activity, and Texas Department of Insurance wind/hail loss data."
+
+sections:
+  - heading: "Three Roofing Quotes Can Still Be Three Different Jobs."
+    body: |
+      <p>One roofer may include decking. Another may charge for it later.</p>
+      <p>One may specify underlayment, flashing, ventilation, cleanup, and warranties. Another may give you little more than a total price.</p>
+      <p>If the scopes are different, the prices aren&rsquo;t truly apples to apples.</p>
+
+  - heading: "Give Every Roofer the Same Starting Point."
+    body: |
+      <p>Your QuoteReady Roofing Brief organizes what you know about your roof before you start collecting estimates.</p>
+      <p>That can include the problem, leak or damage location, roof age and type if known, previous repairs, storm history, photos, timing, priorities, and questions you want answered.</p>
+      <p>You explain it once.</p>
+
+  - heading: "What Is a Roofing Project Brief?"
+    body: |
+      <p>A roofing project brief is a standardized document that summarizes a homeowner&rsquo;s roofing problem or planned project before contractors prepare estimates.</p>
+      <p>A useful roofing brief can include reported damage or leaks, roof information, prior repairs, photos, homeowner priorities, known project history, and questions each roofer should address.</p>
+      <p>The brief is not a roof inspection or diagnosis. It gives roofing professionals a clearer and more consistent starting point.</p>
+
+  - heading: "What Should You Include When Asking for Roofing Quotes?"
+    body: |
+      <p>Give each roofer the same core project information whenever possible.</p>
+      <p>For a roofing repair or replacement, useful information may include the reason for the project, location of visible problems, roof age and material if known, prior repairs, storm or insurance context, interior water evidence, photos, access issues, timing, and your priorities.</p>
+      <p>The goal is simple: reduce the number of important details that change from one quote request to the next.</p>
+
+  - heading: "Compare the Roof Scope Before You Compare the Price."
+    body: |
+      <p>A lower roofing quote is not automatically a better deal.</p>
+      <p>Check what each proposal actually includes. Look at materials, tear-off, decking terms, underlayment, flashing, ventilation, permits, cleanup, warranties, timing, payment terms, and exclusions where relevant.</p>
+      <p>Then compare the final price.</p>
+
+  - heading: "Questions Every Roofing Quote Should Help Answer"
+    body: |
+      <ul>
+        <li>What work is being proposed?</li>
+        <li>What materials are included?</li>
+        <li>What happens if damaged decking or hidden problems are found?</li>
+        <li>Are permits, disposal, and cleanup included?</li>
+        <li>What warranties apply?</li>
+        <li>What could cause the final price to change?</li>
+        <li>When can the work start, and how long should it take?</li>
+      </ul>
+      <p>A QuoteReady Roofing Brief puts these questions in front of contractors before you make your choice.</p>
+
+closing_heading: "Get Your Roof Project Clear Before You Pick the Roofer."
+closing_body: >-
+  Create one Project Brief. Use it with every roofer you want to consider.
+  Then compare the work, the terms, and the price from a much clearer
+  starting point.
+
+faq:
+  - q: "Should you get three roofing quotes?"
+    a: "Getting several quotes can help you compare pricing, scope, materials, warranties, and contractor recommendations. The key is making sure each roofer understands the same project before you compare the totals."
+  - q: "Is the cheapest roofing quote the best quote?"
+    a: "Not necessarily. Two roofing prices may reflect different materials, different work, different warranties, or different assumptions. Compare the written scope before deciding which price represents the better value."
+  - q: "Can you use the QuoteReady Roofing Brief with your own roofer?"
+    a: "Yes. You can use your brief with any roofer you choose. Texas Home Intelligence contractor introductions are optional."

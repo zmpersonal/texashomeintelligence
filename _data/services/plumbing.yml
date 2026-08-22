@@ -1,0 +1,60 @@
+name: Plumbing
+copy_status: supplied
+eyebrow: "FREE PLUMBING QUOTE TOOL FOR {CITY} HOMEOWNERS"
+hero_tagline: "Get Better Plumbing Quotes, Faster."
+hero_body: >-
+  Tell us about the plumbing problem once. Get a clear QuoteReady Plumbing
+  Brief you can use with any plumber. It helps you spend less time repeating
+  the problem and makes larger plumbing quotes easier to compare.
+hero_microcopy: "Free &bull; Takes about 3&ndash;5 minutes &bull; Use it with any plumber &bull; No phone number required to start"
+
+intake_focus: "Leak/clog/pressure/sewer/water-heater symptoms, location, active damage, hot or cold water, duration, and prior repair or access history."
+data_note: "Live local metrics for this page will draw on freeze/weather context, municipal plumbing permit activity, FEMA/TWDB water data, and BLS trade-wage indexes."
+
+sections:
+  - heading: "Plumbing Problems Are Messy. Your Quote Request Doesn&rsquo;t Have to Be."
+    body: |
+      <p>&ldquo;There&rsquo;s a leak somewhere.&rdquo; &ldquo;The water pressure dropped.&rdquo; &ldquo;The water heater keeps acting up.&rdquo;</p>
+      <p>That may be all you know.</p>
+      <p>You do not need to know the right plumbing terms. Start with what you see, hear, or experience. QuoteReady organizes the rest.</p>
+
+  - heading: "Give Every Plumber the Same Facts."
+    body: |
+      <p>Your QuoteReady Plumbing Brief can organize where the problem is, when it happens, whether water damage is visible, what equipment or fixtures are involved, prior repairs, access issues, photos, timing, and your priorities.</p>
+      <p>Instead of telling a slightly different version of the problem every time, you have one clear starting document.</p>
+
+  - heading: "What Is a Plumbing Project Brief?"
+    body: |
+      <p>A plumbing project brief is a standardized summary of a plumbing repair, replacement, installation, or recurring problem.</p>
+      <p>It can include the reported problem, location, symptoms, timing, affected fixtures or equipment, prior work, property information, photos, homeowner priorities, and questions a plumber should answer.</p>
+      <p>The brief does not remotely diagnose a leak, sewer issue, water heater, or other plumbing problem. Some conditions require an on-site inspection or testing.</p>
+
+  - heading: "What Information Should You Give a Plumber Before Asking for a Quote?"
+    body: |
+      <p>Start with what you know.</p>
+      <p>Include the location of the problem, when it started, whether it is constant or intermittent, whether hot or cold water is involved, visible water damage, affected fixtures, previous repairs, equipment age if known, photos, and any access limitations.</p>
+      <p>For larger projects, also explain what outcome matters most to you.</p>
+
+  - heading: "Compare What the Plumber Will Do &mdash; Then Compare Price."
+    body: |
+      <p>Plumbing estimates can differ in materials, labor, permits, access work, cleanup, restoration, warranties, exclusions, and change-order terms.</p>
+      <p>A low number does not tell you which of those things are included. Get clear on the proposed work first. Then compare the total.</p>
+
+  - heading: "When Are Multiple Plumbing Quotes Most Useful?"
+    body: |
+      <p>For a small emergency repair, getting three quotes may not make sense.</p>
+      <p>Multiple quotes become more useful when the project is expensive, planned, unclear, or likely to have several possible solutions. That can include water heater replacement, repiping, sewer work, recurring plumbing problems, major drainage work, and larger installations.</p>
+
+closing_heading: "Get the Plumbing Project Clear Before You Pick the Plumber."
+closing_body: >-
+  Tell us about it once. Get your Project Brief. Use it with your plumber,
+  send it to several companies, or ask Texas Home Intelligence for optional
+  help finding local pros.
+
+faq:
+  - q: "Do you need three quotes for every plumbing repair?"
+    a: "No. For a small or urgent repair, speed may matter more. Multiple quotes are most useful when the cost is significant or contractors may recommend different solutions."
+  - q: "Can a plumber give an exact price from the Project Brief?"
+    a: "Not always. Some plumbing work requires inspection, testing, measurements, or access before an exact price can be provided. The brief improves the starting information; it does not replace professional evaluation."
+  - q: "Can you send your Plumbing Brief to plumbers outside the Texas Home Intelligence network?"
+    a: "Yes. Use it with any plumber you choose. Help finding local professionals is optional."

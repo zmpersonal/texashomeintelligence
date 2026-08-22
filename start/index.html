@@ -1,0 +1,110 @@
+---
+layout: default
+title: "Build My QuoteReady Brief | Texas Home Intelligence"
+description: "Tell us about your home project once and get a free QuoteReady Project Brief you can use with any contractor."
+permalink: /start/
+---
+<div class="proto-banner">Clickable prototype &mdash; this demo does not submit, store, or email any information yet.</div>
+
+<section class="block">
+  <div class="wrap">
+    <div class="step-shell">
+      <div class="progress-track" id="progress">
+        <span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span>
+        <span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span>
+      </div>
+
+      <form id="intake-form" onsubmit="return false;">
+
+        <div class="intake-step" data-step="1">
+          <h2 class="mt-0">Let&rsquo;s start with the basics.</h2>
+          <p>First name and email only &mdash; no phone number required to start. We&rsquo;ll create a secure link so you can come back anytime without losing your progress.</p>
+          <div class="field">
+            <label for="first-name">First name</label>
+            <input type="text" id="first-name" placeholder="Jamie">
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="you@example.com">
+          </div>
+        </div>
+
+        <div class="intake-step" data-step="2">
+          <h2 class="mt-0">What kind of project is this?</h2>
+          <div class="choice-grid" id="service-choices">
+            {% for svc in site.data.service_list %}
+            <div class="choice-card" data-value="{{ svc.slug }}">{{ svc.name }}</div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="intake-step" data-step="3">
+          <h2 class="mt-0">Tell us what&rsquo;s going on.</h2>
+          <div class="field">
+            <label for="overview">Describe the problem in your own words</label>
+            <textarea id="overview" placeholder="e.g. There's a stain spreading across the ceiling in the upstairs bathroom..."></textarea>
+          </div>
+          <div class="field">
+            <label for="urgency">How urgent is this?</label>
+            <select id="urgency">
+              <option>Emergency &mdash; needs attention now</option>
+              <option>Soon &mdash; within the next couple weeks</option>
+              <option>Planning ahead &mdash; no rush</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="address">Property address</label>
+            <input type="text" id="address" placeholder="Street address, city, ZIP">
+            <p style="font-size:0.8rem;color:var(--ink-soft);margin-top:6px;">We use your address to pull relevant public data (weather, permits, flood zone) so you don&rsquo;t have to answer questions we can already look up.</p>
+          </div>
+        </div>
+
+        <div class="intake-step" data-step="4">
+          <h2 class="mt-0">A few details about this specific job.</h2>
+          <p id="service-specific-note" style="font-size:0.9rem;">Select a service in step 2 to see relevant questions.</p>
+          <div id="service-specific-fields"></div>
+        </div>
+
+        <div class="intake-step" data-step="5">
+          <h2 class="mt-0">Anything else that helps?</h2>
+          <div class="field">
+            <label for="prior-work">Prior repairs, quotes, or inspections (optional)</label>
+            <textarea id="prior-work" placeholder="e.g. A plumber looked at this in 2024 and replaced a section of pipe..."></textarea>
+          </div>
+          <div class="field">
+            <label for="objectives">What matters most to you? (optional)</label>
+            <input type="text" id="objectives" placeholder="e.g. Fix it permanently, lowest cost, fastest timeline...">
+          </div>
+          <div class="field">
+            <label for="photos">Photos (optional &mdash; demo only, not functional)</label>
+            <input type="file" id="photos" multiple disabled>
+          </div>
+        </div>
+
+        <div class="intake-step" data-step="6">
+          <h2 class="mt-0">Review &amp; generate your brief.</h2>
+          <p>In production, this step lets you review everything before your QuoteReady Project Brief is generated. This prototype skips straight to a sample brief so you can see the output.</p>
+          <div class="disclaimer-note">No 1, 2, or 3 contractor choice appears before your brief is generated &mdash; that choice only comes up afterward, and only if you want it.</div>
+        </div>
+
+        <div class="step-actions">
+          <button type="button" class="link-btn" id="back-btn">&larr; Back</button>
+          <button type="button" class="btn" id="next-btn">Continue</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  window.THI_SERVICE_QUESTIONS = {
+    roofing: ["Do you know your roof&rsquo;s approximate age or material?", "Is there visible interior water staining?", "Was there a recent storm, hail, or wind event?"],
+    hvac: ["Is the system running at all?", "Which rooms are most affected?", "Do you know the system&rsquo;s approximate age?"],
+    plumbing: ["Where is the problem located?", "Is it constant or does it come and go?", "Is hot water, cold water, or both affected?"],
+    "fire-damage-restoration": ["What is the event date?", "Which areas were affected by fire, smoke, or water?", "Is the home currently livable?"],
+    "mold-remediation": ["Where do you see visible growth or smell odor?", "Was there a known leak or flood?", "Has anyone tested or assessed the area already?"],
+    electrical: ["Which breakers, outlets, or fixtures are affected?", "Do you notice any burning smell, heat, or sparking?", "Do you know your panel&rsquo;s approximate age?"],
+    "tree-trimming": ["What is the tree&rsquo;s approximate size?", "Is it near a structure or power line?", "Do you want it trimmed, or fully removed?"]
+  };
+</script>
+<script src="{{ '/assets/js/intake.js' | relative_url }}"></script>

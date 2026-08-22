@@ -1,0 +1,28 @@
+- slug: roofing
+  name: Roofing
+  short: "Storm damage, leaks, repair vs. replace"
+  copy_status: supplied
+- slug: hvac
+  name: HVAC
+  short: "AC and heating repair, replacement, install"
+  copy_status: supplied
+- slug: plumbing
+  name: Plumbing
+  short: "Leaks, clogs, water heaters, repiping"
+  copy_status: supplied
+- slug: fire-damage-restoration
+  name: Fire Damage Restoration
+  short: "Fire, smoke, and soot damage recovery"
+  copy_status: draft
+- slug: mold-remediation
+  name: Mold Remediation
+  short: "Mold assessment, remediation, moisture sources"
+  copy_status: draft
+- slug: electrical
+  name: Electrical
+  short: "Panels, breakers, wiring, outlets"
+  copy_status: draft
+- slug: tree-trimming
+  name: Tree Trimming
+  short: "Trimming, removal, storm-damaged trees"
+  copy_status: draft

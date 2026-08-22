@@ -1,0 +1,58 @@
+name: Electrical
+copy_status: draft
+eyebrow: "FREE ELECTRICAL QUOTE TOOL FOR {CITY} HOMEOWNERS"
+hero_tagline: "Get Better Electrical Quotes, Faster."
+hero_body: >-
+  Tell us what your panel, breakers, or wiring are doing once. Get a clear
+  QuoteReady Electrical Brief you can use with any licensed electrician
+  &mdash; and compare what each one is actually proposing.
+hero_microcopy: "Free &bull; Takes about 3&ndash;5 minutes &bull; Use it with any licensed electrician &bull; No phone number required to start"
+
+safety_note: >-
+  If you smell burning, see sparking, or a breaker won&rsquo;t stay reset,
+  treat it as an emergency: shut off power to the affected circuit if you
+  can safely do so and contact a licensed electrician immediately.
+
+intake_focus: "Outage or breaker/panel symptoms, affected circuits, burning smell/heat/sparking, panel age and context, and prior electrical work."
+data_note: "Live local metrics for this page will draw on municipal electrical permit activity, severe-storm history, local housing-age data, and BLS trade-wage indexes."
+
+sections:
+  - heading: "Electrical Quotes Range Wildly &mdash; Because the Diagnosis Isn&rsquo;t the Same."
+    body: |
+      <p>One electrician quotes a breaker swap. Another wants to replace the whole panel. A third flags wiring behind the walls that the first two never mentioned.</p>
+      <p>Different diagnoses produce different prices. That doesn&rsquo;t mean one of them is wrong &mdash; but you need to know why they disagree.</p>
+
+  - heading: "Describe What&rsquo;s Happening. QuoteReady Organizes the Rest."
+    body: |
+      <p>Breaker keeps tripping? Outlet stopped working? Lights flickering? Panel making noise?</p>
+      <p>You don&rsquo;t need to know electrical terminology. QuoteReady organizes the symptoms, affected areas, panel information, and history into a brief a licensed electrician can quickly understand.</p>
+
+  - heading: "What Is an Electrical Project Brief?"
+    body: |
+      <p>An electrical project brief is a standardized summary of an electrical repair, panel, or wiring problem, or a planned electrical project.</p>
+      <p>It can include reported symptoms, affected circuits or areas, panel age and type if known, prior electrical work, photos, priorities, and questions a licensed electrician should address.</p>
+      <p>The brief does not diagnose an electrical fault. Electrical work in Texas should always be performed by a licensed electrician.</p>
+
+  - heading: "What Information Helps When Getting Electrical Quotes?"
+    body: |
+      <p>Useful information includes which breakers, outlets, or fixtures are affected, whether you notice burning smells, heat, sparking, or flickering, your panel&rsquo;s age and amperage if known, any prior electrical work or permits, and photos of the panel label and affected areas.</p>
+      <p>For larger projects, also explain what you&rsquo;re trying to accomplish &mdash; a repair, an upgrade, or new circuits.</p>
+
+  - heading: "Compare the Proposed Work Before You Compare the Price."
+    body: |
+      <p>Electrical estimates can differ in whether they include permits, panel upgrades versus targeted repairs, code-compliance corrections, and warranty.</p>
+      <p>A lower quote that skips a permit or a code correction is not automatically the safer or better option.</p>
+
+closing_heading: "Get the Electrical Job Clear Before You Choose an Electrician."
+closing_body: >-
+  Tell us what&rsquo;s happening once. Get your Project Brief. Use it with a
+  licensed electrician you already trust, or ask Texas Home Intelligence for
+  optional help finding local pros.
+
+faq:
+  - q: "Can QuoteReady tell me what's wrong with my electrical system?"
+    a: "No. It organizes what you report so a licensed electrician has clearer starting information. Diagnosing an electrical fault requires an on-site, licensed evaluation."
+  - q: "Is a licensed electrician required in Texas?"
+    a: "Yes, for most electrical work. Ask any provider for their Texas electrical license number and verify it before work begins, especially for panel or wiring work."
+  - q: "Can you use your Electrical Brief with any electrician?"
+    a: "Yes. Use it with any licensed electrician you choose. Help finding local professionals through Texas Home Intelligence is optional."

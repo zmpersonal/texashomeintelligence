@@ -1,0 +1,39 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="{{ page.url | absolute_url }}">
+<link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+<link rel="icon" href="data:,">
+{% seo title=false %}
+<title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }} &mdash; {{ site.tagline }}{% endif %}</title>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Texas Home Intelligence",
+  "url": "{{ site.url }}/",
+  "description": "Free QuoteReady Project Brief tool and local homeowner intelligence for Texas homeowners.",
+  "areaServed": {
+    "@type": "State",
+    "name": "Texas"
+  }
+}
+</script>
+{% if page.breadcrumbs %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {% for crumb in page.breadcrumbs %}
+    {
+      "@type": "ListItem",
+      "position": {{ forloop.index }},
+      "name": "{{ crumb.name }}",
+      "item": "{{ crumb.url | absolute_url }}"
+    }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}

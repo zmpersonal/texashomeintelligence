@@ -1,0 +1,36 @@
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <h4>Texas Home Intelligence</h4>
+        <p style="color:#c6d6e4; max-width: 34em;">A free QuoteReady Project Brief tool for Texas homeowners, plus continuously updated local homeowner intelligence for Austin, San Antonio, and beyond. Contractor introductions are optional and never required to use the brief.</p>
+      </div>
+      <div>
+        <h4>Locations</h4>
+        <ul>
+          <li><a href="{{ '/austin/' | relative_url }}">Austin</a></li>
+          <li><a href="{{ '/san-antonio/' | relative_url }}">San Antonio</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          {% for svc in site.data.service_list %}
+          <li><a href="{{ '/austin/' | append: svc.slug | append: '/' | relative_url }}">{{ svc.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="{{ '/data/' | relative_url }}">Data Catalog</a></li>
+          <li><a href="{{ '/methodology/' | relative_url }}">Methodology</a></li>
+          <li><a href="{{ '/start/' | relative_url }}">Build My Brief</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; {{ 'now' | date: "%Y" }} Texas Home Intelligence. QuoteReady Project Briefs organize homeowner-reported information and public data &mdash; they are not an inspection, diagnosis, or professional evaluation.
+    </div>
+  </div>
+</footer>

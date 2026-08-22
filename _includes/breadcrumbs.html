@@ -1,0 +1,5 @@
+{% if page.breadcrumbs %}
+<nav class="breadcrumbs wrap" aria-label="Breadcrumb">
+  {% for crumb in page.breadcrumbs %}{% if forloop.last %}<span>{{ crumb.name }}</span>{% else %}<a href="{{ crumb.url | relative_url }}">{{ crumb.name }}</a> &rsaquo; {% endif %}{% endfor %}
+</nav>
+{% endif %}

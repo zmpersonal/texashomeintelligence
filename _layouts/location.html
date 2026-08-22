@@ -1,0 +1,75 @@
+---
+layout: default
+---
+{% assign loc = site.data.locations[page.location] %}
+
+<nav class="breadcrumbs wrap" aria-label="Breadcrumb">
+  <a href="{{ '/' | relative_url }}">Home</a> &rsaquo; <span>{{ loc.name }}</span>
+</nav>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ '/' | absolute_url }}" },
+    { "@type": "ListItem", "position": 2, "name": "{{ loc.name }}", "item": "{{ page.url | absolute_url }}" }
+  ]
+}
+</script>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">{{ loc.region }}</span>
+    <h1>{{ loc.name }} Home Intelligence</h1>
+    <p class="lede">{{ loc.hub_intro }}</p>
+    <a class="btn" href="{{ '/start/?location=' | append: page.location | relative_url }}">{{ site.cta_label }}</a>
+    <p class="microcopy">Free &bull; Takes about 3&ndash;5 minutes &bull; No phone number required to start</p>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <h2>Current {{ loc.name }} Homeowner Conditions</h2>
+    <p style="max-width:44em;">A snapshot of the conditions Texas Home Intelligence tracks for {{ loc.name }} homeowners. These figures are placeholders until live public-data feeds are connected &mdash; see the <a href="{{ '/data/' | append: page.location | append: '/' | relative_url }}">{{ loc.name }} data catalog</a>.</p>
+    <div class="grid-4">
+      {% for c in loc.conditions %}
+      <div class="card data-card">
+        <span class="sample-badge">SAMPLE</span>
+        <p class="metric-label" style="margin-top:8px;">{{ c.label }}</p>
+        <p class="metric-note">{{ c.note }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="block alt">
+  <div class="wrap">
+    <h2>{{ loc.name }} Home Services</h2>
+    <p style="max-width:44em;">Build a free QuoteReady Project Brief for any of these {{ loc.name }} home-service categories.</p>
+    <div class="grid-4">
+      {% for svc in site.data.service_list %}
+      <a class="card" style="text-decoration:none;" href="{{ '/' | append: page.location | append: '/' | append: svc.slug | append: '/' | relative_url }}">
+        <div class="icon-badge">{{ svc.name | slice: 0, 1 }}</div>
+        <h3 style="color:var(--ink);">{{ svc.name }}</h3>
+        <p>{{ svc.short }}</p>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap" style="max-width:760px;">
+    <h2>About {{ loc.name }} Home Intelligence</h2>
+    <p>Texas Home Intelligence publishes continuously updated homeowner intelligence for {{ loc.name }} &mdash; covering {{ loc.counties }} &mdash; alongside the free QuoteReady Project Brief tool. See our <a href="{{ '/methodology/' | relative_url }}">methodology</a> for how data is sourced, updated, and labeled.</p>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap">
+    <h2>Get Your {{ loc.name }} Project Clear Before You Call Anyone.</h2>
+    <p style="max-width:40em;margin:0 auto 20px;">Tell us what's going on once. Get a QuoteReady Project Brief you can use with any contractor in {{ loc.name }}.</p>
+    <a class="btn" href="{{ '/start/?location=' | append: page.location | relative_url }}">{{ site.cta_label }}</a>
+  </div>
+</section>

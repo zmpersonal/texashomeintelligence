@@ -1,0 +1,92 @@
+---
+layout: default
+title: "Austin Roofing Data: Hail & Storm Events | Texas Home Intelligence"
+description: "Current and historical hail and wind event data for Austin, TX, and what it may mean for roofing decisions."
+permalink: /data/austin/roofing/
+---
+<nav class="breadcrumbs wrap" aria-label="Breadcrumb">
+  <a href="{{ '/' | relative_url }}">Home</a> &rsaquo;
+  <a href="{{ '/data/' | relative_url }}">Data</a> &rsaquo;
+  <a href="{{ '/data/' | relative_url }}">Austin</a> &rsaquo;
+  <span>Roofing &mdash; Hail &amp; Storm Events</span>
+</nav>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "Austin, TX Hail & Wind Storm Events (Roofing Context)",
+  "description": "Recorded hail and wind storm events for the Austin, TX metro, used as roofing-decision context.",
+  "temporalCoverage": "SAMPLE",
+  "spatialCoverage": { "@type": "Place", "name": "Austin, Texas" },
+  "creator": { "@type": "Organization", "name": "Texas Home Intelligence" },
+  "distribution": [
+    { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "{{ '/data/austin/roofing/hail-events.csv' | absolute_url }}" }
+  ]
+}
+</script>
+
+<section class="hero">
+  <div class="wrap" style="max-width:820px;">
+    <span class="eyebrow">AUSTIN &bull; ROOFING DATA</span>
+    <h1>Austin Hail &amp; Wind Storm Events</h1>
+    <p class="lede">Recent hail and wind history for the Austin metro, and what it may mean for roof age, damage likelihood, and quote timing.</p>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <div class="grid-3">
+      <div class="card data-card">
+        <span class="sample-badge">SAMPLE</span>
+        <p class="metric-label" style="margin-top:8px;">Reported hail events, trailing 12 months</p>
+        <p style="font-size:1.6rem;font-weight:800;margin:6px 0 0;">4</p>
+      </div>
+      <div class="card data-card">
+        <span class="sample-badge">SAMPLE</span>
+        <p class="metric-label" style="margin-top:8px;">Largest reported hail size</p>
+        <p style="font-size:1.6rem;font-weight:800;margin:6px 0 0;">1.75&Prime;</p>
+      </div>
+      <div class="card data-card">
+        <span class="sample-badge">SAMPLE</span>
+        <p class="metric-label" style="margin-top:8px;">Last successful update</p>
+        <p style="font-size:1.6rem;font-weight:800;margin:6px 0 0;">Not yet connected</p>
+      </div>
+    </div>
+    <p class="data-meta">Measures: county-level hail and wind storm reports. Geography: Travis County (Austin metro proxy). Reporting period: trailing 12 months, updated monthly once connected. Source: NOAA Storm Events Database (planned).</p>
+  </div>
+</section>
+
+<section class="block alt">
+  <div class="wrap" style="max-width:900px;">
+    <h2>Recent Reported Events</h2>
+    <table class="data-table">
+      <thead>
+        <tr><th>Date</th><th>Event type</th><th>Reported size / gust</th><th>Area affected</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>SAMPLE</td><td>Hail</td><td>1.75&Prime;</td><td>North Austin</td></tr>
+        <tr><td>SAMPLE</td><td>Wind</td><td>62 mph gust</td><td>South Austin</td></tr>
+        <tr><td>SAMPLE</td><td>Hail</td><td>1.00&Prime;</td><td>Round Rock corridor</td></tr>
+        <tr><td>SAMPLE</td><td>Hail</td><td>0.75&Prime;</td><td>East Austin</td></tr>
+      </tbody>
+    </table>
+    <p><a href="{{ '/data/austin/roofing/hail-events.csv' | relative_url }}">Download as CSV</a> <span class="sample-badge">SAMPLE</span></p>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap" style="max-width:760px;">
+    <h2>THI Interpretation</h2>
+    <p><strong>Data:</strong> the table above reflects storm events reported for the Austin area over the trailing period shown.</p>
+    <p><strong>THI Interpretation:</strong> repeated hail events at or above roughly one inch are a common trigger for insurance-eligible roof damage, so homes in affected areas may benefit from a professional roof inspection even without an obvious leak.</p>
+    <p><strong>What this may mean for homeowners:</strong> if your property falls within an affected area and time window, it can be worth requesting a roof inspection and comparing quotes with a <a href="{{ '/austin/roofing/' | relative_url }}">QuoteReady Roofing Brief</a> before the next storm season.</p>
+    <p><strong>Limitations:</strong> storm event reports are recorded at the county or station level, not the individual address, and do not confirm damage to any specific roof. This page currently shows placeholder SAMPLE data; no live feed is connected yet.</p>
+  </div>
+</section>
+
+<section class="block alt">
+  <div class="wrap" style="max-width:760px;">
+    <h2>Methodology</h2>
+    <p>Planned source: NOAA Storm Events Database, filtered to Travis County. Update cadence: monthly. If a scheduled update fails, the prior valid values will be preserved and marked stale with the last successful update date, rather than showing zero or blank. See our full <a href="{{ '/methodology/' | relative_url }}">methodology</a> page for how we handle stale data, historical observations, and source attribution across the site.</p>
+  </div>
+</section>

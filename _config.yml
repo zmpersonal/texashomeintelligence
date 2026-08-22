@@ -1,0 +1,36 @@
+title: Texas Home Intelligence
+tagline: "The QuoteReady Project Brief for Texas homeowners"
+description: >-
+  Texas Home Intelligence helps homeowners build a free QuoteReady Project
+  Brief for home-service projects, and publishes continuously updated local
+  homeowner intelligence for Austin, San Antonio, and beyond.
+url: "https://texashomeintelligence.com"
+baseurl: ""
+
+markdown: kramdown
+permalink: pretty
+
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+collections:
+  locations:
+    output: false
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+exclude:
+  - docs/source
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+
+# Product-level names used throughout copy/layouts
+product_name: "QuoteReady Project Brief"
+cta_label: "Build My QuoteReady Brief"
