@@ -1,0 +1,111 @@
+{
+  "datasetId": "eia-electricity",
+  "location": "texas",
+  "methodologyVersion": "v1",
+  "status": "sample",
+  "lastAttemptAt": "2026-08-23T07:05:29.727Z",
+  "lastSuccessAt": null,
+  "lastError": "Missing required env var(s): EIA_API_KEY",
+  "source": {
+    "name": "EIA Electricity Data (Texas, residential)",
+    "url": "https://www.eia.gov/electricity/data.php"
+  },
+  "observations": [
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.614Z",
+      "key": "2025-09",
+      "value": {
+        "pricePerKwhCents": 14.27
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.614Z",
+      "key": "2025-10",
+      "value": {
+        "pricePerKwhCents": 14.16
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.614Z",
+      "key": "2025-11",
+      "value": {
+        "pricePerKwhCents": 13.99
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.614Z",
+      "key": "2025-12",
+      "value": {
+        "pricePerKwhCents": 13.89
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.614Z",
+      "key": "2026-01",
+      "value": {
+        "pricePerKwhCents": 13.89
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.614Z",
+      "key": "2026-02",
+      "value": {
+        "pricePerKwhCents": 13.6
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.614Z",
+      "key": "2026-03",
+      "value": {
+        "pricePerKwhCents": 13.53
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.614Z",
+      "key": "2026-04",
+      "value": {
+        "pricePerKwhCents": 13.82
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.614Z",
+      "key": "2026-05",
+      "value": {
+        "pricePerKwhCents": 13.82
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.614Z",
+      "key": "2026-06",
+      "value": {
+        "pricePerKwhCents": 13.58
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.614Z",
+      "key": "2026-07",
+      "value": {
+        "pricePerKwhCents": 13.73
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.614Z",
+      "key": "2026-08",
+      "value": {
+        "pricePerKwhCents": 13.88
+      }
+    }
+  ]
+}

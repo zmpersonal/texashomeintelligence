@@ -1,0 +1,65 @@
+name: Data ingestion
+
+# Runs the ingestion pipeline (site/scripts/ingest.ts) on a schedule,
+# commits whatever changed under site/src/data/generated/, and pushes.
+# Cloudflare Pages is configured to auto-deploy on push to `main` — this
+# workflow doesn't (and shouldn't) trigger a separate rebuild itself; the
+# push IS the trigger. See HANDOFF.md "Seam 1" for what's still stubbed.
+on:
+  schedule:
+    # Once a day, off-peak UTC. Every registered feed's `requiredEnvVars`
+    # is checked before every real fetch attempt — until Seam 1's API
+    # keys exist as repo secrets, every run safely no-ops into "sample
+    # data preserved, nothing new" (see runIngestion.ts).
+    - cron: "17 9 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-ingestion
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - run: npm ci
+
+      - name: Run ingestion
+        run: npm run ingest
+        env:
+          # Seam 1 (HANDOFF.md): populate these as repository secrets once
+          # you have real keys. Every fetcher checks its own
+          # `requiredEnvVars` before attempting a real call — a missing
+          # var here fails that one feed's attempt without affecting any
+          # other, and never fabricates a value.
+          SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+          AIRNOW_API_KEY: ${{ secrets.AIRNOW_API_KEY }}
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
+
+      - name: Commit generated data if it changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/generated/
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Data ingestion: update generated datasets [skip ci]"
+            git push
+          fi

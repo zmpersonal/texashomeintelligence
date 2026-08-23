@@ -330,31 +330,71 @@ where a site's SEO surface gets called "finished."
 
 ---
 
-## Phase 5 — Ingestion framework
+## Phase 5 — Ingestion framework ✅ done
 
 **Goal:** the pipe that will carry real data exists and is provably
 correct on sample data, without needing real API keys yet.
 
-- [ ] Normalized observation schema (value, geography, period, source,
+- [x] Normalized observation schema (value, geography, period, source,
       fetched-at, status: `ok | stale | error`) — one schema for all feeds
-- [ ] GitHub Actions cron workflow: runs ingestion scripts, writes to
+- [x] GitHub Actions cron workflow: runs ingestion scripts, writes to
       `site/src/data/generated/`, commits, triggers a Pages rebuild
-- [ ] Fetcher interface + stubbed fetchers for every feed in handoff §11
-- [ ] Real backfill + stale/history logic, with **sample historical
+- [x] Fetcher interface + stubbed fetchers for every feed in handoff §11
+- [x] Real backfill + stale/history logic, with **sample historical
       series** (not live-fetched) for the three priority feeds: NOAA Storm
       Events, Austin/San Antonio municipal permits, EIA TX electricity
       price
-- [ ] Failure path proven: a fetcher returning an error preserves the last
+- [x] Failure path proven: a fetcher returning an error preserves the last
       valid observation and marks it `stale` with its last-good timestamp
       — never silently zero/null
-- [ ] Historical observations append, never overwrite
+- [x] Historical observations append, never overwrite
 
-**How I'll verify it:** run the cron script locally against the sample
-fixtures, confirm a simulated fetch failure leaves the prior value intact
-and flips status to `stale`, confirm a second successful run appends a new
-historical row rather than replacing the first, confirm the three
-priority feeds render a real (if sample-sourced) historical chart + HTML
-table on their data-detail pages.
+**How I verified it:**
+
+- Normalized schema lives in `site/src/ingest/types.ts` —
+  `Observation<T>`/`DatasetFile<T>`/`FetcherModule<T>`, with `FeedStatus`
+  deliberately identical to `DataStatus.astro`'s existing
+  `"sample"|"live"|"stale"|"error"` contract rather than inventing a
+  parallel vocabulary.
+- Wrote a standalone test against a fake fetcher (3 sequential
+  `runIngestion` calls, not against any real feed) and confirmed the
+  exact state machine required: run 1 (first success) → `live`, 1
+  observation; run 2 (second success, one new row) → `live`, 2
+  observations, **the first row byte-for-byte unchanged**; run 3
+  (simulated failure) → `stale`, still 2 observations (preserved
+  exactly), `lastError` recorded, no zero/null substitution.
+- Ran `npm run ingest` for real against all 15 fetchers (all of which
+  throw, by design — every `fetchRaw()` is an unimplemented TODO stub):
+  seeded 16 dataset files (5 deep + 11 stub — `noaa-storm-events` and
+  `municipal-permits` each produce an Austin + San Antonio file), then
+  ran it a second time and confirmed the observations arrays were
+  untouched — only `lastAttemptAt`/`lastError` moved — proving seeding is
+  idempotent and a no-op fetch attempt never resets accumulated sample
+  history.
+- Wired the existing Austin roofing data-detail page
+  (`site/src/pages/data/austin/roofing/index.astro`, built in Phase 2) to
+  import `noaa-storm-events/austin.json` directly and compute its metrics
+  (trailing-12-month event count, largest hail size, the events table)
+  from the real observations array instead of 4 hand-typed rows —
+  confirmed via the built HTML that the rendered numbers (10 events,
+  1.86″ largest) match the generated JSON exactly.
+- `npx astro check` → 0/0/0; `npm run build` clean with the new
+  `src/ingest/**` code and `src/data/generated/**` fixtures included.
+
+**Two honest gaps, not fixed this phase (out of this instruction's
+scope, flagged rather than silently left):**
+
+1. Municipal permits and EIA electricity price don't have data-detail
+   pages yet (only Austin roofing does, from Phase 2) — so those two
+   deep-tier feeds' generated JSON isn't rendered anywhere yet, even
+   though the ingestion pipeline for them is fully real. Building those
+   pages is a Phase-2-style template addition, not part of this seam.
+2. `src/data/data-sources.yaml`'s `nws-api` entry is still
+   `priority: true` / `status: "sample"` (from Phase 1, following
+   CLAUDE.md's original "NOAA Storm Events **+ NWS**" grouping), while
+   this phase's explicit instruction scoped NWS into the stub tier
+   instead. Both are accurate on their own terms; see HANDOFF.md's Seam 1
+   note for the full explanation.
 
 ---
 

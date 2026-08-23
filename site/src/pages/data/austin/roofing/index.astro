@@ -2,6 +2,16 @@
 import Base from "../../../../layouts/Base.astro";
 import Breadcrumbs from "../../../../components/Breadcrumbs.astro";
 import DataStatus from "../../../../components/DataStatus.astro";
+import type { DatasetFile } from "../../../../ingest/types";
+import type { StormEventValue } from "../../../../ingest/fetchers/noaaStormEvents";
+// Real ingestion output (src/ingest/**, .github/workflows/data-ingestion.yml)
+// — not hand-typed sample rows. Every field below is read from the
+// normalized dataset file, never a raw API shape (CLAUDE.md). Until Seam
+// 1's fetchRaw() is implemented this stays "sample"; the moment a real
+// fetch succeeds, `stormData.status` flips to "live" and this page
+// updates with no code change.
+import stormDataRaw from "../../../../data/generated/noaa-storm-events/austin.json";
+const stormData = stormDataRaw as DatasetFile<StormEventValue>;
 
 const title = "Austin Roofing Data: Hail & Storm Events | Texas Home Intelligence";
 const description =
@@ -13,7 +23,7 @@ const jsonLd = {
   name: "Austin, TX Hail & Wind Storm Events (Roofing Context)",
   description:
     "Recorded hail and wind storm events for the Austin, TX metro, used as roofing-decision context.",
-  temporalCoverage: "SAMPLE",
+  temporalCoverage: stormData.status === "sample" ? "SAMPLE" : `${stormData.observations[0]?.observedAt ?? ""}/${stormData.observations.at(-1)?.observedAt ?? ""}`,
   spatialCoverage: { "@type": "Place", name: "Austin, Texas" },
   creator: { "@type": "Organization", name: "Texas Home Intelligence" },
   distribution: [
@@ -25,12 +35,28 @@ const jsonLd = {
   ],
 };
 
-const events = [
-  { date: "SAMPLE", type: "Hail", size: "1.75″", area: "North Austin" },
-  { date: "SAMPLE", type: "Wind", size: "62 mph gust", area: "South Austin" },
-  { date: "SAMPLE", type: "Hail", size: "1.00″", area: "Round Rock corridor" },
-  { date: "SAMPLE", type: "Hail", size: "0.75″", area: "East Austin" },
-];
+const trailing12mo = (() => {
+  const cutoff = Date.now() - 365 * 86_400_000;
+  return stormData.observations.filter((o) => new Date(o.observedAt).getTime() >= cutoff);
+})();
+
+const largestHailInches = trailing12mo
+  .filter((o) => o.value.eventType === "Hail")
+  .map((o) => parseFloat(o.value.magnitude))
+  .filter((n) => !Number.isNaN(n))
+  .reduce((max, n) => Math.max(max, n), 0);
+
+const events = [...stormData.observations]
+  .sort((a, b) => b.observedAt.localeCompare(a.observedAt))
+  .map((o) => ({
+    date: new Date(o.observedAt).toLocaleDateString("en-US", { year: "numeric", month: "short" }),
+    type: o.value.eventType,
+    size: o.value.magnitude,
+    area: o.value.county,
+  }));
+
+const badgeStatus = stormData.status;
+const asOf = stormData.status === "sample" ? undefined : (stormData.lastSuccessAt ?? undefined);
 ---
 
 <Base title={title} description={description}>
@@ -59,24 +85,29 @@ const events = [
     <div class="wrap">
       <div class="grid-3">
         <div class="card data-card">
-          <DataStatus status="sample" />
-          <p class="metric-label" style="margin-top:8px;">Reported hail events, trailing 12 months</p>
-          <p style="font-size:1.6rem;font-weight:800;margin:6px 0 0;">4</p>
+          <DataStatus status={badgeStatus} asOf={asOf} source={stormData.source.name} />
+          <p class="metric-label" style="margin-top:8px;">Reported hail/wind events, trailing 12 months</p>
+          <p style="font-size:1.6rem;font-weight:800;margin:6px 0 0;">{trailing12mo.length}</p>
         </div>
         <div class="card data-card">
-          <DataStatus status="sample" />
+          <DataStatus status={badgeStatus} asOf={asOf} source={stormData.source.name} />
           <p class="metric-label" style="margin-top:8px;">Largest reported hail size</p>
-          <p style="font-size:1.6rem;font-weight:800;margin:6px 0 0;">1.75&Prime;</p>
+          <p style="font-size:1.6rem;font-weight:800;margin:6px 0 0;">
+            {largestHailInches > 0 ? `${largestHailInches.toFixed(2)}″` : "No hail reported"}
+          </p>
         </div>
         <div class="card data-card">
-          <DataStatus status="error" />
+          <DataStatus status={badgeStatus} asOf={stormData.lastAttemptAt ?? undefined} source={stormData.source.name} />
           <p class="metric-label" style="margin-top:8px;">Live feed connection</p>
+          {stormData.lastError && (
+            <p style="font-size:0.78rem;color:var(--ink-soft);margin-top:4px;">{stormData.lastError}</p>
+          )}
         </div>
       </div>
       <p class="data-meta">
         Measures: county-level hail and wind storm reports. Geography: Travis County (Austin metro
         proxy). Reporting period: trailing 12 months, updated monthly once connected. Source: NOAA
-        Storm Events Database (planned).
+        Storm Events Database.
       </p>
     </div>
   </section>
@@ -94,7 +125,10 @@ const events = [
           ))}
         </tbody>
       </table>
-      <p><a href="/data/austin/roofing/hail-events.csv">Download as CSV</a> <span class="sample-badge">SAMPLE</span></p>
+      <p>
+        <a href="/data/austin/roofing/hail-events.csv">Download as CSV</a>{" "}
+        {stormData.status === "sample" && <span class="sample-badge">SAMPLE</span>}
+      </p>
     </div>
   </section>
 

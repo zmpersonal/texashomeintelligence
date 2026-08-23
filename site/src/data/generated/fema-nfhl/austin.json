@@ -1,0 +1,24 @@
+{
+  "datasetId": "fema-nfhl",
+  "location": "austin",
+  "methodologyVersion": "v1",
+  "status": "sample",
+  "lastAttemptAt": "2026-08-23T07:05:29.728Z",
+  "lastSuccessAt": null,
+  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"fema-nfhl/austin\" is not implemented yet. Requested window 2026-07-01T00:00:00.000Z .. 2026-08-23T07:05:29.728Z.",
+  "source": {
+    "name": "FEMA National Flood Hazard Layer",
+    "url": "https://hazards.fema.gov/gis/nfhl/"
+  },
+  "observations": [
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.615Z",
+      "key": "2026-07",
+      "value": {
+        "floodZone": "X (SAMPLE)",
+        "note": "SAMPLE — illustrative, not a real parcel lookup."
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "datasetId": "bls",
+  "location": "austin",
+  "methodologyVersion": "v1",
+  "status": "sample",
+  "lastAttemptAt": "2026-08-23T07:05:29.729Z",
+  "lastSuccessAt": null,
+  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"bls/austin\" is not implemented yet. Requested window 2026-07-01T00:00:00.000Z .. 2026-08-23T07:05:29.729Z.",
+  "source": {
+    "name": "BLS Occupational Employment and Wage Statistics",
+    "url": "https://www.bls.gov/oes/"
+  },
+  "observations": [
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.617Z",
+      "key": "2026-07",
+      "value": {
+        "trade": "SAMPLE — Plumbers, Pipefitters, and Steamfitters",
+        "medianHourlyWageUsd": 28.75
+      }
+    }
+  ]
+}

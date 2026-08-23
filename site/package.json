@@ -8,7 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "verify-content": "node scripts/verify-content.mjs"
+    "verify-content": "node scripts/verify-content.mjs",
+    "ingest": "tsx scripts/ingest.ts"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.2.3",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@cloudflare/workers-types": "^5.20260822.1",
+    "tsx": "^4.23.12",
     "typescript": "5.9.3",
     "wrangler": "^4.125.0",
     "yaml": "^2.9.0"

@@ -26,38 +26,113 @@ being right is not sufficient proof the edge agrees with it.
 
 ---
 
-## Seam 1 — Live data APIs
+## Seam 1 — Live data APIs ✅ ingestion framework built (Phase 5), every fetch is yours to implement
 
-Ingestion framework, normalized schema, and stubbed fetchers get built in
-Phase 5. Each feed below needs its real fetcher + credentials wired in;
-until then it runs on the sample/backfill data we generate.
+Built: the normalized schema, the merge/backfill/stale pipeline (real,
+not stubbed), the GitHub Actions cron, and one fetcher module per feed —
+all 15 with the exact same interface, so implementing one doesn't require
+touching the pipeline around it. **Every single `fetchRaw()` body is an
+unimplemented TODO stub that throws** — that's the entire content of
+this seam. Nothing here fabricates a value; every dataset file currently
+on disk is honestly marked `"sample"`.
 
-| Feed | Fetcher file (planned) | Env var(s) needed | Status |
+### Framework files (real, not stubs — read before touching a fetcher)
+
+| File | What it does |
+|---|---|
+| `site/src/ingest/types.ts` | The normalized shape every feed conforms to: `Observation<T>`, `DatasetFile<T>`, `FetcherModule<T>`, `FetchContext`. `FeedStatus` (`"sample" \| "live" \| "stale" \| "error"`) matches `DataStatus.astro`'s contract exactly. |
+| `site/src/ingest/merge.ts` | `computeFetchWindow()` — real backfill logic: a dataset with no observations yet gets a full trailing window (default 365 days), everything after that is incremental. `mergeObservations()` — real append-only merge: a new `key` appends, a repeated `key` updates in place (a correction), nothing is ever dropped. |
+| `site/src/ingest/runIngestion.ts` | `runIngestion(fetcher, filePath)` — orchestrates one fetcher: checks `requiredEnvVars`, calls `fetchRaw`, merges the result, writes the file. On any failure (missing env var, thrown error, or today, always — every `fetchRaw` throws), it preserves whatever's on disk and only moves status `"live"/"stale"` → `"stale"`; a dataset that's still `"sample"` (never yet lived) stays `"sample"` rather than being marked `"error"`. |
+| `site/src/ingest/seed.ts` | One-time, idempotent seeding (`seedIfMissing`/`seedAll`) — generates the illustrative SAMPLE historical series each dataset file starts with. Deterministic (seeded PRNG), and skips any file that already exists — it never resets real accumulated history. |
+| `site/src/ingest/registry.ts` | `REGISTRY` — the one array mapping every fetcher to its output file path (`src/data/generated/{datasetId}/{location}.json`) and its tier (`"deep"` vs `"stub"`, see below). |
+| `site/scripts/ingest.ts` | The CLI entrypoint (`npm run ingest`, via `tsx`) that `.github/workflows/data-ingestion.yml` runs: seeds anything missing, then runs every registered fetcher. |
+| `.github/workflows/data-ingestion.yml` | Daily cron (`workflow_dispatch` too) that runs `npm run ingest` and commits+pushes anything that changed under `site/src/data/generated/`. Cloudflare Pages auto-deploys on push to `main` — the push itself is the "trigger a rebuild" step, nothing separate needed. |
+
+### What you do for every fetcher, regardless of tier
+
+1. Get the credential (if the table below lists one) and add it as a
+   **GitHub Actions repository secret** (Settings → Secrets and variables
+   → Actions) with the exact name shown — `.github/workflows/data-ingestion.yml`
+   already passes each one through as an env var. (This is separate from
+   Cloudflare Pages env vars — ingestion runs in GitHub Actions, not on
+   Cloudflare, so nothing here needs a Cloudflare-side env var.)
+2. Replace the body of that fetcher's `fetchRaw()` with a real HTTP
+   call, returning `Observation<T>[]` in the shape already defined at the
+   top of the file. Each file's doc-comment names the real endpoint to
+   start from and the specific gotcha to check (format changes, which
+   platform a city's open-data portal actually runs on, etc.).
+3. Delete that fetcher's now-unused `notImplemented(...)` import/call.
+4. That's it — `runIngestion` picks it up automatically next cron run
+   (or `npm run ingest` locally). No registry, schema, or pipeline change
+   needed.
+
+### Deep tier — real backfill/merge/stale logic already exercised end-to-end on sample data
+
+| Feed | Fetcher file | `fetchRaw()` | Env var(s) | Generated file(s) |
+|---|---|---|---|---|
+| NOAA Storm Events | `site/src/ingest/fetchers/noaaStormEvents.ts` | `makeFetcher("austin"\|"san-antonio")` → exports `noaaStormEventsAustin`, `noaaStormEventsSanAntonio` | none (NOAA bulk data is keyless) | `noaa-storm-events/austin.json`, `noaa-storm-events/san-antonio.json` |
+| Austin municipal permits (Socrata) | `site/src/ingest/fetchers/austinPermits.ts` | exports `austinPermits` | `SOCRATA_APP_TOKEN` (optional — raises the anonymous rate limit, not required to fetch at all) | `municipal-permits/austin.json` |
+| San Antonio municipal permits | `site/src/ingest/fetchers/sanAntonioPermits.ts` | exports `sanAntonioPermits` | none confirmed yet — verify which platform (Socrata vs. ArcGIS) San Antonio's portal actually uses before assuming Austin's shape | `municipal-permits/san-antonio.json` |
+| EIA TX residential electricity price | `site/src/ingest/fetchers/eiaElectricityPrice.ts` | exports `eiaElectricityPrice` | `EIA_API_KEY` (free instant signup) | `eia-electricity/texas.json` |
+
+Verified for real (not just written): a standalone test run of
+`runIngestion` against a fake fetcher proved the full state machine —
+first successful fetch → `"live"`; a second successful fetch with one
+more row → `"live"` with the new row **appended**, the first row
+byte-for-byte unchanged; a simulated failure after that → `"stale"`,
+observations preserved exactly, `lastError` recorded. `npm run ingest`
+run twice in a row against the real (stubbed) fetchers confirmed the
+seeded sample files are untouched aside from `lastAttemptAt`/`lastError`
+— no data reset, no duplication.
+
+The Austin roofing data-detail page (`site/src/pages/data/austin/roofing/index.astro`)
+now imports `noaa-storm-events/austin.json` directly and computes its
+metrics (trailing-12-month event count, largest hail size, the events
+table) from real observations instead of hand-typed numbers — the moment
+`noaaStormEventsAustin.fetchRaw()` is implemented and a cron run
+succeeds, that page's `SAMPLE` badge becomes `LIVE` with no code change.
+Permits and EIA electricity price don't have a data-detail page yet — no
+page reads `municipal-permits/*.json` or `eia-electricity/texas.json`
+yet; building those pages is a Phase 2-style template addition, not part
+of this seam.
+
+### Stub tier — same schema/pipeline, single illustrative sample row, `fetchRaw()` fully unimplemented
+
+| Feed | Fetcher file | Env var(s) | Generated file |
 |---|---|---|---|
-| NOAA Storm Events | `site/src/ingest/fetchers/noaaStormEvents.ts` | _TBD_ | ☐ not started |
-| NWS (forecast/observations/alerts) | `site/src/ingest/fetchers/nws.ts` | _TBD_ | ☐ not started |
-| Austin municipal permits (Socrata) | `site/src/ingest/fetchers/austinPermits.ts` | `SOCRATA_APP_TOKEN` (optional, raises rate limit) | ☐ not started |
-| San Antonio municipal permits | `site/src/ingest/fetchers/sanAntonioPermits.ts` | _TBD_ | ☐ not started |
-| EIA TX residential electricity price | `site/src/ingest/fetchers/eiaElectricityPrice.ts` | `EIA_API_KEY` | ☐ not started |
-| FEMA / NFHL | `site/src/ingest/fetchers/femaFlood.ts` | _TBD_ | ☐ not started |
-| TWDB / TexMesonet | `site/src/ingest/fetchers/twdbDrought.ts` | _TBD_ | ☐ not started |
-| Texas Dept. of Insurance (wind/hail, fire loss) | `site/src/ingest/fetchers/tdiLosses.ts` | _TBD_ | ☐ not started |
-| AirNow | `site/src/ingest/fetchers/airnow.ts` | `AIRNOW_API_KEY` | ☐ not started |
-| Census ACS | `site/src/ingest/fetchers/censusAcs.ts` | `CENSUS_API_KEY` (optional) | ☐ not started |
-| BLS | `site/src/ingest/fetchers/blsWages.ts` | `BLS_API_KEY` (optional) | ☐ not started |
-| ERCOT | `site/src/ingest/fetchers/ercot.ts` | _TBD_ | ☐ not started |
-| Texas A&M Forest Service | `site/src/ingest/fetchers/txForestService.ts` | _TBD_ | ☐ not started |
-| USDA Soil Data Access | `site/src/ingest/fetchers/usdaSoil.ts` | _TBD_ | ☐ not started |
+| NWS (forecast/observations/alerts) | `site/src/ingest/fetchers/nws.ts` | none (NWS API is keyless; needs a descriptive `User-Agent` header per its terms of use, not a token) | `nws-api/austin.json` |
+| NOAA Climate Data Online (normals) | `site/src/ingest/fetchers/noaaClimate.ts` | `NOAA_CDO_TOKEN` (not yet requested — add it if you implement this one) | `noaa-climate/austin.json` |
+| FEMA / NFHL | `site/src/ingest/fetchers/femaFlood.ts` | none | `fema-nfhl/austin.json` |
+| Texas Dept. of Insurance (wind/hail, fire, water loss) | `site/src/ingest/fetchers/tdiLosses.ts` | none confirmed — TDI publishes as periodic data calls, not a standing API | `tdi-losses/austin.json` |
+| TWDB / TexMesonet | `site/src/ingest/fetchers/twdbDrought.ts` | none | `twdb-texmesonet/austin.json` |
+| USDA Soil Data Access | `site/src/ingest/fetchers/usdaSoil.ts` | none | `usda-soil/austin.json` |
+| AirNow | `site/src/ingest/fetchers/airnow.ts` | `AIRNOW_API_KEY` | `airnow/austin.json` |
+| Census ACS | `site/src/ingest/fetchers/censusAcs.ts` | `CENSUS_API_KEY` (optional) | `census-acs/austin.json` |
+| BLS (OEWS trade wages) | `site/src/ingest/fetchers/blsWages.ts` | `BLS_API_KEY` (optional) | `bls/austin.json` |
+| ERCOT | `site/src/ingest/fetchers/ercot.ts` | none confirmed — no single documented REST API, some data is CSV/XML downloads | `ercot/texas.json` |
+| Texas A&M Forest Service | `site/src/ingest/fetchers/txForestService.ts` | none confirmed — verify a machine-readable feed exists before assuming one | `tx-forest-service/texas.json` |
 
-**Priority 3 (real backfill + sample historical series built in Phase 5):**
-NOAA Storm Events, Austin + San Antonio permits, EIA electricity price.
-All others: fetcher interface + stub only until you provide keys.
+These 11 are single-location samples (one representative city/statewide,
+not both Austin and San Antonio) — narrower than the deep tier
+deliberately, per this phase's scope. Extending one to full Austin + San
+Antonio coverage is part of "implement the real fetcher," not a separate
+step: add a second `RegistryEntry` in `site/src/ingest/registry.ts`
+(follow the `noaaStormEventsAustin`/`noaaStormEventsSanAntonio` pattern)
+once there's a second location's worth of real data to fetch.
 
-**What you do:** get an API key/token where one is needed, fill it into
-Cloudflare Pages environment variables (never into repo config), implement
-the fetcher body (interface + expected return shape will already be
-defined and type-checked), remove the `status: "stub"` flag in the data
-source registry entry.
+### A note on `nws-api`'s status in `src/data/data-sources.yaml`
+
+That registry (built in Phase 1) marks `nws-api` `priority: true` /
+`status: "sample"`, matching CLAUDE.md's original "go deep on NOAA Storm
+Events **+ NWS**" framing. This phase's instructions named exactly three
+feeds for deep treatment — NOAA Storm Events, Austin/San Antonio permits,
+EIA electricity — and NWS landed in the stub tier instead. Both facts
+are true at once and don't conflict: `data-sources.yaml`'s `status:
+"sample"` describes what's shown on the data-catalog page (accurate —
+nothing here is fabricated as live), while the *ingestion pipeline's*
+depth for NWS specifically is stub-tier until you ask for it to be
+deepened. Flagging this explicitly so the mismatch doesn't look like an
+oversight.
 
 ---
 

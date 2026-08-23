@@ -1,0 +1,135 @@
+{
+  "datasetId": "municipal-permits",
+  "location": "austin",
+  "methodologyVersion": "v1",
+  "status": "sample",
+  "lastAttemptAt": "2026-08-23T07:05:29.726Z",
+  "lastSuccessAt": null,
+  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"municipal-permits/austin\" is not implemented yet. Requested window 2026-08-01T00:00:00.000Z .. 2026-08-23T07:05:29.726Z.",
+  "source": {
+    "name": "City of Austin Issued Construction Permits (Socrata)",
+    "url": "https://data.austintexas.gov/"
+  },
+  "observations": [
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2025-09",
+      "value": {
+        "permitType": "Electrical",
+        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
+        "status": "23 issued (SAMPLE)"
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2025-10",
+      "value": {
+        "permitType": "Building",
+        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
+        "status": "27 issued (SAMPLE)"
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2025-11",
+      "value": {
+        "permitType": "Plumbing",
+        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
+        "status": "33 issued (SAMPLE)"
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2025-12",
+      "value": {
+        "permitType": "Electrical",
+        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
+        "status": "42 issued (SAMPLE)"
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2026-01",
+      "value": {
+        "permitType": "Roofing",
+        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
+        "status": "48 issued (SAMPLE)"
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2026-02",
+      "value": {
+        "permitType": "Electrical",
+        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
+        "status": "42 issued (SAMPLE)"
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2026-03",
+      "value": {
+        "permitType": "Building",
+        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
+        "status": "40 issued (SAMPLE)"
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2026-04",
+      "value": {
+        "permitType": "Roofing",
+        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
+        "status": "48 issued (SAMPLE)"
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2026-05",
+      "value": {
+        "permitType": "Mechanical (HVAC)",
+        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
+        "status": "23 issued (SAMPLE)"
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2026-06",
+      "value": {
+        "permitType": "Plumbing",
+        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
+        "status": "50 issued (SAMPLE)"
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2026-07",
+      "value": {
+        "permitType": "Electrical",
+        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
+        "status": "45 issued (SAMPLE)"
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2026-08",
+      "value": {
+        "permitType": "Electrical",
+        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
+        "status": "59 issued (SAMPLE)"
+      }
+    }
+  ]
+}

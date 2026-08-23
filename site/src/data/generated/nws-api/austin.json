@@ -1,0 +1,24 @@
+{
+  "datasetId": "nws-api",
+  "location": "austin",
+  "methodologyVersion": "v1",
+  "status": "sample",
+  "lastAttemptAt": "2026-08-23T07:05:29.727Z",
+  "lastSuccessAt": null,
+  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"nws-api/austin\" is not implemented yet. Requested window 2026-07-01T00:00:00.000Z .. 2026-08-23T07:05:29.727Z.",
+  "source": {
+    "name": "National Weather Service API",
+    "url": "https://api.weather.gov"
+  },
+  "observations": [
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.614Z",
+      "key": "2026-07",
+      "value": {
+        "forecastHighF": 96,
+        "forecastLowF": 74
+      }
+    }
+  ]
+}

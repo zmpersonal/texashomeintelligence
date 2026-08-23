@@ -1,0 +1,24 @@
+{
+  "datasetId": "airnow",
+  "location": "austin",
+  "methodologyVersion": "v1",
+  "status": "sample",
+  "lastAttemptAt": "2026-08-23T07:05:29.729Z",
+  "lastSuccessAt": null,
+  "lastError": "Missing required env var(s): AIRNOW_API_KEY",
+  "source": {
+    "name": "AirNow",
+    "url": "https://www.airnow.gov"
+  },
+  "observations": [
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.617Z",
+      "key": "2026-07",
+      "value": {
+        "aqi": 42,
+        "category": "Good"
+      }
+    }
+  ]
+}

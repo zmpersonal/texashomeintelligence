@@ -1,0 +1,103 @@
+{
+  "datasetId": "noaa-storm-events",
+  "location": "san-antonio",
+  "methodologyVersion": "v1",
+  "status": "sample",
+  "lastAttemptAt": "2026-08-23T07:05:29.726Z",
+  "lastSuccessAt": null,
+  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"noaa-storm-events/san-antonio\" is not implemented yet. Requested window 2026-08-01T00:00:00.000Z .. 2026-08-23T07:05:29.726Z.",
+  "source": {
+    "name": "NOAA Storm Events Database",
+    "url": "https://www.ncdc.noaa.gov/stormevents/"
+  },
+  "observations": [
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2025-09-Hail",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.99\"",
+        "county": "SAMPLE COUNTY",
+        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2025-12-Hail",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.34\"",
+        "county": "SAMPLE COUNTY",
+        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2026-01-Wind",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "77 mph gust",
+        "county": "SAMPLE COUNTY",
+        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2026-02-Hail",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.26\"",
+        "county": "SAMPLE COUNTY",
+        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2026-04-Tornado",
+      "value": {
+        "eventType": "Tornado",
+        "magnitude": "EF0",
+        "county": "SAMPLE COUNTY",
+        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2026-05-Tornado",
+      "value": {
+        "eventType": "Tornado",
+        "magnitude": "EF0",
+        "county": "SAMPLE COUNTY",
+        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2026-07-Hail",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.17\"",
+        "county": "SAMPLE COUNTY",
+        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-23T07:05:17.613Z",
+      "key": "sample-2026-08-Wind",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "50 mph gust",
+        "county": "SAMPLE COUNTY",
+        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
+      }
+    }
+  ]
+}
