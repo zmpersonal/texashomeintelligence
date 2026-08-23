@@ -3,9 +3,9 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-23T07:05:29.729Z",
+  "lastAttemptAt": "2026-08-23T09:42:03.093Z",
   "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"bls/austin\" is not implemented yet. Requested window 2026-07-01T00:00:00.000Z .. 2026-08-23T07:05:29.729Z.",
+  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"bls/austin\" is not implemented yet. Requested window 2026-07-01T00:00:00.000Z .. 2026-08-23T09:42:03.093Z.",
   "source": {
     "name": "BLS Occupational Employment and Wage Statistics",
     "url": "https://www.bls.gov/oes/"

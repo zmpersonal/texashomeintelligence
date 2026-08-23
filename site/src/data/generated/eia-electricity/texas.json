@@ -3,7 +3,7 @@
   "location": "texas",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-23T07:05:29.727Z",
+  "lastAttemptAt": "2026-08-23T09:42:03.091Z",
   "lastSuccessAt": null,
   "lastError": "Missing required env var(s): EIA_API_KEY",
   "source": {

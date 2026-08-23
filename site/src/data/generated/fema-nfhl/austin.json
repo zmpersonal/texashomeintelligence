@@ -3,9 +3,9 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-23T07:05:29.728Z",
+  "lastAttemptAt": "2026-08-23T09:42:03.092Z",
   "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"fema-nfhl/austin\" is not implemented yet. Requested window 2026-07-01T00:00:00.000Z .. 2026-08-23T07:05:29.728Z.",
+  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"fema-nfhl/austin\" is not implemented yet. Requested window 2026-07-01T00:00:00.000Z .. 2026-08-23T09:42:03.092Z.",
   "source": {
     "name": "FEMA National Flood Hazard Layer",
     "url": "https://hazards.fema.gov/gis/nfhl/"
