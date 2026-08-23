@@ -2,7 +2,7 @@
 
 This tracks exactly what's stubbed vs. real, so "ready for live traffic" =
 you filling in the items below. Updated as each phase lands — current
-through Phase 4 (AI/SEO layer).
+through Phase 5 (ingestion framework).
 
 ---
 
