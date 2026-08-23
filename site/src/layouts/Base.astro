@@ -14,7 +14,32 @@ interface Props {
 
 const { title, description, noindex = false } = Astro.props;
 const siteName = "Texas Home Intelligence";
+const siteURL = Astro.site?.toString() ?? "";
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// Analytics — Seam-adjacent (see HANDOFF.md "Analytics"): both IDs are
+// real Cloudflare Pages build-time env vars (PUBLIC_* so Vite exposes them
+// to the client), left unset here. Nothing analytics-related renders
+// until you supply real IDs — we never ship a placeholder/fake ID that
+// would silently start sending traffic to a property that doesn't exist.
+const ga4Id = import.meta.env.PUBLIC_GA4_MEASUREMENT_ID;
+const cfBeaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
+
+// Referrers from AI answer engines land in GA4's "Direct" bucket by
+// default because these tools don't send standard search-style referrer
+// tags. We capture the first-touch referrer's host once per session and
+// resend it as a `ai_referral_source` param on every hit, so it survives
+// internal navigation and a GA4 custom channel-group rule can key off it
+// (see HANDOFF.md for the exact GA4-UI steps — that part isn't
+// code-configurable). See CLAUDE.md's Analytics section for the domain
+// list.
+const AI_REFERRAL_DOMAINS = [
+  "chatgpt.com",
+  "perplexity.ai",
+  "claude.ai",
+  "gemini.google.com",
+  "copilot.microsoft.com",
+];
 ---
 
 <!doctype html>
@@ -27,16 +52,84 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, follow" />}
 
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL.toString()} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
     <script type="application/ld+json" is:inline set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "Organization",
+      "@id": `${siteURL}#organization`,
       name: siteName,
-      url: Astro.site?.toString(),
+      url: siteURL,
       description:
         "Free QuoteReady Project Brief tool and local homeowner intelligence for Texas homeowners.",
       areaServed: { "@type": "State", name: "Texas" },
+      // TODO(seam-adjacent, not one of the 3 reserved seams): once real
+      // social profiles exist, list them here — schema.org uses `sameAs`
+      // to confirm this Organization is the same entity across the web.
+      // Left out entirely rather than filled with placeholder URLs.
     })}
     />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      name: "QuoteReady Project Brief",
+      url: `${siteURL}/start/`,
+      description,
+      applicationCategory: "LifestyleApplication",
+      operatingSystem: "Any (web-based)",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      provider: { "@id": `${siteURL}#organization` },
+    })}
+    />
+
+    {ga4Id && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}></script>
+        <script
+          is:inline
+          define:vars={{ ga4Id, AI_REFERRAL_DOMAINS }}
+        >
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag("js", new Date());
+
+          var STORAGE_KEY = "thi_ai_referral_source";
+          var stored = null;
+          try { stored = sessionStorage.getItem(STORAGE_KEY); } catch (e) {}
+
+          if (!stored && document.referrer) {
+            try {
+              var refHost = new URL(document.referrer).hostname.replace(/^www\./, "");
+              var matched = AI_REFERRAL_DOMAINS.find(function (d) { return refHost === d || refHost.endsWith("." + d); });
+              if (matched) {
+                stored = matched;
+                try { sessionStorage.setItem(STORAGE_KEY, matched); } catch (e) {}
+              }
+            } catch (e) {}
+          }
+
+          if (stored) {
+            gtag("set", "user_properties", { ai_referral_source: stored });
+          }
+          gtag("config", ga4Id, stored ? { ai_referral_source: stored } : {});
+        </script>
+      </>
+    )}
+    {cfBeaconToken && (
+      <script
+        is:inline
+        defer
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon={`{"token": "${cfBeaconToken}"}`}
+      ></script>
+    )}
   </head>
   <body>
     <Nav />

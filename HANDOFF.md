@@ -1,23 +1,28 @@
 # HANDOFF.md — Seams reserved for you
 
 This tracks exactly what's stubbed vs. real, so "ready for live traffic" =
-you filling in the items below. Updated as each phase lands — right now
-(pre-Phase-0) it's an empty scaffold per your request.
+you filling in the items below. Updated as each phase lands — current
+through Phase 4 (AI/SEO layer).
 
 ---
 
 ## ⚠️ Cloudflare gotcha — verify this yourself before go-live
 
 Cloudflare's **Bot Fight Mode** / WAF / the dashboard "block AI bots"
-toggle can silently override `robots.txt` at the edge. Our `robots.txt`
-will explicitly allow the citation/search crawlers (OAI-SearchBot,
-ChatGPT-User, PerplexityBot, Perplexity-User, Claude-SearchBot,
-Claude-User, Googlebot, Bingbot) and the training crawlers (GPTBot,
-ClaudeBot, Google-Extended) — but that file has no authority over
-Cloudflare's edge security settings. **You need to check the Cloudflare
-dashboard directly** (Security → Bots) once this app is on Cloudflare
-Pages, and confirm none of those user agents are being challenged/blocked
-before relying on citation traffic.
+toggle can silently override `robots.txt` at the edge. `site/public/robots.txt`
+(final as of Phase 4) explicitly allows the citation/search crawlers
+(OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User,
+Claude-SearchBot, Claude-User, Googlebot, Bingbot) and the training
+crawlers (GPTBot, ClaudeBot, Google-Extended — kept in their own
+commented block so you can toggle them off independently), and blocks two
+low-value scrapers (CCBot, DataForSeoBot) — but that file has **no
+authority over Cloudflare's edge security settings**. **You need to check
+the Cloudflare dashboard directly** (Security → Bots, and Security → WAF)
+once this app is on Cloudflare Pages, and confirm none of the citation/
+training bot user agents above are being challenged or blocked at the
+edge before relying on citation traffic. This is the single most common
+way an otherwise-correct AI-citation setup silently fails — robots.txt
+being right is not sufficient proof the edge agrees with it.
 
 ---
 
@@ -132,6 +137,46 @@ environment-specific config), run `migrations/0001_init.sql` against
 production, and continue building out any schema beyond what's scaffolded
 here. Do **not** run `migrations/seed.sql` against production — it's
 sample data only.
+
+---
+
+## Analytics — not one of the 3 reserved seams, but still yours to key in
+
+Built in Phase 4: GA4 + Cloudflare Web Analytics wiring and a working
+AI-referral attribution mechanism, all in `site/src/layouts/Base.astro`.
+Both scripts are **fully gated on real env vars being set** — with no ID
+supplied, nothing analytics-related renders at all (no placeholder ID is
+ever shipped, so a blank config can never quietly send traffic to a
+property that doesn't exist).
+
+| Piece | Where | Env var | Status |
+|---|---|---|---|
+| GA4 tag (`gtag.js`) | `Base.astro` `<head>` | `PUBLIC_GA4_MEASUREMENT_ID` (e.g. `G-XXXXXXX`) | ☐ set the env var in Cloudflare Pages → this is a **build-time** Vite `PUBLIC_*` var, baked in at build, not a runtime Worker binding |
+| Cloudflare Web Analytics beacon | `Base.astro` `<head>` | `PUBLIC_CF_BEACON_TOKEN` | ☐ same as above — get the token from Cloudflare dashboard → Analytics → Web Analytics |
+| AI-referral first-touch capture | `Base.astro` inline script | (uses the GA4 var above) | ✅ built — see below |
+
+**AI-referral channel — what's built vs. what you still do in the GA4 UI:**
+AI answer engines (ChatGPT, Perplexity, Claude, Gemini, Copilot) mostly
+don't send a referrer GA4 recognizes as "search," so this traffic lands in
+Direct by default and is invisible as a channel. The inline script in
+`Base.astro` fixes the *data* side of this: on first landing, if
+`document.referrer`'s host matches `chatgpt.com`, `perplexity.ai`,
+`claude.ai`, `gemini.google.com`, or `copilot.microsoft.com` (subdomains
+included), it stores that domain in `sessionStorage` and resends it as a
+`ai_referral_source` user property/event param on every subsequent hit in
+the session — so it survives internal navigation, not just the landing
+page. **What's still manual, in the GA4 UI itself (Admin → Data display →
+Channel groups → create a custom channel):** add a rule matching
+`ai_referral_source` is set (or matches your domain list) → name the
+channel "AI Referral." This is a GA4 configuration step, not something a
+build can wire for you — GA4 doesn't expose channel-group definitions
+through gtag/config.
+
+**What you do:** create the GA4 property and Cloudflare Web Analytics
+site, set the two env vars above in Cloudflare Pages (Settings →
+Environment variables, **Production** — and Preview if you want analytics
+in preview deploys too), then define the "AI Referral" custom channel in
+the GA4 UI per the rule above.
 
 ---
 

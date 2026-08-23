@@ -12,10 +12,29 @@ const orderedLocations = locationOrder
 const title = "Texas Homeowner Data Catalog | Texas Home Intelligence";
 const description =
   "The statewide catalog of local homeowner data Texas Home Intelligence tracks, by location and topic.";
+
+// Only one dataset page exists yet (Austin roofing — see BUILD_PLAN.md
+// Phase 2/5 notes on the 3-feeds-deep-first priority); this list grows as
+// more /data/{location}/{topic}/ pages get built.
+const datasetJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "DataCatalog",
+  name: "Texas Home Intelligence Homeowner Data Catalog",
+  description,
+  url: new URL("/data/", Astro.site).toString(),
+  dataset: [
+    {
+      "@type": "Dataset",
+      name: "Austin, TX Hail & Wind Storm Events (Roofing Context)",
+      url: new URL("/data/austin/roofing/", Astro.site).toString(),
+    },
+  ],
+};
 ---
 
 <Base title={title} description={description}>
   <Breadcrumbs crumbs={[{ name: "Home", url: "/" }, { name: "Data", url: "/data/" }]} />
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(datasetJsonLd)} />
 
   <section class="hero">
     <div class="wrap" style="max-width:760px;">

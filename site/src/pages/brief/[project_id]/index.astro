@@ -1,5 +1,6 @@
 ---
 import Base from "../../../layouts/Base.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import { getProject, resolveToken } from "../../../lib/kv";
 
 export const prerender = false;
@@ -16,6 +17,7 @@ const description = "Your generated QuoteReady Project Brief.";
 ---
 
 <Base title={title} description={description} noindex={true}>
+  <Breadcrumbs crumbs={[{ name: "Home", url: "/" }, { name: "Your Project Brief", url: Astro.url.pathname }]} />
   <section class="block">
     <div class="wrap" style="max-width:760px;">
       {!authorized && (

@@ -249,32 +249,84 @@ mocks) two ways:
 
 ---
 
-## Phase 4 — AI/SEO layer
+## Phase 4 — AI/SEO layer ✅ done
 
 **Goal:** the finished shape is maximally legible to search + AI crawlers.
 
-- [ ] Per-page-type schema: `Organization`, tool as `WebApplication`,
+- [x] Per-page-type schema: `Organization`, tool as `WebApplication`,
       `Dataset`/`DataCatalog` on real data pages, `BreadcrumbList`
       sitewide, `FAQPage` on FAQ blocks
-- [ ] Breadcrumbs (visible + structured) on every non-homepage route
-- [ ] Canonicals on every page; PPC pages `noindex` via the per-page flag
-- [ ] Final `robots.txt` (citation bots allowed, training bots allowed per
+- [x] Breadcrumbs (visible + structured) on every non-homepage route
+- [x] Canonicals on every page; PPC pages `noindex` via the per-page flag
+- [x] Final `robots.txt` (citation bots allowed, training bots allowed per
       CLAUDE.md, low-value scrapers blocked-but-commented, sitemap ref)
-- [ ] `sitemap.xml` generation covers every indexable route, excludes
+- [x] `sitemap.xml` generation covers every indexable route, excludes
       `/lp/*`
-- [ ] `llms.txt` pointing agents at methodology + data catalog + best
+- [x] `llms.txt` pointing agents at methodology + data catalog + best
       data pages
-- [ ] GA4 snippet + documented custom channel grouping for AI-referral
+- [x] GA4 snippet + documented custom channel grouping for AI-referral
       traffic (chatgpt.com, perplexity.ai, claude.ai, gemini.google.com,
       copilot.microsoft.com) + Cloudflare Web Analytics
-- [ ] **`HANDOFF.md` gets the Cloudflare Bot Fight Mode / WAF warning**
+- [x] **`HANDOFF.md` gets the Cloudflare Bot Fight Mode / WAF warning**
       (dashboard-level AI-bot blocking can silently override robots.txt)
 
-**How I'll verify it:** validate every JSON-LD block with a schema
-validator pass (`JSON.parse` + required-field check per type), confirm
-`sitemap.xml` entry count matches indexable route count, confirm `/lp/*`
-pages carry `noindex` and are absent from the sitemap, confirm robots.txt
-explicitly names each required crawler.
+**How I verified it:**
+
+- Wrote a small Node script that walks every built page, extracts every
+  `<script type="application/ld+json">` block, `JSON.parse`s it, and
+  checks required fields per `@type`. Result: 24 pages, 87 JSON-LD
+  blocks, 0 parse errors, 0 missing required fields. Spot-checked one
+  page per family (homepage, location hub, location×service, data
+  catalog, data detail, methodology, `/start/`, PPC) and confirmed the
+  expected type set on each — e.g. `BreadcrumbList` present everywhere
+  except the homepage and `/lp/*` (by design — PPC pages are
+  conversion-pure/noindex and intentionally carry no internal-linking
+  breadcrumb trail per CLAUDE.md's two-page-family split), `Dataset` +
+  `DataDownload` on the data-detail page, `DataCatalog` (referencing that
+  dataset) on `/data/`, `FAQPage` on every service + PPC page.
+  `Organization` and `WebApplication` (the QuoteReady tool modeled as a
+  product of that org, via a shared `@id`) render on every page from
+  `Base.astro`.
+- `grep`-ed the sitemap: 21 entries, exactly matching the indexable route
+  count (1 homepage + 2 hubs + 14 service pages + 2 data pages +
+  methodology + `/start/`); confirmed zero `/lp/*` entries and confirmed
+  each `/lp/*` page's built HTML carries `<meta name="robots"
+  content="noindex, follow">`, absent on every indexable page.
+- Confirmed `robots.txt` (already correct from Phase 0) copies through to
+  the build output unchanged and matches CLAUDE.md's crawler list
+  exactly.
+- Built `llms.txt` and confirmed it's present in `dist/client/`.
+- Added GA4 + Cloudflare Web Analytics to `Base.astro`, both fully gated
+  on real env vars (`PUBLIC_GA4_MEASUREMENT_ID`, `PUBLIC_CF_BEACON_TOKEN`)
+  — confirmed via `grep` that a build with no env vars set ships zero
+  analytics script tags (no placeholder/fake ID ever ships), then
+  rebuilt with fake test IDs and confirmed via `grep` that both render
+  correctly when the vars are present.
+- Built the AI-referral first-touch capture (session-scoped
+  `document.referrer` host match against the 5 CLAUDE.md-listed AI
+  domains, resent as a `ai_referral_source` GA4 user property on every
+  hit) and verified it with three real headless-Chromium (Playwright)
+  runs against the built static output: (1) landing with
+  `referer: https://chatgpt.com/...` correctly populates
+  `sessionStorage` and appears in the GA4 `dataLayer`'s `config` call;
+  (2) landing with a normal Google-search referrer leaves it unset; (3)
+  landing via Perplexity then navigating to a second internal page shows
+  the value persists across the session and is resent on the second
+  page's `config` call. Documented the one part that has no code
+  equivalent — defining the actual GA4 "AI Referral" channel-group rule —
+  as a manual GA4-UI step in `HANDOFF.md`.
+- Refreshed `HANDOFF.md`'s Cloudflare Bot Fight Mode/WAF warning (it
+  already existed from the initial scaffold) with the finalized
+  `robots.txt` crawler list, and added a new "Analytics" section covering
+  both env vars and the manual GA4 channel-group step.
+
+**Known, deliberate gap carried forward:** the homepage is still the
+Phase 0 scaffold placeholder — per Phase 2's note, the homepage rebuild
+was explicitly out of scope for that go-ahead and has not been assigned
+to any phase since. `Organization`/`WebApplication` schema, canonical,
+and OG/Twitter meta all render correctly on it as-is, but its visible
+content is not real yet. Flagging again here since Phase 4 is normally
+where a site's SEO surface gets called "finished."
 
 ---
 
