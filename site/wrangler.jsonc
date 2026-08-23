@@ -8,7 +8,7 @@
   // The IDs below are LOCAL PLACEHOLDERS ONLY — replace with real Cloudflare
   // KV namespace / D1 database IDs before deploying, per HANDOFF.md.
   "kv_namespaces": [
-    { "binding": "PROJECTS_KV", "id": "local-placeholder-projects-kv" }
+    { "binding": "PROJECTS_KV", "id": "texas-home-intelligence-projects" }
   ],
   "d1_databases": [
     {
