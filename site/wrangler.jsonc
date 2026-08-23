@@ -8,7 +8,11 @@
   // The IDs below are LOCAL PLACEHOLDERS ONLY — replace with real Cloudflare
   // KV namespace / D1 database IDs before deploying, per HANDOFF.md.
   "kv_namespaces": [
-    { "binding": "PROJECTS_KV", "id": "d5c64f949583450db1bd1cee073caf23" }
+    { "binding": "PROJECTS_KV", "id": "d5c64f949583450db1bd1cee073caf23" },
+    {
+      "binding": "SESSION",
+      "id": "cc7a5a1c29e04852ace9723ed69969bb"
+    }
   ],
   "d1_databases": [
     {
