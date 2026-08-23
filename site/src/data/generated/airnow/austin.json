@@ -3,7 +3,7 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-23T07:05:29.729Z",
+  "lastAttemptAt": "2026-08-23T09:42:03.092Z",
   "lastSuccessAt": null,
   "lastError": "Missing required env var(s): AIRNOW_API_KEY",
   "source": {
