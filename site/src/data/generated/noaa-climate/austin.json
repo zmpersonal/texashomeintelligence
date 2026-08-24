@@ -3,9 +3,9 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-24T15:50:48.070Z",
+  "lastAttemptAt": "2026-08-24T15:57:51.130Z",
   "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"noaa-climate/austin\" is not implemented yet. Requested window 2025-08-24T15:50:48.070Z .. 2026-08-24T15:50:48.070Z.",
+  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"noaa-climate/austin\" is not implemented yet. Requested window 2025-08-24T15:57:51.130Z .. 2026-08-24T15:57:51.130Z.",
   "source": {
     "name": "NOAA Climate Data Online",
     "url": "https://www.ncdc.noaa.gov/cdo-web/"
