@@ -52,11 +52,14 @@ jobs:
           CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
           BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
 
+      - name: Fetch current U.S. Drought Monitor Texas map
+        run: npm run fetch-drought-map
+
       - name: Commit generated data if it changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/generated/
+          git add src/data/generated/ public/images/drought/
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else

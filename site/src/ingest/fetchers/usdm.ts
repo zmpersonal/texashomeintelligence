@@ -7,15 +7,16 @@ export interface DroughtValue {
 }
 
 /**
- * U.S. Drought Monitor (droughtmonitor.unl.edu) DmData web service —
- * keyless JSON REST, `GetDroughtSeverityStatisticsByAreaPercent`,
- * county-level (`aoi` = 5-digit county FIPS: Travis 48453, Bexar 48029 —
- * the FIPS-as-aoi shape is per the task brief, which corroborates it).
+ * U.S. Drought Monitor — the DATA service is a different host than the
+ * informational site: `usdmdataservices.unl.edu`, not
+ * `droughtmonitor.unl.edu` (the latter 404s to an HTML page for this
+ * path, which is what previously surfaced as "Unexpected token '<'" —
+ * confirmed against a real Actions run, not a guess). Keyless JSON REST,
+ * `GetDroughtSeverityStatisticsByAreaPercent`, county-level (`aoi` =
+ * 5-digit county FIPS: Travis 48453, Bexar 48029). Requires an explicit
+ * `Accept: application/json` header — without it the API returns XML.
  * Published weekly (Thursdays); each row reports the % of the county's
- * area at-or-worse-than each D-category (None/D0-D4, cumulative). Not
- * independently verified against a live response from this sandbox
- * (network policy blocks droughtmonitor.unl.edu) — if the first live run
- * comes back empty, check the exact response field casing first.
+ * area at-or-worse-than each D-category (None/D0-D4, cumulative).
  *
  * Reduces each week's row to a single county-level category: the worst
  * (highest) D-level with area% > 0, labeled with its standard USDM name.
@@ -31,9 +32,9 @@ const COUNTY_FIPS_BY_LOCATION: Record<"austin" | "san-antonio", string> = {
 
 const D_LABELS = ["D0 — Abnormally Dry", "D1 — Moderate Drought", "D2 — Severe Drought", "D3 — Extreme Drought", "D4 — Exceptional Drought"];
 
-function mmddyyyy(iso: string): string {
+function mdyyyy(iso: string): string {
   const d = new Date(iso);
-  return `${String(d.getUTCMonth() + 1).padStart(2, "0")}/${String(d.getUTCDate()).padStart(2, "0")}/${d.getUTCFullYear()}`;
+  return `${d.getUTCMonth() + 1}/${d.getUTCDate()}/${d.getUTCFullYear()}`;
 }
 
 interface UsdmWeekRow {
@@ -76,13 +77,15 @@ function makeFetcher(location: "austin" | "san-antonio"): FetcherModule<DroughtV
     source: { name: "U.S. Drought Monitor", url: "https://droughtmonitor.unl.edu" },
     requiredEnvVars: [],
     async fetchRaw(ctx): Promise<Observation<DroughtValue>[]> {
-      const url = new URL("https://droughtmonitor.unl.edu/DmData/GetDroughtSeverityStatisticsByAreaPercent.aspx");
-      url.searchParams.set("area", fips);
+      const url = new URL(
+        "https://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByAreaPercent",
+      );
+      url.searchParams.set("aoi", fips);
       url.searchParams.set("statisticsType", "1");
-      url.searchParams.set("startdate", mmddyyyy(ctx.window.since));
-      url.searchParams.set("enddate", mmddyyyy(ctx.window.until));
+      url.searchParams.set("startdate", mdyyyy(ctx.window.since));
+      url.searchParams.set("enddate", mdyyyy(ctx.window.until));
 
-      const res = await fetch(url);
+      const res = await fetch(url, { headers: { Accept: "application/json" } });
       if (!res.ok) {
         throw new Error(`U.S. Drought Monitor fetch failed: HTTP ${res.status} from ${url.toString()}`);
       }

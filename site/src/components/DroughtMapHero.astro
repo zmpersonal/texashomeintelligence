@@ -1,31 +1,20 @@
 ---
 /**
- * Swappable hero visual: an official, auto-updating U.S. Drought Monitor
- * map focused on Texas. Renders a real hotlinked image from the National
- * Drought Mitigation Center's public map service (droughtmonitor.unl.edu)
- * — no scraping, no fabricated proxy; the browser requests the same URL
- * NDMC serves to anyone, so it reflects that week's real map with zero
- * work on our end.
+ * Swappable hero visual: an official, weekly-updating U.S. Drought
+ * Monitor map focused on Texas — self-hosted, not hotlinked. The
+ * original hotlink to a "current_tx.png"-style path 404'd (NDMC doesn't
+ * publish a stable "current" alias at that path); the real map is only
+ * published at a datestamped path, so the ingestion cron now downloads
+ * it weekly and commits it here (see scripts/fetch-drought-map.ts and
+ * .github/workflows/data-ingestion.yml). That script is non-fatal on
+ * failure, so this file may briefly be a week stale rather than missing.
  *
- * TODO(owner): if NDMC ever changes this path, or you'd rather point at a
- * different official source (e.g. an embeddable NDMC/drought.gov widget),
- * this is the one place to change it — update MAP_SRC below, nothing else
- * in the hero needs to change.
- *
- * ⚠️ Not independently verified rendering live: this sandbox's network
- * policy blocks ALL outbound internet access (confirmed against multiple
- * unrelated domains, not just droughtmonitor.unl.edu — even
- * en.wikipedia.org was blocked), so neither `curl` nor the WebFetch tool
- * could load this URL from here to confirm it's still current. The path
- * below is NDMC's long-documented state-map convention
- * (droughtmonitor.unl.edu/data/png/current/current_{state-abbr}.png),
- * not a guess pulled from nowhere, but please load the live site and
- * confirm the image actually renders before you consider this shipped —
- * the onerror fallback below means a wrong URL degrades to a text-only
- * caption instead of a broken-image icon, but it should still be fixed
- * if so.
+ * TODO(owner): if you'd rather point at a different official source
+ * (e.g. an embeddable NDMC/drought.gov widget) or a live hotlink NDMC
+ * documents as stable, this is the one place to change it — update
+ * MAP_SRC below, nothing else in the hero needs to change.
  */
-const MAP_SRC = "https://droughtmonitor.unl.edu/data/png/current/current_tx.png";
+const MAP_SRC = "/images/drought/current_tx.png";
 const MAP_ALT = "U.S. Drought Monitor map of Texas, showing current county-level drought conditions";
 ---
 

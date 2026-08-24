@@ -141,6 +141,47 @@ need a key not yet provided).
 | BLS OEWS trade wages | `blsWages.ts` | Public Data API v2, plumbers median hourly wage, Austin MSA | `BLS_API_KEY` (optional) | **Highest-uncertainty fetcher in this batch** — the OEWS series id (`OEUM001242000000047215208`) is assembled from documented series-id conventions, not confirmed against a live response. If status isn't `REQUEST_SUCCEEDED` or the series is empty, look up the real id at https://data.bls.gov/PDQWeb/oe before re-guessing |
 | U.S. Drought Monitor ✅ **replaces the TWDB/TexMesonet stub** | `usdm.ts` (new; `twdbDrought.ts` deleted) | `GetDroughtSeverityStatisticsByAreaPercent`, county FIPS (Travis 48453, Bexar 48029) | none | Dataset id renamed `twdb-texmesonet` → `usdm-drought`; now two locations (`usdm-drought/austin.json`, `usdm-drought/san-antonio.json`); reduces each week's D0-D4 percent-of-area breakdown to a single worst-category label — documented simplification, not fabrication |
 
+### Round 2 verified live on a real Actions run — 7 of 9 confirmed working
+
+The next real cron run confirmed (with actual returned values, not just "no
+error"): **NWS, USDA Soil, AirNow (both cities), Census ACS, BLS, and EIA**
+are all genuinely live and returning plausible real data (e.g. BLS: $30.20/hr
+median plumber wage; NWS: a real active Heat Advisory alert; USDA Soil:
+"Urban land, 0 to 6 percent slopes" — a real SSURGO map unit name). Two came
+back needing fixes, both applied:
+
+1. **`usdm.ts` (U.S. Drought Monitor)** — errored with `Unexpected token
+   '<'` (an HTML page, not JSON). Root cause: the *data* API lives on a
+   different host than the informational site —
+   `usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByAreaPercent`,
+   not `droughtmonitor.unl.edu/DmData/...`. Also needed an explicit
+   `Accept: application/json` header (without it the API silently returns
+   XML) and the query param is `aoi`, not `area`. Fixed; not yet
+   re-verified live (needs another Actions run).
+2. **Austin/San Antonio permits** — Austin's Socrata `$where` clause got
+   HTTP 400 (a SoQL syntax issue in the filter, not yet root-caused); San
+   Antonio's CSV headers are `PERMIT TYPE`, `PERMIT #`, `DATE SUBMITTED`,
+   `DATE ISSUED` (not `ISSUE DATE`, which the header-resolver was looking
+   for). **Not fixed yet** — flagged for the next round.
+3. **`femaFlood.ts`** — HTTP 404 on the NFHL MapServer layer 28 query,
+   meaning layer 28 isn't "Flood Hazard Zones" on this MapServer instance
+   (or the whole path is wrong). **Not fixed yet** — flagged for the next
+   round.
+
+**Hero drought map**: the hotlinked `current_tx.png` path 404'd (NDMC
+doesn't publish a stable "current" alias there). Replaced with a
+self-hosting approach: `scripts/fetch-drought-map.ts` (run by the
+ingestion cron, `npm run fetch-drought-map`) downloads the real
+datestamped map (`droughtmonitor.unl.edu/data/png/{YYYYMMDD}/{YYYYMMDD}_TX_trd.png`,
+most recent Thursday, stepping back a week at a time on a 404, up to 8
+weeks) to `site/public/images/drought/current_tx.png`, which
+`DroughtMapHero.astro` now points at instead of the external URL. Non-fatal
+by design — a failed week leaves the previous local image in place rather
+than failing the whole ingestion job. Not yet verified against a real
+response (this sandbox has no general internet access at all — confirmed
+blocked for `en.wikipedia.org` too) — the next real Actions run is the
+first real test.
+
 **NOAA Storm Events `fetchRaw()` is now real, not a stub** — the endpoint
 that was corrected in this round (the original stub referenced the
 retired `ncdc.noaa.gov` path; it now hits NCEI's actual bulk archive:
