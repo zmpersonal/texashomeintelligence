@@ -1,5 +1,9 @@
 ---
-const ctaLabel = "Build My QuoteReady Brief";
+// THI-round-homepage-nav.md §1/§2 (revised — Services dropped, see repo
+// root round spec + agreed deviation). This component renders on every
+// page via Base.astro, so the header CTA and restructured nav are
+// sitewide, not homepage-only.
+const ctaLabel = "My Dashboard";
 ---
 
 <div class="topbar">
@@ -13,12 +17,19 @@ const ctaLabel = "Build My QuoteReady Brief";
     <a class="brand-mark" href="/">Texas Home<span>Intelligence</span></a>
     <nav aria-label="Primary">
       <ul class="nav-links">
-        <li><a href="/austin/">Austin</a></li>
-        <li><a href="/san-antonio/">San Antonio</a></li>
+        <li><a href="/tools/">Tools</a></li>
         <li><a href="/data/">Data</a></li>
-        <li><a href="/methodology/">Methodology</a></li>
+        <li>
+          <details class="nav-dropdown">
+            <summary>Locations</summary>
+            <ul>
+              <li><a href="/austin/">Austin</a></li>
+              <li><a href="/san-antonio/">San Antonio</a></li>
+            </ul>
+          </details>
+        </li>
       </ul>
     </nav>
-    <a class="nav-cta" href="/start/">{ctaLabel}</a>
+    <a class="nav-cta" href="/dashboard/">{ctaLabel}</a>
   </div>
 </header>

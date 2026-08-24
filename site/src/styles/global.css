@@ -101,6 +101,26 @@ ul { color: var(--ink-soft); }
 .nav-cta { background: var(--accent); color: #fff !important; padding: 9px 16px; border-radius: 999px; font-weight: 700; font-size: 0.88rem; text-decoration: none; white-space: nowrap; }
 .nav-cta:hover { background: var(--accent-dark); color: #fff !important; }
 
+/* Locations dropdown — native <details>/<summary>: every link stays a
+ * real <a href> in the served HTML regardless of open/closed state (so
+ * it's crawlable with zero JS), and toggling is natively keyboard- and
+ * touch-accessible without a hover requirement. */
+.nav-dropdown { position: relative; list-style: none; }
+.nav-dropdown summary { cursor: pointer; list-style: none; color: var(--ink); }
+.nav-dropdown summary::-webkit-details-marker { display: none; }
+.nav-dropdown summary::after { content: "▾"; font-size: 0.7em; margin-left: 5px; color: var(--ink-soft); }
+.nav-dropdown summary:hover { color: var(--brand); }
+.nav-dropdown[open] summary::after { content: "▴"; }
+.nav-dropdown ul {
+  position: absolute; top: calc(100% + 10px); left: 0; z-index: 50;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(16,24,38,0.12); padding: 8px; margin: 0;
+  list-style: none; min-width: 160px;
+}
+.nav-dropdown li { margin: 0; }
+.nav-dropdown ul a { display: block; padding: 8px 10px; border-radius: 6px; white-space: nowrap; }
+.nav-dropdown ul a:hover { background: var(--paper-alt); }
+
 /* ---- Breadcrumbs ---- */
 .breadcrumbs { font-size: 0.82rem; color: var(--ink-soft); padding: 14px 0 0; }
 .breadcrumbs a { color: var(--ink-soft); text-decoration: none; }

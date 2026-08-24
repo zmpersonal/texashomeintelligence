@@ -15,10 +15,17 @@ export default defineConfig({
   }),
   integrations: [
     sitemap({
-      // /lp/* pages are noindex (per-page <meta robots> in PPCPage.astro)
-      // to avoid duplicate-content collision with the equivalent SEO
-      // page — keep them out of the sitemap too, not just noindexed.
-      filter: (page) => !page.includes("/lp/"),
+      // Every noindexed route needs to be excluded here too — a <meta
+      // robots noindex> tag alone doesn't keep a page out of the
+      // sitemap. /lp/* (PPCPage.astro) and the not-yet-built tool
+      // placeholders (ToolPlaceholder.astro, THI-round-homepage-nav.md
+      // §6) are the two noindexed families right now.
+      filter: (page) =>
+        !page.includes("/lp/") &&
+        !page.includes("/dashboard/") &&
+        !page.includes("/tools/quickconnect/") &&
+        !page.includes("/tools/home-risk-report/") &&
+        !page.includes("/tools/cost-calculators/"),
     }),
   ],
   vite: {

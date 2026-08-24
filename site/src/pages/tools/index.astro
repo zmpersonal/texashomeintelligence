@@ -1,0 +1,81 @@
+---
+// THI-round-homepage-nav.md §3 — the real, indexable /tools/ hub. Every
+// other tool page under /tools/ (and /dashboard/) is a noindexed
+// placeholder linked from here.
+import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+
+interface Tool {
+  name: string;
+  description: string;
+  href: string;
+  cta: string;
+}
+
+const tools: Tool[] = [
+  {
+    name: "Home Dashboard",
+    description:
+      "See the conditions affecting your home right now — weather, HVAC stress, storm exposure, maintenance signals, and more.",
+    href: "/dashboard/",
+    cta: "Check My Home",
+  },
+  {
+    name: "QuoteReady Project Brief",
+    description:
+      "Describe a home repair or improvement project once and get a standardized brief you can send to any contractor.",
+    href: "/start/",
+    cta: "Build My Brief",
+  },
+  {
+    name: "QuickConnect",
+    description: "A faster way to connect with local Texas home-service contractors.",
+    href: "/tools/quickconnect/",
+    cta: "Learn More",
+  },
+  {
+    name: "Home Risk Report",
+    description: "A generated report on the weather, storm, and environmental risks facing your property.",
+    href: "/tools/home-risk-report/",
+    cta: "Learn More",
+  },
+  {
+    name: "Cost Calculators",
+    description: "Texas-specific calculators for repair-vs-replace decisions and project cost ranges.",
+    href: "/tools/cost-calculators/",
+    cta: "Learn More",
+  },
+];
+
+const title = "Free Texas Homeowner Tools | Texas Home Intelligence";
+const description =
+  "Free tools for Texas homeowners — a home dashboard, the QuoteReady Project Brief, cost calculators, and more.";
+---
+
+<Base title={title} description={description}>
+  <Breadcrumbs crumbs={[{ name: "Home", url: "/" }, { name: "Tools", url: "/tools/" }]} />
+  <section class="hero">
+    <div class="wrap" style="max-width: 760px;">
+      <span class="eyebrow">FREE FOR TEXAS HOMEOWNERS</span>
+      <h1>Free Texas Homeowner Tools</h1>
+      <p class="lede">
+        Tools built specifically for Texas homeowners — understand what's affecting your home,
+        organize a project, and plan repair or replacement decisions with local data behind you.
+      </p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="grid-3">
+        {tools.map((tool) => (
+          <a class="card" href={tool.href} style="text-decoration:none;color:inherit;display:block;">
+            <h3>{tool.name}</h3>
+            <p>{tool.description}</p>
+            <p style="margin-top:12px;font-weight:700;color:var(--brand);">{tool.cta} &rarr;</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

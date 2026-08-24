@@ -1,0 +1,38 @@
+---
+// Shared shell for the not-yet-built tool routes (THI-round-homepage-nav.md
+// §6): "a clean, non-empty placeholder ('what this will do') — never a
+// dead link," noindexed until real. /tools/ itself is the one exception
+// (real, indexable) and uses its own page, not this layout.
+import Base from "./Base.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  toolName: string;
+  path: string;
+  body: string;
+  statusNote: string;
+}
+
+const { title, description, toolName, path, body, statusNote } = Astro.props;
+---
+
+<Base title={title} description={description} noindex={true}>
+  <Breadcrumbs
+    crumbs={[
+      { name: "Home", url: "/" },
+      { name: "Tools", url: "/tools/" },
+      { name: toolName, url: path },
+    ]}
+  />
+  <section class="hero">
+    <div class="wrap" style="max-width: 720px;">
+      <span class="eyebrow">HOMEOWNER TOOLS</span>
+      <h1>{toolName}</h1>
+      <p class="lede">{body}</p>
+      <div class="disclaimer-note">{statusNote}</div>
+      <a class="btn secondary" href="/tools/">&larr; Back to all tools</a>
+    </div>
+  </section>
+</Base>
