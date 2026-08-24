@@ -17,13 +17,14 @@ export interface PermitValue {
  * anonymous rate limit — sent as `X-App-Token` when present.
  *
  * Filters to roofing-relevant permits via a SoQL `$where` clause matching
- * `work_class`/`permit_type_desc`/`description` against "roof" — field
- * names are Austin's documented Socrata columns for this dataset, but not
- * independently verified against a live response from this sandbox (its
- * network policy blocks data.austintexas.gov); if the first live run
- * comes back with 0 records after the Texas/county-equivalent filter,
- * check these column names first, the same way the NOAA round's window
- * bug was found — not by guessing.
+ * `work_class`/`permit_type_desc`/`description` against "roof". Column
+ * names confirmed against a live Actions run's Socrata error body (which
+ * echoes the full column list on a bad query): the date column is
+ * `issue_date`, not `issued_date` as originally guessed — that typo was
+ * the sole cause of every live run's HTTP 400 so far. Every other
+ * assumed column name (`permit_number`, `permit_type_desc`, `work_class`,
+ * `description`, `status_current`, the valuation fields) matched the
+ * real schema on the first try.
  */
 const RESOURCE_URL = "https://data.austintexas.gov/resource/3syk-w9eu.json";
 const PAGE_SIZE = 5000;
@@ -40,7 +41,7 @@ interface AustinPermitRow {
   work_class?: string;
   description?: string;
   status_current?: string;
-  issued_date?: string;
+  issue_date?: string;
   total_valuation_remodel?: string;
   building_valuation?: string;
   total_job_valuation?: string;
@@ -69,7 +70,7 @@ export const austinPermits: FetcherModule<PermitValue> = {
   requiredEnvVars: [],
   async fetchRaw(ctx): Promise<Observation<PermitValue>[]> {
     const { since, until } = ctx.window;
-    const where = `issued_date between '${soqlTimestamp(since)}' and '${soqlTimestamp(until)}' AND (upper(work_class) like '%ROOF%' OR upper(permit_type_desc) like '%ROOF%' OR upper(description) like '%ROOF%')`;
+    const where = `issue_date between '${soqlTimestamp(since)}' and '${soqlTimestamp(until)}' AND (upper(work_class) like '%ROOF%' OR upper(permit_type_desc) like '%ROOF%' OR upper(description) like '%ROOF%')`;
 
     const headers: Record<string, string> = {};
     if (ctx.env.SOCRATA_APP_TOKEN) headers["X-App-Token"] = ctx.env.SOCRATA_APP_TOKEN;
@@ -78,19 +79,17 @@ export const austinPermits: FetcherModule<PermitValue> = {
     for (let page = 0; page < MAX_PAGES; page++) {
       const url = new URL(RESOURCE_URL);
       url.searchParams.set("$where", where);
-      url.searchParams.set("$order", "issued_date");
+      url.searchParams.set("$order", "issue_date");
       url.searchParams.set("$limit", String(PAGE_SIZE));
       url.searchParams.set("$offset", String(page * PAGE_SIZE));
 
       const res = await fetch(url, { headers });
       if (!res.ok) {
-        // TEMP DIAGNOSTIC (2026-08-24): this has thrown HTTP 400 on every
-        // live run so far, but only the status code was ever logged —
-        // Socrata's error body usually names the exact bad column/syntax.
-        // Log it once so the next run's log shows the real reason instead
-        // of guessing at the SoQL again. Remove once confirmed fixed.
+        // Socrata's error body names the exact bad column/syntax when
+        // something's wrong with the $where clause — worth keeping in
+        // the thrown message rather than just the status code, since
+        // that's exactly what surfaced the issue_date/issued_date typo.
         const body = await res.text();
-        console.log(`[austin-permits-diag] HTTP ${res.status} body: ${body.slice(0, 1000)}`);
         throw new Error(`Austin permits fetch failed: HTTP ${res.status} from ${url.toString()} — ${body.slice(0, 300)}`);
       }
       const rows = (await res.json()) as AustinPermitRow[];
@@ -98,8 +97,8 @@ export const austinPermits: FetcherModule<PermitValue> = {
 
       for (const row of rows) {
         if (!isRoofingRelated(row)) continue; // belt-and-suspenders vs. the $where clause
-        if (!row.permit_number || !row.issued_date) continue;
-        const observedAt = new Date(row.issued_date).toISOString();
+        if (!row.permit_number || !row.issue_date) continue;
+        const observedAt = new Date(row.issue_date).toISOString();
         observations.push({
           observedAt,
           ingestedAt: new Date().toISOString(),

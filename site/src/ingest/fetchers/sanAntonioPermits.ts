@@ -98,18 +98,35 @@ export const sanAntonioPermits: FetcherModule<PermitValue> = {
       );
     }
 
+    // TEMP DIAGNOSTIC (2026-08-24): the column-name fix stopped the throw,
+    // but the real run still came back with 0 matches and no error —
+    // meaning either no row's WORK TYPE/PROJECT NAME contains "roof" in
+    // this window, or every "roof" match failed the date-window check.
+    // Log per-stage counts (mirrors noaaStormEvents.ts's pattern) so the
+    // next real run's log shows which stage actually drops to zero,
+    // plus a few real WORK TYPE/PROJECT NAME values so we can see the
+    // real terminology if "roof" truly doesn't appear. Remove once
+    // confirmed.
+    let afterRoofFilter = 0;
+    let afterDateWindow = 0;
+    const sampleTypeValues = new Set<string>();
+
     const observations: Observation<PermitValue>[] = [];
     for (const row of records) {
       const type = cols.permitType ? row[cols.permitType] : "";
       const description = cols.description ? row[cols.description] : "";
+      if (sampleTypeValues.size < 15 && description) sampleTypeValues.add(description);
       const haystack = `${type} ${description}`.toLowerCase();
       if (!haystack.includes("roof")) continue;
+      afterRoofFilter++;
 
       const rawDate = row[cols.issueDate];
       if (!rawDate) continue;
-      const observedAt = new Date(rawDate).toISOString();
-      if (Number.isNaN(new Date(observedAt).getTime())) continue;
+      const parsedDate = new Date(rawDate);
+      if (Number.isNaN(parsedDate.getTime())) continue;
+      const observedAt = parsedDate.toISOString();
       if (observedAt < since || observedAt > until) continue;
+      afterDateWindow++;
 
       const permitNumber = cols.permitNumber ? row[cols.permitNumber] : undefined;
       const key = permitNumber || `${observedAt}-${(cols.description ? row[cols.description] : "").slice(0, 40)}`;
@@ -128,6 +145,10 @@ export const sanAntonioPermits: FetcherModule<PermitValue> = {
         },
       });
     }
+    console.log(
+      `[sa-permits-diag] ${records.length} total row(s) -> ${afterRoofFilter} after roof filter -> ${afterDateWindow} after date window (since=${since} until=${until})`,
+    );
+    console.log(`[sa-permits-diag] sample WORK TYPE/PROJECT NAME values seen: ${[...sampleTypeValues].join(" | ")}`);
     return observations;
   },
 };
