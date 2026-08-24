@@ -84,7 +84,14 @@ export const austinPermits: FetcherModule<PermitValue> = {
 
       const res = await fetch(url, { headers });
       if (!res.ok) {
-        throw new Error(`Austin permits fetch failed: HTTP ${res.status} from ${url.toString()}`);
+        // TEMP DIAGNOSTIC (2026-08-24): this has thrown HTTP 400 on every
+        // live run so far, but only the status code was ever logged —
+        // Socrata's error body usually names the exact bad column/syntax.
+        // Log it once so the next run's log shows the real reason instead
+        // of guessing at the SoQL again. Remove once confirmed fixed.
+        const body = await res.text();
+        console.log(`[austin-permits-diag] HTTP ${res.status} body: ${body.slice(0, 1000)}`);
+        throw new Error(`Austin permits fetch failed: HTTP ${res.status} from ${url.toString()} — ${body.slice(0, 300)}`);
       }
       const rows = (await res.json()) as AustinPermitRow[];
       if (rows.length === 0) break;

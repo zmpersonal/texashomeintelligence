@@ -8,14 +8,15 @@ import { parseCsv, rowsToRecords } from "../csv";
  * we find the one named "Permits Issued" and download its CSV.
  *
  * The CKAN package id ("building-permits") and the "Permits Issued"
- * resource name are per the task brief; the CSV's actual column headers
- * are not independently verified against a live response from this
- * sandbox (its network policy blocks data.sanantonio.gov). Rather than
- * hardcode a guessed header spelling and risk silently matching nothing
- * (the same class of risk NOAA's CZ_NAME/CZ_FIPS choice was), header
- * resolution below tries several plausible spellings per logical field
- * and picks whichever is actually present — if the first live run comes
- * back empty, log the CSV's real header row first.
+ * resource name are per the task brief. Real header row (confirmed
+ * against a live Actions run): PERMIT TYPE, PERMIT #, PROJECT NAME,
+ * WORK TYPE, ADDRESS, LOCATION, X_COORD, Y_COORD, DATE SUBMITTED,
+ * DATE ISSUED, DECLARED VALUATION, AREA (SF), PRIMARY CONTACT, CD, NCD,
+ * HD — no free-text description column, no status column (every row in
+ * this resource is issued by definition). Header resolution below still
+ * tries several plausible spellings per logical field rather than
+ * hardcoding the exact real names, so a future column rename degrades
+ * gracefully instead of breaking outright.
  */
 const PACKAGE_SHOW_URL = "https://data.sanantonio.gov/api/3/action/package_show?id=building-permits";
 const RESOURCE_NAME_MATCH = /permits?\s*issued/i;
@@ -81,10 +82,15 @@ export const sanAntonioPermits: FetcherModule<PermitValue> = {
     const cols = {
       permitNumber: resolveHeader(records[0], ["PERMIT #", "PERMIT NUMBER", "PERMIT_NUMBER", "PERMITNO", "PERMIT NO"]),
       permitType: resolveHeader(records[0], ["PERMIT TYPE", "PERMIT_TYPE", "PERMITTYPE", "TYPE"]),
-      description: resolveHeader(records[0], ["WORK DESCRIPTION", "DESCRIPTION", "WORK_DESCRIPTION", "SCOPE OF WORK"]),
+      // Real CSV (confirmed live) has no free-text description column at
+      // all — "WORK TYPE" and "PROJECT NAME" are the closest proxies for
+      // scope-of-work text to filter/display.
+      description: resolveHeader(records[0], ["WORK TYPE", "PROJECT NAME", "WORK DESCRIPTION", "DESCRIPTION", "WORK_DESCRIPTION", "SCOPE OF WORK"]),
       status: resolveHeader(records[0], ["STATUS", "PERMIT STATUS", "PERMIT_STATUS"]),
-      issueDate: resolveHeader(records[0], ["ISSUE DATE", "ISSUED DATE", "ISSUE_DATE", "ISSUED_DATE", "APPROVED DATE"]),
-      valuation: resolveHeader(records[0], ["VALUATION", "JOB VALUATION", "ESTIMATED COST", "PROJECT VALUATION"]),
+      // Real header is "DATE ISSUED" (word order reversed from the
+      // original guess "ISSUE DATE"/"ISSUED DATE") — confirmed live.
+      issueDate: resolveHeader(records[0], ["DATE ISSUED", "ISSUE DATE", "ISSUED DATE", "ISSUE_DATE", "ISSUED_DATE", "APPROVED DATE", "DATE SUBMITTED"]),
+      valuation: resolveHeader(records[0], ["DECLARED VALUATION", "VALUATION", "JOB VALUATION", "ESTIMATED COST", "PROJECT VALUATION"]),
     };
     if (!cols.issueDate) {
       throw new Error(
@@ -115,7 +121,9 @@ export const sanAntonioPermits: FetcherModule<PermitValue> = {
         value: {
           permitType: type || "Roofing",
           workDescription: description?.slice(0, 300),
-          status: (cols.status ? row[cols.status] : "") || "Unknown",
+          // No status column exists in the real CSV — this resource is
+          // specifically "Permits Issued", so every row is issued by definition.
+          status: (cols.status ? row[cols.status] : "") || "Issued",
           valuationUsd: parseValuation(cols.valuation ? row[cols.valuation] : undefined),
         },
       });
