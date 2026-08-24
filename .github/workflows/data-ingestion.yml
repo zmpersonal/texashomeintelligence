@@ -59,7 +59,15 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/generated/ public/images/drought/
+          git add src/data/generated/
+          # fetch-drought-map.ts is non-fatal and may not have written
+          # anything (e.g. no matching map found this run) -- `git add`
+          # on a path with nothing to add errors out and would otherwise
+          # abort this whole step, silently dropping the real dataset
+          # commits above. Only add it if it actually exists.
+          if [ -d public/images/drought ]; then
+            git add public/images/drought/
+          fi
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
