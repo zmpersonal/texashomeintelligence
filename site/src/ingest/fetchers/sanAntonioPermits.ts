@@ -23,7 +23,9 @@ const RESOURCE_NAME_MATCH = /permits?\s*issued/i;
 
 interface CkanPackageShowResponse {
   success: boolean;
-  result?: { resources?: { name?: string; url?: string; format?: string }[] };
+  result?: {
+    resources?: { name?: string; url?: string; format?: string; last_modified?: string; created?: string }[];
+  };
 }
 
 async function findPermitsIssuedCsvUrl(): Promise<string> {
@@ -35,6 +37,16 @@ async function findPermitsIssuedCsvUrl(): Promise<string> {
   if (!body.success || !body.result?.resources) {
     throw new Error(`San Antonio CKAN package_show returned no resources for "building-permits"`);
   }
+  // TEMP DIAGNOSTIC (2026-08-24): the "Permits Issued" resource's newest
+  // roofing permit is from 2024-12-31, over a year stale. Before
+  // concluding that's just how this feed is, log every resource's
+  // name/last_modified/created so we can see whether a fresher resource
+  // exists under a different name. Remove once confirmed either way.
+  console.log(
+    `[sa-permits-diag] all resources in "building-permits" package: ${body.result.resources
+      .map((r) => `name="${r.name}" format=${r.format} last_modified=${r.last_modified} created=${r.created}`)
+      .join(" ||| ")}`,
+  );
   const resource = body.result.resources.find((r) => r.name && RESOURCE_NAME_MATCH.test(r.name));
   if (!resource?.url) {
     const names = body.result.resources.map((r) => r.name).join(", ");
