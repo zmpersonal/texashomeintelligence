@@ -18,7 +18,7 @@ conditions:
   - label: "Drought / tree & foundation stress"
     value:
       status: sample
-    note: "Will track TWDB/TexMesonet drought data once the live feed is connected."
+    note: "Will track U.S. Drought Monitor data once the live feed is connected."
   - label: "Mechanical & roofing permit activity"
     value:
       status: sample

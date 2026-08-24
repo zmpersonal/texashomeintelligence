@@ -1,5 +1,6 @@
 import { gunzipSync } from "node:zlib";
 import type { FetcherModule, Observation } from "../types";
+import { parseCsv, rowsToRecords } from "../csv";
 
 export interface StormEventValue {
   eventType: "Hail" | "Wind" | "Tornado" | "Flood";
@@ -70,54 +71,6 @@ async function fetchYearCsv(url: string): Promise<string> {
   // ever runs under plain Node (via tsx), but astro check still resolves
   // this whole file's types since .astro pages import a type from it.
   return new TextDecoder("utf-8").decode(gunzipSync(gzipped));
-}
-
-// --- CSV parsing (RFC4180-ish: quoted fields, embedded commas/quotes/newlines) ---
-
-function parseCsv(text: string): string[][] {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let field = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (inQuotes) {
-      if (c === '"') {
-        if (text[i + 1] === '"') {
-          field += '"';
-          i++;
-        } else {
-          inQuotes = false;
-        }
-      } else {
-        field += c;
-      }
-    } else if (c === '"') {
-      inQuotes = true;
-    } else if (c === ",") {
-      row.push(field);
-      field = "";
-    } else if (c === "\n" || c === "\r") {
-      if (c === "\r" && text[i + 1] === "\n") i++;
-      row.push(field);
-      field = "";
-      if (row.length > 1 || row[0] !== "") rows.push(row);
-      row = [];
-    } else {
-      field += c;
-    }
-  }
-  if (field !== "" || row.length > 0) {
-    row.push(field);
-    rows.push(row);
-  }
-  return rows;
-}
-
-function rowsToRecords(rows: string[][]): Record<string, string>[] {
-  const [header, ...body] = rows;
-  return body.map((r) => Object.fromEntries(header.map((h, i) => [h, r[i] ?? ""])));
 }
 
 // --- row -> Observation<StormEventValue> ------------------------------

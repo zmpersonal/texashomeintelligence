@@ -10,9 +10,9 @@ import { nwsAustin } from "./fetchers/nws";
 import { noaaClimate } from "./fetchers/noaaClimate";
 import { femaFlood } from "./fetchers/femaFlood";
 import { tdiLosses } from "./fetchers/tdiLosses";
-import { twdbDrought } from "./fetchers/twdbDrought";
+import { usdmAustin, usdmSanAntonio } from "./fetchers/usdm";
 import { usdaSoil } from "./fetchers/usdaSoil";
-import { airnow } from "./fetchers/airnow";
+import { airnowAustin, airnowSanAntonio } from "./fetchers/airnow";
 import { censusAcs } from "./fetchers/censusAcs";
 import { blsWages } from "./fetchers/blsWages";
 import { ercot } from "./fetchers/ercot";
@@ -53,14 +53,19 @@ export const REGISTRY: RegistryEntry[] = [
   entry("deep", sanAntonioPermits),
   entry("deep", eiaElectricityPrice),
 
-  // --- stub: interface + TODO fetchRaw + a minimal sample file ---
+  // --- stub tier: minimal 1-row seed, but most of these now have real
+  // fetchRaw() implementations (Seam 1 round 2) — "stub" here describes
+  // the seed richness, not whether the fetch is real. noaaClimate,
+  // tdiLosses, ercot, txForestService remain true TODO stubs.
   entry("stub", nwsAustin),
   entry("stub", noaaClimate),
   entry("stub", femaFlood),
   entry("stub", tdiLosses),
-  entry("stub", twdbDrought),
+  entry("stub", usdmAustin),
+  entry("stub", usdmSanAntonio),
   entry("stub", usdaSoil),
-  entry("stub", airnow),
+  entry("stub", airnowAustin),
+  entry("stub", airnowSanAntonio),
   entry("stub", censusAcs),
   entry("stub", blsWages),
   entry("stub", ercot),

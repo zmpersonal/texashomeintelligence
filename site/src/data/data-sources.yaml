@@ -3,7 +3,7 @@
   org: "National Weather Service"
   primaryUse: "Current forecast, observations, alerts"
   thiOutput: "Fast-changing weather context and derived heat/freeze/storm indicators"
-  status: sample
+  status: live
   priority: true
 
 - id: noaa-climate
@@ -19,7 +19,7 @@
   org: "NOAA"
   primaryUse: "Hail, wind, tornado, severe event history"
   thiOutput: "Roof/storm exposure and event context"
-  status: sample
+  status: live
   priority: true
 
 - id: fema-nfhl
@@ -27,15 +27,15 @@
   org: "FEMA"
   primaryUse: "Flood hazard context"
   thiOutput: "Flood/water/mold context; do not overstate probability"
-  status: stub
+  status: live
   priority: false
 
 - id: municipal-permits
   name: "Local Municipal Permit Feeds"
-  org: "City of Austin / City of San Antonio (Socrata)"
+  org: "City of Austin (Socrata) / City of San Antonio (CKAN)"
   primaryUse: "Mechanical, plumbing, electrical, building, roofing/tree where available"
   thiOutput: "Service activity, permit trends, and timing proxies"
-  status: sample
+  status: live
   priority: true
 
 - id: tdi-losses
@@ -46,12 +46,12 @@
   status: stub
   priority: false
 
-- id: twdb-texmesonet
-  name: "TWDB / TexMesonet"
-  org: "Texas Water Development Board"
-  primaryUse: "Drought, rainfall, water/weather observations"
+- id: usdm-drought
+  name: "U.S. Drought Monitor"
+  org: "National Drought Mitigation Center / USDA / NOAA"
+  primaryUse: "County-level drought category (D0-D4)"
   thiOutput: "Tree, foundation, moisture, and water context"
-  status: stub
+  status: live
   priority: false
 
 - id: usda-soil
@@ -59,7 +59,7 @@
   org: "USDA"
   primaryUse: "Soil/drainage/interpretations"
   thiOutput: "Tree/foundation/landscape context"
-  status: stub
+  status: live
   priority: false
 
 - id: airnow
@@ -67,7 +67,7 @@
   org: "EPA"
   primaryUse: "Air Quality Index / smoke"
   thiOutput: "HVAC/filtration and fire/smoke context"
-  status: stub
+  status: live
   priority: false
 
 - id: census-acs
@@ -75,7 +75,7 @@
   org: "US Census Bureau"
   primaryUse: "Housing stock / age / structure"
   thiOutput: "Local housing context"
-  status: stub
+  status: live
   priority: false
 
 - id: bls
@@ -83,7 +83,7 @@
   org: "Bureau of Labor Statistics"
   primaryUse: "Trade wages / cost indicators"
   thiOutput: "Repair-cost pressure indexes"
-  status: stub
+  status: live
   priority: false
 
 - id: eia-electricity
@@ -91,7 +91,7 @@
   org: "US Energy Information Administration"
   primaryUse: "Texas residential electricity prices"
   thiOutput: "HVAC operating-cost context"
-  status: sample
+  status: live
   priority: true
 
 - id: ercot

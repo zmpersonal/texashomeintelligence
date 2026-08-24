@@ -128,7 +128,7 @@ const GENERATORS: Record<string, Generator> = {
   "noaa-climate": single({ normalHighF: 95, normalLowF: 73 }),
   "fema-nfhl": single({ floodZone: "X (SAMPLE)", note: "SAMPLE — illustrative, not a real parcel lookup." }),
   "tdi-losses": single({ lossType: "Wind/Hail", claimsPaidUsd: 482_000 }),
-  "twdb-texmesonet": single({ droughtIndex: "D1 — Moderate Drought (SAMPLE)", rainfallInches: 1.8 }),
+  "usdm-drought": single({ droughtIndex: "D1 — Moderate Drought (SAMPLE)", rainfallInches: 1.8 }),
   "usda-soil": single({ soilType: "SAMPLE clay loam", drainageClass: "Moderately well drained", shrinkSwellPotential: "Moderate" }),
   airnow: single({ aqi: 42, category: "Good" }),
   "census-acs": single({ medianHomeAgeYears: 34, ownerOccupiedPct: 58 }),

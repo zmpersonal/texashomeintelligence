@@ -11,7 +11,7 @@ import FaqAccordion from "../components/FaqAccordion.astro";
 import type { DatasetFile } from "../ingest/types";
 import type { StormEventValue } from "../ingest/fetchers/noaaStormEvents";
 import type { PermitValue } from "../ingest/fetchers/austinPermits";
-import type { DroughtValue } from "../ingest/fetchers/twdbDrought";
+import type { DroughtValue } from "../ingest/fetchers/usdm";
 
 // Reuse the same normalized dataset files the Austin roofing data page
 // reads (src/data/generated/**, built by the Phase 5 ingestion
@@ -22,7 +22,7 @@ import type { DroughtValue } from "../ingest/fetchers/twdbDrought";
 import stormDataRaw from "../data/generated/noaa-storm-events/austin.json";
 import permitsAustinRaw from "../data/generated/municipal-permits/austin.json";
 import permitsSanAntonioRaw from "../data/generated/municipal-permits/san-antonio.json";
-import droughtDataRaw from "../data/generated/twdb-texmesonet/austin.json";
+import droughtDataRaw from "../data/generated/usdm-drought/austin.json";
 
 const stormData = stormDataRaw as DatasetFile<StormEventValue>;
 const permitsAustin = permitsAustinRaw as DatasetFile<PermitValue>;
@@ -87,7 +87,7 @@ const homeownerGuides = [
 
 const primarySources = [
   { title: "Weather & Climate", items: ["NWS", "NOAA"] },
-  { title: "Texas Water & Drought", items: ["TWDB", "TexMesonet"] },
+  { title: "Texas Water & Drought", items: ["U.S. Drought Monitor"] },
   { title: "Hazards", items: ["FEMA", "Texas A&M Forest Service"] },
   { title: "Housing & Permits", items: ["Census", "City / municipal permit systems"] },
   { title: "Insurance", items: ["Texas Department of Insurance"] },
@@ -233,7 +233,7 @@ const description =
         <div class="card data-card">
           <DataStatus status={droughtData.status} asOf={droughtAsOf} source={droughtData.source.name} />
           <p class="metric-label" style="margin-top:8px;">Drought &amp; tree/foundation stress</p>
-          <p class="metric-note">{latestDrought ?? "Illustrative — will track TWDB/TexMesonet data."}</p>
+          <p class="metric-note">{latestDrought ?? "Illustrative — will track U.S. Drought Monitor data."}</p>
         </div>
       </div>
     </div>

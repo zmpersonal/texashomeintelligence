@@ -1,0 +1,24 @@
+{
+  "datasetId": "usdm-drought",
+  "location": "austin",
+  "methodologyVersion": "v1",
+  "status": "sample",
+  "lastAttemptAt": null,
+  "lastSuccessAt": null,
+  "lastError": null,
+  "source": {
+    "name": "U.S. Drought Monitor",
+    "url": "https://droughtmonitor.unl.edu"
+  },
+  "observations": [
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-24T07:24:14.940Z",
+      "key": "2026-07",
+      "value": {
+        "droughtIndex": "D1 — Moderate Drought (SAMPLE)",
+        "rainfallInches": 1.8
+      }
+    }
+  ]
+}

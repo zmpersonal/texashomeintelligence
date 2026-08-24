@@ -70,10 +70,10 @@ on disk is honestly marked `"sample"`.
 
 | Feed | Fetcher file | `fetchRaw()` | Env var(s) | Generated file(s) |
 |---|---|---|---|---|
-| NOAA Storm Events ✅ **implemented** | `site/src/ingest/fetchers/noaaStormEvents.ts` | `makeFetcher("austin"\|"san-antonio")` → exports `noaaStormEventsAustin`, `noaaStormEventsSanAntonio` | none (NOAA bulk data is keyless) | `noaa-storm-events/austin.json`, `noaa-storm-events/san-antonio.json` |
-| Austin municipal permits (Socrata) | `site/src/ingest/fetchers/austinPermits.ts` | exports `austinPermits` | `SOCRATA_APP_TOKEN` (optional — raises the anonymous rate limit, not required to fetch at all) | `municipal-permits/austin.json` |
-| San Antonio municipal permits | `site/src/ingest/fetchers/sanAntonioPermits.ts` | exports `sanAntonioPermits` | none confirmed yet — verify which platform (Socrata vs. ArcGIS) San Antonio's portal actually uses before assuming Austin's shape | `municipal-permits/san-antonio.json` |
-| EIA TX residential electricity price | `site/src/ingest/fetchers/eiaElectricityPrice.ts` | exports `eiaElectricityPrice` | `EIA_API_KEY` (free instant signup) | `eia-electricity/texas.json` |
+| NOAA Storm Events ✅ **implemented, verified live** | `site/src/ingest/fetchers/noaaStormEvents.ts` | `makeFetcher("austin"\|"san-antonio")` → exports `noaaStormEventsAustin`, `noaaStormEventsSanAntonio` | none (NOAA bulk data is keyless) | `noaa-storm-events/austin.json`, `noaa-storm-events/san-antonio.json` |
+| Austin municipal permits (Socrata) ✅ **implemented** | `site/src/ingest/fetchers/austinPermits.ts` | exports `austinPermits` | `SOCRATA_APP_TOKEN` (optional — raises the anonymous rate limit, not required to fetch at all) | `municipal-permits/austin.json` |
+| San Antonio municipal permits (CKAN) ✅ **implemented** | `site/src/ingest/fetchers/sanAntonioPermits.ts` | exports `sanAntonioPermits` | none (keyless CKAN, not Socrata) | `municipal-permits/san-antonio.json` |
+| EIA TX residential electricity price ✅ **implemented** | `site/src/ingest/fetchers/eiaElectricityPrice.ts` | exports `eiaElectricityPrice` | `EIA_API_KEY` (free instant signup) | `eia-electricity/texas.json` |
 
 Verified for real (not just written): a standalone test run of
 `runIngestion` against a fake fetcher proved the full state machine —
@@ -95,6 +95,51 @@ Permits and EIA electricity price don't have a data-detail page yet — no
 page reads `municipal-permits/*.json` or `eia-electricity/texas.json`
 yet; building those pages is a Phase 2-style template addition, not part
 of this seam.
+
+**Austin permits** (Socrata SODA, dataset `3syk-w9eu` "Issued Construction
+Permits"): filters via a `$where` SoQL clause matching `work_class` /
+`permit_type_desc` / `description` against "roof", paginated 5,000 rows
+at a time, keyed by `permit_number`. `PermitValue` gained an optional
+`valuationUsd` field (backward-compatible — existing seeded sample rows
+don't set it). Column names are Austin's documented Socrata schema but
+**not independently verified live** (sandbox network policy blocks
+`data.austintexas.gov`) — if the first live run comes back empty, check
+these column names first.
+
+**San Antonio permits** (CKAN, NOT Socrata, keyless): resolves
+`package_show?id=building-permits`, finds the resource named "Permits
+Issued", downloads and parses its CSV (shared parser, see below). Since
+the CSV's real header spelling isn't confirmed live, header resolution
+tries several plausible spellings per logical field (permit number,
+type, description, status, issue date, valuation) and uses whichever is
+actually present — same defensive posture as NOAA's county-field risk,
+for the same reason.
+
+**Shared CSV parser extracted**: `site/src/ingest/csv.ts` now holds the
+RFC4180-ish parser (quoted fields, embedded commas/quotes/newlines) that
+NOAA Storm Events originally had inline — San Antonio permits needs the
+identical logic, so it's a shared module now, not two copies.
+
+### Round 2 — nine more feeds wired (real `fetchRaw()`, not stubs)
+
+All nine below were implemented from documented API shapes but **could
+not be verified against a live response from this sandbox** — its
+network policy blocks every one of these hosts. Each file's doc comment
+says exactly what to check first if the first live GitHub Actions run
+comes back empty for that feed, rather than guessing blind a second
+time. `ercot.ts`, `tdiLosses.ts`, `txForestService.ts`, and
+`noaaClimate.ts` remain untouched TODO stubs (endpoint unconfirmed, or
+need a key not yet provided).
+
+| Feed | Fetcher file | Real fetch | Env var(s) | Notes |
+|---|---|---|---|---|
+| NWS forecast/alerts | `nws.ts` | `/points` → forecast periods + `/alerts/active` | none (needs descriptive `User-Agent`, not a token) | Current-conditions feed, doesn't backfill the window — one observation per run |
+| FEMA / NFHL flood zone | `femaFlood.ts` | ArcGIS REST point-in-polygon query, layer 28 ("Flood Hazard Zones") | none | Layer id not verified live; static per-point data, one observation per calendar month |
+| USDA Soil Data Access | `usdaSoil.ts` | SDA Tabular `POST` query (`SDA_Get_Mukey_from_intersection_with_WktWgs84`) | none | `shrinkSwellPotential` deliberately left `undefined` — the real interpretation-table join isn't confirmed; only `soilType`/`drainageClass` (verified SSURGO columns) are populated |
+| AirNow AQI ✅ **now Austin + San Antonio** | `airnow.ts` | current-observation endpoint by zip, worst pollutant reported | `AIRNOW_API_KEY` (required) | Expanded from Austin-only per this round's ask; new registry entries `airnowAustin`/`airnowSanAntonio` |
+| Census ACS housing stock | `censusAcs.ts` | ACS 5-year detailed table, Travis County | `CENSUS_API_KEY` (optional) | Vintage pinned to 2023 as a constant — TODO(owner): bump yearly once the next vintage is confirmed released |
+| BLS OEWS trade wages | `blsWages.ts` | Public Data API v2, plumbers median hourly wage, Austin MSA | `BLS_API_KEY` (optional) | **Highest-uncertainty fetcher in this batch** — the OEWS series id (`OEUM001242000000047215208`) is assembled from documented series-id conventions, not confirmed against a live response. If status isn't `REQUEST_SUCCEEDED` or the series is empty, look up the real id at https://data.bls.gov/PDQWeb/oe before re-guessing |
+| U.S. Drought Monitor ✅ **replaces the TWDB/TexMesonet stub** | `usdm.ts` (new; `twdbDrought.ts` deleted) | `GetDroughtSeverityStatisticsByAreaPercent`, county FIPS (Travis 48453, Bexar 48029) | none | Dataset id renamed `twdb-texmesonet` → `usdm-drought`; now two locations (`usdm-drought/austin.json`, `usdm-drought/san-antonio.json`); reduces each week's D0-D4 percent-of-area breakdown to a single worst-category label — documented simplification, not fabrication |
 
 **NOAA Storm Events `fetchRaw()` is now real, not a stub** — the endpoint
 that was corrected in this round (the original stub referenced the
@@ -136,43 +181,35 @@ The first live run surfaced two bugs, both fixed:
    genuine prior live/stale evidence, not just sample rows. This affects
    every "deep" tier feed seeded with sample history, not just NOAA.
 
-### Stub tier — same schema/pipeline, single illustrative sample row, `fetchRaw()` fully unimplemented
+### Stub tier — genuinely still unimplemented (`fetchRaw()` throws a TODO)
 
 | Feed | Fetcher file | Env var(s) | Generated file |
 |---|---|---|---|
-| NWS (forecast/observations/alerts) | `site/src/ingest/fetchers/nws.ts` | none (NWS API is keyless; needs a descriptive `User-Agent` header per its terms of use, not a token) | `nws-api/austin.json` |
 | NOAA Climate Data Online (normals) | `site/src/ingest/fetchers/noaaClimate.ts` | `NOAA_CDO_TOKEN` (not yet requested — add it if you implement this one) | `noaa-climate/austin.json` |
-| FEMA / NFHL | `site/src/ingest/fetchers/femaFlood.ts` | none | `fema-nfhl/austin.json` |
 | Texas Dept. of Insurance (wind/hail, fire, water loss) | `site/src/ingest/fetchers/tdiLosses.ts` | none confirmed — TDI publishes as periodic data calls, not a standing API | `tdi-losses/austin.json` |
-| TWDB / TexMesonet | `site/src/ingest/fetchers/twdbDrought.ts` | none | `twdb-texmesonet/austin.json` |
-| USDA Soil Data Access | `site/src/ingest/fetchers/usdaSoil.ts` | none | `usda-soil/austin.json` |
-| AirNow | `site/src/ingest/fetchers/airnow.ts` | `AIRNOW_API_KEY` | `airnow/austin.json` |
-| Census ACS | `site/src/ingest/fetchers/censusAcs.ts` | `CENSUS_API_KEY` (optional) | `census-acs/austin.json` |
-| BLS (OEWS trade wages) | `site/src/ingest/fetchers/blsWages.ts` | `BLS_API_KEY` (optional) | `bls/austin.json` |
 | ERCOT | `site/src/ingest/fetchers/ercot.ts` | none confirmed — no single documented REST API, some data is CSV/XML downloads | `ercot/texas.json` |
 | Texas A&M Forest Service | `site/src/ingest/fetchers/txForestService.ts` | none confirmed — verify a machine-readable feed exists before assuming one | `tx-forest-service/texas.json` |
 
-These 11 are single-location samples (one representative city/statewide,
-not both Austin and San Antonio) — narrower than the deep tier
-deliberately, per this phase's scope. Extending one to full Austin + San
-Antonio coverage is part of "implement the real fetcher," not a separate
-step: add a second `RegistryEntry` in `site/src/ingest/registry.ts`
-(follow the `noaaStormEventsAustin`/`noaaStormEventsSanAntonio` pattern)
-once there's a second location's worth of real data to fetch.
+The other 11 feeds that used to be single-location stub-tier samples
+(NWS, FEMA/NFHL, USDA Soil, AirNow, Census ACS, BLS, U.S. Drought
+Monitor) now have real `fetchRaw()` bodies — see "Round 2" above. AirNow
+and U.S. Drought Monitor were expanded to both Austin + San Antonio; NWS,
+FEMA/NFHL, USDA Soil, Census ACS, and BLS remain single-location
+(Austin/Travis) per this round's scope — extending one to San Antonio
+too is the same "add a second `RegistryEntry`" pattern as
+`noaaStormEventsAustin`/`noaaStormEventsSanAntonio`, whenever that's
+asked for.
 
-### A note on `nws-api`'s status in `src/data/data-sources.yaml`
+### A note on `data-sources.yaml`'s `status` field
 
-That registry (built in Phase 1) marks `nws-api` `priority: true` /
-`status: "sample"`, matching CLAUDE.md's original "go deep on NOAA Storm
-Events **+ NWS**" framing. This phase's instructions named exactly three
-feeds for deep treatment — NOAA Storm Events, Austin/San Antonio permits,
-EIA electricity — and NWS landed in the stub tier instead. Both facts
-are true at once and don't conflict: `data-sources.yaml`'s `status:
-"sample"` describes what's shown on the data-catalog page (accurate —
-nothing here is fabricated as live), while the *ingestion pipeline's*
-depth for NWS specifically is stub-tier until you ask for it to be
-deepened. Flagging this explicitly so the mismatch doesn't look like an
-oversight.
+`status` here describes whether a feed's `fetchRaw()` is real code (not
+whether the GitHub secret it needs is actually set, or whether a given
+`DatasetFile` on disk is currently `"live"` — that's the per-file runtime
+status, a separate concept). It's now `"live"` for every feed with a real
+`fetchRaw()` implementation, including the nine wired in Round 2 —
+`noaa-climate`, `tdi-losses`, `ercot`, and `tx-forest-service` are the
+only ids still `"stub"`, matching the fetcher files that are still true
+TODO stubs.
 
 ---
 
