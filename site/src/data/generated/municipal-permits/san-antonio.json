@@ -3,9 +3,9 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-24T03:27:18.574Z",
+  "lastAttemptAt": "2026-08-24T10:02:56.973Z",
   "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"municipal-permits/san-antonio\" is not implemented yet. Requested window 2025-08-24T03:27:18.574Z .. 2026-08-24T03:27:18.574Z.",
+  "lastError": "San Antonio permits CSV: couldn't find an issue-date column among headers: PERMIT TYPE, PERMIT #, PROJECT NAME, WORK TYPE, ADDRESS, LOCATION, X_COORD, Y_COORD, DATE SUBMITTED, DATE ISSUED, DECLARED VALUATION, AREA (SF), PRIMARY CONTACT, CD, NCD, HD",
   "source": {
     "name": "City of San Antonio Permits Open Data",
     "url": "https://data.sanantonio.gov/"

@@ -2,15 +2,24 @@
   "datasetId": "bls",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "sample",
-  "lastAttemptAt": "2026-08-24T03:27:18.576Z",
-  "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"bls/austin\" is not implemented yet. Requested window 2025-08-24T03:27:18.576Z .. 2026-08-24T03:27:18.576Z.",
+  "status": "live",
+  "lastAttemptAt": "2026-08-24T10:03:08.462Z",
+  "lastSuccessAt": "2026-08-24T10:03:08.462Z",
+  "lastError": null,
   "source": {
     "name": "BLS Occupational Employment and Wage Statistics",
     "url": "https://www.bls.gov/oes/"
   },
   "observations": [
+    {
+      "observedAt": "2025-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-24T10:03:08.743Z",
+      "key": "OEUM001242000000047215208-2025",
+      "value": {
+        "trade": "Plumbers, Pipefitters, and Steamfitters (Austin-Round Rock-Georgetown MSA)",
+        "medianHourlyWageUsd": 30.2
+      }
+    },
     {
       "observedAt": "2026-07-01T00:00:00.000Z",
       "ingestedAt": "2026-08-23T07:05:17.617Z",

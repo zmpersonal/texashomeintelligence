@@ -3,9 +3,9 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": null,
+  "lastAttemptAt": "2026-08-24T10:03:06.656Z",
   "lastSuccessAt": null,
-  "lastError": null,
+  "lastError": "Unexpected token '<', \"\r\n\r\n<!DOCTYPE \"... is not valid JSON",
   "source": {
     "name": "U.S. Drought Monitor",
     "url": "https://droughtmonitor.unl.edu"

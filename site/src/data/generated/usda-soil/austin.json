@@ -2,10 +2,10 @@
   "datasetId": "usda-soil",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "sample",
-  "lastAttemptAt": "2026-08-24T03:27:18.576Z",
-  "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"usda-soil/austin\" is not implemented yet. Requested window 2025-08-24T03:27:18.576Z .. 2026-08-24T03:27:18.576Z.",
+  "status": "live",
+  "lastAttemptAt": "2026-08-24T10:03:06.958Z",
+  "lastSuccessAt": "2026-08-24T10:03:06.958Z",
+  "lastError": null,
   "source": {
     "name": "USDA Soil Data Access",
     "url": "https://sdmdataaccess.nrcs.usda.gov"
@@ -19,6 +19,14 @@
         "soilType": "SAMPLE clay loam",
         "drainageClass": "Moderately well drained",
         "shrinkSwellPotential": "Moderate"
+      }
+    },
+    {
+      "observedAt": "2026-08-24T10:03:07.209Z",
+      "ingestedAt": "2026-08-24T10:03:07.209Z",
+      "key": "2026-08",
+      "value": {
+        "soilType": "Urban land, 0 to 6 percent slopes"
       }
     }
   ]
