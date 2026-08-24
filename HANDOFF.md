@@ -165,11 +165,43 @@ back needing fixes, both applied:
    `YYYYMMDD` form assumed. Both counties are now genuinely `"live"`
    with 54 weeks of real history (e.g. Travis: D2 Severe Drought, 10% of
    county; Bexar: D1 Moderate Drought, 32% of county).
-2. **Austin/San Antonio permits** — Austin's Socrata `$where` clause got
-   HTTP 400 (a SoQL syntax issue in the filter, not yet root-caused); San
-   Antonio's CSV headers are `PERMIT TYPE`, `PERMIT #`, `DATE SUBMITTED`,
-   `DATE ISSUED` (not `ISSUE DATE`, which the header-resolver was looking
-   for). **Not fixed yet** — flagged for the next round.
+2. **Austin/San Antonio permits** ✅ **fixed and verified live** — three
+   real bugs, each found by capturing real evidence from a live Actions
+   run rather than guessing twice:
+   - **Austin**: every run threw HTTP 400. The Socrata error body (once
+     actually logged instead of just the status code) named the real
+     column list — the date column is `issue_date`, not `issued_date` as
+     originally guessed, a one-character typo. Fixed with a project-wide
+     find/replace. Verified live: 1,881 real roofing permits fetched,
+     1,893 total after merge.
+   - **San Antonio, header mismatch**: the real CSV header is `DATE
+     ISSUED` (word order reversed from the original `ISSUE DATE`/`ISSUED
+     DATE` guesses), and there's no free-text description or status
+     column at all — `WORK TYPE`/`PROJECT NAME` are the closest
+     scope-of-work proxies, and every row in the "Permits Issued"
+     resource is issued by definition, so status now defaults to
+     `"Issued"`. Fixed by adding the real header spellings to the
+     candidate lists. Also fixed a latent bug spotted along the way:
+     `new Date(rawDate).toISOString()` threw a `RangeError` on any
+     unparseable date instead of being skipped like the surrounding
+     checks intend — now checks `isNaN` first.
+   - **San Antonio, wrong resource**: after the header fix, every run
+     still came back with 0 matches in the trailing-365-day window, with
+     18,777 real roofing-permit rows found but all older than the
+     window. Two rounds of diagnostic logging (per-stage counts, sample
+     matches, then a max-parsed-date tracker across every match) proved
+     this wasn't a parsing bug — the newest matching permit was
+     genuinely dated 2024-12-31. The real root cause: the CKAN
+     `building-permits` package has **two** resources whose name matches
+     a loose "permits issued" pattern — `"PERMITS ISSUED 2020-2024"` (a
+     frozen historical archive) and `"PERMITS ISSUED"` (the actually-
+     current one, `last_modified` within the same week as the query).
+     `findPermitsIssuedCsvUrl()`'s `.find()` was silently picking
+     whichever came first in the API's resource array, which happened to
+     be the archive. Fixed by collecting every name match and picking the
+     one with the latest `last_modified` instead of the first regex
+     match. Verified live: 5,077 real roofing permits fetched, 5,082
+     total after merge.
 3. **`femaFlood.ts`** — HTTP 404 on the NFHL MapServer layer 28 query,
    meaning layer 28 isn't "Flood Hazard Zones" on this MapServer instance
    (or the whole path is wrong). **Not fixed yet** — flagged for the next
