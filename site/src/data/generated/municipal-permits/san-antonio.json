@@ -3,7 +3,7 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-24T15:18:58.037Z",
+  "lastAttemptAt": "2026-08-24T15:25:30.353Z",
   "lastSuccessAt": null,
   "lastError": "San Antonio permits CSV: couldn't find an issue-date column among headers: PERMIT TYPE, PERMIT #, PROJECT NAME, WORK TYPE, ADDRESS, LOCATION, X_COORD, Y_COORD, DATE SUBMITTED, DATE ISSUED, DECLARED VALUATION, AREA (SF), PRIMARY CONTACT, CD, NCD, HD",
   "source": {

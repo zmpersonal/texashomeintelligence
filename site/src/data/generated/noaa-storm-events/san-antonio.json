@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-08-24T15:18:54.607Z",
-  "lastSuccessAt": "2026-08-24T15:18:54.607Z",
+  "lastAttemptAt": "2026-08-24T15:25:27.203Z",
+  "lastSuccessAt": "2026-08-24T15:25:27.203Z",
   "lastError": null,
   "source": {
     "name": "NOAA Storm Events Database",
