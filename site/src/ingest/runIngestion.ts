@@ -70,6 +70,23 @@ export async function runIngestion<T>(
 
   try {
     const fresh = await fetcher.fetchRaw({ env: process.env, window });
+    const wasEverLive = existing.status === "live" || existing.status === "stale";
+
+    // A fetch that threw nothing but came back with zero raw records is
+    // only real evidence of a working live feed if this dataset has *some*
+    // prior live evidence. Otherwise every observation on file is still
+    // seeded sample data, and flipping status to "live" here would present
+    // sample rows as if a real fetch had produced them — never do that.
+    if (fresh.length === 0 && !wasEverLive) {
+      return failAttempt(
+        fetcher,
+        filePath,
+        existing,
+        now,
+        "fetchRaw returned 0 raw records with no prior live/stale evidence for this dataset — leaving status unchanged rather than reporting sample data as live.",
+      );
+    }
+
     const observations = mergeObservations(existing.observations, fresh);
     const updated: DatasetFile<T> = {
       ...existing,

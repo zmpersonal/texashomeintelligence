@@ -2,9 +2,9 @@
   "datasetId": "noaa-storm-events",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-08-24T02:42:14.576Z",
-  "lastSuccessAt": "2026-08-24T02:42:14.576Z",
+  "status": "sample",
+  "lastAttemptAt": null,
+  "lastSuccessAt": null,
   "lastError": null,
   "source": {
     "name": "NOAA Storm Events Database",
