@@ -3,9 +3,9 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-24T03:24:19.511Z",
+  "lastAttemptAt": "2026-08-24T03:27:18.576Z",
   "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"census-acs/austin\" is not implemented yet. Requested window 2026-07-01T00:00:00.000Z .. 2026-08-24T03:24:19.511Z.",
+  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"census-acs/austin\" is not implemented yet. Requested window 2025-08-24T03:27:18.576Z .. 2026-08-24T03:27:18.576Z.",
   "source": {
     "name": "Census ACS",
     "url": "https://www.census.gov/data/developers/data-sets/acs-5year.html"

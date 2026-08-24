@@ -2,10 +2,10 @@
   "datasetId": "noaa-storm-events",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "sample",
-  "lastAttemptAt": "2026-08-24T03:24:14.256Z",
-  "lastSuccessAt": null,
-  "lastError": "fetchRaw returned 0 raw records with no prior live/stale evidence for this dataset — leaving status unchanged rather than reporting sample data as live.",
+  "status": "live",
+  "lastAttemptAt": "2026-08-24T03:26:59.013Z",
+  "lastSuccessAt": "2026-08-24T03:26:59.013Z",
+  "lastError": null,
   "source": {
     "name": "NOAA Storm Events Database",
     "url": "https://www.ncdc.noaa.gov/stormevents/"
@@ -34,6 +34,28 @@
       }
     },
     {
+      "observedAt": "2025-10-24T22:45:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:05.318Z",
+      "key": "1297321",
+      "value": {
+        "eventType": "Tornado",
+        "magnitude": "unknown",
+        "county": "Blanco",
+        "narrative": "A tornado touched down in Kendall County approximately four miles southwest of Kendalia traveled 9.8 miles to the east crossed into Blanco County approximately a quarter of a mile west-northwest of the intersection of Hwy 281 and FM 306 continued east a quarter of a mile to the Comal County line a tenth of mile northwest of the Hwy 281/FM 306 intersection and continued another 10.2 miles east before dissipating after crossing FM 306 near Hancock Rd. No damage was found over its short path throug"
+      }
+    },
+    {
+      "observedAt": "2025-10-24T23:50:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:05.318Z",
+      "key": "1297373",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "65 mph gust",
+        "county": "Caldwell",
+        "narrative": "A thunderstorm produced wind gusts estimated at 75 mph. Two large Oak trees were uprooted. Several medium size metal buildings (12x20, 10x12, 60x100) were damaged or destroyed. All of the damage was near Dale."
+      }
+    },
+    {
       "observedAt": "2025-11-01T00:00:00.000Z",
       "ingestedAt": "2026-08-23T07:05:17.611Z",
       "key": "sample-2025-11-Wind",
@@ -53,6 +75,94 @@
         "magnitude": "1.84\"",
         "county": "SAMPLE COUNTY",
         "narrative": "SAMPLE — illustrative event, not a live NOAA record."
+      }
+    },
+    {
+      "observedAt": "2026-01-25T04:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.776Z",
+      "key": "1314444",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "unknown",
+        "county": "Burnet",
+        "narrative": "The wind chill temperature in Burnet dropped to -1 degrees."
+      }
+    },
+    {
+      "observedAt": "2026-01-25T04:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.776Z",
+      "key": "1314447",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "unknown",
+        "county": "Travis",
+        "narrative": "The wind chill temperature dropped to 4 degrees at Austin Executive Airport."
+      }
+    },
+    {
+      "observedAt": "2026-01-25T04:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.776Z",
+      "key": "1314448",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "unknown",
+        "county": "Williamson",
+        "narrative": "The wind chill temperature dropped to 3 degrees in Georgetown and 2 degrees in Taylor."
+      }
+    },
+    {
+      "observedAt": "2026-01-25T04:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.776Z",
+      "key": "1314450",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "unknown",
+        "county": "Caldwell",
+        "narrative": "The wind chill temperature dropped to 6 degrees at the San Marcos Airport."
+      }
+    },
+    {
+      "observedAt": "2026-01-26T04:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1314429",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "unknown",
+        "county": "Burnet",
+        "narrative": "The wind chill temperature in Burnet dropped to 4 degrees."
+      }
+    },
+    {
+      "observedAt": "2026-01-26T04:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1314432",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "unknown",
+        "county": "Travis",
+        "narrative": "The wind chill temperature dropped to 4 degrees at Austin Executive Airport."
+      }
+    },
+    {
+      "observedAt": "2026-01-26T04:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1314433",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "unknown",
+        "county": "Williamson",
+        "narrative": "The wind chill temperature dropped to 5 degrees in Georgetown and 4 degrees in Taylor."
+      }
+    },
+    {
+      "observedAt": "2026-01-26T04:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.786Z",
+      "key": "1314435",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "unknown",
+        "county": "Caldwell",
+        "narrative": "The wind chill temperature dropped to 5 degrees at the San Marcos Airport."
       }
     },
     {
@@ -78,6 +188,94 @@
       }
     },
     {
+      "observedAt": "2026-04-18T18:47:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.782Z",
+      "key": "1333066",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Williamson",
+        "narrative": "A thunderstorm produced quarter size hail in Cedar Park. We received a picture of the hail stone against a ruler."
+      }
+    },
+    {
+      "observedAt": "2026-04-18T18:50:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.782Z",
+      "key": "1333071",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "0.88\"",
+        "county": "Williamson",
+        "narrative": "A thunderstorm produced nickel size hail in Brushy Creek."
+      }
+    },
+    {
+      "observedAt": "2026-04-18T19:02:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.782Z",
+      "key": "1333075",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Williamson",
+        "narrative": "A thunderstorm produced pea to quarter size hail across a swath between Georgetown and Round Rock including communities near Westinghouse Rd., FM 1460, and Hwy 130."
+      }
+    },
+    {
+      "observedAt": "2026-04-21T07:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.782Z",
+      "key": "1333710",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Williamson",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding closing several low water crossings across Williamson County."
+      }
+    },
+    {
+      "observedAt": "2026-04-30T12:46:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.782Z",
+      "key": "1333079",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "0.88\"",
+        "county": "Travis",
+        "narrative": "A thunderstorm produced pea to nickel size hail along with 50 mph wind gusts in Oak Hill."
+      }
+    },
+    {
+      "observedAt": "2026-04-30T12:53:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.782Z",
+      "key": "1333084",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "56 mph gust",
+        "county": "Travis",
+        "narrative": "A thunderstorm produced wind gusts estimated at 65 mph that knocked down 3-6 inch diameter tree limbs in the Zilker neighborhood of Austin."
+      }
+    },
+    {
+      "observedAt": "2026-04-30T12:54:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.782Z",
+      "key": "1333086",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Travis",
+        "narrative": "A thunderstorm produced quarter size hail near Hwy 290 and S. Lamar Blvd. in Austin."
+      }
+    },
+    {
+      "observedAt": "2026-04-30T13:04:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.782Z",
+      "key": "1333088",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Travis",
+        "narrative": "A thunderstorm produced quarter size hail west of Austin Bergstrom International Airport."
+      }
+    },
+    {
       "observedAt": "2026-05-01T00:00:00.000Z",
       "ingestedAt": "2026-08-23T07:05:17.611Z",
       "key": "sample-2026-05-Wind",
@@ -86,6 +284,523 @@
         "magnitude": "59 mph gust",
         "county": "SAMPLE COUNTY",
         "narrative": "SAMPLE — illustrative event, not a live NOAA record."
+      }
+    },
+    {
+      "observedAt": "2026-05-06T08:40:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1340620",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.50\"",
+        "county": "Burnet",
+        "narrative": "A thunderstorm produced ping pong ball size hail in Inks Lake State Park."
+      }
+    },
+    {
+      "observedAt": "2026-05-06T08:44:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1340622",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.25\"",
+        "county": "Burnet",
+        "narrative": "A thunderstorm produced half dollar size hail northeast of Kingsland."
+      }
+    },
+    {
+      "observedAt": "2026-05-06T08:48:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1340623",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Burnet",
+        "narrative": "A thunderstorm produced quarter size hail on the west side of Burnet."
+      }
+    },
+    {
+      "observedAt": "2026-05-06T09:33:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1340632",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "2.00\"",
+        "county": "Blanco",
+        "narrative": "A thunderstorm produced chicken egg size hail on Round Mountain-Sandy Rd. southwest of Round Mountain. There was a video of the hail on social media."
+      }
+    },
+    {
+      "observedAt": "2026-05-09T10:51:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1340633",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "0.75\"",
+        "county": "Williamson",
+        "narrative": "A thunderstorm produced half inch to penny size hail in Sun City. Broadcast media had a picture of the hail."
+      }
+    },
+    {
+      "observedAt": "2026-05-09T13:04:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1340634",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "0.75\"",
+        "county": "Travis",
+        "narrative": "A thunderstorm produced penny size hail in Pflugerville. The Emergency Manager sent a picture of the hail."
+      }
+    },
+    {
+      "observedAt": "2026-05-09T13:20:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1340636",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Travis",
+        "narrative": "A thunderstorm produced penny to quarter size hail near Pflugerville. Broadcast media had a picture of the hail."
+      }
+    },
+    {
+      "observedAt": "2026-05-09T14:38:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1340639",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "61 mph gust",
+        "county": "Travis",
+        "narrative": "A thunderstorm produced wind gusts estimated at 70 mph that blew down a tree that blocked Old San Antonio Rd. in Manchaca. The road was closed in the 11500 block."
+      }
+    },
+    {
+      "observedAt": "2026-05-09T14:38:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1340640",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "61 mph gust",
+        "county": "Hays",
+        "narrative": "A thunderstorm produced wind gusts estimated at 70 mph that snapped some 6-12 inch diameter Oak tree limbs at the Memorial Miniature Golf & Museum in Buda."
+      }
+    },
+    {
+      "observedAt": "2026-05-09T14:45:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1340641",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "56 mph gust",
+        "county": "Hays",
+        "narrative": "A thunderstorm produced wind gusts estimated at 65 mph that uprooted a tree in the Whispering Hollow subdivision in Buda."
+      }
+    },
+    {
+      "observedAt": "2026-05-09T14:58:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1340642",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "56 mph gust",
+        "county": "Hays",
+        "narrative": "A thunderstorm produced wind gusts estimated at 65 mph that uprooted a tree in Mountain City."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T19:56:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1334996",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Burnet",
+        "narrative": "Up to quarter-sized hail was reported in Burnet."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T19:59:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1334997",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Williamson",
+        "narrative": "Quarter-sized hail was reported on State Highway 195 between Florence and Sun City."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T20:16:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335011",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "56 mph gust",
+        "county": "Williamson",
+        "narrative": "A 56 kt gust was recorded by the AWOS at Georgetown Municipal Airport from a line of severe thunderstorms."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T20:27:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1334998",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "50 mph gust",
+        "county": "Travis",
+        "narrative": "Strong thunderstorm wind gusts downed large tree limbs in the Steiner Ranch area."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T20:30:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1334999",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "50 mph gust",
+        "county": "Travis",
+        "narrative": "Strong thunderstorm winds downed trees and snapped tree limbs across North Austin. Some power lines were downed."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T20:50:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1335000",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "50 mph gust",
+        "county": "Travis",
+        "narrative": "Numerous medium to large tree limbs were downed by strong thunderstorm winds across South Austin."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T20:50:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1335001",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "50 mph gust",
+        "county": "Travis",
+        "narrative": "A large snapped tree limb was observed in Pflugerville."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T20:54:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335012",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "56 mph gust",
+        "county": "Travis",
+        "narrative": "A 56 kt gust was recorded by the ASOS at Austin-Bergstrom International Airport from a line of severe thunderstorms."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T21:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335004",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "50 mph gust",
+        "county": "Travis",
+        "narrative": "Power lines were downed across the Austin metropolitan area from strong thunderstorm winds and downed trees. Over 18,000 electricity customers lost power during the storms."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T21:10:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335005",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "50 mph gust",
+        "county": "Travis",
+        "narrative": "A deck awning was blown down by strong thunderstorm winds."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T21:25:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335007",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "50 mph gust",
+        "county": "Bastrop",
+        "narrative": "Thunderstorm winds resulted in isolated instances of downed trees and signage around Bastrop."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T17:36:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335066",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Williamson",
+        "narrative": "A severe thunderstorm produced quarter-sized hail in Granger."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T17:53:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335065",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Williamson",
+        "narrative": "A severe thunderstorm produced up to quarter-sized hail between Granger and Jarrell."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T19:11:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1335069",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Burnet",
+        "narrative": "Floodwaters from heavy rain inundated low water crossings along CR202 and CR203 with around 6 inches of water."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T19:19:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335061",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Williamson",
+        "narrative": "A severe thunderstorm produced quarter-sized hail at Andice."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T19:51:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1335074",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Burnet",
+        "narrative": "Floodwaters from heavy rain produced by slow-moving thunderstorms rendered portions of CR 208 impassable in northeastern Burnet County."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T19:51:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335056",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "65 mph gust",
+        "county": "Williamson",
+        "narrative": "A 12-inch diameter tree was snapped near Stadium Drive and North Austin Avenue from strong straight-line thunderstorm winds."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T20:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335055",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "50 mph gust",
+        "county": "Williamson",
+        "narrative": "Straight-line thunderstorm winds downed several trees in the Georgetown area."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T20:04:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335054",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "60 mph gust",
+        "county": "Williamson",
+        "narrative": "A few metal roof panels were torn from a service station canopy along I-35."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T20:05:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335043",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "52 mph gust",
+        "county": "Travis",
+        "narrative": "A line of thunderstorms produced wind gusts estimated around 50 to 60 mph in the Oak Hill area. Power flashes were observed."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T20:12:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335042",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "61 mph gust",
+        "county": "Williamson",
+        "narrative": "A line of severe thunderstorms produced estimated wind gusts near 70 mph along State Highway 130."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T20:13:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335461",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Burnet",
+        "narrative": "Heavy rain from slow-moving thunderstorms caused some flooding along the Russell Fork of the San Gabriel River, with about 1 ft of water over the roadway on the 4700 and 7200 blocks of CR 963 and 1.5 ft of water over the low water crossing on the 6500 block of CR 210."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T20:15:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335053",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "50 mph gust",
+        "county": "Williamson",
+        "narrative": "Strong thunderstorm winds downed medium to large branches near CR337 and CR124."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T20:20:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1335052",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "50 mph gust",
+        "county": "Travis",
+        "narrative": "A pecan tree was downed onto a restaurant patio along Barton Springs Road by strong winds produced by a line of thunderstorms. One man died after sustaining critical injuries from the falling tree."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T20:25:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1335035",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "64 mph gust",
+        "county": "Williamson",
+        "narrative": "A 74 mph wind gust from strong thunderstorm winds was measured by a personal weather station. Large tree branches were also downed in the area."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T20:33:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1335071",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Williamson",
+        "narrative": "Heavy rain from thunderstorms and the resulting flooding resulted in high water rescues on the 700 block of East Main and the 1100 block of CR 229 in Florence."
+      }
+    },
+    {
+      "observedAt": "2026-05-20T00:30:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1335070",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Williamson",
+        "narrative": "Heavy rain from slow-moving thunderstorms caused rises along Berry Creek. The combination of elevated streamflow and accumulation of water in a nearby detention basin led to a washout across both lanes of Berry Creek Drive between Airport Road/Briarcrest Drive and Mourning Dove Boulevard."
+      }
+    },
+    {
+      "observedAt": "2026-05-21T17:42:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1340651",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Burnet",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Flooding was reported throughout the city of Granite Shoals."
+      }
+    },
+    {
+      "observedAt": "2026-05-25T16:25:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1340652",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Blanco",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. In Johnson City, low water crossings on W. Pecan Dr. and E. Ash Dr. at Town Creek were closed due to water over the roadway."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T18:45:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1340768",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "56 mph gust",
+        "county": "Williamson",
+        "narrative": "A thunderstorm produced wind gusts estimated at 65 mph that pushed a recreational vehicle onto its side southeast of Andice."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T19:01:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.785Z",
+      "key": "1340762",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Williamson",
+        "narrative": "A thunderstorm produced quarter size hail southeast of Andice."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T20:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1340778",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Burnet",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. The Emergency Manager  reported all low water crossings on CR 200 were overtopped and impassable."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T20:26:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1340779",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Burnet",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. The Emergency Manager reported a water rescue on CR200."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T20:26:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1340785",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Burnet",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. A vehicle was stranded in mud and water near the confluence of Hamilton Creek and the Colorado River."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T20:39:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1340780",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Blanco",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding closing low water crossings closed on W. Pecan Dr. and E. Ash Dr. in Johnson City."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T23:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:08.784Z",
+      "key": "1340784",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Williamson",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Three men were successfully rescued after being stranded in trees along Berry Creek near Florence."
       }
     },
     {

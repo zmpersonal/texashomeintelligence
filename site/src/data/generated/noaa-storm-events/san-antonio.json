@@ -2,15 +2,103 @@
   "datasetId": "noaa-storm-events",
   "location": "san-antonio",
   "methodologyVersion": "v1",
-  "status": "sample",
-  "lastAttemptAt": "2026-08-24T03:24:17.195Z",
-  "lastSuccessAt": null,
-  "lastError": "fetchRaw returned 0 raw records with no prior live/stale evidence for this dataset — leaving status unchanged rather than reporting sample data as live.",
+  "status": "live",
+  "lastAttemptAt": "2026-08-24T03:27:08.796Z",
+  "lastSuccessAt": "2026-08-24T03:27:08.796Z",
+  "lastError": null,
   "source": {
     "name": "NOAA Storm Events Database",
     "url": "https://www.ncdc.noaa.gov/stormevents/"
   },
   "observations": [
+    {
+      "observedAt": "2025-08-31T17:43:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.303Z",
+      "key": "1290904",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Kendall",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. The fire department closed RM 473 at Sheps Creek west of Kendalia. There was 4.5 feet of water over the road."
+      }
+    },
+    {
+      "observedAt": "2025-08-31T18:01:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1290931",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "51 mph gust",
+        "county": "Bexar",
+        "narrative": "A thunderstorm produced wind gusts measured at 51 kts. by the ASOS at San Antonio International Airport."
+      }
+    },
+    {
+      "observedAt": "2025-08-31T18:15:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1290910",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Bexarflood reported E. Bitters Rd. was closed at Salado Creek due to water over the road just north of San Antonio International Airport."
+      }
+    },
+    {
+      "observedAt": "2025-08-31T18:33:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1290917",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. A video on X showed  southbound Hwy 281 flooded near Paseo del Norte in northern San Antonio."
+      }
+    },
+    {
+      "observedAt": "2025-08-31T18:45:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1290922",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. The bodies of two homeless individuals were recovered from Salado Creek near Maltsberger Ln. in northern San Antonio. Law enforcement officials believe they were swept away from a homeless encampment in a drainage channel near the creek."
+      }
+    },
+    {
+      "observedAt": "2025-08-31T19:07:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1290925",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Bexarflood showed Devine Rd. closed at Olmos Creek due to water over the road."
+      }
+    },
+    {
+      "observedAt": "2025-08-31T19:14:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1290927",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Bexarflood showed Creekview Dr. closed at Pershing Creek due to water over the road in northeastern San Antonio."
+      }
+    },
+    {
+      "observedAt": "2025-08-31T19:31:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1290930",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Bexarflood reported Blue Wing Rd. was closed due to water over the road near Salado Creek in southeastern San Antonio."
+      }
+    },
     {
       "observedAt": "2025-09-01T00:00:00.000Z",
       "ingestedAt": "2026-08-23T07:05:17.613Z",
@@ -20,6 +108,116 @@
         "magnitude": "1.99\"",
         "county": "SAMPLE COUNTY",
         "narrative": "SAMPLE — illustrative event, not a live NOAA record."
+      }
+    },
+    {
+      "observedAt": "2025-10-24T22:10:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1297370",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "52 mph gust",
+        "county": "Kendall",
+        "narrative": "A thunderstorm produced wind gusts estimated at 60 mph that tore some metal roofing and solar panels off a house near Comfort."
+      }
+    },
+    {
+      "observedAt": "2025-10-24T22:35:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1297320",
+      "value": {
+        "eventType": "Tornado",
+        "magnitude": "unknown",
+        "county": "Kendall",
+        "narrative": "A tornado touched down in Kendall County approximately four miles southwest of Kendalia traveled 9.8 miles to the east crossed into Blanco County approximately a quarter of a mile west-northwest of the intersection of Hwy 281 and FM 306 continued east a quarter of a mile to the Comal County line a tenth of mile northwest of the Hwy 281/FM 306 intersection and continued another 10.2 miles east before dissipating after crossing FM 306 near Hancock Rd. As the tornado moved through rural Kendall Cou"
+      }
+    },
+    {
+      "observedAt": "2025-10-24T22:46:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1297322",
+      "value": {
+        "eventType": "Tornado",
+        "magnitude": "unknown",
+        "county": "Comal",
+        "narrative": "A tornado touched down in Kendall County approximately four miles southwest of Kendalia traveled 9.8 miles to the east crossed into Blanco County approximately a quarter of a mile west-northwest of the intersection of Hwy 281 and FM 306 continued east a quarter of a mile to the Comal County line a tenth of mile northwest of the Hwy 281/FM 306 intersection and continued another 10.2 miles east before dissipating after crossing FM 306 near Hancock Rd. Shortly after entering Comal County, it crosse"
+      }
+    },
+    {
+      "observedAt": "2025-10-24T23:01:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1297371",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "52 mph gust",
+        "county": "Comal",
+        "narrative": "A thunderstorm produced wind gusts estimated at 60 mph that peeled some metal sheeting off a house on Canyon Lake."
+      }
+    },
+    {
+      "observedAt": "2025-10-24T23:01:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1297372",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "50 mph gust",
+        "county": "Comal",
+        "narrative": "A thunderstorm produced wind gusts measured at 50 kts by the mesonet station at Canyon Lake."
+      }
+    },
+    {
+      "observedAt": "2025-10-24T23:02:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1297494",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "87 mph gust",
+        "county": "Comal",
+        "narrative": "An NWS survey team observed a home with a portion of its roof removed and thrown 100 yards to the east-northeast. Approximately 150 yards to the east-northeast of the house,  the roof of a detached garage was blown off. Large tree limbs and power poles were also broken close to these structures. These buildings were located on the western top of a high ridge, and the portion of the roofs removed were exposed to the west. When overlaying radar data, the most likely cause of this damage were the r"
+      }
+    },
+    {
+      "observedAt": "2025-10-24T23:02:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.305Z",
+      "key": "1297495",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "87 mph gust",
+        "county": "Comal",
+        "narrative": "An NWS survey team observed a home on Sundown Trail with a portion of its roof removed. This house was located on the western top of a high ridge, and the portion of the roof removed was exposed to the west. When overlaying radar data, the most likely cause of this damage was the roof being completely exposed to the surging rear-flank downdraft at a significantly higher elevation than surrounding homes that were not damaged. These straight-line winds were estimated to be near 100 mph."
+      }
+    },
+    {
+      "observedAt": "2025-10-25T03:24:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1297374",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Atascosa",
+        "narrative": "A thunderstorm produced pea to quarter size hail in Pleasanton."
+      }
+    },
+    {
+      "observedAt": "2025-10-25T03:33:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.304Z",
+      "key": "1297375",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "0.75\"",
+        "county": "Atascosa",
+        "narrative": "A thunderstorm produced penny size hail in Pleasanton."
+      }
+    },
+    {
+      "observedAt": "2025-11-01T16:26:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:15.306Z",
+      "key": "1300629",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Guadalupe",
+        "narrative": "A thunderstorm produced quarter size hail in Seguin. There were pictures of the hail on social media."
       }
     },
     {
@@ -45,6 +243,72 @@
       }
     },
     {
+      "observedAt": "2026-01-25T04:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.564Z",
+      "key": "1314443",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "unknown",
+        "county": "Guadalupe",
+        "narrative": "The wind chill temperature dropped to 7 degrees at the New Braunfels National Airport and 10 degrees in Seguin."
+      }
+    },
+    {
+      "observedAt": "2026-01-25T04:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.564Z",
+      "key": "1314445",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "unknown",
+        "county": "Medina",
+        "narrative": "The wind chill temperature dropped to 7 degrees in Hondo and 9 degrees in Castroville."
+      }
+    },
+    {
+      "observedAt": "2026-01-25T04:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.564Z",
+      "key": "1314451",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "The wind chill temperature dropped to 9 degrees at San Antonio International Airport, 9 degrees at Randolph AFB, and 10 degrees at Stinson Municipal Airport."
+      }
+    },
+    {
+      "observedAt": "2026-01-26T04:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.571Z",
+      "key": "1314428",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "unknown",
+        "county": "Guadalupe",
+        "narrative": "The wind chill temperature dropped to 7 degrees at the New Braunfels National Airport and 10 degrees in Seguin."
+      }
+    },
+    {
+      "observedAt": "2026-01-26T04:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.571Z",
+      "key": "1314430",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "unknown",
+        "county": "Medina",
+        "narrative": "The wind chill temperature in Hondo dropped to 9 degrees."
+      }
+    },
+    {
+      "observedAt": "2026-01-26T04:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.571Z",
+      "key": "1314436",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "The wind chill temperature dropped to 9 degrees at San Antonio International Airport."
+      }
+    },
+    {
       "observedAt": "2026-02-01T00:00:00.000Z",
       "ingestedAt": "2026-08-23T07:05:17.613Z",
       "key": "sample-2026-02-Hail",
@@ -53,6 +317,72 @@
         "magnitude": "1.26\"",
         "county": "SAMPLE COUNTY",
         "narrative": "SAMPLE — illustrative event, not a live NOAA record."
+      }
+    },
+    {
+      "observedAt": "2026-02-14T16:05:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.571Z",
+      "key": "1319326",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "51 mph gust",
+        "county": "Wilson",
+        "narrative": "A thunderstorm produced wind gusts measured at 51 kts by the mesonet station in Three Oaks."
+      }
+    },
+    {
+      "observedAt": "2026-03-07T15:51:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.567Z",
+      "key": "1325737",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.50\"",
+        "county": "Bandera",
+        "narrative": "A thunderstorm produced ping pong ball size hail south of Pipe Creek. One of our media partners relayed a picture of the hail on social media."
+      }
+    },
+    {
+      "observedAt": "2026-03-07T16:21:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.567Z",
+      "key": "1325738",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Bandera",
+        "narrative": "A thunderstorm produced quarter size hail along Hwy 173 approximately six miles south of Bandera."
+      }
+    },
+    {
+      "observedAt": "2026-03-08T06:50:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.567Z",
+      "key": "1325740",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flooding in southeastern San Antonio. A few low water crossings were closed in the vicinity of the intersection of I-37 and I-410."
+      }
+    },
+    {
+      "observedAt": "2026-03-10T18:40:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.566Z",
+      "key": "1319780",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "2.75\"",
+        "county": "Bandera",
+        "narrative": "A thunderstorm produced up to baseball ball sized hail in western Bandera County."
+      }
+    },
+    {
+      "observedAt": "2026-03-10T19:30:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.566Z",
+      "key": "1319783",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "2.00\"",
+        "county": "Kendall",
+        "narrative": "A thunderstorm produced up to lime sized hail in Comfort."
       }
     },
     {
@@ -67,6 +397,83 @@
       }
     },
     {
+      "observedAt": "2026-04-20T13:10:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.568Z",
+      "key": "1333705",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. The Emergency Manager reported a swift water rescue near the intersection of Nacogdoches Rd. and Cattleman St. in Live Oak."
+      }
+    },
+    {
+      "observedAt": "2026-04-20T16:16:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.568Z",
+      "key": "1333711",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flooding of River Ranch at Leon Creek in Leon Springs."
+      }
+    },
+    {
+      "observedAt": "2026-04-20T16:17:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.568Z",
+      "key": "1333706",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Pictures on X showed Salado Creek out of its banks north of San Antonio International Airport."
+      }
+    },
+    {
+      "observedAt": "2026-04-20T16:25:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.568Z",
+      "key": "1333707",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding on San Pedro Ave. at Olmos Creek in San Antonio."
+      }
+    },
+    {
+      "observedAt": "2026-04-20T16:38:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.568Z",
+      "key": "1333722",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to street flooding around the Cedar Creek Golf Course in northwestern San Antonio."
+      }
+    },
+    {
+      "observedAt": "2026-04-20T17:22:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.568Z",
+      "key": "1333709",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Salado Creek overflowed at Seguin Rd."
+      }
+    },
+    {
+      "observedAt": "2026-04-21T06:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.569Z",
+      "key": "1333730",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain Monday and Monday night across the northeast side of San Antonio. Between 4 and 6 inches of rain occurred. This caused a quick rise into             flood stage on Salado Creek early Tuesday morning. A 44 year old man was killed by the flood waters in the Salado Creek Greenway, near J Street Park. Authorities were not able to determine how the man got into the water, but was suspected of being homeless and living near the creek."
+      }
+    },
+    {
       "observedAt": "2026-05-01T00:00:00.000Z",
       "ingestedAt": "2026-08-23T07:05:17.613Z",
       "key": "sample-2026-05-Tornado",
@@ -75,6 +482,292 @@
         "magnitude": "EF0",
         "county": "SAMPLE COUNTY",
         "narrative": "SAMPLE — illustrative event, not a live NOAA record."
+      }
+    },
+    {
+      "observedAt": "2026-05-01T06:35:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1338427",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Comal",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding closing at least eight roads in western Comal County."
+      }
+    },
+    {
+      "observedAt": "2026-05-01T06:54:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1338428",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Over 30 roads were flooded from north-central to southeast Bexar County."
+      }
+    },
+    {
+      "observedAt": "2026-05-01T08:15:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.569Z",
+      "key": "1338671",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding sending San Pedro Creek out of its banks near Furnish Ave. and S. San Marcos St. San Antonio firefighters were called to the scene to execute a high-water rescue. They recovered a man, but he was pronounced dead at the scene. Police stated a jogger or walker was pulled into the creek by the high water."
+      }
+    },
+    {
+      "observedAt": "2026-05-01T11:15:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1338435",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Atascosa",
+        "narrative": "Thunderstorms produced heavy rain that led to minor street flooding in Pleasanton."
+      }
+    },
+    {
+      "observedAt": "2026-05-01T12:30:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.569Z",
+      "key": "1340807",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Guadalupe",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. There were multiple water rescues and flooded low water crossings across the county."
+      }
+    },
+    {
+      "observedAt": "2026-05-09T16:12:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1340643",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "0.75\"",
+        "county": "Comal",
+        "narrative": "A thunderstorm produced dime to penny size hail at the Creekside Crossing shopping center in New Braunfels."
+      }
+    },
+    {
+      "observedAt": "2026-05-09T16:18:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1340644",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "0.75\"",
+        "county": "Comal",
+        "narrative": "A thunderstorm produced dime to penny size hail at Schlitterbahn in New Braunfels."
+      }
+    },
+    {
+      "observedAt": "2026-05-09T16:21:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1340646",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "0.88\"",
+        "county": "Comal",
+        "narrative": "A thunderstorm produced pea to nickel size hail in New Braunfels."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T21:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1335015",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "53 mph gust",
+        "county": "Medina",
+        "narrative": "A 53 kt wind gust was recorded by an Edwards Aquifer Authority mesonet station along Parkers Creek."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T21:01:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1335017",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "65 mph gust",
+        "county": "Medina",
+        "narrative": "A 65 kt gust was recorded by the ASOS at South Texas Regional Airport from a line of severe thunderstorms."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T21:05:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1335018",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "50 mph gust",
+        "county": "Bexar",
+        "narrative": "A CoCoRaHS observer observed a 58 mph wind gust shortly before the arrival of thunderstorms."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T21:15:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1335006",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "50 mph gust",
+        "county": "Bexar",
+        "narrative": "Thunderstorm winds snapped large tree limbs near Frost Bank Center."
+      }
+    },
+    {
+      "observedAt": "2026-05-10T22:05:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1335010",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "60 mph gust",
+        "county": "Atascosa",
+        "narrative": "A tin outbuilding was destroyed by strong thunderstorm winds near Charlotte, leaving behind partly crumbled metal sheeting."
+      }
+    },
+    {
+      "observedAt": "2026-05-19T23:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1335036",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "52 mph gust",
+        "county": "Bexar",
+        "narrative": "Wind gusts of 55-60 mph was measured by a personal home weather station from a line of severe thunderstorms."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T09:20:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1340662",
+      "value": {
+        "eventType": "Tornado",
+        "magnitude": "unknown",
+        "county": "Guadalupe",
+        "narrative": "The National Weather Service conducted a damage survey of a line of thunderstorms that impacted portions of southern Guadalupe County during the late night hours of May 26th. The survey team found damage that supported the existence of a short-lived EF-1 tornado. A tornadic debris signature was seen on radar just north of where the most extensive damage was surveyed. The tornado may have started just east of Linne Rd. The most significant damage occurred north of Kunde Rd. with widespread tree d"
+      }
+    },
+    {
+      "observedAt": "2026-05-26T18:30:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.569Z",
+      "key": "1340776",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Atascosa",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. There was water over multiple roadways in Atascosa County, particularly in the Charlotte area, including Hwy 97. Several roadways remained flooded  through the morning of the 27th."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T18:42:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1340761",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "2.00\"",
+        "county": "Atascosa",
+        "narrative": "A thunderstorm produced two inch diameter hail on Hwy 97 between Charlotte and Jourdanton. There was a picture of the hail on X."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T20:40:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.571Z",
+      "key": "1340770",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "56 mph gust",
+        "county": "Bexar",
+        "narrative": "A thunderstorm produced wind gusts estimated at 65 mph in Elmendorf. A sheet metal  barn was knocked over, and a tree branch was thrown into a kitchen window. Picture  shared on Facebook."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T20:45:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.571Z",
+      "key": "1340771",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "52 mph gust",
+        "county": "Bexar",
+        "narrative": "A thunderstorm produced wind gusts estimated at 60 mph near San Antonio College. A |medium to large tree branch was torn off by the winds."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T20:55:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1340675",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "65 mph gust",
+        "county": "Bexar",
+        "narrative": "A National Weather Service storm survey team conducted a damage survey of areas in Kirby. The team concluded that severe downdraft winds, associated with a supercell thunderstorm, impacted the community of Kirby resulting in sporadic damage. Imagery and drone footage from the Texas Department of Emergency Management (TDEM) and the Bexar County Office of Emergency Management, in addition to the NWS ground survey, noted intermittent damage to trees and fences, mainly south of Binz Engleman Rd. Dam"
+      }
+    },
+    {
+      "observedAt": "2026-05-26T20:57:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.571Z",
+      "key": "1340772",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "61 mph gust",
+        "county": "Bexar",
+        "narrative": "A thunderstorm produced wind gusts estimated at 70 mph in Martinez. There was a social media picture of a large, partly uprooted, tree with snapped branches."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T21:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.570Z",
+      "key": "1340781",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Several vehicles were stranded in high water on General Hudnell Dr. in southwestern San Antonio."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T21:06:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.569Z",
+      "key": "1340773",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "61 mph gust",
+        "county": "Bexar",
+        "narrative": "A thunderstorm produced wind gusts estimated at 70 mph in St. Hedwig. The winds blew down several tree limbs, and a carport was blown away and partly crumpled."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T21:25:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.569Z",
+      "key": "1340774",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "54 mph gust",
+        "county": "Guadalupe",
+        "narrative": "A thunderstorm produced wind gusts measured at 54 kts by the mesonet station TWB16 1.1 NE New Berlin."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T22:30:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.569Z",
+      "key": "1340782",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. There were numerous low water crossings closed across Bexar County."
+      }
+    },
+    {
+      "observedAt": "2026-05-26T23:00:00.000Z",
+      "ingestedAt": "2026-08-24T03:27:18.569Z",
+      "key": "1340783",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Guadalupe",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Numerous roads were closed in the Cibolo area due to flooding."
       }
     },
     {
