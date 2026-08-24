@@ -109,18 +109,20 @@ export const sanAntonioPermits: FetcherModule<PermitValue> = {
     // confirmed.
     let afterRoofFilter = 0;
     let afterDateWindow = 0;
-    const sampleTypeValues = new Set<string>();
+    const sampleRoofMatches: string[] = [];
+    const sampleDates: string[] = [];
 
     const observations: Observation<PermitValue>[] = [];
     for (const row of records) {
       const type = cols.permitType ? row[cols.permitType] : "";
       const description = cols.description ? row[cols.description] : "";
-      if (sampleTypeValues.size < 15 && description) sampleTypeValues.add(description);
       const haystack = `${type} ${description}`.toLowerCase();
       if (!haystack.includes("roof")) continue;
       afterRoofFilter++;
+      if (sampleRoofMatches.length < 10) sampleRoofMatches.push(`type="${type}" desc="${description}"`);
 
       const rawDate = row[cols.issueDate];
+      if (sampleDates.length < 10) sampleDates.push(JSON.stringify(rawDate));
       if (!rawDate) continue;
       const parsedDate = new Date(rawDate);
       if (Number.isNaN(parsedDate.getTime())) continue;
@@ -148,7 +150,8 @@ export const sanAntonioPermits: FetcherModule<PermitValue> = {
     console.log(
       `[sa-permits-diag] ${records.length} total row(s) -> ${afterRoofFilter} after roof filter -> ${afterDateWindow} after date window (since=${since} until=${until})`,
     );
-    console.log(`[sa-permits-diag] sample WORK TYPE/PROJECT NAME values seen: ${[...sampleTypeValues].join(" | ")}`);
+    console.log(`[sa-permits-diag] sample roof-matching type/description values: ${sampleRoofMatches.join(" ||| ")}`);
+    console.log(`[sa-permits-diag] sample raw DATE ISSUED values from roof matches: ${sampleDates.join(", ")}`);
     return observations;
   },
 };
