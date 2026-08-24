@@ -15,8 +15,18 @@ export function computeFetchWindow<T>(
   now: Date = new Date(),
 ): { since: string; until: string } {
   const until = now.toISOString();
-  const lastObservedAt = existing?.observations.at(-1)?.observedAt;
-  const since = lastObservedAt ?? existing?.lastSuccessAt ?? new Date(now.getTime() - backfillDays * 86_400_000).toISOString();
+  const backfillSince = new Date(now.getTime() - backfillDays * 86_400_000).toISOString();
+  // A dataset that has never been "live" or "stale" has no real fetch
+  // history yet — only seeded SAMPLE observations, if any. Dating the
+  // window from those sample rows' timestamps would produce a narrow
+  // window on the very first real attempt (the sample series only spans
+  // the last ~12 months up to whenever it was seeded) and could silently
+  // filter out real historical events. Only a dataset with genuine prior
+  // live/stale evidence gets the incremental (last-observed-forward) window.
+  const hasRealHistory = existing?.status === "live" || existing?.status === "stale";
+  const since = hasRealHistory
+    ? (existing?.observations.at(-1)?.observedAt ?? existing?.lastSuccessAt ?? backfillSince)
+    : backfillSince;
   return { since, until };
 }
 
