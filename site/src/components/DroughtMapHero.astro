@@ -1,0 +1,46 @@
+---
+/**
+ * Swappable hero visual: an official, auto-updating U.S. Drought Monitor
+ * map focused on Texas. Renders a real hotlinked image from the National
+ * Drought Mitigation Center's public map service (droughtmonitor.unl.edu)
+ * — no scraping, no fabricated proxy; the browser requests the same URL
+ * NDMC serves to anyone, so it reflects that week's real map with zero
+ * work on our end.
+ *
+ * TODO(owner): if NDMC ever changes this path, or you'd rather point at a
+ * different official source (e.g. an embeddable NDMC/drought.gov widget),
+ * this is the one place to change it — update MAP_SRC below, nothing else
+ * in the hero needs to change.
+ *
+ * ⚠️ Not independently verified rendering live: this sandbox's network
+ * policy blocks ALL outbound internet access (confirmed against multiple
+ * unrelated domains, not just droughtmonitor.unl.edu — even
+ * en.wikipedia.org was blocked), so neither `curl` nor the WebFetch tool
+ * could load this URL from here to confirm it's still current. The path
+ * below is NDMC's long-documented state-map convention
+ * (droughtmonitor.unl.edu/data/png/current/current_{state-abbr}.png),
+ * not a guess pulled from nowhere, but please load the live site and
+ * confirm the image actually renders before you consider this shipped —
+ * the onerror fallback below means a wrong URL degrades to a text-only
+ * caption instead of a broken-image icon, but it should still be fixed
+ * if so.
+ */
+const MAP_SRC = "https://droughtmonitor.unl.edu/data/png/current/current_tx.png";
+const MAP_ALT = "U.S. Drought Monitor map of Texas, showing current county-level drought conditions";
+---
+
+<div class="hero-photo drought-map" id="drought-map">
+  <img src={MAP_SRC} alt={MAP_ALT} width="800" height="600" loading="eager" />
+  <p class="drought-map-caption">
+    <a href="/data/austin/drought/">U.S. Drought Monitor — updated weekly</a>
+  </p>
+  <p class="drought-map-fallback">
+    U.S. Drought Monitor map — <a href="/data/austin/drought/">see current Texas drought conditions</a>.
+  </p>
+</div>
+
+<script>
+  const el = document.getElementById("drought-map");
+  const img = el?.querySelector("img");
+  img?.addEventListener("error", () => el?.classList.add("drought-map--error"), { once: true });
+</script>

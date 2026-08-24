@@ -93,13 +93,39 @@ ul { color: var(--ink-soft); }
 
 .site-nav { background: var(--paper); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 40; }
 .site-nav .wrap { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; padding-bottom: 14px; gap: 16px; flex-wrap: wrap; }
-.brand-mark { font-weight: 800; font-size: 1.15rem; color: var(--brand-dark); text-decoration: none; letter-spacing: -0.01em; }
-.brand-mark span { color: var(--accent); }
-.nav-links { display: flex; gap: 20px; list-style: none; margin: 0; padding: 0; font-size: 0.92rem; font-weight: 600; }
+
+/* Brand mark: logo image is the default visual, capped to a height that
+ * fits inside the header's existing content row (never grows the header
+ * — the row's height today is set by .nav-cta, ~35px including its own
+ * padding) with a comfortable margin under that. The text wordmark stays
+ * in the DOM as an always-available fallback, shown only if the logo
+ * image fails to load (see Nav.astro's onerror handler) — the header
+ * height is identical either way since both are capped/sized to the same
+ * row. */
+.brand-mark { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+.brand-logo { height: 28px; width: auto; max-width: 220px; display: block; }
+.brand-mark-text { display: none; font-weight: 800; font-size: 1.15rem; color: var(--brand-dark); letter-spacing: -0.01em; }
+.brand-mark-text span { color: var(--accent); }
+.brand-mark--fallback .brand-logo { display: none; }
+.brand-mark--fallback .brand-mark-text { display: inline-flex; }
+
+.nav-links { display: flex; gap: 20px; list-style: none; margin: 0; padding: 0; font-size: 0.92rem; font-weight: 600; transition: opacity 0.2s ease; }
 .nav-links a { color: var(--ink); text-decoration: none; }
 .nav-links a:hover { color: var(--brand); }
 .nav-cta { background: var(--accent); color: #fff !important; padding: 9px 16px; border-radius: 999px; font-weight: 700; font-size: 0.88rem; text-decoration: none; white-space: nowrap; }
 .nav-cta:hover { background: var(--accent-dark); color: #fff !important; }
+
+/* Compact-on-scroll: the topbar collapses and the nav links fade once
+ * the visitor has scrolled past the top of the page — the sticky header
+ * itself never changes height, only content around/inside it. */
+.topbar { max-height: 60px; overflow: hidden; transition: max-height 0.25s ease, opacity 0.25s ease; }
+.topbar .wrap { transition: padding 0.25s ease; }
+body.is-scrolled .topbar { max-height: 0; opacity: 0; }
+body.is-scrolled .topbar .wrap { padding-top: 0; padding-bottom: 0; }
+body.is-scrolled .nav-links { opacity: 0; pointer-events: none; }
+@media (max-width: 760px) {
+  body.is-scrolled .nav-menu { opacity: 0; pointer-events: none; }
+}
 
 /* Mobile hamburger — CSS-only "checkbox hack," no JS. The checkbox is
  * visually hidden but stays in the tab order (clip pattern, not
@@ -159,6 +185,17 @@ ul { color: var(--ink-soft); }
 @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } }
 .hero-photo img { width: 100%; height: auto; display: block; border-radius: var(--radius); box-shadow: var(--shadow); }
 .hero p.lede { font-size: 1.08rem; color: var(--ink-soft); max-width: 46em; }
+
+/* Drought Monitor hero map — a real hotlinked external image, so unlike
+ * the placeholder it needs a load-failure fallback (see
+ * DroughtMapHero.astro's inline script) rather than assuming it always
+ * renders. */
+.drought-map-caption { font-size: 0.82rem; color: var(--ink-soft); margin: 10px 0 0; text-align: center; }
+.drought-map-caption a { color: var(--ink-soft); text-decoration: underline; }
+.drought-map-fallback { display: none; font-size: 0.9rem; color: var(--ink-soft); background: var(--paper-alt); border: 1px solid var(--line); border-radius: var(--radius); padding: 32px 20px; text-align: center; margin: 0; }
+.drought-map--error img { display: none; }
+.drought-map--error .drought-map-caption { display: none; }
+.drought-map--error .drought-map-fallback { display: block; }
 .microcopy { font-size: 0.85rem; color: var(--ink-soft); margin-top: 12px; }
 .microcopy .sep { margin: 0 8px; color: var(--line); }
 

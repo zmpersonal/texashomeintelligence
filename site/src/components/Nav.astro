@@ -6,15 +6,25 @@
 const ctaLabel = "My Dashboard";
 ---
 
-<div class="topbar">
+<div class="topbar" id="topbar">
   <div class="wrap">
     <span>Free for homeowners &bull; No phone number required to start</span>
     <span>Austin &amp; San Antonio &bull; more Texas metros coming soon</span>
   </div>
 </div>
-<header class="site-nav">
+<header class="site-nav" id="site-nav">
   <div class="wrap">
-    <a class="brand-mark" href="/">Texas Home<span>Intelligence</span></a>
+    <a class="brand-mark" href="/" aria-label="Texas Home Intelligence — home">
+      <!-- TODO(owner): logo-raw.png isn't in the repo yet (checked working
+      tree + full git history — nothing found). Push it to
+      site/public/images/logo-raw.png (any reasonable resolution; it's
+      scaled to fit the header via CSS, not the file's native size) and
+      it appears automatically — no other change needed. Until then this
+      <img> 404s and the onerror fallback below shows the text wordmark
+      instead, so the header never shows a broken-image icon. -->
+      <img src="/images/logo-raw.png" alt="" class="brand-logo" />
+      <span class="brand-mark-text">Texas Home<span>Intelligence</span></span>
+    </a>
 
     <!-- Mobile hamburger toggle — CSS-only (checkbox hack), no JS. The
     nav links below are always real <a href> in the DOM; this only ever
@@ -42,3 +52,38 @@ const ctaLabel = "My Dashboard";
     <a class="nav-cta" href="/dashboard/">{ctaLabel}</a>
   </div>
 </header>
+
+<script>
+  // Logo load-failure fallback: never show a broken-image icon in the
+  // header — fall back to the text wordmark instead.
+  const brandLogo = document.querySelector<HTMLImageElement>(".brand-logo");
+  brandLogo?.addEventListener(
+    "error",
+    () => brandLogo.closest(".brand-mark")?.classList.add("brand-mark--fallback"),
+    { once: true },
+  );
+
+  // Compact the header on scroll (fade the nav links, collapse the
+  // announcement bar) so the sticky header takes less vertical space
+  // once the visitor is reading content below it — most valuable on
+  // mobile, where every pixel of a persistent sticky header competes
+  // with the viewport. The header's own height never changes; this only
+  // ever hides/fades content that sits above or beside it.
+  const SCROLL_THRESHOLD = 12;
+  let ticking = false;
+  function updateScrolledState() {
+    document.body.classList.toggle("is-scrolled", window.scrollY > SCROLL_THRESHOLD);
+    ticking = false;
+  }
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!ticking) {
+        requestAnimationFrame(updateScrolledState);
+        ticking = true;
+      }
+    },
+    { passive: true },
+  );
+  updateScrolledState();
+</script>

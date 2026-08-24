@@ -8,6 +8,7 @@
 import Base from "../layouts/Base.astro";
 import DataStatus from "../components/DataStatus.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
+import DroughtMapHero from "../components/DroughtMapHero.astro";
 import type { DatasetFile } from "../ingest/types";
 import type { StormEventValue } from "../ingest/fetchers/noaaStormEvents";
 import type { PermitValue } from "../ingest/fetchers/austinPermits";
@@ -157,15 +158,7 @@ const description =
           Updated continuously using weather, property, economic, and home-service data.
         </p>
       </div>
-      <div class="hero-photo">
-        {/* TODO: swap this placeholder for a real photo (e.g. a Texas home
-            exterior). Drop the file in site/public/images/ and either
-            replace hero-home-placeholder.svg in place or update the src
-            below — no other markup change needed. Purely decorative
-            (alt=""); give it real descriptive alt text once it's an
-            actual photo of something specific. */}
-        <img src="/images/hero-home-placeholder.svg" alt="" width="800" height="600" />
-      </div>
+      <DroughtMapHero />
     </div>
   </section>
 
