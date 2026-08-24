@@ -2,15 +2,24 @@
   "datasetId": "census-acs",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "sample",
-  "lastAttemptAt": "2026-08-24T03:27:18.576Z",
-  "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"census-acs/austin\" is not implemented yet. Requested window 2025-08-24T03:27:18.576Z .. 2026-08-24T03:27:18.576Z.",
+  "status": "live",
+  "lastAttemptAt": "2026-08-24T10:03:07.871Z",
+  "lastSuccessAt": "2026-08-24T10:03:07.871Z",
+  "lastError": null,
   "source": {
     "name": "Census ACS",
     "url": "https://www.census.gov/data/developers/data-sets/acs-5year.html"
   },
   "observations": [
+    {
+      "observedAt": "2023-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-08-24T10:03:08.461Z",
+      "key": "acs5-2023",
+      "value": {
+        "medianHomeAgeYears": 29,
+        "ownerOccupiedPct": 53
+      }
+    },
     {
       "observedAt": "2026-07-01T00:00:00.000Z",
       "ingestedAt": "2026-08-23T07:05:17.617Z",

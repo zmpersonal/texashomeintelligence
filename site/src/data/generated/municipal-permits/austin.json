@@ -3,9 +3,9 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-24T03:27:18.573Z",
+  "lastAttemptAt": "2026-08-24T10:02:56.487Z",
   "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"municipal-permits/austin\" is not implemented yet. Requested window 2025-08-24T03:27:18.573Z .. 2026-08-24T03:27:18.573Z.",
+  "lastError": "Austin permits fetch failed: HTTP 400 from https://data.austintexas.gov/resource/3syk-w9eu.json?%24where=issued_date+between+%272025-08-24T10%3A02%3A56%27+and+%272026-08-24T10%3A02%3A56%27+AND+%28upper%28work_class%29+like+%27%25ROOF%25%27+OR+upper%28permit_type_desc%29+like+%27%25ROOF%25%27+OR+upper%28description%29+like+%27%25ROOF%25%27%29&%24order=issued_date&%24limit=5000&%24offset=0",
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
     "url": "https://data.austintexas.gov/"

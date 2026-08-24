@@ -2,10 +2,10 @@
   "datasetId": "airnow",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "sample",
-  "lastAttemptAt": "2026-08-24T03:27:18.576Z",
-  "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"airnow/austin\" is not implemented yet. Requested window 2025-08-24T03:27:18.576Z .. 2026-08-24T03:27:18.576Z.",
+  "status": "live",
+  "lastAttemptAt": "2026-08-24T10:03:07.209Z",
+  "lastSuccessAt": "2026-08-24T10:03:07.209Z",
+  "lastError": null,
   "source": {
     "name": "AirNow",
     "url": "https://www.airnow.gov"
@@ -18,6 +18,15 @@
       "value": {
         "aqi": 42,
         "category": "Good"
+      }
+    },
+    {
+      "observedAt": "2026-08-24T03:00:00.000Z",
+      "ingestedAt": "2026-08-24T10:03:07.484Z",
+      "key": "Austin-2026-08-24-3",
+      "value": {
+        "aqi": 58,
+        "category": "Moderate"
       }
     }
   ]

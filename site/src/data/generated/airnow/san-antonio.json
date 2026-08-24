@@ -2,9 +2,9 @@
   "datasetId": "airnow",
   "location": "san-antonio",
   "methodologyVersion": "v1",
-  "status": "sample",
-  "lastAttemptAt": null,
-  "lastSuccessAt": null,
+  "status": "live",
+  "lastAttemptAt": "2026-08-24T10:03:07.484Z",
+  "lastSuccessAt": "2026-08-24T10:03:07.484Z",
   "lastError": null,
   "source": {
     "name": "AirNow",
@@ -18,6 +18,15 @@
       "value": {
         "aqi": 42,
         "category": "Good"
+      }
+    },
+    {
+      "observedAt": "2026-08-24T03:00:00.000Z",
+      "ingestedAt": "2026-08-24T10:03:07.870Z",
+      "key": "San Antonio-2026-08-24-3",
+      "value": {
+        "aqi": 63,
+        "category": "Moderate"
       }
     }
   ]
