@@ -3,9 +3,9 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-24T10:03:06.656Z",
+  "lastAttemptAt": "2026-08-24T14:50:35.514Z",
   "lastSuccessAt": null,
-  "lastError": "Unexpected token '<', \"\r\n\r\n<!DOCTYPE \"... is not valid JSON",
+  "lastError": "fetchRaw returned 0 raw records with no prior live/stale evidence for this dataset — leaving status unchanged rather than reporting sample data as live.",
   "source": {
     "name": "U.S. Drought Monitor",
     "url": "https://droughtmonitor.unl.edu"
