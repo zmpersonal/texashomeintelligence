@@ -150,14 +150,21 @@ median plumber wage; NWS: a real active Heat Advisory alert; USDA Soil:
 "Urban land, 0 to 6 percent slopes" — a real SSURGO map unit name). Two came
 back needing fixes, both applied:
 
-1. **`usdm.ts` (U.S. Drought Monitor)** ✅ **fixed, host was wrong** —
-   errored with `Unexpected token '<'` (an HTML page, not JSON). Root
-   cause: the *data* API lives on a different host than the
-   informational site —
+1. **`usdm.ts` (U.S. Drought Monitor)** ✅ **fixed and verified live** —
+   two bugs, both real, both confirmed against live Actions runs rather
+   than guessed: (a) errored with `Unexpected token '<'` (an HTML page,
+   not JSON) — the *data* API lives on a different host than the
+   informational site,
    `usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByAreaPercent`,
-   not `droughtmonitor.unl.edu/DmData/...`. Also needed an explicit
-   `Accept: application/json` header (without it the API silently returns
-   XML) and the query param is `aoi`, not `area`.
+   not `droughtmonitor.unl.edu/DmData/...`, and needed an explicit
+   `Accept: application/json` header plus the `aoi` param (not `area`);
+   (b) after that fix, the request succeeded but silently returned 0
+   parsed rows every time — the real API's JSON is **camelCase**
+   (`mapDate`, `d0`-`d4`), not the PascalCase (`MapDate`, `D0`-`D4`)
+   originally assumed, and `mapDate` is a full datetime string, not the
+   `YYYYMMDD` form assumed. Both counties are now genuinely `"live"`
+   with 54 weeks of real history (e.g. Travis: D2 Severe Drought, 10% of
+   county; Bexar: D1 Moderate Drought, 32% of county).
 2. **Austin/San Antonio permits** — Austin's Socrata `$where` clause got
    HTTP 400 (a SoQL syntax issue in the filter, not yet root-caused); San
    Antonio's CSV headers are `PERMIT TYPE`, `PERMIT #`, `DATE SUBMITTED`,
@@ -176,6 +183,23 @@ back needing fixes, both applied:
    failure. EIA's fetcher handles the identical situation correctly
    (returns `[]`, stays `live`). **Not fixed yet** — flagged for the
    next round.
+
+**`/austin/` and `/san-antonio/` hub pages showed SAMPLE regardless of
+real data** ✅ **fixed**. Their "Current Homeowner Conditions" cards read
+straight from the static `locations/*.yaml` content collection
+(`conditions[].value.status`), hardcoded to `sample` back in Phase 1 and
+never revisited once real fetchers went live — those two pages were
+structurally incapable of showing LIVE no matter what the ingestion
+pipeline produced. `LocationHub.astro` now maps each condition label,
+per city, to the real generated dataset file that backs it (when one
+exists for that city) and overrides status/asOf/source at render time.
+**⚠️ If the live site still shows stale/SAMPLE data after this and the
+drought/permits fixes above are on `main`**: check that Cloudflare Pages
+is actually auto-deploying on push to `main` (Pages dashboard →
+Deployments → confirm the latest deployment's commit hash matches
+`main`'s HEAD) — this is an owner-side setup item CLAUDE.md already
+flags as unconfirmed, and every fix in this file only reaches the live
+site through that auto-deploy.
 
 **Hero drought map** ✅ **fixed and verified live**. The originally
 hotlinked `current_tx.png` alias never existed, and the first
