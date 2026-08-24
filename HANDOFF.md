@@ -114,14 +114,27 @@ intentionally-stale duplicate-year revision to confirm "latest `c` wins,"
 cross-county/cross-state/wrong-event-type rows to confirm scoping, and
 all three real failure modes — network error, listing HTTP 500, a listed
 year file 404ing — confirmed to throw rather than silently return empty
-or fabricated data) — every case passed. **Not independently verified
-against the live NOAA endpoint**: this sandbox's outbound network policy
-blocks `ncei.noaa.gov` (and `api.weather.gov`), so the only live-network
-attempt from here got HTTP 403 at the proxy — the pipeline correctly
-handled that (preserved the 10/8 existing sample observations, updated
-only `lastAttemptAt`/`lastError`, stayed `"sample"` rather than
-fabricating anything). The real end-to-end proof happens on the next
-GitHub Actions cron run, which has normal internet egress.
+or fabricated data) — every case passed. **Verified live** on a GitHub
+Actions run against the real NCEI endpoint: 65 (Austin) / 63 (San
+Antonio) real Travis/Bexar-area hail/wind/tornado/flood records fetched
+and merged in alongside the original seeded sample rows, status
+legitimately `"live"`.
+
+The first live run surfaced two bugs, both fixed:
+1. `runIngestion.ts` flipped status to `"live"` whenever `fetchRaw()`
+   succeeded, even with 0 raw records — so a dataset with only seeded
+   SAMPLE data and a network 403 (this sandbox blocks `ncei.noaa.gov`) or
+   a narrow-window zero-result was incorrectly reported live. Fixed: a
+   0-record success now only sets `"live"` if the dataset already had
+   prior live/stale evidence; otherwise status is left unchanged.
+2. `merge.ts`'s `computeFetchWindow()` dated the incremental `since`
+   window from the last **seeded sample** observation's timestamp
+   whenever any observations existed — producing a ~3-week window on the
+   very first live attempt instead of a real 365-day backfill, so real
+   historical events fell outside the window and got silently dropped.
+   Fixed: the full backfill window is now used until a dataset has
+   genuine prior live/stale evidence, not just sample rows. This affects
+   every "deep" tier feed seeded with sample history, not just NOAA.
 
 ### Stub tier — same schema/pipeline, single illustrative sample row, `fetchRaw()` fully unimplemented
 
