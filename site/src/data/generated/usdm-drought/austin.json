@@ -3,7 +3,7 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-24T14:50:35.514Z",
+  "lastAttemptAt": "2026-08-24T15:19:30.625Z",
   "lastSuccessAt": null,
   "lastError": "fetchRaw returned 0 raw records with no prior live/stale evidence for this dataset — leaving status unchanged rather than reporting sample data as live.",
   "source": {
