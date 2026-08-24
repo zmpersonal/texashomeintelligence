@@ -150,14 +150,14 @@ median plumber wage; NWS: a real active Heat Advisory alert; USDA Soil:
 "Urban land, 0 to 6 percent slopes" — a real SSURGO map unit name). Two came
 back needing fixes, both applied:
 
-1. **`usdm.ts` (U.S. Drought Monitor)** — errored with `Unexpected token
-   '<'` (an HTML page, not JSON). Root cause: the *data* API lives on a
-   different host than the informational site —
+1. **`usdm.ts` (U.S. Drought Monitor)** ✅ **fixed, host was wrong** —
+   errored with `Unexpected token '<'` (an HTML page, not JSON). Root
+   cause: the *data* API lives on a different host than the
+   informational site —
    `usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByAreaPercent`,
    not `droughtmonitor.unl.edu/DmData/...`. Also needed an explicit
    `Accept: application/json` header (without it the API silently returns
-   XML) and the query param is `aoi`, not `area`. Fixed; not yet
-   re-verified live (needs another Actions run).
+   XML) and the query param is `aoi`, not `area`.
 2. **Austin/San Antonio permits** — Austin's Socrata `$where` clause got
    HTTP 400 (a SoQL syntax issue in the filter, not yet root-caused); San
    Antonio's CSV headers are `PERMIT TYPE`, `PERMIT #`, `DATE SUBMITTED`,
@@ -167,20 +167,41 @@ back needing fixes, both applied:
    meaning layer 28 isn't "Flood Hazard Zones" on this MapServer instance
    (or the whole path is wrong). **Not fixed yet** — flagged for the next
    round.
+4. **`blsWages.ts`** — new finding: on the incremental (post-first-run)
+   window it threw `returned no data points for 2026-2026` and got
+   demoted `live` → `stale`. OEWS is annual with a real publication lag
+   (no 2026 estimates exist yet, only through 2025) — the underlying
+   feed is fine, but `fetchRaw` throws on an empty result instead of
+   returning `[]`, so a normal "nothing new yet" period looks like a
+   failure. EIA's fetcher handles the identical situation correctly
+   (returns `[]`, stays `live`). **Not fixed yet** — flagged for the
+   next round.
 
-**Hero drought map**: the hotlinked `current_tx.png` path 404'd (NDMC
-doesn't publish a stable "current" alias there). Replaced with a
-self-hosting approach: `scripts/fetch-drought-map.ts` (run by the
-ingestion cron, `npm run fetch-drought-map`) downloads the real
-datestamped map (`droughtmonitor.unl.edu/data/png/{YYYYMMDD}/{YYYYMMDD}_TX_trd.png`,
-most recent Thursday, stepping back a week at a time on a 404, up to 8
-weeks) to `site/public/images/drought/current_tx.png`, which
-`DroughtMapHero.astro` now points at instead of the external URL. Non-fatal
-by design — a failed week leaves the previous local image in place rather
-than failing the whole ingestion job. Not yet verified against a real
-response (this sandbox has no general internet access at all — confirmed
-blocked for `en.wikipedia.org` too) — the next real Actions run is the
-first real test.
+**Hero drought map** ✅ **fixed and verified live**. The originally
+hotlinked `current_tx.png` alias never existed, and the first
+self-hosting attempt assumed the wrong reference day: it computed the
+most recent *Thursday* (USDM's release day) and got a real HTTP 404 on
+all 8 weekly attempts on a live Actions run — not a network block, the
+pattern itself was wrong. Rather than guess again, a temporary
+diagnostic version of `scripts/fetch-drought-map.ts` probed the bare
+directory listing plus a matrix of filename variants and logged every
+attempt; the real Actions run's log showed the directory listing
+directly (autoindex is enabled) — confirming the file is
+`{YYYYMMDD}_TX_trd.png` (the suffix guess was right) but the directory
+is dated to the most recent **Tuesday** (USDM's data-valid/cutoff date),
+not Thursday. Fixed and collapsed back to the one real URL; the same
+run's log confirmed a match (`20260818_TX_trd.png`, 67,498 bytes,
+verified real PNG magic bytes) and the file is committed at
+`site/public/images/drought/current_tx.png`, which `DroughtMapHero.astro`
+points at.
+
+A related regression also surfaced and was fixed: the workflow's
+`git add src/data/generated/ public/images/drought/` hard-failed (exit
+128, "pathspec did not match any files") whenever the drought-map step
+hadn't written anything yet, which aborted the *entire* commit step —
+silently dropping every real dataset update from that run too (this bit
+two runs in a row before being caught). Fixed by only `git add`-ing the
+drought image path when the directory actually exists.
 
 **NOAA Storm Events `fetchRaw()` is now real, not a stub** — the endpoint
 that was corrected in this round (the original stub referenced the
