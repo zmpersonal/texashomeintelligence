@@ -81,7 +81,7 @@ Maintain `HANDOFF.md` listing every seam the owner completes (file paths, functi
 /lp/{service}-{location}/   Paid AdWords landing pages (conversion-pure, NOINDEX)
 ```
 
-- **Nav (current, LOCKED):** Tools · Data · Locations(dropdown: Austin, San Antonio) + a persistent top-right **"My Dashboard"** button → `/dashboard/`. Methodology is in the footer. **`/services/` was removed and deleted — do not re-add it or link to it.** Dashboard is not a nav link (the button covers it).
+- **Nav (current, LOCKED):** Tools · Data · Methodology · Locations(dropdown: Austin, San Antonio) + a persistent top-right **"My Dashboard"** button → `/dashboard/`. Methodology is in the top nav and the footer (both). **`/services/` was removed and deleted — do not re-add it or link to it.** Dashboard is not a nav link (the button covers it).
 - All nav/CTAs are real crawlable `<a href>`; the Locations dropdown is keyboard/touch accessible (no hover-only).
 - Thin not-yet-built pages get clean non-empty placeholders and are **noindex**; `/tools/` is the indexable exception.
 - Sitemap is `sitemap-index.xml` (Astro).

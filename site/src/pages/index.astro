@@ -54,20 +54,31 @@ const description =
 
 <Base title={title} description={description}>
   <section class="hero">
-    <div class="wrap" style="max-width: 720px;">
-      <span class="eyebrow">Texas Home Intelligence</span>
-      <h1>Know What Your Texas Home Needs — Before It Gets Expensive.</h1>
-      <p class="lede">
-        Texas-specific data, tools, and local home-service intelligence to help homeowners
-        understand risks, maintenance, repair costs, and when to take action.
-      </p>
-      <div style="margin-top: 28px; display: flex; gap: 14px; flex-wrap: wrap;">
-        <a class="btn" href="/dashboard/">Open My Home Dashboard</a>
-        <a class="btn secondary" href="/tools/">Explore Free Tools</a>
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Texas Home Intelligence</span>
+        <h1>Know What Your Texas Home Needs — Before It Gets Expensive.</h1>
+        <p class="lede">
+          Texas-specific data, tools, and local home-service intelligence to help homeowners
+          understand risks, maintenance, repair costs, and when to take action.
+        </p>
+        <div style="margin-top: 28px; display: flex; gap: 14px; flex-wrap: wrap;">
+          <a class="btn" href="/dashboard/">Open My Home Dashboard</a>
+          <a class="btn secondary" href="/tools/">Explore Free Tools</a>
+        </div>
+        <p class="microcopy" style="margin-top:20px;">
+          Updated continuously using weather, property, economic, and home-service data.
+        </p>
       </div>
-      <p class="microcopy" style="margin-top:20px;">
-        Updated continuously using weather, property, economic, and home-service data.
-      </p>
+      <div class="hero-photo">
+        {/* TODO: swap this placeholder for a real photo (e.g. a Texas home
+            exterior). Drop the file in site/public/images/ and either
+            replace hero-home-placeholder.svg in place or update the src
+            below — no other markup change needed. Purely decorative
+            (alt=""); give it real descriptive alt text once it's an
+            actual photo of something specific. */}
+        <img src="/images/hero-home-placeholder.svg" alt="" width="800" height="600" />
+      </div>
     </div>
   </section>
 

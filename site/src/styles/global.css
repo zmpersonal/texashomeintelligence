@@ -157,6 +157,7 @@ ul { color: var(--ink-soft); }
 .eyebrow { display: inline-block; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.06em; color: var(--accent-dark); background: #fdeee0; padding: 5px 12px; border-radius: 999px; margin-bottom: 14px; }
 .hero-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 40px; align-items: center; }
 @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } }
+.hero-photo img { width: 100%; height: auto; display: block; border-radius: var(--radius); box-shadow: var(--shadow); }
 .hero p.lede { font-size: 1.08rem; color: var(--ink-soft); max-width: 46em; }
 .microcopy { font-size: 0.85rem; color: var(--ink-soft); margin-top: 12px; }
 .microcopy .sep { margin: 0 8px; color: var(--line); }
