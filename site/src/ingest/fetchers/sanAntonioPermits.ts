@@ -98,19 +98,19 @@ export const sanAntonioPermits: FetcherModule<PermitValue> = {
       );
     }
 
-    // TEMP DIAGNOSTIC (2026-08-24): the column-name fix stopped the throw,
-    // but the real run still came back with 0 matches and no error —
-    // meaning either no row's WORK TYPE/PROJECT NAME contains "roof" in
-    // this window, or every "roof" match failed the date-window check.
-    // Log per-stage counts (mirrors noaaStormEvents.ts's pattern) so the
-    // next real run's log shows which stage actually drops to zero,
-    // plus a few real WORK TYPE/PROJECT NAME values so we can see the
-    // real terminology if "roof" truly doesn't appear. Remove once
-    // confirmed.
+    // TEMP DIAGNOSTIC (2026-08-24): a prior run showed the first 10
+    // roof-matching rows all had DATE ISSUED in late 2020 — real data,
+    // correctly parseable, just outside the trailing-365-day window. But
+    // that only proves the *first* 10 rows encountered are old, not that
+    // the whole 18,777-row match set is. Track the actual max parsed date
+    // across every roof match to settle whether this CKAN resource is a
+    // genuinely stale bulk export or whether recent rows exist elsewhere
+    // in the file. Remove once confirmed.
     let afterRoofFilter = 0;
     let afterDateWindow = 0;
     const sampleRoofMatches: string[] = [];
     const sampleDates: string[] = [];
+    let maxParsedDate: string | null = null;
 
     const observations: Observation<PermitValue>[] = [];
     for (const row of records) {
@@ -127,6 +127,7 @@ export const sanAntonioPermits: FetcherModule<PermitValue> = {
       const parsedDate = new Date(rawDate);
       if (Number.isNaN(parsedDate.getTime())) continue;
       const observedAt = parsedDate.toISOString();
+      if (maxParsedDate === null || observedAt > maxParsedDate) maxParsedDate = observedAt;
       if (observedAt < since || observedAt > until) continue;
       afterDateWindow++;
 
@@ -152,6 +153,7 @@ export const sanAntonioPermits: FetcherModule<PermitValue> = {
     );
     console.log(`[sa-permits-diag] sample roof-matching type/description values: ${sampleRoofMatches.join(" ||| ")}`);
     console.log(`[sa-permits-diag] sample raw DATE ISSUED values from roof matches: ${sampleDates.join(", ")}`);
+    console.log(`[sa-permits-diag] max parsed DATE ISSUED across all ${afterRoofFilter} roof matches: ${maxParsedDate}`);
     return observations;
   },
 };
