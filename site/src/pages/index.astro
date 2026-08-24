@@ -1,41 +1,142 @@
 ---
+// THI-round-homepage-nav.md §4/§5/§7 — the real homepage, replacing the
+// Phase 0 scaffold placeholder. Copy is pulled verbatim from the round
+// spec where the spec gives exact copy (hero, four cards); the live-data
+// section below ports the live Jekyll homepage's SAMPLE-marked 4-card
+// grid (repo root index.html, "QuoteReady + Live Data Proof"), reframed
+// for this page's authority-first hero rather than the brief-first one.
 import Base from "../layouts/Base.astro";
+import DataStatus from "../components/DataStatus.astro";
+import type { DatasetFile } from "../ingest/types";
+import type { StormEventValue } from "../ingest/fetchers/noaaStormEvents";
+import type { PermitValue } from "../ingest/fetchers/austinPermits";
+import type { DroughtValue } from "../ingest/fetchers/twdbDrought";
+
+// Reuse the same normalized dataset files the Austin roofing data page
+// reads (src/data/generated/**, built by the Phase 5 ingestion
+// framework) rather than raw API shapes or hand-typed numbers — per this
+// round's instruction. Where no matching derived metric exists yet
+// (cooling-degree stress), the card stays a plain illustrative SAMPLE
+// note rather than being wired to an unrelated feed.
+import stormDataRaw from "../data/generated/noaa-storm-events/austin.json";
+import permitsAustinRaw from "../data/generated/municipal-permits/austin.json";
+import permitsSanAntonioRaw from "../data/generated/municipal-permits/san-antonio.json";
+import droughtDataRaw from "../data/generated/twdb-texmesonet/austin.json";
+
+const stormData = stormDataRaw as DatasetFile<StormEventValue>;
+const permitsAustin = permitsAustinRaw as DatasetFile<PermitValue>;
+const permitsSanAntonio = permitsSanAntonioRaw as DatasetFile<PermitValue>;
+const droughtData = droughtDataRaw as DatasetFile<DroughtValue>;
+
+const trailing12mo = (observations: { observedAt: string }[]) => {
+  const cutoff = Date.now() - 365 * 86_400_000;
+  return observations.filter((o) => new Date(o.observedAt).getTime() >= cutoff);
+};
+
+const stormCount = trailing12mo(stormData.observations).length;
+
+const STATUS_RANK = { error: 0, stale: 1, sample: 2, live: 3 } as const;
+const permitsStatus =
+  STATUS_RANK[permitsAustin.status] <= STATUS_RANK[permitsSanAntonio.status]
+    ? permitsAustin.status
+    : permitsSanAntonio.status;
+const permitsCount =
+  trailing12mo(permitsAustin.observations).length + trailing12mo(permitsSanAntonio.observations).length;
+const permitsAsOf = permitsStatus === "sample" ? undefined : (permitsAustin.lastSuccessAt ?? undefined);
+
+const droughtAsOf = droughtData.status === "sample" ? undefined : (droughtData.lastSuccessAt ?? undefined);
+const latestDrought = droughtData.observations.at(-1)?.value.droughtIndex;
+
+const title = "Texas Home Intelligence — Data, Tools & Local Home Intelligence for Texas Homeowners";
+const description =
+  "Texas-specific data, tools, and local home-service intelligence to help homeowners understand risks, maintenance, repair costs, and when to take action.";
 ---
 
-<Base
-  title="Texas Home Intelligence | Free QuoteReady Project Brief"
-  description="Build a free QuoteReady Project Brief for your Texas home repair project, then use it with any contractor."
->
-  <section class="border-b border-line bg-gradient-to-b from-[#f5f9fc] to-white px-5 py-16">
-    <div class="mx-auto max-w-[1120px]">
-      <span
-        class="mb-4 inline-block rounded-full bg-[#fdeee0] px-3 py-1 text-xs font-extrabold tracking-wide text-accent-dark"
-      >
-        PHASE 0 — SCAFFOLD ONLY
-      </span>
-      <h1 class="max-w-2xl text-3xl font-extrabold text-ink sm:text-4xl">
-        Astro + Tailwind + Cloudflare scaffold is wired up.
-      </h1>
-      <p class="mt-4 max-w-xl text-ink-soft">
-        This page exists to prove the base layout, design tokens, and build
-        pipeline work end to end. Real homepage content — reusing the
-        section order already approved on the live site — lands in Phase 2.
+<Base title={title} description={description}>
+  <section class="hero">
+    <div class="wrap" style="max-width: 720px;">
+      <span class="eyebrow">Texas Home Intelligence</span>
+      <h1>Know What Your Texas Home Needs — Before It Gets Expensive.</h1>
+      <p class="lede">
+        Texas-specific data, tools, and local home-service intelligence to help homeowners
+        understand risks, maintenance, repair costs, and when to take action.
       </p>
-      <div class="mt-8 rounded-[10px] border border-line bg-white p-5 shadow-[0_1px_2px_rgba(16,24,38,0.06),0_8px_24px_rgba(16,24,38,0.06)]">
-        <span class="rounded-full bg-[#e5f3ea] px-3 py-1 text-xs font-extrabold text-good">
-          Sample output
-        </span>
-        <h2 class="mt-3 text-base font-bold text-brand-dark">Design token check</h2>
-        <ul class="mt-2 space-y-1 text-sm text-ink-soft">
-          <li>Brand navy button below, accent amber background above</li>
-          <li>Tailwind v4 CSS-first theme (<code>@theme</code>) driving utilities</li>
-        </ul>
-        <a
-          href="#"
-          class="mt-4 inline-block rounded-lg bg-accent px-6 py-3 font-extrabold text-white"
-        >
-          Build My QuoteReady Brief
+      <div style="margin-top: 28px; display: flex; gap: 14px; flex-wrap: wrap;">
+        <a class="btn" href="/dashboard/">Open My Home Dashboard</a>
+        <a class="btn secondary" href="/tools/">Explore Free Tools</a>
+      </div>
+      <p class="microcopy" style="margin-top:20px;">
+        Updated continuously using weather, property, economic, and home-service data.
+      </p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="grid-4">
+        <a class="card card-link card-featured" href="/dashboard/">
+          <span class="card-tag">For Your Home</span>
+          <h2>Home Dashboard</h2>
+          <p>
+            See the conditions affecting your home right now — including weather, HVAC stress,
+            storm exposure, maintenance signals, and more.
+          </p>
+          <p style="margin-top:12px;font-weight:700;color:var(--brand);">Check My Home &rarr;</p>
         </a>
+        <a class="card card-link" href="/tools/">
+          <h2>Homeowner Tools</h2>
+          <p>
+            Use Texas-specific tools for repair costs, repair-vs-replace decisions, project
+            planning, and contractor quotes.
+          </p>
+          <p style="margin-top:12px;font-weight:700;color:var(--brand);">Explore Free Tools &rarr;</p>
+        </a>
+        <a class="card card-link" href="/tools/">
+          <h2>Research a Home Project</h2>
+          <p>
+            Research HVAC, roofing, plumbing, electrical, mold, fire damage, tree care, and other
+            major home projects.
+          </p>
+          <p style="margin-top:12px;font-weight:700;color:var(--brand);">Explore Home Services &rarr;</p>
+        </a>
+        <a class="card card-link" href="/data/">
+          <h2>Texas Home Data</h2>
+          <p>Track the weather, costs, risks, and market conditions affecting homes across Texas.</p>
+          <p style="margin-top:12px;font-weight:700;color:var(--brand);">See Current Data &rarr;</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <h2>Backed by Live Texas Data</h2>
+      <p style="max-width:44em;">
+        Every tool on this site can pull in relevant current conditions — heat, recent storms,
+        drought, or local permit activity — so you and your contractor start with more context,
+        not less.
+      </p>
+      <div class="grid-4">
+        <div class="card data-card">
+          <DataStatus status="sample" />
+          <p class="metric-label" style="margin-top:8px;">Texas cooling-degree stress</p>
+          <p class="metric-note">Illustrative &mdash; will track live NWS/NOAA heat data by metro.</p>
+        </div>
+        <div class="card data-card">
+          <DataStatus status={stormData.status} asOf={stormData.status === "sample" ? undefined : (stormData.lastSuccessAt ?? undefined)} source={stormData.source.name} />
+          <p class="metric-label" style="margin-top:8px;">Recent hail &amp; wind events</p>
+          <p class="metric-note">{stormCount} reported near Austin, trailing 12 months.</p>
+        </div>
+        <div class="card data-card">
+          <DataStatus status={permitsStatus} asOf={permitsAsOf} source="City of Austin / City of San Antonio (Socrata)" />
+          <p class="metric-label" style="margin-top:8px;">Permit activity, Austin &amp; San Antonio</p>
+          <p class="metric-note">{permitsCount} permits reported, trailing 12 months.</p>
+        </div>
+        <div class="card data-card">
+          <DataStatus status={droughtData.status} asOf={droughtAsOf} source={droughtData.source.name} />
+          <p class="metric-label" style="margin-top:8px;">Drought &amp; tree/foundation stress</p>
+          <p class="metric-note">{latestDrought ?? "Illustrative — will track TWDB/TexMesonet data."}</p>
+        </div>
       </div>
     </div>
   </section>

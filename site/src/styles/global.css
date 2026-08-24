@@ -101,6 +101,16 @@ ul { color: var(--ink-soft); }
 .nav-cta { background: var(--accent); color: #fff !important; padding: 9px 16px; border-radius: 999px; font-weight: 700; font-size: 0.88rem; text-decoration: none; white-space: nowrap; }
 .nav-cta:hover { background: var(--accent-dark); color: #fff !important; }
 
+/* Mobile hamburger — CSS-only "checkbox hack," no JS. The checkbox is
+ * visually hidden but stays in the tab order (clip pattern, not
+ * display:none) so it's keyboard-operable; the label is what's visually
+ * shown as the ☰ icon and toggles it on click/tap/Enter/Space. Every nav
+ * link stays a real <a href> in the DOM at all times — this only ever
+ * toggles CSS display. */
+.nav-toggle { position: absolute; opacity: 0; width: 1px; height: 1px; overflow: hidden; }
+.nav-toggle-label { display: none; cursor: pointer; font-size: 1.5rem; line-height: 1; padding: 4px 6px; color: var(--brand-dark); order: 2; }
+.nav-toggle:focus-visible + .nav-toggle-label { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
+
 /* Locations dropdown — native <details>/<summary>: every link stays a
  * real <a href> in the served HTML regardless of open/closed state (so
  * it's crawlable with zero JS), and toggling is natively keyboard- and
@@ -120,6 +130,22 @@ ul { color: var(--ink-soft); }
 .nav-dropdown li { margin: 0; }
 .nav-dropdown ul a { display: block; padding: 8px 10px; border-radius: 6px; white-space: nowrap; }
 .nav-dropdown ul a:hover { background: var(--paper-alt); }
+
+@media (max-width: 760px) {
+  .brand-mark { order: 1; }
+  .nav-toggle-label { display: inline-flex; }
+  .nav-cta { order: 3; }
+  .nav-menu { order: 4; flex-basis: 100%; display: none; }
+  .nav-toggle:checked ~ .nav-menu { display: block; }
+  .nav-links { flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 0 4px; }
+  .nav-links > li { width: 100%; }
+  .nav-links a { display: block; padding: 8px 0; }
+  /* Locations expands inline in the stacked menu on mobile, not as a
+   * floating overlay — more usable inside a narrow open panel. This has
+   * to come after the unconditional .nav-dropdown ul rule above (equal
+   * specificity — source order decides the winner, media query or not). */
+  .nav-dropdown ul { position: static; box-shadow: none; border: none; padding: 4px 0 4px 14px; margin-top: 2px; }
+}
 
 /* ---- Breadcrumbs ---- */
 .breadcrumbs { font-size: 0.82rem; color: var(--ink-soft); padding: 14px 0 0; }
@@ -160,9 +186,21 @@ section.block h2 { max-width: 40em; }
 @media (max-width: 560px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
 
 .card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
-.card h3 { margin-bottom: 8px; }
+.card h2, .card h3 { margin-bottom: 8px; }
 .card p { margin-bottom: 0; font-size: 0.94rem; }
 .icon-badge { width: 38px; height: 38px; border-radius: 9px; background: #eaf1f8; color: var(--brand); display: flex; align-items: center; justify-content: center; font-weight: 800; margin-bottom: 12px; }
+
+/* A card that's also a link (homepage nav cards, /tools/ hub cards) —
+ * the whole card is clickable, not just an inline link inside it. */
+.card-link { display: block; text-decoration: none; color: inherit; transition: box-shadow 0.15s, transform 0.15s; }
+.card-link:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+
+/* Slightly stronger visual weight for the one flagship card (homepage
+ * §5, Home Dashboard) — a heavier border and a bigger icon badge, not a
+ * bigger card. */
+.card-featured { border: 2px solid var(--brand); }
+.card-featured .icon-badge { width: 46px; height: 46px; font-size: 1.15rem; }
+.card-tag { display: inline-block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.02em; color: var(--brand-dark); background: #eaf1f8; padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; }
 
 .image-note { border: 1px dashed var(--line); background: var(--paper-alt); color: var(--ink-soft); font-size: 0.82rem; padding: 10px 14px; border-radius: 8px; margin: 8px 0 20px; }
 .image-note b { color: var(--ink); }

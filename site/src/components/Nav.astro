@@ -15,7 +15,15 @@ const ctaLabel = "My Dashboard";
 <header class="site-nav">
   <div class="wrap">
     <a class="brand-mark" href="/">Texas Home<span>Intelligence</span></a>
-    <nav aria-label="Primary">
+
+    <!-- Mobile hamburger toggle — CSS-only (checkbox hack), no JS. The
+    nav links below are always real <a href> in the DOM; this only ever
+    toggles their CSS display, so they're crawlable and reachable via
+    keyboard/screen reader regardless of viewport or JS. -->
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+    <label for="nav-toggle" class="nav-toggle-label" aria-label="Menu">&#9776;</label>
+
+    <nav aria-label="Primary" class="nav-menu">
       <ul class="nav-links">
         <li><a href="/tools/">Tools</a></li>
         <li><a href="/data/">Data</a></li>
