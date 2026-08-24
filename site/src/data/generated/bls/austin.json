@@ -3,7 +3,7 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "stale",
-  "lastAttemptAt": "2026-08-24T16:01:46.024Z",
+  "lastAttemptAt": "2026-08-24T16:08:00.240Z",
   "lastSuccessAt": "2026-08-24T10:03:08.462Z",
   "lastError": "BLS OEWS series OEUM001242000000047215208 returned no data points for 2026-2026",
   "source": {
