@@ -3,6 +3,7 @@ import Base from "./Base.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import DataStatus from "../components/DataStatus.astro";
 import { getEntry, getCollection } from "astro:content";
+import type { DatasetFile } from "../ingest/types";
 
 interface Props {
   locationSlug: string;
@@ -12,6 +13,56 @@ const { locationSlug } = Astro.props;
 const locEntry = await getEntry("locations", locationSlug);
 if (!locEntry) throw new Error(`LocationHub: unknown location "${locationSlug}"`);
 const loc = locEntry.data;
+
+/**
+ * The YAML content collection's `conditions[].value` was seeded with
+ * static `status: sample` placeholders back before any real fetcher
+ * existed (Phase 1) and was never revisited once Seam 1 fetchers went
+ * live — so this hub kept showing SAMPLE regardless of what the
+ * ingestion pipeline actually produced. Rather than hand-edit the YAML
+ * (real status can change on every cron run), this maps each condition
+ * card, by label, to the real generated dataset file that backs it (if
+ * one exists for this specific city) and overrides the YAML's status/
+ * asOf/source with the real thing at render time. A label with no entry
+ * here (no matching per-city feed exists yet — e.g. San Antonio has no
+ * census-acs file) keeps the YAML's honest "sample" placeholder rather
+ * than being wired to a feed that doesn't cover this city.
+ */
+const LIVE_SOURCE_BY_LABEL: Record<string, Record<string, { datasetId: string; location: string }>> = {
+  austin: {
+    "Recent hail / wind events": { datasetId: "noaa-storm-events", location: "austin" },
+    "Drought / tree & foundation stress": { datasetId: "usdm-drought", location: "austin" },
+    "Mechanical & roofing permit activity": { datasetId: "municipal-permits", location: "austin" },
+  },
+  "san-antonio": {
+    "Flash-flood / heavy-rain events": { datasetId: "noaa-storm-events", location: "san-antonio" },
+    "Mechanical & roofing permit activity": { datasetId: "municipal-permits", location: "san-antonio" },
+  },
+};
+
+const generatedFiles = import.meta.glob<{ default: DatasetFile<unknown> }>("../data/generated/*/*.json", {
+  eager: true,
+});
+
+function findGeneratedFile(datasetId: string, location: string): DatasetFile<unknown> | undefined {
+  const suffix = `/data/generated/${datasetId}/${location}.json`;
+  const match = Object.entries(generatedFiles).find(([path]) => path.endsWith(suffix));
+  return match?.[1].default;
+}
+
+const conditions = loc.conditions.map((c) => {
+  const source = LIVE_SOURCE_BY_LABEL[locationSlug]?.[c.label];
+  const dataset = source && findGeneratedFile(source.datasetId, source.location);
+  if (!dataset) return c;
+  return {
+    ...c,
+    value: {
+      status: dataset.status,
+      asOf: dataset.status === "sample" ? undefined : (dataset.lastSuccessAt ?? undefined),
+      source: dataset.source.name,
+    },
+  };
+});
 
 const serviceOrder = [
   "roofing",
@@ -49,11 +100,12 @@ const description = `Local homeowner intelligence and free QuoteReady Project Br
       <h2>Current {loc.name} Homeowner Conditions</h2>
       <p style="max-width:44em;">
         A snapshot of the conditions Texas Home Intelligence tracks for {loc.name} homeowners.
-        These figures are placeholders until live public-data feeds are connected &mdash; see the{" "}
+        Cards show LIVE once a public feed is connected for {loc.name}; the rest stay clearly
+        marked SAMPLE until then &mdash; see the{" "}
         <a href={`/data/${locationSlug}/`}>{loc.name} data catalog</a>.
       </p>
       <div class="grid-4">
-        {loc.conditions.map((c) => (
+        {conditions.map((c) => (
           <div class="card data-card">
             <DataStatus status={c.value.status} asOf={c.value.asOf} source={c.value.source} />
             <p class="metric-label" style="margin-top:8px;">{c.label}</p>

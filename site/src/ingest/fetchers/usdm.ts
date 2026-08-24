@@ -86,10 +86,28 @@ function makeFetcher(location: "austin" | "san-antonio"): FetcherModule<DroughtV
       url.searchParams.set("enddate", mdyyyy(ctx.window.until));
 
       const res = await fetch(url, { headers: { Accept: "application/json" } });
+      // TEMP DIAGNOSTIC (2026-08-24): the host/header/param fix stopped
+      // the "Unexpected token '<'" error, but the real run still came
+      // back with 0 raw records with no thrown error — meaning the
+      // request succeeds but the parsed array is empty (or something
+      // about its shape doesn't match UsdmWeekRow). Log the raw
+      // response before parsing so the next real run's log shows
+      // exactly what's coming back, instead of guessing again. Remove
+      // once confirmed fixed (same pattern as noaaStormEvents.ts).
+      const rawText = await res.text();
+      console.log(
+        `[usdm-diag:${location}] HTTP ${res.status} content-type=${res.headers.get("content-type")} url=${url.toString()} body length=${rawText.length}`,
+      );
+      console.log(`[usdm-diag:${location}] first 500 chars: ${rawText.slice(0, 500)}`);
       if (!res.ok) {
         throw new Error(`U.S. Drought Monitor fetch failed: HTTP ${res.status} from ${url.toString()}`);
       }
-      const rows = (await res.json()) as UsdmWeekRow[];
+      const rows = JSON.parse(rawText) as UsdmWeekRow[];
+      console.log(`[usdm-diag:${location}] parsed ${Array.isArray(rows) ? rows.length : "non-array"} row(s)`);
+      if (Array.isArray(rows) && rows.length > 0) {
+        console.log(`[usdm-diag:${location}] first row keys: ${Object.keys(rows[0]).join(", ")}`);
+        console.log(`[usdm-diag:${location}] first row: ${JSON.stringify(rows[0])}`);
+      }
 
       const observations: Observation<DroughtValue>[] = [];
       for (const row of rows) {
