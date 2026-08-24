@@ -3,9 +3,9 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": null,
+  "lastAttemptAt": "2026-08-24T03:24:17.195Z",
   "lastSuccessAt": null,
-  "lastError": null,
+  "lastError": "fetchRaw returned 0 raw records with no prior live/stale evidence for this dataset — leaving status unchanged rather than reporting sample data as live.",
   "source": {
     "name": "NOAA Storm Events Database",
     "url": "https://www.ncdc.noaa.gov/stormevents/"

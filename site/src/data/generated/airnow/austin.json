@@ -3,9 +3,9 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-24T02:42:19.534Z",
+  "lastAttemptAt": "2026-08-24T03:24:19.511Z",
   "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"airnow/austin\" is not implemented yet. Requested window 2026-07-01T00:00:00.000Z .. 2026-08-24T02:42:19.534Z.",
+  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"airnow/austin\" is not implemented yet. Requested window 2026-07-01T00:00:00.000Z .. 2026-08-24T03:24:19.511Z.",
   "source": {
     "name": "AirNow",
     "url": "https://www.airnow.gov"
