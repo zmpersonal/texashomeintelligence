@@ -3,9 +3,9 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-23T09:42:03.091Z",
+  "lastAttemptAt": "2026-08-24T02:42:19.532Z",
   "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"municipal-permits/austin\" is not implemented yet. Requested window 2026-08-01T00:00:00.000Z .. 2026-08-23T09:42:03.091Z.",
+  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"municipal-permits/austin\" is not implemented yet. Requested window 2026-08-01T00:00:00.000Z .. 2026-08-24T02:42:19.532Z.",
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
     "url": "https://data.austintexas.gov/"
