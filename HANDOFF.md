@@ -70,7 +70,7 @@ on disk is honestly marked `"sample"`.
 
 | Feed | Fetcher file | `fetchRaw()` | Env var(s) | Generated file(s) |
 |---|---|---|---|---|
-| NOAA Storm Events | `site/src/ingest/fetchers/noaaStormEvents.ts` | `makeFetcher("austin"\|"san-antonio")` → exports `noaaStormEventsAustin`, `noaaStormEventsSanAntonio` | none (NOAA bulk data is keyless) | `noaa-storm-events/austin.json`, `noaa-storm-events/san-antonio.json` |
+| NOAA Storm Events ✅ **implemented** | `site/src/ingest/fetchers/noaaStormEvents.ts` | `makeFetcher("austin"\|"san-antonio")` → exports `noaaStormEventsAustin`, `noaaStormEventsSanAntonio` | none (NOAA bulk data is keyless) | `noaa-storm-events/austin.json`, `noaa-storm-events/san-antonio.json` |
 | Austin municipal permits (Socrata) | `site/src/ingest/fetchers/austinPermits.ts` | exports `austinPermits` | `SOCRATA_APP_TOKEN` (optional — raises the anonymous rate limit, not required to fetch at all) | `municipal-permits/austin.json` |
 | San Antonio municipal permits | `site/src/ingest/fetchers/sanAntonioPermits.ts` | exports `sanAntonioPermits` | none confirmed yet — verify which platform (Socrata vs. ArcGIS) San Antonio's portal actually uses before assuming Austin's shape | `municipal-permits/san-antonio.json` |
 | EIA TX residential electricity price | `site/src/ingest/fetchers/eiaElectricityPrice.ts` | exports `eiaElectricityPrice` | `EIA_API_KEY` (free instant signup) | `eia-electricity/texas.json` |
@@ -95,6 +95,33 @@ Permits and EIA electricity price don't have a data-detail page yet — no
 page reads `municipal-permits/*.json` or `eia-electricity/texas.json`
 yet; building those pages is a Phase 2-style template addition, not part
 of this seam.
+
+**NOAA Storm Events `fetchRaw()` is now real, not a stub** — the endpoint
+that was corrected in this round (the original stub referenced the
+retired `ncdc.noaa.gov` path; it now hits NCEI's actual bulk archive:
+`https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/`, keyless).
+It parses the directory listing (picking each year's latest `c`-dated
+revision), downloads and gunzips the year files the backfill/incremental
+window actually needs, parses the CSV (hand-rolled RFC4180-ish parser —
+NOAA's narrative fields contain embedded commas/quotes/newlines a naive
+`split(",")` would corrupt), and filters to Travis/Bexar + each one's
+bordering counties, Texas only, and hail/wind/tornado/flood event types.
+Keyed by NOAA's own `EVENT_ID` — stable across re-ingestion, so a
+corrected magnitude updates in place per the existing merge logic
+(untouched). Verified via a full mocked-network test (realistic synthetic
+CSV data matching NOAA's real schema, multi-year window spanning, an
+intentionally-stale duplicate-year revision to confirm "latest `c` wins,"
+cross-county/cross-state/wrong-event-type rows to confirm scoping, and
+all three real failure modes — network error, listing HTTP 500, a listed
+year file 404ing — confirmed to throw rather than silently return empty
+or fabricated data) — every case passed. **Not independently verified
+against the live NOAA endpoint**: this sandbox's outbound network policy
+blocks `ncei.noaa.gov` (and `api.weather.gov`), so the only live-network
+attempt from here got HTTP 403 at the proxy — the pipeline correctly
+handled that (preserved the 10/8 existing sample observations, updated
+only `lastAttemptAt`/`lastError`, stayed `"sample"` rather than
+fabricating anything). The real end-to-end proof happens on the next
+GitHub Actions cron run, which has normal internet egress.
 
 ### Stub tier — same schema/pipeline, single illustrative sample row, `fetchRaw()` fully unimplemented
 

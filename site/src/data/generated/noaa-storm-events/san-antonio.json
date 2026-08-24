@@ -3,9 +3,9 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-23T09:42:03.091Z",
+  "lastAttemptAt": "2026-08-24T02:14:45.369Z",
   "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"noaa-storm-events/san-antonio (Bexar County)\" is not implemented yet. Requested window 2026-08-01T00:00:00.000Z .. 2026-08-23T09:42:03.091Z.",
+  "lastError": "NOAA Storm Events directory listing failed: HTTP 403 from https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/",
   "source": {
     "name": "NOAA Storm Events Database",
     "url": "https://www.ncdc.noaa.gov/stormevents/"
