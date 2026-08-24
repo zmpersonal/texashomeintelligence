@@ -3,9 +3,9 @@
   "location": "texas",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-24T16:10:05.491Z",
+  "lastAttemptAt": "2026-08-24T16:12:34.659Z",
   "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"ercot/texas\" is not implemented yet. Requested window 2025-08-24T16:10:05.491Z .. 2026-08-24T16:10:05.491Z.",
+  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"ercot/texas\" is not implemented yet. Requested window 2025-08-24T16:12:34.659Z .. 2026-08-24T16:12:34.659Z.",
   "source": {
     "name": "ERCOT",
     "url": "https://www.ercot.com"
