@@ -17,6 +17,12 @@ import { parseCsv, rowsToRecords } from "../csv";
  * tries several plausible spellings per logical field rather than
  * hardcoding the exact real names, so a future column rename degrades
  * gracefully instead of breaking outright.
+ *
+ * The package also contains a frozen historical archive resource,
+ * "PERMITS ISSUED 2020-2024" (capped at 2024-12-31), whose name also
+ * matches a loose "permits issued" pattern — see findPermitsIssuedCsvUrl's
+ * freshest-by-last_modified tiebreak below, which is what actually
+ * prevents that archive from being picked over the live resource.
  */
 const PACKAGE_SHOW_URL = "https://data.sanantonio.gov/api/3/action/package_show?id=building-permits";
 const RESOURCE_NAME_MATCH = /permits?\s*issued/i;
@@ -37,20 +43,27 @@ async function findPermitsIssuedCsvUrl(): Promise<string> {
   if (!body.success || !body.result?.resources) {
     throw new Error(`San Antonio CKAN package_show returned no resources for "building-permits"`);
   }
-  // TEMP DIAGNOSTIC (2026-08-24): the "Permits Issued" resource's newest
-  // roofing permit is from 2024-12-31, over a year stale. Before
-  // concluding that's just how this feed is, log every resource's
-  // name/last_modified/created so we can see whether a fresher resource
-  // exists under a different name. Remove once confirmed either way.
-  console.log(
-    `[sa-permits-diag] all resources in "building-permits" package: ${body.result.resources
-      .map((r) => `name="${r.name}" format=${r.format} last_modified=${r.last_modified} created=${r.created}`)
-      .join(" ||| ")}`,
-  );
-  const resource = body.result.resources.find((r) => r.name && RESOURCE_NAME_MATCH.test(r.name));
-  if (!resource?.url) {
+  // Confirmed against a live run: the "building-permits" package has more
+  // than one resource whose name matches /permits?\s*issued/i -- a frozen
+  // historical archive ("PERMITS ISSUED 2020-2024", capped at 2024-12-31)
+  // alongside the actually-current one ("PERMITS ISSUED", last_modified
+  // updated same-week as the query). Picking the first regex match (array
+  // order put the archive first) silently fed the archive into every
+  // ingestion run instead of the live resource. Disambiguate by
+  // last_modified: among every name match, take the most recently
+  // modified one (an unset last_modified sorts last, not first).
+  const candidates = body.result.resources.filter((r) => r.name && RESOURCE_NAME_MATCH.test(r.name));
+  if (candidates.length === 0) {
     const names = body.result.resources.map((r) => r.name).join(", ");
     throw new Error(`San Antonio CKAN: no resource matching "Permits Issued" found among: ${names}`);
+  }
+  const resource = candidates.reduce((freshest, r) => {
+    const freshestTime = freshest.last_modified ? Date.parse(freshest.last_modified) : -Infinity;
+    const rTime = r.last_modified ? Date.parse(r.last_modified) : -Infinity;
+    return rTime > freshestTime ? r : freshest;
+  });
+  if (!resource.url) {
+    throw new Error(`San Antonio CKAN: matched resource "${resource.name}" has no url`);
   }
   return resource.url;
 }
@@ -110,38 +123,19 @@ export const sanAntonioPermits: FetcherModule<PermitValue> = {
       );
     }
 
-    // TEMP DIAGNOSTIC (2026-08-24): a prior run showed the first 10
-    // roof-matching rows all had DATE ISSUED in late 2020 — real data,
-    // correctly parseable, just outside the trailing-365-day window. But
-    // that only proves the *first* 10 rows encountered are old, not that
-    // the whole 18,777-row match set is. Track the actual max parsed date
-    // across every roof match to settle whether this CKAN resource is a
-    // genuinely stale bulk export or whether recent rows exist elsewhere
-    // in the file. Remove once confirmed.
-    let afterRoofFilter = 0;
-    let afterDateWindow = 0;
-    const sampleRoofMatches: string[] = [];
-    const sampleDates: string[] = [];
-    let maxParsedDate: string | null = null;
-
     const observations: Observation<PermitValue>[] = [];
     for (const row of records) {
       const type = cols.permitType ? row[cols.permitType] : "";
       const description = cols.description ? row[cols.description] : "";
       const haystack = `${type} ${description}`.toLowerCase();
       if (!haystack.includes("roof")) continue;
-      afterRoofFilter++;
-      if (sampleRoofMatches.length < 10) sampleRoofMatches.push(`type="${type}" desc="${description}"`);
 
       const rawDate = row[cols.issueDate];
-      if (sampleDates.length < 10) sampleDates.push(JSON.stringify(rawDate));
       if (!rawDate) continue;
       const parsedDate = new Date(rawDate);
       if (Number.isNaN(parsedDate.getTime())) continue;
       const observedAt = parsedDate.toISOString();
-      if (maxParsedDate === null || observedAt > maxParsedDate) maxParsedDate = observedAt;
       if (observedAt < since || observedAt > until) continue;
-      afterDateWindow++;
 
       const permitNumber = cols.permitNumber ? row[cols.permitNumber] : undefined;
       const key = permitNumber || `${observedAt}-${(cols.description ? row[cols.description] : "").slice(0, 40)}`;
@@ -160,12 +154,6 @@ export const sanAntonioPermits: FetcherModule<PermitValue> = {
         },
       });
     }
-    console.log(
-      `[sa-permits-diag] ${records.length} total row(s) -> ${afterRoofFilter} after roof filter -> ${afterDateWindow} after date window (since=${since} until=${until})`,
-    );
-    console.log(`[sa-permits-diag] sample roof-matching type/description values: ${sampleRoofMatches.join(" ||| ")}`);
-    console.log(`[sa-permits-diag] sample raw DATE ISSUED values from roof matches: ${sampleDates.join(", ")}`);
-    console.log(`[sa-permits-diag] max parsed DATE ISSUED across all ${afterRoofFilter} roof matches: ${maxParsedDate}`);
     return observations;
   },
 };
