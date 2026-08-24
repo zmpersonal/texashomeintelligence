@@ -3,9 +3,9 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-24T15:25:29.426Z",
+  "lastAttemptAt": "2026-08-24T15:50:19.815Z",
   "lastSuccessAt": null,
-  "lastError": "Austin permits fetch failed: HTTP 400 from https://data.austintexas.gov/resource/3syk-w9eu.json?%24where=issued_date+between+%272025-08-24T15%3A25%3A29%27+and+%272026-08-24T15%3A25%3A29%27+AND+%28upper%28work_class%29+like+%27%25ROOF%25%27+OR+upper%28permit_type_desc%29+like+%27%25ROOF%25%27+OR+upper%28description%29+like+%27%25ROOF%25%27%29&%24order=issued_date&%24limit=5000&%24offset=0",
+  "lastError": "Austin permits fetch failed: HTTP 400 from https://data.austintexas.gov/resource/3syk-w9eu.json?%24where=issued_date+between+%272025-08-24T15%3A50%3A19%27+and+%272026-08-24T15%3A50%3A19%27+AND+%28upper%28work_class%29+like+%27%25ROOF%25%27+OR+upper%28permit_type_desc%29+like+%27%25ROOF%25%27+OR+upper%28description%29+like+%27%25ROOF%25%27%29&%24order=issued_date&%24limit=5000&%24offset=0 — {\"message\":\"Query coordinator error: query.soql.no-such-column; No such column: issued_date; position: Map(row -> 1, column -> 1362, line -> \\\"SELECT `permittype`, `permit_type_desc`, `permit_number`, `permit_class_mapped`, `permit_class`, `work_class`, `condominium`, `permit_location`, `description",
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
     "url": "https://data.austintexas.gov/"

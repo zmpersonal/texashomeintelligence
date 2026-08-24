@@ -3,9 +3,9 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-08-24T15:25:30.353Z",
+  "lastAttemptAt": "2026-08-24T15:50:20.352Z",
   "lastSuccessAt": null,
-  "lastError": "San Antonio permits CSV: couldn't find an issue-date column among headers: PERMIT TYPE, PERMIT #, PROJECT NAME, WORK TYPE, ADDRESS, LOCATION, X_COORD, Y_COORD, DATE SUBMITTED, DATE ISSUED, DECLARED VALUATION, AREA (SF), PRIMARY CONTACT, CD, NCD, HD",
+  "lastError": "fetchRaw returned 0 raw records with no prior live/stale evidence for this dataset — leaving status unchanged rather than reporting sample data as live.",
   "source": {
     "name": "City of San Antonio Permits Open Data",
     "url": "https://data.sanantonio.gov/"
