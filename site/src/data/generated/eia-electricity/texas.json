@@ -3,8 +3,8 @@
   "location": "texas",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-08-26T09:56:56.560Z",
-  "lastSuccessAt": "2026-08-26T09:56:56.560Z",
+  "lastAttemptAt": "2026-08-27T19:49:55.283Z",
+  "lastSuccessAt": "2026-08-27T19:49:55.283Z",
   "lastError": null,
   "source": {
     "name": "EIA Electricity Data (Texas, residential)",

@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-08-26T09:56:52.135Z",
-  "lastSuccessAt": "2026-08-26T09:56:52.135Z",
+  "lastAttemptAt": "2026-08-27T19:49:52.219Z",
+  "lastSuccessAt": "2026-08-27T19:49:52.219Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -7299,16 +7299,6 @@
         "permitType": "Remodel",
         "workDescription": "Interior renovations new secure entry vestibule & security fencing re-roofing elevator replacement exterior facade renovations.\n\nPuPR2",
         "status": "Active"
-      }
-    },
-    {
-      "observedAt": "2025-12-12T00:00:00.000Z",
-      "ingestedAt": "2026-08-24T15:57:40.356Z",
-      "key": "2025-156375 EP",
-      "value": {
-        "permitType": "Auxiliary Power",
-        "workDescription": "Installation of 540kW AC Roof Mounted Auxiliary Power System \n\nThe service is for BLDG 2 UNIT DG",
-        "status": "Final"
       }
     },
     {
@@ -19411,7 +19401,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-26T09:56:52.597Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
       "key": "2026-107762 BP",
       "value": {
         "permitType": "Remodel",
@@ -19422,13 +19412,220 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-26T09:56:52.597Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
       "key": "2026-073341 BP",
       "value": {
         "permitType": "Repair",
         "workDescription": "Express: Replace drywall fixtures (like for like) countertops cabinets appliances flooring windows and doors like for like siding electrical outlets mechanical system roof shingles upgrade electrical service",
         "status": "Active",
         "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-08-24T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-096571 BP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition of an attached covered patio and extension of existing concrete patio slab at rear of existing 2-story single family residence. Work includes concrete slab new structural posts roof framing and roofing to match existing homes. Install can lighting and a fan. Roll in scope of work from expir",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-08-24T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-041588 MP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "ePlan: Residential Expedited Review - Addition and Remodel to Existing 2-Story Single Family Res. Building 1[3bed 2.5bath] Work to include: Second floor addition Third floor addition Covered roof deck addition.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-24T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-095246 MP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Roof replacement and renovations to existing sanctuary to accommodate installation of new HVAC equipment.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-24T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-110680 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express: Replace roof replace 3 windows 1 siding door replace 20 ft siding.",
+        "status": "Active",
+        "valuationUsd": 20000
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2025-156375 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Installation of 540kW AC Roof Mounted Auxiliary Power System \n\nThe service is for BLDG 2 UNIT DG",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-107818 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Collins/Matthew - 40-06335 - Install new 3.8 kW rooftop solar system to existing residential only using backfed breaker only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-110751 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express: Roof and deck replacement (not going past the decking)",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-110414 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "EXPRESS: Reroofing - WUI",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-108893 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Install new 17.2kW rooftop solar system for existing residential only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-096571 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition of an attached covered patio and extension of existing concrete patio slab at rear of existing 2-story single family residence. Work includes concrete slab new structural posts roof framing and roofing to match existing homes. Install can lighting and a fan. Roll in scope of work from expir",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-108133 EP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Outdoor installation of (1) weatherproof nema 14-50 and (1) 40 amp gfci breaker outdoor by the main panel..",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-109734 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Stanton - 39-96789 - Install new 5.7 kW rooftop solar system to existing residential only using backfed breaker only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-108737 BP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Interior remodel of existing 2-story single-family residence with 70 SF conditioned 2nd floor addition (new roof at 2:12 pitch). New uncovered wood deck at\nrear (272 SF at 50%). Removal of existing pergola carport shed and concrete steps. Two protected trees on site; CRZ tree protection per site pla",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-110283 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "EXPRESS: Reroof replacement WUI Zone C",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-102504 PP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "Bldg. 2 - New construction of 3 story SFR w/ attached carport covered front porch and uncovered wood steps at rear and rooftop uncovered balcony. 3 bedroom 3.5 baths",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-108756 BP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Full kitchen remodel with layout changes; primary bathroom full remodel with slab cuts at\nrelocated fixtures; flooring removed and replaced on both floors; new trim paint interior doors and lighting throughout. Addition: new 91 SF pantry/mudroom off the rear of the third garage bay  new foundation/s",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-069759 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Chavis-Parod - 39-63869 - Install new 5.76 kW rooftop solar system to existing residential only using backfed breaker only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-102503 PP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "Bldg. 1 - New construction of 3 story SFR w/ attached carport covered front porch and uncovered wood steps at rear and rooftop uncovered balcony. 3 bedroom 3.5 baths",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-108465 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Install new 4.3kW rooftop solar system for existing residential only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "key": "2026-103253 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "adding a solar rooftop system to an existing building",
+        "status": "Active"
       }
     }
   ]
