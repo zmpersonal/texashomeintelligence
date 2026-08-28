@@ -1,136 +1,231 @@
 # CLAUDE.md — Texas Home Intelligence (TexasHomeIntelligence.com)
 
-Persistent instruction set for this project. Read it before every task. If a one-off instruction I give in chat conflicts with this file, ask before proceeding.
+Persistent instruction set for this project. **Read this before every task.** It is the
+hub; the specialized files below hold the detail. If a one-off instruction in chat
+conflicts with this file, follow **Rule 1** (surface it, don't silently comply or refuse).
 
-## What we are building
+> This file **supersedes** the previous `CLAUDE.md`. `BUILD_PLAN.md` (phase history) and
+> `HANDOFF.md` (owner seams) are kept as reference — see `_SUPERSEDES.md` for the map.
 
-**Positioning: a Texas homeowner data / tools / intelligence platform first; lead generation is downstream.** The site publishes original, continuously-updated Texas home intelligence (weather, storms, permits, energy, costs, risk) and free homeowner tools. Lead capture is a secondary outcome that rides on top of that authority — not the front door.
+---
 
-The flagship tool is the **Home Dashboard** (address → translated local home signals). Other tools: **Cost Calculators**, **QuoteReady Project Brief** (the deterministic brief generator, live at `/start/`, no further investment for now), **QuickConnect** and **Home Risk Report** (later). Tools live under a `/tools/` hub.
+## Rule 1 — Surface, don't assume (the governing convention)
 
-Launch metros: **Austin and San Antonio** (Houston is a strong candidate for #3, deferred). Services: **Roofing, HVAC, Plumbing, Fire Damage Restoration, Mold Remediation, Electrical, Tree Trimming.** **First authority cluster: Austin Roofing.** Next clusters: HVAC + Plumbing.
+Every rule, KPI, brand guardrail, cost limit, and permission in this project is a
+**flag-and-decide** rule, not a frozen lock. When a task or a proposed change would work
+against any of them:
 
-Source material in `docs/` (read as reference): the copywriter output, the wireframe/handoff doc, the master backlog, the homepage/nav round spec, the phase-0 coder foundation list, and (when present) the roofing data-structure and keyword-research files.
+- **Do not** silently comply, and **do not** silently refuse.
+- **Surface the conflict**, explain the tradeoff in one or two sentences, and **wait for
+  the owner's call** to proceed or not.
 
-## Primary optimization goal: AI first, SEO second, humans third
+This keeps the project un-boxed (the owner can change direction anytime) while making sure
+nothing important gets quietly overridden. Every other file points back to this rule.
+When in doubt about anything, raise it rather than guess.
 
-**We optimize indexed content for AI answer engines (ChatGPT / Perplexity / Claude / Google AI answers) first, classic SEO second — NOT for human conversion.** Human conversion happens on the tools and on the paid `/lp/` pages, not on the authority content. When a tradeoff appears between "more citable / more extractable by AI" and "more persuasive to a human reader," choose citable on indexed authority pages. This priority ordering is the point of the whole build; do not quietly revert to conversion-first content.
+---
 
-## Owner [O] vs. coder [C] split
+## What this is
 
-- **[O] Owner:** provisions the Postgres instance, obtains API keys, sets Cloudflare/GitHub secrets, loads datasets, runs migrations in the real env, handles DNS cutover, decides which crawlers to allow, gets legal review before any lead resale.
-- **[C] Coder (you):** all code, config, migrations, scripts, scaffolding, with clear TODO markers where owner values plug in. **Secrets never committed to the repo or shipped in client JS.**
+**Texas Home Intelligence (THI)** continuously ingests Texas-specific public data —
+weather/storms (NOAA/NWS), building permits, energy load, air quality, drought, property
+and cost signals — and translates it into plain-language, **sourced** intelligence about a
+specific home or ZIP: what's happening, what it means, and when to act. The flagship
+interactive surface is the **Home Dashboard**. The brand essence is *situational awareness
+for your home* — a calm, sourced **instrument panel, not a weather-radar alarm**.
 
-Maintain `HANDOFF.md` listing every seam the owner completes (file paths, function names, env vars, expected I/O). Keep it current.
+Launch metros: **Austin and San Antonio** (Houston deferred). First authority cluster:
+**Austin Roofing**. See `THI-Brand-Kit.md` for the full brand/positioning system.
 
-## Non-negotiable product rules
+**Sibling note:** AustinHomeIntelligence.com (AHI) is a **separate future code project** —
+not part of this repo, not part of this build. Everything here is THI only.
 
-- **Do not lead with "AI"** in user-facing copy. The visible value is Texas-specific intelligence and useful tools. AI optimization is how we get *found*, not the pitch.
-- **Indexed authority pages are not conversion pages** (see Page Families below).
-- **QuoteReady / `/start/` intake:** name + email only to start → creates `project_id` + secure return token → (stubbed) return-link email. **No phone before the brief exists. No 1/2/3 contractor choice before the brief** — contractor help is a post-brief screen only, where phone may be requested.
-- **The brief never diagnoses or invents facts.** It organizes homeowner-reported facts + enriched public context and separates: reported facts vs. external context vs. unknowns/items-a-pro-should-evaluate. Includes limitation language: not an inspection or remote diagnosis.
-- **The Dashboard captures an address → PII.** Consent/privacy handling must be in place before it stores anything (ties to the leads/consent schema). A display-only mode that stores nothing is allowed without a consent flow; storing the address as a lead requires consent.
-- **Sample data is never presented as fact.** Anything placeholder is visibly SAMPLE and/or renders a clear unavailable/stale state. Every data card can show source, last-updated, and a stale/error state. Never silently substitute zero/null for a failed feed.
-- **Leads carry consent from day one:** consent, consent_source, shared_with, source attribution, timestamps. Homeowner-facing and contractor-facing data are cleanly separated (schema or DB boundary). No lead resale before owner's legal review (TDPSA / TCPA / privacy policy).
+---
 
-## Page families (LOCKED — this reverses the original conversion-first model)
+## Primary KPIs (what every decision serves)
 
-1. **Indexed authority pages** — location hubs (`/austin/`), location×service pages (`/austin/roofing/`), `/data/**`, `/texas/**`, `/indexes/**`, `/methodology/**`. These are **authority-first, optimized for AI citation**: exact AI-prompt phrasings as H2s with the answer in the first 1–2 sentences; original data, tables, and index readings in **static/server HTML**; visible freshness. Conversion is limited to **one contextual CTA at the bottom** plus at most a single soft inline mention. Do NOT build these conversion-first.
-2. **Conversion pages** — the **tools** (`/dashboard/`, `/tools/cost-calculators/`, `/start/`) and the **paid `/lp/{service}-{location}/` landing pages**. This is where persuasion, forms, and heavy CTAs live. `/lp/` pages are **noindex** (paid traffic; avoid duplicate-content collision with the authority pages). Tools are indexable where a citable companion answer exists, but the interactive tool itself is the conversion surface.
+In priority order for the current build:
 
-## Tool architecture (LOCKED — protect logic, expose facts)
+1. **AI referral traffic & organic SEO** — being cited/mentioned by AI answer engines
+   (ChatGPT / Perplexity / Claude / Google AI) first, classic SEO second.
+2. **Stickiness & return visitors** — the dashboard as a habit; the weekly brief.
+3. **Sellable homeowner leads** — **deferred.** Leads will come from the future QuoteReady
+   funnel and later tools. Not a goal of this build. Design so it's not *blocked* later,
+   but don't optimize for it now.
 
-- Tool **logic** (calculator formulas, cost model, dashboard signal computation, index weights/thresholds) runs **server-side in Cloudflare Functions against the operational DB, behind rate-limited endpoints** — never shipped as client JS, never exposing proprietary constants.
-- Citable **outputs** (cost ranges, tables, index readings, FAQ answers) are still published as **static HTML on companion content pages.** Win the citation with the exposed general answer; win the click with the personalized/live layer AI can't reproduce.
-- **Never hide citable facts.** The moat is the Postgres archive + live execution + brand, protected by architecture — not by hiding pages.
+**Sitewide vs. dashboard split (important):**
+- **Everything indexed/public (content, authority pages, data pages) is optimized AI-first,
+  SEO-second — NOT for human conversion.** When "more citable/extractable by AI" conflicts
+  with "more persuasive to a human," choose citable on these pages.
+- **The Dashboard is the exception.** Its job is **stickiness, usability, and value** for
+  the returning homeowner — not citation. Don't apply the AI-extraction ruleset to the
+  dashboard; apply the brand + usability ruleset instead.
 
-## Non-negotiable engineering rules
+Because leads are deferred, the old "gate the exact-home read to capture a lead vs. expose
+it for citation" tension is **dormant** this build — but see the dashboard capture note
+below, which still touches PII.
 
-- **Config-driven, not hand-coded pages.** All location×service pages, hubs, and data pages generate from content collections / structured config. Adding a metro or service = config, not a copied page. Document "how to add a new metro×service" in HANDOFF.md.
-- **Facts render in static/server HTML, not JS-only.** Every important number is in served HTML, tabular data in `<table>`. Charts are progressive enhancement over already-present HTML.
+---
+
+## Current build — scope
+
+**In scope:** the **Home Dashboard** + **sitewide AI-mention / SEO-organic optimization**.
+Marketing is paid social engagement posts (alerts, memes, ZIP-code announcements) — Buffer
+is the pipe when we get there.
+
+**Dashboard behavior for this build:**
+- Open the dashboard → prompt for **ZIP** → show ZIP-level data. **ZIP read is open, stores
+  nothing, no account.** This is the citable/shareable, low-friction layer.
+- To unlock tailored, home-specific data/alerts → user enters **address + email**. **This
+  step captures PII** → store server-side in **D1** with consent (see `SECURITY.md`). This
+  is the stickiness + future-lead hook, not a lead-gen push right now.
+
+**Explicitly OUT of scope this build (do not build; bring back later):**
+- The **Tools** nav item and the **tools/cards section directly below the homepage hero.**
+- **Services** anywhere (removed permanently from nav; do not re-add).
+- QuoteReady expansion, cost calculators, Home Risk Report, proposal generator, contractor
+  lead marketplace.
+- The **Postgres migration** (stay on existing D1/KV).
+- The full **SEMrush content-demand system** (architecture is *reserved* now — see
+  `.claude/skills/content-demand-ingestion/SKILL.md` — but not built until greenlit).
+- Anything AHI.
+
+**Nav for this build (confirm before writing):** `Data · Locations(dropdown: Austin, San
+Antonio)` + a persistent top-right **"My Dashboard"** button → `/dashboard/`. Methodology
+lives in the footer. No Tools, no Services. All nav/CTAs are real crawlable `<a href>`;
+the Locations dropdown is keyboard/touch accessible (no hover-only).
+
+**Copy discipline:** You may adjust **structure, headings, schema, and FAQ scaffolding**
+for AI/SEO freely. But **once copy is provided in a copy document, it is frozen** — render
+it exactly and don't change it later unless given explicit replacement copy. **The one
+exception:** the AI-phrase **content pages** (there will be many) — you may **author**
+these yourself, provided they follow the AI-optimization best practices in `ROADMAP.md`
+and the brand voice.
+
+---
+
+## Definition of done
+
+"Done" for any round = **the owner reviews and approves it on staging**
+(`texashomeintelligence.<...>.workers.dev`). After approval, **Claude Code may push it live
+— but only on the owner's explicit command** (see `SECURITY.md`). DNS cutover from the old
+GitHub-Pages Jekyll site to the Cloudflare Worker is owner-owned.
+
+---
+
+## Repo reality (verify before trusting)
+
+Two sites live in this one repo:
+- **Repo root = the OLD Jekyll site** (`_data/`, `_layouts/`, `CNAME`) — still the *current
+  live site on GitHub Pages*. Leave it running until DNS cutover.
+- **`site/` = the Astro app** — the real build, deployed as a **Cloudflare Worker** and
+  served at the workers.dev **staging** URL. **All new work happens in `site/`.**
+
+**Stack (in `site/`):** Astro 7 + TypeScript + Tailwind 4 + `@astrojs/cloudflare`,
+deployed via **Wrangler** (`site/wrangler.jsonc`, worker name `texas-home-intelligence`).
+Bindings already exist: **D1** (`DB` = `texas-home-intelligence-db`) and **KV**
+(`PROJECTS_KV`, `SESSION`) — IDs in `wrangler.jsonc` are local placeholders the owner
+swaps for real ones. `robots.txt` + `llms.txt` already allow citation crawlers.
+
+**Known scripts (run from `site/`; verify against `site/package.json` before relying):**
+`npm run dev` · `npm run build` · `npm run preview` · `npm run check` (astro check =
+typecheck) · `npm run verify-content` · `npm run ingest` · `npm run fetch-drought-map`.
+There is **no separate lint/test script** beyond `check` + `verify-content` — don't assume
+one; if you need it, propose adding it (Rule 1).
+
+**Deploy target reconciliation:** older docs say "Cloudflare Pages / Pages Functions."
+Ground truth is a **Cloudflare Worker via Wrangler**. Server-side logic (endpoints, PII
+capture, tool logic) runs as **Astro server routes on the Worker**, not Pages Functions.
+Treat that as the truth; if you find evidence it's actually Pages, surface it (Rule 1).
+
+---
+
+## Non-negotiable engineering rules (flag-and-decide per Rule 1)
+
+- **Config-driven, not hand-coded pages.** Location×service pages, hubs, and data pages
+  generate from content collections / structured config. Adding a metro or service = config,
+  not a copied page.
+- **Facts render in static/server HTML, not JS-only.** Every important number is in served
+  HTML; tabular data in `<table>`. Charts are progressive enhancement over present HTML.
 - **Secrets never reach the browser.** Keyed calls and tool logic run server-side only.
-- **Store history, never overwrite.** Ingestion appends observations; derived indices store the underlying observations + methodology version that produced them.
-- **Preserve URLs across the migration; 301 anything that must change; no URL breaks.**
-- **Scale reality:** target ~90–300 leads/month; over-building is a mistake. Prefer boring, cheap, reliable.
+  Secrets are never committed to the repo. (See `SECURITY.md`.)
+- **Store history, never overwrite.** Ingestion appends observations; derived indices store
+  the underlying observations + methodology version that produced them.
+- **Sample data is never presented as fact.** Placeholder is visibly `SAMPLE` and/or renders
+  a clear unavailable/stale state. Never silently substitute zero/null for a failed feed.
+  **No `SAMPLE` on an indexed page** (that becomes a citation liability).
+- **Preserve URLs; 301 anything that must move; no URL breaks.**
+- **No LLM in the runtime or ingestion path.** Numbers are computed deterministically, never
+  model-generated. AI tokens are spent at authoring/build time only, never per pageview or
+  per data refresh. (See `COST.md`.)
+- **Scale reality:** target ~90–300 leads/month equivalent. Prefer boring, cheap, reliable.
+  Don't over-build. (See `COST.md`.)
 
-## Tech stack
+---
 
-- **Framework:** Astro + TypeScript + Tailwind (small custom design-token layer; intentional, trustworthy, fast — not the default AI-generated look; follow the frontend-design skill).
-- **Hosting:** Cloudflare Pages (static) + Pages Functions (server-side tool/intake endpoints). Confirm the Pages project auto-deploys on push, or cron-committed data won't reach the site.
-- **State/session:** Cloudflare **KV** = session/return-token state.
-- **Operational DB — TARGET: Postgres (Supabase or Neon) as the owned system-of-record** (leads/PII+consent, the historical observations archive, indices, cost estimates, projects). **CURRENT STATE:** the intake pipeline is built on Cloudflare **D1**; the Postgres migration is a planned foundation round and is **not done yet**. Until it is: the public site renders from generated JSON regardless of engine, and you must **confirm what actually exists in the repo before writing DB code** — do not assume Postgres is wired.
-- **Edge DB access:** when Postgres lands, use an **edge-compatible driver** (Neon serverless driver, Supabase HTTP client, or Cloudflare Hyperdrive). A raw TCP `pg` driver may not work in the Workers/Pages runtime — do not assume raw TCP.
-- **Ingestion:** GitHub Actions cron (2–3×/week) → real API calls → append to the archive → derive indices/costs (deterministic, no LLM) → emit `src/data/generated/*.json` → commit → Pages rebuild. GitHub is source of truth for site, scripts, generated datasets, and config.
-- **Analytics:** GA4 + a documented custom AI-referral channel (chatgpt.com, perplexity.ai, claude.ai, gemini.google.com, copilot.microsoft.com) + Cloudflare Web Analytics. Default GA4 grouping under-counts AI referrals — set it up so we can see the channel from day one.
+## Two logical data domains (keep conceptually separate)
 
-## URL architecture
+Same infrastructure is fine; **one undifferentiated schema is not.** Track these as
+distinct domains:
+1. **Home/location intelligence** — the observations archive, indices, cost estimates, and
+   **leads/PII+consent** (the ZIP/home data and captured homeowners). Currently on **D1/KV**.
+2. **Market/query intelligence** — the future **SEMrush content-demand** system: AI-phrase
+   records, clusters, opportunity scores, AI-visibility tracking, editorial state. This is
+   **internal/editorial ops tooling** — it neither serves public pages nor stores homeowner
+   PII. Reserved now, built later. See `content-demand-ingestion/SKILL.md`.
 
-```
-/                       Homepage (authority hero + four cards + live-data section)
-/dashboard/             Home Dashboard (flagship tool; header button + hero CTA point here)
-/tools/                 Tools hub (indexable) — cards to each tool
-/tools/cost-calculators/  /tools/quickconnect/  /tools/home-risk-report/   (shells until built)
-/start/                 QuoteReady intake (live, deterministic brief; no further investment now)
-/brief/{project_id}/    Generated brief (token-gated)
-/austin/  /san-antonio/                         Location hubs (authority)
-/austin/{service}/  /san-antonio/{service}/     Location×service (authority)
-/data/  /data/{location}/  /data/{location}/{topic}/   Data catalog + detail (authority)
-/indexes/{index}/       Derived index pages (e.g. austin-roof-stress)
-/methodology/  /methodology/{index}/            Methodology (authority)
-/texas/{topic}/         Texas-wide authority pages (justified by data)
-/lp/{service}-{location}/   Paid AdWords landing pages (conversion-pure, NOINDEX)
-```
+The public site should not query a live DB on the serving path — it renders from generated
+JSON/config. The DB's jobs are (a) captured leads/PII and (b) the observations history.
 
-- **Nav (current, LOCKED):** Tools · Data · Methodology · Locations(dropdown: Austin, San Antonio) + a persistent top-right **"My Dashboard"** button → `/dashboard/`. Methodology is in the top nav and the footer (both). **`/services/` was removed and deleted — do not re-add it or link to it.** Dashboard is not a nav link (the button covers it).
-- All nav/CTAs are real crawlable `<a href>`; the Locations dropdown is keyboard/touch accessible (no hover-only).
-- Thin not-yet-built pages get clean non-empty placeholders and are **noindex**; `/tools/` is the indexable exception.
-- Sitemap is `sitemap-index.xml` (Astro).
+---
 
-## Database schema (target Postgres; append-only archive)
+## Permissions (summary — full detail in `SECURITY.md`)
 
-- `observations` — historical archive, **append-only** (metro, service, metric_key, value, unit, classification, band, period, data_through, source_name, source_dataset, source_url, baseline_value, baseline_label, captured_at).
-- `indices` — computed index history (metro, service, index_key, value, band, inputs JSON, drivers JSON, computed_at).
-- `cost_estimates` — (metro, service, breakdown JSON, inputs JSON, computed_at).
-- `leads` — PII + consent from day one (id, created_at, email, phone, address, geo, ip, source, service, metro, consent, consent_source, shared_with, status).
-- `projects` — QuoteReady briefs.
-- Homeowner-facing vs. contractor-facing data cleanly separated.
+- **Safe (do freely):** read files, inspect the repo, run the build/checks, work on a
+  **branch**, edit anything under `site/` on the branch, trigger the **free** data-ingestion
+  Action (read-only, free-tier feeds only).
+- **Ask first:** dependencies, migrations, auth, any paid API, deleting files, schema
+  changes, anything that could incur cost or call an external paid service.
+- **Human-owns:** DNS cutover, billing, production data/PII decisions, secrets, and the
+  **merge-to-main / deploy-to-live** step. Claude Code **may deploy to live, but only on the
+  owner's explicit command.**
+- **Workflow:** work on branches, show the diff + a summary, and request approval to merge/
+  deploy. Staging (workers.dev) is the freely-testable surface; the DNS-live domain is
+  protected.
 
-## Data feeds (deep on three; others stubbed)
-
-Priority, real backfill + history: **NOAA Storm Events + NWS** (hail/wind; roofing + tree), **municipal permits via Socrata** (Austin + San Antonio; roofing permit counts + valuations — the local moat feed), **EIA Texas residential electricity** (HVAC operating-cost context). Additional feeds (AirNow, Census ACS, BLS, etc.) are wired as owner keys become available. Present derived, **branded indices** (e.g. Austin Roof Stress Index) as the citable, defensible unit. On feed failure: keep last-good data, mark stale, never crash the build, never show sample-as-fact.
-
-## Generated brief
-
-Deterministic, from a **template keyed to structured intake fields.** No LLM-invented facts about the home. (An optional prose-smoothing hook may only rephrase homeowner-supplied text, never add facts; off by default.) Sections: Project Summary; Reported Problem/Conditions; Property & Local Context; Work Already Performed / Prior Quotes; Homeowner Objectives; Items a Professional Should Evaluate; Questions the Written Estimate Should Answer; Attachments/Notes; Information Still Needed/Unknowns; limitation statement.
-
-## AI-optimization requirements (apply to every authority page)
-
-1. Exact AI-prompt phrasings as H2s; answer in the first 1–2 sentences.
-2. Publish original data (permit-valuation costs, hail counts, indices) — be the primary source for prompts that currently cite nothing.
-3. Extractable formats: cost-by-material tables, key-findings blocks, ranges not false precision — all in server-rendered HTML.
-4. Schema: FAQPage + Article + Dataset/DataCatalog + Organization (consistent "Texas Home Intelligence" entity, logo, sameAs) + WebSite + BreadcrumbList.
-5. Own the "how to choose" decision frameworks (a large share of demand); THI is not a directory.
-6. `llms.txt` + `robots.txt` allowing citation/search crawlers (OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Claude-SearchBot, Claude-User, Googlebot, Bingbot, plus Applebot-Extended/Amazonbot/cohere-ai; training crawlers and no-value scrapers in clearly-labeled, separately-togglable blocks). **Verify Cloudflare Bot Fight Mode / WAF isn't blocking citation crawlers at the edge** — this is the most common own-goal.
-7. Visible freshness (Updated / Data-through) on time-sensitive pages.
-8. Canonicals everywhere; consistent trailing-slash policy; per-page OG/Twitter overrides.
-
-## Content grounding & scope discipline
-
-- Content is grounded in the **roofing keyword research**, NOT the noisy AHI-AI-PHRASES file (retired for planning). ~Half of roofing AI prompts are "recommend/choose a roofer" (#1 intent) — own that framework.
-- Roofing FAQ batches (in the backlog) map to specific cluster pages and carry FAQPage schema; apply them per page in the roofing round.
-- **Skip keyword-tool noise:** individual competitor-brand review pages, crown molding, awnings, deck/fence, canvas. Gutters/siding/insulation/waterproofing/roof-cleaning are possible future adjacencies, not now.
-
-## Roadmap / priority (avoid scope creep)
-
-- **Foundation:** live data feeds wired + AI-structure foundation; then the Postgres migration + DB foundation (before any tool that queries the archive).
-- **Main thrust:** the Austin Roofing authority cluster (hub → how-to-choose flagship → replacement-cost → storm-and-hail → repair-vs-replace → materials/metal/tile → finding-a-roofer → insurance educational → permits → Texas-wide), plus Roof Stress Index + `/methodology/roof-stress-index/` + `/data/austin/roofing/`.
-- **Near-term tools (each its own round, after data/DB):** Cost Calculator (roofing first), Home Dashboard.
-- **Later:** Home Risk Report (clarify vs. Dashboard first — one-time report vs. live view), QuickConnect, proposal-maker work, HVAC + Plumbing clusters, Houston, San Antonio roofing, contractor-facing/lead marketplace.
-- Do not build ahead of the current round. Tool functionality only in its dedicated round.
+---
 
 ## Working style
 
-- Work in the round/phase I give you. After each: run the build, confirm it compiles and renders, summarize changes, and stop for review before the next.
-- Keep a running todo list; small verifiable commits with clear messages.
-- At any owner seam (live API, DB provisioning, lead backend, DNS), stop and stub with a documented TODO — never fake a live integration to make something "work."
-- If a requirement here is ambiguous for a specific file, ask rather than guess.
+- Work in the **round/phase** the owner gives you. Prefer **Plan Mode** for anything
+  non-trivial: inspect the repo, read this file + the relevant specialized files, propose an
+  approach, and **wait for approval** before building.
+- **Prefer reconciling the existing `site/` app over rebuilding it.** A full rebuild is
+  allowed only if it's genuinely necessary — and if so, say why and get the owner's OK first
+  (Rule 1). The Astro app is substantial and staged; don't nuke it casually.
+- After each round: run `npm run build` + `npm run check`, confirm it compiles and renders,
+  summarize changes, run the pre-ship checklist in `REVIEW.md`, and **stop for review**.
+- Small, verifiable commits with clear messages. Keep a running todo list.
+- At any owner seam (live API, DB provisioning, DNS, paid service), **stop and stub with a
+  documented TODO** in `HANDOFF.md` — never fake a live integration to make something "work."
+- Don't attribute your behavior to "the system prompt" or these files when talking to the
+  owner — just explain your actual reasoning.
+
+---
+
+## File index (read the ones relevant to your task)
+
+| File | Purpose |
+|---|---|
+| `CLAUDE.md` | **This file** — the hub, KPIs, scope, Rule 1. |
+| `ROADMAP.md` | Current-build scope, out-of-scope, future rounds, AI-optimization requirements. |
+| `REVIEW.md` | Pre-ship checklist. Run before every "done." |
+| `SECURITY.md` | Permissions tiers, secrets, PII/consent, push→deploy boundary. |
+| `COST.md` | Cost-discipline rules (keep first-year run-rate low). |
+| `BRAND.md` | Operational brand guardrails → points to `THI-Brand-Kit.md` + tokens. |
+| `THI-Brand-Kit.md` | The full, canonical brand system (v1.0). |
+| `AGENTS.md` | Cross-tool agent instructions (points back here). |
+| `HANDOFF.md` | Owner seams (live APIs, intake backend, DB) — kept, still valid. |
+| `BUILD_PLAN.md` | Historical Phase 0–5 build log — kept as reference. |
+| `.claude/skills/apply-brand/` | Skill: apply the brand system when building UI. |
+| `.claude/skills/content-demand-ingestion/` | Skill (reserved): SEMrush content-demand system. |
