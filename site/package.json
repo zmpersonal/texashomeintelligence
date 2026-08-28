@@ -7,6 +7,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "astro build && wrangler deploy --config dist/server/wrangler.json",
     "check": "astro check",
     "verify-content": "node scripts/verify-content.mjs",
     "ingest": "tsx scripts/ingest.ts",

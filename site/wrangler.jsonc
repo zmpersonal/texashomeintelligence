@@ -1,5 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
+  // Deploying: `npm run build` makes @astrojs/cloudflare emit a fully
+  // resolved dist/server/wrangler.json from THIS file (it injects
+  // main: entry.mjs + assets: ../client — do not add main/assets here).
+  // Deploy with `npm run deploy`, or in Cloudflare Workers Builds set:
+  //   root dir `site` · build `npm run build`
+  //   deploy `npx wrangler deploy --config dist/server/wrangler.json`
   "name": "texas-home-intelligence",
   "compatibility_date": "2026-04-15",
   "compatibility_flags": ["nodejs_compat"],

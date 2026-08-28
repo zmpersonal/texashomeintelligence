@@ -2,7 +2,42 @@
 
 This tracks exactly what's stubbed vs. real, so "ready for live traffic" =
 you filling in the items below. Updated as each phase lands — current
-through Phase 5 (ingestion framework).
+through Phase 5 (ingestion framework) + the governance-layer refresh.
+
+---
+
+## ⚠️ Deploy-target correction (supersedes "Cloudflare Pages" below)
+
+Older sections of this file say "Cloudflare Pages" — ground truth is a
+**Cloudflare Worker deployed via Wrangler** (`site/wrangler.jsonc`, worker
+name `texas-home-intelligence`), built and deployed by the owner's
+**Git-connected Workers Builds** (no GitHub Actions deploy workflow — do
+not add one). Staging serves at the owner's `*.julian-0ef.workers.dev`
+subdomain. Read every "Pages" mention below through that lens: "Pages
+project settings" → the Worker's settings/bindings; "Pages env vars" →
+Workers build-time environment variables in the Workers Builds config.
+
+**Workers Builds settings the owner maintains (dashboard-side):**
+- Root directory: `site` · Build command: `npm run build`
+- Deploy command: `npx wrangler deploy --config dist/server/wrangler.json`
+  (the build emits that fully-resolved config from `site/wrangler.jsonc` —
+  verified locally with a `wrangler deploy --dry-run`; `npm run deploy`
+  wraps the same two steps for manual deploys)
+- Build-time env vars when analytics go live: `PUBLIC_GA4_MEASUREMENT_ID`,
+  `PUBLIC_CF_BEACON_TOKEN`
+- Real KV/D1 namespace IDs substituted for the placeholder IDs in
+  `wrangler.jsonc` (or bound in the dashboard) before a production-grade
+  deploy — the committed IDs are local/Miniflare placeholders.
+
+## Seam 4 — Dashboard consent/PII capture (reserved; build round pending)
+
+The dashboard's home-unlock (address + email → D1) requires, before
+anything is stored: a consent checkbox + consent text, `consent` +
+`consent_source` + timestamp columns in a new D1 migration, a server-only
+capture route, and a published `/privacy/` page (none exists yet). ZIP-level
+reads store nothing and need none of this. Owner owns the consent/legal
+wording (TDPSA/TCPA review); the build round stubs it with a documented
+TODO until supplied.
 
 ---
 
@@ -454,7 +489,8 @@ the GA4 UI per the rule above.
 
 Not a "seam" in the same sense, but worth tracking here since CLAUDE.md
 defers it: **texashomeintelligence.com currently serves the live Jekyll
-site on GitHub Pages.** This Astro app deploys to its own Cloudflare Pages
-project/subdomain independently. Pointing the real domain at this app
+site on GitHub Pages.** This Astro app deploys as a Cloudflare Worker to
+its own workers.dev staging subdomain independently (see the deploy-target
+correction at the top of this file). Pointing the real domain at this app
 (DNS change + retiring the GitHub Pages deployment) is an explicit,
 separate go-live step — not implied by any phase above being "done."

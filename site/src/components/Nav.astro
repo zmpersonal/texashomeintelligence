@@ -15,13 +15,11 @@ const ctaLabel = "My Dashboard";
 <header class="site-nav" id="site-nav">
   <div class="wrap">
     <a class="brand-mark" href="/" aria-label="Texas Home Intelligence — home">
-      <!-- TODO(owner): logo-raw.png isn't in the repo yet (checked working
-      tree + full git history — nothing found). Push it to
-      site/public/images/logo-raw.png (any reasonable resolution; it's
-      scaled to fit the header via CSS, not the file's native size) and
-      it appears automatically — no other change needed. Until then this
-      <img> 404s and the onerror fallback below shows the text wordmark
-      instead, so the header never shows a broken-image icon. -->
+      <!-- The mark is a swappable asset (logo not finalized — BRAND.md):
+      replace the file at site/public/images/logo-raw.png to change it,
+      nothing else references it. The crawlable wordmark below stays
+      beside the mark regardless, and doubles as the onerror fallback so
+      the header never shows a broken-image icon. -->
       <img src="/images/logo-raw.png" alt="" class="brand-logo" />
       <span class="brand-mark-text">Texas Home<span>Intelligence</span></span>
     </a>
