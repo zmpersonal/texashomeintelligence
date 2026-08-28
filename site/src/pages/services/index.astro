@@ -1,0 +1,112 @@
+---
+/**
+ * Services hub — `/services/`.
+ *
+ * Reinstated as a footer-linked hub, not a nav item: ROADMAP.md's "Services
+ * out" rule is scoped to the header. Without a hub the 14 location×service
+ * pages were reachable only from each other and from one homepage strip, which
+ * is thin internal linking for a third of the indexed site.
+ *
+ * Generated from the services and locations collections, so it grows and
+ * shrinks with them — adding a service is still a config change.
+ */
+import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import { getCollection } from "astro:content";
+import { SERVICE_SIGNALS, SERVICES_WITHOUT_SIGNAL } from "../../lib/serviceSignals";
+import { publishedDataPages } from "../../lib/dataPages";
+
+const SERVICE_ORDER = [
+  "roofing",
+  "hvac",
+  "plumbing",
+  "fire-damage-restoration",
+  "mold-remediation",
+  "electrical",
+  "tree-trimming",
+];
+const LOCATION_ORDER = ["austin", "san-antonio"];
+
+const services = await getCollection("services");
+const locations = await getCollection("locations");
+
+const orderedServices = SERVICE_ORDER.map((slug) => services.find((s) => s.id === slug)).filter(
+  (s) => s !== undefined,
+);
+const orderedLocations = LOCATION_ORDER.map((id) => locations.find((l) => l.id === id)).filter(
+  (l) => l !== undefined,
+);
+
+/** How many of these services have a measured local signal behind them. */
+const withSignal = orderedServices.filter((svc) => {
+  const signal = SERVICE_SIGNALS[svc.id];
+  if (!signal) return false;
+  return LOCATION_ORDER.some((loc) => {
+    const pages = publishedDataPages(loc);
+    return pages.some((p) => p.topic === signal.topic || p.topic === signal.fallbackTopic);
+  });
+}).length;
+
+const title = "Home Services We Cover in Texas | Texas Home Intelligence";
+const description = `The ${orderedServices.length} home-service categories Texas Home Intelligence covers for Austin and San Antonio, with the local data behind each one.`;
+---
+
+<Base title={title} description={description} article={{ section: "Services" }}>
+  <Breadcrumbs crumbs={[{ name: "Home", url: "/" }, { name: "Services", url: "/services/" }]} />
+
+  <section class="hero">
+    <div class="wrap" style="max-width:760px;">
+      <span class="eyebrow">Services</span>
+      <h1>Home services we cover</h1>
+      <p class="lede">
+        {orderedServices.length} service categories across {orderedLocations.length} Texas metros.
+        Each page covers what a contractor should evaluate, the questions worth settling before
+        you compare quotes, and — for {withSignal} of them — the local data we actually measure.
+      </p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <h2>By service</h2>
+      <div class="grid-2">
+        {orderedServices.map((svc) => {
+          const signal = SERVICE_SIGNALS[svc.id];
+          const noSignal = SERVICES_WITHOUT_SIGNAL[svc.id];
+          return (
+            <div class="card">
+              <h3>{svc.data.name}</h3>
+              {signal && <p>{signal.why}</p>}
+              {!signal && noSignal && <p>Covered for both metros. No measured local feed for this one yet.</p>}
+              <p class="service-hub-links">
+                {orderedLocations.map((loc, i) => (
+                  <>
+                    {i > 0 && " · "}
+                    <a href={`/${loc.id}/${svc.id}/`}>{loc.data.name}</a>
+                  </>
+                ))}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap" style="max-width:760px;">
+      <h2>How these pages are built</h2>
+      <p>
+        Each service page pairs guidance with whatever we genuinely measure locally. Where a
+        published dataset bears on a service — storm history for roofing, drought for trees and
+        buried plumbing, electricity prices for HVAC — the page shows the real reading with its
+        source and dates, and links to the full dataset. Where we have no relevant feed, the page
+        says so rather than showing an unrelated number.
+      </p>
+      <p>
+        See the <a href="/data/">data catalog</a> for everything we track, or our
+        <a href="/methodology/">methodology</a> for how sourcing and freshness are handled.
+      </p>
+    </div>
+  </section>
+</Base>

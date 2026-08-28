@@ -59,11 +59,6 @@ if (Object.keys(locations).length !== EXPECTED_LOCATIONS.length) {
     } (${Object.keys(locations).join(", ")})`,
   );
 }
-for (const [slug, loc] of Object.entries(locations)) {
-  if (!loc.conditions || loc.conditions.length < 3) {
-    fail(`locations/${slug}: expected at least 3 dashboard conditions`);
-  }
-}
 
 // --- services ---
 const services = loadDir("services");

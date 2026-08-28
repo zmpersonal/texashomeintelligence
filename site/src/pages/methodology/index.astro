@@ -103,7 +103,7 @@ const dateModified = sourceRows
                   {row.connected && row.status !== "sample" ? (
                     <DataStatus status={row.status} asOf={row.asOf} />
                   ) : (
-                    <span class="sample-badge">NOT YET CONNECTED</span>
+                    <span class="sample-badge">Not yet connected</span>
                   )}
                 </td>
               </tr>
@@ -145,13 +145,13 @@ const dateModified = sourceRows
         a data page can show a trend, not just a snapshot.
       </p>
 
-      <h2>Placeholder data during development</h2>
+      <h2>Do you ever publish placeholder numbers?</h2>
       <p>
-        Sources we have not connected yet are marked <strong>SAMPLE</strong> or
-        <strong>NOT YET CONNECTED</strong> &mdash; illustrative placeholders for layout and
-        product design only, never real facts. Published data pages carry no placeholder rows at
-        all: a page is only built once its feed has returned real records, and any fabricated
-        bootstrap rows are retired from a dataset the first time a real fetch succeeds.
+        No. Sources we have not connected yet are listed above as
+        <strong>Not yet connected</strong> and carry no figures at all. Published data pages
+        contain no placeholder rows: a page is only built once its feed has returned real
+        records, and the fabricated rows used to bootstrap a dataset during development are
+        retired from it automatically the first time a real fetch succeeds.
       </p>
 
       <h2>Not a substitute for professional evaluation</h2>

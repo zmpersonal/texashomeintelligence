@@ -2,23 +2,6 @@ import { defineCollection } from "astro:content";
 import { glob, file } from "astro/loaders";
 import { z } from "astro/zod";
 
-/**
- * Shared shape for any value that isn't live yet. `status` drives the
- * SAMPLE badge / stale state in the UI layer generically — pages should
- * never need their own per-value "is this real?" logic.
- */
-const sampleValue = z.object({
-  status: z.enum(["sample", "stale", "live", "error"]),
-  asOf: z.string().optional(),
-  source: z.string().optional(),
-});
-
-const dashCondition = z.object({
-  label: z.string(),
-  value: sampleValue,
-  note: z.string(),
-});
-
 const copySection = z.object({
   heading: z.string(),
   body: z.string(), // raw HTML, same convention as the Jekyll build
@@ -39,7 +22,6 @@ const locations = defineCollection({
     region: z.string(),
     counties: z.string(),
     hubIntro: z.string(),
-    conditions: z.array(dashCondition),
   }),
 });
 

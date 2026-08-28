@@ -23,6 +23,7 @@ import Base from "../layouts/Base.astro";
 import DataStatus from "../components/DataStatus.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
 import DroughtMapHero from "../components/DroughtMapHero.astro";
+import LiveConditionsPanel from "../components/LiveConditionsPanel.astro";
 import { getCollection } from "astro:content";
 import { publishedDataPages } from "../lib/dataPages";
 import { findDataset, freshnessOf } from "../lib/datasets";
@@ -101,7 +102,17 @@ const description =
           Updated continuously using weather, property, economic, and home-service data.
         </p>
       </div>
-      <DroughtMapHero />
+      <LiveConditionsPanel
+        location="austin"
+        locationLabel="Austin"
+        topics={["roofing", "drought", "roof-permits"]}
+        trendTopic="drought"
+        trendValue={(v) => {
+          const m = String(v.droughtIndex ?? "").match(/^D(\d)/);
+          return m ? Number(m[1]) + 1 : 0;
+        }}
+        trendLabel="Travis County drought severity, weekly"
+      />
     </div>
   </section>
 
@@ -177,6 +188,23 @@ const description =
         </div>
       </div>
       <p style="margin-top:20px;"><a href="/methodology/">Read our methodology &rarr;</a></p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width:760px;">
+      <h2>Where does Texas sit in the drought right now?</h2>
+      <p>
+        The U.S. Drought Monitor publishes a new statewide map every Thursday. It is the
+        source behind our county drought readings, and the national picture it shows is the
+        context those readings sit in.
+      </p>
+      <div class="drought-map--inline">
+        <DroughtMapHero />
+      </div>
+      <p style="margin-top:20px;">
+        <a href="/data/austin/drought/">Austin&rsquo;s weekly readings &rarr;</a>
+      </p>
     </div>
   </section>
 

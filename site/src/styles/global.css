@@ -250,12 +250,7 @@ body.is-scrolled .topbar .wrap { padding-top: 0; padding-bottom: 0; }
 .btn.secondary:hover { background: var(--thi-mist); color: var(--thi-navy); }
 .btn.block { display: block; width: 100%; text-align: center; }
 
-.brief-preview { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 22px; }
-.brief-preview h4 { margin: 0 0 10px; font-size: 0.95rem; color: var(--brand-dark); }
-.brief-preview .row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 7px 0; border-bottom: 1px dashed var(--line); }
-.brief-preview .row:last-child { border-bottom: none; }
-.brief-preview .row b { color: var(--ink); }
-.tag-ready { display: inline-block; font-size: 0.72rem; font-weight: 800; color: var(--good); background: #e5f3ea; padding: 3px 9px; border-radius: 999px; }
+.tag-ready { display: inline-block; font-family: var(--thi-font-ui); font-size: var(--thi-fs-label); font-weight: 600; color: var(--thi-safe-text); background: var(--thi-safe-bg); padding: 3px 9px; border-radius: var(--thi-r-pill); }
 
 /* ---- Sections ---- */
 section.block { padding: 46px 0; }
@@ -271,7 +266,7 @@ section.block h2 { max-width: 40em; }
 .card { background: var(--surface); border: var(--thi-border); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); padding: var(--thi-sp-5) var(--thi-sp-6); }
 .card h2, .card h3 { margin-bottom: 8px; }
 .card p { margin-bottom: 0; font-size: 0.94rem; }
-.icon-badge { width: 38px; height: 38px; border-radius: 9px; background: #eaf1f8; color: var(--brand); display: flex; align-items: center; justify-content: center; font-weight: 800; margin-bottom: 12px; }
+.icon-badge { width: 38px; height: 38px; border-radius: var(--thi-r-control); background: var(--thi-mist); color: var(--thi-navy); display: flex; align-items: center; justify-content: center; font-weight: 800; margin-bottom: 12px; }
 
 /* A card that's also a link (homepage nav cards, /tools/ hub cards) —
  * the whole card is clickable, not just an inline link inside it. */
@@ -339,15 +334,15 @@ table.data-table th, table.data-table td { text-align: left; padding: 9px 10px; 
 table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-soft); }
 
 /* ---- Homepage: "Something on your mind?" service picker ---- */
-.pick-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
-.pick-card h3 { font-size: 1rem; margin-bottom: 6px; }
+.pick-card { background: var(--surface); border: var(--thi-border); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); padding: var(--thi-sp-4) var(--thi-sp-5); }
+.pick-card h3 { font-family: var(--thi-font-ui); font-weight: 600; font-size: var(--thi-fs-card); line-height: var(--thi-lh-card); margin-bottom: 6px; }
 .pick-card p { font-size: 0.88rem; margin-bottom: 10px; }
-.pick-card a.pick-link { font-size: 0.88rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.pick-card a.pick-link { font-family: var(--thi-font-ui); font-size: var(--thi-fs-body-sm); font-weight: 600; text-decoration: none; }
 .pick-card a.pick-link:hover { text-decoration: underline; }
 
 /* ---- Homepage: Austin data dashboard modules ---- */
-.dash-module { background: #fff; border: 1px solid var(--line); border-left: 3px solid var(--brand); border-radius: var(--radius); padding: 18px 20px; }
-.dash-module h3 { font-size: 0.98rem; margin-bottom: 10px; }
+.dash-module { background: var(--surface); border: var(--thi-border); border-left: 3px solid var(--thi-link); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); padding: var(--thi-sp-5); }
+.dash-module h3 { font-family: var(--thi-font-ui); font-weight: 600; font-size: var(--thi-fs-card); line-height: var(--thi-lh-card); margin-bottom: 10px; }
 .dash-value { font-size: 1.15rem; font-weight: 800; margin: 0 0 4px; }
 .dash-detail { font-size: 0.88rem; color: var(--ink-soft); margin: 0 0 10px; }
 .dash-meta { font-size: 0.78rem; color: var(--ink-soft); border-top: 1px dashed var(--line); padding-top: 8px; margin-bottom: 10px; }
@@ -357,28 +352,16 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
 .dash-module .pick-link { font-size: 0.82rem; font-weight: 700; text-decoration: none; display: inline-block; margin-top: 10px; }
 
 /* ---- Homepage: Texas Homeowner Guides ---- */
-.guide-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 32px; }
-@media (max-width: 700px) { .guide-list { grid-template-columns: 1fr; } }
-.guide-list li { border-bottom: 1px solid var(--line); padding: 12px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.guide-list a { font-weight: 700; font-size: 0.94rem; text-decoration: none; }
-.guide-list a:hover { text-decoration: underline; }
-.guide-list .guide-title-soon { font-weight: 700; font-size: 0.94rem; color: var(--ink-soft); }
-.tag-soon {
-  font-size: 0.68rem; font-weight: 800; letter-spacing: 0.03em;
-  color: var(--ink-soft); background: var(--paper-alt); border: 1px solid var(--line);
-  padding: 2px 8px; border-radius: 999px; white-space: nowrap;
-}
 
 /* ---- Homepage: Methodology + Sources ---- */
-.method-card h3 { font-size: 0.96rem; }
+.method-card h3 { font-size: var(--thi-fs-card); }
 .method-card p { font-size: 0.88rem; }
-.source-col h4 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--brand); margin-bottom: 8px; }
+.source-col h3 { font-family: var(--thi-font-ui); font-size: var(--thi-fs-label); font-weight: 600; text-transform: uppercase; letter-spacing: var(--thi-ls-label); color: var(--thi-slate-700); margin-bottom: 8px; }
 .source-col ul { list-style: none; margin: 0; padding: 0; font-size: 0.9rem; }
 .source-col li { margin-bottom: 4px; }
 
 /* ---- Draft-copy flag ---- */
-.draft-flag { display: inline-block; margin-bottom: 14px; font-size: 0.75rem; font-weight: 800; color: #9a4b00; background: #fff0dd; border: 1px solid #f2c78c; padding: 4px 10px; border-radius: 6px; }
-.disclaimer-note { font-size: 0.85rem; color: var(--ink-soft); background: var(--paper-alt); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; margin: 18px 0; }
+.disclaimer-note { font-size: var(--thi-fs-body-sm); color: var(--ink-soft); background: var(--thi-mist); border: var(--thi-border); border-radius: var(--thi-r-card); padding: 12px 16px; margin: 18px 0; }
 
 /* ---- FAQ ---- */
 .faq-item { border-bottom: 1px solid var(--line); padding: 14px 0; }
@@ -417,3 +400,59 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
 .hero-actions { margin-top: var(--thi-sp-6); display: flex; gap: var(--thi-sp-3); flex-wrap: wrap; }
 .hero-actions + .microcopy { margin-top: var(--thi-sp-5); }
 .cta-band-note { color: var(--thi-on-dark-muted); }
+
+/* ---- Live conditions panel (homepage hero visual) ----
+   The dark intelligence surface from kit §5: Depth Navy ground, on-dark text
+   tokens, a hairline instead of a shadow, one amber accent (the sparkline's
+   endpoint). Replaces the drought map as the hero visual — that map is a field
+   of saturated risk colour, which the kit rules out for the interface. */
+.conditions-panel {
+  background: var(--thi-navy-deep);
+  border: var(--thi-border-dark);
+  border-radius: var(--thi-r-card);
+  padding: var(--thi-sp-6);
+  color: var(--thi-on-dark);
+}
+.conditions-eyebrow {
+  font-family: var(--thi-font-ui); font-size: var(--thi-fs-label); font-weight: 600;
+  text-transform: uppercase; letter-spacing: var(--thi-ls-label);
+  color: var(--thi-on-dark-muted); margin: 0 0 var(--thi-sp-4);
+}
+.conditions-list { list-style: none; margin: 0; padding: 0; color: inherit; }
+.conditions-list li {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--thi-sp-3);
+  padding: var(--thi-sp-3) 0; border-bottom: var(--thi-border-dark);
+}
+.conditions-list li:last-child { border-bottom: none; }
+.conditions-list a { display: flex; align-items: baseline; justify-content: space-between; gap: var(--thi-sp-4); flex: 1; color: inherit; text-decoration: none; }
+.conditions-list a:hover .conditions-label { text-decoration: underline; text-decoration-color: var(--thi-amber); text-underline-offset: 3px; }
+.conditions-label { font-size: var(--thi-fs-body-sm); color: var(--thi-on-dark-muted); }
+.conditions-value { font-family: var(--thi-font-mono); font-feature-settings: "tnum" 1; font-size: var(--thi-fs-data-md); color: var(--thi-on-dark); white-space: nowrap; }
+/* Status as a small labelled signal, never colour alone (kit §18 ALWAYS #8). */
+.conditions-state {
+  font-family: var(--thi-font-ui); font-size: var(--thi-fs-label); font-weight: 600;
+  text-transform: uppercase; letter-spacing: var(--thi-ls-chip);
+  display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+}
+.conditions-state::before { content: ""; width: 7px; height: 7px; border-radius: 50%; }
+.conditions-state.is-live { color: var(--thi-safe-on-dark); }
+.conditions-state.is-live::before { background: var(--thi-safe-on-dark); }
+.conditions-state.is-stale { color: var(--thi-elevated-on-dark); }
+.conditions-state.is-stale::before { background: var(--thi-elevated-on-dark); }
+
+.conditions-trend { margin: var(--thi-sp-5) 0 0; }
+.conditions-trend figcaption { font-size: var(--thi-fs-body-sm); color: var(--thi-on-dark-muted); margin-bottom: var(--thi-sp-2); }
+.conditions-trend svg { display: block; width: 100%; height: 48px; }
+/* Single series: a light neutral line reads at full contrast on the dark
+   ground, so identity never rests on hue. Amber marks only the latest value. */
+.spark-line { fill: none; stroke: var(--thi-on-dark); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.spark-area { fill: rgba(255,255,255,0.07); stroke: none; }
+.spark-dot { fill: var(--thi-amber); }
+.conditions-trend-link { display: inline-block; margin-top: var(--thi-sp-2); font-size: var(--thi-fs-body-sm); color: var(--thi-on-dark); }
+.conditions-source { font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption); color: var(--thi-on-dark-muted); margin: var(--thi-sp-5) 0 0; padding-top: var(--thi-sp-3); border-top: var(--thi-border-dark); }
+
+/* ---- Drought map, in its lower placement ---- */
+.drought-map--inline { max-width: 560px; margin: 0 auto; }
+.drought-map--inline img { border: var(--thi-border); border-radius: var(--thi-r-card); }
+
+.service-hub-links { font-family: var(--thi-font-ui); font-size: var(--thi-fs-body-sm); font-weight: 600; margin-bottom: 0; }

@@ -38,6 +38,7 @@ const orderedServices = serviceOrder
       <div>
         <h4>Services</h4>
         <ul>
+          <li><a href="/services/">All services</a></li>
           {orderedServices.map((svc) => (
             <li><a href={`/austin/${svc.id}/`}>{svc.data.name}</a></li>
           ))}

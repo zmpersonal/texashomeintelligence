@@ -1,0 +1,115 @@
+---
+/**
+ * The dark "instrument panel" — current readings for one location, on the
+ * brand's dark intelligence surface (kit §5).
+ *
+ * This replaced the U.S. Drought Monitor map as the homepage hero visual. That
+ * map is an authentic source image, but it is a field of saturated yellow and
+ * red — the weather-radar look the brand kit explicitly rules out (§18 NEVER
+ * #4) — and it made the loudest element on the page the one thing not built to
+ * the system. The map still appears further down the homepage, with its
+ * attribution, where its own visual language does not set the tone for the site.
+ *
+ * Every reading is computed from the generated datasets, with its source and
+ * dates, so the panel is subject to the same honesty rules as a data page.
+ */
+import { publishedDataPages } from "../lib/dataPages";
+import { findDataset, freshnessOf } from "../lib/datasets";
+import { sparkline } from "../lib/sparkline";
+import { formatDate } from "../lib/format";
+
+interface Props {
+  location: string;
+  locationLabel: string;
+  /** topic slugs to read, in display order */
+  topics: string[];
+  /** topic slug whose series is drawn as the sparkline */
+  trendTopic?: string;
+  /** Maps an observation to a number for the trend line. */
+  trendValue?: (value: any) => number;
+  trendLabel?: string;
+}
+
+const { location, locationLabel, topics, trendTopic, trendValue, trendLabel } = Astro.props;
+
+const published = publishedDataPages(location);
+
+const readings = topics
+  .map((topic) => {
+    const spec = published.find((s) => s.topic === topic);
+    if (!spec) return undefined;
+    const dataset = findDataset(spec.datasetId, spec.location)!;
+    const observations = dataset.observations
+      .filter((o) => !o.seed)
+      .sort((a, b) => b.observedAt.localeCompare(a.observedAt));
+    const stat = spec.stats({ dataset, observations })[0];
+    return { spec, dataset, stat, freshness: freshnessOf(dataset) };
+  })
+  .filter((r) => r !== undefined);
+
+// The trend series, oldest first so the line reads left-to-right in time.
+let trend: ReturnType<typeof sparkline>;
+let trendSpec: (typeof readings)[number] | undefined;
+if (trendTopic && trendValue) {
+  trendSpec = readings.find((r) => r.spec.topic === trendTopic);
+  const dataset = trendSpec && findDataset(trendSpec.spec.datasetId, location);
+  if (dataset) {
+    const series = dataset.observations
+      .filter((o) => !o.seed)
+      .sort((a, b) => a.observedAt.localeCompare(b.observedAt))
+      .map((o) => trendValue(o.value));
+    trend = sparkline(series);
+  }
+}
+
+const sources = [...new Set(readings.map((r) => r.dataset.source.name))];
+const asOf = readings
+  .map((r) => r.freshness.asOf)
+  .filter((v): v is string => Boolean(v))
+  .sort()
+  .at(-1);
+---
+
+{readings.length > 0 && (
+  <div class="conditions-panel">
+    <p class="conditions-eyebrow">{locationLabel} conditions</p>
+    <ul class="conditions-list">
+      {readings.map(({ spec, dataset, stat }) => (
+        <li>
+          <a href={`/data/${spec.location}/${spec.topic}/`}>
+            <span class="conditions-label">{stat.label}</span>
+            <span class="conditions-value">{stat.value}</span>
+          </a>
+          <span class={`conditions-state ${dataset.status === "live" ? "is-live" : "is-stale"}`}>
+            {dataset.status === "live" ? "Live" : "Stale"}
+          </span>
+        </li>
+      ))}
+    </ul>
+
+    {trend && trendSpec && (
+      <figure class="conditions-trend">
+        <figcaption>{trendLabel}</figcaption>
+        <svg
+          viewBox={`0 0 ${trend.width} ${trend.height}`}
+          width={trend.width}
+          height={trend.height}
+          role="img"
+          aria-label={`${trendLabel}. Full weekly figures are published on the ${trendSpec.spec.h1} page.`}
+          preserveAspectRatio="none"
+        >
+          <path class="spark-area" d={trend.area} />
+          <path class="spark-line" d={trend.line} />
+          <circle class="spark-dot" cx={trend.last.x} cy={trend.last.y} r="4" />
+        </svg>
+        <a class="conditions-trend-link" href={`/data/${trendSpec.spec.location}/${trendSpec.spec.topic}/`}>
+          See every reading &rarr;
+        </a>
+      </figure>
+    )}
+
+    <p class="conditions-source">
+      Source: {sources.join(" · ")}{asOf ? ` · confirmed ${formatDate(asOf)}` : ""}
+    </p>
+  </div>
+)}

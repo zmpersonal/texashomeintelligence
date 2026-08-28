@@ -3,8 +3,6 @@ import "../styles/global.css";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import { absolute, organizationId, websiteId } from "../lib/urls";
-import { getImage } from "astro:assets";
-import logoSrc from "../assets/logo-raw.png";
 
 interface Props {
   title: string;
@@ -30,15 +28,15 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const orgId = organizationId(Astro.site);
 const siteId = websiteId(Astro.site);
 
-// Social card image. The mark is square and `twitter:card` is `summary`, the
-// card type that actually wants a square image — so this pairs correctly. It
-// is run through Astro's build-time image service to avoid serving the 1.6 MB
-// original to every social crawler.
-// TODO(round: share cards): replace with a purpose-built 1200x630 navy card
-// from the share-card system (brand kit §10) and switch to
-// `summary_large_image`.
-const ogImage = await getImage({ src: logoSrc, width: 1200, height: 1200, format: "png" });
-const ogImageUrl = absolute(ogImage.src, Astro.site);
+// Social card: a 1200x630 JPEG (the ratio both Open Graph and
+// `summary_large_image` want), the mark centred on Depth Navy. Committed as a
+// static asset rather than derived at build time — running the 1.6 MB source
+// through the compile-time image service emitted two multi-megabyte PNGs, one
+// of them larger than the original, for every deploy.
+// TODO(round: share cards): replace with a purpose-built card from the
+// share-card system (brand kit §10), which can carry a live reading.
+const OG_IMAGE = { path: "/images/og-card.jpg", width: 1200, height: 630 };
+const ogImageUrl = absolute(OG_IMAGE.path, Astro.site);
 
 // Analytics — Seam-adjacent (see HANDOFF.md "Analytics"): both IDs are
 // real Cloudflare Pages build-time env vars (PUBLIC_* so Vite exposes them
@@ -81,13 +79,13 @@ const AI_REFERRAL_DOMAINS = [
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL.toString()} />
     <meta property="og:image" content={ogImageUrl} />
-    <meta property="og:image:width" content={String(ogImage.attributes.width ?? 1200)} />
-    <meta property="og:image:height" content={String(ogImage.attributes.height ?? 1200)} />
-    <meta property="og:image:alt" content={`${siteName} logo`} />
+    <meta property="og:image:width" content={String(OG_IMAGE.width)} />
+    <meta property="og:image:height" content={String(OG_IMAGE.height)} />
+    <meta property="og:image:alt" content={`${siteName} — live, sourced local data for Texas homeowners`} />
     {article?.dateModified && (
       <meta property="article:modified_time" content={article.dateModified} />
     )}
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
@@ -112,8 +110,8 @@ const AI_REFERRAL_DOMAINS = [
       logo: {
         "@type": "ImageObject",
         url: ogImageUrl,
-        width: ogImage.attributes.width ?? 1200,
-        height: ogImage.attributes.height ?? 1200,
+        width: OG_IMAGE.width,
+        height: OG_IMAGE.height,
       },
       areaServed: { "@type": "State", name: "Texas" },
       knowsAbout: [
