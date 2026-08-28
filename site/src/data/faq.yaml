@@ -31,9 +31,9 @@
 - id: where-data-comes-from
   tag: authority
   q: "Where does Texas Home Intelligence get its data?"
-  a: "From public sources including NWS/NOAA weather data, municipal permit systems, TWDB drought data, and other government and utility sources."
+  a: "From public sources including NWS/NOAA weather and storm data, municipal permit systems, the U.S. Drought Monitor, the EIA, and other government and utility sources. Every published figure names its source and the date it was last confirmed."
 
 - id: how-often-updated
   tag: authority
   q: "How often is Texas Home Intelligence data updated?"
-  a: "Update cadence depends on the source and is stated on each data page once a live feed is connected. Figures currently marked SAMPLE are placeholders, not live data yet."
+  a: "Cadence depends on the source and is stated on every data page. Because several sources publish on a lag, each page shows two dates: how far the records themselves run, and when we last confirmed the feed."

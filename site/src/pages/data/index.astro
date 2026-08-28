@@ -11,6 +11,7 @@ import DataStatus from "../../components/DataStatus.astro";
 import { getCollection } from "astro:content";
 import { dataHubLocations, publishedDataPages } from "../../lib/dataPages";
 import { findDataset, freshnessOf } from "../../lib/datasets";
+import { organizationId } from "../../lib/urls";
 
 // Locations come from the registry so statewide datasets (Texas) are listed
 // alongside the metros; the collection supplies the county blurb where one
@@ -45,7 +46,7 @@ const datasetJsonLd = {
   name: "Texas Home Intelligence Homeowner Data Catalog",
   description,
   url: new URL("/data/", Astro.site).toString(),
-  publisher: { "@id": `${Astro.site?.toString().replace(/\/$/, "") ?? ""}/#organization` },
+  publisher: { "@id": organizationId(Astro.site) },
   dataset: published.map(({ spec }) => ({
     "@type": "Dataset",
     name: spec.datasetName,

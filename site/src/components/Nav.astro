@@ -1,7 +1,9 @@
 ---
-// THI-round-homepage-nav.md §1/§2 (revised — Services dropped, see repo
-// root round spec + agreed deviation). This component renders on every
-// page via Base.astro, so the header CTA and restructured nav are
+// Nav for this build (CLAUDE.md / ROADMAP.md): `Data · Locations` plus a
+// persistent "My Dashboard" button. Tools and Methodology both left the
+// header this round — Methodology moved to the footer, and the Tools hub is
+// out of scope for this build. Services were dropped earlier and are not
+// coming back. This renders on every page via Base.astro, so the change is
 // sitewide, not homepage-only.
 const ctaLabel = "My Dashboard";
 ---
@@ -33,9 +35,7 @@ const ctaLabel = "My Dashboard";
 
     <nav aria-label="Primary" class="nav-menu">
       <ul class="nav-links">
-        <li><a href="/tools/">Tools</a></li>
         <li><a href="/data/">Data</a></li>
-        <li><a href="/methodology/">Methodology</a></li>
         <li>
           <details class="nav-dropdown">
             <summary>Locations</summary>

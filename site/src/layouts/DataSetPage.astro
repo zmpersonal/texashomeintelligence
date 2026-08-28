@@ -16,6 +16,7 @@ import DataStatus from "../components/DataStatus.astro";
 import type { DataPageSpec, DataPageContext } from "../lib/dataPages";
 import { requireDataset, freshnessOf, earliestObservedAt, latestObservedAt } from "../lib/datasets";
 import { machineDate } from "../lib/format";
+import { organizationId } from "../lib/urls";
 
 interface Props {
   spec: DataPageSpec<any>;
@@ -45,7 +46,7 @@ const csvUrl = new URL(
   `/data/${spec.location}/${spec.topic}/${spec.csvName}.csv`,
   Astro.site,
 ).toString();
-const siteUrl = Astro.site?.toString().replace(/\/$/, "") ?? "";
+const orgId = organizationId(Astro.site);
 
 const from = earliestObservedAt(observations);
 const to = latestObservedAt(observations);
@@ -62,8 +63,8 @@ const datasetJsonLd = {
   ...(from && to ? { temporalCoverage: `${from}/${to}` } : {}),
   ...(dataset.lastSuccessAt ? { dateModified: dataset.lastSuccessAt } : {}),
   spatialCoverage: { "@type": "Place", name: spec.spatialCoverage },
-  creator: { "@id": `${siteUrl}/#organization` },
-  publisher: { "@id": `${siteUrl}/#organization` },
+  creator: { "@id": orgId },
+  publisher: { "@id": orgId },
   isBasedOn: { "@type": "Dataset", name: dataset.source.name, url: dataset.source.url },
   distribution: [
     { "@type": "DataDownload", encodingFormat: "text/csv", contentUrl: csvUrl },

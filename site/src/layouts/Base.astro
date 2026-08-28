@@ -2,6 +2,9 @@
 import "../styles/global.css";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
+import { absolute, organizationId, websiteId } from "../lib/urls";
+import { getImage } from "astro:assets";
+import logoSrc from "../assets/logo-raw.png";
 
 interface Props {
   title: string;
@@ -10,12 +13,32 @@ interface Props {
    * collision with the equivalent SEO page, per CLAUDE.md's two-page-family
    * rule. Defaults to indexable. */
   noindex?: boolean;
+  /** Editorial pages opt into Article schema. Data pages don't — they emit
+   * Dataset instead, which is the more specific and more citable type. */
+  article?: {
+    /** ISO 8601. Omit rather than guess: a wrong dateModified is worse than
+     * none, since it is exactly the freshness signal crawlers lean on. */
+    dateModified?: string;
+    datePublished?: string;
+    section?: string;
+  };
 }
 
-const { title, description, noindex = false } = Astro.props;
+const { title, description, noindex = false, article } = Astro.props;
 const siteName = "Texas Home Intelligence";
-const siteURL = Astro.site?.toString() ?? "";
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const orgId = organizationId(Astro.site);
+const siteId = websiteId(Astro.site);
+
+// Social card image. The mark is square and `twitter:card` is `summary`, the
+// card type that actually wants a square image — so this pairs correctly. It
+// is run through Astro's build-time image service to avoid serving the 1.6 MB
+// original to every social crawler.
+// TODO(round: share cards): replace with a purpose-built 1200x630 navy card
+// from the share-card system (brand kit §10) and switch to
+// `summary_large_image`.
+const ogImage = await getImage({ src: logoSrc, width: 1200, height: 1200, format: "png" });
+const ogImageUrl = absolute(ogImage.src, Astro.site);
 
 // Analytics — Seam-adjacent (see HANDOFF.md "Analytics"): both IDs are
 // real Cloudflare Pages build-time env vars (PUBLIC_* so Vite exposes them
@@ -52,42 +75,92 @@ const AI_REFERRAL_DOMAINS = [
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, follow" />}
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={article ? "article" : "website"} />
     <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL.toString()} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content={String(ogImage.attributes.width ?? 1200)} />
+    <meta property="og:image:height" content={String(ogImage.attributes.height ?? 1200)} />
+    <meta property="og:image:alt" content={`${siteName} logo`} />
+    {article?.dateModified && (
+      <meta property="article:modified_time" content={article.dateModified} />
+    )}
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
 
+    {/*
+      The publishing entity, referenced by @id from every other node on the
+      site (Dataset creator/publisher, WebSite publisher, Article publisher)
+      so citations accrue to one entity rather than to many loose copies.
+      This replaced a `WebApplication` node for the QuoteReady Project Brief
+      that used to render on all 38 pages — describing a deferred lead-gen
+      tool, with each page's own description, as the site's primary entity.
+    */}
     <script type="application/ld+json" is:inline set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "Organization",
-      "@id": `${siteURL}#organization`,
+      "@id": orgId,
       name: siteName,
-      url: siteURL,
+      alternateName: "THI",
+      url: absolute("/", Astro.site),
       description:
-        "Free QuoteReady Project Brief tool and local homeowner intelligence for Texas homeowners.",
+        "Independent home-intelligence platform for Texas homeowners: live local weather, storm, permit, drought and energy data, translated into plain-language guidance with the source and date on every reading.",
+      logo: {
+        "@type": "ImageObject",
+        url: ogImageUrl,
+        width: ogImage.attributes.width ?? 1200,
+        height: ogImage.attributes.height ?? 1200,
+      },
       areaServed: { "@type": "State", name: "Texas" },
-      // TODO(seam-adjacent, not one of the 3 reserved seams): once real
-      // social profiles exist, list them here — schema.org uses `sameAs`
-      // to confirm this Organization is the same entity across the web.
-      // Left out entirely rather than filled with placeholder URLs.
+      knowsAbout: [
+        "Texas home maintenance",
+        "hail and storm damage",
+        "residential building permits",
+        "drought and foundation movement",
+        "residential electricity prices",
+      ],
+      // TODO(owner): add real social profiles here as `sameAs` once they
+      // exist — that array is how search and answer engines confirm this is
+      // the same entity across the web, and it is the single highest-value
+      // remaining item for entity consolidation. Left out entirely rather
+      // than filled with placeholder URLs.
     })}
     />
     <script type="application/ld+json" is:inline set:html={JSON.stringify({
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      name: "QuoteReady Project Brief",
-      url: `${siteURL}/start/`,
-      description,
-      applicationCategory: "LifestyleApplication",
-      operatingSystem: "Any (web-based)",
-      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-      provider: { "@id": `${siteURL}#organization` },
+      "@type": "WebSite",
+      "@id": siteId,
+      name: siteName,
+      url: absolute("/", Astro.site),
+      description:
+        "Live, sourced local data and home intelligence for Texas homeowners.",
+      inLanguage: "en-US",
+      publisher: { "@id": orgId },
     })}
     />
+    {article && (
+      <script type="application/ld+json" is:inline set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "@id": `${canonicalURL.toString()}#article`,
+        headline: title,
+        description,
+        url: canonicalURL.toString(),
+        inLanguage: "en-US",
+        isPartOf: { "@id": siteId },
+        publisher: { "@id": orgId },
+        author: { "@id": orgId },
+        image: ogImageUrl,
+        ...(article.section ? { articleSection: article.section } : {}),
+        ...(article.datePublished ? { datePublished: article.datePublished } : {}),
+        ...(article.dateModified ? { dateModified: article.dateModified } : {}),
+      })}
+      />
+    )}
 
     {ga4Id && (
       <>
