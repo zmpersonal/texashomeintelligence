@@ -38,6 +38,15 @@ const siteId = websiteId(Astro.site);
 const OG_IMAGE = { path: "/images/og-card.jpg", width: 1200, height: 630 };
 const ogImageUrl = absolute(OG_IMAGE.path, Astro.site);
 
+/** The live THI social profiles, for Organization.sameAs. Deliberately does
+ * not include texashomeintelligence.com — that is the canonical `url`, and
+ * listing it here would assert the site is a separate profile of the entity. */
+const SAME_AS = [
+  "https://www.facebook.com/profile.php?id=61593991198459",
+  "https://www.instagram.com/texashomeintelligence/",
+  "https://www.threads.com/@texashomeintelligence",
+];
+
 // Analytics — Seam-adjacent (see HANDOFF.md "Analytics"): both IDs are
 // real Cloudflare Pages build-time env vars (PUBLIC_* so Vite exposes them
 // to the client), left unset here. Nothing analytics-related renders
@@ -121,11 +130,12 @@ const AI_REFERRAL_DOMAINS = [
         "drought and foundation movement",
         "residential electricity prices",
       ],
-      // TODO(owner): add real social profiles here as `sameAs` once they
-      // exist — that array is how search and answer engines confirm this is
-      // the same entity across the web, and it is the single highest-value
-      // remaining item for entity consolidation. Left out entirely rather
-      // than filled with placeholder URLs.
+      // The live THI profiles. `sameAs` is how search and answer engines
+      // confirm these are all the same entity, so citations consolidate onto
+      // one Organization instead of scattering. Note this is deliberately
+      // *not* the canonical site — that is `url` above; listing the site here
+      // as well would assert it is a separate profile of the same entity.
+      sameAs: SAME_AS,
     })}
     />
     <script type="application/ld+json" is:inline set:html={JSON.stringify({

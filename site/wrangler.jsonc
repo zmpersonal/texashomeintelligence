@@ -10,16 +10,31 @@
   "compatibility_date": "2026-04-15",
   "compatibility_flags": ["nodejs_compat"],
 
-  // Seam 3 (HANDOFF.md): real bindings for local/dev testing via Miniflare.
-  // The IDs below are LOCAL PLACEHOLDERS ONLY — replace with real Cloudflare
-  // KV namespace / D1 database IDs before deploying, per HANDOFF.md.
+  // Seam 3 (HANDOFF.md). These IDs were long commented as "LOCAL PLACEHOLDERS
+  // ONLY"; they are not. All three were verified against the owner's real
+  // Cloudflare account — the two KV namespace IDs match the live namespaces
+  // (texas-home-intelligence-projects and texashomeintelligence-session), and
+  // the D1 id matches the live texas-home-intelligence-db. Nothing needs
+  // swapping before a deploy.
   "kv_namespaces": [
+    // Intake project state and resumable return tokens (src/lib/kv.ts writes
+    // `project:` and `token:` keys here).
     { "binding": "PROJECTS_KV", "id": "d5c64f949583450db1bd1cee073caf23" },
+    // Astro Sessions. No application code touches this binding; the
+    // @astrojs/cloudflare adapter claims it by name at build time ("Enabling
+    // sessions with Cloudflare KV with the SESSION KV binding"), so the name
+    // must stay exactly `SESSION`.
     {
       "binding": "SESSION",
       "id": "cc7a5a1c29e04852ace9723ed69969bb"
     }
   ],
+  // Durable store for intake projects, answers, generated briefs and
+  // contractor requests (src/lib/db.ts).
+  // NOTE: this database currently has 0 tables — migrations/0001_init.sql has
+  // never been applied to it. The static site deploys and serves fine either
+  // way, but the /api/intake/* routes will error until it is applied. Applying
+  // it is an owner action (production data, SECURITY.md).
   "d1_databases": [
     {
       "binding": "DB",
