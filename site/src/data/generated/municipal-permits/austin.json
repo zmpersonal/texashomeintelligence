@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-08-27T19:49:52.219Z",
-  "lastSuccessAt": "2026-08-27T19:49:52.219Z",
+  "lastAttemptAt": "2026-08-28T20:50:08.783Z",
+  "lastSuccessAt": "2026-08-28T20:50:08.783Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -11898,16 +11898,6 @@
     {
       "observedAt": "2026-03-29T00:00:00.000Z",
       "ingestedAt": "2026-08-24T15:57:40.358Z",
-      "key": "2026-002058 EP",
-      "value": {
-        "permitType": "Addition and Remodel",
-        "workDescription": "Addition/ remodel to include: Converting existing 4-plex to 2-Unit use duplex. Unit A: 3 bedroom 2 bath with front covered porch rear covered balcony and addition of foyer & HVAC closet. EXISTING 4-PLEX TO BE RENOVATED AND TURNED INTO A DUPLEX. TOTAL INTERIOR REMODEL PLUS SOME ADDED CONDITIONED SPAC",
-        "status": "Active"
-      }
-    },
-    {
-      "observedAt": "2026-03-29T00:00:00.000Z",
-      "ingestedAt": "2026-08-24T15:57:40.358Z",
       "key": "2026-002059 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -17830,16 +17820,6 @@
     {
       "observedAt": "2026-07-22T00:00:00.000Z",
       "ingestedAt": "2026-08-24T15:57:40.361Z",
-      "key": "2026-085966 EP",
-      "value": {
-        "permitType": "Auxiliary Power",
-        "workDescription": "Rooftop Solar Line side tap interconnection - Building B",
-        "status": "Active"
-      }
-    },
-    {
-      "observedAt": "2026-07-22T00:00:00.000Z",
-      "ingestedAt": "2026-08-24T15:57:40.361Z",
       "key": "2026-034546 MP",
       "value": {
         "permitType": "Repair",
@@ -19465,17 +19445,17 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2025-156375 EP",
       "value": {
         "permitType": "Auxiliary Power",
         "workDescription": "Installation of 540kW AC Roof Mounted Auxiliary Power System \n\nThe service is for BLDG 2 UNIT DG",
-        "status": "Active"
+        "status": "Final"
       }
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2026-107818 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -19485,7 +19465,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2026-110751 BP",
       "value": {
         "permitType": "Repair",
@@ -19496,7 +19476,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2026-110414 BP",
       "value": {
         "permitType": "Repair",
@@ -19507,7 +19487,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2026-108893 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -19517,7 +19497,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2026-096571 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -19527,7 +19507,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2026-108133 EP",
       "value": {
         "permitType": "Repair",
@@ -19537,7 +19517,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
       "key": "2026-109734 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -19547,7 +19527,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2026-108737 BP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -19558,7 +19538,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2026-110283 BP",
       "value": {
         "permitType": "Repair",
@@ -19569,7 +19549,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2026-102504 PP",
       "value": {
         "permitType": "New",
@@ -19579,7 +19559,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2026-108756 BP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -19590,7 +19570,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2026-069759 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -19600,7 +19580,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2026-102503 PP",
       "value": {
         "permitType": "New",
@@ -19610,7 +19590,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2026-108465 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -19620,12 +19600,226 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-27T19:49:52.688Z",
+      "ingestedAt": "2026-08-28T20:50:09.286Z",
       "key": "2026-103253 EP",
       "value": {
         "permitType": "Auxiliary Power",
         "workDescription": "adding a solar rooftop system to an existing building",
         "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-26T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-087473 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "1-story addition to existing townhome. Existing Atrium will be converted to a studio. Level existing concrete and erect (1) wall. Add roof to match. (1) existing sliding door will be repurposed as window. Roll in expired permit 2014-066731 MP HVAC change out to exist res.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-26T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-103257 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "adding a solar pv rooftop system to an existing residence",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-26T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-004536 PP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition remodel to existing 1-story residence remove walls wood deck and existing roof. 4 bed/ 3 bath",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-26T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-089081 PP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "Bldg2: New construction 3-unit use single-family residential 2-story 3 bedroom 3 bath with attached 1-car garage covered front porch covered rear patio and covered roof deck.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-26T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-112049 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "After-the-fact permit for previously installed commercial Type I kitchen exhaust hood ductwork rooftop exhaust fan and associated components serving existing bakery kitchen. No change in occupancy or building area.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-26T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-089082 PP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "Bldg 3: New construction 3-unit use single-family residential 2-story 4 bedroom 3 bath with attached 1-car garage covered front porch covered rear patio covered roof deck and uncovered roof deck.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-26T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-110591 EP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Residential Add on of Battery to the Residents Existing Roof Mounted Solar System",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-26T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-107762 PP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Fast casual Asian restaurant with mechanical electrical plumbing and finishes work to accommodate restaurant functions. This includes the addition of a grease interceptor and replacement of rooftop equipment but no other exterior work",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-002058 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition/ remodel to include: Converting existing 4-plex to 2-Unit use duplex. Unit A: 3 bedroom 2 bath with front covered porch rear covered balcony and addition of foyer & HVAC closet. EXISTING 4-PLEX TO BE RENOVATED AND TURNED INTO A DUPLEX. TOTAL INTERIOR REMODEL PLUS SOME ADDED CONDITIONED SPAC",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-085966 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Rooftop Solar Line side tap interconnection - Building B",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-111746 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express: Re-roofing (located in WUI)",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-08-27T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-108665 EP",
+      "value": {
+        "permitType": "Upgrade",
+        "workDescription": "Upgrading existing electrical service from two existing seperate service drops each rated for 100 amps. Installing one 2 riser rated for 200 amps with 3/0 copper conductors and gutter or troff sized as per city ordinances with two weather proof panel one for each and two new meter sockets one for ea",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-093328 BP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "2-story addition to existing 1-story residence addition includes study dining room and 2nd story loft Rolling in expired permits 2015-083972 BP Replace roof.  Repair existing foundation. 2015-118719 EP Replace outlets & switches as needed throughout and replace 1-ceiling fan to existing residence on",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-08-27T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-078438 PP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Remodel of restrooms on the first and second levels; new window openings in the existing exterior walls at weight room; new roof top skylights lighting and acoustical tiles at corridor north of competition gym",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-112666 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof/overlay existing metal roof with Duro-Last. No tear-off or structural alterations-this includes the main building.",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-08-27T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-108879 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "PH2 Install new 2.289kw rooftop solar system for existing residential only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2024-140408 PP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "BLDG 8 - UNIT A TRIPLEX (UNIT 1008-10101044-1046) EACH UNIT WILL HAVE A 2 CAR GARAGE 3 BEDROOMS 3 FULL BATHROOMS AND A ROOF TOP PATIO.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2024-140410 PP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "BLDG 8 - UNIT A TRIPLEX (UNIT 1008-10101044-1046) EACH UNIT WILL HAVE A 2 CAR GARAGE 3 BEDROOMS 3 FULL BATHROOMS AND A ROOF TOP PATIO.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2024-140409 PP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "BLDG 8 - UNIT A TRIPLEX (UNIT 1008-10101044-1046) EACH UNIT WILL HAVE A 2 CAR GARAGE 3 BEDROOMS 3 FULL BATHROOMS AND A ROOF TOP PATIO.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-110698 EP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Addition of 8.80 DWC (20 440W modules) to existing 5.67 WDC rooftop soar system servicing residential. New strings will be tied in to existing battery.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T00:00:00.000Z",
+      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "key": "2026-112687 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof/overlay existing metal roof with Duro-Last. No tear-off or structural alterations includes two structures.",
+        "status": "Active",
+        "valuationUsd": 1
       }
     }
   ]

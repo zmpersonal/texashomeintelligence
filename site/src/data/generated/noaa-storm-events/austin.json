@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-08-27T19:49:47.967Z",
-  "lastSuccessAt": "2026-08-27T19:49:47.967Z",
+  "lastAttemptAt": "2026-08-28T20:50:02.560Z",
+  "lastSuccessAt": "2026-08-28T20:50:02.560Z",
   "lastError": null,
   "source": {
     "name": "NOAA Storm Events Database",
