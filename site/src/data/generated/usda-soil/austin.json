@@ -12,16 +12,6 @@
   },
   "observations": [
     {
-      "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.616Z",
-      "key": "2026-07",
-      "value": {
-        "soilType": "SAMPLE clay loam",
-        "drainageClass": "Moderately well drained",
-        "shrinkSwellPotential": "Moderate"
-      }
-    },
-    {
       "observedAt": "2026-08-27T19:49:58.991Z",
       "ingestedAt": "2026-08-27T19:49:58.991Z",
       "key": "2026-08",

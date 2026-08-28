@@ -21,6 +21,12 @@ export interface Observation<T> {
   ingestedAt: string;
   key: string;
   value: T;
+  /** True only on rows written by `seed.ts` — illustrative placeholders, never
+   * measured facts. Set so a seeded row stays identifiable after it lands on
+   * disk: `runIngestion` retires every one of them the first time a real fetch
+   * succeeds, so a live dataset can never mix fabricated rows in with measured
+   * ones (and a page can never derive a headline number from a seed). */
+  seed?: true;
 }
 
 export interface DatasetSource {

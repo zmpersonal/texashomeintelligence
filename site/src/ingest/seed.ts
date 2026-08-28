@@ -149,7 +149,9 @@ export function seedIfMissing(entry: RegistryEntry): "seeded" | "already-exists"
 
   const rand = mulberry32(seedFromString(`${entry.fetcher.datasetId}/${entry.fetcher.location}`));
   const ingestedAt = new Date().toISOString();
-  const observations = generator(rand, ingestedAt);
+  // Tag every generated row so it stays identifiable as fabricated once it's
+  // on disk — `runIngestion` drops these the moment a real fetch succeeds.
+  const observations = generator(rand, ingestedAt).map((o) => ({ ...o, seed: true as const }));
 
   const file: DatasetFile<unknown> = {
     datasetId: entry.fetcher.datasetId,

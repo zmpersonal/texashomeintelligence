@@ -12,28 +12,6 @@
   },
   "observations": [
     {
-      "observedAt": "2025-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.611Z",
-      "key": "sample-2025-09-Wind",
-      "value": {
-        "eventType": "Wind",
-        "magnitude": "71 mph gust",
-        "county": "SAMPLE COUNTY",
-        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
-      }
-    },
-    {
-      "observedAt": "2025-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.611Z",
-      "key": "sample-2025-10-Hail",
-      "value": {
-        "eventType": "Hail",
-        "magnitude": "0.80\"",
-        "county": "SAMPLE COUNTY",
-        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
-      }
-    },
-    {
       "observedAt": "2025-10-24T22:45:00.000Z",
       "ingestedAt": "2026-08-24T03:27:05.318Z",
       "key": "1297321",
@@ -53,28 +31,6 @@
         "magnitude": "65 mph gust",
         "county": "Caldwell",
         "narrative": "A thunderstorm produced wind gusts estimated at 75 mph. Two large Oak trees were uprooted. Several medium size metal buildings (12x20, 10x12, 60x100) were damaged or destroyed. All of the damage was near Dale."
-      }
-    },
-    {
-      "observedAt": "2025-11-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.611Z",
-      "key": "sample-2025-11-Wind",
-      "value": {
-        "eventType": "Wind",
-        "magnitude": "61 mph gust",
-        "county": "SAMPLE COUNTY",
-        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
-      }
-    },
-    {
-      "observedAt": "2025-12-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.611Z",
-      "key": "sample-2025-12-Hail",
-      "value": {
-        "eventType": "Hail",
-        "magnitude": "1.84\"",
-        "county": "SAMPLE COUNTY",
-        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
       }
     },
     {
@@ -166,28 +122,6 @@
       }
     },
     {
-      "observedAt": "2026-02-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.611Z",
-      "key": "sample-2026-02-Tornado",
-      "value": {
-        "eventType": "Tornado",
-        "magnitude": "EF0",
-        "county": "SAMPLE COUNTY",
-        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
-      }
-    },
-    {
-      "observedAt": "2026-03-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.611Z",
-      "key": "sample-2026-03-Hail",
-      "value": {
-        "eventType": "Hail",
-        "magnitude": "1.19\"",
-        "county": "SAMPLE COUNTY",
-        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
-      }
-    },
-    {
       "observedAt": "2026-04-18T18:47:00.000Z",
       "ingestedAt": "2026-08-24T03:27:08.782Z",
       "key": "1333066",
@@ -273,17 +207,6 @@
         "magnitude": "1.00\"",
         "county": "Travis",
         "narrative": "A thunderstorm produced quarter size hail west of Austin Bergstrom International Airport."
-      }
-    },
-    {
-      "observedAt": "2026-05-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.611Z",
-      "key": "sample-2026-05-Wind",
-      "value": {
-        "eventType": "Wind",
-        "magnitude": "59 mph gust",
-        "county": "SAMPLE COUNTY",
-        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
       }
     },
     {
@@ -801,39 +724,6 @@
         "magnitude": "unknown",
         "county": "Williamson",
         "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Three men were successfully rescued after being stranded in trees along Berry Creek near Florence."
-      }
-    },
-    {
-      "observedAt": "2026-06-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.611Z",
-      "key": "sample-2026-06-Hail",
-      "value": {
-        "eventType": "Hail",
-        "magnitude": "1.86\"",
-        "county": "SAMPLE COUNTY",
-        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
-      }
-    },
-    {
-      "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.611Z",
-      "key": "sample-2026-07-Wind",
-      "value": {
-        "eventType": "Wind",
-        "magnitude": "49 mph gust",
-        "county": "SAMPLE COUNTY",
-        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
-      }
-    },
-    {
-      "observedAt": "2026-08-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.611Z",
-      "key": "sample-2026-08-Hail",
-      "value": {
-        "eventType": "Hail",
-        "magnitude": "1.17\"",
-        "county": "SAMPLE COUNTY",
-        "narrative": "SAMPLE — illustrative event, not a live NOAA record."
       }
     }
   ]

@@ -622,16 +622,6 @@
       }
     },
     {
-      "observedAt": "2025-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2025-09",
-      "value": {
-        "permitType": "Electrical",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "23 issued (SAMPLE)"
-      }
-    },
-    {
       "observedAt": "2025-09-02T00:00:00.000Z",
       "ingestedAt": "2026-08-24T15:57:40.349Z",
       "key": "2025-108980 EP",
@@ -2781,16 +2771,6 @@
     },
     {
       "observedAt": "2025-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2025-10",
-      "value": {
-        "permitType": "Building",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "27 issued (SAMPLE)"
-      }
-    },
-    {
-      "observedAt": "2025-10-01T00:00:00.000Z",
       "ingestedAt": "2026-08-24T15:57:40.354Z",
       "key": "2025-122888 EP",
       "value": {
@@ -4816,16 +4796,6 @@
       }
     },
     {
-      "observedAt": "2025-11-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2025-11",
-      "value": {
-        "permitType": "Plumbing",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "33 issued (SAMPLE)"
-      }
-    },
-    {
       "observedAt": "2025-11-03T00:00:00.000Z",
       "ingestedAt": "2026-08-24T15:57:40.355Z",
       "key": "2025-134973 EP",
@@ -6535,16 +6505,6 @@
     },
     {
       "observedAt": "2025-12-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2025-12",
-      "value": {
-        "permitType": "Electrical",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "42 issued (SAMPLE)"
-      }
-    },
-    {
-      "observedAt": "2025-12-01T00:00:00.000Z",
       "ingestedAt": "2026-08-24T15:57:40.356Z",
       "key": "2025-011729 BP",
       "value": {
@@ -8170,16 +8130,6 @@
       }
     },
     {
-      "observedAt": "2026-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-01",
-      "value": {
-        "permitType": "Roofing",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "48 issued (SAMPLE)"
-      }
-    },
-    {
       "observedAt": "2026-01-02T00:00:00.000Z",
       "ingestedAt": "2026-08-24T15:57:40.357Z",
       "key": "2026-000200 BP",
@@ -9398,16 +9348,6 @@
         "permitType": "Addition and Remodel",
         "workDescription": "Add 32 sf extension to existing patio and install new patio cover tied into existing roof add ceiling fan",
         "status": "Final"
-      }
-    },
-    {
-      "observedAt": "2026-02-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-02",
-      "value": {
-        "permitType": "Electrical",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "42 issued (SAMPLE)"
       }
     },
     {
@@ -10814,16 +10754,6 @@
       }
     },
     {
-      "observedAt": "2026-03-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-03",
-      "value": {
-        "permitType": "Building",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "40 issued (SAMPLE)"
-      }
-    },
-    {
       "observedAt": "2026-03-02T00:00:00.000Z",
       "ingestedAt": "2026-08-24T15:57:40.358Z",
       "key": "2024-087845 MP",
@@ -12138,16 +12068,6 @@
         "workDescription": "Demo fence carport conc patio slab; Fill in exist. ext door/curb; Replace exist. ext. doors/windows (same size); Replace drywall at w. heater closet; Replace\nexist. A/C water heater flooring cabinets doors trim/shelving fans switches outlets AC vents tile plumbing fixtures; Add recess lighting. New ",
         "status": "Active",
         "valuationUsd": 1
-      }
-    },
-    {
-      "observedAt": "2026-04-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-04",
-      "value": {
-        "permitType": "Roofing",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "48 issued (SAMPLE)"
       }
     },
     {
@@ -13693,16 +13613,6 @@
     },
     {
       "observedAt": "2026-05-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-05",
-      "value": {
-        "permitType": "Mechanical (HVAC)",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "23 issued (SAMPLE)"
-      }
-    },
-    {
-      "observedAt": "2026-05-01T00:00:00.000Z",
       "ingestedAt": "2026-08-24T15:57:40.359Z",
       "key": "2026-054163 BP",
       "value": {
@@ -14865,16 +14775,6 @@
         "workDescription": "Express: Replace composite roof with metal roof replacing window for window",
         "status": "Active",
         "valuationUsd": 1
-      }
-    },
-    {
-      "observedAt": "2026-06-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-06",
-      "value": {
-        "permitType": "Plumbing",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "50 issued (SAMPLE)"
       }
     },
     {
@@ -16853,16 +16753,6 @@
     },
     {
       "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-07",
-      "value": {
-        "permitType": "Electrical",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "45 issued (SAMPLE)"
-      }
-    },
-    {
-      "observedAt": "2026-07-01T00:00:00.000Z",
       "ingestedAt": "2026-08-24T15:57:40.360Z",
       "key": "2026-080430 BP",
       "value": {
@@ -18427,16 +18317,6 @@
         "permitType": "Addition and Remodel",
         "workDescription": "Addition and Remodel: Remodel existing kitchen; demo portion of right exterior wall and brick and demo front exterior wall and brick; replace existing roof (match shingles); demo existing patio (posts & beam); add one new bedroom and office; add full bath and powder; and add new porch; add new windo",
         "status": "Active"
-      }
-    },
-    {
-      "observedAt": "2026-08-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-08",
-      "value": {
-        "permitType": "Electrical",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "59 issued (SAMPLE)"
       }
     },
     {
