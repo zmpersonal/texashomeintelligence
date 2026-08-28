@@ -1,0 +1,25 @@
+:root{
+  /* Brand */
+  --thi-navy:#0C2340; --thi-navy-deep:#081A31; --thi-amber:#C4772E; --thi-amber-deep:#9E5E22;
+  --thi-navy-hover:#0A1E38;
+  /* Neutrals (mineral) */
+  --thi-ink:#0E1726; --thi-slate-700:#33414F; --thi-slate-500:#5A6675; --thi-slate-400:#8A94A3;
+  --thi-line:#D9DEE6; --thi-line-strong:#C3CAD4; --thi-line-soft:#E7EBF0;
+  --thi-mist:#EEF1F5; --thi-paper:#F7F8FA; --thi-surface:#FFFFFF;
+  /* Interactive / data */
+  --thi-link:#2A6FB0; --thi-link-deep:#1E5488;
+  /* Status / risk — indicator use only */
+  --thi-safe:#1F7A54; --thi-watch:#B4831F; --thi-elevated:#CE5A1B; --thi-severe:#A82E22; --thi-unknown:#8A94A3;
+  --thi-safe-bg:#ECF5F0; --thi-watch-bg:#FBF4E6; --thi-elevated-bg:#FCEFE6; --thi-severe-bg:#FBF0EF; --thi-unknown-bg:#F0F2F5;
+  --thi-safe-text:#1B6B49; --thi-watch-text:#8A6417; --thi-elevated-text:#B14C16; --thi-severe-text:#A82E22; --thi-unknown-text:#5A6675;
+  /* Commercial layer — quarantined */
+  --thi-sponsor-sand:#F4F2EC; --thi-sponsor-line:#E3DFD3;
+  /* On dark */
+  --thi-on-dark:#E8EDF4; --thi-on-dark-muted:#9FB0C4; --thi-hairline-dark:rgba(255,255,255,.10);
+  /* Status, brightened one step for dark panels */
+  --thi-safe-on-dark:#3FA97B; --thi-watch-on-dark:#D9A63C; --thi-elevated-on-dark:#E8783A; --thi-severe-on-dark:#D95A4C; --thi-unknown-on-dark:#9FB0C4;
+  /* Chart series */
+  --thi-chart-1:var(--thi-link); --thi-chart-2:var(--thi-navy); --thi-chart-3:var(--thi-slate-500); --thi-chart-4:var(--thi-amber); --thi-chart-grid:var(--thi-line-soft);
+  /* Map base */
+  --thi-map-land:#EEF1F5; --thi-map-water:#DDE6EE; --thi-map-road:#FFFFFF; --thi-map-label:var(--thi-slate-700); --thi-map-pin:var(--thi-amber);
+}

@@ -1,0 +1,13 @@
+:root{
+  --thi-ease:cubic-bezier(.2,.6,.2,1); /* @kind other */
+  --thi-dur-fast:150ms; /* @kind other */
+  --thi-dur:220ms; /* @kind other */
+  --thi-dur-slow:250ms; /* @kind other */
+}
+@media (prefers-reduced-motion:reduce){
+  :root{
+    --thi-dur-fast:0ms; /* @kind other */
+    --thi-dur:0ms; /* @kind other */
+    --thi-dur-slow:0ms; /* @kind other */
+  }
+}

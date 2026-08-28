@@ -1,4 +1,8 @@
 @import "tailwindcss";
+/* THI brand tokens (Newsreader / IBM Plex + the brand-kit custom properties).
+ * Token definitions only — nothing below consumes them yet; components are
+ * repointed in the chrome-migration round. See thi-tokens.css. */
+@import "./thi-tokens.css";
 
 /*
  * Design tokens — Phase 0.

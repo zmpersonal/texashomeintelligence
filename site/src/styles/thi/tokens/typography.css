@@ -1,0 +1,35 @@
+:root{
+  --thi-font-display:"Newsreader", Georgia, "Times New Roman", serif;
+  --thi-font-ui:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --thi-font-mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --thi-fs-display-xl:3.5rem;   --thi-lh-display-xl:3.75rem;  /* 56/60 */
+  --thi-fs-h1:2.5rem;           --thi-lh-h1:2.75rem;          /* 40/44 */
+  --thi-fs-h2:1.875rem;         --thi-lh-h2:2.25rem;          /* 30/36 */
+  --thi-fs-h3:1.5rem;           --thi-lh-h3:1.875rem;         /* 24/30 */
+  --thi-fs-card:1.125rem;       --thi-lh-card:1.5rem;         /* 18/24 */
+  --thi-fs-body-lg:1.125rem;    --thi-lh-body-lg:1.75rem;     /* 18/28 */
+  --thi-fs-body:1rem;           --thi-lh-body:1.625rem;       /* 16/26 */
+  --thi-fs-body-sm:0.875rem;    --thi-lh-body-sm:1.375rem;    /* 14/22 */
+  --thi-fs-label:0.75rem;       --thi-lh-label:1rem;          /* 12/16 */
+  --thi-fs-data-xl:4rem;        --thi-lh-data-xl:4rem;        /* 64/64 */
+  --thi-fs-data-lg:2rem;        --thi-lh-data-lg:2.25rem;     /* 32/36 */
+  --thi-fs-data-md:1.25rem;     --thi-lh-data-md:1.5rem;      /* 20/24 */
+  --thi-fs-caption:0.75rem;     --thi-lh-caption:1rem;        /* 12/16 */
+
+  --thi-ls-label:0.08em; --thi-ls-chip:0.06em;
+  --thi-lh-headline-tight:1.1; /* @kind font */ /* editorial headlines 1.05-1.15 */
+  --thi-measure:68ch;           /* max body measure */
+  --thi-tnum:"tnum" 1; /* @kind font */
+}
+@media (max-width:640px){
+  :root{
+    --thi-fs-display-xl:2.5rem;  --thi-lh-display-xl:2.75rem;
+    --thi-fs-h1:1.875rem;        --thi-lh-h1:2.125rem;
+    --thi-fs-h2:1.5rem;          --thi-lh-h2:1.75rem;
+    --thi-fs-h3:1.25rem;         --thi-lh-h3:1.625rem;
+    --thi-fs-body-lg:1.0625rem;  --thi-lh-body-lg:1.6875rem;
+    --thi-fs-data-xl:3rem;       --thi-lh-data-xl:3rem;
+    --thi-fs-data-lg:1.75rem;    --thi-lh-data-lg:2rem;
+  }
+}

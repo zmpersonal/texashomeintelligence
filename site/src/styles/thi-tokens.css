@@ -1,0 +1,21 @@
+/*
+ * THI brand tokens — canonical implementation source of truth.
+ *
+ * Source: the Claude Design system delivered 2026-08-28 (committed verbatim
+ * under ./thi/), companion to THI-Brand-Kit.md v1.0 (§17). Layout reference:
+ * the .dc.html screens in docs/source/design/.
+ *
+ * This entry imports the TOKEN layers only (CSS custom properties + the
+ * Newsreader / IBM Plex webfonts). The starter component classes live in
+ * ./thi/base/primitives.css and are deliberately NOT imported yet — existing
+ * components still render on the legacy palette in global.css until the
+ * chrome migration round repoints them. Importing this file changes no
+ * rendered pixel.
+ */
+@import "./thi/tokens/fonts.css";
+@import "./thi/tokens/colors.css";
+@import "./thi/tokens/typography.css";
+@import "./thi/tokens/spacing.css";
+@import "./thi/tokens/shape.css";
+@import "./thi/tokens/motion.css";
+@import "./thi/tokens/semantic.css";

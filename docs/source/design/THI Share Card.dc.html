@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/colors.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/typography.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/shape.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/motion.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/base/primitives.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/styles.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<script src="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/_ds_bundle.js"></script>
+<style>
+  body { margin: 0; background: var(--thi-paper); -webkit-font-smoothing: antialiased; }
+  a { color: var(--thi-link); text-decoration: none; }
+  a:hover { color: var(--thi-link-deep); text-decoration: underline; text-decoration-color: var(--thi-amber); }
+  h1, h2, h3, p, ul, figure { margin: 0; }
+</style>
+</helmet>
+
+<div style="background: var(--thi-paper); min-height: 100vh; padding: 0 0 80px">
+
+  <div style="max-width: var(--thi-container); margin: 0 auto; padding: 32px var(--thi-gutter) 0">
+    <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">Share card system</x-import>
+    <h1 style="font: 500 var(--thi-fs-h1)/var(--thi-lh-h1) var(--thi-font-display); color: var(--thi-ink); margin: 10px 0 0; max-width: 30ch">One ZIP's reading, packaged as a data object</h1>
+    <p style="font: 400 var(--thi-fs-body)/var(--thi-lh-body) var(--thi-font-ui); color: var(--thi-slate-700); margin-top: 12px; max-width: 72ch">The percentile fronts every card — it is the social currency and reads in under two seconds. The score, band, and delta sit beneath it, and the footer makes the card self-branding for a stranger who sees only the image. Nothing home-specific ever appears here: no to-dos, filters, reminders, addresses, or names.</p>
+
+    <sc-if value="{{ designNotes }}" hint-placeholder-val="{{ true }}">
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 20px; font: 400 var(--thi-fs-caption)/1.55 var(--thi-font-ui); color: var(--thi-slate-500); margin-top: var(--thi-sp-5); padding-top: var(--thi-sp-4); border-top: 1px dashed var(--thi-line-strong)">
+        <div><b style="color: var(--thi-ink)">Backend-populatable.</b> Score, band, percentile, delta, location, date, and verdict are all variable-length: the hook wraps to three lines, the score cell is fixed-width mono, and nothing is positioned absolutely against a text edge.</div>
+        <div><b style="color: var(--thi-ink)">Amber spends itself once.</b> The percentile figure is the only accent on the card — roughly 2% of the surface. Status color appears only in the ring and one small band chip, brightened a step for dark ground.</div>
+        <div><b style="color: var(--thi-ink)">Thumbnail-safe.</b> Nothing below 26px at export scale; the hook and score survive platform recompression, and the ring reads as a shape before the number is legible.</div>
+        <div><b style="color: var(--thi-ink)">Swappable mark.</b> The lockup comes from the design system's Logo component, so replacing the unfinished mark is a one-file change and every card format picks it up.</div>
+      </div>
+      <p style="font: 400 var(--thi-fs-caption)/1.6 var(--thi-font-mono); color: var(--thi-slate-500); margin-top: var(--thi-sp-4)">Cards are drawn at full export resolution and shown scaled to fit this page — 9:16 is 1080×1920, square is 1080×1080, link preview is 1200×630. Switch the ZIP in Tweaks.</p>
+    </sc-if>
+  </div>
+
+  <!-- 9:16 · PRIMARY -->
+  <section data-screen-label="9:16 story cards" style="max-width: var(--thi-container); margin: 48px auto 0; padding: 0 var(--thi-gutter)">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--thi-sp-4); flex-wrap: wrap; padding-bottom: 12px; border-bottom: 1px solid var(--thi-line)">
+      <h2 style="font: 500 var(--thi-fs-h2)/var(--thi-lh-h2) var(--thi-font-display); color: var(--thi-ink)">9:16 · story and reel</h2>
+      <span style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-500)">1080 × 1920 · the primary format</span>
+    </div>
+    <div style="display: flex; gap: 20px; margin-top: var(--thi-sp-5); flex-wrap: wrap">
+      <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+        <figure style="display: flex; flex-direction: column; gap: 10px">
+          <div style="width: 357px; height: 634px; overflow: hidden; border-radius: 10px; border: 1px solid var(--thi-line-strong)">
+            <div style="width: 1080px; height: 1920px; transform: scale(0.33); transform-origin: top left; background: linear-gradient(180deg, #081A31 0%, #0C2340 100%); position: relative; box-sizing: border-box; padding: 96px 88px; display: flex; flex-direction: column">
+              <div style="position: absolute; inset: 0; opacity: .04; background-image: linear-gradient(#E8EDF4 2px, transparent 2px), linear-gradient(90deg, #E8EDF4 2px, transparent 2px); background-size: 90px 90px"></div>
+              <div style="position: absolute; inset: 20px; border: 2px solid rgba(255,255,255,.10); border-radius: 18px"></div>
+
+              <div style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24px">
+                <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Logo" hint-size="auto,54px" edition="Texas" size="{{ 52 }}" on-dark="{{ true }}"></x-import>
+                <span style="font: 400 30px/1 var(--thi-font-mono); letter-spacing: .14em; text-transform: uppercase; color: #9FB0C4">{{ c.eyebrow }}</span>
+              </div>
+
+              <div style="position: relative; margin-top: 108px">
+                <h3 style="font: 500 96px/1.08 var(--thi-font-display); color: #E8EDF4; text-wrap: pretty">{{ c.hookPre }}<span style="color: #C4772E">{{ c.hookStat }}</span>{{ c.hookPost }}</h3>
+              </div>
+
+              <div style="position: relative; margin-top: 72px; padding-top: 44px; border-top: 2px solid rgba(255,255,255,.12)">
+                <div style="font: 500 62px/1.1 var(--thi-font-display); color: #E8EDF4">{{ c.zip }} · {{ c.hood }}</div>
+                <div style="font: 400 30px/1 var(--thi-font-mono); letter-spacing: .1em; text-transform: uppercase; color: #9FB0C4; margin-top: 16px">Austin, TX</div>
+              </div>
+
+              <div style="position: relative; margin-top: auto; display: flex; align-items: center; gap: 56px">
+                <span style="position: relative; width: 320px; height: 320px; flex: 0 0 auto; display: inline-block">
+                  <svg viewBox="0 0 320 320" style="width: 320px; height: 320px; display: block">
+                    <circle cx="160" cy="160" r="142" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="18"></circle>
+                    <circle cx="160" cy="160" r="142" fill="none" stroke="{{ c.ring }}" stroke-width="18" stroke-linecap="round" stroke-dasharray="{{ c.dashLg }}" transform="rotate(-90 160 160)"></circle>
+                  </svg>
+                  <span style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px">
+                    <span style="font: 500 132px/1 var(--thi-font-mono); font-feature-settings: 'tnum' 1; color: #fff">{{ c.score }}</span>
+                    <span style="font: 400 24px/1 var(--thi-font-mono); letter-spacing: .12em; text-transform: uppercase; color: #9FB0C4">of 100</span>
+                  </span>
+                </span>
+                <span style="flex: 1; min-width: 0">
+                  <span style="display: inline-flex; align-items: center; gap: 14px; font: 600 34px/1 var(--thi-font-ui); letter-spacing: .1em; text-transform: uppercase; color: {{ c.ring }}">
+                    <span style="width: 18px; height: 18px; border-radius: 50%; background: {{ c.ring }}"></span>{{ c.band }}
+                  </span>
+                  <span style="display: block; font: 400 30px/1 var(--thi-font-mono); color: #E8EDF4; background: rgba(255,255,255,.08); border: 2px solid rgba(255,255,255,.12); border-radius: 999px; padding: 18px 26px; margin-top: 26px; width: fit-content">{{ c.delta }}</span>
+                  <span style="display: block; font: 400 34px/1.45 var(--thi-font-ui); color: #E8EDF4; margin-top: 30px; text-wrap: pretty">{{ c.verdict }}</span>
+                </span>
+              </div>
+
+              <div style="position: relative; margin-top: 72px; padding-top: 40px; border-top: 2px solid rgba(255,255,255,.12); display: flex; align-items: flex-end; justify-content: space-between; gap: 32px">
+                <span style="font: 400 26px/1.6 var(--thi-font-mono); color: #9FB0C4">{{ c.source }}<br>Home stress index · area-level, not a claim about one house</span>
+                <span style="font: 500 28px/1.3 var(--thi-font-mono); color: #E8EDF4; text-align: right; white-space: nowrap">Check your ZIP →<br><span style="color: #9FB0C4">texashomeintelligence.com</span></span>
+              </div>
+            </div>
+          </div>
+          <figcaption style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+            <span style="font: 600 var(--thi-fs-body-sm)/1 var(--thi-font-ui); color: var(--thi-ink)">{{ c.variant }}</span>
+            <span style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-500)">{{ c.variantNote }}</span>
+          </figcaption>
+        </figure>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 1:1 · FEED -->
+  <section data-screen-label="1:1 feed cards" style="max-width: var(--thi-container); margin: 56px auto 0; padding: 0 var(--thi-gutter)">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--thi-sp-4); flex-wrap: wrap; padding-bottom: 12px; border-bottom: 1px solid var(--thi-line)">
+      <h2 style="font: 500 var(--thi-fs-h2)/var(--thi-lh-h2) var(--thi-font-display); color: var(--thi-ink)">1:1 · feed</h2>
+      <span style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-500)">1080 × 1080 · hook and score share the upper field</span>
+    </div>
+    <div style="display: flex; gap: 20px; margin-top: var(--thi-sp-5); flex-wrap: wrap">
+      <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+        <figure style="display: flex; flex-direction: column; gap: 10px">
+          <div style="width: 357px; height: 357px; overflow: hidden; border-radius: 10px; border: 1px solid var(--thi-line-strong)">
+            <div style="width: 1080px; height: 1080px; transform: scale(0.33); transform-origin: top left; background: linear-gradient(180deg, #081A31 0%, #0C2340 100%); position: relative; box-sizing: border-box; padding: 76px 72px; display: flex; flex-direction: column">
+              <div style="position: absolute; inset: 0; opacity: .04; background-image: linear-gradient(#E8EDF4 2px, transparent 2px), linear-gradient(90deg, #E8EDF4 2px, transparent 2px); background-size: 90px 90px"></div>
+              <div style="position: absolute; inset: 18px; border: 2px solid rgba(255,255,255,.10); border-radius: 16px"></div>
+
+              <div style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 20px">
+                <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Logo" hint-size="auto,46px" edition="Texas" size="{{ 44 }}" on-dark="{{ true }}"></x-import>
+                <span style="font: 400 26px/1 var(--thi-font-mono); letter-spacing: .14em; text-transform: uppercase; color: #9FB0C4">{{ c.eyebrow }}</span>
+              </div>
+
+              <h3 style="position: relative; font: 500 74px/1.1 var(--thi-font-display); color: #E8EDF4; margin-top: 52px; text-wrap: pretty">{{ c.hookPre }}<span style="color: #C4772E">{{ c.hookStat }}</span>{{ c.hookPost }}</h3>
+
+              <div style="position: relative; margin-top: auto; display: flex; align-items: center; gap: 44px">
+                <span style="position: relative; width: 240px; height: 240px; flex: 0 0 auto; display: inline-block">
+                  <svg viewBox="0 0 240 240" style="width: 240px; height: 240px; display: block">
+                    <circle cx="120" cy="120" r="106" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="15"></circle>
+                    <circle cx="120" cy="120" r="106" fill="none" stroke="{{ c.ring }}" stroke-width="15" stroke-linecap="round" stroke-dasharray="{{ c.dashMd }}" transform="rotate(-90 120 120)"></circle>
+                  </svg>
+                  <span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 500 100px/1 var(--thi-font-mono); font-feature-settings: 'tnum' 1; color: #fff">{{ c.score }}</span>
+                </span>
+                <span style="flex: 1; min-width: 0">
+                  <span style="display: block; font: 500 48px/1.12 var(--thi-font-display); color: #E8EDF4">{{ c.zip }} · {{ c.hood }}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 12px; font: 600 26px/1 var(--thi-font-ui); letter-spacing: .1em; text-transform: uppercase; color: {{ c.ring }}; margin-top: 20px">
+                    <span style="width: 14px; height: 14px; border-radius: 50%; background: {{ c.ring }}"></span>{{ c.band }}
+                  </span>
+                  <span style="display: block; font: 400 26px/1 var(--thi-font-mono); color: #E8EDF4; background: rgba(255,255,255,.08); border: 2px solid rgba(255,255,255,.12); border-radius: 999px; padding: 15px 22px; margin-top: 20px; width: fit-content">{{ c.delta }}</span>
+                </span>
+              </div>
+
+              <div style="position: relative; margin-top: 48px; padding-top: 32px; border-top: 2px solid rgba(255,255,255,.12); display: flex; align-items: flex-end; justify-content: space-between; gap: 28px">
+                <span style="font: 400 24px/1.55 var(--thi-font-mono); color: #9FB0C4; max-width: 46ch">{{ c.verdictShort }}<br>{{ c.source }}</span>
+                <span style="font: 500 26px/1.3 var(--thi-font-mono); color: #E8EDF4; text-align: right; white-space: nowrap">Check your ZIP →<br><span style="color: #9FB0C4">texashomeintelligence.com</span></span>
+              </div>
+            </div>
+          </div>
+          <figcaption style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+            <span style="font: 600 var(--thi-fs-body-sm)/1 var(--thi-font-ui); color: var(--thi-ink)">{{ c.variant }}</span>
+            <span style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-500)">1080 × 1080</span>
+          </figcaption>
+        </figure>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 1200×630 · OG -->
+  <section data-screen-label="Link preview cards" style="max-width: var(--thi-container); margin: 56px auto 0; padding: 0 var(--thi-gutter)">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--thi-sp-4); flex-wrap: wrap; padding-bottom: 12px; border-bottom: 1px solid var(--thi-line)">
+      <h2 style="font: 500 var(--thi-fs-h2)/var(--thi-lh-h2) var(--thi-font-display); color: var(--thi-ink)">1200 × 630 · link preview</h2>
+      <span style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-500)">/og/austin/{{ zipPlain }}/2026-08-28.png · regenerated weekly</span>
+    </div>
+    <div style="display: flex; gap: 20px; margin-top: var(--thi-sp-5); flex-wrap: wrap">
+      <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+        <figure style="display: flex; flex-direction: column; gap: 10px">
+          <div style="width: 336px; height: 177px; overflow: hidden; border-radius: 8px; border: 1px solid var(--thi-line-strong)">
+            <div style="width: 1200px; height: 630px; transform: scale(0.28); transform-origin: top left; background: linear-gradient(180deg, #081A31 0%, #0C2340 100%); position: relative; box-sizing: border-box; padding: 56px 60px; display: flex; flex-direction: column">
+              <div style="position: absolute; inset: 0; opacity: .04; background-image: linear-gradient(#E8EDF4 2px, transparent 2px), linear-gradient(90deg, #E8EDF4 2px, transparent 2px); background-size: 72px 72px"></div>
+              <div style="position: absolute; inset: 14px; border: 2px solid rgba(255,255,255,.10); border-radius: 14px"></div>
+
+              <div style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 20px">
+                <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Logo" hint-size="auto,40px" edition="Texas" size="{{ 38 }}" on-dark="{{ true }}"></x-import>
+                <span style="font: 400 22px/1 var(--thi-font-mono); letter-spacing: .14em; text-transform: uppercase; color: #9FB0C4">{{ c.eyebrow }}</span>
+              </div>
+
+              <div style="position: relative; margin: auto 0; display: flex; align-items: center; gap: 52px">
+                <span style="flex: 1; min-width: 0">
+                  <h3 style="font: 500 58px/1.1 var(--thi-font-display); color: #E8EDF4; text-wrap: pretty">{{ c.hookPre }}<span style="color: #C4772E">{{ c.hookStat }}</span>{{ c.hookPost }}</h3>
+                  <span style="display: block; font: 400 24px/1.5 var(--thi-font-ui); color: #9FB0C4; margin-top: 20px; max-width: 54ch">{{ c.verdictShort }}</span>
+                </span>
+                <span style="flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 18px">
+                  <span style="position: relative; width: 200px; height: 200px; display: inline-block">
+                    <svg viewBox="0 0 200 200" style="width: 200px; height: 200px; display: block">
+                      <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="13"></circle>
+                      <circle cx="100" cy="100" r="88" fill="none" stroke="{{ c.ring }}" stroke-width="13" stroke-linecap="round" stroke-dasharray="{{ c.dashSm }}" transform="rotate(-90 100 100)"></circle>
+                    </svg>
+                    <span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 500 82px/1 var(--thi-font-mono); font-feature-settings: 'tnum' 1; color: #fff">{{ c.score }}</span>
+                  </span>
+                  <span style="display: inline-flex; align-items: center; gap: 10px; font: 600 22px/1 var(--thi-font-ui); letter-spacing: .1em; text-transform: uppercase; color: {{ c.ring }}">
+                    <span style="width: 12px; height: 12px; border-radius: 50%; background: {{ c.ring }}"></span>{{ c.band }}
+                  </span>
+                  <span style="font: 400 22px/1 var(--thi-font-mono); color: #E8EDF4; background: rgba(255,255,255,.08); border: 2px solid rgba(255,255,255,.12); border-radius: 999px; padding: 12px 18px; white-space: nowrap">{{ c.delta }}</span>
+                </span>
+              </div>
+
+              <div style="position: relative; padding-top: 26px; border-top: 2px solid rgba(255,255,255,.12); display: flex; align-items: flex-end; justify-content: space-between; gap: 24px">
+                <span style="font: 500 26px/1.3 var(--thi-font-display); color: #E8EDF4">{{ c.zip }} · {{ c.hood }} <span style="font: 400 20px/1 var(--thi-font-mono); color: #9FB0C4">· Austin, TX</span></span>
+                <span style="font: 400 20px/1.5 var(--thi-font-mono); color: #9FB0C4; text-align: right">{{ c.source }}<br><span style="color: #E8EDF4">texashomeintelligence.com/austin/{{ c.zip }}</span></span>
+              </div>
+            </div>
+          </div>
+          <figcaption style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+            <span style="font: 600 var(--thi-fs-body-sm)/1 var(--thi-font-ui); color: var(--thi-ink)">{{ c.variant }}</span>
+            <span style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-500)">1200 × 630</span>
+          </figcaption>
+        </figure>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- SPEC STRIP -->
+  <section data-screen-label="Generation spec" style="max-width: var(--thi-container); margin: 56px auto 0; padding: 0 var(--thi-gutter)">
+    <div style="background: var(--thi-mist); border: 1px solid var(--thi-line); border-radius: var(--thi-r-card); padding: var(--thi-sp-6)">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--thi-sp-4); flex-wrap: wrap; margin-bottom: var(--thi-sp-4)">
+        <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">What the generator fills in</x-import>
+        <span style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-500)">one payload, three formats, three tones</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--thi-line); border: 1px solid var(--thi-line); border-radius: var(--thi-r-md); overflow: hidden">
+        <sc-for list="{{ specFields }}" as="f" hint-placeholder-count="8">
+          <div style="background: var(--thi-surface); padding: 13px 15px">
+            <div style="font: 500 var(--thi-fs-body-sm)/1 var(--thi-font-mono); color: var(--thi-ink)">{{ f.key }}</div>
+            <div style="font: 400 var(--thi-fs-caption)/1.5 var(--thi-font-ui); color: var(--thi-slate-500); margin-top: 5px">{{ f.note }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <p style="font: 400 var(--thi-fs-body-sm)/var(--thi-lh-body-sm) var(--thi-font-ui); color: var(--thi-slate-700); margin-top: var(--thi-sp-4); max-width: 86ch">The tone is chosen by the same priority engine that orders the dashboard: a storm event within the decay window takes the card, otherwise an elevated band frames the percentile as higher stress, and a normal band flips it to the calmer-than framing. No week produces an empty card.</p>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;zip&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;78704 · South Austin&quot;,&quot;options&quot;:[&quot;78704 · South Austin&quot;,&quot;78745 · Sunset Valley&quot;,&quot;78702 · East Austin&quot;,&quot;78749 · Oak Hill&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Payload&quot;},&quot;designNotes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Presentation&quot;}}">
+const ZIPS = { '78704': 'South Austin', '78745': 'Sunset Valley', '78702': 'East Austin', '78749': 'Oak Hill' };
+// Status colors, brightened one step for dark ground (per the on-dark ramp).
+const RING = { severe: '#E4695B', elevated: '#F08B4C', watch: '#E0B24A', safe: '#4FBF8B' };
+const CIRC = { lg: 892.2, md: 666.0, sm: 552.9 };
+
+const VARIANTS = [
+  { variant: 'Elevated week', variantNote: 'the default hot-week framing',
+    score: 61, band: 'Elevated', status: 'elevated',
+    hookPre: 'This ZIP has higher home stress than ', hookStat: '68%', hookPost: ' of Austin ZIPs this week.',
+    delta: '↑ 4 from last week',
+    verdict: 'Persistent heat and drying clay soils are driving this week\u2019s rise. Storms have been quiet for six weeks.',
+    verdictShort: 'Persistent heat and drying soils are driving this week\u2019s rise.',
+    source: 'NWS · NOAA · USDM · Austin Water · as of 08/28 06:00' },
+  { variant: 'Calm week', variantNote: 'a quiet week is still a brag',
+    score: 32, band: 'Normal', status: 'safe',
+    hookPre: 'This ZIP is calmer than ', hookStat: '72%', hookPost: ' of Austin ZIPs this week.',
+    delta: '↓ 6 from last week',
+    verdict: 'Cooler nights and August rain eased every signal at once — a third straight calmer week.',
+    verdictShort: 'Cooler nights and August rain eased every signal at once.',
+    source: 'NWS · NOAA · USDM · Austin Water · as of 08/28 06:00' },
+  { variant: 'Storm week', variantNote: 'the event leads, decay-aware',
+    score: 68, band: 'Elevated', status: 'elevated',
+    hookPre: 'Hail hit the Austin area — this ZIP is in the top ', hookStat: '10%', hookPost: ' for roof stress this month.',
+    delta: '↑ 10 from last week',
+    verdict: 'Reports are area-level, so they don\u2019t confirm hail reached any one street. The reading eases over about two weeks.',
+    verdictShort: 'Reports are area-level. The reading eases over about two weeks.',
+    source: 'NOAA Storm Events · NWS · as of 08/28 06:02' }
+];
+
+const SPEC = [
+  { key: 'percentile', note: 'Drives the hook and its framing — higher-than, calmer-than, or top-of.' },
+  { key: 'score · band · status', note: 'Score sets the ring sweep; status sets the ring color and dot; band supplies the word.' },
+  { key: 'delta', note: 'Signed and unit-suffixed by the generator; the chip sizes to its content.' },
+  { key: 'zip · neighborhood', note: 'Neighborhood may be absent — the line collapses to the ZIP alone.' },
+  { key: 'verdict', note: 'Two lengths shipped: full for 9:16, short for square and link preview.' },
+  { key: 'week · as-of', note: 'Eyebrow date and the mono source line; never omitted, never rounded.' },
+  { key: 'sources', note: 'Listed in the order they contributed, truncated with · separators.' },
+  { key: 'format', note: '9:16, 1:1, or 1200×630 — same payload, three compositions.' }
+];
+
+class Component extends DCLogic {
+  renderVals() {
+    const zip = (this.props.zip ?? '78704 · South Austin').split(' · ')[0];
+    const hood = ZIPS[zip] ?? 'Austin';
+    const cards = VARIANTS.map(v => ({
+      ...v,
+      zip, hood,
+      eyebrow: 'Austin ZIP reading · week of Aug 24',
+      ring: RING[v.status],
+      dashLg: (v.score / 100 * CIRC.lg).toFixed(1) + ' ' + CIRC.lg,
+      dashMd: (v.score / 100 * CIRC.md).toFixed(1) + ' ' + CIRC.md,
+      dashSm: (v.score / 100 * CIRC.sm).toFixed(1) + ' ' + CIRC.sm
+    }));
+    return {
+      designNotes: this.props.designNotes ?? true,
+      zipPlain: zip, cards, specFields: SPEC
+    };
+  }
+}
+</script>
+</body>
+</html>

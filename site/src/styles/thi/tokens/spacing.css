@@ -1,0 +1,7 @@
+:root{
+  --thi-sp-1:4px; --thi-sp-2:8px; --thi-sp-3:12px; --thi-sp-4:16px; --thi-sp-5:20px;
+  --thi-sp-6:24px; --thi-sp-8:32px; --thi-sp-10:40px; --thi-sp-12:48px; --thi-sp-16:64px; --thi-sp-20:80px;
+  --thi-container:1120px;
+  --thi-gutter:20px;
+  --thi-header-h:28px; /* locked max logo height in header */
+}
