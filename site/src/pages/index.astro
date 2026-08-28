@@ -1,89 +1,66 @@
 ---
-// THI-round-homepage-nav.md §4/§5/§7 — the real homepage, replacing the
-// Phase 0 scaffold placeholder. Copy is pulled verbatim from the round
-// spec where the spec gives exact copy (hero, four cards); the live-data
-// section below ports the live Jekyll homepage's SAMPLE-marked 4-card
-// grid (repo root index.html, "QuoteReady + Live Data Proof"), reframed
-// for this page's authority-first hero rather than the brief-first one.
+/**
+ * Homepage.
+ *
+ * Round 2 changes, all structural:
+ *  - The four-card grid that sat directly below the hero is gone (ROADMAP.md
+ *    drops it for this build), so the live-data section is now the first thing
+ *    under the hero — the site leads with data rather than with navigation.
+ *  - Every SAMPLE card is gone. Four of the ten cards here were illustrative
+ *    placeholders (cooling-degree stress, water/irrigation, HVAC, fire), which
+ *    REVIEW.md forbids on an indexed page. Rather than dress them up, the
+ *    sections now show only what is actually measured, and each live card
+ *    links to the data page that backs it.
+ *  - The FAQ renders from `src/data/faq.yaml` instead of a hardcoded DRAFT
+ *    duplicate that had drifted from it.
+ *  - "Texas Homeowner Guides" is gone: eight "Coming soon" labels that were
+ *    not links to anything.
+ *
+ * Figures come from the same generated datasets the data pages read, via the
+ * published-page registry, so the homepage cannot contradict them.
+ */
 import Base from "../layouts/Base.astro";
 import DataStatus from "../components/DataStatus.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
 import DroughtMapHero from "../components/DroughtMapHero.astro";
-import type { DatasetFile } from "../ingest/types";
-import type { StormEventValue } from "../ingest/fetchers/noaaStormEvents";
-import type { PermitValue } from "../ingest/fetchers/austinPermits";
-import type { DroughtValue } from "../ingest/fetchers/usdm";
+import LiveConditionsPanel from "../components/LiveConditionsPanel.astro";
+import { getCollection } from "astro:content";
+import { publishedDataPages } from "../lib/dataPages";
+import { findDataset, freshnessOf } from "../lib/datasets";
 
-// Reuse the same normalized dataset files the Austin roofing data page
-// reads (src/data/generated/**, built by the Phase 5 ingestion
-// framework) rather than raw API shapes or hand-typed numbers — per this
-// round's instruction. Where no matching derived metric exists yet
-// (cooling-degree stress), the card stays a plain illustrative SAMPLE
-// note rather than being wired to an unrelated feed.
-import stormDataRaw from "../data/generated/noaa-storm-events/austin.json";
-import permitsAustinRaw from "../data/generated/municipal-permits/austin.json";
-import permitsSanAntonioRaw from "../data/generated/municipal-permits/san-antonio.json";
-import droughtDataRaw from "../data/generated/usdm-drought/austin.json";
+const faqEntries = await getCollection("faq");
+const faqItems = faqEntries.map((e) => ({ q: e.data.q, a: e.data.a }));
 
-const stormData = stormDataRaw as DatasetFile<StormEventValue>;
-const permitsAustin = permitsAustinRaw as DatasetFile<PermitValue>;
-const permitsSanAntonio = permitsSanAntonioRaw as DatasetFile<PermitValue>;
-const droughtData = droughtDataRaw as DatasetFile<DroughtValue>;
-
-const trailing12mo = (observations: { observedAt: string }[]) => {
-  const cutoff = Date.now() - 365 * 86_400_000;
-  return observations.filter((o) => new Date(o.observedAt).getTime() >= cutoff);
-};
-
-const stormCount = trailing12mo(stormData.observations).length;
-
-const STATUS_RANK = { error: 0, stale: 1, sample: 2, live: 3 } as const;
-const permitsStatus =
-  STATUS_RANK[permitsAustin.status] <= STATUS_RANK[permitsSanAntonio.status]
-    ? permitsAustin.status
-    : permitsSanAntonio.status;
-const permitsCount =
-  trailing12mo(permitsAustin.observations).length + trailing12mo(permitsSanAntonio.observations).length;
-const permitsAsOf = permitsStatus === "sample" ? undefined : (permitsAustin.lastSuccessAt ?? undefined);
-
-const droughtAsOf = droughtData.status === "sample" ? undefined : (droughtData.lastSuccessAt ?? undefined);
-const latestDrought = droughtData.observations.at(-1)?.value.droughtIndex;
-
-// Same trailing-12-month hail computation as the Austin roofing data page
-// (src/pages/data/austin/roofing/index.astro) — reused here (not
-// re-derived) so the "Austin Roof & Storm Conditions" module below can't
-// contradict the live-data grid above it on this same page.
-const stormCutoff = Date.now() - 365 * 86_400_000;
-const largestHailInches = stormData.observations
-  .filter((o) => new Date(o.observedAt).getTime() >= stormCutoff && o.value.eventType === "Hail")
-  .map((o) => parseFloat(o.value.magnitude))
-  .filter((n) => !Number.isNaN(n))
-  .reduce((max, n) => Math.max(max, n), 0);
-
-// THI-round-homepage-nav.md follow-up: everything from here down ports
-// the live Jekyll homepage's (repo root index.html) sections from
-// "Something on Your Mind?" through the end. Structure/layout preserved;
-// see the accompanying report for which sections still carry
-// QuoteReady-brief-first copy pending the next copy-rewrite round.
-const servicePicks = [
-  { name: "Roofing", blurb: "Leak? Storm damage? Aging roof? Comparing replacement options?", service: "roofing", cta: "Start a Roofing Brief" },
-  { name: "HVAC", blurb: "Not cooling? Weak airflow? Uneven temperatures? Thinking about replacement?", service: "hvac", cta: "Start an HVAC Brief" },
-  { name: "Plumbing", blurb: "Leak, drain problem, water heater, low pressure, or sewer issue?", service: "plumbing", cta: "Start a Plumbing Brief" },
-  { name: "Fire Damage", blurb: "Recent fire or smoke damage? Not sure where to start?", service: "fire-damage-restoration", cta: "Start a Fire Damage Brief" },
-  { name: "Mold", blurb: "Visible mold, musty smell, or a past leak you're worried about?", service: "mold-remediation", cta: "Start a Mold Brief" },
-  { name: "Electrical", blurb: "Tripping breakers, flickering lights, or a panel that's acting up?", service: "electrical", cta: "Start an Electrical Brief" },
-  { name: "Tree Trimming", blurb: "Dead limbs, storm damage, or a tree too close to your house?", service: "tree-trimming", cta: "Start a Tree Brief" },
+/**
+ * The live-data strip. Curated rather than "every published page", so the
+ * homepage stays a summary — but each entry resolves through the registry, so
+ * a card cannot outlive the page it points at.
+ */
+const FEATURED = [
+  { location: "austin", topic: "roofing", label: "Austin hail & storm events" },
+  { location: "san-antonio", topic: "roof-permits", label: "San Antonio re-roof permits" },
+  { location: "austin", topic: "drought", label: "Austin drought conditions" },
+  { location: "texas", topic: "electricity-prices", label: "Texas electricity prices" },
 ];
 
-const homeownerGuides = [
-  "How many contractor quotes should I get?",
-  "What should be included in a contractor estimate?",
-  "How do I compare contractor quotes?",
-  "When should I repair vs. replace an HVAC system?",
-  "What should be included in a roofing quote?",
-  "What should I do immediately after a water leak?",
-  "What days can I water my lawn in Austin?",
-  "What should I check after a severe Texas storm?",
+const published = publishedDataPages();
+const featured = FEATURED.map((f) => {
+  const spec = published.find((s) => s.location === f.location && s.topic === f.topic);
+  if (!spec) return undefined;
+  const dataset = findDataset(spec.datasetId, spec.location)!;
+  const observations = dataset.observations.filter((o) => !o.seed);
+  const stat = spec.stats({ dataset, observations })[0];
+  return { spec, dataset, freshness: freshnessOf(dataset), label: f.label, stat };
+}).filter((f) => f !== undefined);
+
+const servicePicks = [
+  { name: "Roofing", blurb: "Leak? Storm damage? Aging roof? Comparing replacement options?", service: "roofing" },
+  { name: "HVAC", blurb: "Not cooling? Weak airflow? Uneven temperatures? Thinking about replacement?", service: "hvac" },
+  { name: "Plumbing", blurb: "Leak, drain problem, water heater, low pressure, or sewer issue?", service: "plumbing" },
+  { name: "Fire Damage", blurb: "Recent fire or smoke damage? Not sure where to start?", service: "fire-damage-restoration" },
+  { name: "Mold", blurb: "Visible mold, musty smell, or a past leak you're worried about?", service: "mold-remediation" },
+  { name: "Electrical", blurb: "Tripping breakers, flickering lights, or a panel that's acting up?", service: "electrical" },
+  { name: "Tree Trimming", blurb: "Dead limbs, storm damage, or a tree too close to your house?", service: "tree-trimming" },
 ];
 
 const primarySources = [
@@ -96,51 +73,18 @@ const primarySources = [
   { title: "Environment", items: ["EPA AirNow", "USDA"] },
 ];
 
-// DRAFT — pending a full copy-rewrite pass (question wording/answers
-// below are new for this round, not carried over from the old
-// QuoteReady-only FAQ). One-two sentence answers per CLAUDE.md's
-// AI-optimization requirements.
-const faqItems = [
-  {
-    q: "What is Texas Home Intelligence?",
-    a: "Texas Home Intelligence is a Texas homeowner data, tools, and intelligence platform — continuously updated local information (weather, storms, permits, energy, costs, risk) plus free tools like the Home Dashboard and the QuoteReady Project Brief.",
-  },
-  {
-    q: "Is Texas Home Intelligence free to use?",
-    a: "Yes. The Home Dashboard, homeowner tools, and the QuoteReady Project Brief are all free, with no phone number required to start.",
-  },
-  {
-    q: "What can Texas Home Intelligence tell me about my home in Austin?",
-    a: "For Austin we track conditions like recent hail and wind events, drought and tree/foundation stress, and permit activity — local signals that can affect maintenance, repair timing, and risk.",
-  },
-  {
-    q: "How do I find a reliable home contractor in Austin?",
-    a: "Start by researching the project type on our Austin service pages, then build a QuoteReady Project Brief so every contractor you contact is quoting the same scope of work — optional contractor introductions are available once your brief is ready.",
-  },
-  {
-    q: "How does Texas Home Intelligence help me get better repair quotes?",
-    a: "A QuoteReady Project Brief organizes what you already know about your project into one clear document, so it's easier to get quotes that are actually comparable, not just cheaper or more expensive.",
-  },
-  {
-    q: "Where does the data come from, and how current is it?",
-    a: 'Our data comes from public sources such as NWS/NOAA, municipal permit systems, and other government agencies. Update cadence and freshness are shown on each data page — see our <a href="/methodology/">methodology</a> for the full picture.',
-  },
-  {
-    q: "Does Texas Home Intelligence sell or share my information?",
-    a: '<span class="tag-soon">Pending privacy policy / legal review</span> We have not finalized a data-sharing policy. Any sharing of homeowner information will require your consent and legal review before it happens.',
-  },
-  {
-    q: "Does Texas Home Intelligence do repairs or recommend contractors?",
-    a: "No. Texas Home Intelligence is a data and decision-support platform, not a contractor or a directory. Optional help finding local pros is available after your brief is created, but it's never required.",
-  },
-];
+const dateModified = featured
+  .map((f) => f.freshness.asOf)
+  .filter((v): v is string => Boolean(v))
+  .sort()
+  .at(-1);
 
 const title = "Texas Home Intelligence — Data, Tools & Local Home Intelligence for Texas Homeowners";
 const description =
   "Texas-specific data, tools, and local home-service intelligence to help homeowners understand risks, maintenance, repair costs, and when to take action.";
 ---
 
-<Base title={title} description={description}>
+<Base title={title} description={description} article={{ dateModified }}>
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
@@ -150,268 +94,154 @@ const description =
           Texas-specific data, tools, and local home-service intelligence to help homeowners
           understand risks, maintenance, repair costs, and when to take action.
         </p>
-        <div style="margin-top: 28px; display: flex; gap: 14px; flex-wrap: wrap;">
+        <div class="hero-actions">
           <a class="btn" href="/dashboard/">Open My Home Dashboard</a>
-          <a class="btn secondary" href="/tools/">Explore Free Tools</a>
+          <a class="btn secondary" href="/data/">Explore Texas Data</a>
         </div>
-        <p class="microcopy" style="margin-top:20px;">
+        <p class="microcopy">
           Updated continuously using weather, property, economic, and home-service data.
         </p>
       </div>
-      <DroughtMapHero />
+      <LiveConditionsPanel
+        location="austin"
+        locationLabel="Austin"
+        topics={["roofing", "drought", "roof-permits"]}
+        trendTopic="drought"
+        trendValue={(v) => {
+          const m = String(v.droughtIndex ?? "").match(/^D(\d)/);
+          return m ? Number(m[1]) + 1 : 0;
+        }}
+        trendLabel="Travis County drought severity, weekly"
+      />
     </div>
   </section>
 
   <section class="block">
     <div class="wrap">
-      <div class="grid-4">
-        <a class="card card-link card-featured" href="/dashboard/">
-          <span class="card-tag">For Your Home</span>
-          <h2>Home Dashboard</h2>
-          <p>
-            See the conditions affecting your home right now — including weather, HVAC stress,
-            storm exposure, maintenance signals, and more.
-          </p>
-          <p style="margin-top:12px;font-weight:700;color:var(--brand);">Check My Home &rarr;</p>
-        </a>
-        <a class="card card-link" href="/tools/">
-          <h2>Homeowner Tools</h2>
-          <p>
-            Use Texas-specific tools for repair costs, repair-vs-replace decisions, project
-            planning, and contractor quotes.
-          </p>
-          <p style="margin-top:12px;font-weight:700;color:var(--brand);">Explore Free Tools &rarr;</p>
-        </a>
-        <a class="card card-link" href="/tools/">
-          <h2>Research a Home Project</h2>
-          <p>
-            Research HVAC, roofing, plumbing, electrical, mold, fire damage, tree care, and other
-            major home projects.
-          </p>
-          <p style="margin-top:12px;font-weight:700;color:var(--brand);">Explore Home Services &rarr;</p>
-        </a>
-        <a class="card card-link" href="/data/">
-          <h2>Texas Home Data</h2>
-          <p>Track the weather, costs, risks, and market conditions affecting homes across Texas.</p>
-          <p style="margin-top:12px;font-weight:700;color:var(--brand);">See Current Data &rarr;</p>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section class="block alt">
-    <div class="wrap">
-      <h2>Backed by Live Texas Data</h2>
+      <h2>Backed by live Texas data</h2>
       <p style="max-width:44em;">
-        Every tool on this site can pull in relevant current conditions — heat, recent storms,
-        drought, or local permit activity — so you and your contractor start with more context,
-        not less.
+        Every figure below is computed from public records we ingest and republish, with the
+        source and the date it was last confirmed on every reading. Follow any card for the full
+        dataset and its limitations.
       </p>
       <div class="grid-4">
-        <div class="card data-card">
-          <DataStatus status="sample" />
-          <p class="metric-label" style="margin-top:8px;">Texas cooling-degree stress</p>
-          <p class="metric-note">Illustrative &mdash; will track live NWS/NOAA heat data by metro.</p>
-        </div>
-        <div class="card data-card">
-          <DataStatus status={stormData.status} asOf={stormData.status === "sample" ? undefined : (stormData.lastSuccessAt ?? undefined)} source={stormData.source.name} />
-          <p class="metric-label" style="margin-top:8px;">Recent hail &amp; wind events</p>
-          <p class="metric-note">{stormCount} reported near Austin, trailing 12 months.</p>
-        </div>
-        <div class="card data-card">
-          <DataStatus status={permitsStatus} asOf={permitsAsOf} source="City of Austin / City of San Antonio (Socrata)" />
-          <p class="metric-label" style="margin-top:8px;">Permit activity, Austin &amp; San Antonio</p>
-          <p class="metric-note">{permitsCount} permits reported, trailing 12 months.</p>
-        </div>
-        <div class="card data-card">
-          <DataStatus status={droughtData.status} asOf={droughtAsOf} source={droughtData.source.name} />
-          <p class="metric-label" style="margin-top:8px;">Drought &amp; tree/foundation stress</p>
-          <p class="metric-note">{latestDrought ?? "Illustrative — will track U.S. Drought Monitor data."}</p>
-        </div>
+        {featured.map(({ spec, dataset, freshness, label, stat }) => (
+          <a class="card data-card card-link" href={`/data/${spec.location}/${spec.topic}/`}>
+            <p class="metric-label">{label}</p>
+            <p class="metric-value">{stat.value}</p>
+            <p class="metric-note">{stat.label}</p>
+            <DataStatus
+              status={dataset.status}
+              asOf={freshness.asOf}
+              dataThrough={freshness.dataThrough}
+              source={dataset.source.name}
+            />
+          </a>
+        ))}
       </div>
+      <p style="margin-top:20px;"><a href="/data/">See the full data catalog &rarr;</a></p>
     </div>
   </section>
 
-  {/* Ported from the live Jekyll homepage, "Something on Your Mind?" —
-      FLAG: card CTA copy ("Start a __ Brief") is QuoteReady-brief-first
-      phrasing, pending the copy-rewrite round. */}
-  <section class="block">
+  {/* FLAG (copy round): card CTAs used to read "Start a __ Brief" and pointed
+      at the QuoteReady intake. They now point at the Austin service pages —
+      the real authority content — which also gives those 14 indexed pages a
+      route in from the homepage. Blurb copy is unchanged. */}
+  <section class="block alt">
     <div class="wrap">
-      <h2>Something on Your Mind?</h2>
+      <h2>Something on your mind?</h2>
       <p style="max-width:44em;">
-        Start with the problem, not the paperwork. Pick what's going on and we'll ask the right
-        questions for that job.
+        Start with the problem, not the paperwork. Pick what's going on and see what we know
+        about it locally.
       </p>
       <div class="grid-4">
         {servicePicks.map((s) => (
           <div class="pick-card">
             <h3>{s.name}</h3>
             <p>{s.blurb}</p>
-            <a class="pick-link" href={`/start/?service=${s.service}`}>{s.cta} &rarr;</a>
+            <a class="pick-link" href={`/austin/${s.service}/`}>{s.name} in Austin &rarr;</a>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  {/* Ported from Jekyll, "Austin Home Data, Translated Into Something
-      Useful." 3 of 6 modules (Roof & Storm, Home-Service Activity,
-      Tree & Drought) are wired to the same real generated-JSON values
-      already computed above for the live-data grid, instead of Jekyll's
-      hand-typed numbers — kept them from contradicting that grid on the
-      same page. The other 3 (Water & Irrigation, HVAC, Fire) have no
-      matching ingested feed yet and stay static SAMPLE placeholders,
-      exactly as in Jekyll. */}
-  <section class="block alt">
-    <div class="wrap">
-      <h2>Austin Home Data, Translated Into Something Useful</h2>
-      <p style="max-width:44em;">
-        What's happening around Austin right now, and what it actually means for your home. This
-        section is specific to the Austin metro &mdash; San Antonio and other Texas metros get
-        their own data as feeds are connected.
-      </p>
-
-      <div class="grid-2" style="margin-top:20px;">
-        <div class="dash-module">
-          <DataStatus status="sample" />
-          <h3 style="margin-top:8px;">Austin Water &amp; Irrigation</h3>
-          <p class="dash-value">Stage 1 Watering Restrictions</p>
-          <p class="dash-detail">Once-weekly watering schedule, by address</p>
-          <p class="dash-meta"><span>Scope: Austin Water service area</span><span>Updated: not yet connected</span><span>Source: Austin Water (planned)</span></p>
-          <p class="dash-interpretation"><b>What this means:</b> Irrigation, sod, and landscaping work often needs to work around the current watering schedule &mdash; worth confirming before a contractor plans start dates.</p>
-        </div>
-
-        <div class="dash-module">
-          <DataStatus status="sample" />
-          <h3 style="margin-top:8px;">Austin HVAC Conditions</h3>
-          <p class="dash-value">High Cooling Demand</p>
-          <p class="dash-detail">5 of the next 7 days forecast above 100&deg;F &mdash; above seasonal normal</p>
-          <p class="dash-meta"><span>Scope: Austin metro</span><span>Period: 7-day forecast</span><span>Updated: not yet connected</span><span>Source: NWS + NOAA (planned)</span></p>
-          <p class="dash-interpretation"><b>What this means:</b> Long AC runtimes are common during extended heat. Existing airflow or cooling problems often become more noticeable during peak afternoon hours.</p>
-        </div>
-
-        <div class="dash-module">
-          <DataStatus status="sample" />
-          <h3 style="margin-top:8px;">Austin Fire Conditions</h3>
-          <p class="dash-value">Elevated Fire Weather Risk</p>
-          <p class="dash-detail">Dry, breezy conditions in the outlook</p>
-          <p class="dash-meta"><span>Scope: Travis County</span><span>Updated: not yet connected</span><span>Source: Texas A&amp;M Forest Service + NWS (planned)</span></p>
-          <p class="dash-interpretation"><b>What this means:</b> It's a reasonable time to check smoke detectors, clear dry vegetation near the home, and confirm any planned burning is currently allowed.</p>
-        </div>
-
-        <div class="dash-module">
-          <DataStatus status={droughtData.status} asOf={droughtAsOf} source={droughtData.source.name} />
-          <h3 style="margin-top:8px;">Austin Tree &amp; Drought Conditions</h3>
-          <p class="dash-value">{latestDrought ?? "Drought data not yet connected"}</p>
-          <p class="dash-detail">See current reading above</p>
-          <p class="dash-meta"><span>Scope: Travis County</span><span>Source: {droughtData.source.name}</span></p>
-          <p class="dash-interpretation"><b>What this means:</b> Prolonged drought stresses trees and shifts soil around foundations &mdash; both common contributors to storm-season tree failures and foundation concerns.</p>
-        </div>
-
-        <div class="dash-module">
-          <DataStatus status={stormData.status} asOf={stormData.status === "sample" ? undefined : (stormData.lastSuccessAt ?? undefined)} source={stormData.source.name} />
-          <h3 style="margin-top:8px;">Austin Roof &amp; Storm Conditions</h3>
-          <p class="dash-value">{stormCount} Reported Hail/Wind Events</p>
-          <p class="dash-detail">Trailing 12 months{largestHailInches > 0 ? `, up to ${largestHailInches.toFixed(2)}″ reported` : ""}</p>
-          <p class="dash-meta"><span>Scope: Travis County</span><span>Source: {stormData.source.name}</span></p>
-          <p class="dash-interpretation"><b>What this means:</b> Repeated hail at or above roughly one inch is a common trigger for insurance-eligible roof damage, even without an obvious leak.</p>
-          <a class="pick-link" href="/data/austin/roofing/">See the full Austin roofing data page &rarr;</a>
-        </div>
-
-        <div class="dash-module">
-          <DataStatus status={permitsStatus} asOf={permitsAsOf} source="City of Austin / City of San Antonio (Socrata)" />
-          <h3 style="margin-top:8px;">Austin Home-Service Activity</h3>
-          <p class="dash-value">Mechanical &amp; Roofing Permits</p>
-          <p class="dash-detail">{permitsCount} permits reported, trailing 12 months</p>
-          <p class="dash-meta"><span>Scope: City of Austin</span><span>Period: trailing 12 months</span></p>
-          <p class="dash-interpretation"><b>What this means:</b> Permit trends are a rough proxy for how much HVAC, roofing, and electrical work is happening locally &mdash; useful context when timing a project.</p>
-        </div>
-      </div>
-
-      <p style="margin-top:20px;"><a href="/data/">Explore the full Austin data catalog &rarr;</a></p>
-    </div>
-  </section>
-
-  {/* Ported from Jekyll, "Texas Homeowner Guides" — none of these guide
-      pages exist yet, so (as in Jekyll) these are plain labels, not
-      links to anything. */}
   <section class="block">
-    <div class="wrap" style="max-width:820px;">
-      <h2>Texas Homeowner Guides</h2>
-      <p>Answers to the questions Texas homeowners ask most before starting a project.</p>
-      <ul class="guide-list">
-        {homeownerGuides.map((g) => (
-          <li><span class="guide-title-soon">{g}</span><span class="tag-soon">Coming soon</span></li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
-  {/* Ported from Jekyll, "How Texas Home Intelligence Works" (methodology summary). */}
-  <section class="block alt">
     <div class="wrap">
-      <h2>How Texas Home Intelligence Works</h2>
+      <h2>How Texas Home Intelligence works</h2>
       <div class="grid-4">
         <div class="card method-card">
-          <h3>Public / Observed Data</h3>
+          <h3>Public / observed data</h3>
           <p>Information directly reported by authoritative sources &mdash; weather services, permit systems, and state agencies.</p>
         </div>
         <div class="card method-card">
-          <h3>Historical Context</h3>
+          <h3>Historical context</h3>
           <p>How a current value compares with previous conditions or seasonal norms, not just a single snapshot.</p>
         </div>
         <div class="card method-card">
-          <h3>THI Analysis</h3>
+          <h3>THI analysis</h3>
           <p>Our own plain-language interpretation of what the data may mean for a homeowner's project or timing.</p>
         </div>
         <div class="card method-card">
-          <h3>Estimates &amp; Homeowner Information</h3>
+          <h3>Estimates &amp; homeowner information</h3>
           <p>Modeled values and anything a homeowner tells us directly are always clearly labeled as such.</p>
         </div>
       </div>
-      <p style="margin-top:20px;"><a href="/methodology/">Read Our Methodology &rarr;</a></p>
+      <p style="margin-top:20px;"><a href="/methodology/">Read our methodology &rarr;</a></p>
     </div>
   </section>
 
-  {/* Ported from Jekyll, "Built From Primary Sources." */}
   <section class="block">
+    <div class="wrap" style="max-width:760px;">
+      <h2>Where does Texas sit in the drought right now?</h2>
+      <p>
+        The U.S. Drought Monitor publishes a new statewide map every Thursday. It is the
+        source behind our county drought readings, and the national picture it shows is the
+        context those readings sit in.
+      </p>
+      <div class="drought-map--inline">
+        <DroughtMapHero />
+      </div>
+      <p style="margin-top:20px;">
+        <a href="/data/austin/drought/">Austin&rsquo;s weekly readings &rarr;</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="block alt">
     <div class="wrap">
-      <h2>Built From Primary Sources</h2>
+      <h2>Built from primary sources</h2>
       <div class="grid-4">
         {primarySources.map((s) => (
           <div class="source-col">
-            <h4>{s.title}</h4>
+            <h3>{s.title}</h3>
             <ul>{s.items.map((item) => <li>{item}</li>)}</ul>
           </div>
         ))}
       </div>
-      <p style="margin-top:20px;"><a href="/data/">Explore Data &rarr;</a></p>
+      <p style="margin-top:20px;"><a href="/methodology/">See every source and its current state &rarr;</a></p>
     </div>
   </section>
 
-  {/* Ported from Jekyll, "Have Something Going On With Your Home?" —
-      FLAG: heading/body/CTA are all QuoteReady-brief-first copy, pending
-      the copy-rewrite round (this whole section's framing predates the
-      authority-first hero above it). */}
+  {/* FLAG (copy round): this band's heading and body are QuoteReady-brief-first
+      copy that predates the authority-first hero above it. The CTA label is
+      neutralized here; the framing itself needs the copy doc. */}
   <section class="cta-band">
     <div class="wrap">
-      <h2>Have Something Going On With Your Home?</h2>
+      <h2>Have something going on with your home?</h2>
       <p style="max-width:40em;margin:0 auto 20px;">
         Turn what you know into a clear project brief before you start comparing contractors.
       </p>
-      <a class="btn" href="/start/">Build My QuoteReady Brief</a>
-      <p class="microcopy" style="color:#cfe0ee;">
+      <a class="btn" href="/start/">Build a Project Brief</a>
+      <p class="microcopy cta-band-note">
         Free &bull; Use it with any contractor &bull; Contractor introductions are optional
       </p>
     </div>
   </section>
 
-  {/* NEW FAQ set (replaces the old QuoteReady-only FAQ) — DRAFT copy,
-      pending a full editorial pass. FaqAccordion emits FAQPage schema. */}
   <section class="block">
     <div class="wrap" style="max-width:760px;">
-      <span class="draft-flag">Draft copy &mdash; pending final editorial review</span>
-      <FaqAccordion heading="Frequently Asked Questions" items={faqItems} />
+      <FaqAccordion heading="Frequently asked questions" items={faqItems} />
     </div>
   </section>
 </Base>

@@ -1,0 +1,113 @@
+---
+/**
+ * Per-location data hub — `/data/austin/`, `/data/san-antonio/`, `/data/texas/`.
+ *
+ * These URLs were already linked from every location hub and service page
+ * (`LocationHub.astro`, `ServicePage.astro`) but had no route behind them, so
+ * they 404'd from 16 pages. This generates one from the published data-page
+ * registry.
+ *
+ * Locations come from the registry, not the `locations` content collection: a
+ * statewide page like Texas needs a data hub without becoming a marketing
+ * location (which would generate a whole service-page grid for it). Where a
+ * matching collection entry does exist, its county list enriches the intro.
+ *
+ * A location only gets a hub once it has at least one publishable data page.
+ * An empty hub would be a thin indexed page promising data we haven't
+ * published yet, which is worse than the link being added later.
+ */
+import Base from "../../../layouts/Base.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import DataStatus from "../../../components/DataStatus.astro";
+import { getCollection } from "astro:content";
+import { dataHubLocations, publishedDataPages, type DataPageSpec } from "../../../lib/dataPages";
+import { freshnessOf, requireDataset } from "../../../lib/datasets";
+
+export async function getStaticPaths() {
+  const locations = await getCollection("locations");
+  return dataHubLocations().map(({ location, label }) => ({
+    params: { location },
+    props: {
+      locationName: label,
+      counties: locations.find((l) => l.id === location)?.data.counties,
+      specs: publishedDataPages(location),
+    },
+  }));
+}
+
+interface Props {
+  locationName: string;
+  counties?: string;
+  specs: DataPageSpec<any>[];
+}
+
+const { locationName, counties, specs } = Astro.props as Props;
+
+const entries = specs.map((spec) => {
+  const dataset = requireDataset(spec.datasetId, spec.location);
+  const measured = dataset.observations.filter((o) => !o.seed);
+  return { spec, dataset, freshness: freshnessOf(dataset), recordCount: measured.length };
+});
+
+const title = `${locationName} Home Data — Storms, Permits & Local Conditions | Texas Home Intelligence`;
+const description = `Published datasets for ${locationName}: what we track, where each figure comes from, and how current it is.`;
+---
+
+<Base title={title} description={description}>
+  <Breadcrumbs
+    crumbs={[
+      { name: "Home", url: "/" },
+      { name: "Data", url: "/data/" },
+      { name: locationName, url: `/data/${Astro.params.location}/` },
+    ]}
+  />
+
+  <section class="hero">
+    <div class="wrap" style="max-width:820px;">
+      <span class="eyebrow">{locationName.toUpperCase()} · DATA</span>
+      <h1>{locationName} Home Data</h1>
+      <p class="lede">
+        The {entries.length} datasets we publish for {locationName}{counties ? ` (${counties})` : ""}.
+        Each one shows its source, how far the records run, and when we last confirmed the feed —
+        and every figure is computed from the records themselves, not summarized by hand.
+      </p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width:900px;">
+      <div class="grid-2">
+        {entries.map(({ spec, dataset, freshness, recordCount }) => (
+          <a class="card card-link" href={`/data/${spec.location}/${spec.topic}/`}>
+            <h2>{spec.h1}</h2>
+            <p>{spec.description}</p>
+            <p class="metric-label">{recordCount.toLocaleString("en-US")} records</p>
+            <DataStatus
+              status={dataset.status}
+              asOf={freshness.asOf}
+              dataThrough={freshness.dataThrough}
+              source={dataset.source.name}
+            />
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap" style="max-width:760px;">
+      <h2>How to cite these figures</h2>
+      <p>
+        Every number on these pages is derived at build time from the underlying records,
+        which are published alongside each page as CSV. Where a figure is an estimate rather
+        than a measurement, it is labeled as one. Where a feed has stopped updating, the page
+        keeps the last confirmed values and marks them stale rather than showing zero.
+      </p>
+      <p>
+        See the <a href="/data/">full data catalog</a> for every dataset we track, or our
+        <a href="/methodology/">methodology</a> for how sourcing, freshness and stale states
+        are handled across the site.
+      </p>
+    </div>
+  </section>
+</Base>

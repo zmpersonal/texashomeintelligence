@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Texas Home Intelligence — Home Dashboard (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Core brand */
+    --navy:#0C2340; --navy-hover:#0A1E38; --depth:#081A31;
+    --amber:#C4772E; --amber-deep:#9E5E22;
+    /* Neutrals */
+    --ink:#0E1726; --slate700:#33414F; --slate500:#5A6675; --slate400:#8A94A3;
+    --line:#D9DEE6; --line-soft:#E7EBF0; --line-strong:#C3CAD4; --mist:#EEF1F5;
+    --paper:#F7F8FA; --surface:#FFFFFF;
+    /* Data / interactive */
+    --blue:#2A6FB0; --blue-deep:#1E5488;
+    /* Status (light) */
+    --safe:#1F7A54; --safe-bg:#ECF5F0; --safe-tx:#1B6B49;
+    --watch:#B4831F; --watch-bg:#FBF4E6; --watch-tx:#8A6417;
+    --elev:#CE5A1B; --elev-bg:#FCEFE6; --elev-tx:#B14C16;
+    --sev:#A82E22; --sev-bg:#FBF0EF; --sev-tx:#A82E22;
+    --unk:#8A94A3; --unk-bg:#F0F2F5; --unk-tx:#5A6675;
+    /* Dark intelligence surface */
+    --d-text:#E8EDF4; --d-muted:#9FB0C4; --d-hair:rgba(255,255,255,0.10);
+    --safe-d:#35B888; --watch-d:#E0A83A; --elev-d:#E8763A; --sev-d:#E5584A;
+    /* type */
+    --serif:'Newsreader',Georgia,'Times New Roman',serif;
+    --sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --mono:'IBM Plex Mono','SF Mono',Consolas,monospace;
+    --shadow-sm:0 1px 2px rgba(12,35,64,.06),0 1px 3px rgba(12,35,64,.05);
+    --shadow-md:0 6px 18px rgba(12,35,64,.10),0 2px 6px rgba(12,35,64,.06);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+    font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  a{color:var(--blue);text-decoration:none}
+  a:hover{color:var(--blue-deep);text-decoration:underline}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  .eyebrow{font-family:var(--sans);font-weight:600;font-size:12px;line-height:16px;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--slate500)}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .src{font-family:var(--mono);font-weight:400;font-size:12px;line-height:16px;color:var(--slate500)}
+  h1,h2,h3{font-family:var(--serif);font-weight:500;color:var(--ink);margin:0}
+
+  /* ---------- Header (locked height) ---------- */
+  header.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:40;
+    border-bottom:1px solid rgba(255,255,255,.08)}
+  .top .wrap{display:flex;align-items:center;gap:24px;height:64px}
+  .brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+  .mark{width:26px;height:26px;border-radius:5px;background:linear-gradient(150deg,#12335c,#0a1c33);
+    border:1px solid rgba(255,255,255,.18);position:relative;display:grid;place-items:center}
+  .mark::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--amber)}
+  .wordmark{font-family:var(--serif);font-weight:500;font-size:18px;color:#fff;letter-spacing:.2px;white-space:nowrap}
+  .wordmark b{font-weight:600}
+  nav.main{display:flex;gap:22px;margin-left:8px}
+  nav.main a{color:#cfd8e6;font-size:14px;font-weight:500}
+  nav.main a:hover{color:#fff;text-decoration:none}
+  .top .right{margin-left:auto;display:flex;align-items:center;gap:14px}
+  .mockflag{font-family:var(--mono);font-size:11px;color:#9fb0c4;border:1px solid rgba(255,255,255,.16);
+    padding:3px 8px;border-radius:5px}
+  .btn-dash{background:var(--amber);color:#fff;font-weight:600;font-size:14px;padding:9px 16px;
+    border-radius:6px;border:0;cursor:pointer}
+  .btn-dash:hover{background:var(--amber-deep)}
+  @media(max-width:820px){nav.main,.mockflag{display:none}}
+
+  /* ---------- Context bar ---------- */
+  .ctx{background:var(--surface);border-bottom:1px solid var(--line)}
+  .ctx .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 24px}
+  .ziprow{display:flex;align-items:center;gap:8px}
+  .ziptabs{display:flex;gap:2px;background:var(--mist);border-radius:8px;padding:3px}
+  .ziptab{border:0;background:transparent;font-family:var(--mono);font-size:14px;font-weight:500;
+    color:var(--slate500);padding:6px 12px;border-radius:6px;cursor:pointer}
+  .ziptab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm);
+    border-bottom:2px solid var(--amber)}
+  .ctx .asof{margin-left:auto}
+
+  /* ---------- Hero (dark intelligence surface) ---------- */
+  .hero{background:var(--depth);color:var(--d-text);
+    background-image:radial-gradient(120% 90% at 85% -10%,#0e2b4e 0%,#081a31 55%)}
+  .hero .wrap{padding:36px 24px 40px}
+  .hero .eyebrow{color:var(--d-muted)}
+  .hero .eyebrow .tick{color:var(--amber)}
+  .herogrid{display:grid;grid-template-columns:minmax(280px,1fr) 1.25fr;gap:40px;align-items:start;margin-top:16px}
+  .score-wrap{display:flex;align-items:flex-start;gap:18px}
+  .score{font-family:var(--mono);font-weight:500;font-size:96px;line-height:.9;color:#fff;letter-spacing:-2px}
+  .score-side{padding-top:6px}
+  .score-out{font-family:var(--mono);font-size:14px;color:var(--d-muted);margin-bottom:10px}
+  .band{display:inline-flex;align-items:center;gap:7px;font-family:var(--sans);font-weight:600;
+    font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:999px;
+    border:1px solid var(--d-hair)}
+  .band .dot{width:8px;height:8px;border-radius:50%}
+  .delta{margin-top:12px;font-family:var(--mono);font-size:13px;color:var(--d-muted)}
+  .delta b{color:var(--d-text);font-weight:600}
+  .verdict{font-family:var(--serif);font-weight:500;font-size:30px;line-height:1.15;color:#fff;margin:2px 0 10px}
+  .summary{color:var(--d-text);font-size:16px;max-width:52ch;margin:0 0 14px;opacity:.92}
+  .methnote{font-family:var(--mono);font-size:12px;color:var(--d-muted);border-left:2px solid var(--amber);
+    padding:2px 0 2px 12px;margin:0 0 20px;max-width:52ch}
+  .methnote a{color:var(--d-text);text-decoration:underline;text-decoration-color:var(--d-hair)}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  .btn{font-family:var(--sans);font-weight:600;font-size:14px;border-radius:6px;padding:12px 20px;
+    cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:9px}
+  .btn-primary{background:#fff;color:var(--navy)}
+  .btn-primary:hover{background:#eef2f8}
+  .btn-ghost{background:transparent;color:var(--d-text);border-color:var(--d-hair);position:relative}
+  .btn-ghost:hover{border-color:rgba(255,255,255,.28)}
+  .btn-ghost::after{content:"";position:absolute;left:16px;right:16px;bottom:6px;height:2px;background:var(--amber);
+    opacity:0;transition:opacity .18s}
+  .btn-ghost:hover::after{opacity:1}
+  .hero .src{color:var(--d-muted)}
+  .spark-hero{width:100%;height:44px;display:block;margin-top:4px}
+  @media(max-width:760px){
+    .herogrid{grid-template-columns:1fr;gap:24px}
+    .score{font-size:72px}
+    .verdict{font-size:24px}
+  }
+
+  /* ---------- Section scaffolding ---------- */
+  section{padding:34px 0}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:18px}
+  .sec-head h2{font-size:24px}
+  .sec-head .eyebrow{margin-bottom:4px}
+
+  /* ---------- What changed strip ---------- */
+  .changed{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--elev);
+    border-radius:8px;padding:18px 22px;display:flex;gap:16px;align-items:flex-start;box-shadow:var(--shadow-sm)}
+  .changed .ico{flex-shrink:0;width:34px;height:34px;border-radius:8px;background:var(--elev-bg);
+    color:var(--elev-tx);display:grid;place-items:center;font-weight:700;font-family:var(--mono)}
+  .changed .body{flex:1}
+  .changed .lead{font-weight:600;color:var(--ink);margin:2px 0 4px}
+  .changed .lead b{font-family:var(--mono);color:var(--elev-tx)}
+
+  /* ---------- Signal cards ---------- */
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media(max-width:680px){.cards{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:20px 22px;
+    box-shadow:var(--shadow-sm);transition:box-shadow .18s;position:relative}
+  .card.actionable{cursor:pointer}
+  .card.actionable::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--amber);
+    border-radius:8px 8px 0 0;opacity:0;transition:opacity .18s}
+  .card.actionable:hover{box-shadow:var(--shadow-md)}
+  .card.actionable:hover::before{opacity:1}
+  .card.alert{border-left:4px solid var(--elev)}
+  .card .chd{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .card .name{font-family:var(--sans);font-weight:600;font-size:16px;color:var(--ink)}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-weight:600;font-size:11px;
+    letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:999px}
+  .chip .dot{width:8px;height:8px;border-radius:50%}
+  .reading{display:flex;align-items:baseline;gap:10px;margin:14px 0 6px}
+  .reading .val{font-family:var(--mono);font-weight:500;font-size:32px;color:var(--ink);line-height:1}
+  .reading .of{font-family:var(--mono);font-size:13px;color:var(--slate400)}
+  .reading .wk{font-family:var(--mono);font-size:12px;margin-left:auto;color:var(--slate500)}
+  .means{font-size:14.5px;color:var(--slate700);margin:6px 0 12px;line-height:1.5}
+  .spark{width:100%;height:34px;display:block;margin-bottom:12px}
+  .card .foot{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    border-top:1px solid var(--line-soft);padding-top:10px}
+  .expand{border:0;background:transparent;color:var(--blue);font-family:var(--sans);font-weight:600;
+    font-size:13px;cursor:pointer;padding:0}
+  .drawer{display:none;margin-top:14px;border-top:1px dashed var(--line);padding-top:14px}
+  .drawer.open{display:block}
+  .drawer h4{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--slate500);margin:0 0 8px}
+  .driver{display:flex;gap:8px;font-size:14px;color:var(--slate700);margin-bottom:6px}
+  .driver::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--slate400);margin-top:8px;flex-shrink:0}
+  .prov{margin-top:12px;background:var(--mist);border-radius:6px;padding:10px 12px}
+  .prov .row{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:12px;
+    color:var(--slate700);padding:2px 0}
+  .prov .row span:first-child{color:var(--slate500)}
+  .fresh{display:inline-flex;align-items:center;gap:6px}
+  .fresh .fdot{width:6px;height:6px;border-radius:50%;background:var(--safe)}
+
+  /* ---------- Compare / percentile (viral) ---------- */
+  .compare{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-sm);
+    overflow:hidden}
+  .compare .ch{padding:18px 22px;border-bottom:1px solid var(--line-soft);display:flex;align-items:center;gap:12px}
+  .compare .ch h3{font-family:var(--sans);font-weight:600;font-size:16px}
+  .pctrow{display:flex;align-items:center;gap:16px;padding:14px 22px;border-bottom:1px solid var(--line-soft)}
+  .pctrow:last-of-type{border-bottom:0}
+  .pctrow .lab{width:150px;flex-shrink:0;font-size:14px;color:var(--slate700);font-weight:500}
+  .track{flex:1;height:8px;background:var(--mist);border-radius:999px;position:relative;overflow:hidden}
+  .track .fill{position:absolute;top:0;bottom:0;left:0;border-radius:999px;background:var(--blue)}
+  .pctrow .pv{font-family:var(--mono);font-size:13px;color:var(--ink);width:118px;text-align:right;flex-shrink:0}
+  .compare .cf{padding:16px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--paper)}
+  .btn-share{background:var(--navy);color:#fff}
+  .btn-share:hover{background:var(--navy-hover)}
+  .btn-outline{background:transparent;color:var(--navy);border-color:var(--line-strong)}
+  .btn-outline:hover{background:var(--mist)}
+
+  /* ---------- Weekly brief (trigger) ---------- */
+  .brief{background:var(--navy);border-radius:10px;color:#fff;padding:26px 28px;
+    display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:center;
+    background-image:radial-gradient(100% 120% at 90% 0%,#12335c 0,#0c2340 60%)}
+  .brief h3{color:#fff;font-size:24px;margin-bottom:6px}
+  .brief p{color:#c6d2e2;margin:0;font-size:15px}
+  .briefform{display:flex;gap:8px;flex-wrap:wrap}
+  .briefform input{flex:1;min-width:200px;font-family:var(--sans);font-size:15px;padding:12px 14px;border-radius:6px;
+    border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff}
+  .briefform input::placeholder{color:#93a3b8}
+  .briefform .btn-primary{background:var(--amber);color:#fff}
+  .briefform .btn-primary:hover{background:var(--amber-deep)}
+  .briefnote{font-family:var(--mono);font-size:12px;color:#93a3b8;margin-top:10px}
+  @media(max-width:680px){.brief{grid-template-columns:1fr;gap:16px}}
+
+  /* ---------- Footer ---------- */
+  footer{border-top:1px solid var(--line);margin-top:20px;padding:28px 0 48px;color:var(--slate500)}
+  footer .wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:center;font-size:13px}
+  footer .src{color:var(--slate400)}
+
+  /* ---------- Share modal ---------- */
+  .scrim{position:fixed;inset:0;background:rgba(8,20,40,.62);backdrop-filter:blur(3px);z-index:80;
+    display:none;align-items:center;justify-content:center;padding:24px}
+  .scrim.open{display:flex}
+  .modal{background:var(--surface);border-radius:12px;max-width:760px;width:100%;box-shadow:var(--shadow-md);
+    display:grid;grid-template-columns:auto 1fr;gap:0;overflow:hidden;max-height:92vh}
+  @media(max-width:680px){.modal{grid-template-columns:1fr;overflow:auto}}
+  .modal .previewpane{background:var(--mist);padding:26px;display:grid;place-items:center}
+  /* the actual 9:16 share card */
+  .sharecard{width:270px;aspect-ratio:9/16;background:var(--depth);border-radius:14px;color:var(--d-text);
+    padding:24px 22px;display:flex;flex-direction:column;overflow:hidden;position:relative;
+    background-image:radial-gradient(120% 70% at 80% 0%,#0f2c50 0,#081a31 60%);box-shadow:var(--shadow-md)}
+  .sharecard .sc-brand{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-weight:500;font-size:14px;color:#fff}
+  .sc-node{width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0}
+  .sharecard .sc-eyebrow{font-family:var(--mono);font-size:11px;color:var(--d-muted);margin-top:26px;letter-spacing:.04em}
+  .sharecard .sc-head{font-family:var(--serif);font-weight:500;font-size:23px;line-height:1.18;color:#fff;margin:8px 0 0}
+  .sharecard .sc-hero{margin-top:auto}
+  .sharecard .sc-stat{font-family:var(--mono);font-weight:600;font-size:44px;line-height:1;color:#fff}
+  .sharecard .sc-stat .u{font-size:18px;color:var(--amber)}
+  .sharecard .sc-statlab{font-family:var(--sans);font-size:13px;color:var(--d-text);margin-top:6px;opacity:.9}
+  .sharecard .sc-meta{margin-top:16px;border-top:1px solid var(--d-hair);padding-top:10px;
+    display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--d-muted)}
+  .modal .sharebody{padding:26px 26px 24px}
+  .modal .sharebody h3{font-size:22px;margin-bottom:6px}
+  .modal .sharebody p{color:var(--slate700);font-size:14.5px;margin:0 0 18px}
+  .sharebtns{display:flex;flex-direction:column;gap:9px}
+  .sharebtns .btn{justify-content:center;width:100%}
+  .ogline{font-family:var(--mono);font-size:12px;color:var(--slate500);background:var(--mist);border-radius:6px;
+    padding:10px 12px;margin-top:16px;word-break:break-all}
+  .modalclose{position:absolute;top:14px;right:16px;border:0;background:transparent;color:var(--slate400);
+    font-size:22px;cursor:pointer;line-height:1;z-index:2}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);
+    color:#fff;font-size:14px;padding:11px 18px;border-radius:8px;opacity:0;transition:.25s;z-index:90;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  :focus-visible{outline:2px solid var(--amber);outline-offset:2px;border-radius:3px}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><div class="mark" aria-hidden="true"></div>
+      <span class="wordmark">Texas <b>Home Intelligence</b></span></div>
+    <nav class="main" aria-label="Primary">
+      <a href="#">Tools</a><a href="#">Services</a><a href="#">Data</a><a href="#">Locations</a>
+    </nav>
+    <div class="right">
+      <span class="mockflag">Mockup · sample data</span>
+      <button class="btn-dash">My Dashboard</button>
+    </div>
+  </div>
+</header>
+
+<!-- Context bar: ZIP + freshness -->
+<div class="ctx">
+  <div class="wrap">
+    <div class="ziprow">
+      <span class="eyebrow" style="margin-right:4px">Your area</span>
+      <div class="ziptabs" role="tablist" aria-label="Choose a ZIP">
+        <button class="ziptab" role="tab" data-zip="78704" aria-selected="true">78704</button>
+        <button class="ziptab" role="tab" data-zip="78209" aria-selected="false">78209</button>
+        <button class="ziptab" role="tab" data-zip="75201" aria-selected="false">75201</button>
+      </div>
+      <span class="src" id="zipname">South Austin · Travis County</span>
+    </div>
+    <span class="src asof">Updated <span id="asof">Aug 24, 2026 · 6:00 AM CT</span></span>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span class="tick">▚</span>&nbsp; Situational awareness · <span id="hero-area">South Austin</span></div>
+    <div class="herogrid">
+      <div>
+        <div class="score-wrap">
+          <div class="score" id="hero-score">61</div>
+          <div class="score-side">
+            <div class="score-out">/100</div>
+            <span class="band" id="hero-band"><span class="dot"></span><span class="lab">Elevated</span></span>
+            <div class="delta" id="hero-delta"><b>▲ 14</b> vs last week</div>
+          </div>
+        </div>
+        <svg class="spark-hero" id="hero-spark" viewBox="0 0 320 44" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="src" style="margin-top:2px">Home Stress Index · 8-week trend</div>
+      </div>
+      <div>
+        <h2 class="verdict" id="hero-verdict">Worth keeping an eye on your roof this week.</h2>
+        <p class="summary" id="hero-summary">Conditions around 78704 are elevated, driven by hail reported in the Austin area on Aug 18. Heat and water stress are steady; everything else is calm.</p>
+        <p class="methnote">The Home Stress Index is a 0–100 read on <b>current conditions around your home</b> — not a prediction of damage. <a href="#">How we calculate it →</a></p>
+        <div class="cta-row">
+          <button class="btn btn-primary">Check my exact home →</button>
+          <button class="btn btn-ghost" data-openshare>◱&nbsp; Share this</button>
+        </div>
+        <div class="src">Sources: NOAA Storm Events · NWS · U.S. Drought Monitor · Austin Water</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- WHAT CHANGED (return hook) -->
+  <section>
+    <div class="sec-head" style="display:block">
+      <div class="eyebrow">Since your last visit · Aug 17</div>
+    </div>
+    <div class="changed">
+      <div class="ico" id="chg-ico">▲</div>
+      <div class="body">
+        <div class="lead" id="chg-lead">Roof &amp; Storm rose <b>22 points</b> after 1.25″ hail was reported in the Austin area on Tue, Aug 18.</div>
+        <div class="src" id="chg-sub">It's already easing as the event ages — storm readings decay over ~14 days. NOAA Storm Events · as of Aug 24.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIGNAL CARDS -->
+  <section>
+    <div class="sec-head">
+      <div><div class="eyebrow">Five signals</div><h2>What's affecting your home</h2></div>
+    </div>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <!-- COMPARE (viral) -->
+  <section>
+    <div class="sec-head">
+      <div><div class="eyebrow">How you compare</div><h2 style="font-family:var(--serif)">Your ZIP vs. the metro</h2></div>
+    </div>
+    <div class="compare">
+      <div class="ch"><h3 id="cmp-title">78704 vs. all Austin ZIPs · this month</h3></div>
+      <div id="cmp-rows"></div>
+      <div class="cf">
+        <span class="src" style="margin-right:auto">Percentiles compare current conditions across metro ZIPs. Ranking, not risk.</span>
+        <button class="btn btn-share" data-openshare>◱&nbsp; Create share card</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- WEEKLY BRIEF (trigger) -->
+  <section>
+    <div class="brief">
+      <div>
+        <h3>Get <span id="brief-zip">78704</span>'s conditions every Monday</h3>
+        <p>One email a week with your Home Stress Index and anything that moved — the same read you see here, delivered before your week starts.</p>
+      </div>
+      <div>
+        <div class="briefform">
+          <input type="email" placeholder="you@email.com" aria-label="Email address">
+          <button class="btn btn-primary" id="brief-btn">Email me the weekly brief</button>
+        </div>
+        <div class="briefnote">Only the things that changed. No account needed. Unsubscribe anytime.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <span class="wordmark" style="color:var(--navy);font-size:15px">Texas <b>Home Intelligence</b></span>
+    <a href="#">Methodology</a><a href="#">Sources &amp; freshness</a><a href="#">Privacy</a>
+    <span class="src" style="margin-left:auto">Situational awareness for your home · sample data for mockup</span>
+  </div>
+</footer>
+
+<!-- SHARE MODAL -->
+<div class="scrim" id="scrim" role="dialog" aria-modal="true" aria-label="Share card">
+  <div class="modal">
+    <button class="modalclose" id="modalclose" aria-label="Close">×</button>
+    <div class="previewpane">
+      <div class="sharecard" id="sharecard">
+        <div class="sc-brand"><span class="sc-node"></span> Texas Home Intelligence</div>
+        <div class="sc-eyebrow" id="sc-eyebrow">78704 · SOUTH AUSTIN · AUG 2026</div>
+        <div class="sc-head" id="sc-head">78704 saw the most storm activity in months.</div>
+        <div class="sc-hero">
+          <div class="sc-stat" id="sc-stat">Top 8<span class="u">%</span></div>
+          <div class="sc-statlab" id="sc-statlab">storm exposure among Austin ZIPs this month</div>
+        </div>
+        <div class="sc-meta"><span id="sc-index">Home Stress Index 61 · Elevated</span><span>as of Aug 24</span></div>
+      </div>
+    </div>
+    <div class="sharebody">
+      <h3>Share your home's read</h3>
+      <p>A branded card built from your live ZIP data — sized for Instagram and X, generated per ZIP so it works as a link preview too.</p>
+      <div class="sharebtns">
+        <button class="btn btn-share" id="btn-native">◱&nbsp; Share…</button>
+        <button class="btn btn-outline" id="btn-copyimg">Download image</button>
+        <button class="btn btn-outline" id="btn-copylink">Copy link</button>
+      </div>
+      <div class="ogline" id="ogline">texashomeintelligence.com/dashboard/78704 → /og/78704.png</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+const DATA = {
+  "78704":{
+    area:"South Austin", county:"Travis County", zipname:"South Austin · Travis County",
+    score:61, band:"elev", bandlab:"Elevated", delta:+14,
+    verdict:"Worth keeping an eye on your roof this week.",
+    summary:"Conditions around 78704 are elevated, driven by hail reported in the Austin area on Aug 18. Heat and water stress are steady; everything else is calm.",
+    trend:[42,45,44,47,46,50,47,61],
+    changed:{dir:"up", ico:"▲", lead:'Roof &amp; Storm rose <b>22 points</b> after 1.25″ hail was reported in the Austin area on Tue, Aug 18.',
+      sub:"It's already easing as the event ages — storm readings decay over ~14 days. NOAA Storm Events · as of Aug 24."},
+    signals:[
+      {name:"Roof & Storm", band:"elev", val:72, wk:+22, alert:true,
+        means:"Hail up to 1.25″ was reported in the Austin area this week. Worth a look at your roof on the next dry day.",
+        trend:[20,18,22,19,24,21,50,72],
+        drivers:["1.25″ hail reported in the Austin area — Tue, Aug 18","60 mph wind gusts logged at Austin-Bergstrom","Reading decays as the event ages (~14-day window)"],
+        prov:{source:"NOAA Storm Events + NWS alerts", success:"Aug 24, 6:02 AM CT", period:"Rolling 30 days", status:"Fresh"}},
+      {name:"HVAC", band:"watch", val:58, wk:+4, alert:false,
+        means:"12 straight days at or above 100°F. Your AC is running near peak — a good week to change the filter.",
+        trend:[40,44,48,50,53,55,56,58],
+        drivers:["12 consecutive days ≥ 100°F","Cooling-degree days 18% above the seasonal normal","Overnight lows staying above 78°F"],
+        prov:{source:"NWS (Camp Mabry gridpoint)", success:"Aug 24, 6:00 AM CT", period:"Rolling 14 days", status:"Fresh"}},
+      {name:"Water & Irrigation", band:"watch", val:54, wk:+2, alert:false,
+        means:"Austin Water is at Stage 2 — watering is limited to one day a week. Under 0.2″ of rain in 30 days.",
+        trend:[38,40,44,46,48,50,52,54],
+        drivers:["Austin Water restriction: Stage 2","0.18″ rainfall in the past 30 days","Soil-moisture deficit building"],
+        prov:{source:"Austin Water + NWS precip", success:"Aug 24, 5:40 AM CT", period:"Current stage + 30-day precip", status:"Fresh"}},
+      {name:"Trees & Yard", band:"safe", val:34, wk:+1, alert:false,
+        means:"Mild, slow-building stress from the heat and dry spell. Nothing that needs action this week.",
+        trend:[28,29,30,31,32,33,33,34],
+        drivers:["Prolonged heat + rainfall deficit","Slow-moving signal — changes over weeks, not days"],
+        prov:{source:"U.S. Drought Monitor + NWS", success:"Aug 22, 11:00 PM CT", period:"Weekly", status:"Fresh"}},
+      {name:"Foundation & Soil", band:"safe", val:39, wk:+2, alert:false, est:true,
+        means:"Clay soils are drying under the drought, which can move slabs over time. Slow to change — no action now.",
+        trend:[30,31,33,34,35,37,38,39],
+        drivers:["Estimated soil-moisture deficit under sustained drought","Expansive-clay soils common in this area","Slow-moving — trend matters more than the weekly number"],
+        prov:{source:"U.S. Drought Monitor + local precip (modeled)", success:"Aug 22, 11:00 PM CT", period:"Weekly", status:"Fresh"}}
+    ],
+    compare:{title:"78704 vs. all Austin ZIPs · this month",
+      rows:[{lab:"Storm exposure", pct:92, txt:"Top 8%"},{lab:"Heat load", pct:74, txt:"Hotter than 74%"},
+        {lab:"Rainfall", pct:19, txt:"Drier than 81%"}]},
+    share:{eyebrow:"78704 · SOUTH AUSTIN · AUG 2026", head:"78704 saw the most storm activity in months.",
+      stat:"Top 8", unit:"%", statlab:"storm exposure among Austin ZIPs this month", index:"Home Stress Index 61 · Elevated"}
+  },
+  "78209":{
+    area:"Alamo Heights", county:"Bexar County", zipname:"Alamo Heights · Bexar County",
+    score:48, band:"watch", bandlab:"Watch", delta:+3,
+    verdict:"Steady week — water is the one to watch.",
+    summary:"78209 is in a watch posture. San Antonio's Stage 3 restrictions and building heat are the drivers; storms have been quiet for three weeks.",
+    trend:[43,44,45,46,45,46,45,48],
+    changed:{dir:"up", ico:"▲", lead:'Water &amp; Irrigation rose <b>6 points</b> as SAWS moved to <b>Stage 3</b> restrictions this week.',
+      sub:"Heat is steady and no storms were logged in Bexar County. SAWS + NWS · as of Aug 24."},
+    signals:[
+      {name:"Water & Irrigation", band:"elev", val:66, wk:+6, alert:true,
+        means:"SAWS is at Stage 3 — watering is limited and drought surcharges apply. Under 0.3″ of rain in 30 days.",
+        trend:[48,50,52,55,58,60,60,66],
+        drivers:["SAWS restriction: Stage 3","0.26″ rainfall in the past 30 days","Aquifer level below the Stage 3 trigger"],
+        prov:{source:"SAWS + NWS precip", success:"Aug 24, 5:45 AM CT", period:"Current stage + 30-day precip", status:"Fresh"}},
+      {name:"HVAC", band:"watch", val:61, wk:+3, alert:false,
+        means:"A hot, dry stretch has your AC working hard. Overnight lows aren't giving it much of a break.",
+        trend:[46,50,53,55,57,59,60,61],
+        drivers:["14 days ≥ 100°F in the past month","Cooling-degree days 21% above normal"],
+        prov:{source:"NWS (San Antonio gridpoint)", success:"Aug 24, 6:00 AM CT", period:"Rolling 14 days", status:"Fresh"}},
+      {name:"Foundation & Soil", band:"watch", val:52, wk:+3, alert:false, est:true,
+        means:"Bexar County clay is drying under sustained drought — the kind of slow deficit that moves foundations over months.",
+        trend:[40,42,44,46,48,50,51,52],
+        drivers:["Estimated soil-moisture deficit under D2 drought","Expansive-clay soils common in this area","Slow-moving signal"],
+        prov:{source:"U.S. Drought Monitor + local precip (modeled)", success:"Aug 22, 11:00 PM CT", period:"Weekly", status:"Fresh"}},
+      {name:"Trees & Yard", band:"safe", val:40, wk:+2, alert:false,
+        means:"Moderate, slow stress from the dry spell. Deep, infrequent watering where restrictions allow helps established trees.",
+        trend:[33,34,35,36,37,38,39,40],
+        drivers:["Rainfall deficit + sustained heat","Slow-moving — changes over weeks"],
+        prov:{source:"U.S. Drought Monitor + NWS", success:"Aug 22, 11:00 PM CT", period:"Weekly", status:"Fresh"}},
+      {name:"Roof & Storm", band:"safe", val:28, wk:-4, alert:false,
+        means:"No hail or high wind logged in the San Antonio area for three weeks. Quiet.",
+        trend:[41,38,34,32,30,30,30,28],
+        drivers:["No qualifying storm events in Bexar County (3 weeks)","Any prior reading has fully decayed"],
+        prov:{source:"NOAA Storm Events + NWS alerts", success:"Aug 24, 6:02 AM CT", period:"Rolling 30 days", status:"Fresh"}}
+    ],
+    compare:{title:"78209 vs. all San Antonio ZIPs · this month",
+      rows:[{lab:"Water stress", pct:70, txt:"Top 30%"},{lab:"Heat load", pct:58, txt:"Hotter than 58%"},
+        {lab:"Storm exposure", pct:22, txt:"Calmer than 78%"}]},
+    share:{eyebrow:"78209 · ALAMO HEIGHTS · AUG 2026", head:"78209 is drier than most of San Antonio right now.",
+      stat:"Top 30", unit:"%", statlab:"water stress among San Antonio ZIPs this month", index:"Home Stress Index 48 · Watch"}
+  },
+  "75201":{
+    area:"Downtown Dallas", county:"Dallas County", zipname:"Downtown Dallas · Dallas County",
+    score:35, band:"safe", bandlab:"Normal", delta:-6,
+    verdict:"A calm week for your home.",
+    summary:"75201 has settled into a normal posture. Storms have stayed north, water is unrestricted, and heat has eased off its peak. Three quiet weeks running.",
+    trend:[48,46,45,43,41,39,41,35],
+    changed:{dir:"down", ico:"▼", lead:'Your Home Stress Index <b>fell 6 points</b> — the third calm week in a row for 75201.',
+      sub:"Cooler nights eased HVAC load and no storms were logged in Dallas County. NWS + NOAA · as of Aug 24."},
+    signals:[
+      {name:"HVAC", band:"watch", val:55, wk:-5, alert:false,
+        means:"Still summer, but cooler nights are giving your AC a break. Load is trending down.",
+        trend:[64,63,61,60,58,57,58,55],
+        drivers:["Overnight lows dropped into the low 70s","Cooling-degree days easing toward normal"],
+        prov:{source:"NWS (DFW gridpoint)", success:"Aug 24, 6:00 AM CT", period:"Rolling 14 days", status:"Fresh"}},
+      {name:"Foundation & Soil", band:"safe", val:33, wk:-1, alert:false, est:true,
+        means:"Recent rain topped up soil moisture. Foundation-stress signal is easing. Slow-moving as always.",
+        trend:[38,37,37,36,35,34,34,33],
+        drivers:["1.1″ rainfall in the past 30 days eased the deficit","Expansive-clay soils present but well-supplied"],
+        prov:{source:"U.S. Drought Monitor + local precip (modeled)", success:"Aug 22, 11:00 PM CT", period:"Weekly", status:"Fresh"}},
+      {name:"Water & Irrigation", band:"safe", val:30, wk:-3, alert:false,
+        means:"Dallas Water has no restrictions in effect and recent rain has kept things green. No action needed.",
+        trend:[40,38,36,35,33,32,32,30],
+        drivers:["No watering restrictions in effect","1.1″ rainfall in the past 30 days"],
+        prov:{source:"Dallas Water Utilities + NWS precip", success:"Aug 24, 5:50 AM CT", period:"Current stage + 30-day precip", status:"Fresh"}},
+      {name:"Roof & Storm", band:"safe", val:22, wk:-3, alert:false,
+        means:"Storms tracked north of the metro this week. No hail or high wind logged in Dallas County.",
+        trend:[35,33,30,28,26,25,25,22],
+        drivers:["No qualifying storm events in Dallas County","Spring hail readings have fully decayed"],
+        prov:{source:"NOAA Storm Events + NWS alerts", success:"Aug 24, 6:02 AM CT", period:"Rolling 30 days", status:"Fresh"}},
+      {name:"Trees & Yard", band:"safe", val:25, wk:-1, alert:false,
+        means:"Healthy and well-watered after recent rain. Nothing to do.",
+        trend:[30,29,28,27,27,26,26,25],
+        drivers:["Recent rainfall + moderate temperatures","No drought stress in the current period"],
+        prov:{source:"U.S. Drought Monitor + NWS", success:"Aug 22, 11:00 PM CT", period:"Weekly", status:"Fresh"}}
+    ],
+    compare:{title:"75201 vs. all Dallas ZIPs · this month",
+      rows:[{lab:"Overall calm", pct:68, txt:"Calmer than 68%"},{lab:"Heat load", pct:44, txt:"Cooler than 56%"},
+        {lab:"Storm exposure", pct:12, txt:"Calmer than 88%"}]},
+    share:{eyebrow:"75201 · DOWNTOWN DALLAS · AUG 2026", head:"75201 just logged three calm weeks in a row.",
+      stat:"Calmer", unit:"", statlab:"than 68% of Dallas ZIPs this month", index:"Home Stress Index 35 · Normal"}
+  }
+};
+
+const BAND = {
+  safe:{lab:"Normal", dot:"var(--safe)", dotD:"var(--safe-d)", chipBg:"var(--safe-bg)", chipTx:"var(--safe-tx)"},
+  watch:{lab:"Watch", dot:"var(--watch)", dotD:"var(--watch-d)", chipBg:"var(--watch-bg)", chipTx:"var(--watch-tx)"},
+  elev:{lab:"Elevated", dot:"var(--elev)", dotD:"var(--elev-d)", chipBg:"var(--elev-bg)", chipTx:"var(--elev-tx)"},
+  sev:{lab:"Severe", dot:"var(--sev)", dotD:"var(--sev-d)", chipBg:"var(--sev-bg)", chipTx:"var(--sev-tx)"}
+};
+
+function sparkPath(vals,w,h,pad){
+  const min=Math.min(...vals), max=Math.max(...vals), rng=(max-min)||1;
+  const step=(w-pad*2)/(vals.length-1);
+  return vals.map((v,i)=>{const x=pad+i*step; const y=h-pad-((v-min)/rng)*(h-pad*2); return (i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1);}).join(" ");
+}
+function sparkSVG(el,vals,stroke,fill){
+  const w=320,h=el.classList.contains("spark-hero")?44:34,pad=4;
+  const d=sparkPath(vals,w,h,pad);
+  const last=vals[vals.length-1],min=Math.min(...vals),max=Math.max(...vals),rng=(max-min)||1;
+  const lx=w-pad, ly=h-pad-((last-min)/rng)*(h-pad*2);
+  const area=`${d} L ${lx} ${h-pad} L ${pad} ${h-pad} Z`;
+  el.innerHTML=`<path d="${area}" fill="${fill}" opacity="0.10"/>`+
+    `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`+
+    `<circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="3" fill="${stroke}"/>`;
+}
+
+function wkStr(n){ if(n>0) return "▲ "+n+" wk"; if(n<0) return "▼ "+Math.abs(n)+" wk"; return "– 0 wk"; }
+
+function render(zip){
+  const d=DATA[zip];
+  // context
+  document.getElementById("zipname").textContent=d.zipname;
+  document.getElementById("hero-area").textContent=d.area;
+  document.getElementById("brief-zip").textContent=zip;
+  // hero
+  document.getElementById("hero-score").textContent=d.score;
+  const hb=document.getElementById("hero-band"); const b=BAND[d.band];
+  hb.querySelector(".dot").style.background=b.dotD;
+  hb.querySelector(".lab").textContent=d.bandlab;
+  document.getElementById("hero-delta").innerHTML="<b>"+wkStr(d.delta).replace(" wk","")+"</b> vs last week";
+  document.getElementById("hero-verdict").textContent=d.verdict;
+  document.getElementById("hero-summary").textContent=d.summary;
+  sparkSVG(document.getElementById("hero-spark"), d.trend, cssv(b.dotD), "#ffffff");
+  // changed
+  document.getElementById("chg-ico").textContent=d.changed.ico;
+  const chgIco=document.getElementById("chg-ico");
+  if(d.changed.dir==="down"){chgIco.style.background="var(--safe-bg)";chgIco.style.color="var(--safe-tx)";
+    document.querySelector(".changed").style.borderLeftColor="var(--safe)";}
+  else{chgIco.style.background="var(--elev-bg)";chgIco.style.color="var(--elev-tx)";
+    document.querySelector(".changed").style.borderLeftColor="var(--elev)";}
+  document.getElementById("chg-lead").innerHTML=d.changed.lead;
+  document.getElementById("chg-sub").textContent=d.changed.sub.replace(/&amp;/g,"&");
+  // cards
+  const wrap=document.getElementById("cards"); wrap.innerHTML="";
+  d.signals.forEach((s,i)=>{
+    const bb=BAND[s.band];
+    const card=document.createElement("div");
+    card.className="card actionable"+(s.alert?" alert":"");
+    if(s.alert) card.style.borderLeftColor=cssv(bb.dot);
+    card.innerHTML=`
+      <div class="chd">
+        <span class="name">${s.name}${s.est?' <span class="src" style="font-weight:600;color:var(--amber-deep)">· Est.</span>':''}</span>
+        <span class="chip" style="background:${bb.chipBg};color:${bb.chipTx}"><span class="dot" style="background:${bb.dot}"></span>${BAND[s.band].lab}</span>
+      </div>
+      <div class="reading"><span class="val">${s.val}</span><span class="of">/100</span><span class="wk">${wkStr(s.wk)}</span></div>
+      <div class="means">${s.means}</div>
+      <svg class="spark" viewBox="0 0 320 34" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <div class="foot">
+        <span class="src fresh"><span class="fdot"></span>${s.prov.source.split(" + ")[0].split(" (")[0]} · as of ${s.prov.success.split(" CT")[0]}</span>
+        <button class="expand" aria-expanded="false">Why + sources ›</button>
+      </div>
+      <div class="drawer">
+        <h4>What's driving it</h4>
+        ${s.drivers.map(x=>`<div class="driver">${x}</div>`).join("")}
+        <div class="prov">
+          <div class="row"><span>Source</span><span>${s.prov.source}</span></div>
+          <div class="row"><span>Last updated</span><span>${s.prov.success}</span></div>
+          <div class="row"><span>Reporting period</span><span>${s.prov.period}</span></div>
+          <div class="row"><span>Status</span><span style="color:var(--safe-tx)">● ${s.prov.status}</span></div>
+        </div>
+      </div>`;
+    wrap.appendChild(card);
+    sparkSVG(card.querySelector(".spark"), s.trend, cssv(bb.dot), cssv(bb.dot));
+    const btn=card.querySelector(".expand"), dr=card.querySelector(".drawer");
+    function toggle(e){e.stopPropagation();const open=dr.classList.toggle("open");
+      btn.setAttribute("aria-expanded",open);btn.textContent=open?"Hide details ‹":"Why + sources ›";}
+    btn.addEventListener("click",toggle);
+    card.addEventListener("click",(e)=>{if(e.target===btn)return;toggle(e);});
+  });
+  // compare
+  document.getElementById("cmp-title").textContent=d.compare.title;
+  const cr=document.getElementById("cmp-rows"); cr.innerHTML="";
+  d.compare.rows.forEach(r=>{
+    const el=document.createElement("div"); el.className="pctrow";
+    el.innerHTML=`<span class="lab">${r.lab}</span>
+      <span class="track"><span class="fill" style="width:${r.pct}%"></span></span>
+      <span class="pv">${r.txt}</span>`;
+    cr.appendChild(el);
+  });
+  // share card
+  const sh=d.share;
+  document.getElementById("sc-eyebrow").textContent=sh.eyebrow;
+  document.getElementById("sc-head").textContent=sh.head;
+  document.getElementById("sc-stat").innerHTML=sh.stat+(sh.unit?`<span class="u">${sh.unit}</span>`:"");
+  document.getElementById("sc-statlab").textContent=sh.statlab;
+  document.getElementById("sc-index").textContent=sh.index;
+  document.getElementById("ogline").textContent=`texashomeintelligence.com/dashboard/${zip} → /og/${zip}.png`;
+}
+function cssv(v){ if(!v.startsWith("var")) return v;
+  const name=v.slice(4,-1).trim();
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+// ZIP tabs
+document.querySelectorAll(".ziptab").forEach(t=>{
+  t.addEventListener("click",()=>{
+    document.querySelectorAll(".ziptab").forEach(x=>x.setAttribute("aria-selected","false"));
+    t.setAttribute("aria-selected","true");
+    render(t.dataset.zip);
+  });
+});
+// share modal
+const scrim=document.getElementById("scrim");
+function openShare(){scrim.classList.add("open");}
+function closeShare(){scrim.classList.remove("open");}
+document.querySelectorAll("[data-openshare]").forEach(b=>b.addEventListener("click",openShare));
+document.getElementById("modalclose").addEventListener("click",closeShare);
+scrim.addEventListener("click",e=>{if(e.target===scrim)closeShare();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeShare();});
+// toast helpers
+const toast=document.getElementById("toast");
+function showToast(msg){toast.textContent=msg;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1600);}
+document.getElementById("btn-copylink").addEventListener("click",()=>showToast("Link copied"));
+document.getElementById("btn-copyimg").addEventListener("click",()=>showToast("Image downloaded"));
+document.getElementById("btn-native").addEventListener("click",()=>{
+  const zip=document.querySelector('.ziptab[aria-selected="true"]').dataset.zip;
+  if(navigator.share){navigator.share({title:"Texas Home Intelligence",text:DATA[zip].share.head,
+    url:"https://texashomeintelligence.com/dashboard/"+zip}).catch(()=>{});}
+  else showToast("Share sheet (native on mobile)");
+});
+document.getElementById("brief-btn").addEventListener("click",()=>showToast("You're on the weekly brief"));
+
+render("78704");
+</script>
+</body>
+</html>

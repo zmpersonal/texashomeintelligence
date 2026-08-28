@@ -1,34 +1,58 @@
 ---
+/**
+ * The data catalog. Both the visible list and the DataCatalog schema are
+ * generated from the published-page registry, so they cannot drift apart —
+ * this page previously hand-maintained a one-element schema array and a
+ * hardcoded SAMPLE badge that stayed put after the feed behind it went live.
+ */
 import Base from "../../layouts/Base.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import DataStatus from "../../components/DataStatus.astro";
 import { getCollection } from "astro:content";
+import { dataHubLocations, publishedDataPages } from "../../lib/dataPages";
+import { findDataset, freshnessOf } from "../../lib/datasets";
+import { organizationId } from "../../lib/urls";
 
-const locations = await getCollection("locations");
-const locationOrder = ["austin", "san-antonio"];
-const orderedLocations = locationOrder
-  .map((id) => locations.find((l) => l.id === id))
-  .filter((l) => l !== undefined);
+// Locations come from the registry so statewide datasets (Texas) are listed
+// alongside the metros; the collection supplies the county blurb where one
+// exists. Any collection location without published pages is still listed, so
+// the catalog reflects everywhere we operate rather than only what has shipped.
+const collection = await getCollection("locations");
+const hubs = dataHubLocations();
+const listedLocations = [
+  ...hubs.map(({ location, label }) => ({
+    id: location,
+    name: label,
+    counties: collection.find((l) => l.id === location)?.data.counties,
+  })),
+  ...collection
+    .filter((l) => !hubs.some((h) => h.location === l.id))
+    .map((l) => ({ id: l.id, name: l.data.name, counties: l.data.counties })),
+];
 
 const title = "Texas Homeowner Data Catalog | Texas Home Intelligence";
 const description =
-  "The statewide catalog of local homeowner data Texas Home Intelligence tracks, by location and topic.";
+  "The statewide catalog of local homeowner data Texas Home Intelligence tracks, by location and topic — each dataset published with its source, coverage window and last-confirmed date.";
 
-// Only one dataset page exists yet (Austin roofing — see BUILD_PLAN.md
-// Phase 2/5 notes on the 3-feeds-deep-first priority); this list grows as
-// more /data/{location}/{topic}/ pages get built.
+const published = publishedDataPages().map((spec) => {
+  const dataset = findDataset(spec.datasetId, spec.location)!;
+  return { spec, dataset, freshness: freshnessOf(dataset) };
+});
+
 const datasetJsonLd = {
   "@context": "https://schema.org",
   "@type": "DataCatalog",
+  "@id": new URL("/data/", Astro.site).toString() + "#catalog",
   name: "Texas Home Intelligence Homeowner Data Catalog",
   description,
   url: new URL("/data/", Astro.site).toString(),
-  dataset: [
-    {
-      "@type": "Dataset",
-      name: "Austin, TX Hail & Wind Storm Events (Roofing Context)",
-      url: new URL("/data/austin/roofing/", Astro.site).toString(),
-    },
-  ],
+  publisher: { "@id": organizationId(Astro.site) },
+  dataset: published.map(({ spec }) => ({
+    "@type": "Dataset",
+    name: spec.datasetName,
+    description: spec.datasetDescription,
+    url: new URL(`/data/${spec.location}/${spec.topic}/`, Astro.site).toString(),
+  })),
 };
 ---
 
@@ -41,7 +65,8 @@ const datasetJsonLd = {
       <h1>Texas Homeowner Data Catalog</h1>
       <p class="lede">
         A statewide index of the local homeowner data Texas Home Intelligence tracks. Each entry
-        links to a stable, source-attributed data page.
+        links to a stable, source-attributed data page whose figures are computed from the
+        underlying records and published alongside it as CSV.
       </p>
     </div>
   </section>
@@ -50,31 +75,49 @@ const datasetJsonLd = {
     <div class="wrap" style="max-width:760px;">
       <h2>By location</h2>
       <div class="grid-2">
-        {orderedLocations.map((loc) => (
-          <div class="card">
-            <h3>{loc.data.name}</h3>
-            <p>
-              Weather &amp; storm exposure, permit activity, drought conditions, and more for{" "}
-              {loc.data.counties}.
-            </p>
-            {loc.id === "austin" ? (
+        {listedLocations.map((loc) => {
+          const forLocation = published.filter(({ spec }) => spec.location === loc.id);
+          return (
+            <div class="card">
+              <h3>{loc.name}</h3>
               <p>
-                <a href="/data/austin/roofing/">Austin Roofing data &rarr;</a>{" "}
-                <span class="sample-badge">SAMPLE</span>
+                Weather &amp; storm exposure, permit activity, drought conditions, and more
+                {loc.counties ? ` for ${loc.counties}` : ""}.
               </p>
-            ) : (
-              <p style="color:var(--ink-soft);font-size:0.9rem;">Data pages coming soon.</p>
-            )}
-          </div>
-        ))}
+              {forLocation.length > 0 ? (
+                <>
+                  <p><a href={`/data/${loc.id}/`}>All {loc.name} data &rarr;</a></p>
+                  <ul>
+                    {forLocation.map(({ spec, dataset, freshness }) => (
+                      <li>
+                        <a href={`/data/${spec.location}/${spec.topic}/`}>{spec.h1}</a>
+                        <DataStatus
+                          status={dataset.status}
+                          asOf={freshness.asOf}
+                          dataThrough={freshness.dataThrough}
+                          source={dataset.source.name}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <p style="color:var(--ink-soft);font-size:0.9rem;">
+                  No data pages published yet for {loc.name}.
+                </p>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       <h2 style="margin-top:32px;">How to read a data page</h2>
       <p>
         Every data page separates observed <strong>Data</strong> from{" "}
-        <strong>THI Interpretation</strong>, states its update cadence and last-updated date, and
-        links to our <a href="/methodology/">methodology</a>. Figures currently marked SAMPLE are
-        illustrative placeholders, not live facts.
+        <strong>THI Interpretation</strong>, shows how far its records run and when the feed was
+        last confirmed, and links to our <a href="/methodology/">methodology</a>. Estimates are
+        labeled as estimates with a range. If a feed stops updating we keep the last confirmed
+        values and mark them stale rather than showing zero.
       </p>
     </div>
   </section>

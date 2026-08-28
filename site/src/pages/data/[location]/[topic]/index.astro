@@ -1,0 +1,20 @@
+---
+/**
+ * Every published data page, generated from `src/lib/dataPages.ts`.
+ * A spec whose dataset has never had a successful fetch is skipped rather
+ * than built — an indexed page must never render seeded placeholder rows.
+ */
+import DataSetPage from "../../../../layouts/DataSetPage.astro";
+import { publishedDataPages } from "../../../../lib/dataPages";
+
+export function getStaticPaths() {
+  return publishedDataPages().map((spec) => ({
+    params: { location: spec.location, topic: spec.topic },
+    props: { spec },
+  }));
+}
+
+const { spec } = Astro.props;
+---
+
+<DataSetPage spec={spec} />

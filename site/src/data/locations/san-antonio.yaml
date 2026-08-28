@@ -6,20 +6,3 @@ hubIntro: >-
   flooding, aging housing stock in some corridors, and a growing metro
   permit market. Texas Home Intelligence tracks the local conditions that
   actually affect San Antonio home-service decisions.
-conditions:
-  - label: "Cooling-degree-day stress"
-    value:
-      status: sample
-    note: "Will track NWS/NOAA heat data once the live feed is connected."
-  - label: "Flash-flood / heavy-rain events"
-    value:
-      status: sample
-    note: "Will track FEMA/NFHL and NOAA data once the live feed is connected."
-  - label: "Housing stock age"
-    value:
-      status: sample
-    note: "Will track Census ACS data once the live feed is connected."
-  - label: "Mechanical & roofing permit activity"
-    value:
-      status: sample
-    note: "Will track City of San Antonio permit data once the live feed is connected."

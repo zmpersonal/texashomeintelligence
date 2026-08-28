@@ -18,7 +18,8 @@
       "value": {
         "floodZone": "X (SAMPLE)",
         "note": "SAMPLE — illustrative, not a real parcel lookup."
-      }
+      },
+      "seed": true
     }
   ]
 }

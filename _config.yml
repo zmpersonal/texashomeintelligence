@@ -34,6 +34,15 @@ exclude:
   - CLAUDE.md
   - BUILD_PLAN.md
   - HANDOFF.md
+  # Governance/docs layer — internal, never published as pages
+  - AGENTS.md
+  - BRAND.md
+  - COST.md
+  - REVIEW.md
+  - ROADMAP.md
+  - SECURITY.md
+  - THI-Brand-Kit.md
+  - THI-round-homepage-nav.md
 
 # Product-level names used throughout copy/layouts
 product_name: "QuoteReady Project Brief"

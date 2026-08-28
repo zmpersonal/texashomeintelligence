@@ -1,0 +1,14 @@
+:root{
+  --thi-r-xs:2px; --thi-r-sm:4px; --thi-r-md:6px; --thi-r-lg:8px; --thi-r-xl:12px; --thi-r-pill:999px;
+  /* role radii: cards 8 · buttons/inputs 6 · chips 4 · data cells 2 · pills 999 */
+  --thi-r-card:var(--thi-r-lg); --thi-r-control:var(--thi-r-md); --thi-r-chip:var(--thi-r-sm); --thi-r-datacell:var(--thi-r-xs);
+
+  --thi-border:1px solid var(--thi-line);
+  --thi-border-strong:1px solid var(--thi-line-strong);
+  --thi-border-soft:1px solid var(--thi-line-soft);
+  --thi-border-dark:1px solid var(--thi-hairline-dark);
+
+  --thi-shadow-sm:0 1px 2px rgba(14,23,38,.06);
+  --thi-shadow-md:0 4px 12px rgba(14,23,38,.08);
+  --thi-focus-ring:0 0 0 3px rgba(42,111,176,.35);
+}

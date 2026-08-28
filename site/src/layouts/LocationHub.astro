@@ -1,66 +1,47 @@
 ---
+/**
+ * Location hub — `/austin/`, `/san-antonio/`.
+ *
+ * Round 2: the conditions grid was driven by `conditions` in the location
+ * YAML, seeded with `status: sample` placeholders back before any fetcher
+ * existed. Only some labels were ever wired to a real feed, so the rest kept
+ * rendering SAMPLE cards on an indexed page long after the data went live.
+ *
+ * The grid now renders the location's published data pages directly, so every
+ * card is a measured reading with its source and dates and cannot fall out of
+ * step with the datasets. The YAML `conditions` field is retired with it.
+ */
 import Base from "./Base.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import DataStatus from "../components/DataStatus.astro";
 import { getEntry, getCollection } from "astro:content";
-import type { DatasetFile } from "../ingest/types";
+import { hasDataHub, publishedDataPages } from "../lib/dataPages";
+import { findDataset, freshnessOf } from "../lib/datasets";
+import { SERVICE_SIGNALS } from "../lib/serviceSignals";
 
 interface Props {
   locationSlug: string;
 }
 
 const { locationSlug } = Astro.props;
+const hasHub = hasDataHub(locationSlug);
+
 const locEntry = await getEntry("locations", locationSlug);
 if (!locEntry) throw new Error(`LocationHub: unknown location "${locationSlug}"`);
 const loc = locEntry.data;
 
-/**
- * The YAML content collection's `conditions[].value` was seeded with
- * static `status: sample` placeholders back before any real fetcher
- * existed (Phase 1) and was never revisited once Seam 1 fetchers went
- * live — so this hub kept showing SAMPLE regardless of what the
- * ingestion pipeline actually produced. Rather than hand-edit the YAML
- * (real status can change on every cron run), this maps each condition
- * card, by label, to the real generated dataset file that backs it (if
- * one exists for this specific city) and overrides the YAML's status/
- * asOf/source with the real thing at render time. A label with no entry
- * here (no matching per-city feed exists yet — e.g. San Antonio has no
- * census-acs file) keeps the YAML's honest "sample" placeholder rather
- * than being wired to a feed that doesn't cover this city.
- */
-const LIVE_SOURCE_BY_LABEL: Record<string, Record<string, { datasetId: string; location: string }>> = {
-  austin: {
-    "Recent hail / wind events": { datasetId: "noaa-storm-events", location: "austin" },
-    "Drought / tree & foundation stress": { datasetId: "usdm-drought", location: "austin" },
-    "Mechanical & roofing permit activity": { datasetId: "municipal-permits", location: "austin" },
-  },
-  "san-antonio": {
-    "Flash-flood / heavy-rain events": { datasetId: "noaa-storm-events", location: "san-antonio" },
-    "Mechanical & roofing permit activity": { datasetId: "municipal-permits", location: "san-antonio" },
-  },
-};
-
-const generatedFiles = import.meta.glob<{ default: DatasetFile<unknown> }>("../data/generated/*/*.json", {
-  eager: true,
-});
-
-function findGeneratedFile(datasetId: string, location: string): DatasetFile<unknown> | undefined {
-  const suffix = `/data/generated/${datasetId}/${location}.json`;
-  const match = Object.entries(generatedFiles).find(([path]) => path.endsWith(suffix));
-  return match?.[1].default;
-}
-
-const conditions = loc.conditions.map((c) => {
-  const source = LIVE_SOURCE_BY_LABEL[locationSlug]?.[c.label];
-  const dataset = source && findGeneratedFile(source.datasetId, source.location);
-  if (!dataset) return c;
+const localPages = publishedDataPages(locationSlug);
+const readings = localPages.map((spec) => {
+  const dataset = findDataset(spec.datasetId, spec.location)!;
+  const observations = dataset.observations
+    .filter((o) => !o.seed)
+    .sort((a, b) => b.observedAt.localeCompare(a.observedAt));
   return {
-    ...c,
-    value: {
-      status: dataset.status,
-      asOf: dataset.status === "sample" ? undefined : (dataset.lastSuccessAt ?? undefined),
-      source: dataset.source.name,
-    },
+    spec,
+    dataset,
+    freshness: freshnessOf(dataset),
+    stat: spec.stats({ dataset, observations })[0],
+    findings: spec.keyFindings({ dataset, observations }),
   };
 });
 
@@ -78,11 +59,17 @@ const services = serviceOrder
   .map((slug) => allServices.find((s) => s.id === slug))
   .filter((s) => s !== undefined);
 
-const title = `${loc.name} Home Intelligence | Texas Home Intelligence`;
-const description = `Local homeowner intelligence and free QuoteReady Project Briefs for ${loc.name}, TX homeowners across roofing, HVAC, plumbing, and more.`;
+const dateModified = readings
+  .map((r) => r.freshness.asOf)
+  .filter((v): v is string => Boolean(v))
+  .sort()
+  .at(-1);
+
+const title = `${loc.name} Home Data & Local Conditions | Texas Home Intelligence`;
+const description = `What we measure for ${loc.name}, TX homeowners — storm history, permit activity, drought and local costs — plus guidance across ${services.length} home-service categories.`;
 ---
 
-<Base title={title} description={description}>
+<Base title={title} description={description} article={{ dateModified }}>
   <Breadcrumbs crumbs={[{ name: "Home", url: "/" }, { name: loc.name, url: `/${locationSlug}/` }]} />
 
   <section class="hero">
@@ -90,37 +77,66 @@ const description = `Local homeowner intelligence and free QuoteReady Project Br
       <span class="eyebrow">{loc.region}</span>
       <h1>{loc.name} Home Intelligence</h1>
       <p class="lede">{loc.hubIntro}</p>
-      <a class="btn" href={`/start/?location=${locationSlug}`}>Build My QuoteReady Brief</a>
-      <p class="microcopy">Free &bull; Takes about 3&ndash;5 minutes &bull; No phone number required to start</p>
+      <div class="hero-actions">
+        {hasHub && <a class="btn" href={`/data/${locationSlug}/`}>See {loc.name} data</a>}
+        <a class="btn secondary" href={`/start/?location=${locationSlug}`}>Build a Project Brief</a>
+      </div>
+      <p class="microcopy">Free &bull; No phone number required to start</p>
     </div>
   </section>
 
   <section class="block">
     <div class="wrap">
-      <h2>Current {loc.name} Homeowner Conditions</h2>
+      <h2>What is Texas Home Intelligence tracking in {loc.name} right now?</h2>
       <p style="max-width:44em;">
-        A snapshot of the conditions Texas Home Intelligence tracks for {loc.name} homeowners.
-        Cards show LIVE once a public feed is connected for {loc.name}; the rest stay clearly
-        marked SAMPLE until then &mdash; see the{" "}
-        <a href={`/data/${locationSlug}/`}>{loc.name} data catalog</a>.
+        {readings.length > 0
+          ? `We publish ${readings.length} datasets for ${loc.name}. Every figure below is computed from public records, with the source and the date it was last confirmed.`
+          : `We do not publish a dataset for ${loc.name} yet.`}
       </p>
-      <div class="grid-4">
-        {conditions.map((c) => (
-          <div class="card data-card">
-            <DataStatus status={c.value.status} asOf={c.value.asOf} source={c.value.source} />
-            <p class="metric-label" style="margin-top:8px;">{c.label}</p>
-            <p class="metric-note">{c.note}</p>
-          </div>
+      <div class="grid-3">
+        {readings.map(({ spec, dataset, freshness, stat }) => (
+          <a class="card data-card card-link" href={`/data/${spec.location}/${spec.topic}/`}>
+            <p class="metric-label">{spec.h1}</p>
+            <p class="metric-value">{stat.value}</p>
+            <p class="metric-note">{stat.label}</p>
+            <DataStatus
+              status={dataset.status}
+              asOf={freshness.asOf}
+              dataThrough={freshness.dataThrough}
+              source={dataset.source.name}
+            />
+          </a>
         ))}
       </div>
+      {hasHub && (
+        <p style="margin-top:20px;">
+          <a href={`/data/${locationSlug}/`}>All {loc.name} data &rarr;</a>
+        </p>
+      )}
     </div>
   </section>
 
-  <section class="block alt">
+  {readings.length > 0 && (
+    <section class="block alt">
+      <div class="wrap" style="max-width:820px;">
+        <h2>What should {loc.name} homeowners know this season?</h2>
+        <ul class="key-findings">
+          {readings.flatMap((r) => r.findings.slice(0, 2)).map((f) => <li>{f}</li>)}
+        </ul>
+        <p>
+          Each of these comes from a published dataset with its own sources and limitations —
+          follow any card above for the full record.
+        </p>
+      </div>
+    </section>
+  )}
+
+  <section class="block">
     <div class="wrap">
-      <h2>{loc.name} Home Services</h2>
+      <h2>{loc.name} home services</h2>
       <p style="max-width:44em;">
-        Build a free QuoteReady Project Brief for any of these {loc.name} home-service categories.
+        What to know before starting a project in each category, including the local data that
+        bears on it where we measure something relevant.
       </p>
       <div class="grid-4">
         {services.map((svc) => (
@@ -128,6 +144,7 @@ const description = `Local homeowner intelligence and free QuoteReady Project Br
             <div class="icon-badge">{svc.data.name.slice(0, 1)}</div>
             <h3 style="color:var(--ink);">{svc.data.name}</h3>
             <p>{svc.data.intakeFocus}</p>
+            {SERVICE_SIGNALS[svc.id] && <p class="metric-note">Backed by local data</p>}
           </a>
         ))}
       </div>
@@ -139,21 +156,21 @@ const description = `Local homeowner intelligence and free QuoteReady Project Br
       <h2>About {loc.name} Home Intelligence</h2>
       <p>
         Texas Home Intelligence publishes continuously updated homeowner intelligence for{" "}
-        {loc.name} &mdash; covering {loc.counties} &mdash; alongside the free QuoteReady Project
-        Brief tool. See our <a href="/methodology/">methodology</a> for how data is sourced,
-        updated, and labeled.
+        {loc.name} &mdash; covering {loc.counties}. See our
+        <a href="/methodology/">methodology</a> for how data is sourced, updated, and labeled,
+        or <a href="/services/">all services we cover</a>.
       </p>
     </div>
   </section>
 
   <section class="cta-band">
     <div class="wrap">
-      <h2>Get Your {loc.name} Project Clear Before You Call Anyone.</h2>
+      <h2>Get your {loc.name} project clear before you call anyone.</h2>
       <p style="max-width:40em;margin:0 auto 20px;">
-        Tell us what's going on once. Get a QuoteReady Project Brief you can use with any
-        contractor in {loc.name}.
+        Tell us what's going on once. Get a project brief you can use with any contractor in{" "}
+        {loc.name}.
       </p>
-      <a class="btn" href={`/start/?location=${locationSlug}`}>Build My QuoteReady Brief</a>
+      <a class="btn" href={`/start/?location=${locationSlug}`}>Build a Project Brief</a>
     </div>
   </section>
 </Base>

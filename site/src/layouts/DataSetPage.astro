@@ -1,0 +1,227 @@
+---
+/**
+ * One template for every published data page. Entries live in
+ * `src/lib/dataPages.ts`; adding a page is a config change, not a new
+ * `.astro` file (CLAUDE.md).
+ *
+ * Every figure rendered here is computed at build time from the dataset file,
+ * so the prose cannot contradict the badge. The page is built for extraction:
+ * a key-findings list, a real `<table>` of the underlying records, and
+ * question-phrased H2s whose answers stand alone in the first sentences —
+ * with Dataset and FAQPage schema mirroring what a reader sees (ROADMAP.md).
+ */
+import Base from "./Base.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import DataStatus from "../components/DataStatus.astro";
+import type { DataPageSpec, DataPageContext } from "../lib/dataPages";
+import { requireDataset, freshnessOf, earliestObservedAt, latestObservedAt } from "../lib/datasets";
+import { machineDate } from "../lib/format";
+import { organizationId } from "../lib/urls";
+
+interface Props {
+  spec: DataPageSpec<any>;
+}
+
+const { spec } = Astro.props;
+
+const dataset = requireDataset(spec.datasetId, spec.location);
+// Seeded rows are retired by the ingestion layer, but filter defensively so a
+// fabricated row can never reach an indexed page even if one slips onto disk.
+const observations = dataset.observations
+  .filter((o) => !o.seed)
+  .sort((a, b) => b.observedAt.localeCompare(a.observedAt));
+const ctx: DataPageContext<any> = { dataset, observations };
+
+const freshness = freshnessOf(dataset);
+const keyFindings = spec.keyFindings(ctx);
+const stats = spec.stats(ctx);
+const questions = spec.questions(ctx);
+const interpretation = spec.interpretation(ctx);
+// Feeds with thousands of records narrow the on-page table to a readable
+// slice; the CSV endpoint always serves the complete set.
+const tableRows = spec.tableRows ? spec.tableRows(ctx) : observations;
+
+const pageUrl = new URL(`/data/${spec.location}/${spec.topic}/`, Astro.site).toString();
+const csvUrl = new URL(
+  `/data/${spec.location}/${spec.topic}/${spec.csvName}.csv`,
+  Astro.site,
+).toString();
+const orgId = organizationId(Astro.site);
+
+const from = earliestObservedAt(observations);
+const to = latestObservedAt(observations);
+
+const datasetJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "@id": `${pageUrl}#dataset`,
+  name: spec.datasetName,
+  description: spec.datasetDescription,
+  url: pageUrl,
+  keywords: spec.keywords,
+  isAccessibleForFree: true,
+  ...(from && to ? { temporalCoverage: `${from}/${to}` } : {}),
+  ...(dataset.lastSuccessAt ? { dateModified: dataset.lastSuccessAt } : {}),
+  spatialCoverage: { "@type": "Place", name: spec.spatialCoverage },
+  creator: { "@id": orgId },
+  publisher: { "@id": orgId },
+  isBasedOn: { "@type": "Dataset", name: dataset.source.name, url: dataset.source.url },
+  distribution: [
+    { "@type": "DataDownload", encodingFormat: "text/csv", contentUrl: csvUrl },
+  ],
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: questions.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+---
+
+<Base title={spec.title} description={spec.description}>
+  <Breadcrumbs
+    crumbs={[
+      { name: "Home", url: "/" },
+      { name: "Data", url: "/data/" },
+      { name: spec.locationLabel, url: `/data/${spec.location}/` },
+      { name: spec.h1, url: `/data/${spec.location}/${spec.topic}/` },
+    ]}
+  />
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(datasetJsonLd)} />
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(faqJsonLd)} />
+
+  <section class="hero">
+    <div class="wrap" style="max-width:820px;">
+      <span class="eyebrow">{spec.eyebrow}</span>
+      <h1>{spec.h1}</h1>
+      <p class="lede">{spec.lede}</p>
+      <DataStatus
+        status={dataset.status}
+        asOf={freshness.asOf}
+        dataThrough={freshness.dataThrough}
+        source={dataset.source.name}
+      />
+      {dataset.status === "stale" && dataset.lastError && (
+        <p class="metric-note">
+          The most recent refresh did not return new records, so the figures below are the
+          last confirmed values rather than today's. Reported reason: {dataset.lastError}
+        </p>
+      )}
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width:820px;">
+      <h2>Key findings</h2>
+      <ul class="key-findings">
+        {keyFindings.map((finding) => <li>{finding}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <div class="grid-3">
+        {stats.map((stat) => (
+          <div class="card data-card">
+            <p class="metric-label">{stat.label}</p>
+            <p class="metric-value">{stat.value}</p>
+          </div>
+        ))}
+      </div>
+      <p class="data-meta">{spec.coverage(ctx)}</p>
+    </div>
+  </section>
+
+  {spec.aggregate && (
+    <section class="block">
+      <div class="wrap" style="max-width:900px;">
+        <h2>{spec.aggregate.caption}</h2>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>{spec.aggregate.headers.map((h) => <th scope="col">{h}</th>)}</tr>
+            </thead>
+            <tbody>
+              {spec.aggregate.rows(ctx).map((row) => (
+                <tr>{row.map((cell) => <td>{cell}</td>)}</tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {tableRows.length > 0 && (
+    <section class="block">
+      <div class="wrap" style="max-width:900px;">
+        <h2>Recorded records</h2>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>{spec.tableCaption}</caption>
+            <thead>
+              <tr>{spec.columns.map((col) => <th scope="col">{col.header}</th>)}</tr>
+            </thead>
+            <tbody>
+              {tableRows.map((o) => (
+                <tr>
+                  {spec.columns.map((col) => <td>{col.cell(o)}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p>
+          <a href={`/data/${spec.location}/${spec.topic}/${spec.csvName}.csv`}>
+            Download all {observations.length.toLocaleString("en-US")} records as CSV
+          </a>
+        </p>
+      </div>
+    </section>
+  )}
+
+  <section class="block alt">
+    <div class="wrap" style="max-width:760px;">
+      {questions.map((item) => (
+        <>
+          <h2>{item.q}</h2>
+          <p>{item.a}</p>
+        </>
+      ))}
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width:760px;">
+      <h2>THI interpretation</h2>
+      <p><strong>Data:</strong> {interpretation.data}</p>
+      <p><strong>THI interpretation:</strong> {interpretation.interpretation}</p>
+      <p><strong>What this may mean for homeowners:</strong> {interpretation.meaning}</p>
+      <p><strong>Limitations:</strong> {interpretation.limitations}</p>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap" style="max-width:760px;">
+      <h2>Methodology</h2>
+      <p>{spec.methodology}</p>
+      <p>
+        Source: <a href={dataset.source.url} rel="noopener">{dataset.source.name}</a>.
+        {freshness.asOf && (
+          <> Last confirmed <time datetime={machineDate(freshness.asOf)}>{
+            new Date(freshness.asOf).toLocaleDateString("en-US", {
+              year: "numeric", month: "long", day: "numeric", timeZone: "UTC",
+            })
+          }</time>.</>
+        )}
+        {" "}See our full <a href="/methodology/">methodology</a> for how we handle stale data,
+        historical observations, and source attribution across the site.
+      </p>
+    </div>
+  </section>
+</Base>

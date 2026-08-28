@@ -2043,16 +2043,6 @@
     },
     {
       "observedAt": "2025-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2025-09",
-      "value": {
-        "permitType": "Electrical",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "40 issued (SAMPLE)"
-      }
-    },
-    {
-      "observedAt": "2025-09-01T00:00:00.000Z",
       "ingestedAt": "2026-08-24T16:12:17.282Z",
       "key": "REP-ROF-PMT25-35205220",
       "value": {
@@ -9203,16 +9193,6 @@
     },
     {
       "observedAt": "2025-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2025-10",
-      "value": {
-        "permitType": "Electrical",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "54 issued (SAMPLE)"
-      }
-    },
-    {
-      "observedAt": "2025-10-01T00:00:00.000Z",
       "ingestedAt": "2026-08-24T16:12:17.289Z",
       "key": "REP-ROF-PMT25-35205939",
       "value": {
@@ -15082,16 +15062,6 @@
       }
     },
     {
-      "observedAt": "2025-11-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2025-11",
-      "value": {
-        "permitType": "Roofing",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "20 issued (SAMPLE)"
-      }
-    },
-    {
       "observedAt": "2025-11-02T00:00:00.000Z",
       "ingestedAt": "2026-08-24T16:12:17.295Z",
       "key": "REP-ROF-PMT25-35206527",
@@ -18523,16 +18493,6 @@
     },
     {
       "observedAt": "2025-12-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2025-12",
-      "value": {
-        "permitType": "Plumbing",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "34 issued (SAMPLE)"
-      }
-    },
-    {
-      "observedAt": "2025-12-01T00:00:00.000Z",
       "ingestedAt": "2026-08-24T16:12:17.300Z",
       "key": "REP-ROF-PMT25-35206871",
       "value": {
@@ -21219,16 +21179,6 @@
         "permitType": "Re-Roof Permit",
         "workDescription": "",
         "status": "Issued"
-      }
-    },
-    {
-      "observedAt": "2026-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-01",
-      "value": {
-        "permitType": "Roofing",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "56 issued (SAMPLE)"
       }
     },
     {
@@ -23929,16 +23879,6 @@
         "permitType": "Re-Roof Permit",
         "workDescription": "",
         "status": "Issued"
-      }
-    },
-    {
-      "observedAt": "2026-02-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-02",
-      "value": {
-        "permitType": "Roofing",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "23 issued (SAMPLE)"
       }
     },
     {
@@ -27219,16 +27159,6 @@
         "permitType": "Re-Roof Permit",
         "workDescription": "",
         "status": "Issued"
-      }
-    },
-    {
-      "observedAt": "2026-03-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-03",
-      "value": {
-        "permitType": "Building",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "52 issued (SAMPLE)"
       }
     },
     {
@@ -31049,16 +30979,6 @@
         "permitType": "Re-Roof Permit",
         "workDescription": "",
         "status": "Issued"
-      }
-    },
-    {
-      "observedAt": "2026-04-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-04",
-      "value": {
-        "permitType": "Plumbing",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "20 issued (SAMPLE)"
       }
     },
     {
@@ -35259,16 +35179,6 @@
         "permitType": "Re-Roof Permit",
         "workDescription": "",
         "status": "Issued"
-      }
-    },
-    {
-      "observedAt": "2026-05-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-05",
-      "value": {
-        "permitType": "Mechanical (HVAC)",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "20 issued (SAMPLE)"
       }
     },
     {
@@ -39509,16 +39419,6 @@
         "permitType": "Re-Roof Permit",
         "workDescription": "",
         "status": "Issued"
-      }
-    },
-    {
-      "observedAt": "2026-06-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-06",
-      "value": {
-        "permitType": "Plumbing",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "25 issued (SAMPLE)"
       }
     },
     {
@@ -44083,16 +43983,6 @@
     },
     {
       "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-07",
-      "value": {
-        "permitType": "Plumbing",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "39 issued (SAMPLE)"
-      }
-    },
-    {
-      "observedAt": "2026-07-01T00:00:00.000Z",
       "ingestedAt": "2026-08-24T16:12:17.339Z",
       "key": "REP-ROF-PMT26-35202287",
       "value": {
@@ -47909,16 +47799,6 @@
         "permitType": "Re-Roof Permit",
         "workDescription": "",
         "status": "Issued"
-      }
-    },
-    {
-      "observedAt": "2026-08-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.613Z",
-      "key": "sample-2026-08",
-      "value": {
-        "permitType": "Mechanical (HVAC)",
-        "workDescription": "SAMPLE — aggregate illustrative monthly permit count.",
-        "status": "23 issued (SAMPLE)"
       }
     },
     {

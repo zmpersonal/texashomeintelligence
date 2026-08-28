@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/colors.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/typography.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/shape.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/motion.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/base/primitives.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/styles.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<script src="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/_ds_bundle.js"></script>
+<style>
+  body { margin: 0; background: var(--thi-paper); -webkit-font-smoothing: antialiased; }
+  a { color: var(--thi-link); text-decoration: none; }
+  a:hover { color: var(--thi-link-deep); text-decoration: underline; text-decoration-color: var(--thi-amber); }
+  h1, h2, h3, p, ul, ol, figure { margin: 0; }
+</style>
+</helmet>
+
+<div style="background: var(--thi-paper); min-height: 100vh">
+
+  <sc-if value="{{ designNotes }}" hint-placeholder-val="{{ true }}">
+    <aside data-screen-label="Design notes" style="border-bottom: 1px dashed var(--thi-line-strong); padding: 18px 0">
+      <div style="max-width: var(--thi-container); margin: 0 auto; padding: 0 var(--thi-gutter)">
+        <div style="display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap">
+          <span style="font: 600 11px/1 var(--thi-font-mono); letter-spacing: .08em; color: var(--thi-slate-500); border: 1px solid var(--thi-line-strong); border-radius: var(--thi-r-chip); padding: 5px 8px">DESIGN NOTES · NOT PRODUCT UI</span>
+          <span style="font: 400 var(--thi-fs-caption)/1.5 var(--thi-font-mono); color: var(--thi-slate-500)">Logged-in owner view · switch <b>State</b> in Tweaks: with history / first run / stale feed. Hide these notes there.</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 20px; font: 400 var(--thi-fs-caption)/1.55 var(--thi-font-ui); color: var(--thi-slate-500); margin-top: 12px">
+          <div><b style="color: var(--thi-ink)">The queue is the re-open.</b> "Your home this week" sits directly under the score — the score tells you how things are; the queue tells you what to do. Done / Remind / Snooze are one tap and remembered.</div>
+          <div><b style="color: var(--thi-ink)">Event cards are the bridge.</b> The heat card exists because the intelligence detected a condition; it names its trigger and says it will disappear. Checks link straight to queue items.</div>
+          <div><b style="color: var(--thi-ink)">Memory is the moat.</b> Filter Center turns one tap into a recalculated next-due and a "Last changed ✓" history — the thing no weather app has.</div>
+          <div><b style="color: var(--thi-ink)">Honesty everywhere.</b> Freshness pill never hides staleness; stale feeds are named and dated; first-run shows welcoming baselines, not broken charts. Status color stays small — chips, dots, ring.</div>
+        </div>
+      </div>
+    </aside>
+  </sc-if>
+
+  <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.SiteHeader" hint-size="100%,86px" active="My home" cta="Share" cta-href="#share" links="{{ navLinks }}" utility-left="Texas Home Intelligence · your home dashboard" utility-right="Signed in · privacy choices"></x-import>
+
+  <div style="background: var(--thi-surface); border-bottom: 1px solid var(--thi-line)">
+    <div style="max-width: var(--thi-container); margin: 0 auto; padding: 13px var(--thi-gutter); display: flex; align-items: center; justify-content: space-between; gap: var(--thi-sp-4); flex-wrap: wrap">
+      <div style="display: flex; align-items: center; gap: var(--thi-sp-3)">
+        <i class="ph ph-house-line" style="font-size: 18px; color: var(--thi-slate-700)" aria-hidden="true"></i>
+        <span style="font: 600 var(--thi-fs-body-sm)/1 var(--thi-font-ui); color: var(--thi-ink)">Your home</span>
+        <span style="font: 500 var(--thi-fs-body-sm)/1 var(--thi-font-mono); color: var(--thi-slate-700)">78704 · South Austin</span>
+        <span style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-500)">{{ weekLine }}</span>
+      </div>
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.FreshnessPill" hint-size="auto,24px" updated="{{ updatedAgo }}" stale="{{ isStale }}"></x-import>
+    </div>
+  </div>
+
+  <sc-if value="{{ isStale }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Stale-feed notice" style="background: var(--thi-mist); border-bottom: 1px solid var(--thi-line)">
+      <div style="max-width: var(--thi-container); margin: 0 auto; padding: 12px var(--thi-gutter); display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap">
+        <i class="ph ph-clock-countdown" style="font-size: 16px; color: var(--thi-slate-700); align-self: center" aria-hidden="true"></i>
+        <span style="font: 400 var(--thi-fs-body-sm)/1.5 var(--thi-font-ui); color: var(--thi-ink)">Two feeds are reporting late — U.S. Drought Monitor and Austin Water. Foundation and Water readings below are from <b style="font-family: var(--thi-font-mono)">Aug 22</b> and marked as such. We never present a stale reading as current.</span>
+      </div>
+    </div>
+  </sc-if>
+
+  <div id="top" style="max-width: var(--thi-container); margin: 0 auto; padding: 28px var(--thi-gutter) 80px">
+
+    <!-- TIER 1 · HERO -->
+    <div data-screen-label="Hero" style="display: flex; flex-direction: column; gap: var(--thi-sp-3)">
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.ScorePanel" hint-size="100%,300px" score="{{ score }}" status="{{ scoreStatus }}" location="Your home · 78704 · South Austin" read="{{ scoreRead }}" trend="{{ scoreTrend }}" source="AHI home stress index · NWS, NOAA, USDM, Austin Water" as-of="{{ scoreAsOf }}" methodology-href="#sources"></x-import>
+      <div style="display: flex; align-items: center; gap: var(--thi-sp-3); flex-wrap: wrap; background: var(--thi-surface); border: 1px solid var(--thi-line); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); padding: 13px var(--thi-sp-5)">
+        <span style="display: inline-flex; align-items: center; font: 500 var(--thi-fs-body-sm)/1 var(--thi-font-mono); font-feature-settings: 'tnum' 1; color: {{ deltaColor }}; background: {{ deltaBg }}; border-radius: var(--thi-r-pill); padding: 8px 12px">{{ deltaChip }}</span>
+        <span style="font: 400 var(--thi-fs-body-sm)/var(--thi-lh-body-sm) var(--thi-font-ui); color: var(--thi-slate-700); flex: 1; min-width: 24ch">{{ verdictLine }}</span>
+        <a href="#signals" style="font: 600 var(--thi-fs-body-sm)/1 var(--thi-font-ui); color: var(--thi-link-deep)">See what changed →</a>
+        <a href="#sources" style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-500)">How this is calculated ↗</a>
+      </div>
+    </div>
+
+    <!-- TIER 1/2 · YOUR HOME THIS WEEK -->
+    <section id="week" data-screen-label="Your home this week" style="margin-top: 40px">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--thi-sp-3); flex-wrap: wrap; margin-bottom: var(--thi-sp-4)">
+        <div>
+          <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">Your home this week</x-import>
+          <h2 style="font: 500 var(--thi-fs-h2)/var(--thi-lh-h2) var(--thi-font-display); color: var(--thi-ink); margin-top: 8px">{{ queueHeading }}</h2>
+        </div>
+        <span style="font: 400 var(--thi-fs-caption)/1.5 var(--thi-font-mono); color: var(--thi-slate-500)">{{ queueCount }} open · done items are remembered</span>
+      </div>
+
+      <sc-if value="{{ eventCard }}" hint-placeholder-val="{{ true }}">
+        <div style="background: var(--thi-surface); border: 1px solid var(--thi-line); border-left: 4px solid var(--thi-elevated); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); padding: var(--thi-sp-5) var(--thi-sp-6); margin-bottom: var(--thi-sp-4)">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--thi-sp-3); flex-wrap: wrap">
+            <span style="display: inline-flex; align-items: center; gap: 8px; font: 600 var(--thi-fs-card)/1.3 var(--thi-font-ui); color: var(--thi-ink)">
+              <i class="ph ph-thermometer-hot" style="font-size: 20px; color: var(--thi-elevated)" aria-hidden="true"></i>Extreme heat holds through Tuesday — three quick checks
+            </span>
+            <span style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-500)">NWS heat guidance · as of 08/28 06:00</span>
+          </div>
+          <ul style="list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 4px">
+            <sc-for list="{{ eventChecks }}" as="e" hint-placeholder-count="3">
+              <li>
+                <button type="button" onClick="{{ e.toggle }}" style="display: flex; align-items: baseline; gap: 10px; width: 100%; text-align: left; background: transparent; border: none; cursor: pointer; padding: 6px 0; font: 400 var(--thi-fs-body)/1.5 var(--thi-font-ui); color: {{ e.color }}; text-decoration: {{ e.deco }}">
+                  <i class="ph ph-{{ e.icon }}" style="font-size: 17px; color: {{ e.iconColor }}; position: relative; top: 2px" aria-hidden="true"></i>{{ e.text }}
+                </button>
+              </li>
+            </sc-for>
+          </ul>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--thi-sp-3); flex-wrap: wrap; margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--thi-line-soft)">
+            <span style="font: 400 var(--thi-fs-caption)/1.5 var(--thi-font-mono); color: var(--thi-slate-500)">This card appeared because the intelligence layer detected the condition — it disappears when the heat breaks.</span>
+            <button type="button" onClick="{{ remindTonight }}" style="cursor: pointer; font: 600 var(--thi-fs-body-sm)/1 var(--thi-font-ui); color: var(--thi-slate-700); background: var(--thi-surface); border: 1px solid var(--thi-line-strong); border-radius: var(--thi-r-control); padding: 9px 14px" style-hover="background: var(--thi-mist); color: var(--thi-navy)">Remind me tonight</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--thi-sp-4); align-items: start">
+        <sc-for list="{{ queueCols }}" as="col" hint-placeholder-count="2">
+          <div style="display: grid; gap: var(--thi-sp-4)">
+            <sc-for list="{{ col.groups }}" as="g" hint-placeholder-count="2">
+              <div style="background: var(--thi-surface); border: 1px solid var(--thi-line); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); overflow: hidden">
+                <div style="display: flex; align-items: baseline; justify-content: space-between; padding: 13px var(--thi-sp-5) 9px">
+                  <span style="font: 600 11px/1 var(--thi-font-ui); letter-spacing: var(--thi-ls-chip); text-transform: uppercase; color: {{ g.titleColor }}">{{ g.title }}</span>
+                  <span style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-400)">{{ g.meta }}</span>
+                </div>
+                <ul style="list-style: none; padding: 0; margin: 0">
+                  <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="2">
+                    <li style="display: grid; grid-template-columns: 24px 1fr auto; gap: var(--thi-sp-3); align-items: center; padding: 12px var(--thi-sp-5); border-top: 1px solid var(--thi-line-soft)">
+                      <i class="ph ph-{{ it.icon }}" style="font-size: 19px; color: {{ it.iconColor }}" aria-hidden="true"></i>
+                      <span>
+                        <span style="display: block; font: 600 var(--thi-fs-body-sm)/1.35 var(--thi-font-ui); color: {{ it.titleColor }}; text-decoration: {{ it.deco }}">{{ it.title }}</span>
+                        <span style="display: block; font: 400 var(--thi-fs-caption)/1.45 var(--thi-font-mono); color: var(--thi-slate-500); margin-top: 2px">{{ it.meta }}</span>
+                      </span>
+                      <span style="display: flex; gap: 6px">
+                        <sc-if value="{{ it.pending }}" hint-placeholder-val="{{ true }}">
+                          <button type="button" onClick="{{ it.done }}" style="cursor: pointer; font: 600 12px/1 var(--thi-font-ui); color: var(--thi-navy); background: var(--thi-surface); border: 1px solid var(--thi-line-strong); border-radius: var(--thi-r-control); padding: 8px 11px" style-hover="background: var(--thi-mist)">{{ it.doneLabel }}</button>
+                          <button type="button" onClick="{{ it.snooze }}" title="Snooze" style="cursor: pointer; font: 600 12px/1 var(--thi-font-ui); color: var(--thi-slate-500); background: transparent; border: 1px solid var(--thi-line); border-radius: var(--thi-r-control); padding: 8px 10px" style-hover="background: var(--thi-mist)"><i class="ph ph-alarm" style="font-size: 14px" aria-hidden="true"></i></button>
+                        </sc-if>
+                        <sc-if value="{{ it.isDone }}" hint-placeholder-val="{{ false }}">
+                          <span style="display: inline-flex; align-items: center; gap: 6px; font: 500 12px/1 var(--thi-font-mono); color: var(--thi-safe-text); background: var(--thi-safe-bg); border-radius: var(--thi-r-chip); padding: 7px 10px"><i class="ph ph-check" style="font-size: 13px" aria-hidden="true"></i>Done</span>
+                        </sc-if>
+                      </span>
+                    </li>
+                  </sc-for>
+                </ul>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- TIER 2 · FIVE SIGNALS -->
+    <section id="signals" data-screen-label="Five signals" style="margin-top: 40px">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: var(--thi-sp-4); flex-wrap: wrap; margin-bottom: var(--thi-sp-4)">
+        <div>
+          <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">Five home signals</x-import>
+          <h2 style="font: 500 var(--thi-fs-h2)/var(--thi-lh-h2) var(--thi-font-display); color: var(--thi-ink); margin-top: 8px">What is putting stress on homes in 78704</h2>
+        </div>
+        <span style="font: 400 var(--thi-fs-caption)/1.6 var(--thi-font-mono); color: var(--thi-slate-500); max-width: 44ch; text-align: right">Indexes of conditions around your ZIP, 0–100 — never a prediction of damage to your house. <a href="#sources">How scoring works ↗</a></span>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--thi-sp-4)">
+        <sc-for list="{{ signalCards }}" as="s" hint-placeholder-count="5">
+          <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.DomainCard" hint-size="100%,240px" domain="{{ s.name }}" icon="{{ s.icon }}" status="{{ s.status }}" reading="{{ s.score }}" analysis="{{ s.analysis }}" trend="{{ s.trend }}" source="{{ s.source }}" as-of="{{ s.asOf }}" stale="{{ s.stale }}" methodology-href="#sources" action="{{ s.action }}"></x-import>
+        </sc-for>
+        <div style="background: var(--thi-mist); border: 1px solid var(--thi-line); border-radius: var(--thi-r-card); padding: var(--thi-sp-5) var(--thi-sp-6); display: flex; flex-direction: column; justify-content: center; gap: 8px">
+          <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">Reading the cards</x-import>
+          <p style="font: 400 var(--thi-fs-body-sm)/1.6 var(--thi-font-ui); color: var(--thi-slate-700); max-width: 52ch">Value → what it means → what to do. The action row under each divider links into your week above; storm readings decay as events age, so an elevated number eases on its own when the weather does.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIER 2 · WORTH KNOWING -->
+    <section data-screen-label="Worth knowing" style="margin-top: 40px; background: var(--thi-surface); border: 1px solid var(--thi-line); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); overflow: hidden">
+      <div style="padding: var(--thi-sp-5) var(--thi-sp-6) 0">
+        <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">Worth knowing right now</x-import>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: var(--thi-sp-4) var(--thi-sp-6) var(--thi-sp-5)">
+        <sc-for list="{{ knowCols }}" as="k" hint-placeholder-count="3">
+          <div style="padding: 0 var(--thi-sp-5); border-left: {{ k.border }}">
+            <span style="display: inline-flex; align-items: center; gap: 7px; font: 600 11px/1 var(--thi-font-ui); letter-spacing: var(--thi-ls-chip); text-transform: uppercase; color: {{ k.color }}"><i class="ph ph-{{ k.icon }}" style="font-size: 14px" aria-hidden="true"></i>{{ k.title }}</span>
+            <ul style="list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 8px">
+              <sc-for list="{{ k.items }}" as="i" hint-placeholder-count="2">
+                <li style="font: 400 var(--thi-fs-body-sm)/1.5 var(--thi-font-ui); color: var(--thi-slate-700)">{{ i }}</li>
+              </sc-for>
+            </ul>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- TIER 3 · COMPARE + TREND -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--thi-sp-4); margin-top: 40px; align-items: stretch">
+      <section id="compare" data-screen-label="Compare" style="background: var(--thi-surface); border: 1px solid var(--thi-line); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); padding: var(--thi-sp-5) var(--thi-sp-6); display: flex; flex-direction: column">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--thi-sp-3)">
+          <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">How 78704 compares</x-import>
+          <span style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-500)">this week · 41 Austin ZIPs</span>
+        </div>
+        <h2 style="font: 500 var(--thi-fs-h3)/var(--thi-lh-h3) var(--thi-font-display); color: var(--thi-ink); margin: 10px 0 4px; max-width: 26ch">Higher home stress than 68% of Austin ZIPs this week</h2>
+        <ul style="list-style: none; padding: 0; margin: var(--thi-sp-4) 0 0; display: grid; gap: 14px; flex: 1; align-content: start">
+          <sc-for list="{{ compareRows }}" as="r" hint-placeholder-count="5">
+            <li style="display: grid; grid-template-columns: 118px 1fr 84px; gap: var(--thi-sp-3); align-items: center">
+              <span style="font: 600 var(--thi-fs-body-sm)/1.2 var(--thi-font-ui); color: var(--thi-ink)">{{ r.label }}</span>
+              <span style="position: relative; display: block; height: 8px; background: var(--thi-mist); border-radius: var(--thi-r-pill)">
+                <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{ r.zipW }}; background: var(--thi-navy); border-radius: var(--thi-r-pill)"></span>
+                <span title="Austin average" style="position: absolute; left: {{ r.austinLeft }}; top: -3px; bottom: -3px; width: 2px; background: var(--thi-slate-400)"></span>
+              </span>
+              <span style="font: 500 var(--thi-fs-caption)/1.2 var(--thi-font-mono); font-feature-settings: 'tnum' 1; color: var(--thi-slate-700); text-align: right">{{ r.vals }}</span>
+            </li>
+          </sc-for>
+        </ul>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--thi-sp-3); flex-wrap: wrap; margin-top: var(--thi-sp-5); padding-top: var(--thi-sp-4); border-top: 1px solid var(--thi-line-soft)">
+          <span style="font: 400 var(--thi-fs-caption)/1.5 var(--thi-font-mono); color: var(--thi-slate-500)">▪ 78704 &nbsp;│ Austin average · ranking, not risk · your to-dos never appear on shares</span>
+          <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" hint-size="auto,34px" size="sm" variant="secondary" href="#share">Share this</x-import>
+        </div>
+      </section>
+
+      <section id="trend" data-screen-label="8-week trend" style="background: var(--thi-surface); border: 1px solid var(--thi-line); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); padding: var(--thi-sp-5) var(--thi-sp-6); display: flex; flex-direction: column">
+        <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">Your last 8 weeks</x-import>
+        <sc-if value="{{ firstRun }}" hint-placeholder-val="{{ false }}">
+          <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 10px; padding: var(--thi-sp-5) 0">
+            <i class="ph ph-chart-line" style="font-size: 30px; color: var(--thi-slate-400)" aria-hidden="true"></i>
+            <h3 style="font: 500 var(--thi-fs-h3)/var(--thi-lh-h3) var(--thi-font-display); color: var(--thi-ink); max-width: 24ch">Your trend starts today</h3>
+            <p style="font: 400 var(--thi-fs-body-sm)/1.6 var(--thi-font-ui); color: var(--thi-slate-700); max-width: 46ch">Today's reading of {{ score }} is your baseline. Each Friday at 5 AM we add a point — in eight weeks this chart is the story of your home's season.</p>
+            <span style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-500)">First data point: today · next: Fri Sep 4</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ hasHistory }}" hint-placeholder-val="{{ true }}">
+          <svg viewBox="0 0 680 196" style="width: 100%; height: auto; display: block; margin-top: var(--thi-sp-4)" aria-hidden="true">
+            <sc-for list="{{ gridLines }}" as="g" hint-placeholder-count="3">
+              <line x1="30" x2="634" y1="{{ g.y }}" y2="{{ g.y }}" stroke="var(--thi-line-soft)" stroke-width="1"></line>
+              <text x="640" y="{{ g.ty }}" fill="var(--thi-slate-400)" style="font: 400 10px var(--thi-font-mono)">{{ g.label }}</text>
+            </sc-for>
+            <path d="{{ chartArea }}" fill="rgba(42,111,176,.08)"></path>
+            <path d="{{ chartPath }}" fill="none" stroke="var(--thi-link)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></path>
+            <sc-for list="{{ chartDots }}" as="p" hint-placeholder-count="8">
+              <circle cx="{{ p.x }}" cy="{{ p.y }}" r="{{ p.r }}" fill="var(--thi-link)"></circle>
+            </sc-for>
+            <text x="{{ lastX }}" y="{{ lastY }}" fill="var(--thi-ink)" style="font: 500 13px var(--thi-font-mono)">{{ score }}</text>
+            <sc-for list="{{ weekLabels }}" as="w" hint-placeholder-count="8">
+              <text x="{{ w.x }}" y="190" text-anchor="middle" fill="var(--thi-slate-400)" style="font: 400 9.5px var(--thi-font-mono)">{{ w.t }}</text>
+            </sc-for>
+          </svg>
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--thi-sp-3); flex-wrap: wrap; margin-top: auto; padding-top: var(--thi-sp-4); border-top: 1px solid var(--thi-line-soft)">
+            <span style="font: 500 var(--thi-fs-body-sm)/1.4 var(--thi-font-mono); color: var(--thi-ink)">Up 12 points over eight weeks — heat and soil, not storms</span>
+            <span style="font: 400 var(--thi-fs-caption)/1.4 var(--thi-font-mono); color: var(--thi-slate-500)">Friday 5 AM snapshots · <a href="#sources">why Friday ↗</a></span>
+          </div>
+        </sc-if>
+      </section>
+    </div>
+
+    <!-- TIER 3 · OUTLOOK + FILTER CENTER -->
+    <div style="display: grid; grid-template-columns: 0.9fr 1.1fr; gap: var(--thi-sp-4); margin-top: var(--thi-sp-4); align-items: stretch">
+      <section data-screen-label="7-day outlook" style="background: var(--thi-surface); border: 1px solid var(--thi-line); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); padding: var(--thi-sp-5) var(--thi-sp-6)">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--thi-sp-3)">
+          <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">7-day outlook</x-import>
+          <span style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-500)">direction only · NWS forecast</span>
+        </div>
+        <ul style="list-style: none; padding: 0; margin: var(--thi-sp-4) 0 0; display: grid; gap: 2px">
+          <sc-for list="{{ outlook }}" as="o" hint-placeholder-count="5">
+            <li style="display: grid; grid-template-columns: 24px 130px 20px 1fr; gap: var(--thi-sp-3); align-items: center; padding: 10px 0; border-bottom: 1px solid var(--thi-line-soft)">
+              <i class="ph ph-{{ o.icon }}" style="font-size: 18px; color: var(--thi-slate-700)" aria-hidden="true"></i>
+              <span style="font: 600 var(--thi-fs-body-sm)/1.3 var(--thi-font-ui); color: var(--thi-ink)">{{ o.name }}</span>
+              <span style="font: 500 16px/1 var(--thi-font-mono); color: {{ o.dirColor }}">{{ o.dir }}</span>
+              <span style="font: 400 var(--thi-fs-body-sm)/1.45 var(--thi-font-ui); color: var(--thi-slate-500)">{{ o.note }}</span>
+            </li>
+          </sc-for>
+        </ul>
+        <p style="font: 400 var(--thi-fs-caption)/1.6 var(--thi-font-mono); color: var(--thi-slate-500); margin-top: var(--thi-sp-4)">Scores refresh Friday 5 AM — the outlook says which way each is leaning, never a new number early. <a href="#sources">Why Friday ↗</a></p>
+      </section>
+
+      <section id="filters" data-screen-label="Filter Center" style="background: var(--thi-surface); border: 1px solid var(--thi-line); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); padding: var(--thi-sp-5) var(--thi-sp-6); display: flex; flex-direction: column">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--thi-sp-3); flex-wrap: wrap">
+          <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">Filter Center · last done</x-import>
+          <span style="font: 400 var(--thi-fs-caption)/1 var(--thi-font-mono); color: var(--thi-slate-500)">{{ filterSub }}</span>
+        </div>
+        <ul style="list-style: none; padding: 0; margin: var(--thi-sp-4) 0 0; display: grid; gap: 0; flex: 1; align-content: start">
+          <sc-for list="{{ filterRows }}" as="f" hint-placeholder-count="5">
+            <li style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: var(--thi-sp-3); align-items: center; padding: 11px 0; border-bottom: 1px solid var(--thi-line-soft)">
+              <i class="ph ph-{{ f.icon }}" style="font-size: 18px; color: var(--thi-slate-700)" aria-hidden="true"></i>
+              <span>
+                <span style="display: block; font: 600 var(--thi-fs-body-sm)/1.3 var(--thi-font-ui); color: var(--thi-ink)">{{ f.name }}</span>
+                <span style="display: block; font: 400 var(--thi-fs-caption)/1.4 var(--thi-font-mono); color: {{ f.lastColor }}; margin-top: 2px">{{ f.last }}</span>
+              </span>
+              <span style="font: 500 var(--thi-fs-caption)/1.3 var(--thi-font-mono); font-feature-settings: 'tnum' 1; color: {{ f.dueColor }}; text-align: right">{{ f.due }}</span>
+              <sc-if value="{{ f.pending }}" hint-placeholder-val="{{ true }}">
+                <button type="button" onClick="{{ f.mark }}" style="cursor: pointer; font: 600 12px/1 var(--thi-font-ui); color: var(--thi-navy); background: var(--thi-surface); border: 1px solid var(--thi-line-strong); border-radius: var(--thi-r-control); padding: 8px 11px" style-hover="background: var(--thi-mist)">{{ f.btn }}</button>
+              </sc-if>
+              <sc-if value="{{ f.doneNow }}" hint-placeholder-val="{{ false }}">
+                <span style="display: inline-flex; align-items: center; gap: 6px; font: 500 12px/1 var(--thi-font-mono); color: var(--thi-safe-text); background: var(--thi-safe-bg); border-radius: var(--thi-r-chip); padding: 7px 10px"><i class="ph ph-check" style="font-size: 13px" aria-hidden="true"></i>Logged</span>
+              </sc-if>
+            </li>
+          </sc-for>
+        </ul>
+        <p style="font: 400 var(--thi-fs-caption)/1.6 var(--thi-font-mono); color: var(--thi-slate-500); margin-top: var(--thi-sp-4)">Mark one done and the next due date recalculates from today. This memory stays on your home — it never appears on anything you share.</p>
+      </section>
+    </div>
+
+    <!-- TIER 3 · ALERTS -->
+    <section id="alerts" data-screen-label="Tailored alerts" style="margin-top: 40px; background: linear-gradient(180deg, var(--thi-navy) 0%, var(--thi-navy-deep) 100%); border: 1px solid var(--thi-hairline-dark); border-radius: var(--thi-r-lg); padding: var(--thi-sp-6); color: var(--thi-on-dark); display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: center">
+      <div>
+        <h2 style="font: 500 var(--thi-fs-h2)/var(--thi-lh-h2) var(--thi-font-display); color: #fff">We'll tell you when something changes</h2>
+        <p style="font: 400 var(--thi-fs-body)/var(--thi-lh-body) var(--thi-font-ui); color: var(--thi-on-dark-muted); margin-top: 10px; max-width: 52ch">The Friday note is a gentle weekly trigger — and the panel rewards a quick glance whenever you like. Between them, these alerts cover the moments that can't wait for Friday.</p>
+      </div>
+      <div style="display: grid; gap: 8px">
+        <sc-for list="{{ alertToggles }}" as="t" hint-placeholder-count="5">
+          <button type="button" onClick="{{ t.flip }}" style="cursor: pointer; display: grid; grid-template-columns: 1fr auto; gap: var(--thi-sp-3); align-items: center; text-align: left; background: rgba(255,255,255,.06); border: 1px solid var(--thi-hairline-dark); border-radius: var(--thi-r-md); padding: 12px 16px">
+            <span>
+              <span style="display: block; font: 600 var(--thi-fs-body-sm)/1.3 var(--thi-font-ui); color: #fff">{{ t.name }}</span>
+              <span style="display: block; font: 400 var(--thi-fs-caption)/1.4 var(--thi-font-mono); color: var(--thi-on-dark-muted); margin-top: 2px">{{ t.desc }}</span>
+            </span>
+            <span style="position: relative; display: inline-block; width: 40px; height: 22px; border-radius: var(--thi-r-pill); background: {{ t.trackBg }}; transition: background .18s">
+              <span style="position: absolute; top: 3px; left: {{ t.knobLeft }}; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: left .18s"></span>
+            </span>
+          </button>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- TIER 3 · SOURCES + SHARE -->
+    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: var(--thi-sp-4); margin-top: 40px; align-items: stretch">
+      <section id="sources" data-screen-label="Sources" style="background: var(--thi-mist); border: 1px solid var(--thi-line); border-radius: var(--thi-r-card); padding: var(--thi-sp-5) var(--thi-sp-6)">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: var(--thi-sp-4); flex-wrap: wrap; margin-bottom: var(--thi-sp-4)">
+          <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">The data behind your dashboard</x-import>
+          <a href="#sources" style="font: 600 var(--thi-fs-body-sm)/1 var(--thi-font-ui); color: var(--thi-link-deep)">Sources &amp; methodology →</a>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--thi-line); border: 1px solid var(--thi-line); border-radius: var(--thi-r-md); overflow: hidden">
+          <sc-for list="{{ sources }}" as="s" hint-placeholder-count="6">
+            <div style="background: var(--thi-surface); padding: 13px 15px">
+              <div style="font: 600 var(--thi-fs-body-sm)/1 var(--thi-font-ui); color: var(--thi-ink)">{{ s.name }}</div>
+              <div style="font: 400 var(--thi-fs-caption)/1.5 var(--thi-font-mono); color: {{ s.color }}; margin-top: 5px">{{ s.what }}<br>{{ s.updated }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+      <section id="share" data-screen-label="Share entry" style="background: var(--thi-surface); border: 1px solid var(--thi-line); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); padding: var(--thi-sp-5) var(--thi-sp-6); display: flex; flex-direction: column; gap: 10px">
+        <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">Share how 78704 is doing</x-import>
+        <p style="font: 400 var(--thi-fs-body-sm)/1.6 var(--thi-font-ui); color: var(--thi-slate-700); max-width: 46ch">The card carries the ZIP percentile and this week's most interesting fact. Your to-dos, filters, and history are private and never included.</p>
+        <div style="display: flex; gap: var(--thi-sp-3); flex-wrap: wrap; margin-top: auto">
+          <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" hint-size="auto,40px" size="md" variant="accent" on-click="{{ nativeShare }}">Share my ZIP card</x-import>
+          <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" hint-size="auto,40px" size="md" variant="secondary" on-click="{{ copyLink }}">Copy link</x-import>
+        </div>
+        <span style="font: 400 var(--thi-fs-caption)/1.5 var(--thi-font-mono); color: var(--thi-slate-500)">Opens a live ZIP view — a neighbor pulls their own in one tap</span>
+      </section>
+    </div>
+
+    <!-- MOBILE · PRIMARY VIEW -->
+    <section data-screen-label="Mobile primary view" style="margin-top: 64px; border-top: 1px solid var(--thi-line); padding-top: 40px">
+      <div style="display: grid; grid-template-columns: 1fr 396px; gap: 48px; align-items: start">
+        <div style="position: sticky; top: 24px">
+          <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">Mobile · the primary view</x-import>
+          <h2 style="font: 500 var(--thi-fs-h2)/var(--thi-lh-h2) var(--thi-font-display); color: var(--thi-ink); margin: 8px 0 12px; max-width: 20ch">Designed at 380px first</h2>
+          <p style="font: 400 var(--thi-fs-body)/var(--thi-lh-body) var(--thi-font-ui); color: var(--thi-slate-700); max-width: 52ch">Screen one answers "did anything change?" — ring, score, delta, verdict. Screen two answers "what do I do?" — the queue, with one-tap Done. Everything below is a scroll the owner chooses. Hit targets are 44px+; status color stays in the ring, chips, and dots.</p>
+          <ul style="list-style: none; padding: 0; margin: var(--thi-sp-5) 0 0; display: grid; gap: 10px; font: 400 var(--thi-fs-body-sm)/1.5 var(--thi-font-ui); color: var(--thi-slate-500)">
+            <li style="display: flex; gap: 10px"><i class="ph ph-gauge" style="font-size: 18px; color: var(--thi-slate-400)" aria-hidden="true"></i>Ring gauge for glanceability — band word and delta beside it, never color alone</li>
+            <li style="display: flex; gap: 10px"><i class="ph ph-list-checks" style="font-size: 18px; color: var(--thi-slate-400)" aria-hidden="true"></i>Queue condenses to Today + Due; groups below the fold</li>
+            <li style="display: flex; gap: 10px"><i class="ph ph-arrows-down-up" style="font-size: 18px; color: var(--thi-slate-400)" aria-hidden="true"></i>Signals as a scannable list, drivers one tap deep</li>
+          </ul>
+        </div>
+        <div style="width: 380px; background: var(--thi-paper); border: 1px solid var(--thi-line-strong); border-radius: 30px; box-shadow: var(--thi-shadow-md); overflow: hidden">
+          <div style="background: var(--thi-surface); border-bottom: 1px solid var(--thi-line); padding: 13px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Logo" hint-size="auto,24px" size="{{ 22 }}"></x-import>
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.FreshnessPill" hint-size="auto,22px" updated="{{ updatedAgo }}" stale="{{ isStale }}"></x-import>
+          </div>
+          <div style="padding: 14px">
+            <div style="background: linear-gradient(180deg, var(--thi-navy) 0%, var(--thi-navy-deep) 100%); border: 1px solid var(--thi-hairline-dark); border-radius: var(--thi-r-card); padding: 18px; color: var(--thi-on-dark)">
+              <div style="font: 400 11px/1 var(--thi-font-mono); text-transform: uppercase; letter-spacing: var(--thi-ls-label); color: var(--thi-on-dark-muted)">Your home · 78704 · {{ weekShort }}</div>
+              <div style="display: flex; align-items: center; gap: 16px; margin-top: 14px">
+                <span style="position: relative; width: 108px; height: 108px; flex: 0 0 auto; display: inline-block">
+                  <svg viewBox="0 0 108 108" style="width: 108px; height: 108px; display: block">
+                    <circle cx="54" cy="54" r="47" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="7"></circle>
+                    <circle cx="54" cy="54" r="47" fill="none" stroke="{{ ringColor }}" stroke-width="7" stroke-linecap="round" stroke-dasharray="{{ ringDash }}" transform="rotate(-90 54 54)"></circle>
+                  </svg>
+                  <span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 500 34px/1 var(--thi-font-mono); font-feature-settings: 'tnum' 1; color: #fff">{{ score }}</span>
+                </span>
+                <span>
+                  <span style="display: block; font: 600 var(--thi-fs-body)/1 var(--thi-font-ui); text-transform: uppercase; letter-spacing: var(--thi-ls-chip); color: {{ ringColor }}">{{ band }}</span>
+                  <span style="display: inline-block; font: 500 12px/1 var(--thi-font-mono); color: var(--thi-on-dark); background: rgba(255,255,255,.08); border: 1px solid var(--thi-hairline-dark); border-radius: var(--thi-r-pill); padding: 6px 10px; margin-top: 8px">{{ deltaChip }}</span>
+                  <span style="display: block; font: 400 var(--thi-fs-body-sm)/1.45 var(--thi-font-ui); color: var(--thi-on-dark); margin-top: 10px">{{ verdictLine }}</span>
+                </span>
+              </div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--thi-hairline-dark)">
+                <span style="font: 400 10.5px/1.5 var(--thi-font-mono); color: var(--thi-on-dark-muted)">NWS · NOAA · USDM · Austin Water · {{ scoreAsOf }}</span>
+                <a href="#sources" style="font: 400 10.5px/1 var(--thi-font-mono); color: var(--thi-on-dark-muted); white-space: nowrap">How it's calculated ↗</a>
+              </div>
+            </div>
+            <div style="background: var(--thi-surface); border: 1px solid var(--thi-line); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); margin-top: 12px; overflow: hidden">
+              <div style="padding: 12px 14px 8px; display: flex; justify-content: space-between; align-items: baseline">
+                <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">Your home this week</x-import>
+                <span style="font: 400 10px/1 var(--thi-font-mono); color: var(--thi-slate-400)">{{ queueCount }} open</span>
+              </div>
+              <sc-for list="{{ mQueue }}" as="it" hint-placeholder-count="3">
+                <div style="display: grid; grid-template-columns: 20px 1fr auto; gap: 10px; align-items: center; padding: 11px 14px; border-top: 1px solid var(--thi-line-soft)">
+                  <i class="ph ph-{{ it.icon }}" style="font-size: 17px; color: {{ it.iconColor }}" aria-hidden="true"></i>
+                  <span>
+                    <span style="display: block; font: 600 13px/1.3 var(--thi-font-ui); color: {{ it.titleColor }}; text-decoration: {{ it.deco }}">{{ it.title }}</span>
+                    <span style="display: block; font: 400 10.5px/1.4 var(--thi-font-mono); color: var(--thi-slate-500)">{{ it.metaShort }}</span>
+                  </span>
+                  <sc-if value="{{ it.pending }}" hint-placeholder-val="{{ true }}">
+                    <button type="button" onClick="{{ it.done }}" style="cursor: pointer; min-height: 44px; font: 600 12px/1 var(--thi-font-ui); color: var(--thi-navy); background: var(--thi-surface); border: 1px solid var(--thi-line-strong); border-radius: var(--thi-r-control); padding: 0 12px">Done</button>
+                  </sc-if>
+                  <sc-if value="{{ it.isDone }}" hint-placeholder-val="{{ false }}">
+                    <i class="ph ph-check-circle" style="font-size: 20px; color: var(--thi-safe)" aria-hidden="true"></i>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <div style="background: var(--thi-surface); border: 1px solid var(--thi-line); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); margin-top: 12px; overflow: hidden">
+              <div style="padding: 12px 14px 8px">
+                <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Label" hint-size="auto,16px">Five signals</x-import>
+              </div>
+              <sc-for list="{{ mSignals }}" as="s" hint-placeholder-count="5">
+                <div style="display: grid; grid-template-columns: 20px 1fr 38px auto; gap: 10px; align-items: center; padding: 11px 14px; border-top: 1px solid var(--thi-line-soft)">
+                  <i class="ph ph-{{ s.icon }}" style="font-size: 17px; color: var(--thi-slate-700)" aria-hidden="true"></i>
+                  <span style="font: 600 13px/1.3 var(--thi-font-ui); color: var(--thi-ink)">{{ s.name }}</span>
+                  <span style="font: 500 var(--thi-fs-data-md)/1 var(--thi-font-mono); font-feature-settings: 'tnum' 1; color: {{ s.color }}; text-align: right">{{ s.score }}</span>
+                  <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.StatusChip" hint-size="auto,22px" status="{{ s.status }}" label="{{ s.band }}"></x-import>
+                </div>
+              </sc-for>
+            </div>
+            <p style="font: 400 10.5px/1.6 var(--thi-font-mono); color: var(--thi-slate-500); margin: 12px 0 4px; text-align: center">Every reading sourced · updated {{ updatedAgo }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.SiteFooter" hint-size="100%,280px" blurb="Texas Home Intelligence — know what your Texas home needs, before it gets expensive. Sourced. Current. Independent." columns="{{ footerColumns }}" legal="© 2026 Texas Home Intelligence. The home stress index is a read on conditions around a ZIP — an index, never a probability of damage to a specific property, and not a substitute for a licensed professional's evaluation."></x-import>
+
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%); background: var(--thi-ink); color: #fff; font: 500 var(--thi-fs-body-sm)/1 var(--thi-font-ui); padding: 12px 18px; border-radius: var(--thi-r-md); box-shadow: var(--thi-shadow-md); z-index: 90">{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:2600},&quot;state&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Returning · with history&quot;,&quot;options&quot;:[&quot;Returning · with history&quot;,&quot;First run · just signed up&quot;,&quot;Stale feed&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Scenario&quot;},&quot;designNotes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Presentation&quot;}}">
+const SIG = {
+  hvac: { name: 'HVAC', icon: 'thermometer-simple', score: 72, trend: [58,62,60,64,68,66,66,72], source: 'NWS Austin · NOAA cooling degree days', asOf: '08/28 06:00',
+    analysis: 'Nine straight days above normal cooling demand — an existing airflow or refrigerant problem shows up now, not in October.',
+    action: '→ Your AC filter is overdue by 4 days — a 2-minute check, queued above' },
+  foundation: { name: 'Foundation & soil', icon: 'house-line', score: 74, trend: [48,52,55,57,59,61,65,74], source: 'U.S. Drought Monitor (county) · NWS precipitation', asOf: '08/21 07:00',
+    analysis: 'Seven weeks of moderate drought over South Austin clay — soils shrink as they dry, the common contributor to slab movement here.',
+    action: '→ Saturday is your Stage 2 watering day — soak the perimeter' },
+  storm: { name: 'Roof & storm', icon: 'cloud-lightning', score: 42, trend: [58,54,52,49,47,45,45,42], source: 'NOAA Storm Events · NWS alerts', asOf: '08/28 06:02',
+    analysis: 'No qualifying events in six weeks; the reading keeps easing as older events age out of the window.', action: null },
+  water: { name: 'Water & irrigation', icon: 'drop', score: 68, trend: [44,46,48,50,53,55,62,68], source: 'Austin Water · NWS precipitation', asOf: '08/27 09:00',
+    analysis: 'Stage 2 since Aug 19 — one watering day a week is the binding constraint on soil moisture.',
+    action: '→ Irrigation set for Saturday? One day a week under Stage 2' },
+  trees: { name: 'Trees & yard', icon: 'tree', score: 41, trend: [30,32,33,35,37,38,39,41], source: 'USDM · NWS heat accumulation', asOf: '08/28 06:00',
+    analysis: 'Slow-building heat stress. Established canopy is fine; trees planted in the last two seasons need the deep soak.',
+    action: '→ Deep-water young trees on Saturday' }
+};
+const WEIGHTS = { hvac: .25, foundation: .25, storm: .20, water: .15, trees: .15 };
+const WEEKS = ['Jul 10','Jul 17','Jul 24','Jul 31','Aug 7','Aug 14','Aug 21','Aug 28'];
+const BANDS = [[75,'High','severe'],[55,'Elevated','elevated'],[35,'Moderate','watch'],[0,'Normal','safe']];
+const bandOf = v => { const b = BANDS.find(x => v >= x[0]); return { band: b[1], status: b[2] }; };
+const TXT = { severe: 'var(--thi-severe)', elevated: 'var(--thi-elevated-text)', watch: 'var(--thi-watch-text)', safe: 'var(--thi-safe)' };
+// One word per status, matching the word DomainCard derives from the same status.
+const STATUS_WORD = { severe: 'Severe', elevated: 'Elevated', watch: 'Watch', safe: 'Safe' };
+const ONDARK = { severe: 'var(--thi-severe-on-dark)', elevated: 'var(--thi-elevated-on-dark)', watch: 'var(--thi-watch-on-dark)', safe: 'var(--thi-safe-on-dark)' };
+
+const QUEUE = [
+  { g: 'TODAY', meta: 'Fri Aug 28', items: [
+    { id: 'trash', icon: 'trash', title: 'Recycling + trash', meta: 'Out by 7 AM · City of Austin pickup' },
+    { id: 'preheat', icon: 'sun-horizon', title: 'Run errands before 3 PM', meta: 'Heat advisory peaks 3–7 PM · NWS' } ] },
+  { g: 'THIS WEEK', meta: 'through Sun', items: [
+    { id: 'water', icon: 'drop', title: 'Watering day — Saturday', meta: 'Stage 2 · foundation perimeter + young trees deep-soak' } ] },
+  { g: 'DUE', meta: 'needs a date', items: [
+    { id: 'acfilter', icon: 'wind', title: 'AC filter', meta: 'Overdue by 4 days · 1″ MERV 11 · last changed Jun 18' },
+    { id: 'trap', icon: 'bug', title: 'Mosquito trap refill', meta: 'Due Sun · last refilled Jul 28' } ] },
+  { g: 'COMING UP', meta: 'next 3 weeks', items: [
+    { id: 'compost', icon: 'leaf', title: 'Compost pickup resumes', meta: 'Thu Sep 4 · City of Austin' },
+    { id: 'tuneup', icon: 'wrench', title: 'Fall HVAC tune-up window', meta: 'Opens Sep 15 — book before the rush' } ] },
+  { g: 'LATER', meta: 'on the calendar', items: [
+    { id: 'bulk', icon: 'truck', title: 'Bulk pickup', meta: 'Oct 12 · set out by Oct 11' },
+    { id: 'freeze', icon: 'snowflake', title: 'First-freeze prep', meta: 'Typically mid-Nov — the checklist triggers itself' } ] }
+];
+const FILTERS = [
+  { id: 'ac', icon: 'wind', name: 'AC filter · 1″ MERV 11', last: 'Last changed Jun 18 ✓', due: 'Overdue 4d', overdue: true, redoLast: 'Last changed Aug 28 ✓', redoDue: 'Next: Nov 26' },
+  { id: 'fridge', icon: 'snowflake', name: 'Fridge water filter', last: 'Last changed Mar 2 ✓', due: 'Due Sep 2', redoLast: 'Last changed Aug 28 ✓', redoDue: 'Next: Feb 28' },
+  { id: 'whole', icon: 'faders', name: 'Whole-home water filter', last: 'Last changed Jan 10 ✓', due: 'Due Jan 10 ’27', redoLast: 'Last changed Aug 28 ✓', redoDue: 'Next: Aug 28 ’27' },
+  { id: 'trapf', icon: 'bug', name: 'Mosquito trap', last: 'Last refilled Jul 28 ✓', due: 'Due Sun', redoLast: 'Refilled Aug 28 ✓', redoDue: 'Next: Sep 27' },
+  { id: 'gutters', icon: 'house-line', name: 'Gutters', last: 'Last cleaned Apr 5 ✓', due: 'Due after leaf drop · Oct', redoLast: 'Cleaned Aug 28 ✓', redoDue: 'Next: after leaf drop' }
+];
+const EVENT_CHECKS = [
+  { id: 'e1', text: 'Verify the AC filter isn’t overdue — it is, by 4 days' },
+  { id: 'e2', text: 'Set irrigation for your Saturday Stage 2 watering day' },
+  { id: 'e3', text: 'Deep-water trees planted in the last two seasons' }
+];
+
+class Component extends DCLogic {
+  state = { done: {}, checks: {}, filterDone: {}, alerts: { freeze: true, hail: true, heat: true, storm: true, friday: true }, toast: null };
+  showToast(msg) { clearTimeout(this._tt); this.setState({ toast: msg }); this._tt = setTimeout(() => this.setState({ toast: null }), 2100); }
+
+  renderVals() {
+    const st = this.props.state ?? 'Returning · with history';
+    const firstRun = st === 'First run · just signed up';
+    const isStale = st === 'Stale feed';
+    const overall = WEEKS.map((_, i) => Math.round(Object.keys(WEIGHTS).reduce((a, k) => a + WEIGHTS[k] * SIG[k].trend[i], 0)));
+    const score = overall[7], delta = score - overall[6];
+    const { band, status } = bandOf(score);
+
+    const mkItem = raw => {
+      const d = !!this.state.done[raw.id];
+      return { ...raw, isDone: d, pending: !d,
+        titleColor: d ? 'var(--thi-slate-400)' : 'var(--thi-ink)',
+        iconColor: d ? 'var(--thi-slate-400)' : 'var(--thi-slate-700)',
+        deco: d ? 'line-through' : 'none',
+        doneLabel: raw.id === 'acfilter' ? 'Done — log it' : 'Done',
+        metaShort: raw.meta.split(' · ')[0],
+        done: () => { this.setState(s => ({ done: { ...s.done, [raw.id]: true }, filterDone: raw.id === 'acfilter' ? { ...s.filterDone, ac: true } : s.filterDone })); this.showToast(raw.id === 'acfilter' ? 'Logged — next due Nov 26. Filter Center updated.' : 'Done — remembered on your home.'); },
+        snooze: () => this.showToast('Snoozed to tomorrow 8 AM — we\u2019ll nudge you.') };
+    };
+    const groups = QUEUE.map(g => ({
+      title: g.g, meta: g.meta,
+      titleColor: g.g === 'DUE' ? 'var(--thi-elevated-text)' : g.g === 'TODAY' ? 'var(--thi-navy)' : 'var(--thi-slate-500)',
+      items: g.items.map(mkItem)
+    }));
+    const openCount = QUEUE.flatMap(g => g.items).filter(i => !this.state.done[i.id]).length;
+
+    const signalCards = Object.keys(SIG).map(k => {
+      const s = SIG[k], b = bandOf(s.score);
+      const stale = isStale && (k === 'foundation' || k === 'water');
+      return { name: s.name + ' stress', icon: s.icon, status: b.status, score: s.score, trend: s.trend,
+        analysis: stale ? s.analysis + ' Feed reporting late — this is the Aug 22 reading.' : s.analysis,
+        source: s.source, asOf: stale ? '08/22 07:00 · delayed' : s.asOf, stale, action: s.action ?? undefined };
+    });
+
+    const PL = 30, PR = 46, PT = 14, PB = 34, W = 680, H = 196;
+    const x = i => PL + i * (W - PL - PR) / 7, y = v => PT + (100 - v) / 100 * (H - PT - PB);
+    const pts = overall.map((v, i) => ({ x: x(i), y: y(v) }));
+    const path = pts.map((p, i) => (i ? 'L' : 'M') + p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' ');
+
+    const filterRows = FILTERS.map(f => {
+      const d = !!this.state.filterDone[f.id];
+      return { icon: f.icon, name: f.name,
+        last: d ? f.redoLast : f.last, lastColor: d ? 'var(--thi-safe-text)' : 'var(--thi-slate-500)',
+        due: firstRun ? 'Not set' : d ? f.redoDue : f.due,
+        dueColor: !firstRun && !d && f.overdue ? 'var(--thi-elevated-text)' : 'var(--thi-slate-700)',
+        pending: !d, doneNow: d, btn: firstRun ? 'Set date' : 'Mark done',
+        mark: () => { if (firstRun) { this.showToast('Pick the last-changed date — we\u2019ll take it from there.'); return; } this.setState(s => ({ filterDone: { ...s.filterDone, [f.id]: true } })); this.showToast('Logged — next due recalculated from today.'); } };
+    });
+
+    const eventChecks = EVENT_CHECKS.map(e => {
+      const on = !!this.state.checks[e.id];
+      return { text: e.text, icon: on ? 'check-square' : 'square', iconColor: on ? 'var(--thi-safe)' : 'var(--thi-slate-400)',
+        color: on ? 'var(--thi-slate-400)' : 'var(--thi-ink)', deco: on ? 'line-through' : 'none',
+        toggle: () => this.setState(s => ({ checks: { ...s.checks, [e.id]: !on } })) };
+    });
+
+    const share = () => {
+      const url = 'https://texashomeintelligence.com/dashboard/78704/?ref=share';
+      if (navigator.share) navigator.share({ title: '78704 home stress: ' + score, text: '78704 home stress is ' + score + ' — higher than 68% of Austin ZIPs this week.', url }).catch(() => {});
+      else this.showToast('Native share sheet opens here on mobile');
+    };
+
+    return {
+      designNotes: this.props.designNotes ?? true,
+      navLinks: [{ label: 'My home', href: '#top' }, { label: 'Compare ZIPs', href: '#compare' }, { label: 'Alerts', href: '#alerts' }, { label: 'Methodology', href: '#sources' }],
+      weekLine: firstRun ? 'Set up today · Fri Aug 28' : 'Week of Aug 24–30 · your ' + (isStale ? '11th' : '9th') + ' week tracked',
+      weekShort: 'Aug 28',
+      updatedAgo: isStale ? '6d ago' : '2h ago', isStale, firstRun, hasHistory: !firstRun,
+
+      score, band, scoreStatus: status,
+      scoreRead: firstRun ? 'Your first reading. Elevated is common in late August — the trend from here is what matters most.'
+        : isStale ? 'Elevated. Two feeds are late, so this score holds Thursday\u2019s foundation and water readings — marked below.'
+        : 'Elevated, and up 4 — persistent heat and drying soil are doing the work. Two cheap preventive steps are queued below.',
+      scoreTrend: firstRun ? undefined : overall,
+      scoreAsOf: isStale ? '08/22 07:00' : '08/28 06:00',
+      deltaChip: firstRun ? 'Baseline set today' : (delta > 0 ? '↑ ' : '↓ ') + Math.abs(delta) + ' from last week',
+      deltaColor: firstRun ? 'var(--thi-slate-700)' : delta > 0 ? 'var(--thi-elevated-text)' : 'var(--thi-safe-text)',
+      deltaBg: firstRun ? 'var(--thi-mist)' : delta > 0 ? 'var(--thi-elevated-bg)' : 'var(--thi-safe-bg)',
+      verdictLine: firstRun ? 'Persistent heat is the main pressure on 78704 homes right now — your queue below already reflects it.'
+        : 'Persistent heat is driving most of this week\u2019s rise; storms stayed quiet.',
+      ringColor: ONDARK[status], ringDash: (score / 100 * 295.3).toFixed(1) + ' 295.3',
+
+      queueHeading: firstRun ? 'Your queue is ready on day one' : 'What the house needs from you',
+      queueCount: openCount, queueCols: [{ groups: groups.slice(0, 3) }, { groups: groups.slice(3) }],
+      eventCard: true, eventChecks,
+      remindTonight: () => this.showToast('We\u2019ll send the checklist at 7 PM tonight.'),
+
+      signalCards,
+      knowCols: [
+        { title: 'Check now', icon: 'magnifying-glass', color: 'var(--thi-ink)', border: 'none',
+          items: ['Nothing needs immediate attention this week.'] },
+        { title: 'Keep an eye on', icon: 'eye', color: 'var(--thi-navy)', border: '1px solid var(--thi-line-soft)',
+          items: ['HVAC — nine days above normal cooling demand; the filter check covers the cheap end.', 'Foundation — week seven of D1 drought over clay soil; Saturday\u2019s soak is the preventive step.'] },
+        { title: 'Can wait', icon: 'clock', color: 'var(--thi-slate-500)', border: '1px solid var(--thi-line-soft)',
+          items: ['Roof & storm — six quiet weeks and easing.', 'Water — Stage 2 holds; nothing to fix.', 'Trees — established canopy is fine.'] }
+      ],
+
+      compareRows: [['HVAC', 72, 66], ['Foundation', 74, 61], ['Water', 68, 60], ['Storm', 42, 35], ['Trees', 41, 38]].map(([label, zip, austin]) => ({ label, zipW: zip + '%', austinLeft: austin + '%', vals: zip + ' · ' + austin })),
+
+      gridLines: [25, 50, 75].map(v => ({ y: y(v).toFixed(1), ty: (y(v) + 3).toFixed(1), label: String(v) })),
+      chartPath: path,
+      chartArea: path + ' L ' + x(7).toFixed(1) + ' ' + y(0).toFixed(1) + ' L ' + x(0).toFixed(1) + ' ' + y(0).toFixed(1) + ' Z',
+      chartDots: pts.map((p, i) => ({ x: p.x.toFixed(1), y: p.y.toFixed(1), r: i === 7 ? 4.5 : 2.5 })),
+      lastX: (pts[7].x + 9).toFixed(1), lastY: (pts[7].y + 4).toFixed(1),
+      weekLabels: pts.map((p, i) => ({ x: p.x.toFixed(1), t: WEEKS[i] })),
+
+      outlook: [
+        { icon: 'thermometer-simple', name: 'HVAC', dir: '↗', dirColor: 'var(--thi-elevated-text)', note: 'Heat holds through Tue, then eases 5–8°F' },
+        { icon: 'house-line', name: 'Foundation', dir: '→', dirColor: 'var(--thi-slate-500)', note: 'No rain forecast — slow drying continues' },
+        { icon: 'cloud-lightning', name: 'Roof & storm', dir: '→', dirColor: 'var(--thi-slate-500)', note: 'Quiet pattern through the weekend' },
+        { icon: 'drop', name: 'Water', dir: '→', dirColor: 'var(--thi-slate-500)', note: 'Stage 2 holds; next review Sep 8' },
+        { icon: 'tree', name: 'Trees', dir: '↘', dirColor: 'var(--thi-safe-text)', note: 'Slightly easier after Tuesday\u2019s break' }
+      ],
+
+      filterSub: firstRun ? 'tell us once — we remember' : 'the memory no weather app has',
+      filterRows,
+
+      alertToggles: [
+        { key: 'freeze', name: 'Freeze expected', desc: 'Hoses, pipes, faucets checklist · usually Nov–Feb' },
+        { key: 'hail', name: 'Hail reported nearby', desc: 'Ground-check prompt within hours of a report' },
+        { key: 'heat', name: 'Extreme heat', desc: 'Filter + watering-day nudge when advisories hold' },
+        { key: 'storm', name: 'Severe storm watch', desc: 'Secure-loose-items note before it arrives' },
+        { key: 'friday', name: 'Friday morning note', desc: 'The weekly read — what moved and what\u2019s queued' }
+      ].map(t => { const on = this.state.alerts[t.key]; return { ...t, trackBg: on ? 'var(--thi-safe)' : 'rgba(255,255,255,.18)', knobLeft: on ? '21px' : '3px', flip: () => { this.setState(s => ({ alerts: { ...s.alerts, [t.key]: !on } })); this.showToast(on ? 'Off — you can turn it back on anytime.' : 'On — we\u2019ll only write when it\u2019s real.'); } }; }),
+
+      sources: [
+        { name: 'NWS', what: 'Heat, forecast, alerts', updated: 'Every 30–60 min · 2h ago', color: 'var(--thi-slate-500)' },
+        { name: 'NOAA', what: 'Storm events', updated: 'Daily · 4h ago', color: 'var(--thi-slate-500)' },
+        { name: 'USDM', what: 'Drought (county)', updated: isStale ? 'Weekly, Thu · LATE — 6d ago' : 'Weekly, Thu · 21h ago', color: isStale ? 'var(--thi-elevated-text)' : 'var(--thi-slate-500)' },
+        { name: 'Austin Water', what: 'Restriction stage', updated: isStale ? 'Every 6h · LATE — 6d ago' : 'Every 6h · 5h ago', color: isStale ? 'var(--thi-elevated-text)' : 'var(--thi-slate-500)' },
+        { name: 'City of Austin', what: 'Pickup schedules', updated: 'Weekly · current', color: 'var(--thi-slate-500)' },
+        { name: 'THI engine', what: 'Scores recomputed', updated: 'On data change · 2h ago', color: 'var(--thi-slate-500)' }
+      ],
+      nativeShare: share, copyLink: () => { try { navigator.clipboard.writeText('https://texashomeintelligence.com/dashboard/78704/'); } catch (e) {} this.showToast('Link copied — the ZIP card travels with it'); },
+
+      mQueue: [mkItem(QUEUE[0].items[0]), mkItem(QUEUE[2].items[0]), mkItem(QUEUE[1].items[0])],
+      mSignals: Object.keys(SIG).map(k => { const b = bandOf(SIG[k].score); return { name: SIG[k].name, icon: SIG[k].icon, score: SIG[k].score, status: b.status, band: STATUS_WORD[b.status], color: TXT[b.status] }; }),
+
+      footerColumns: [
+        { title: 'Your home', links: [{ label: 'This week', href: '#week' }, { label: 'Filter Center', href: '#filters' }, { label: 'Alerts', href: '#alerts' }] },
+        { title: 'Texas Home Intelligence', links: [{ label: 'Methodology', href: '#sources' }, { label: 'Data catalog', href: '#sources' }, { label: 'Compare ZIPs', href: '#compare' }] },
+        { title: 'Privacy', links: [{ label: 'Privacy policy', href: '#sources' }, { label: 'Privacy choices', href: '#sources' }, { label: 'Sign out', href: '#top' }] }
+      ],
+      toast: this.state.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

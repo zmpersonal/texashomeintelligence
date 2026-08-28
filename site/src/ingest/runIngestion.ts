@@ -87,7 +87,15 @@ export async function runIngestion<T>(
       );
     }
 
-    const observations = mergeObservations(existing.observations, fresh);
+    // Retire seeded placeholders now that a real fetch has succeeded. This is
+    // the one case where dropping rows is correct rather than a violation of
+    // "store history, never overwrite": seeds are fabricated illustrations,
+    // not observed history, so carrying them alongside measured rows would
+    // publish invented facts under a LIVE badge. Merging still preserves every
+    // genuine observation unconditionally.
+    const retained = existing.observations.filter((o) => !o.seed);
+    const retiredCount = existing.observations.length - retained.length;
+    const observations = mergeObservations(retained, fresh);
     const updated: DatasetFile<T> = {
       ...existing,
       status: "live",
@@ -102,7 +110,9 @@ export async function runIngestion<T>(
       location: fetcher.location,
       outcome: "live",
       observationCount: observations.length,
-      message: `Fetched ${fresh.length} raw record(s), ${observations.length} total after merge.`,
+      message:
+        `Fetched ${fresh.length} raw record(s), ${observations.length} total after merge.` +
+        (retiredCount > 0 ? ` Retired ${retiredCount} seeded sample row(s).` : ""),
     };
   } catch (err) {
     const reason = err instanceof Error ? err.message : String(err);

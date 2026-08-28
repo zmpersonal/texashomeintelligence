@@ -8,8 +8,10 @@ interface Props {
   crumbs: Crumb[];
 }
 
+import { origin } from "../lib/urls";
+
 const { crumbs } = Astro.props;
-const site = Astro.site?.toString().replace(/\/$/, "") ?? "";
+const site = origin(Astro.site);
 
 const jsonLd = {
   "@context": "https://schema.org",

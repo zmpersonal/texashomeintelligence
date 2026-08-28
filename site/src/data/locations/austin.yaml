@@ -6,20 +6,3 @@ hubIntro: >-
   events, drought-stressed trees and foundations, and a fast-moving permit
   and construction market. Texas Home Intelligence tracks the local
   conditions that actually affect Austin home-service decisions.
-conditions:
-  - label: "Cooling-degree-day stress"
-    value:
-      status: sample
-    note: "Will track NWS/NOAA heat data once the live feed is connected."
-  - label: "Recent hail / wind events"
-    value:
-      status: sample
-    note: "Will track NOAA Storm Events once the live feed is connected."
-  - label: "Drought / tree & foundation stress"
-    value:
-      status: sample
-    note: "Will track U.S. Drought Monitor data once the live feed is connected."
-  - label: "Mechanical & roofing permit activity"
-    value:
-      status: sample
-    note: "Will track City of Austin permit data once the live feed is connected."

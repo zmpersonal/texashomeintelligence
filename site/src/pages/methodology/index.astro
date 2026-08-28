@@ -1,13 +1,57 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import DataStatus from "../../components/DataStatus.astro";
+import { getCollection } from "astro:content";
+import { findDataset } from "../../lib/datasets";
 
 const title = "Methodology | Texas Home Intelligence";
 const description =
-  "How Texas Home Intelligence sources, updates, labels, and limits the local data it publishes.";
+  "How Texas Home Intelligence sources, updates, labels, and limits the local data it publishes — including every public source we track and its current state.";
+
+/**
+ * The source registry, rendered from `src/data/data-sources.yaml` rather than
+ * re-typed in prose. The page used to list these sources in a hand-written
+ * paragraph while the collection sat unread, so the two could drift apart.
+ *
+ * Each row's state comes from the generated dataset files, not from the YAML's
+ * own `status` field — that field is maintained by hand and is exactly the
+ * kind of thing that goes stale once a feed changes.
+ */
+const sources = await getCollection("dataSources");
+const LOCATIONS = ["austin", "san-antonio", "texas"];
+
+const sourceRows = sources.map((entry) => {
+  const datasets = LOCATIONS.map((loc) => findDataset(entry.data.id, loc)).filter(
+    (d) => d !== undefined,
+  );
+  const live = datasets.filter((d) => d.status === "live");
+  const stale = datasets.filter((d) => d.status === "stale");
+  const newest = datasets
+    .map((d) => d.lastSuccessAt)
+    .filter((v): v is string => Boolean(v))
+    .sort()
+    .at(-1);
+  const status: "live" | "stale" | "sample" =
+    live.length > 0 ? "live" : stale.length > 0 ? "stale" : "sample";
+  return { ...entry.data, status, asOf: status === "sample" ? undefined : newest, connected: datasets.length > 0 };
+});
+
+const connectedCount = sourceRows.filter((r) => r.status === "live").length;
+// The page's own content moves when a feed's state changes, so the newest
+// successful fetch is an honest dateModified for it.
+const dateModified = sourceRows
+  .map((r) => r.asOf)
+  .filter((v): v is string => Boolean(v))
+  .sort()
+  .at(-1);
 ---
 
-<Base title={title} description={description}>
+<Base
+  title={title}
+  description={description}
+  article={{ dateModified, section: "Methodology" }}
+>
   <Breadcrumbs crumbs={[{ name: "Home", url: "/" }, { name: "Methodology", url: "/methodology/" }]} />
 
   <section class="hero">
@@ -24,20 +68,49 @@ const description =
     <div class="wrap" style="max-width:760px;">
       <h2>What this page covers</h2>
       <p>
-        Texas Home Intelligence publishes two kinds of content: the free QuoteReady Project Brief
-        tool, and a continuously updated layer of local homeowner data and interpretation. This
-        page explains how the data layer works.
+        Texas Home Intelligence publishes a continuously updated layer of local homeowner data
+        and plain-language interpretation, plus free homeowner tools. This page explains how the
+        data layer works: where each figure comes from, how often it refreshes, and what we do
+        when a source fails.
       </p>
 
-      <h2>Source-first, always attributed</h2>
+      <h2>Where does Texas Home Intelligence get its data?</h2>
       <p>
-        Every changing figure we publish is designed to state what it measures, its geography, its
-        reporting period, when it was last successfully updated, and which public source it came
-        from &mdash; for example NWS/NOAA weather data, municipal permit feeds, FEMA flood mapping,
-        Texas Department of Insurance loss data, U.S. Drought Monitor drought data, USDA soil
-        data, AirNow air quality, Census ACS housing data, BLS trade-wage data, EIA electricity
-        pricing, ERCOT grid data, and Texas A&amp;M Forest Service wildfire and tree resources.
+        Every figure comes from a named public source, and every page states what it measures,
+        its geography, its reporting period, and when the feed was last confirmed. We track{" "}
+        {sourceRows.length} public sources; {connectedCount} are currently connected and live.
+        The table below is generated from our source registry, so it reflects the real state of
+        each feed rather than a description of it.
       </p>
+      <div class="table-scroll">
+        <table class="data-table">
+          <caption>Every public data source Texas Home Intelligence tracks, and its current state.</caption>
+          <thead>
+            <tr>
+              <th scope="col">Source</th>
+              <th scope="col">Published by</th>
+              <th scope="col">What it provides</th>
+              <th scope="col">State</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sourceRows.map((row) => (
+              <tr>
+                <td>{row.name}</td>
+                <td>{row.org}</td>
+                <td>{row.thiOutput}</td>
+                <td>
+                  {row.connected && row.status !== "sample" ? (
+                    <DataStatus status={row.status} asOf={row.asOf} />
+                  ) : (
+                    <span class="sample-badge">Not yet connected</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <h2>Public / Observed Data vs. Historical Context vs. THI Analysis</h2>
       <p>
@@ -57,24 +130,35 @@ const description =
         explicitly rather than substituting a fabricated number.
       </p>
 
+      <h2>How often does the data update?</h2>
+      <p>
+        Ingestion runs on a schedule and appends to an archive rather than replacing it. Several
+        sources publish on their own lag — NOAA's storm reports run months behind the events they
+        describe, and the EIA revises recent months as utilities report — so each page shows two
+        separate dates: how far the records themselves run, and when we last confirmed the feed.
+        Collapsing those into one "updated" date would overstate how current the data is.
+      </p>
+
       <h2>Historical observations</h2>
       <p>
         Where practical, we store historical values rather than overwriting the previous number, so
         a data page can show a trend, not just a snapshot.
       </p>
 
-      <h2>Placeholder data during development</h2>
+      <h2>Do you ever publish placeholder numbers?</h2>
       <p>
-        Some figures across this site are currently marked <strong>SAMPLE</strong> &mdash; these
-        are illustrative placeholders for layout and product design only, not real facts, and will
-        be replaced by connected live sources before they are presented as current data.
+        No. Sources we have not connected yet are listed above as
+        <strong>Not yet connected</strong> and carry no figures at all. Published data pages
+        contain no placeholder rows: a page is only built once its feed has returned real
+        records, and the fabricated rows used to bootstrap a dataset during development are
+        retired from it automatically the first time a real fetch succeeds.
       </p>
 
       <h2>Not a substitute for professional evaluation</h2>
       <p>
-        Nothing on Texas Home Intelligence &mdash; including a generated QuoteReady Project Brief
-        &mdash; is an inspection, a diagnosis, or a substitute for a licensed professional&rsquo;s
-        on-site evaluation.
+        Nothing on Texas Home Intelligence is an inspection, a diagnosis, or a substitute for a
+        licensed professional&rsquo;s on-site evaluation. Our readings describe conditions
+        recorded across an area; they cannot confirm the state of any individual property.
       </p>
     </div>
   </section>

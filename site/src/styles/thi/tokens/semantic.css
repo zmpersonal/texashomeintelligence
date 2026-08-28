@@ -1,0 +1,31 @@
+/* Semantic aliases — prefer these in components; base values live in colors.css */
+:root{
+  --text-body:var(--thi-ink);
+  --text-secondary:var(--thi-slate-500);
+  --text-strong-secondary:var(--thi-slate-700);
+  --text-muted:var(--thi-slate-400);
+  --text-on-dark:var(--thi-on-dark);
+  --text-on-dark-muted:var(--thi-on-dark-muted);
+  --text-link:var(--thi-link);
+  --text-link-hover:var(--thi-link-deep);
+
+  --surface-page:var(--thi-paper);
+  --surface-card:var(--thi-surface);
+  --surface-alt:var(--thi-mist);
+  --surface-dark:var(--thi-navy-deep);
+  --surface-dark-panel:var(--thi-navy);
+  --surface-sponsored:var(--thi-sponsor-sand);
+
+  --border-default:var(--thi-line);
+  --border-strong-color:var(--thi-line-strong);
+  --border-soft-color:var(--thi-line-soft);
+  --border-sponsored:var(--thi-sponsor-line);
+  --border-on-dark:var(--thi-hairline-dark);
+
+  --accent:var(--thi-amber);
+  --accent-text:var(--thi-amber-deep);
+
+  --font-serif-display:var(--thi-font-display);
+  --font-sans-ui:var(--thi-font-ui);
+  --font-mono-data:var(--thi-font-mono);
+}

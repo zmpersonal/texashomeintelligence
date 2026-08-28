@@ -19,15 +19,6 @@
         "trade": "Plumbers, Pipefitters, and Steamfitters (Austin-Round Rock-Georgetown MSA)",
         "medianHourlyWageUsd": 30.2
       }
-    },
-    {
-      "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.617Z",
-      "key": "2026-07",
-      "value": {
-        "trade": "SAMPLE — Plumbers, Pipefitters, and Steamfitters",
-        "medianHourlyWageUsd": 28.75
-      }
     }
   ]
 }

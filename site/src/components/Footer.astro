@@ -21,11 +21,11 @@ const orderedServices = serviceOrder
     <div class="footer-grid">
       <div>
         <h4>Texas Home Intelligence</h4>
-        <p style="color:#c6d6e4; max-width: 34em;">
-          A free QuoteReady Project Brief tool for Texas homeowners, plus
-          continuously updated local homeowner intelligence for Austin, San
-          Antonio, and beyond. Contractor introductions are optional and
-          never required to use the brief.
+        <p class="footer-blurb">
+          Continuously updated local home intelligence for Texas homeowners —
+          weather and storm exposure, permit activity, drought and energy
+          costs for Austin, San Antonio, and beyond. Every reading shows its
+          source and how current it is.
         </p>
       </div>
       <div>
@@ -38,6 +38,7 @@ const orderedServices = serviceOrder
       <div>
         <h4>Services</h4>
         <ul>
+          <li><a href="/services/">All services</a></li>
           {orderedServices.map((svc) => (
             <li><a href={`/austin/${svc.id}/`}>{svc.data.name}</a></li>
           ))}
@@ -48,15 +49,15 @@ const orderedServices = serviceOrder
         <ul>
           <li><a href="/data/">Data Catalog</a></li>
           <li><a href="/methodology/">Methodology</a></li>
-          <li><a href="/start/">Build My Brief</a></li>
+          <li><a href="/dashboard/">My Dashboard</a></li>
+          <li><a href="/start/">Project Brief</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      &copy; {new Date().getFullYear()} Texas Home Intelligence. QuoteReady
-      Project Briefs organize homeowner-reported information and public
-      data &mdash; they are not an inspection, diagnosis, or professional
-      evaluation.
+      &copy; {new Date().getFullYear()} Texas Home Intelligence. Our readings
+      organize public data and homeowner-reported information &mdash; they are
+      not an inspection, diagnosis, or professional evaluation.
     </div>
   </div>
 </footer>

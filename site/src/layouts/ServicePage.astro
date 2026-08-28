@@ -1,9 +1,31 @@
 ---
+/**
+ * Location × service page.
+ *
+ * Round 2 changes:
+ *  - The SAMPLE card is gone. It rendered `status="sample"` on all 14 indexed
+ *    pages beneath a note promising a live feed "once connected" — while feeds
+ *    for these locations had in fact been live for some time. Each page now
+ *    shows a real reading from a dataset that genuinely bears on the service
+ *    (see lib/serviceSignals.ts), with source and dates, or says plainly that
+ *    no measured signal exists for it yet.
+ *  - The hero's "Sample output" QuoteReady brief panel is replaced by the live
+ *    conditions panel, so the first visual is measured local data.
+ *  - `evaluationItems` and `estimateQuestions` — already authored, previously
+ *    read only by the private brief generator — are surfaced as the extractable
+ *    blocks an answer engine can quote. No new copy was written for them.
+ *  - The visible "Draft copy — pending final editorial review" flag no longer
+ *    renders; it is an internal editorial state, not something to publish.
+ */
 import Base from "./Base.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import DataStatus from "../components/DataStatus.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
+import LiveConditionsPanel from "../components/LiveConditionsPanel.astro";
 import { getEntry } from "astro:content";
+import { hasDataHub, publishedDataPages } from "../lib/dataPages";
+import { findDataset, freshnessOf } from "../lib/datasets";
+import { SERVICE_SIGNALS, SERVICES_WITHOUT_SIGNAL } from "../lib/serviceSignals";
 
 interface Props {
   serviceSlug: string;
@@ -11,6 +33,7 @@ interface Props {
 }
 
 const { serviceSlug, locationSlug } = Astro.props;
+const hasHub = hasDataHub(locationSlug);
 
 const svcEntry = await getEntry("services", serviceSlug);
 const locEntry = await getEntry("locations", locationSlug);
@@ -28,11 +51,42 @@ const otherLocationSlug = locationSlug === "austin" ? "san-antonio" : "austin";
 const otherLocationEntry = await getEntry("locations", otherLocationSlug);
 const otherLocationName = otherLocationEntry?.data.name ?? "";
 
-const title = `${cityName} ${svc.name} Quotes | Free QuoteReady Project Brief`;
-const description = `Build a free QuoteReady ${svc.name} Brief for your ${cityName} project and get quotes that are easier to compare.`;
+// The measured signal for this service in this city, if one genuinely exists.
+const localPages = publishedDataPages(locationSlug);
+const signal = SERVICE_SIGNALS[serviceSlug];
+const signalSpec = signal
+  ? (localPages.find((s) => s.topic === signal.topic) ??
+     (signal.fallbackTopic ? localPages.find((s) => s.topic === signal.fallbackTopic) : undefined))
+  : undefined;
+
+const signalReading = signalSpec
+  ? (() => {
+      const dataset = findDataset(signalSpec.datasetId, signalSpec.location)!;
+      const observations = dataset.observations
+        .filter((o) => !o.seed)
+        .sort((a, b) => b.observedAt.localeCompare(a.observedAt));
+      return {
+        dataset,
+        freshness: freshnessOf(dataset),
+        stats: signalSpec.stats({ dataset, observations }),
+        findings: signalSpec.keyFindings({ dataset, observations }),
+      };
+    })()
+  : undefined;
+
+const noSignalReason = SERVICES_WITHOUT_SIGNAL[serviceSlug];
+
+const title = `${svc.name} in ${cityName}, TX — Local Data & What to Know | Texas Home Intelligence`;
+const description = `What ${cityName} homeowners should know before a ${svc.name.toLowerCase()} project: the local conditions we track, what a contractor should evaluate, and the questions worth asking first.`;
+
+const dateModified = signalReading?.freshness.asOf;
 ---
 
-<Base title={title} description={description}>
+<Base
+  title={title}
+  description={description}
+  article={{ dateModified, section: svc.name }}
+>
   <Breadcrumbs
     crumbs={[
       { name: "Home", url: "/" },
@@ -44,45 +98,71 @@ const description = `Build a free QuoteReady ${svc.name} Brief for your ${cityNa
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        {svc.copyStatus === "draft" && (
-          <>
-            <span class="draft-flag">Draft copy &mdash; pending final editorial review</span>
-            <br />
-          </>
-        )}
         <span class="eyebrow">{eyebrow}</span>
         <h1>{heroTagline}</h1>
         <p class="lede">{svc.heroBody}</p>
-        <a class="btn" href={`/start/?service=${serviceSlug}&location=${locationSlug}`}>
-          Build My QuoteReady Brief
-        </a>
+        <div class="hero-actions">
+          <a class="btn" href={`/start/?service=${serviceSlug}&location=${locationSlug}`}>
+            Build a Project Brief
+          </a>
+          {hasHub && (
+            <a class="btn secondary" href={`/data/${locationSlug}/`}>See {cityName} data</a>
+          )}
+        </div>
         <p class="microcopy" set:html={svc.heroMicrocopy} />
         {svc.safetyNote && <p class="disclaimer-note">{svc.safetyNote}</p>}
         {svc.licensingNote && <p class="disclaimer-note">{svc.licensingNote}</p>}
         {svc.permitNote && <p class="disclaimer-note">{svc.permitNote}</p>}
       </div>
-      <div class="brief-preview">
-        <span class="tag-ready">Sample output</span>
-        <h4>{cityName} {svc.name} &mdash; QuoteReady Brief</h4>
-        <div class="row"><span>Project type</span><b>{svc.name}</b></div>
-        <div class="row"><span>Location</span><b>{cityName}, TX</b></div>
-        <div class="row"><span>Priorities</span><b>Homeowner-ranked</b></div>
-        <div class="row"><span>Questions for contractor</span><b>Included</b></div>
-        <div class="row"><span>Status</span><b>Ready to share</b></div>
-      </div>
+      <LiveConditionsPanel
+        location={locationSlug}
+        locationLabel={cityName}
+        topics={localPages.map((s) => s.topic)}
+      />
     </div>
   </section>
 
-  <section class="block">
-    <div class="wrap">
-      <div class="card data-card">
-        <DataStatus status="sample" />
-        <p class="metric-note">
-          {svc.dataNote} A dedicated <a href={`/data/${locationSlug}/`}>{cityName} data page</a> for {svc.name.toLowerCase()} will replace this note once a live feed is connected.
+  {signalReading && signalSpec && (
+    <section class="block">
+      <div class="wrap" style="max-width:820px;">
+        <h2>What the local data says about {svc.name.toLowerCase()} in {cityName}</h2>
+        <ul class="key-findings">
+          {signalReading.findings.slice(0, 4).map((f) => <li>{f}</li>)}
+        </ul>
+        <p><strong>Why this matters for {svc.name.toLowerCase()}:</strong> {signal.why}</p>
+        <div class="card data-card">
+          <p class="metric-label">{signalReading.stats[0].label}</p>
+          <p class="metric-value">{signalReading.stats[0].value}</p>
+          <DataStatus
+            status={signalReading.dataset.status}
+            asOf={signalReading.freshness.asOf}
+            dataThrough={signalReading.freshness.dataThrough}
+            source={signalReading.dataset.source.name}
+          />
+        </div>
+        <p style="margin-top:16px;">
+          <a href={`/data/${signalSpec.location}/${signalSpec.topic}/`}>
+            Full {signalSpec.h1.toLowerCase()} data, sources and limitations &rarr;
+          </a>
         </p>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
+
+  {!signalReading && noSignalReason && (
+    <section class="block">
+      <div class="wrap" style="max-width:820px;">
+        <h2>What local data do you have on {svc.name.toLowerCase()}?</h2>
+        <p>{noSignalReason}</p>
+        {hasHub && (
+          <p>
+            The conditions we do track for {cityName} are in the{" "}
+            <a href={`/data/${locationSlug}/`}>{cityName} data hub</a>.
+          </p>
+        )}
+      </div>
+    </section>
+  )}
 
   {svc.sections.map((s, i) => (
     <section class={`block ${i % 2 === 1 ? "alt" : ""}`}>
@@ -93,12 +173,41 @@ const description = `Build a free QuoteReady ${svc.name} Brief for your ${cityNa
     </section>
   ))}
 
+  {/* Both lists are existing authored content that previously reached nobody:
+      the brief generator read them privately. As visible, extractable blocks
+      they are among the most quotable things on the page. */}
+  <section class="block alt">
+    <div class="wrap" style="max-width:760px;">
+      <h2>What should a {svc.name.toLowerCase()} contractor evaluate?</h2>
+      <p>
+        A thorough {cityName} {svc.name.toLowerCase()} assessment should cover each of these
+        before anyone quotes a price:
+      </p>
+      <ul class="key-findings">
+        {svc.evaluationItems.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width:760px;">
+      <h2>What should I ask before getting a {svc.name.toLowerCase()} quote?</h2>
+      <p>
+        These are the details that most often change a {svc.name.toLowerCase()} price, and the
+        ones worth settling before you compare quotes:
+      </p>
+      <ul class="key-findings">
+        {svc.estimateQuestions.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+  </section>
+
   <section class="cta-band">
     <div class="wrap">
       <h2>{svc.closingHeading}</h2>
       <p style="max-width:40em;margin:0 auto 20px;">{svc.closingBody}</p>
       <a class="btn" href={`/start/?service=${serviceSlug}&location=${locationSlug}`}>
-        Build My QuoteReady Brief
+        Build a Project Brief
       </a>
     </div>
   </section>
@@ -116,6 +225,8 @@ const description = `Build a free QuoteReady ${svc.name} Brief for your ${cityNa
         <a href={`/${otherLocationSlug}/${serviceSlug}/`}>{otherLocationName}</a>
         {" "}&bull;{" "}
         <a href={`/${locationSlug}/`}>All {cityName} services</a>
+        {" "}&bull;{" "}
+        <a href="/services/">All services</a>
       </p>
     </div>
   </section>

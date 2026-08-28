@@ -1,7 +1,9 @@
 ---
-// THI-round-homepage-nav.md §1/§2 (revised — Services dropped, see repo
-// root round spec + agreed deviation). This component renders on every
-// page via Base.astro, so the header CTA and restructured nav are
+// Nav for this build (CLAUDE.md / ROADMAP.md): `Data · Locations` plus a
+// persistent "My Dashboard" button. Tools and Methodology both left the
+// header this round — Methodology moved to the footer, and the Tools hub is
+// out of scope for this build. Services were dropped earlier and are not
+// coming back. This renders on every page via Base.astro, so the change is
 // sitewide, not homepage-only.
 const ctaLabel = "My Dashboard";
 ---
@@ -15,14 +17,14 @@ const ctaLabel = "My Dashboard";
 <header class="site-nav" id="site-nav">
   <div class="wrap">
     <a class="brand-mark" href="/" aria-label="Texas Home Intelligence — home">
-      <!-- TODO(owner): logo-raw.png isn't in the repo yet (checked working
-      tree + full git history — nothing found). Push it to
-      site/public/images/logo-raw.png (any reasonable resolution; it's
-      scaled to fit the header via CSS, not the file's native size) and
-      it appears automatically — no other change needed. Until then this
-      <img> 404s and the onerror fallback below shows the text wordmark
-      instead, so the header never shows a broken-image icon. -->
-      <img src="/images/logo-raw.png" alt="" class="brand-logo" />
+      <!-- The mark is a swappable asset (logo not finalized — BRAND.md):
+      replace site/public/images/logo.png to change it, nothing else
+      references it. Sized for its 28px header slot at 4x; the previous
+      file was the 1.6 MB 1254px original, shipped twice and loaded on
+      every page. The crawlable wordmark beside it stays regardless, and
+      doubles as the onerror fallback so the header never shows a broken
+      image. -->
+      <img src="/images/logo.png" alt="" width="28" height="28" class="brand-logo" />
       <span class="brand-mark-text">Texas Home<span>Intelligence</span></span>
     </a>
 
@@ -35,9 +37,7 @@ const ctaLabel = "My Dashboard";
 
     <nav aria-label="Primary" class="nav-menu">
       <ul class="nav-links">
-        <li><a href="/tools/">Tools</a></li>
         <li><a href="/data/">Data</a></li>
-        <li><a href="/methodology/">Methodology</a></li>
         <li>
           <details class="nav-dropdown">
             <summary>Locations</summary>

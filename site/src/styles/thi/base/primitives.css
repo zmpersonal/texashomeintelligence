@@ -1,0 +1,31 @@
+/* Optional starter classes — carried over verbatim from thi-tokens.css §Base primitives. */
+body{background:var(--thi-paper);color:var(--thi-ink);font-family:var(--thi-font-ui);font-size:var(--thi-fs-body);line-height:var(--thi-lh-body)}
+h1,h2,h3{font-family:var(--thi-font-display);font-weight:500;color:var(--thi-ink)}
+a{color:var(--thi-link);text-decoration:none}
+a:hover{color:var(--thi-link-deep);text-decoration:underline;text-decoration-color:var(--thi-amber)}
+:focus-visible{outline:none;box-shadow:var(--thi-focus-ring);border-radius:var(--thi-r-sm)}
+.thi-eyebrow{font:600 var(--thi-fs-label)/var(--thi-lh-label) var(--thi-font-ui);text-transform:uppercase;letter-spacing:var(--thi-ls-label);color:var(--thi-slate-700)}
+.thi-num{font-family:var(--thi-font-mono);font-weight:500;font-feature-settings:"tnum" 1}
+.thi-source{font:400 var(--thi-fs-caption)/var(--thi-lh-caption) var(--thi-font-mono);color:var(--thi-slate-500)}
+.thi-btn{font:600 var(--thi-fs-body-sm)/1 var(--thi-font-ui);border-radius:var(--thi-r-md);padding:12px 20px;cursor:pointer;border:1px solid transparent;transition:background var(--thi-dur-fast) var(--thi-ease)}
+.thi-btn--primary{background:var(--thi-navy);color:#fff}
+.thi-btn--primary:hover{background:var(--thi-navy-hover)}
+.thi-btn--secondary{background:transparent;color:var(--thi-navy);border-color:var(--thi-line-strong)}
+.thi-btn--secondary:hover{background:var(--thi-mist)}
+.thi-btn--tertiary{background:transparent;color:var(--thi-link-deep);padding:8px 4px}
+.thi-btn--tertiary:hover{text-decoration:underline;text-decoration-color:var(--thi-amber)}
+.thi-card{background:var(--thi-surface);border:var(--thi-border);border-radius:var(--thi-r-lg);box-shadow:var(--thi-shadow-sm);padding:var(--thi-sp-5) var(--thi-sp-6)}
+.thi-card--actionable{transition:box-shadow var(--thi-dur) var(--thi-ease),border-color var(--thi-dur) var(--thi-ease);cursor:pointer}
+.thi-card--actionable:hover{box-shadow:var(--thi-shadow-md);border-top:2px solid var(--thi-amber)}
+.thi-card--alert{border-left:4px solid var(--thi-elevated);background:var(--thi-elevated-bg)}
+.thi-card--severe{border-left:4px solid var(--thi-severe);background:var(--thi-severe-bg)}
+.thi-card--sponsored{background:var(--thi-sponsor-sand);border:1px solid var(--thi-sponsor-line);border-radius:var(--thi-r-lg)}
+.thi-sponsored-label{font:500 var(--thi-fs-caption)/1 var(--thi-font-mono);text-transform:uppercase;letter-spacing:var(--thi-ls-chip);color:var(--thi-slate-500)}
+.thi-chip{display:inline-flex;align-items:center;gap:6px;font:600 var(--thi-fs-label)/1 var(--thi-font-ui);text-transform:uppercase;letter-spacing:var(--thi-ls-chip);padding:4px 10px;border-radius:var(--thi-r-pill)}
+.thi-chip::before{content:"";width:8px;height:8px;border-radius:50%}
+.thi-chip--safe{background:var(--thi-safe-bg);color:var(--thi-safe-text)}.thi-chip--safe::before{background:var(--thi-safe)}
+.thi-chip--watch{background:var(--thi-watch-bg);color:var(--thi-watch-text)}.thi-chip--watch::before{background:var(--thi-watch)}
+.thi-chip--elevated{background:var(--thi-elevated-bg);color:var(--thi-elevated-text)}.thi-chip--elevated::before{background:var(--thi-elevated)}
+.thi-chip--severe{background:var(--thi-severe-bg);color:var(--thi-severe-text)}.thi-chip--severe::before{background:var(--thi-severe)}
+.thi-chip--unknown{background:var(--thi-unknown-bg);color:var(--thi-unknown-text)}.thi-chip--unknown::before{background:var(--thi-unknown)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
