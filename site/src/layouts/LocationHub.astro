@@ -3,13 +3,17 @@ import Base from "./Base.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import DataStatus from "../components/DataStatus.astro";
 import { getEntry, getCollection } from "astro:content";
-import type { DatasetFile } from "../ingest/types";
+import { findDataset } from "../lib/datasets";
+import { hasDataHub } from "../lib/dataPages";
 
 interface Props {
   locationSlug: string;
 }
 
 const { locationSlug } = Astro.props;
+// `/data/{slug}/` only exists once that location has a published data page —
+// linking to it unconditionally is what made these hubs 404 into the catalog.
+const hasHub = hasDataHub(locationSlug);
 const locEntry = await getEntry("locations", locationSlug);
 if (!locEntry) throw new Error(`LocationHub: unknown location "${locationSlug}"`);
 const loc = locEntry.data;
@@ -40,19 +44,9 @@ const LIVE_SOURCE_BY_LABEL: Record<string, Record<string, { datasetId: string; l
   },
 };
 
-const generatedFiles = import.meta.glob<{ default: DatasetFile<unknown> }>("../data/generated/*/*.json", {
-  eager: true,
-});
-
-function findGeneratedFile(datasetId: string, location: string): DatasetFile<unknown> | undefined {
-  const suffix = `/data/generated/${datasetId}/${location}.json`;
-  const match = Object.entries(generatedFiles).find(([path]) => path.endsWith(suffix));
-  return match?.[1].default;
-}
-
 const conditions = loc.conditions.map((c) => {
   const source = LIVE_SOURCE_BY_LABEL[locationSlug]?.[c.label];
-  const dataset = source && findGeneratedFile(source.datasetId, source.location);
+  const dataset = source && findDataset(source.datasetId, source.location);
   if (!dataset) return c;
   return {
     ...c,
@@ -102,7 +96,11 @@ const description = `Local homeowner intelligence and free QuoteReady Project Br
         A snapshot of the conditions Texas Home Intelligence tracks for {loc.name} homeowners.
         Cards show LIVE once a public feed is connected for {loc.name}; the rest stay clearly
         marked SAMPLE until then &mdash; see the{" "}
-        <a href={`/data/${locationSlug}/`}>{loc.name} data catalog</a>.
+        {hasHub ? (
+          <a href={`/data/${locationSlug}/`}>{loc.name} data catalog</a>
+        ) : (
+          <a href="/data/">data catalog</a>
+        )}.
       </p>
       <div class="grid-4">
         {conditions.map((c) => (

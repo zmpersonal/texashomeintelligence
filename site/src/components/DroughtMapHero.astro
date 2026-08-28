@@ -9,6 +9,11 @@
  * .github/workflows/data-ingestion.yml). That script is non-fatal on
  * failure, so this file may briefly be a week stale rather than missing.
  *
+ * The caption links straight to NDMC's Texas map: attribution belongs on the
+ * source, and there is no internal drought page yet. When
+ * /data/austin/drought/ is published, point these two links there instead —
+ * they linked to that URL before it existed, and 404'd from the homepage.
+ *
  * TODO(owner): if you'd rather point at a different official source
  * (e.g. an embeddable NDMC/drought.gov widget) or a live hotlink NDMC
  * documents as stable, this is the one place to change it — update
@@ -21,10 +26,10 @@ const MAP_ALT = "U.S. Drought Monitor map of Texas, showing current county-level
 <div class="hero-photo drought-map" id="drought-map">
   <img src={MAP_SRC} alt={MAP_ALT} width="800" height="600" loading="eager" />
   <p class="drought-map-caption">
-    <a href="/data/austin/drought/">U.S. Drought Monitor — updated weekly</a>
+    <a href="https://droughtmonitor.unl.edu/CurrentMap/StateDroughtMonitor.aspx?TX">U.S. Drought Monitor — updated weekly</a>
   </p>
   <p class="drought-map-fallback">
-    U.S. Drought Monitor map — <a href="/data/austin/drought/">see current Texas drought conditions</a>.
+    U.S. Drought Monitor map — <a href="https://droughtmonitor.unl.edu/CurrentMap/StateDroughtMonitor.aspx?TX">see current Texas drought conditions</a>.
   </p>
 </div>
 

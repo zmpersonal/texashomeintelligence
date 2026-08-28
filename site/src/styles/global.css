@@ -257,6 +257,22 @@ section.block h2 { max-width: 40em; }
 .data-card .metric-note { font-size: 0.82rem; margin-top: 6px; }
 .data-meta { font-size: 0.8rem; color: var(--ink-soft); border-top: 1px solid var(--line); margin-top: 14px; padding-top: 10px; }
 .data-meta span { display: inline-block; margin-right: 10px; }
+/* Separator between freshness fields. Rendered so the line reads correctly
+   when the markup is stripped to plain text (how an answer engine quotes it),
+   not only when the margins are visible. */
+.data-meta-sep { color: var(--line); }
+
+/* The headline figure on a data card: the reading itself, given the weight. */
+.metric-value { font-size: 1.6rem; font-weight: 800; margin: 6px 0 0; }
+
+/* Key-findings block — the extractable summary at the top of a data page. */
+.key-findings { margin: 0 0 1em; padding-left: 1.1em; }
+.key-findings li { margin-bottom: 8px; }
+
+/* Wide data tables scroll inside their own box so the page body never scrolls
+   horizontally on a phone. */
+.table-scroll { overflow-x: auto; }
+table.data-table caption { text-align: left; font-size: 0.85rem; color: var(--ink-soft); padding-bottom: 8px; }
 
 table.data-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin: 12px 0 20px; }
 table.data-table th, table.data-table td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); }

@@ -10,14 +10,23 @@
  *  - "stale"   → last known-good value, preserved rather than zeroed out
  *  - "error"   → feed failed and no valid value has ever been obtained
  *  - "live"    → a real, currently-fresh value
+ *
+ * `asOf` (when we last confirmed the feed) and `dataThrough` (how far the
+ * records themselves actually run) are deliberately separate: several sources
+ * publish on a lag, so a feed checked today can still only cover through
+ * months ago. Collapsing the two would overstate how current the data is.
+ * Callers may pass a raw ISO timestamp or an already-human string.
  */
+import { formatDate, machineDate } from "../lib/format";
+
 interface Props {
   status: "sample" | "stale" | "live" | "error";
   asOf?: string;
+  dataThrough?: string;
   source?: string;
 }
 
-const { status, asOf, source } = Astro.props;
+const { status, asOf, dataThrough, source } = Astro.props;
 
 const badgeClass = {
   sample: "sample-badge",
@@ -43,7 +52,17 @@ const badgeLabel = {
   </p>
 ) : (
   <p class="data-meta">
-    {asOf && <span>{status === "stale" ? "Last known value:" : "Updated:"} {asOf}</span>}
+    {dataThrough && (
+      <span>Data through <time datetime={machineDate(dataThrough)}>{formatDate(dataThrough)}</time></span>
+    )}
+    {dataThrough && asOf && <span aria-hidden="true" class="data-meta-sep">·</span>}
+    {asOf && (
+      <span>
+        {status === "stale" ? "Last known value:" : "Updated:"}{" "}
+        <time datetime={machineDate(asOf)}>{formatDate(asOf)}</time>
+      </span>
+    )}
+    {(dataThrough || asOf) && source && <span aria-hidden="true" class="data-meta-sep">·</span>}
     {source && <span>Source: {source}</span>}
   </p>
 )}

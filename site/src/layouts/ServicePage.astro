@@ -4,6 +4,7 @@ import Breadcrumbs from "../components/Breadcrumbs.astro";
 import DataStatus from "../components/DataStatus.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
 import { getEntry } from "astro:content";
+import { hasDataHub } from "../lib/dataPages";
 
 interface Props {
   serviceSlug: string;
@@ -11,6 +12,8 @@ interface Props {
 }
 
 const { serviceSlug, locationSlug } = Astro.props;
+// `/data/{slug}/` only exists once that location has a published data page.
+const hasHub = hasDataHub(locationSlug);
 
 const svcEntry = await getEntry("services", serviceSlug);
 const locEntry = await getEntry("locations", locationSlug);
@@ -78,7 +81,11 @@ const description = `Build a free QuoteReady ${svc.name} Brief for your ${cityNa
       <div class="card data-card">
         <DataStatus status="sample" />
         <p class="metric-note">
-          {svc.dataNote} A dedicated <a href={`/data/${locationSlug}/`}>{cityName} data page</a> for {svc.name.toLowerCase()} will replace this note once a live feed is connected.
+          {svc.dataNote} A dedicated {hasHub ? (
+            <a href={`/data/${locationSlug}/`}>{cityName} data page</a>
+          ) : (
+            <a href="/data/">data page</a>
+          )} for {svc.name.toLowerCase()} will replace this note once a live feed is connected.
         </p>
       </div>
     </div>
