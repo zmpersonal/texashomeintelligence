@@ -9,14 +9,25 @@ import Base from "../../layouts/Base.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import DataStatus from "../../components/DataStatus.astro";
 import { getCollection } from "astro:content";
-import { publishedDataPages } from "../../lib/dataPages";
+import { dataHubLocations, publishedDataPages } from "../../lib/dataPages";
 import { findDataset, freshnessOf } from "../../lib/datasets";
 
-const locations = await getCollection("locations");
-const locationOrder = ["austin", "san-antonio"];
-const orderedLocations = locationOrder
-  .map((id) => locations.find((l) => l.id === id))
-  .filter((l) => l !== undefined);
+// Locations come from the registry so statewide datasets (Texas) are listed
+// alongside the metros; the collection supplies the county blurb where one
+// exists. Any collection location without published pages is still listed, so
+// the catalog reflects everywhere we operate rather than only what has shipped.
+const collection = await getCollection("locations");
+const hubs = dataHubLocations();
+const listedLocations = [
+  ...hubs.map(({ location, label }) => ({
+    id: location,
+    name: label,
+    counties: collection.find((l) => l.id === location)?.data.counties,
+  })),
+  ...collection
+    .filter((l) => !hubs.some((h) => h.location === l.id))
+    .map((l) => ({ id: l.id, name: l.data.name, counties: l.data.counties })),
+];
 
 const title = "Texas Homeowner Data Catalog | Texas Home Intelligence";
 const description =
@@ -63,18 +74,18 @@ const datasetJsonLd = {
     <div class="wrap" style="max-width:760px;">
       <h2>By location</h2>
       <div class="grid-2">
-        {orderedLocations.map((loc) => {
+        {listedLocations.map((loc) => {
           const forLocation = published.filter(({ spec }) => spec.location === loc.id);
           return (
             <div class="card">
-              <h3>{loc.data.name}</h3>
+              <h3>{loc.name}</h3>
               <p>
-                Weather &amp; storm exposure, permit activity, drought conditions, and more for{" "}
-                {loc.data.counties}.
+                Weather &amp; storm exposure, permit activity, drought conditions, and more
+                {loc.counties ? ` for ${loc.counties}` : ""}.
               </p>
               {forLocation.length > 0 ? (
                 <>
-                  <p><a href={`/data/${loc.id}/`}>All {loc.data.name} data &rarr;</a></p>
+                  <p><a href={`/data/${loc.id}/`}>All {loc.name} data &rarr;</a></p>
                   <ul>
                     {forLocation.map(({ spec, dataset, freshness }) => (
                       <li>
@@ -91,7 +102,7 @@ const datasetJsonLd = {
                 </>
               ) : (
                 <p style="color:var(--ink-soft);font-size:0.9rem;">
-                  No data pages published yet for {loc.data.name}.
+                  No data pages published yet for {loc.name}.
                 </p>
               )}
             </div>

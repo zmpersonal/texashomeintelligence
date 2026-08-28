@@ -1,123 +1,17 @@
 /**
- * The registry of published data pages.
- *
- * Adding a data page = adding an entry here, not copying a `.astro` file
- * (CLAUDE.md: config-driven, not hand-coded pages). The route
- * `src/pages/data/[location]/[topic]/` and the `/data/[location]/` hub both
- * generate from this array, and `DataSetPage.astro` renders every entry
- * through one template.
- *
- * Two rules every entry must honor:
- *
- *  1. **Only genuinely-live feeds get a page.** `publishable()` refuses to
- *     build a page for a dataset that has never had a successful fetch, so a
- *     page can never present seeded placeholders as measured facts.
- *  2. **Figures are computed from the observations, never typed in.** Every
- *     number in a stat, key finding, or answer below is derived at build time
- *     from the dataset file, so prose cannot drift away from the data (the
- *     failure this round exists to fix: a page whose text claimed "no live
- *     feed is connected" while its own badge read LIVE over 75 real rows).
+ * Austin · roofing — NOAA Storm Events, framed for roof decisions.
+ * See ./types.ts for the contract and the two rules every spec honors.
  */
-import type { DatasetFile, Observation } from "../ingest/types";
-import type { StormEventValue } from "../ingest/fetchers/noaaStormEvents";
-import { earliestObservedAt, findDataset, latestObservedAt } from "./datasets";
-import { formatMonth } from "./format";
-
-export interface DataPageContext<T> {
-  dataset: DatasetFile<T>;
-  /** Observations, newest first. Seeded rows are already retired upstream. */
-  observations: Observation<T>[];
-}
-
-export interface DataPageStat {
-  label: string;
-  value: string;
-}
-
-export interface DataPageColumn<T> {
-  header: string;
-  cell: (o: Observation<T>) => string;
-}
-
-export interface DataPageQuestion {
-  /** Phrased the way a homeowner actually asks an answer engine. The answer's
-   * first one or two sentences must stand alone as the extractable reply. */
-  q: string;
-  a: string;
-}
-
-export interface DataPageSpec<T> {
-  location: string;
-  topic: string;
-  locationLabel: string;
-  datasetId: string;
-
-  title: string;
-  description: string;
-  eyebrow: string;
-  h1: string;
-  lede: string;
-
-  /** schema.org Dataset metadata. */
-  datasetName: string;
-  datasetDescription: string;
-  spatialCoverage: string;
-  keywords: string[];
-  /** Basename of the CSV served beside the page, e.g. "hail-events" ->
-   * /data/austin/roofing/hail-events.csv. Existing URLs must not break. */
-  csvName: string;
-
-  /** One-line "what this measures / where / how often" statement. */
-  coverage: (ctx: DataPageContext<T>) => string;
-  keyFindings: (ctx: DataPageContext<T>) => string[];
-  stats: (ctx: DataPageContext<T>) => DataPageStat[];
-  questions: (ctx: DataPageContext<T>) => DataPageQuestion[];
-  tableCaption: string;
-  columns: DataPageColumn<T>[];
-  interpretation: (ctx: DataPageContext<T>) => {
-    data: string;
-    interpretation: string;
-    meaning: string;
-    limitations: string;
-  };
-  methodology: string;
-}
-
-/** A dataset may back a published page only once a real fetch has succeeded.
- * "sample" means every row is fabricated; "error" means nothing was ever
- * fetched. Neither belongs on an indexed page (REVIEW.md). */
-export function publishable<T>(dataset: DatasetFile<T> | undefined): boolean {
-  if (!dataset) return false;
-  if (dataset.status !== "live" && dataset.status !== "stale") return false;
-  return dataset.observations.some((o) => !o.seed);
-}
-
-// --- helpers shared by specs -------------------------------------------
-
-function coverageRange<T>(observations: Observation<T>[]): string {
-  const from = earliestObservedAt(observations);
-  const to = latestObservedAt(observations);
-  if (!from || !to) return "an unreported period";
-  const fromLabel = formatMonth(from);
-  const toLabel = formatMonth(to);
-  return fromLabel === toLabel ? fromLabel : `${fromLabel} and ${toLabel}`;
-}
-
-function inchesOf(magnitude: string): number {
-  const n = parseFloat(magnitude.replace(/[^0-9.]/g, ""));
-  return Number.isNaN(n) ? 0 : n;
-}
-
-function countBy<T>(items: T[], key: (t: T) => string): [string, number][] {
-  const counts = new Map<string, number>();
-  for (const item of items) counts.set(key(item), (counts.get(key(item)) ?? 0) + 1);
-  return [...counts.entries()].sort((a, b) => b[1] - a[1]);
-}
-
-function list(parts: string[]): string {
-  if (parts.length <= 1) return parts[0] ?? "";
-  return `${parts.slice(0, -1).join(", ")} and ${parts.at(-1)}`;
-}
+import type { Observation } from "../../ingest/types";
+import type { StormEventValue } from "../../ingest/fetchers/noaaStormEvents";
+import { formatMonth } from "../format";
+import {
+  type DataPageSpec,
+  coverageRange,
+  countBy,
+  list,
+  numberIn as inchesOf,
+} from "./types";
 
 // --- Austin · roofing (NOAA Storm Events) -------------------------------
 
@@ -127,7 +21,7 @@ function list(parts: string[]): string {
  * not a measured value. */
 const HAIL_DAMAGE_THRESHOLD_IN = 1.0;
 
-const austinRoofing: DataPageSpec<StormEventValue> = {
+export const austinRoofing: DataPageSpec<StormEventValue> = {
   location: "austin",
   topic: "roofing",
   locationLabel: "Austin",
@@ -296,26 +190,3 @@ const austinRoofing: DataPageSpec<StormEventValue> = {
   methodology:
     "Source: NOAA Storm Events Database, filtered to Travis County and its bordering counties (Williamson, Hays, Bastrop, Caldwell, Burnet and Blanco). Records are re-fetched on each ingestion run and merged by NOAA's own event identifier, so corrections republished by NOAA update in place rather than duplicating. Observations are append-only: if a scheduled update fails, the last known-good values are preserved and marked stale with the date they were last confirmed, rather than being shown as zero or blank.",
 };
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- the registry is
-// heterogeneous by design: each spec is internally consistent about its own
-// observation value type, but they differ from one another.
-export const DATA_PAGES: DataPageSpec<any>[] = [austinRoofing];
-
-/**
- * The specs that actually build, optionally narrowed to one location. Every
- * route, hub and cross-link resolves through this so nothing can link to a
- * data page that was skipped for want of a live feed.
- */
-export function publishedDataPages(location?: string): DataPageSpec<any>[] {
-  return DATA_PAGES.filter(
-    (spec) =>
-      (location === undefined || spec.location === location) &&
-      publishable(findDataset(spec.datasetId, spec.location)),
-  );
-}
-
-/** Whether `/data/{location}/` exists — callers must not link to it otherwise. */
-export function hasDataHub(location: string): boolean {
-  return publishedDataPages(location).length > 0;
-}

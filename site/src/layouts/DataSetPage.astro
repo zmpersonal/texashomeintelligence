@@ -36,6 +36,9 @@ const keyFindings = spec.keyFindings(ctx);
 const stats = spec.stats(ctx);
 const questions = spec.questions(ctx);
 const interpretation = spec.interpretation(ctx);
+// Feeds with thousands of records narrow the on-page table to a readable
+// slice; the CSV endpoint always serves the complete set.
+const tableRows = spec.tableRows ? spec.tableRows(ctx) : observations;
 
 const pageUrl = new URL(`/data/${spec.location}/${spec.topic}/`, Astro.site).toString();
 const csvUrl = new URL(
@@ -133,31 +136,53 @@ const faqJsonLd = {
     </div>
   </section>
 
-  <section class="block">
-    <div class="wrap" style="max-width:900px;">
-      <h2>Recorded events</h2>
-      <div class="table-scroll">
-        <table class="data-table">
-          <caption>{spec.tableCaption}</caption>
-          <thead>
-            <tr>{spec.columns.map((col) => <th scope="col">{col.header}</th>)}</tr>
-          </thead>
-          <tbody>
-            {observations.map((o) => (
-              <tr>
-                {spec.columns.map((col) => <td>{col.cell(o)}</td>)}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+  {spec.aggregate && (
+    <section class="block">
+      <div class="wrap" style="max-width:900px;">
+        <h2>{spec.aggregate.caption}</h2>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>{spec.aggregate.headers.map((h) => <th scope="col">{h}</th>)}</tr>
+            </thead>
+            <tbody>
+              {spec.aggregate.rows(ctx).map((row) => (
+                <tr>{row.map((cell) => <td>{cell}</td>)}</tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <p>
-        <a href={`/data/${spec.location}/${spec.topic}/${spec.csvName}.csv`}>
-          Download these {observations.length} records as CSV
-        </a>
-      </p>
-    </div>
-  </section>
+    </section>
+  )}
+
+  {tableRows.length > 0 && (
+    <section class="block">
+      <div class="wrap" style="max-width:900px;">
+        <h2>Recorded records</h2>
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>{spec.tableCaption}</caption>
+            <thead>
+              <tr>{spec.columns.map((col) => <th scope="col">{col.header}</th>)}</tr>
+            </thead>
+            <tbody>
+              {tableRows.map((o) => (
+                <tr>
+                  {spec.columns.map((col) => <td>{col.cell(o)}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p>
+          <a href={`/data/${spec.location}/${spec.topic}/${spec.csvName}.csv`}>
+            Download all {observations.length.toLocaleString("en-US")} records as CSV
+          </a>
+        </p>
+      </div>
+    </section>
+  )}
 
   <section class="block alt">
     <div class="wrap" style="max-width:760px;">
