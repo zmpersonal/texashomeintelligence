@@ -167,9 +167,22 @@ table.data-table td { font-variant-numeric: tabular-nums; }
 /* Compact-on-scroll: the topbar collapses and the nav links fade once
  * the visitor has scrolled past the top of the page — the sticky header
  * itself never changes height, only content around/inside it. */
-.topbar { max-height: 60px; overflow: hidden; transition: max-height 0.25s ease, opacity 0.25s ease; }
-.topbar .wrap { transition: padding 0.25s ease; }
-body.is-scrolled .topbar { max-height: 0; opacity: 0; }
+/* The bar collapses on scroll without a magic height.
+ *
+ * It used to be capped at `max-height: 60px; overflow: hidden`, which clipped
+ * its own text the moment the content grew past 60px — browser zoom, an OS
+ * text-size setting, or any font with taller metrics than the one measured
+ * against all did it, so it clipped on real desktops while looking correct at
+ * default metrics. Reproduced at 1.25x text scale: content 63px inside a 60px
+ * box, at every viewport width.
+ *
+ * Animating `grid-template-rows` from 1fr to 0fr collapses it just as smoothly
+ * and has no height to guess wrong: open, the row is sized by its content, so
+ * the bar cannot clip whatever the text metrics turn out to be. */
+.topbar { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.25s ease, opacity 0.25s ease; }
+/* Both are required for the 0fr collapse to actually hide the row. */
+.topbar .wrap { min-height: 0; overflow: hidden; transition: padding 0.25s ease; }
+body.is-scrolled .topbar { grid-template-rows: 0fr; opacity: 0; }
 body.is-scrolled .topbar .wrap { padding-top: 0; padding-bottom: 0; }
 
 /* Mobile hamburger — CSS-only "checkbox hack," no JS. The checkbox is

@@ -155,7 +155,7 @@ const description =
       <p class="lede">
         The Home Stress Index is a 0–100 measure of how hard recent weather and drought have been on
         houses in a given Texas county or metro. It is built from five signals, each computed by
-        published arithmetic from public records, and combined using the fixed weights below.
+        published arithmetic from public records, and combined using the fixed weights below.{" "}
         <strong>{CONDITIONS_NOT_DAMAGE}</strong>
       </p>
     </div>
@@ -177,8 +177,8 @@ const description =
   <section class="block alt">
     <div class="wrap" style="max-width:900px;">
       <h2>What are the five signals, and how are they weighted?</h2>
-      <div style="overflow-x:auto;">
-        <table>
+      <div class="table-scroll">
+        <table class="data-table">
           <thead>
             <tr><th>Signal</th><th>Weight</th><th>What it measures</th><th>Sources</th></tr>
           </thead>
@@ -248,8 +248,8 @@ const description =
             dataThrough={area.freshness.dataThrough}
             source="Composite of the sources listed above"
           />
-          <div style="overflow-x:auto;">
-            <table>
+          <div class="table-scroll">
+            <table class="data-table">
               <thead><tr><th>Signal</th><th>Score</th><th>Band</th><th>Records through</th></tr></thead>
               <tbody>
                 {area.signals.map((s) => (
@@ -290,8 +290,8 @@ const description =
         federal crosswalk rather than by a guess about ZIP-prefix ranges. A ZIP outside that list
         returns &ldquo;not covered yet&rdquo; rather than being matched to the nearest metro.
       </p>
-      <div style="overflow-x:auto;">
-        <table>
+      <div class="table-scroll">
+        <table class="data-table">
           <thead>
             <tr><th>Metro</th><th>ZIPs</th><th>Counties (ZIPs each)</th><th>Spanning &gt;1 county</th><th>Drought ingested</th></tr>
           </thead>
@@ -337,8 +337,8 @@ const description =
       </p>
 
       <h2>What public data is deliberately left out?</h2>
-      <div style="overflow-x:auto;">
-        <table>
+      <div class="table-scroll">
+        <table class="data-table">
           <thead><tr><th>Source</th><th>Why it is not in the score</th></tr></thead>
           <tbody>
             {EXCLUDED_INPUTS.map((x) => (
