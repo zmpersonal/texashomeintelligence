@@ -1,56 +1,106 @@
 ---
 /**
- * One of the five signals, on the information ladder.
+ * One signal, on the full information ladder.
  *
- * Data rung: the mono 0-100 value plus a band chip.
- * Analysis rung: one plain sentence, generated from the engine's Layer C
- * driver codes rather than written here — the dashboard must not author claims
- * about data it is only displaying.
- * Then the mono source / data-through / updated line.
+ *   Data           mono value + band chip + sparkline
+ *   Analysis       ONE sentence — the rest is behind the disclosure
+ *   Recommendation an observational action, below a divider, from the fixed
+ *                  table in signalActions.ts. Never on a Normal reading.
  *
- * No Estimate or Recommendation rung this round: we have nothing to put on
- * them that would not be invented.
+ * The density change: Round 4 put the engine's whole Layer C paragraph on the
+ * card, which ran to five or six sentences on an active signal and made a grid
+ * of five unreadable. The card now shows the first sentence and puts
+ * everything else — the remaining detail, the arithmetic, the limitation —
+ * behind "Why this reading". Nothing is removed; it is one click away, and the
+ * methodology page carries the same material in full.
  *
- * An unavailable signal renders as a full card in the "not published" state,
- * never as a blank or a zero. A zero would read as "conditions are calm here",
- * which is a different claim from "we don't measure this here".
+ * The action is kept visually below a divider so it can never read as part of
+ * the measurement. It describes what to look at, never what to have done —
+ * see signalActions.ts for why that rule is structural rather than editorial.
  */
-import { BAND_TOKEN } from "../lib/dashboard";
+import { BAND_TOKEN } from "../lib/dashboardShared";
 import type { SignalResult } from "../lib/stressIndex";
+import type { SignalSeries } from "../lib/signalSeries";
+import { actionFor } from "../lib/signalActions";
+import { sparkline } from "../lib/sparkline";
 import { formatDate, machineDate } from "../lib/format";
 
 interface Props {
   signal: SignalResult;
+  series?: SignalSeries;
+  /** Logged-in only: offer to turn the action into a tracked reminder. */
+  allowReminder?: boolean;
 }
-const { signal } = Astro.props as Props;
+const { signal, series, allowReminder = false } = Astro.props as Props;
+
 const token = signal.computable ? BAND_TOKEN[signal.layerB.band] : "unknown";
 const sources = [...new Set(signal.layerA.map((a) => a.sourceName))].join(" · ");
+const action = signal.computable ? actionFor(signal.id, signal.layerB.band) : undefined;
+
+// First sentence for the card; the remainder goes behind the disclosure.
+const detail = signal.computable ? signal.layerC.detail : (signal.limitation ?? "");
+const firstStop = detail.indexOf(". ");
+const lead = firstStop > 0 ? detail.slice(0, firstStop + 1) : detail;
+const rest = firstStop > 0 ? detail.slice(firstStop + 2) : "";
+
+const spark = series && series.values.length > 1 ? sparkline(series.values, { width: 240, height: 34 }) : undefined;
 ---
 
 <article class={`signal-card${signal.computable ? "" : " is-unavailable"}`} data-signal={signal.id}>
   <p class="eyebrow signal-eyebrow">{signal.label}</p>
 
-  {signal.computable ? (
-    <>
-      <div class="signal-readout">
-        <span class="signal-value" data-value>{signal.layerB.score}</span>
-        <span class="signal-scale">/100</span>
-        <span class={`status-chip status-${token}`} data-band>
-          <span class="status-dot" aria-hidden="true"></span>{signal.layerB.bandLabel}
-        </span>
-      </div>
-      <p class="signal-analysis">{signal.layerC.detail}</p>
-    </>
-  ) : (
-    <>
-      <div class="signal-readout">
-        <span class="signal-value signal-value--absent" data-value>—</span>
-        <span class={`status-chip status-unknown`} data-band>
-          <span class="status-dot" aria-hidden="true"></span>Not published for this area
-        </span>
-      </div>
-      <p class="signal-analysis" data-unavailable-reason>{signal.limitation}</p>
-    </>
+  <div class="signal-readout">
+    <span class={`signal-value${signal.computable ? "" : " signal-value--absent"}`} data-value>
+      {signal.computable ? signal.layerB.score : "—"}
+    </span>
+    {signal.computable && <span class="signal-scale">/100</span>}
+    <span class={`status-chip status-${token}`} data-band>
+      <span class="status-dot" aria-hidden="true"></span>
+      {signal.computable ? signal.layerB.bandLabel : "Not published for this area"}
+    </span>
+  </div>
+
+  {spark && series && (
+    <figure class="signal-spark" data-spark>
+      <svg viewBox={`0 0 ${spark.width} ${spark.height}`} width="100%" height={spark.height}
+           preserveAspectRatio="none" role="img" aria-label={series.label}>
+        <path d={spark.area} class={`spark-area spark-${token}`} />
+        <path d={spark.line} class={`spark-line spark-${token}`} fill="none" />
+        <circle cx={spark.last.x} cy={spark.last.y} r="2.5" class={`spark-dot spark-${token}`} />
+      </svg>
+      <figcaption class="data-meta">{series.label}</figcaption>
+    </figure>
+  )}
+
+  <p class="signal-analysis" data-lead>{lead}</p>
+
+  {(rest || signal.computable) && (
+    <details class="signal-why" data-why>
+      <summary>Why this reading &rarr;</summary>
+      {rest && <p class="signal-analysis">{rest}</p>}
+      {signal.computable && signal.layerB.terms.length > 0 && (
+        <ul class="signal-terms">
+          {signal.layerB.terms.map((t) => (
+            <li><span class="signal-term-points">{t.points}</span> {t.label}{t.detail ? ` — ${t.detail}` : ""}</li>
+          ))}
+        </ul>
+      )}
+      <p class="data-meta">
+        <a href="/methodology/home-stress-index/">Full methodology &nearr;</a>
+      </p>
+    </details>
+  )}
+
+  {action && (
+    <div class="signal-action" data-action-code={action.code}>
+      <p class="signal-action-text" data-action-text>{action.text}</p>
+      {allowReminder && action.taskKey && (
+        <form method="post" action="/api/reminders/" class="signal-action-form" data-action-reminder>
+          <input type="hidden" name="task_key" value={action.taskKey} />
+          <button class="btn secondary" type="submit" data-add-reminder-btn>Track this</button>
+        </form>
+      )}
+    </div>
   )}
 
   {sources && (

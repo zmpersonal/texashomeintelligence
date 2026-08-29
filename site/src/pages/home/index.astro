@@ -47,6 +47,7 @@ const signals = [...index.signals].sort((a, b) => order.indexOf(a.id) - order.in
 const unavailable = signals.filter((s) => !s.computable);
 const weightCoverage = index.dashboard.weightCoverage;
 const delta = index.dashboard.delta;
+const series = index.dashboard.series ?? {};
 const composite = index.compositeExplanation;
 const band = index.composite;
 const token = BAND_TOKEN[band.band];
@@ -230,7 +231,7 @@ const unused = TASK_CATALOGUE.filter((t) => !reminders.some((r) => r.taskKey ===
         0&ndash;100 &mdash; never a prediction of damage to your house.{" "}
         <a href="/methodology/home-stress-index/">How scoring works &nearr;</a>
       </p>
-      <div class="signal-grid">{signals.map((signal) => <SignalCard signal={signal} />)}</div>
+      <div class="signal-grid">{signals.map((signal) => <SignalCard signal={signal} series={series[signal.id]} allowReminder />)}</div>
     </div>
   </section>
 
@@ -314,6 +315,21 @@ const unused = TASK_CATALOGUE.filter((t) => !reminders.some((r) => r.taskKey ===
         window.location.reload();
       } else {
         btn.disabled = false;
+      }
+    });
+  });
+
+  // "Track this" on a signal card creates the matching reminder, reusing the
+  // same endpoint as the queue's add form.
+  document.querySelectorAll("[data-action-reminder]").forEach((node) => {
+    if (!(node instanceof HTMLFormElement)) return;
+    node.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const res = await fetch("/api/reminders/", { method: "POST", body: new FormData(node) });
+      if (res.ok) {
+        window.__thiTrack?.("reminder_created", { from: "signal_action" });
+        window.location.assign("/home/#this-week");
+        window.location.reload();
       }
     });
   });

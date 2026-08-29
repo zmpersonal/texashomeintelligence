@@ -3,7 +3,7 @@
  */
 import type { APIRoute } from "astro";
 import { authenticate, json, UNAUTHORIZED } from "../../../lib/auth/guard";
-import { createReminder } from "../../../lib/account/db";
+import { createReminder, listReminders } from "../../../lib/account/db";
 import { TASK_CATALOGUE, addDays } from "../../../lib/account/reminders";
 
 export const prerender = false;
@@ -23,6 +23,17 @@ export const POST: APIRoute = async ({ request }) => {
   const cadence = Number(form.get("cadence_days") ?? task.defaultCadenceDays);
   if (!Number.isInteger(cadence) || cadence < 1 || cadence > 3650) {
     return json({ error: "Cadence must be between 1 and 3650 days." }, 400);
+  }
+
+  // Idempotent per task. "Track this" appears on a signal card that may be on
+  // screen every visit, and the queue's add form offers the same catalogue, so
+  // the same task can easily be submitted twice. Creating a second copy would
+  // give the homeowner two identical rows to complete separately — which is
+  // exactly what happened the first time this was clicked in a real browser.
+  const active = await listReminders(auth.home.id);
+  const already = active.find((r) => r.taskKey === task.key);
+  if (already) {
+    return json({ ok: true, reminder: already, alreadyTracked: true }, 200);
   }
 
   const reminder = await createReminder({

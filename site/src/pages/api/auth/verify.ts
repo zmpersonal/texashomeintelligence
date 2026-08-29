@@ -7,7 +7,7 @@
  */
 import type { APIRoute } from "astro";
 import { consumeMagicToken, safeNext } from "../../../lib/auth/tokens";
-import { createSession, sessionCookie } from "../../../lib/auth/session";
+import { createSession, sessionCookie, signedInMarkerCookie } from "../../../lib/auth/session";
 import { upsertAccount } from "../../../lib/account/db";
 
 export const prerender = false;
@@ -30,8 +30,11 @@ export const GET: APIRoute = async ({ url }) => {
   });
   const sid = await createSession(account.id);
 
-  return new Response(null, {
-    status: 302,
-    headers: { Location: safeNext(payload.next), "Set-Cookie": sessionCookie(sid) },
-  });
+  // Two Set-Cookie headers: the real session (HttpOnly) and the header marker
+  // (readable). Headers, not an object, because a plain object cannot carry
+  // two values under the same name.
+  const headers = new Headers({ Location: safeNext(payload.next) });
+  headers.append("Set-Cookie", sessionCookie(sid));
+  headers.append("Set-Cookie", signedInMarkerCookie());
+  return new Response(null, { status: 302, headers });
 };

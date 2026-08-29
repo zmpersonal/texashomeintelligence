@@ -46,6 +46,7 @@ export const GET: APIRoute = ({ props }) => {
       ? {
           delta: view.delta,
           signalOrder: view.signals.map((s) => s.id),
+          series: view.series,
           weightCoverage: view.weightCoverage,
           compositeHeadline: view.composite.headline,
         }

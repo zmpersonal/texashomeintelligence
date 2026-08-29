@@ -1,15 +1,22 @@
 ---
 /**
- * Email-for-launch capture — Texas Home Intelligence's first PII path.
+ * The unlock block on every public ZIP page.
  *
- * Round 4 captures an email address and nothing else. There is no account, no
- * sign-in link, no address, and no reminder engine behind this yet; the CTA
- * describes what Round 5 will build, and the copy is careful to promise a
- * notification rather than a product that exists.
+ * Round 4 shipped this as a waitlist — "get told when your home dashboard is
+ * ready" — because it wasn't. Round 5 built it, which made this copy false on
+ * 225 indexed pages: it collected addresses for a product that already existed
+ * and steered people away from the thing they were asking for.
  *
- * The consent checkbox is required, and required on the SERVER too — the
- * endpoint rejects a submission without it and writes nothing. Nothing about a
- * visitor is stored before that box is ticked (SECURITY.md).
+ * It is now a signup. Answer-first, like the rest of the indexed pages: it says
+ * what the account gives you and what it costs (nothing), then links to
+ * sign-in. Nothing is promised that Round 5 did not build — the three named
+ * features are the reminder engine, the condition alerts and the saved home,
+ * all of which exist. Municipal pickup days are deliberately not listed here,
+ * because those are still Round 5b.
+ *
+ * The old capture endpoint and its table stay untouched: the people already on
+ * that list asked to be told when this went live, and they are owed that
+ * message rather than a silent deletion.
  */
 interface Props {
   zip: string;
@@ -21,79 +28,35 @@ const { zip, areaLabel } = Astro.props as Props;
 <section class="block alt" id="get-notified">
   <div class="wrap" style="max-width:640px;">
     <div class="card unlock-card">
-      <p class="card-tag">Coming next</p>
+      <p class="card-tag">Free account</p>
       <h2>Make this about your house</h2>
       <p>
-        The {areaLabel} read above is the same for every home in {zip}. The home dashboard adds the
-        parts that are yours: your trash and recycling days, your filter reminders, and freeze
-        alerts for your pipes.
+        The {areaLabel} reading above is the same for every home in {zip}. A free account adds
+        the parts that are yours:
       </p>
-
-      {/* The trailing slash is load-bearing: astro.config sets
-          trailingSlash: "always", so posting to the unslashed path returns a
-          308 and the browser has to re-issue the whole request. Verified
-          against a local worker run. */}
-      <form class="notify-form" method="post" action="/api/dashboard/notify/" data-notify-form>
-        <input type="hidden" name="zip" value={zip} />
-        <input type="hidden" name="consent_source" value={`dashboard_zip_${zip}`} />
-
-        <label class="notify-label" for="notify-email">Email address</label>
-        <input
-          id="notify-email"
-          class="notify-input"
-          type="email"
-          name="email"
-          required
-          autocomplete="email"
-          placeholder="you@example.com"
-        />
-
-        <label class="notify-consent">
-          <input type="checkbox" name="consent" value="yes" required data-consent />
-          <span>
-            Get told when your home dashboard is ready — no spam, we never sell your data.
-          </span>
-        </label>
-
-        <button class="btn" type="submit">Tell me when it's ready</button>
-
-        <p class="notify-fineprint">
-          We store your email address and the ZIP you were viewing, and nothing else. Nothing is
-          stored unless you tick the box. <a href="/privacy/">How we handle your data &rarr;</a>
-        </p>
-        <p class="notify-status" data-notify-status role="status" aria-live="polite"></p>
-      </form>
+      <ul style="list-style:disc;padding-left:1.25em;">
+        <li><strong>Maintenance reminders you set</strong> &mdash; filters, gutters, pest treatment, alarm tests. Mark one done and the next due date recalculates from that day.</li>
+        <li><strong>Alerts when conditions change</strong> &mdash; freeze, hail, extreme heat and flooding recorded for your county, with what to check.</li>
+        <li><strong>Your ZIP saved</strong> &mdash; so the reading you want is the one you land on.</li>
+      </ul>
+      <p>
+        No password: we email a sign-in link. No card, no phone number, and we never sell your
+        data. Readings stay county-level &mdash; an account personalises what you track, not the
+        precision of the data.
+      </p>
+      <p class="unlock-actions">
+        <a class="btn" href="/home/sign-in/" data-signup-cta>Create your free home dashboard &rarr;</a>
+      </p>
+      <p class="notify-fineprint">
+        Already have one? <a href="/home/">Open your home dashboard</a> &middot;{" "}
+        <a href="/privacy/">How we handle your data</a>
+      </p>
     </div>
   </div>
 </section>
 
 <script>
-  document.querySelectorAll("[data-notify-form]").forEach((node) => {
-    if (!(node instanceof HTMLFormElement)) return;
-    const form = node;
-    const action = form.getAttribute("action") || "";
-    const status = form.querySelector("[data-notify-status]");
-    form.addEventListener("submit", async (event) => {
-      const consent = form.querySelector("[data-consent]");
-      // The server enforces this too; the client check only avoids a pointless
-      // round trip and gives an immediate message.
-      if (!(consent instanceof HTMLInputElement) || !consent.checked) return;
-      event.preventDefault();
-      const body = new FormData(form);
-      if (status) status.textContent = "Sending…";
-      try {
-        const res = await fetch(action, { method: "POST", body });
-        const data = (await res.json().catch(() => ({}))) as { message?: string; error?: string };
-        if (res.ok) {
-          window.__thiTrack?.("unlock_email_submitted", { zip: body.get("zip") });
-          if (status) status.textContent = data.message || "Thanks — we'll email you when it's ready.";
-          form.querySelector(".notify-input")?.setAttribute("disabled", "true");
-        } else if (status) {
-          status.textContent = data.error || "That didn't go through. Please try again.";
-        }
-      } catch {
-        if (status) status.textContent = "That didn't go through. Please try again.";
-      }
-    });
+  document.querySelectorAll("[data-signup-cta]").forEach((el) => {
+    el.addEventListener("click", () => window.__thiTrack?.("signup_cta_clicked", {}));
   });
 </script>
