@@ -583,3 +583,35 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
  * page-hero h1 because the score, not the heading, is the hero here. */
 .dash-h1 { color: var(--thi-on-dark); font-size: clamp(1.4rem, 2.4vw, 1.75rem); margin: 0 0 18px; }
 .zip-picker .btn { white-space: nowrap; padding-left: 18px; padding-right: 18px; }
+
+/* ── Logged-in home dashboard (Round 5) ─────────────────────────────────── */
+.queue-group { margin-bottom: 18px; }
+.queue-group h3 { font-family: var(--thi-font-ui); font-size: var(--thi-fs-label); font-weight: 600; text-transform: uppercase; letter-spacing: var(--thi-ls-label); color: var(--thi-slate-700); margin-bottom: 8px; }
+.queue-item { display: flex; gap: 16px; justify-content: space-between; align-items: center; flex-wrap: wrap;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--thi-r-card); padding: 14px 16px; margin-bottom: 8px; }
+.queue-title { font-family: var(--thi-font-ui); font-weight: 600; margin: 0 0 2px; }
+.queue-meta { font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption); color: var(--ink-soft); margin: 0; }
+.queue-group[data-bucket="overdue"] .queue-item { border-left: 3px solid var(--thi-elevated); }
+.queue-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.queue-actions .btn { padding: 8px 14px; font-size: 0.85rem; }
+.btn.secondary { background: transparent; color: var(--thi-navy); border-color: var(--line); }
+/* The event card is an alert, so it takes the left-border treatment the kit
+ * allows — never a status-coloured fill, which would read as an alarm. */
+.event-card { border-left: 3px solid var(--thi-elevated); margin-bottom: 14px; }
+.municipal-pending { border-left: 3px solid var(--thi-unknown); margin: 18px 0; }
+.add-reminder { margin-top: 20px; }
+.add-reminder form { display: flex; gap: 8px; flex-wrap: wrap; max-width: 520px; }
+.add-reminder .notify-input { margin-bottom: 0; flex: 1 1 260px; }
+.alert-pref { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; }
+.alert-pref input { margin-top: 4px; flex: 0 0 auto; }
+/* Secondary buttons on the dark instrument panel need the on-dark treatment —
+ * the default navy-on-transparent is invisible against navy, which is how the
+ * Sign out control disappeared entirely on first render. */
+.dash-picker-panel .btn.secondary,
+.dash-hero .btn.secondary {
+  color: var(--thi-on-dark);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+.dash-picker-panel .btn.secondary:hover,
+.dash-hero .btn.secondary:hover { background: rgba(255, 255, 255, 0.08); }
+.dash-picker-panel form { margin-top: 12px; }

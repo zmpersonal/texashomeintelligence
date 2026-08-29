@@ -18,6 +18,9 @@
  */
 import type { APIRoute, GetStaticPaths } from "astro";
 import { computeStressIndex, explainComposite } from "../../../lib/stressIndex";
+import { buildDashboard } from "../../../lib/dashboard";
+import { evaluateAlerts } from "../../../lib/account/alerts";
+import { ZIP_AREAS } from "../../../lib/zipAreas";
 import { EXCLUDED_INPUTS, SIGNAL_WEIGHTS, STORM_DECAY_HALF_LIFE_DAYS } from "../../../lib/stressIndex";
 import { areaDefinitions } from "../../../lib/zipAreas";
 
@@ -26,9 +29,32 @@ export const getStaticPaths: GetStaticPaths = () =>
 
 export const GET: APIRoute = ({ props }) => {
   const result = computeStressIndex(props.area);
+  const area = ZIP_AREAS.find((a) => a.areaId === props.area.areaId)!;
+  // A representative ZIP for this area, only to reuse the dashboard view
+  // builder — the reading is per-metro, so any covered ZIP yields the same one.
+  const sampleZip = props.area.areaId === "austin" ? "78704" : "78205";
+  const view = buildDashboard(sampleZip);
+
   const body = {
     ...result,
     compositeExplanation: explainComposite(result),
+    // Precomputed here so the logged-in dashboard can render from this file
+    // instead of importing the engine. Importing it into the Worker pulls the
+    // eager dataset glob — every permit JSON included — and took the bundle
+    // from 0.8 MB to 2.8 MB. The serving path reads this artifact instead.
+    dashboard: view
+      ? {
+          delta: view.delta,
+          signalOrder: view.signals.map((s) => s.id),
+          weightCoverage: view.weightCoverage,
+          compositeHeadline: view.composite.headline,
+        }
+      : null,
+    alerts: evaluateAlerts(
+      props.area.areaId,
+      area.primaryCounty.name,
+      new Date(result.referenceDate),
+    ),
     parameters: {
       weights: SIGNAL_WEIGHTS,
       stormDecayHalfLifeDays: STORM_DECAY_HALF_LIFE_DAYS,

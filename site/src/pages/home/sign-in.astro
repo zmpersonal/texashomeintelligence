@@ -1,0 +1,80 @@
+---
+/**
+ * /home/sign-in/ — request a magic link.
+ *
+ * noindex: a sign-in form is not a citation asset, and indexing it would put a
+ * consent checkbox in search results with no context around it.
+ */
+export const prerender = false;
+import Base from "../../layouts/Base.astro";
+import { authenticate } from "../../lib/auth/guard";
+
+const auth = await authenticate(Astro.request);
+if (auth) return Astro.redirect(auth.home ? "/home/" : "/home/setup/");
+
+const error = Astro.url.searchParams.get("error");
+const title = "Sign in | Texas Home Intelligence";
+---
+
+<Base title={title} description="Sign in to your Texas Home Intelligence home dashboard." noindex>
+  <section class="hero">
+    <div class="wrap" style="max-width:520px;">
+      <span class="eyebrow">YOUR HOME</span>
+      <h1>Sign in</h1>
+      <p class="lede">
+        No password. We email you a link that signs you in and expires in fifteen minutes.
+      </p>
+
+      {error === "link" && (
+        <p class="dash-notcovered" data-link-error>
+          That link didn't work — it may have expired or already been used. Request a new one below.
+        </p>
+      )}
+
+      <form class="notify-form" method="post" action="/api/auth/request-link/" data-signin-form>
+        <input type="hidden" name="consent_source" value="home_sign_in" />
+        <label class="notify-label" for="email">Email address</label>
+        <input id="email" class="notify-input" type="email" name="email" required autocomplete="email" placeholder="you@example.com" />
+
+        <label class="notify-consent">
+          <input type="checkbox" name="consent" value="yes" required data-consent />
+          <span>
+            Create my account and email me sign-in links and the home alerts I choose. I can
+            unsubscribe any time.
+          </span>
+        </label>
+
+        <button class="btn" type="submit">Email me a sign-in link</button>
+        <p class="notify-fineprint">
+          Nothing is stored until you tick the box and open the link.
+          <a href="/privacy/">How we handle your data &rarr;</a>
+        </p>
+        <p class="notify-status" data-status role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<script>
+  document.querySelectorAll("[data-signin-form]").forEach((node) => {
+    if (!(node instanceof HTMLFormElement)) return;
+    const form = node;
+    const status = form.querySelector("[data-status]");
+    form.addEventListener("submit", async (event) => {
+      const consent = form.querySelector("[data-consent]");
+      if (!(consent instanceof HTMLInputElement) || !consent.checked) return;
+      event.preventDefault();
+      if (status) status.textContent = "Sending…";
+      const res = await fetch("/api/auth/request-link/", { method: "POST", body: new FormData(form) });
+      const data = (await res.json().catch(() => ({}))) as { message?: string; error?: string; transport?: string };
+      window.__thiTrack?.("link_requested", {});
+      if (status) {
+        status.textContent = res.ok
+          ? data.transport === "stub"
+            ? "Email delivery isn't switched on yet — the link was written to the server log."
+            : (data.message ?? "Check your email.")
+          : (data.error ?? "That didn't go through.");
+      }
+    });
+  });
+</script>
