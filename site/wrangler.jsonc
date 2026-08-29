@@ -6,6 +6,14 @@
   // Deploy with `npm run deploy`, or in Cloudflare Workers Builds set:
   //   root dir `site` · build `npm run build`
   //   deploy `npx wrangler deploy --config dist/server/wrangler.json`
+  // ⚠️ Name mismatch to resolve (owner decision). The Cloudflare account has a
+  // Worker called `texashomeintelligence` (no hyphens, created 2026-08-23);
+  // there is no Worker called `texas-home-intelligence`. Either Workers Builds
+  // deploys under the connected Worker's name and this field is cosmetic, or
+  // this field is what a `wrangler deploy` would target and it would create a
+  // SECOND Worker on its own URL. Left unchanged deliberately: changing it
+  // could fork staging onto a new hostname. Confirm in the dashboard which
+  // Worker the build is attached to, then align this field to it.
   "name": "texas-home-intelligence",
   "compatibility_date": "2026-04-15",
   "compatibility_flags": ["nodejs_compat"],
@@ -31,10 +39,12 @@
   ],
   // Durable store for intake projects, answers, generated briefs and
   // contractor requests (src/lib/db.ts).
-  // NOTE: this database currently has 0 tables — migrations/0001_init.sql has
-  // never been applied to it. The static site deploys and serves fine either
-  // way, but the /api/intake/* routes will error until it is applied. Applying
-  // it is an owner action (production data, SECURITY.md).
+  // migrations/0001_init.sql was applied to the REMOTE database on 2026-08-29
+  // at the owner's instruction. Verified present: tables projects,
+  // intake_responses, generated_briefs, contractor_requests, plus the indexes
+  // idx_intake_responses_project and idx_contractor_requests_project.
+  // migrations/seed.sql has NOT been applied and must not be — it inserts
+  // sample rows, which have no place in a production store.
   "d1_databases": [
     {
       "binding": "DB",
