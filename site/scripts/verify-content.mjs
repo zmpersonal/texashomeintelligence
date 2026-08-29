@@ -9,7 +9,7 @@
  * nothing is silently missing from the registries. Fails loudly (exit 1)
  * on the first problem, printing every problem it finds, not just one.
  */
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { parse } from "yaml";
@@ -186,6 +186,127 @@ if (faqEntries.length < 6 || faqEntries.length > 8) {
 }
 if (productCount === 0) fail("faq: no product-tagged questions found");
 if (authorityCount === 0) fail("faq: no authority-tagged questions found");
+
+// --- home stress index: invariants that must hold before a score is published ---
+//
+// These read the BUILT output when it exists, so the check runs against the
+// numbers actually served rather than a re-derivation. It is skipped (not
+// failed) before a first build, so `verify-content` stays runnable on a clean
+// checkout. What it guards is the set of mistakes that would be invisible on
+// the page: a weight table that no longer sums to 1, a score outside its own
+// scale, a sample feed leaking into a published number, or a signal claiming
+// to be more current than the data behind it.
+const stressDir = path.join(here, "..", "dist", "client", "data", "stress-index");
+if (existsSync(stressDir)) {
+  const files = readdirSync(stressDir).filter((f) => f.endsWith(".json"));
+  if (files.length === 0) fail("stress-index: no area files were emitted");
+  for (const file of files) {
+    const area = file.replace(/\.json$/, "");
+    const r = JSON.parse(readFileSync(path.join(stressDir, file), "utf8"));
+
+    const weightSum = Object.values(r.parameters.weights).reduce((a, b) => a + b, 0);
+    if (Math.abs(weightSum - 1) > 1e-9) {
+      fail(`stress-index/${area}: signal weights sum to ${weightSum}, not 1`);
+    }
+    const inRange = (n) => Number.isInteger(n) && n >= 0 && n <= 100;
+    if (!inRange(r.composite.score)) {
+      fail(`stress-index/${area}: composite ${r.composite.score} is not an integer 0-100`);
+    }
+    if (r.composite.weightCoverage <= 0) {
+      fail(`stress-index/${area}: no signal could be computed`);
+    }
+    for (const sig of r.signals) {
+      if (sig.computable && !inRange(sig.layerB.score)) {
+        fail(`stress-index/${area}/${sig.id}: score ${sig.layerB.score} is not an integer 0-100`);
+      }
+      // A sample feed is fabricated placeholder data; it must never reach a score.
+      for (const input of sig.layerA) {
+        if (input.status === "sample") {
+          fail(`stress-index/${area}/${sig.id}: reads sample feed "${input.datasetId}"`);
+        }
+      }
+      // The signal's stated currency must not outrun its stalest input.
+      const oldest = sig.layerA
+        .map((i) => i.dataThrough)
+        .filter(Boolean)
+        .sort()[0];
+      if (oldest && sig.freshness.dataThrough && sig.freshness.dataThrough > oldest) {
+        fail(
+          `stress-index/${area}/${sig.id}: reports data through ${sig.freshness.dataThrough}, ` +
+            `newer than its stalest input (${oldest})`,
+        );
+      }
+      // An unavailable signal must say why — that sentence is what the UI shows.
+      if (!sig.computable && !sig.limitation) {
+        fail(`stress-index/${area}/${sig.id}: unavailable with no stated reason`);
+      }
+    }
+    // The compare module must stay unavailable until an input varies below county level.
+    if (r.compare.available) {
+      fail(`stress-index/${area}: publishes a ZIP comparison, but no input varies within a metro`);
+    }
+  }
+}
+
+// --- zip crosswalk: the coverage map must stay internally consistent ---
+//
+// The crosswalk is a filtered extract of a federal file, so the risk is not
+// that a row is wrong but that a re-export reshapes or truncates it without
+// anyone noticing. These checks are cheap and would catch that.
+const crosswalkPath = path.join(dataDir, "zip-area-crosswalk.csv");
+if (!existsSync(crosswalkPath)) {
+  fail("zip-area-crosswalk.csv is missing — ZIP resolution has no source");
+} else {
+  const lines = readFileSync(crosswalkPath, "utf8").trim().split(/\r?\n/);
+  const EXPECTED =
+    "zip,area,primary_county_fips,primary_county,all_metro_county_fips,drought_county_granular";
+  if (lines[0].trim() !== EXPECTED) fail(`zip-area-crosswalk: header changed (${lines[0]})`);
+
+  const areaFile = readFileSync(path.join(dataDir, "zip-areas.ts"), "utf8");
+  const knownAreas = [...areaFile.matchAll(/areaId:\s*"([^"]+)"/g)].map((m) => m[1]);
+  const overrides = new Set(
+    [...areaFile.matchAll(/"(\d{5})":\s*\{\s*area:/g)].map((m) => m[1]),
+  );
+
+  const fipsToName = new Map();
+  const seen = new Map();
+  for (const line of lines.slice(1)) {
+    if (!line.trim()) continue;
+    const [zip, area, fips, county, allFips] = line.split(",");
+    const areaId = area.trim().replace(/_/g, "-");
+    if (!/^\d{5}$/.test(zip)) fail(`zip-area-crosswalk: "${zip}" is not a 5-digit ZIP`);
+    if (!knownAreas.includes(areaId)) {
+      fail(`zip-area-crosswalk: ${zip} has area "${areaId}" with no entry in zip-areas.ts`);
+    }
+    const all = allFips.trim().split("|").filter(Boolean);
+    // A primary county outside the ZIP's own county list would make the
+    // reading's geography incoherent.
+    if (!all.includes(fips.trim())) {
+      fail(`zip-area-crosswalk: ${zip} primary county ${fips} is not in its county list ${allFips}`);
+    }
+    const prior = fipsToName.get(fips.trim());
+    if (prior && prior !== county.trim()) {
+      fail(`zip-area-crosswalk: FIPS ${fips} is named both "${prior}" and "${county}"`);
+    }
+    fipsToName.set(fips.trim(), county.trim());
+    // Duplicates are legitimate only for the boundary ZIPs, and each of those
+    // must have an explicit assignment rather than falling to last-write-wins.
+    if (seen.has(zip) && !overrides.has(zip)) {
+      fail(
+        `zip-area-crosswalk: ${zip} appears in both "${seen.get(zip)}" and "${areaId}" ` +
+          "with no CROSS_METRO_ZIPS entry deciding which wins",
+      );
+    }
+    seen.set(zip, areaId);
+  }
+  // An override for a ZIP that is not actually duplicated is stale config.
+  for (const zip of overrides) {
+    const count = lines.slice(1).filter((l) => l.startsWith(zip + ",")).length;
+    if (count < 2) {
+      fail(`zip-areas: CROSS_METRO_ZIPS lists ${zip}, which appears ${count}x in the crosswalk`);
+    }
+  }
+}
 
 // --- report ---
 if (problems.length > 0) {

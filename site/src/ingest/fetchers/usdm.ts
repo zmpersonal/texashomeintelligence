@@ -1,9 +1,15 @@
+import { ingestCounties } from "../../lib/zipAreas";
 import type { FetcherModule, Observation } from "../types";
 
 export interface DroughtValue {
   /** e.g. "D2 — Severe Drought" or "None (no drought)". */
   droughtIndex?: string;
   rainfallInches?: number;
+  /** County this week's reading is for, as the USDM API reports it — not as we
+   * guessed it. Rows written before county ingestion began have no `county`;
+   * their FIPS is still recoverable from `key`, which is `<fips>-<mapDate>`. */
+  county?: string;
+  countyFips?: string;
 }
 
 /**
@@ -34,11 +40,15 @@ export interface DroughtValue {
  * breakdown, not a fabrication — the underlying percentages are real.
  * One observation per published week (real history), keyed by county +
  * week end date, so a later revision to a week updates in place.
+ *
+ * Counties come from `src/data/zip-areas.ts` (via `ingestCounties`) so the set
+ * we ingest and the set the dashboard publishes cannot drift apart. Austin
+ * pulls Travis, Williamson and Hays; San Antonio pulls Bexar, Comal and
+ * Guadalupe. That is 6 keyless requests per run at a 2-3x/week cadence, which
+ * is what COST.md's cheap-and-boring rule asks for - no new source, no key,
+ * no new service. Each county is a separate request because the API takes one
+ * `aoi` at a time.
  */
-const COUNTY_FIPS_BY_LOCATION: Record<"austin" | "san-antonio", string> = {
-  austin: "48453", // Travis
-  "san-antonio": "48029", // Bexar
-};
 
 const D_LABELS = ["D0 — Abnormally Dry", "D1 — Moderate Drought", "D2 — Severe Drought", "D3 — Extreme Drought", "D4 — Exceptional Drought"];
 
@@ -49,6 +59,7 @@ function mdyyyy(iso: string): string {
 
 interface UsdmWeekRow {
   mapDate?: string;
+  county?: string;
   none?: number;
   d0?: number;
   d1?: number;
@@ -76,37 +87,61 @@ function parseMapDate(mapDate: string): string {
 }
 
 function makeFetcher(location: "austin" | "san-antonio"): FetcherModule<DroughtValue> {
-  const fips = COUNTY_FIPS_BY_LOCATION[location];
   return {
     datasetId: "usdm-drought",
     location,
     source: { name: "U.S. Drought Monitor", url: "https://droughtmonitor.unl.edu" },
     requiredEnvVars: [],
     async fetchRaw(ctx): Promise<Observation<DroughtValue>[]> {
-      const url = new URL(
-        "https://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByAreaPercent",
-      );
-      url.searchParams.set("aoi", fips);
-      url.searchParams.set("statisticsType", "1");
-      url.searchParams.set("startdate", mdyyyy(ctx.window.since));
-      url.searchParams.set("enddate", mdyyyy(ctx.window.until));
-
-      const res = await fetch(url, { headers: { Accept: "application/json" } });
-      if (!res.ok) {
-        throw new Error(`U.S. Drought Monitor fetch failed: HTTP ${res.status} from ${url.toString()}`);
+      const counties = ingestCounties(location);
+      if (counties.length === 0) {
+        throw new Error(`No ingest counties configured for ${location} in src/data/zip-areas.ts`);
       }
-      const rows = (await res.json()) as UsdmWeekRow[];
 
       const observations: Observation<DroughtValue>[] = [];
-      for (const row of rows) {
-        if (!row.mapDate) continue;
-        const observedAt = parseMapDate(row.mapDate);
-        observations.push({
-          observedAt,
-          ingestedAt: new Date().toISOString(),
-          key: `${fips}-${row.mapDate}`,
-          value: { droughtIndex: reduceToCategory(row) },
-        });
+      for (const county of counties) {
+        const url = new URL(
+          "https://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByAreaPercent",
+        );
+        url.searchParams.set("aoi", county.fips);
+        url.searchParams.set("statisticsType", "1");
+        url.searchParams.set("startdate", mdyyyy(ctx.window.since));
+        url.searchParams.set("enddate", mdyyyy(ctx.window.until));
+
+        const res = await fetch(url, { headers: { Accept: "application/json" } });
+        if (!res.ok) {
+          throw new Error(
+            `U.S. Drought Monitor fetch failed for ${county.name} (${county.fips}): HTTP ${res.status}`,
+          );
+        }
+        const rows = (await res.json()) as UsdmWeekRow[];
+
+        for (const row of rows) {
+          if (!row.mapDate) continue;
+          // The API echoes the county name for the FIPS we asked for. Comparing
+          // it to the configured name turns a mistyped FIPS into a loud
+          // ingestion failure instead of a whole county series quietly filed
+          // under the wrong place. The FIPS codes in zip-areas.ts were written
+          // from memory; this is what makes that safe.
+          if (row.county && row.county.replace(/\s+County$/i, "").trim() !== county.name) {
+            throw new Error(
+              `U.S. Drought Monitor returned county "${row.county}" for FIPS ${county.fips}, ` +
+                `but src/data/zip-areas.ts calls it "${county.name}". Fix the FIPS or the name.`,
+            );
+          }
+          observations.push({
+            observedAt: parseMapDate(row.mapDate),
+            ingestedAt: new Date().toISOString(),
+            // Unchanged key shape, so the existing single-county history for
+            // Travis and Bexar updates in place rather than duplicating.
+            key: `${county.fips}-${row.mapDate}`,
+            value: {
+              droughtIndex: reduceToCategory(row),
+              county: county.name,
+              countyFips: county.fips,
+            },
+          });
+        }
       }
       return observations;
     },
