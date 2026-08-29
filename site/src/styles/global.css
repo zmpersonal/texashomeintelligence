@@ -615,3 +615,34 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
 .dash-picker-panel .btn.secondary:hover,
 .dash-hero .btn.secondary:hover { background: rgba(255, 255, 255, 0.08); }
 .dash-picker-panel form { margin-top: 12px; }
+/* Header actions: the two states occupy the same slot, so swapping them on the
+ * marker cookie cannot shift layout. */
+.nav-actions { display: inline-flex; align-items: center; gap: 14px; }
+.nav-signin { font-family: var(--thi-font-ui); font-size: 0.88rem; font-weight: 600; text-decoration: none; color: var(--thi-navy); white-space: nowrap; }
+.nav-signin:hover { text-decoration: underline; }
+.unlock-actions { margin: 18px 0 10px; }
+/* Signal card density (Round 4.1). The action sits below a divider so it can
+ * never read as part of the measurement — information-ladder rule. */
+.signal-spark { margin: 0 0 10px; }
+.signal-spark svg { display: block; }
+.spark-line { stroke-width: 1.5; }
+.spark-area { opacity: 0.14; stroke: none; }
+.spark-safe { stroke: var(--thi-safe); fill: var(--thi-safe); }
+.spark-watch { stroke: var(--thi-watch); fill: var(--thi-watch); }
+.spark-elevated { stroke: var(--thi-elevated); fill: var(--thi-elevated); }
+.spark-severe { stroke: var(--thi-severe); fill: var(--thi-severe); }
+.spark-unknown { stroke: var(--thi-unknown); fill: var(--thi-unknown); }
+.signal-why { margin: 0 0 10px; }
+.signal-why > summary {
+  cursor: pointer; font-family: var(--thi-font-ui); font-size: var(--thi-fs-body-sm);
+  font-weight: 600; color: var(--thi-navy); list-style: none;
+}
+.signal-why > summary::-webkit-details-marker { display: none; }
+.signal-why[open] > summary { margin-bottom: 8px; }
+.signal-terms { list-style: none; padding: 0; margin: 0 0 8px; }
+.signal-terms li { font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption); color: var(--ink-soft); margin-bottom: 3px; }
+.signal-term-points { display: inline-block; min-width: 3.5em; text-align: right; color: var(--ink); }
+.signal-action { border-top: 1px solid var(--line); padding-top: 10px; margin-top: 10px; }
+.signal-action-text { font-size: var(--thi-fs-body-sm); color: var(--ink); margin: 0; }
+.signal-action-form { margin-top: 8px; }
+.signal-action-form .btn { padding: 6px 12px; font-size: 0.8rem; }

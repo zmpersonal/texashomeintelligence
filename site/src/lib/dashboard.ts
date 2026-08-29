@@ -11,6 +11,7 @@ import { computeStressIndex, explainComposite } from "./stressIndex";
 import type { SignalResult, StressIndexResult } from "./stressIndex";
 import { areaDefinitions, resolveZip, type ZipResolved } from "./zipAreas";
 import { CROSSWALK } from "./zipCrosswalk";
+import { seriesFor, type SignalSeries } from "./signalSeries";
 
 /** How far back the comparison reading is anchored. A week matches how often
  * the fastest input (drought) publishes; the slower inputs simply will not have
@@ -33,6 +34,8 @@ export interface DashboardDelta {
 
 export interface DashboardView {
   zip: ZipResolved;
+  /** Per-signal sparkline data, only where an honest series exists. */
+  series: Record<string, SignalSeries | undefined>;
   index: StressIndexResult;
   composite: { headline: string; detail: string };
   delta: DashboardDelta;
@@ -87,8 +90,17 @@ export function buildDashboard(zipCode: string): DashboardView | undefined {
   const computable = index.signals.filter((s) => s.computable);
   const unavailable = index.signals.filter((s) => !s.computable);
 
+  const series: Record<string, SignalSeries | undefined> = {};
+  for (const signal of index.signals) {
+    series[signal.id] = seriesFor(
+      signal.id, zip.areaId, zip.readingCountyName, zip.readingCountyFips,
+      new Date(index.referenceDate),
+    );
+  }
+
   return {
     zip,
+    series,
     index,
     composite: explainComposite(index),
     delta: {

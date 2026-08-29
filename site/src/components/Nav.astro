@@ -49,11 +49,34 @@ const ctaLabel = "My Dashboard";
         </li>
       </ul>
     </nav>
-    <a class="nav-cta" href="/dashboard/">{ctaLabel}</a>
+    {/* Both header states ship in the static HTML; the marker cookie decides
+        which is shown. Logged-out is the default, so a visitor with no cookie,
+        no JavaScript, or a stripped cookie still gets a working header — and
+        "Sign in" is correct for them. A signed-in visitor who somehow lands on
+        the logged-out header loses nothing: /home/sign-in/ redirects them
+        straight to /home/ because they already hold a session. */}
+    <span class="nav-actions" data-nav-signed-out>
+      <a class="nav-signin" href="/home/sign-in/">Sign in</a>
+      <a class="nav-cta" href="/dashboard/">{ctaLabel}</a>
+    </span>
+    <span class="nav-actions" data-nav-signed-in hidden>
+      <a class="nav-cta" href="/home/">My Home</a>
+    </span>
   </div>
 </header>
 
 <script>
+  // Header state. Reads the `thi_signed_in` marker, which exists only to pick
+  // between two headers that are both already in the DOM. It is not
+  // authentication: the server never reads it, and forging it changes the
+  // header and nothing else — every protected route still checks the HttpOnly
+  // session and redirects.
+  const signedIn = document.cookie.split(";").some((c) => c.trim() === "thi_signed_in=1");
+  if (signedIn) {
+    document.querySelectorAll<HTMLElement>("[data-nav-signed-out]").forEach((el) => (el.hidden = true));
+    document.querySelectorAll<HTMLElement>("[data-nav-signed-in]").forEach((el) => (el.hidden = false));
+  }
+
   // Logo load-failure fallback: never show a broken-image icon in the
   // header — fall back to the text wordmark instead.
   const brandLogo = document.querySelector<HTMLImageElement>(".brand-logo");

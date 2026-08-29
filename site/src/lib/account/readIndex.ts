@@ -14,13 +14,15 @@
  */
 import { env } from "cloudflare:workers";
 import type { StressIndexResult } from "../stressIndex/types";
-import type { FiredAlert } from "./alerts";
+import type { FiredAlert } from "./alertCatalogue";
+import type { SignalSeries } from "../signalSeries";
 
 export interface PrecomputedArea extends StressIndexResult {
   compositeExplanation: { headline: string; detail: string };
   dashboard: {
     delta: { change: number; comparedTo: string; movers: { id: string; change: number }[] };
     signalOrder: string[];
+    series: Record<string, SignalSeries | undefined>;
     weightCoverage: number;
     compositeHeadline: string;
   } | null;

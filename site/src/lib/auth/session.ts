@@ -8,6 +8,23 @@
 import { env } from "cloudflare:workers";
 
 export const SESSION_COOKIE = "thi_session";
+/**
+ * A second, deliberately readable cookie whose ONLY job is to let static HTML
+ * swap the header between its logged-out and logged-in forms.
+ *
+ * The site is static almost everywhere — 225 ZIP pages, every content page —
+ * and making the header session-aware server-side would force all of it to
+ * SSR. So the static HTML ships the logged-out header and a tiny script
+ * upgrades it when this marker is present.
+ *
+ * It carries no identity and grants nothing. The value is the literal "1"; it
+ * is not HttpOnly precisely so script can read it, and that is safe only
+ * because the server never trusts it for anything. Authorisation is the
+ * HttpOnly session cookie alone, checked in `authenticate()`. Forging this
+ * marker changes the header and nothing else — every protected route still
+ * redirects.
+ */
+export const SIGNED_IN_MARKER = "thi_signed_in";
 /** 30 days. Long enough that the dashboard is a habit rather than a login
  * chore, short enough that an abandoned device does not stay authorised. */
 export const SESSION_TTL_SECONDS = 30 * 24 * 60 * 60;
@@ -82,4 +99,20 @@ export function sessionCookie(sid: string, maxAgeSeconds = SESSION_TTL_SECONDS):
 
 export function clearedSessionCookie(): string {
   return sessionCookie("", 0);
+}
+
+/** Not HttpOnly by design — see SIGNED_IN_MARKER. Still Secure and SameSite,
+ * and still carries nothing but "1". */
+export function signedInMarkerCookie(maxAgeSeconds = SESSION_TTL_SECONDS): string {
+  return [
+    `${SIGNED_IN_MARKER}=1`,
+    "Secure",
+    "SameSite=Lax",
+    "Path=/",
+    `Max-Age=${maxAgeSeconds}`,
+  ].join("; ");
+}
+
+export function clearedMarkerCookie(): string {
+  return [`${SIGNED_IN_MARKER}=`, "Secure", "SameSite=Lax", "Path=/", "Max-Age=0"].join("; ");
 }

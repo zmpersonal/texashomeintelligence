@@ -10,7 +10,7 @@
 import type { APIRoute } from "astro";
 import { authenticate, json, UNAUTHORIZED } from "../../../lib/auth/guard";
 import { deleteAccountData } from "../../../lib/account/deletion";
-import { clearedSessionCookie } from "../../../lib/auth/session";
+import { clearedMarkerCookie, clearedSessionCookie } from "../../../lib/auth/session";
 
 export const prerender = false;
 
@@ -24,5 +24,8 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const report = await deleteAccountData(auth.account.id, auth.sessionId);
-  return json(report, 200, { "Set-Cookie": clearedSessionCookie() });
+  const headers = new Headers({ "Content-Type": "application/json; charset=utf-8" });
+  headers.append("Set-Cookie", clearedSessionCookie());
+  headers.append("Set-Cookie", clearedMarkerCookie());
+  return new Response(JSON.stringify(report), { status: 200, headers });
 };

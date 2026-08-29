@@ -32,7 +32,7 @@ const { zip: zipCode } = Astro.props as { zip: string };
 const view = buildDashboard(zipCode);
 if (!view) throw new Error(`No dashboard view for ZIP ${zipCode}`);
 
-const { zip, index, composite, delta, signals, weightCoverage, unavailable } = view;
+const { zip, index, composite, delta, signals, weightCoverage, unavailable, series } = view;
 const band = index.composite;
 const token = BAND_TOKEN[band.band];
 
@@ -145,7 +145,7 @@ const jsonLd = {
         specific house. <a href="/methodology/home-stress-index/">How scoring works &nearr;</a>
       </p>
       <div class="signal-grid">
-        {signals.map((signal) => <SignalCard signal={signal} />)}
+        {signals.map((signal) => <SignalCard signal={signal} series={series[signal.id]} />)}
       </div>
     </div>
   </section>
