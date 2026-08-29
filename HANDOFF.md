@@ -55,6 +55,33 @@ the schema decision gates the capture route, not the other way round.
 
 ---
 
+## Seam 5 — Transactional email (Resend) 🔴 owner-owned
+
+The magic-link and alert paths send through `src/lib/email/transport.ts`. Two
+things are yours and cannot be done from here:
+
+1. **`wrangler secret put RESEND_API_KEY`** — a Worker secret. It is never in
+   the repo, never in `wrangler.jsonc`, and never read into a constant or a log.
+   The transport reads it per call, so setting it takes effect on the next
+   request with no redeploy.
+2. **SPF and DKIM on the sending domain.** The From address defaults to
+   `accounts@texashomeintelligence.com` and can be overridden with the
+   `EMAIL_FROM` var. It must be a verified THI domain — never a `resend.dev`
+   sandbox address, which would put a third party's domain on mail that signs
+   people into their own account.
+
+Until the secret exists, the stub transport runs, logs what it would have sent,
+and **reports itself**: the sign-in page tells the visitor delivery is not
+switched on rather than showing a success message for an email that does not
+exist.
+
+**Every message goes to exactly one recipient — the person it is about.** No
+bcc, no operator copy, no reply-to redirect. A magic link is a credential and an
+alert is about someone's home. A lead-notification feed (Slack or otherwise) is
+a separate path that must never be wired into this one.
+
+---
+
 ## ⚠️ Cloudflare gotcha — verify this yourself before go-live
 
 Cloudflare's **Bot Fight Mode** / WAF / the dashboard "block AI bots"

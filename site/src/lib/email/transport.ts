@@ -31,12 +31,29 @@ export interface SendResult {
   error?: string;
 }
 
-/** The From address. A real sending domain has to be verified before Resend
- * will accept this; until then the stub path never reads it. */
-const FROM = "Texas Home Intelligence <alerts@texashomeintelligence.com>";
+/**
+ * The From address. Must be on a THI domain the owner has verified with SPF and
+ * DKIM — never a resend.dev sandbox address, which would put a third party's
+ * domain on mail that signs people into their own account.
+ *
+ * Overridable with the EMAIL_FROM var so the exact mailbox can change without a
+ * code change and a redeploy; the default is the mailbox the owner named.
+ */
+const DEFAULT_FROM = "Texas Home Intelligence <accounts@texashomeintelligence.com>";
 
+function envVar(name: string): string | undefined {
+  return (env as unknown as Record<string, string | undefined>)[name];
+}
+
+/** Read at call time, not module load, so `wrangler secret put RESEND_API_KEY`
+ * takes effect on the next request without any other change. The secret is
+ * never read into a constant, logged, or returned in a response. */
 function resendKey(): string | undefined {
-  return (env as unknown as { RESEND_API_KEY?: string }).RESEND_API_KEY;
+  return envVar("RESEND_API_KEY");
+}
+
+function fromAddress(): string {
+  return envVar("EMAIL_FROM") ?? DEFAULT_FROM;
 }
 
 export function activeTransport(): EmailTransport {
@@ -60,8 +77,13 @@ export async function sendEmail(message: OutboundEmail): Promise<SendResult> {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      // Exactly one recipient: the person the message is about. No bcc, no
+      // reply-to redirect, no copy to an operator inbox. A magic link is a
+      // credential and an alert is about someone's home; neither belongs
+      // anywhere but their own inbox. Lead notification, if it ever exists,
+      // must be a separate path that never sees this payload.
       body: JSON.stringify({
-        from: FROM,
+        from: fromAddress(),
         to: [message.to],
         subject: message.subject,
         text: message.text,
