@@ -646,3 +646,56 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
 .signal-action-text { font-size: var(--thi-fs-body-sm); color: var(--ink); margin: 0; }
 .signal-action-form { margin-top: 8px; }
 .signal-action-form .btn { padding: 6px 12px; font-size: 0.8rem; }
+
+/* ── Logged-in dashboard, desktop rhythm (Round 4.2) ───────────────────────
+ * Presentation only, and scoped to `.home-dash` so none of it reaches the
+ * public ZIP dashboard, which shares the hero and signal-grid classes.
+ *
+ * The problem: /home/ was built mobile-first and every block below the signal
+ * grid stayed a full-width single column at 1120px. Prose ran to ~90ch, and
+ * the reminder rows used `justify-content: space-between` inside that width,
+ * marooning Done/Remind/Skip at the far edge with a dead gap in the middle.
+ *
+ * The fix borrows the rhythm that already works on the same page: the signal
+ * grid's auto-fit columns. Nothing below changes at mobile widths. */
+
+/* Comfortable measure for prose, everywhere on this page. 46em on the verdict
+ * was ~90 characters at its font size — roughly double what reads well. */
+.home-dash .dash-verdict { max-width: 62ch; }
+.home-dash .dash-caveat { max-width: 68ch; }
+.home-dash .dash-section-note { max-width: 68ch; }
+.home-dash .queue-title,
+.home-dash .signal-analysis { max-width: 66ch; }
+
+@media (min-width: 760px) {
+  /* Reminder rows take the same auto-fit columns as the signal grid, so a row
+   * is ~500px rather than 1080px and the controls sit beside their label
+   * instead of across the page from it. The h3 spans the row so the bucket
+   * heading still reads as a group header. */
+  .home-dash .queue-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 12px;
+    align-items: start;
+  }
+  .home-dash .queue-group > h3 { grid-column: 1 / -1; margin-bottom: 0; }
+  .home-dash .queue-item { margin-bottom: 0; height: 100%; }
+
+  /* The event card is prose plus a checklist; at full width its lines ran
+   * past comfortable measure. Same treatment for the municipal placeholder so
+   * the two read as a pair. */
+  .home-dash .event-card,
+  .home-dash .municipal-pending { max-width: 74ch; }
+  .home-dash .event-card p,
+  .home-dash .event-card li { max-width: 68ch; }
+
+  /* The add-reminder control belongs with the queue it feeds, not adrift at
+   * the page edge. */
+  .home-dash .add-reminder { max-width: 560px; }
+}
+
+/* Below 760px nothing above applies: the single-column mobile layout that was
+ * built first is left exactly as it was. 760 rather than 900 because at 834px
+ * — a common tablet width — a full-width row still left a ~300px gap between
+ * a reminder's label and its buttons, which is the defect this round exists to
+ * fix rather than an acceptable in-between state. */
