@@ -1,0 +1,75 @@
+---
+/** /home/setup/ — attach a home to a freshly verified account. */
+export const prerender = false;
+import Base from "../../layouts/Base.astro";
+import { authenticate } from "../../lib/auth/guard";
+import { supportedZips } from "../../lib/dashboard";
+import { CROSSWALK } from "../../lib/zipCrosswalk";
+
+const auth = await authenticate(Astro.request);
+if (!auth) return Astro.redirect("/home/sign-in/");
+if (auth.home) return Astro.redirect("/home/");
+
+const zips = supportedZips().map((z) => ({ zip: z, county: CROSSWALK.get(z)!.primaryCountyName, area: CROSSWALK.get(z)!.areaId }));
+---
+
+<Base title="Set up your home | Texas Home Intelligence" description="Add your home." noindex>
+  <section class="hero">
+    <div class="wrap" style="max-width:560px;">
+      <span class="eyebrow">YOUR HOME</span>
+      <h1>Where is your home?</h1>
+      <p class="lede">
+        Your ZIP is what we need. An address is optional — it helps us keep your reminders
+        straight if you ever add a second property, and it never buys a reading about your
+        specific house: every figure we publish is county- or metro-level.
+      </p>
+
+      <form class="notify-form" method="post" action="/api/home/create/" data-home-form>
+        <input type="hidden" name="consent_source" value="home_setup" />
+        <label class="notify-label" for="zip">ZIP code</label>
+        <select id="zip" name="zip" class="notify-input" required>
+          {["austin","san-antonio"].map((area) => (
+            <optgroup label={area === "austin" ? "Austin metro" : "San Antonio metro"}>
+              {zips.filter((z) => z.area === area).map((z) => (
+                <option value={z.zip}>{z.zip} — {z.county} County</option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
+
+        <label class="notify-label" for="address">Street address <span style="font-weight:400;">(optional)</span></label>
+        <input id="address" class="notify-input" type="text" name="address" autocomplete="street-address" placeholder="123 Example St" />
+        <label class="notify-consent">
+          <input type="checkbox" name="address_consent" value="yes" data-address-consent />
+          <span>Store my address. I understand readings stay county-level and I can delete it at any time.</span>
+        </label>
+        <p class="notify-fineprint">
+          Leave the box unticked and we keep the ZIP only — everything on the dashboard still works.
+        </p>
+
+        <button class="btn" type="submit">Create my home dashboard</button>
+        <p class="notify-status" data-status role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<script>
+  document.querySelectorAll("[data-home-form]").forEach((node) => {
+    if (!(node instanceof HTMLFormElement)) return;
+    const form = node;
+    const status = form.querySelector("[data-status]");
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (status) status.textContent = "Setting up…";
+      const res = await fetch("/api/home/create/", { method: "POST", body: new FormData(form) });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (res.ok) {
+        window.__thiTrack?.("home_created", {});
+        window.location.assign("/home/");
+      } else if (status) {
+        status.textContent = data.error ?? "That didn't go through.";
+      }
+    });
+  });
+</script>

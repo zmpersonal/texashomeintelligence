@@ -1,0 +1,342 @@
+---
+/**
+ * /home/ — the logged-in home dashboard.
+ *
+ * Tier order follows "THI Home Dashboard": score, then "Your home this week"
+ * directly under it (the score says how things are; the queue says what to do),
+ * then condition cards, then the five signals, then Filter Center memory and
+ * alert preferences.
+ *
+ * Scores and signals are the SAME precomputed Round 3/4 output the public ZIP
+ * page renders — no recomputation, no request-time fetch. The only per-request
+ * database work is the account's own reminders and preferences.
+ *
+ * noindex: this is a personal view. The public ZIP layer is the indexed asset.
+ *
+ * Municipal rows the design shows — trash, recycling, bulk pickup, Austin Water
+ * watering days — are Round 5b. Their slot renders as an explicit "not built
+ * yet" panel rather than being faked or silently dropped, so the gap is visible
+ * to the owner instead of quietly forgotten.
+ */
+export const prerender = false;
+import Base from "../../layouts/Base.astro";
+import ScoreRing from "../../components/ScoreRing.astro";
+import SignalCard from "../../components/SignalCard.astro";
+import { authenticate } from "../../lib/auth/guard";
+import { deltaLabel, BAND_TOKEN } from "../../lib/dashboardShared";
+import { readAreaIndex } from "../../lib/account/readIndex";
+import { formatDate, machineDate } from "../../lib/format";
+import { getAddress, getAlertPrefs, listReminders } from "../../lib/account/db";
+import { ALERT_CATALOGUE } from "../../lib/account/alertCatalogue";
+import {
+  BUCKET_LABEL, SEASONAL_SUGGESTIONS, TASK_CATALOGUE, bucketFor, dueLabel, type DueBucket,
+} from "../../lib/account/reminders";
+
+const auth = await authenticate(Astro.request);
+if (!auth) return Astro.redirect("/home/sign-in/");
+if (!auth.home) return Astro.redirect("/home/setup/");
+
+const home = auth.home;
+// Precomputed artifact, read from this Worker's own assets — see readIndex.ts
+// for why the engine is not imported here.
+const index = await readAreaIndex(home.areaId);
+if (!index || !index.dashboard) return Astro.redirect(`/dashboard/${home.zip}/`);
+
+const order = index.dashboard.signalOrder;
+const signals = [...index.signals].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+const unavailable = signals.filter((s) => !s.computable);
+const weightCoverage = index.dashboard.weightCoverage;
+const delta = index.dashboard.delta;
+const composite = index.compositeExplanation;
+const band = index.composite;
+const token = BAND_TOKEN[band.band];
+
+const [reminders, prefs, address] = await Promise.all([
+  listReminders(home.id),
+  getAlertPrefs(home.id),
+  getAddress(home.id),
+]);
+
+const now = new Date().toISOString();
+const visible = reminders.filter((r) => !r.snoozedUntil || r.snoozedUntil <= now);
+const snoozed = reminders.filter((r) => r.snoozedUntil && r.snoozedUntil > now);
+
+const ORDER: DueBucket[] = ["overdue", "today", "this-week", "coming-up", "later"];
+const grouped = ORDER.map((bucket) => ({
+  bucket,
+  label: BUCKET_LABEL[bucket],
+  items: visible.filter((r) => bucketFor(r.nextDueAt, now) === bucket),
+})).filter((g) => g.items.length > 0);
+
+const openCount = visible.filter((r) => ["overdue", "today", "this-week"].includes(bucketFor(r.nextDueAt, now))).length;
+
+// Condition alerts, from the same records the signals came from. Only the
+// types this home has left switched on; unset means on.
+const fired = index.alerts.filter((a) => prefs[a.key] !== false);
+
+const seasonal = SEASONAL_SUGGESTIONS[new Date().getUTCMonth()] ?? [];
+const unused = TASK_CATALOGUE.filter((t) => !reminders.some((r) => r.taskKey === t.key));
+---
+
+<Base title={`Your home — ${home.zip} | Texas Home Intelligence`} description="Your home dashboard." noindex>
+  <section class="dash-hero">
+    <div class="wrap">
+      <div class="dash-hero-grid">
+        <div class="dash-score-panel">
+          <p class="eyebrow dash-eyebrow">Your home · {home.zip} · {home.countyName} County</p>
+          <h1 class="dash-h1">Your home</h1>
+          <div class="dash-score-row">
+            <ScoreRing score={band.score} band={band.band} bandLabel={band.bandLabel} weightCoverage={weightCoverage} />
+            <div class="dash-score-read">
+              <p class={`dash-band status-${token}`} data-band-label>
+                <span class="status-dot" aria-hidden="true"></span>{band.bandLabel}
+              </p>
+              <p class="dash-verdict">{composite.headline}</p>
+              <p class="dash-delta" data-delta>
+                {deltaLabel(delta.change)} since the same reading on{" "}
+                <time datetime={machineDate(delta.comparedTo)}>{formatDate(delta.comparedTo)}</time>
+              </p>
+              {weightCoverage < 1 && (
+                <p class="dash-coverage" data-coverage>
+                  Measured from {Math.round(weightCoverage * 100)}% of the signals —{" "}
+                  {unavailable.map((s) => s.label).join(", ")} not published for this area.
+                </p>
+              )}
+            </div>
+          </div>
+          <p class="dash-caveat">The Home Stress Index measures conditions in an area, not damage to a home. It is not a prediction, an inspection, or a probability of loss.</p>
+          <p class="dash-links">
+            <a href="/methodology/home-stress-index/">How this is calculated &nearr;</a>
+            <a href={`/dashboard/${home.zip}/`}>Public view for {home.zip} &rarr;</a>
+          </p>
+        </div>
+
+        <div class="dash-picker-panel">
+          <p class="eyebrow">Signed in</p>
+          <p class="dash-precision" data-account-email>{auth.account.email}</p>
+          {address && <p class="dash-precision" data-address>{address}</p>}
+          <p class="dash-precision">Readings are for {home.countyName} County and the{" "}
+            {home.areaId === "austin" ? "Austin" : "San Antonio"} metro — they describe the area,
+            not this address.</p>
+          <form method="post" action="/api/auth/sign-out/">
+            <button class="btn secondary" type="submit">Sign out</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Condition alerts: present only while the condition holds ── */}
+  {fired.length > 0 && (
+    <section class="block">
+      <div class="wrap">
+        {fired.map((alert) => (
+          <article class="card event-card" data-alert={alert.key}>
+            <p class="card-tag">{alert.label} · condition detected</p>
+            <h2>{alert.headline}</h2>
+            <p>{alert.detail}</p>
+            <ul style="list-style:disc;padding-left:1.25em;">
+              {alert.checklist.map((item) => <li>{item}</li>)}
+            </ul>
+            <p class="data-meta">
+              Source: {alert.source} · reading from{" "}
+              <time datetime={machineDate(alert.observedAt)}>{formatDate(alert.observedAt)}</time>
+            </p>
+            <p class="dash-section-note">
+              This card is here because the data showed the condition. It goes away when the
+              condition does.
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {/* ── Your home this week ── */}
+  <section class="block alt" id="this-week">
+    <div class="wrap">
+      <h2>Your home this week</h2>
+      <p class="dash-section-note" data-open-count>
+        {openCount} open · done items are remembered
+      </p>
+
+      {grouped.length === 0 ? (
+        <p>Nothing due. Add something below and we'll keep track of when it's next needed.</p>
+      ) : (
+        grouped.map((group) => (
+          <div class="queue-group" data-bucket={group.bucket}>
+            <h3>{group.label}</h3>
+            {group.items.map((r) => (
+              <div class="queue-item" data-reminder={r.id}>
+                <div>
+                  <p class="queue-title">{r.label}</p>
+                  <p class="queue-meta" data-due>
+                    {dueLabel(r.nextDueAt, now)}
+                    {r.lastDoneAt && (
+                      <> · last done <time datetime={machineDate(r.lastDoneAt)}>{formatDate(r.lastDoneAt)}</time></>
+                    )}
+                    {" "}· every {r.cadenceDays} days
+                  </p>
+                </div>
+                <div class="queue-actions">
+                  <button class="btn" data-action="complete" data-id={r.id}>Done</button>
+                  <button class="btn secondary" data-action="snooze" data-id={r.id}>Remind me</button>
+                  <button class="btn secondary" data-action="skip" data-id={r.id}>Skip</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ))
+      )}
+
+      {snoozed.length > 0 && (
+        <p class="dash-section-note" data-snoozed>
+          {snoozed.length} snoozed. Snoozing hides an item for a while; it does not move the due
+          date, so nothing gets quietly rescheduled.
+        </p>
+      )}
+
+      {/* Round 5b seam, rendered honestly rather than faked. */}
+      <div class="card municipal-pending" data-municipal-pending>
+        <p class="card-tag">Not built yet</p>
+        <p>
+          Trash, recycling, bulk pickup and Austin Water watering days will appear here once the
+          municipal feeds are wired up. We'd rather leave the space empty than show you a
+          collection day we haven't verified.
+        </p>
+      </div>
+
+      <div class="add-reminder">
+        <h3>Add a reminder</h3>
+        <form method="post" action="/api/reminders/" data-add-reminder>
+          <select name="task_key" class="notify-input" required>
+            {unused.map((t) => (
+              <option value={t.key}>{t.label} — every {t.defaultCadenceDays} days</option>
+            ))}
+          </select>
+          <button class="btn" type="submit">Add</button>
+        </form>
+        {unused.length === 0 && <p class="dash-section-note">Everything in the catalogue is already on your list.</p>}
+      </div>
+    </div>
+  </section>
+
+  {/* ── Five signals ── */}
+  <section class="block">
+    <div class="wrap">
+      <h2>Five home signals</h2>
+      <p class="dash-section-note">
+        What is putting stress on homes in {home.zip}. Indexes of conditions around your ZIP,
+        0&ndash;100 &mdash; never a prediction of damage to your house.{" "}
+        <a href="/methodology/home-stress-index/">How scoring works &nearr;</a>
+      </p>
+      <div class="signal-grid">{signals.map((signal) => <SignalCard signal={signal} />)}</div>
+    </div>
+  </section>
+
+  {/* ── Filter Center memory + seasonal + alert prefs ── */}
+  <section class="block alt">
+    <div class="wrap">
+      <h2>What your home remembers</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Last done</h3>
+          {reminders.filter((r) => r.lastDoneAt).length === 0 ? (
+            <p class="dash-section-note" data-no-history>
+              Nothing marked done yet. Mark one complete and the next due date recalculates from
+              that day.
+            </p>
+          ) : (
+            <ul style="list-style:none;padding:0;">
+              {reminders.filter((r) => r.lastDoneAt).map((r) => (
+                <li class="data-meta" data-history-item>
+                  {r.label} · last done{" "}
+                  <time datetime={machineDate(r.lastDoneAt!)}>{formatDate(r.lastDoneAt!)}</time> ·
+                  next <time datetime={machineDate(r.nextDueAt)}>{formatDate(r.nextDueAt)}</time>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div class="card">
+          <h3>Worth doing this month</h3>
+          <ul style="list-style:disc;padding-left:1.25em;">
+            {seasonal.map((s) => <li>{s}</li>)}
+          </ul>
+          <p class="dash-section-note">
+            General seasonal guidance for Central Texas — not a reading about your home.
+          </p>
+        </div>
+      </div>
+
+      <h2 style="margin-top:28px;">We'll tell you when something changes</h2>
+      <div class="grid-2">
+        {ALERT_CATALOGUE.map((a) => (
+          <label class="card alert-pref" data-alert-pref={a.key}>
+            <input type="checkbox" data-pref={a.key} checked={prefs[a.key] !== false} />
+            <span>
+              <strong>{a.label}</strong>
+              <span class="dash-section-note" style="display:block;">{a.description}</span>
+            </span>
+          </label>
+        ))}
+      </div>
+      <p class="dash-section-note">
+        Alerts describe conditions in your area, never your individual house, and they are sent
+        only while a condition holds.
+      </p>
+      <p class="dash-section-note">
+        <a href="/privacy/#your-account">Delete my account and data &rarr;</a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const post = async (url: string, fields: Record<string, string>) => {
+    const body = new FormData();
+    for (const [k, v] of Object.entries(fields)) body.append(k, v);
+    const res = await fetch(url, { method: "POST", body });
+    return { ok: res.ok, data: (await res.json().catch(() => ({}))) as Record<string, unknown> };
+  };
+
+  document.querySelectorAll("[data-action]").forEach((node) => {
+    node.addEventListener("click", async () => {
+      const btn = node as HTMLButtonElement;
+      const action = btn.dataset.action!;
+      btn.disabled = true;
+      const { ok } = await post("/api/reminders/action/", {
+        reminder_id: btn.dataset.id!, action, days: "3",
+      });
+      if (ok) {
+        if (action === "complete") window.__thiTrack?.("reminder_completed", {});
+        window.location.reload();
+      } else {
+        btn.disabled = false;
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-add-reminder]").forEach((node) => {
+    if (!(node instanceof HTMLFormElement)) return;
+    node.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const res = await fetch("/api/reminders/", { method: "POST", body: new FormData(node) });
+      if (res.ok) {
+        window.__thiTrack?.("reminder_created", {});
+        window.location.reload();
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-pref]").forEach((node) => {
+    node.addEventListener("change", async () => {
+      const input = node as HTMLInputElement;
+      await post("/api/account/alert-prefs/", {
+        alert_key: input.dataset.pref!, enabled: input.checked ? "yes" : "no",
+      });
+      window.__thiTrack?.("alert_pref_set", { alert: input.dataset.pref });
+    });
+  });
+</script>

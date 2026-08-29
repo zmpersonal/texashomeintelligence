@@ -7,6 +7,15 @@ interface ImportMetaEnv {
   readonly PUBLIC_GA4_MEASUREMENT_ID?: string;
   /** Cloudflare Web Analytics beacon token. Same gating as above. */
   readonly PUBLIC_CF_BEACON_TOKEN?: string;
+  /* Server-side only, and deliberately NOT PUBLIC_-prefixed so Vite cannot
+   * expose them to the browser:
+   *   RESEND_API_KEY — set with `wrangler secret put RESEND_API_KEY`. Never in
+   *     the repo, never in wrangler.jsonc. Absent, the stub transport runs and
+   *     says so.
+   *   EMAIL_FROM — optional override for the From address; defaults to
+   *     accounts@texashomeintelligence.com. Must be a THI domain with SPF and
+   *     DKIM verified in Resend.
+   * Both are read via `cloudflare:workers` env in src/lib/email/transport.ts. */
 }
 
 interface Window {

@@ -8,7 +8,7 @@
  * API (COST.md).
  */
 import { computeStressIndex, explainComposite } from "./stressIndex";
-import type { BandId, SignalResult, StressIndexResult } from "./stressIndex";
+import type { SignalResult, StressIndexResult } from "./stressIndex";
 import { areaDefinitions, resolveZip, type ZipResolved } from "./zipAreas";
 import { CROSSWALK } from "./zipCrosswalk";
 
@@ -107,18 +107,5 @@ export function buildDashboard(zipCode: string): DashboardView | undefined {
   };
 }
 
-/** Status-ramp token suffix for a band. The ramp is Safe/Watch/Elevated/Severe
- * in the kit; the index's bands map onto it in order. */
-export const BAND_TOKEN: Record<BandId, string> = {
-  normal: "safe",
-  moderate: "watch",
-  elevated: "elevated",
-  high: "severe",
-};
+export { BAND_TOKEN, deltaLabel } from "./dashboardShared";
 
-/** Plain-language direction for a delta. Zero is stated, not hidden — "no
- * change" is a measurement, and blanking it would imply we didn't look. */
-export function deltaLabel(change: number): string {
-  if (change === 0) return "No change";
-  return `${change > 0 ? "Up" : "Down"} ${Math.abs(change)} point${Math.abs(change) === 1 ? "" : "s"}`;
-}
