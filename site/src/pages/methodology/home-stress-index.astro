@@ -1,0 +1,337 @@
+---
+/**
+ * /methodology/home-stress-index/ — the citation asset behind the score.
+ *
+ * Everything on this page is read from the same config and computation the
+ * dashboard uses, so a weight cannot be changed without this page changing
+ * with it. Nothing here is re-typed prose about the numbers.
+ */
+import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import DataStatus from "../../components/DataStatus.astro";
+import FaqAccordion from "../../components/FaqAccordion.astro";
+import {
+  BANDS,
+  CONDITIONS_NOT_DAMAGE,
+  DROUGHT_LEVEL_POINTS,
+  DROUGHT_WINDOWS,
+  EXCLUDED_INPUTS,
+  METHODOLOGY_VERSION,
+  SIGNAL_WEIGHTS,
+  STORM_DECAY_HALF_LIFE_DAYS,
+  STORM_SEVERITY,
+  computeStressIndex,
+} from "../../lib/stressIndex";
+import { areaDefinitions, coverageSummary } from "../../lib/zipAreas";
+import { formatDate, machineDate } from "../../lib/format";
+
+const areas = areaDefinitions().map((a) => computeStressIndex(a));
+const coverage = coverageSummary();
+
+const WEIGHTS: Record<string, number> = SIGNAL_WEIGHTS;
+
+const SIGNAL_DOC = [
+  {
+    id: "roof-storm",
+    label: "Roof & Storm",
+    question: "What does the Roof & Storm signal measure?",
+    answer:
+      "Hail, severe wind and tornado events recorded by NOAA in the counties covering the area, " +
+      "each weighted by how recently it happened and how large it was. Flood events are recorded " +
+      "by the same feed but excluded, because flooding is not roof stress.",
+    sources: "NOAA Storm Events Database (county-level, published on a multi-month lag)",
+  },
+  {
+    id: "foundation-soil",
+    label: "Foundation & Soil",
+    question: "What does the Foundation & Soil signal measure?",
+    answer:
+      `Drought persistence over the trailing ${DROUGHT_WINDOWS.foundationWeeks} weeks. Central Texas ` +
+      "clay shrinks as it dries and swells as it rewets, and it is the length of a dry spell rather " +
+      "than any single week that moves a slab. We hold no soil-composition or per-property data, so " +
+      "this describes moisture conditions around houses in the county, not the state of a foundation.",
+    sources: "U.S. Drought Monitor (weekly, county-level)",
+  },
+  {
+    id: "hvac",
+    label: "HVAC",
+    question: "What does the HVAC signal measure?",
+    answer:
+      `How much of the recent forecast ran at or above ${100}°F, with extra weight for days at or above ` +
+      "105°F, plus air quality as a proxy for filter load. It is a measure of demand on a cooling " +
+      "system, not of that system's condition.",
+    sources: "National Weather Service forecast API; EPA AirNow (both metro-level)",
+  },
+  {
+    id: "water-irrigation",
+    label: "Water & Irrigation",
+    question: "What does the Water & Irrigation signal measure?",
+    answer:
+      "The current week's U.S. Drought Monitor category for the county, scaled by how much of the " +
+      "county is actually at that level. It reads the same feed as Foundation & Soil but only the " +
+      "latest week, so the two are related readings rather than independent evidence.",
+    sources: "U.S. Drought Monitor (weekly, county-level)",
+  },
+  {
+    id: "trees-yard",
+    label: "Trees & Yard",
+    question: "What does the Trees & Yard signal measure?",
+    answer:
+      `Drought over the trailing ${DROUGHT_WINDOWS.treesWeeks} weeks blended with recent wind and ` +
+      "tornado activity. Drought weakens limbs; wind is what brings the weakened ones down.",
+    sources: "U.S. Drought Monitor; NOAA Storm Events Database",
+  },
+];
+
+const faqItems = [
+  {
+    q: "Is the Home Stress Index a prediction of damage to my home?",
+    a:
+      "No. " + CONDITIONS_NOT_DAMAGE + " It describes what the weather and drought have been doing " +
+      "across a county, using published public records. Two identical houses on the same street " +
+      "receive the same score, because every input is measured at county or metro level.",
+  },
+  {
+    q: "How precise is the Home Stress Index for a specific ZIP code?",
+    a:
+      "It is not ZIP-specific. Storm and drought records are published by county, and forecast and " +
+      "air-quality readings by metro, so every ZIP in a metro currently resolves to the same reading. " +
+      "We do not publish a ZIP-versus-metro comparison because no input we hold varies within a metro; " +
+      "producing one would mean modelling a difference rather than measuring it.",
+  },
+  {
+    q: "How is the Home Stress Index calculated?",
+    a:
+      "In three layers. A raw public observation is read from its source, converted by a published " +
+      "rule into a 0–100 sub-score for one of five signals, and the five sub-scores are combined " +
+      "using fixed weights. Every step is deterministic arithmetic: the same records always produce " +
+      "the same score, and no language model is involved at any point.",
+  },
+  {
+    q: "How far back does a storm keep counting toward the score?",
+    a:
+      `Storm events decay exponentially with a ${STORM_DECAY_HALF_LIFE_DAYS}-day half-life, so an ` +
+      "event from six months ago counts half as much as one from this week and a year-old event " +
+      "still carries about a quarter. Unrepaired storm damage does not heal, so the decay is " +
+      "deliberately slower than recency alone would suggest.",
+  },
+  {
+    q: "How current is the Home Stress Index?",
+    a:
+      "Each signal reports two dates: how far its underlying records run, and when we last confirmed " +
+      "the feed. A signal is never presented as more current than its stalest input, and all " +
+      "time-based maths is measured from the newest record we hold rather than from today's date — " +
+      "so a feed that stops updating produces a visibly stale score instead of a quietly decaying one.",
+  },
+];
+
+const dateModified = areas
+  .map((a) => a.freshness.asOf)
+  .filter((v): v is string => Boolean(v))
+  .sort()
+  .at(-1);
+
+const title = "Home Stress Index Methodology — How the Score Is Calculated | Texas Home Intelligence";
+const description =
+  "How Texas Home Intelligence computes the Home Stress Index: the five signals, the weights, the " +
+  "0–100 bands, the storm decay curve, the public sources behind each signal, and what the score " +
+  "does and does not claim.";
+---
+
+<Base title={title} description={description} article={{ dateModified }}>
+  <Breadcrumbs
+    crumbs={[
+      { name: "Home", url: "/" },
+      { name: "Methodology", url: "/methodology/" },
+      { name: "Home Stress Index", url: "/methodology/home-stress-index/" },
+    ]}
+  />
+
+  <section class="hero">
+    <div class="wrap" style="max-width:820px;">
+      <span class="eyebrow">METHODOLOGY · {METHODOLOGY_VERSION}</span>
+      <h1>How the Home Stress Index is calculated</h1>
+      <p class="lede">
+        The Home Stress Index is a 0–100 measure of how hard recent weather and drought have been on
+        houses in a given Texas county or metro. It is built from five signals, each computed by
+        published arithmetic from public records, and combined using the fixed weights below.
+        <strong>{CONDITIONS_NOT_DAMAGE}</strong>
+      </p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width:820px;">
+      <h2>What the score means at a glance</h2>
+      <ul style="list-style:disc;padding-left:1.25em;">
+        <li><strong>Range:</strong> 0–100, where higher means conditions have been harder on houses.</li>
+        <li><strong>Signals:</strong> five, weighted — {SIGNAL_DOC.map((s) => s.label).join(", ")}.</li>
+        <li><strong>Bands:</strong> {BANDS.slice().reverse().map((b) => `${b.label} (${b.min}+)`).join(", ")}.</li>
+        <li><strong>Granularity:</strong> county for storms and drought, metro for forecast and air quality. Never address-level.</li>
+        <li><strong>Determinism:</strong> no model, no randomness — identical records always produce an identical score.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap" style="max-width:900px;">
+      <h2>What are the five signals, and how are they weighted?</h2>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr><th>Signal</th><th>Weight</th><th>What it measures</th><th>Sources</th></tr>
+          </thead>
+          <tbody>
+            {SIGNAL_DOC.map((s) => (
+              <tr>
+                <th scope="row">{s.label}</th>
+                <td>{Math.round(WEIGHTS[s.id] * 100)}%</td>
+                <td>{s.answer}</td>
+                <td>{s.sources}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p>
+        The composite is the weighted mean of the five sub-scores. When a signal cannot be computed
+        for an area — because a feed does not cover it — the remaining weights are re-normalised and
+        the area's reading records which signals were missing. A missing signal is never scored as
+        zero, because "we don't know" and "conditions are calm" are not the same statement.
+      </p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width:820px;">
+      <h2>How does a raw record become a score?</h2>
+      <p>Three layers, kept separate so each can be checked on its own:</p>
+      <ol style="list-style:decimal;padding-left:1.25em;">
+        <li><strong>Layer A — observation.</strong> The published record as its source stated it, with the source name, the period it covers and when we last confirmed the feed.</li>
+        <li><strong>Layer B — sub-score.</strong> A published rule converts the observation to 0–100. Every term that contributed is retained, so the arithmetic can be re-added by hand.</li>
+        <li><strong>Layer C — explanation.</strong> Driver codes and the plain-language sentences generated from them. The wording is produced from templates, so what the dashboard says is fixed by this methodology rather than written per page.</li>
+      </ol>
+
+      <h2>How quickly does a past storm stop counting?</h2>
+      <p>
+        Each storm event is weighted by <code>0.5 ^ (days since event / {STORM_DECAY_HALF_LIFE_DAYS})</code>,
+        then dropped once that weight falls below {Math.round(0.05 * 100)}%. Severity before decay:
+        hail at {STORM_SEVERITY.hail.map((h) => `${h.minInches}"+ = ${h.points} pts`).join(", ")};
+        wind at {STORM_SEVERITY.wind.map((w) => `${w.minMph}+ mph = ${w.points} pts`).join(", ")};
+        a tornado in the county = {STORM_SEVERITY.tornadoPoints} pts. Events recorded without a
+        measured magnitude — which is every flood and tornado row, and some wind rows — are counted
+        at the lowest severity band rather than assumed severe.
+      </p>
+
+      <h2>How is drought severity converted to a score?</h2>
+      <p>
+        The U.S. Drought Monitor publishes, for each county each week, the share of the county's area
+        at each drought category. We score the worst category present
+        ({Object.entries(DROUGHT_LEVEL_POINTS).map(([k, v]) => `${k} = ${v}`).join(", ")})
+        and then <strong>scale it by the share of the county actually at that level</strong>. A county
+        that is 10% in severe drought is not a county in severe drought, and scoring the label alone
+        would overstate it by an order of magnitude.
+      </p>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap" style="max-width:900px;">
+      <h2>What is the current reading for each area?</h2>
+      {areas.map((area) => (
+        <div class="card" style="margin-bottom:16px;">
+          <h3>{area.areaLabel} — {area.composite.score}/100 ({area.composite.bandLabel})</h3>
+          <DataStatus
+            status="live"
+            asOf={area.freshness.asOf}
+            dataThrough={area.freshness.dataThrough}
+            source="Composite of the sources listed above"
+          />
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>Signal</th><th>Score</th><th>Band</th><th>Records through</th></tr></thead>
+              <tbody>
+                {area.signals.map((s) => (
+                  <tr>
+                    <th scope="row">{s.label}</th>
+                    <td>{s.computable ? s.layerB.score : "—"}</td>
+                    <td>{s.computable ? s.layerB.bandLabel : "not published"}</td>
+                    <td>
+                      {s.freshness.dataThrough ? (
+                        <time datetime={machineDate(s.freshness.dataThrough)}>
+                          {formatDate(s.freshness.dataThrough)}
+                        </time>
+                      ) : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="metric-note">
+            All time-based maths for this area is measured from{" "}
+            <time datetime={machineDate(area.referenceDate)}>{formatDate(area.referenceDate)}</time>,
+            the newest record behind it.
+          </p>
+          <p><a href={`/data/stress-index/${area.areaId}.json`}>Full computation as JSON &rarr;</a></p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width:820px;">
+      <h2>Which ZIP codes does this cover, and how exactly?</h2>
+      <p>
+        A ZIP resolves to a metro, and the metro's county readings are what it shows. Coverage is
+        published in two tiers, and the dashboard states which tier a given ZIP matched:
+      </p>
+      <ul style="list-style:disc;padding-left:1.25em;">
+        {coverage.map((c) => (
+          <li>
+            <strong>{c.label}:</strong> {c.verifiedZips} ZIP{c.verifiedZips === 1 ? "" : "s"} confirmed
+            against a cited source; all other ZIPs beginning {c.prefixes.join(", ")} resolve to this
+            metro by prefix, which we label as the weaker match that it is. Drought is ingested for{" "}
+            {c.ingestCounties} counties; storm records are read across {c.stormCounties}.
+          </li>
+        ))}
+      </ul>
+      <p>
+        A ZIP that matches neither tier returns "not covered yet" rather than being snapped to the
+        nearest metro. Showing a Travis County drought reading to someone in West Texas would be
+        worse than showing them nothing.
+      </p>
+
+      <h2>Why is there no ZIP-versus-metro comparison?</h2>
+      <p>
+        Because none of our inputs vary within a metro. Storm and drought records are published by
+        county; forecast and air-quality readings are metro-wide. Every ZIP in a metro therefore
+        resolves to an identical reading, and any percentile we showed would be a modelled difference
+        presented as a measured one. The comparison stays marked as coming soon until an input that
+        genuinely varies below the county level is in place.
+      </p>
+
+      <h2>What public data is deliberately left out?</h2>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Source</th><th>Why it is not in the score</th></tr></thead>
+          <tbody>
+            {EXCLUDED_INPUTS.map((x) => (
+              <tr><th scope="row">{x.datasetId}</th><td>{x.reason}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap" style="max-width:760px;">
+      <FaqAccordion heading="Home Stress Index — questions and answers" items={faqItems} />
+      <p style="margin-top:20px;">
+        See our <a href="/methodology/">sitewide methodology</a> for how every feed is sourced,
+        updated and labelled, or the <a href="/data/">data catalog</a> for the underlying records.
+      </p>
+    </div>
+  </section>
+</Base>
