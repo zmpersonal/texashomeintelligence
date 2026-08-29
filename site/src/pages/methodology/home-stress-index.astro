@@ -22,11 +22,12 @@ import {
   STORM_SEVERITY,
   computeStressIndex,
 } from "../../lib/stressIndex";
-import { areaDefinitions, coverageSummary } from "../../lib/zipAreas";
+import { areaDefinitions, coverageSummary, coverageTotals } from "../../lib/zipAreas";
 import { formatDate, machineDate } from "../../lib/format";
 
 const areas = areaDefinitions().map((a) => computeStressIndex(a));
 const coverage = coverageSummary();
+const totals = coverageTotals();
 
 const WEIGHTS: Record<string, number> = SIGNAL_WEIGHTS;
 
@@ -283,23 +284,47 @@ const description =
     <div class="wrap" style="max-width:820px;">
       <h2>Which ZIP codes does this cover, and how exactly?</h2>
       <p>
-        A ZIP resolves to a metro, and the metro's county readings are what it shows. Coverage is
-        published in two tiers, and the dashboard states which tier a given ZIP matched:
+        {totals.distinctZips} ZIP codes across the Austin and San Antonio metros. Coverage comes from
+        the U.S. Census Bureau&rsquo;s 2020 ZCTA-to-County Relationship File, filtered to the counties
+        of the two metropolitan statistical areas — so every ZIP we resolve is backed by a published
+        federal crosswalk rather than by a guess about ZIP-prefix ranges. A ZIP outside that list
+        returns &ldquo;not covered yet&rdquo; rather than being matched to the nearest metro.
       </p>
-      <ul style="list-style:disc;padding-left:1.25em;">
-        {coverage.map((c) => (
-          <li>
-            <strong>{c.label}:</strong> {c.verifiedZips} ZIP{c.verifiedZips === 1 ? "" : "s"} confirmed
-            against a cited source; all other ZIPs beginning {c.prefixes.join(", ")} resolve to this
-            metro by prefix, which we label as the weaker match that it is. Drought is ingested for{" "}
-            {c.ingestCounties} counties; storm records are read across {c.stormCounties}.
-          </li>
-        ))}
-      </ul>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr><th>Metro</th><th>ZIPs</th><th>Counties (ZIPs each)</th><th>Spanning &gt;1 county</th><th>Drought ingested</th></tr>
+          </thead>
+          <tbody>
+            {coverage.map((c) => (
+              <tr>
+                <th scope="row">{c.label}</th>
+                <td>{c.zips}</td>
+                <td>{c.countiesByZipCount.map(([n, k]) => `${n} (${k})`).join(", ")}</td>
+                <td>{c.multiCountyZips}</td>
+                <td>{c.droughtCounties} counties</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Does a ZIP code get its own county's reading?</h2>
       <p>
-        A ZIP that matches neither tier returns "not covered yet" rather than being snapped to the
-        nearest metro. Showing a Travis County drought reading to someone in West Texas would be
-        worse than showing them nothing.
+        Not always, and the dashboard says which it is. The index is published per metro, computed
+        for that metro&rsquo;s representative county — Travis for Austin, Bexar for San Antonio. A ZIP
+        in, say, Bastrop or Medina County is covered, but the readings it sees are the metro&rsquo;s,
+        not its own county&rsquo;s. Of the ZIPs we cover,{" "}
+        {coverage.map((c) => `${c.droughtGranularZips} of ${c.zips} in ${c.label}`).join(" and ")}{" "}
+        sit in a county we already ingest drought data for, which is what a future county-level
+        reading would be built from.
+      </p>
+      <p>
+        {coverage.reduce((n, c) => n + c.multiCountyZips, 0)} of the covered ZIPs straddle more than
+        one county inside their metro, and {totals.crossMetro.length} straddle the Austin–San Antonio
+        boundary itself and appear in the federal file under both metros. For those, the file carries
+        no land-area or population share to arbitrate with, so we assign each to one metro and label
+        it as a boundary ZIP rather than implying it sits cleanly on one side.
       </p>
 
       <h2>Why is there no ZIP-versus-metro comparison?</h2>

@@ -248,6 +248,66 @@ if (existsSync(stressDir)) {
   }
 }
 
+// --- zip crosswalk: the coverage map must stay internally consistent ---
+//
+// The crosswalk is a filtered extract of a federal file, so the risk is not
+// that a row is wrong but that a re-export reshapes or truncates it without
+// anyone noticing. These checks are cheap and would catch that.
+const crosswalkPath = path.join(dataDir, "zip-area-crosswalk.csv");
+if (!existsSync(crosswalkPath)) {
+  fail("zip-area-crosswalk.csv is missing — ZIP resolution has no source");
+} else {
+  const lines = readFileSync(crosswalkPath, "utf8").trim().split(/\r?\n/);
+  const EXPECTED =
+    "zip,area,primary_county_fips,primary_county,all_metro_county_fips,drought_county_granular";
+  if (lines[0].trim() !== EXPECTED) fail(`zip-area-crosswalk: header changed (${lines[0]})`);
+
+  const areaFile = readFileSync(path.join(dataDir, "zip-areas.ts"), "utf8");
+  const knownAreas = [...areaFile.matchAll(/areaId:\s*"([^"]+)"/g)].map((m) => m[1]);
+  const overrides = new Set(
+    [...areaFile.matchAll(/"(\d{5})":\s*\{\s*area:/g)].map((m) => m[1]),
+  );
+
+  const fipsToName = new Map();
+  const seen = new Map();
+  for (const line of lines.slice(1)) {
+    if (!line.trim()) continue;
+    const [zip, area, fips, county, allFips] = line.split(",");
+    const areaId = area.trim().replace(/_/g, "-");
+    if (!/^\d{5}$/.test(zip)) fail(`zip-area-crosswalk: "${zip}" is not a 5-digit ZIP`);
+    if (!knownAreas.includes(areaId)) {
+      fail(`zip-area-crosswalk: ${zip} has area "${areaId}" with no entry in zip-areas.ts`);
+    }
+    const all = allFips.trim().split("|").filter(Boolean);
+    // A primary county outside the ZIP's own county list would make the
+    // reading's geography incoherent.
+    if (!all.includes(fips.trim())) {
+      fail(`zip-area-crosswalk: ${zip} primary county ${fips} is not in its county list ${allFips}`);
+    }
+    const prior = fipsToName.get(fips.trim());
+    if (prior && prior !== county.trim()) {
+      fail(`zip-area-crosswalk: FIPS ${fips} is named both "${prior}" and "${county}"`);
+    }
+    fipsToName.set(fips.trim(), county.trim());
+    // Duplicates are legitimate only for the boundary ZIPs, and each of those
+    // must have an explicit assignment rather than falling to last-write-wins.
+    if (seen.has(zip) && !overrides.has(zip)) {
+      fail(
+        `zip-area-crosswalk: ${zip} appears in both "${seen.get(zip)}" and "${areaId}" ` +
+          "with no CROSS_METRO_ZIPS entry deciding which wins",
+      );
+    }
+    seen.set(zip, areaId);
+  }
+  // An override for a ZIP that is not actually duplicated is stale config.
+  for (const zip of overrides) {
+    const count = lines.slice(1).filter((l) => l.startsWith(zip + ",")).length;
+    if (count < 2) {
+      fail(`zip-areas: CROSS_METRO_ZIPS lists ${zip}, which appears ${count}x in the crosswalk`);
+    }
+  }
+}
+
 // --- report ---
 if (problems.length > 0) {
   console.error(`\n✗ Content verification failed with ${problems.length} problem(s):\n`);
