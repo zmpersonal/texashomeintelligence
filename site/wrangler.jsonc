@@ -6,15 +6,16 @@
   // Deploy with `npm run deploy`, or in Cloudflare Workers Builds set:
   //   root dir `site` · build `npm run build`
   //   deploy `npx wrangler deploy --config dist/server/wrangler.json`
-  // ⚠️ Name mismatch to resolve (owner decision). The Cloudflare account has a
-  // Worker called `texashomeintelligence` (no hyphens, created 2026-08-23);
-  // there is no Worker called `texas-home-intelligence`. Either Workers Builds
-  // deploys under the connected Worker's name and this field is cosmetic, or
-  // this field is what a `wrangler deploy` would target and it would create a
-  // SECOND Worker on its own URL. Left unchanged deliberately: changing it
-  // could fork staging onto a new hostname. Confirm in the dashboard which
-  // Worker the build is attached to, then align this field to it.
-  "name": "texas-home-intelligence",
+  // Must stay byte-identical to the Worker that Workers Builds is connected to
+  // (`texashomeintelligence`, no hyphens, repo zmpersonal/texashomeintelligence).
+  // It was previously the hyphenated `texas-home-intelligence`, which Cloudflare
+  // flagged as a mismatch; a `wrangler deploy` under that name would have
+  // created a SECOND Worker on its own workers.dev hostname rather than
+  // updating staging. Do not "tidy" this into the hyphenated form to match the
+  // D1/KV resource names below — those are separate resources and are correctly
+  // hyphenated. Renaming the Worker is an owner action in the dashboard first,
+  // this field second.
+  "name": "texashomeintelligence",
   "compatibility_date": "2026-04-15",
   "compatibility_flags": ["nodejs_compat"],
 

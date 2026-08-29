@@ -122,7 +122,7 @@ Two sites live in this one repo:
   served at the workers.dev **staging** URL. **All new work happens in `site/`.**
 
 **Stack (in `site/`):** Astro 7 + TypeScript + Tailwind 4 + `@astrojs/cloudflare`,
-deployed via **Wrangler** (`site/wrangler.jsonc`, worker name `texas-home-intelligence`).
+deployed via **Wrangler** (`site/wrangler.jsonc`, worker name `texashomeintelligence`).
 Bindings already exist: **D1** (`DB` = `texas-home-intelligence-db`) and **KV**
 (`PROJECTS_KV`, `SESSION`) — IDs in `wrangler.jsonc` are local placeholders the owner
 swaps for real ones. `robots.txt` + `llms.txt` already allow citation crawlers.

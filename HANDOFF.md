@@ -10,7 +10,7 @@ through Phase 5 (ingestion framework) + the governance-layer refresh.
 
 Older sections of this file say "Cloudflare Pages" — ground truth is a
 **Cloudflare Worker deployed via Wrangler** (`site/wrangler.jsonc`, worker
-name `texas-home-intelligence`), built and deployed by the owner's
+name `texashomeintelligence`), built and deployed by the owner's
 **Git-connected Workers Builds** (no GitHub Actions deploy workflow — do
 not add one). Staging serves at the owner's `*.julian-0ef.workers.dev`
 subdomain. Read every "Pages" mention below through that lens: "Pages
