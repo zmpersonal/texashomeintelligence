@@ -39,6 +39,20 @@ reads store nothing and need none of this. Owner owns the consent/legal
 wording (TDPSA/TCPA review); the build round stubs it with a documented
 TODO until supplied.
 
+**Ratified 2026-08-29 (owner):** these tables are **separate from the
+QuoteReady tables**, not extensions of them. `migrations/0001_init.sql`
+(`projects`, `intake_responses`, `generated_briefs`, `contractor_requests`)
+stays the QuoteReady intake schema and is now applied to the remote D1; the
+dashboard's consent / home-profile / reminder tables get their own migration
+and their own names. They share the database, not the schema — which is the
+`CLAUDE.md` two-domain rule applied one level down: a homeowner who unlocks a
+dashboard has not started a QuoteReady project, and collapsing the two would
+make consent provenance ambiguous exactly where it must not be.
+
+The exact columns are a **Round 5 deliverable and must be settled before the
+first PII write** — consent provenance cannot be backfilled after the fact, so
+the schema decision gates the capture route, not the other way round.
+
 ---
 
 ## ⚠️ Cloudflare gotcha — verify this yourself before go-live
