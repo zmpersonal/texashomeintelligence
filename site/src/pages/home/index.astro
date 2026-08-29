@@ -22,12 +22,16 @@ export const prerender = false;
 import Base from "../../layouts/Base.astro";
 import ScoreRing from "../../components/ScoreRing.astro";
 import SignalCard from "../../components/SignalCard.astro";
+import MunicipalCard from "../../components/MunicipalCard.astro";
 import { authenticate } from "../../lib/auth/guard";
 import { deltaLabel, BAND_TOKEN } from "../../lib/dashboardShared";
 import { readAreaIndex } from "../../lib/account/readIndex";
 import { formatDate, machineDate } from "../../lib/format";
 import { getAddress, getAlertPrefs, listReminders } from "../../lib/account/db";
 import { ALERT_CATALOGUE } from "../../lib/account/alertCatalogue";
+import { readArrShard } from "../../lib/municipal/shards";
+import { matchCollection } from "../../lib/municipal/match";
+import { buildWateringView } from "../../lib/municipal/watering";
 import {
   BUCKET_LABEL, SEASONAL_SUGGESTIONS, TASK_CATALOGUE, bucketFor, dueLabel, type DueBucket,
 } from "../../lib/account/reminders";
@@ -57,6 +61,17 @@ const [reminders, prefs, address] = await Promise.all([
   getAlertPrefs(home.id),
   getAddress(home.id),
 ]);
+
+// Round 5b. One shard read through ASSETS — this ZIP's file only, never the
+// whole table, and never a call out to the city on the serving path.
+const shard = home.areaId === "austin" ? await readArrShard(home.zip) : null;
+const collection = matchCollection(home.areaId, home.zip, address, shard);
+const watering = buildWateringView(
+  home.areaId,
+  index.municipal?.waterStage ?? null,
+  address,
+  new Date(),
+);
 
 const now = new Date().toISOString();
 const visible = reminders.filter((r) => !r.snoozedUntil || r.snoozedUntil <= now);
@@ -197,15 +212,7 @@ const unused = TASK_CATALOGUE.filter((t) => !reminders.some((r) => r.taskKey ===
         </p>
       )}
 
-      {/* Round 5b seam, rendered honestly rather than faked. */}
-      <div class="card municipal-pending" data-municipal-pending>
-        <p class="card-tag">Not built yet</p>
-        <p>
-          Trash, recycling, bulk pickup and Austin Water watering days will appear here once the
-          municipal feeds are wired up. We'd rather leave the space empty than show you a
-          collection day we haven't verified.
-        </p>
-      </div>
+      <MunicipalCard collection={collection} watering={watering} areaId={home.areaId} />
 
       <div class="add-reminder">
         <h3>Add a reminder</h3>

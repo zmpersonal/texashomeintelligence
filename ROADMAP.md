@@ -32,6 +32,33 @@ homeowners come back to.
   (Data → Analysis → Estimate → Recommendation → Sponsored), source + freshness on every
   reading, score never without its methodology link, status color as small signal only.
 
+### 1b. Municipal schedules on the home dashboard (Round 5b)
+Fills the "Your home this week" municipal row on the logged-in dashboard with
+**verified** Austin municipal schedules. Austin-only; every other metro renders
+the honest "not available for your area" state rather than implying coverage.
+
+Built in tiers, by how well the source actually supports the claim:
+
+- **Tier 1 — Watering (built).** The drought stage is ingested with provenance
+  and an as-of; the watering day is Austin Water's published rule applied to
+  street-number parity. Stated **conditionally** ("if your home is an Austin
+  Water customer") because the day is rule-derived, not measured for this home.
+- **Tier 2 — Personalised watering day (deferred).** Asserting the day applies
+  to *this* home needs the Austin Water service-area boundary, which does not
+  follow city or county lines. See HANDOFF seam 8.
+- **Tier 3 — Trash/recycling (built).** Matched per-address against the city's
+  own table, **strict match-or-withhold**: exact match publishes the day and the
+  A/B recycling week; any ambiguity, ZIP conflict, unreadable address, or absent
+  row withholds and links the city's lookup. A home the city does not serve is
+  never shown Austin's day. The A/B week ships as a **letter, never a date** —
+  the calendar anchor is unsourced (HANDOFF seam 7).
+- **Tier 4 — Bulk (built).** Entitlement only, **never a date**: Austin replaced
+  its predetermined bulk schedule with on-demand appointments in January 2025,
+  so no "next pickup" date exists to publish for anyone.
+
+The governing rule for the whole round: **a wrong collection day is worse than
+no collection day.** There is no fuzzy matching anywhere in the path.
+
 ### 2. Sitewide AI-mention / SEO-organic optimization
 Everything indexed/public, optimized AI-first (see requirements below). Includes the nav
 change (drop Tools + the section directly below the homepage hero; no Services), schema,

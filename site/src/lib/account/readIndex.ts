@@ -16,6 +16,7 @@ import { env } from "cloudflare:workers";
 import type { StressIndexResult } from "../stressIndex/types";
 import type { FiredAlert } from "./alertCatalogue";
 import type { SignalSeries } from "../signalSeries";
+import type { StageReading } from "../municipal/watering";
 
 export interface PrecomputedArea extends StressIndexResult {
   compositeExplanation: { headline: string; detail: string };
@@ -27,6 +28,9 @@ export interface PrecomputedArea extends StressIndexResult {
     compositeHeadline: string;
   } | null;
   alerts: FiredAlert[];
+  /** Round 5b. Optional so an artifact built before this round still parses
+   * rather than throwing the whole dashboard to the ZIP page. */
+  municipal?: { waterStage: StageReading | null };
 }
 
 export async function readAreaIndex(areaId: string): Promise<PrecomputedArea | null> {
