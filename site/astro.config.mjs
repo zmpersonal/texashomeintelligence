@@ -63,9 +63,12 @@ export default defineConfig({
       // sitemap. /lp/* (PPCPage.astro) and the not-yet-built tool
       // placeholders (ToolPlaceholder.astro, THI-round-homepage-nav.md
       // §6) are the two noindexed families right now.
+      //
+      // /dashboard/ was excluded while it was a noindexed placeholder. It is
+      // now 225 real per-ZIP pages carrying local data, which is exactly what
+      // should be in the sitemap, so the exclusion is gone.
       filter: (page) =>
         !page.includes("/lp/") &&
-        !page.includes("/dashboard/") &&
         !page.includes("/start/") &&
         !page.includes("/tools/quickconnect/") &&
         !page.includes("/tools/home-risk-report/") &&

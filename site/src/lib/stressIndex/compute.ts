@@ -63,8 +63,22 @@ const COMPARE_UNAVAILABLE: CompareResult = {
     "not measured, so we do not publish one yet.",
 };
 
-export function computeStressIndex(area: AreaDefinition): StressIndexResult {
-  const referenceDate = referenceDateFor(area.areaId);
+/**
+ * `at` re-anchors every time-relative calculation to an earlier date, which is
+ * how the dashboard derives an honest "since the last reading" delta: the same
+ * deterministic function over the same committed records, evaluated a week
+ * back. It is a recomputation, not a stored snapshot — we keep no score
+ * history — so the delta means "how this reading differs from what the same
+ * method would have produced then", and the UI says exactly that.
+ *
+ * Omitted, behaviour is unchanged: the reference date is derived from the data
+ * as before, so Round 3's published output stays byte-identical.
+ */
+export function computeStressIndex(
+  area: AreaDefinition,
+  opts: { at?: Date } = {},
+): StressIndexResult {
+  const referenceDate = opts.at ?? referenceDateFor(area.areaId);
   const ctx: SignalContext = {
     areaId: area.areaId,
     areaLabel: area.areaLabel,

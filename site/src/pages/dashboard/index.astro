@@ -1,12 +1,117 @@
 ---
-import ToolPlaceholder from "../../layouts/ToolPlaceholder.astro";
+/**
+ * /dashboard/ — the arrival state.
+ *
+ * Replaces the placeholder that had been promoting a dashboard that did not
+ * exist. Two jobs: let someone pick a ZIP, and be a crawlable hub that links
+ * every per-ZIP page (225 short links, grouped by county — the internal
+ * linking is what gets those pages discovered).
+ *
+ * `?zip=NNNNN` is handled client-side so the no-JS form still resolves; the
+ * page is static, so there is no server to read the query string. A ZIP that
+ * is not covered lands on the honest not-covered state rather than the nearest
+ * metro.
+ */
+import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import ZipPicker from "../../components/ZipPicker.astro";
+import { supportedZips } from "../../lib/dashboard";
+import { CROSSWALK } from "../../lib/zipCrosswalk";
+import { ZIP_AREAS } from "../../lib/zipAreas";
+
+const DEFAULT_ZIP = "78704";
+
+const byCounty = new Map<string, { area: string; zips: string[] }>();
+for (const zip of supportedZips()) {
+  const row = CROSSWALK.get(zip)!;
+  const key = `${row.areaId}|${row.primaryCountyName}`;
+  if (!byCounty.has(key)) byCounty.set(key, { area: row.areaId, zips: [] });
+  byCounty.get(key)!.zips.push(zip);
+}
+const groups = [...byCounty.entries()]
+  .map(([key, v]) => ({ county: key.split("|")[1], area: v.area, zips: v.zips }))
+  .sort((a, b) => a.area.localeCompare(b.area) || b.zips.length - a.zips.length);
+
+const total = supportedZips().length;
+const title = `Texas Home Dashboard — Free ZIP-Level Home Conditions | Texas Home Intelligence`;
+const description =
+  `Pick any of ${total} Austin or San Antonio ZIP codes and see the Home Stress Index and the five ` +
+  `signals behind it, computed from public NOAA, U.S. Drought Monitor and National Weather Service ` +
+  `records. Free, no account.`;
 ---
 
-<ToolPlaceholder
-  title="My Dashboard | Texas Home Intelligence"
-  description="Your Home Dashboard — a live view of the conditions affecting your Texas home. Coming soon."
-  toolName="My Dashboard"
-  path="/dashboard/"
-  body="See the conditions affecting your home right now — including weather, HVAC stress, storm exposure, maintenance signals, and more. No account required; just your address or neighborhood."
-  statusNote="Coming soon — this is Texas Home Intelligence's flagship free tool, in active development as its own build round. This page is a placeholder; no dashboard functionality exists yet."
-/>
+<Base title={title} description={description}>
+  <Breadcrumbs crumbs={[{ name: "Home", url: "/" }, { name: "Dashboard", url: "/dashboard/" }]} />
+
+  <section class="hero">
+    <div class="wrap" style="max-width:760px;">
+      <span class="eyebrow">FREE ZIP DASHBOARD</span>
+      <h1>Which Texas ZIP do you want the read on?</h1>
+      <p class="lede">
+        Enter a ZIP and you'll see the Home Stress Index for that area, the five signals behind it,
+        and where every figure came from. No account, nothing stored.
+      </p>
+      <ZipPicker current={DEFAULT_ZIP} />
+      <p style="margin-top:16px;">
+        <a class="btn" href={`/dashboard/${DEFAULT_ZIP}/`}>Show the read for {DEFAULT_ZIP} &rarr;</a>
+      </p>
+      <p class="dash-notcovered" data-notcovered hidden></p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width:820px;">
+      <h2>What you'll see</h2>
+      <ul style="list-style:disc;padding-left:1.25em;">
+        <li><strong>One score, 0&ndash;100.</strong> How hard recent weather and drought have been on houses in that area.</li>
+        <li><strong>Five signals.</strong> Roof &amp; Storm, Foundation &amp; Soil, HVAC, Water &amp; Irrigation, Trees &amp; Yard — each with its own reading and its own sources.</li>
+        <li><strong>Where every number came from.</strong> Source, the period the records cover, and when we last confirmed the feed.</li>
+        <li><strong>What we don't know.</strong> Where a signal isn't published for an area, the page says so instead of showing a zero.</li>
+      </ul>
+      <p>
+        Every reading is area-level — a county or a metro, never an address. Scores are indexes of
+        conditions, not claims about any individual house.{" "}
+        <a href="/methodology/home-stress-index/">Read the methodology &rarr;</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <h2>Every ZIP we cover</h2>
+      <p class="dash-section-note">
+        {total} ZIP codes across {ZIP_AREAS.map((a) => a.label).join(" and ")}, from the U.S. Census
+        Bureau's 2020 ZCTA-to-county relationship file. A ZIP outside this list isn't covered yet.
+      </p>
+      {groups.map((g) => (
+        <div class="zip-index-group">
+          <h3>{g.county} County <span class="zip-index-count">{g.zips.length}</span></h3>
+          <ul class="zip-index">
+            {g.zips.map((z) => <li><a href={`/dashboard/${z}/`}>{z}</a></li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<script>
+  // Route ?zip= through to the per-ZIP page, or say plainly that it isn't
+  // covered. Never falls back to a nearby metro.
+  const params = new URLSearchParams(window.location.search);
+  const zip = (params.get("zip") || "").trim();
+  if (/^\d{5}$/.test(zip)) {
+    const known = document.querySelector(`.zip-index a[href="/dashboard/${zip}/"]`);
+    if (known) {
+      window.location.replace(`/dashboard/${zip}/`);
+    } else {
+      const note = document.querySelector("[data-notcovered]");
+      if (note instanceof HTMLElement) {
+        note.textContent =
+          `We don't cover ${zip} yet. Texas Home Intelligence currently publishes readings for the ` +
+          `Austin and San Antonio metros.`;
+        note.hidden = false;
+      }
+    }
+  }
+</script>

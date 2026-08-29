@@ -1,0 +1,99 @@
+---
+/**
+ * Email-for-launch capture — Texas Home Intelligence's first PII path.
+ *
+ * Round 4 captures an email address and nothing else. There is no account, no
+ * sign-in link, no address, and no reminder engine behind this yet; the CTA
+ * describes what Round 5 will build, and the copy is careful to promise a
+ * notification rather than a product that exists.
+ *
+ * The consent checkbox is required, and required on the SERVER too — the
+ * endpoint rejects a submission without it and writes nothing. Nothing about a
+ * visitor is stored before that box is ticked (SECURITY.md).
+ */
+interface Props {
+  zip: string;
+  areaLabel: string;
+}
+const { zip, areaLabel } = Astro.props as Props;
+---
+
+<section class="block alt" id="get-notified">
+  <div class="wrap" style="max-width:640px;">
+    <div class="card unlock-card">
+      <p class="card-tag">Coming next</p>
+      <h2>Make this about your house</h2>
+      <p>
+        The {areaLabel} read above is the same for every home in {zip}. The home dashboard adds the
+        parts that are yours: your trash and recycling days, your filter reminders, and freeze
+        alerts for your pipes.
+      </p>
+
+      {/* The trailing slash is load-bearing: astro.config sets
+          trailingSlash: "always", so posting to the unslashed path returns a
+          308 and the browser has to re-issue the whole request. Verified
+          against a local worker run. */}
+      <form class="notify-form" method="post" action="/api/dashboard/notify/" data-notify-form>
+        <input type="hidden" name="zip" value={zip} />
+        <input type="hidden" name="consent_source" value={`dashboard_zip_${zip}`} />
+
+        <label class="notify-label" for="notify-email">Email address</label>
+        <input
+          id="notify-email"
+          class="notify-input"
+          type="email"
+          name="email"
+          required
+          autocomplete="email"
+          placeholder="you@example.com"
+        />
+
+        <label class="notify-consent">
+          <input type="checkbox" name="consent" value="yes" required data-consent />
+          <span>
+            Get told when your home dashboard is ready — no spam, we never sell your data.
+          </span>
+        </label>
+
+        <button class="btn" type="submit">Tell me when it's ready</button>
+
+        <p class="notify-fineprint">
+          We store your email address and the ZIP you were viewing, and nothing else. Nothing is
+          stored unless you tick the box. <a href="/privacy/">How we handle your data &rarr;</a>
+        </p>
+        <p class="notify-status" data-notify-status role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll("[data-notify-form]").forEach((node) => {
+    if (!(node instanceof HTMLFormElement)) return;
+    const form = node;
+    const action = form.getAttribute("action") || "";
+    const status = form.querySelector("[data-notify-status]");
+    form.addEventListener("submit", async (event) => {
+      const consent = form.querySelector("[data-consent]");
+      // The server enforces this too; the client check only avoids a pointless
+      // round trip and gives an immediate message.
+      if (!(consent instanceof HTMLInputElement) || !consent.checked) return;
+      event.preventDefault();
+      const body = new FormData(form);
+      if (status) status.textContent = "Sending…";
+      try {
+        const res = await fetch(action, { method: "POST", body });
+        const data = (await res.json().catch(() => ({}))) as { message?: string; error?: string };
+        if (res.ok) {
+          window.__thiTrack?.("unlock_email_submitted", { zip: body.get("zip") });
+          if (status) status.textContent = data.message || "Thanks — we'll email you when it's ready.";
+          form.querySelector(".notify-input")?.setAttribute("disabled", "true");
+        } else if (status) {
+          status.textContent = data.error || "That didn't go through. Please try again.";
+        }
+      } catch {
+        if (status) status.textContent = "That didn't go through. Please try again.";
+      }
+    });
+  });
+</script>

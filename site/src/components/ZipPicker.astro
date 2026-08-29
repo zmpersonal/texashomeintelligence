@@ -1,0 +1,60 @@
+---
+/**
+ * ZIP switcher.
+ *
+ * A real <form> with a real <select> of every supported ZIP, so it works with
+ * no JavaScript at all: submitting navigates to /dashboard/?zip=NNNNN, and the
+ * entry page routes on from there. The inline script upgrades that to a direct
+ * jump when JS is available. Nothing here is a fetch — each ZIP is its own
+ * static page.
+ */
+import { supportedZips } from "../lib/dashboard";
+import { CROSSWALK } from "../lib/zipCrosswalk";
+
+interface Props {
+  current?: string;
+}
+const { current } = Astro.props as Props;
+
+const zips = supportedZips().map((zip) => {
+  const row = CROSSWALK.get(zip)!;
+  return { zip, label: `${zip} — ${row.primaryCountyName} County`, area: row.areaId };
+});
+const grouped = [
+  { label: "Austin metro", items: zips.filter((z) => z.area === "austin") },
+  { label: "San Antonio metro", items: zips.filter((z) => z.area === "san-antonio") },
+];
+---
+
+<form class="zip-picker" action="/dashboard/" method="get" data-zip-picker>
+  <label class="eyebrow" for="zip-select">Change ZIP</label>
+  <div class="zip-picker-row">
+    <select id="zip-select" name="zip" data-zip-select>
+      {grouped.map((g) => (
+        <optgroup label={g.label}>
+          {g.items.map((z) => (
+            <option value={z.zip} selected={z.zip === current}>{z.label}</option>
+          ))}
+        </optgroup>
+      ))}
+    </select>
+    <button class="btn" type="submit">Show the read</button>
+  </div>
+  <p class="zip-picker-note">
+    {zips.length} ZIPs across the Austin and San Antonio metros. Nothing is stored — this page
+    is the same for everyone who opens it.
+  </p>
+</form>
+
+<script>
+  // Progressive enhancement only: the form already works without this.
+  document.querySelectorAll("[data-zip-picker]").forEach((form) => {
+    form.addEventListener("submit", (event) => {
+      const select = form.querySelector("[data-zip-select]");
+      if (!(select instanceof HTMLSelectElement) || !/^\d{5}$/.test(select.value)) return;
+      event.preventDefault();
+      window.__thiTrack?.("zip_selected", { zip: select.value });
+      window.location.assign(`/dashboard/${select.value}/`);
+    });
+  });
+</script>
