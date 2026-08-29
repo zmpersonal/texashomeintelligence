@@ -80,7 +80,7 @@ const unused = TASK_CATALOGUE.filter((t) => !reminders.some((r) => r.taskKey ===
 ---
 
 <Base title={`Your home — ${home.zip} | Texas Home Intelligence`} description="Your home dashboard." noindex>
-  <section class="dash-hero">
+  <section class="dash-hero home-dash">
     <div class="wrap">
       <div class="dash-hero-grid">
         <div class="dash-score-panel">
@@ -116,7 +116,7 @@ const unused = TASK_CATALOGUE.filter((t) => !reminders.some((r) => r.taskKey ===
           <p class="eyebrow">Signed in</p>
           <p class="dash-precision" data-account-email>{auth.account.email}</p>
           {address && <p class="dash-precision" data-address>{address}</p>}
-          <p class="dash-precision">Readings are for {home.countyName} County and the{" "}
+          <p class="dash-precision" data-precision-note>Readings are for {home.countyName} County and the{" "}
             {home.areaId === "austin" ? "Austin" : "San Antonio"} metro — they describe the area,
             not this address.</p>
           <form method="post" action="/api/auth/sign-out/">
@@ -129,7 +129,7 @@ const unused = TASK_CATALOGUE.filter((t) => !reminders.some((r) => r.taskKey ===
 
   {/* ── Condition alerts: present only while the condition holds ── */}
   {fired.length > 0 && (
-    <section class="block">
+    <section class="block home-dash">
       <div class="wrap">
         {fired.map((alert) => (
           <article class="card event-card" data-alert={alert.key}>
@@ -154,7 +154,7 @@ const unused = TASK_CATALOGUE.filter((t) => !reminders.some((r) => r.taskKey ===
   )}
 
   {/* ── Your home this week ── */}
-  <section class="block alt" id="this-week">
+  <section class="block alt home-dash" id="this-week">
     <div class="wrap">
       <h2>Your home this week</h2>
       <p class="dash-section-note" data-open-count>
@@ -223,7 +223,7 @@ const unused = TASK_CATALOGUE.filter((t) => !reminders.some((r) => r.taskKey ===
   </section>
 
   {/* ── Five signals ── */}
-  <section class="block">
+  <section class="block home-dash">
     <div class="wrap">
       <h2>Five home signals</h2>
       <p class="dash-section-note">
@@ -236,7 +236,7 @@ const unused = TASK_CATALOGUE.filter((t) => !reminders.some((r) => r.taskKey ===
   </section>
 
   {/* ── Filter Center memory + seasonal + alert prefs ── */}
-  <section class="block alt">
+  <section class="block alt home-dash">
     <div class="wrap">
       <h2>What your home remembers</h2>
       <div class="grid-2">
