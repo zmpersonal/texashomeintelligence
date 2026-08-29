@@ -78,6 +78,25 @@ const AI_REFERRAL_DOMAINS = [
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="canonical" href={canonicalURL} />
+
+    {/* Preload only the two faces that paint above the fold on every page:
+        body text and the serif heading. The other four (Plex Sans 600/700,
+        Plex Mono 400/700) are discovered from CSS as usual — preloading a face
+        a given page might not use would spend bandwidth to save nothing. */}
+    <link
+      rel="preload"
+      href="/fonts/ibm-plex-sans-400.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/newsreader-500.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, follow" />}
