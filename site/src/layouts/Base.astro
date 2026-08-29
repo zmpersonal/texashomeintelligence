@@ -191,7 +191,16 @@ const AI_REFERRAL_DOMAINS = [
 
     {ga4Id && (
       <>
-        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}></script>
+        {/* Event shim. Pages call window.__thiTrack(name, params); it forwards to
+        GA4 when a measurement id is configured and is a no-op otherwise, so no
+        page needs to branch on whether analytics exists. Never carries PII:
+        a ZIP is an area, and the email is deliberately not passed. */}
+    <script is:inline>
+      window.__thiTrack = function (name, params) {
+        try { if (typeof window.gtag === "function") window.gtag("event", name, params || {}); } catch (e) {}
+      };
+    </script>
+    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}></script>
         <script
           is:inline
           define:vars={{ ga4Id, AI_REFERRAL_DOMAINS }}

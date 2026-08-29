@@ -8,3 +8,10 @@ interface ImportMetaEnv {
   /** Cloudflare Web Analytics beacon token. Same gating as above. */
   readonly PUBLIC_CF_BEACON_TOKEN?: string;
 }
+
+interface Window {
+  /** Analytics event shim installed by Base.astro. Forwards to GA4 when a
+   * measurement id is configured and is a no-op otherwise, so no page has to
+   * branch on whether analytics exists. Never carries personal data. */
+  __thiTrack?: (name: string, params?: Record<string, unknown>) => void;
+}

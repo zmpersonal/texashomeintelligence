@@ -1,0 +1,71 @@
+---
+/**
+ * The Home Stress Index ring — the dashboard's one hero number.
+ *
+ * Two arcs, not one. The score arc is drawn in the band colour over the
+ * portion of the dial this area actually measures; where a signal could not be
+ * computed, the shortfall is drawn as its own arc in the neutral "unknown"
+ * token, starting where the measured portion ends.
+ *
+ * That second arc is the point. San Antonio publishes four of five signals,
+ * and an ordinary ring renders the missing fifth as empty track — visually
+ * identical to "nothing going on there". A distinct segment says the opposite.
+ * Colour never carries that alone: the legend beside the ring names the
+ * missing signal in words, and the aria-label states the coverage.
+ *
+ * Geometry follows the reference screen: 108px box, r=47, 7px stroke, rotated
+ * -90deg so the arc starts at twelve o'clock.
+ */
+import { BAND_TOKEN } from "../lib/dashboard";
+import type { BandId } from "../lib/stressIndex";
+
+interface Props {
+  score: number;
+  band: BandId;
+  bandLabel: string;
+  /** 0-1. Below 1 means a signal is unavailable for this area. */
+  weightCoverage: number;
+}
+
+const { score, band, bandLabel, weightCoverage } = Astro.props as Props;
+
+const R = 47;
+const CIRC = 2 * Math.PI * R;
+const measured = CIRC * weightCoverage;
+const scoreArc = measured * (score / 100);
+const gapArc = CIRC - measured;
+const token = BAND_TOKEN[band];
+const hasGap = gapArc > 0.5;
+// The gap begins where the measured portion of the dial ends.
+const gapRotation = -90 + 360 * weightCoverage;
+
+const label =
+  `Home Stress Index ${score} of 100, ${bandLabel}` +
+  (hasGap ? `, measured from ${Math.round(weightCoverage * 100)}% of the signals` : "");
+---
+
+<div class="ring" role="img" aria-label={label}>
+  <svg viewBox="0 0 108 108" width="108" height="108" aria-hidden="true">
+    <circle cx="54" cy="54" r={R} fill="none" stroke="rgba(255,255,255,.12)" stroke-width="7" />
+    {hasGap && (
+      <circle
+        cx="54" cy="54" r={R} fill="none"
+        stroke="var(--thi-unknown-on-dark)" stroke-width="7"
+        stroke-dasharray={`${gapArc.toFixed(2)} ${(CIRC - gapArc).toFixed(2)}`}
+        transform={`rotate(${gapRotation.toFixed(2)} 54 54)`}
+      />
+    )}
+    <circle
+      class="ring-score-arc"
+      cx="54" cy="54" r={R} fill="none"
+      stroke={`var(--thi-${token}-on-dark)`}
+      stroke-width="7" stroke-linecap="round"
+      stroke-dasharray={`${scoreArc.toFixed(2)} ${(CIRC - scoreArc).toFixed(2)}`}
+      transform="rotate(-90 54 54)"
+    />
+  </svg>
+  <div class="ring-centre">
+    <span class="ring-score">{score}</span>
+    <span class="ring-of">/100</span>
+  </div>
+</div>

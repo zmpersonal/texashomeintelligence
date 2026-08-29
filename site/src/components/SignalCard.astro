@@ -1,0 +1,67 @@
+---
+/**
+ * One of the five signals, on the information ladder.
+ *
+ * Data rung: the mono 0-100 value plus a band chip.
+ * Analysis rung: one plain sentence, generated from the engine's Layer C
+ * driver codes rather than written here — the dashboard must not author claims
+ * about data it is only displaying.
+ * Then the mono source / data-through / updated line.
+ *
+ * No Estimate or Recommendation rung this round: we have nothing to put on
+ * them that would not be invented.
+ *
+ * An unavailable signal renders as a full card in the "not published" state,
+ * never as a blank or a zero. A zero would read as "conditions are calm here",
+ * which is a different claim from "we don't measure this here".
+ */
+import { BAND_TOKEN } from "../lib/dashboard";
+import type { SignalResult } from "../lib/stressIndex";
+import { formatDate, machineDate } from "../lib/format";
+
+interface Props {
+  signal: SignalResult;
+}
+const { signal } = Astro.props as Props;
+const token = signal.computable ? BAND_TOKEN[signal.layerB.band] : "unknown";
+const sources = [...new Set(signal.layerA.map((a) => a.sourceName))].join(" · ");
+---
+
+<article class={`signal-card${signal.computable ? "" : " is-unavailable"}`} data-signal={signal.id}>
+  <p class="eyebrow signal-eyebrow">{signal.label}</p>
+
+  {signal.computable ? (
+    <>
+      <div class="signal-readout">
+        <span class="signal-value" data-value>{signal.layerB.score}</span>
+        <span class="signal-scale">/100</span>
+        <span class={`status-chip status-${token}`} data-band>
+          <span class="status-dot" aria-hidden="true"></span>{signal.layerB.bandLabel}
+        </span>
+      </div>
+      <p class="signal-analysis">{signal.layerC.detail}</p>
+    </>
+  ) : (
+    <>
+      <div class="signal-readout">
+        <span class="signal-value signal-value--absent" data-value>—</span>
+        <span class={`status-chip status-unknown`} data-band>
+          <span class="status-dot" aria-hidden="true"></span>Not published for this area
+        </span>
+      </div>
+      <p class="signal-analysis" data-unavailable-reason>{signal.limitation}</p>
+    </>
+  )}
+
+  {sources && (
+    <p class="data-meta signal-source">
+      Source: {sources}
+      {signal.freshness.dataThrough && (
+        <> · Data through <time datetime={machineDate(signal.freshness.dataThrough)}>{formatDate(signal.freshness.dataThrough)}</time></>
+      )}
+      {signal.freshness.asOf && (
+        <> · Updated <time datetime={machineDate(signal.freshness.asOf)}>{formatDate(signal.freshness.asOf)}</time></>
+      )}
+    </p>
+  )}
+</article>

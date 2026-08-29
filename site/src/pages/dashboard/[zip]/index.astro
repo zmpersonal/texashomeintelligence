@@ -1,0 +1,232 @@
+---
+/**
+ * /dashboard/{zip}/ — the public, no-account ZIP dashboard.
+ *
+ * One static page per supported ZIP (225 of them, from the Census crosswalk),
+ * so each is a real crawlable page carrying local data rather than a shell
+ * that fetches. Nothing is computed, queried or fetched at request time; the
+ * whole view is assembled at build from the Round 3 engine.
+ *
+ * Layout follows "THI Public ZIP Dashboard" in docs/source/design/. Blocks in
+ * that screen which this round does not build — the 8-week trend, the 7-day
+ * outlook, municipal water/trash cards, condition cards, magic-link sign-in —
+ * are omitted rather than stubbed, because each would need either data we do
+ * not hold or the Round 5 account layer.
+ */
+import Base from "../../../layouts/Base.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import ScoreRing from "../../../components/ScoreRing.astro";
+import SignalCard from "../../../components/SignalCard.astro";
+import ZipPicker from "../../../components/ZipPicker.astro";
+import LaunchNotify from "../../../components/LaunchNotify.astro";
+import { buildDashboard, deltaLabel, supportedZips, BAND_TOKEN } from "../../../lib/dashboard";
+import { CONDITIONS_NOT_DAMAGE } from "../../../lib/stressIndex";
+import { formatDate, machineDate } from "../../../lib/format";
+import { absolute } from "../../../lib/urls";
+
+export async function getStaticPaths() {
+  return supportedZips().map((zip) => ({ params: { zip }, props: { zip } }));
+}
+
+const { zip: zipCode } = Astro.props as { zip: string };
+const view = buildDashboard(zipCode);
+if (!view) throw new Error(`No dashboard view for ZIP ${zipCode}`);
+
+const { zip, index, composite, delta, signals, weightCoverage, unavailable } = view;
+const band = index.composite;
+const token = BAND_TOKEN[band.band];
+
+const title = `${zip.zip} Home Stress Index — ${band.score}/100 ${band.bandLabel} | ${zip.areaLabel} | Texas Home Intelligence`;
+const description =
+  `Current home-conditions read for ZIP ${zip.zip} (${zip.countyName} County, ${zip.areaLabel}): ` +
+  `Home Stress Index ${band.score}/100, ${band.bandLabel}, across ${signals.filter((s) => s.computable).length} ` +
+  `measured signals from public NOAA, U.S. Drought Monitor and National Weather Service records.`;
+
+/** Dataset schema, consistent with the /data/ pages: this is a published
+ * derived reading with named sources, not an article about one. */
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  name: `Home Stress Index — ZIP ${zip.zip}, ${zip.areaLabel}`,
+  description,
+  url: absolute(`/dashboard/${zip.zip}/`, Astro.site),
+  isAccessibleForFree: true,
+  creator: { "@id": absolute("/#organization", Astro.site) },
+  dateModified: index.freshness.asOf,
+  temporalCoverage: index.freshness.dataThrough,
+  spatialCoverage: {
+    "@type": "Place",
+    name: `${zip.countyName} County, Texas`,
+    address: { "@type": "PostalAddress", postalCode: zip.zip, addressRegion: "TX", addressCountry: "US" },
+  },
+  variableMeasured: signals.filter((s) => s.computable).map((s) => ({
+    "@type": "PropertyValue",
+    name: s.label,
+    value: s.layerB.score,
+    minValue: 0,
+    maxValue: 100,
+  })),
+  citation: absolute("/methodology/home-stress-index/", Astro.site),
+};
+---
+
+<Base title={title} description={description} article={{ dateModified: index.freshness.asOf }}>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+
+  <Breadcrumbs
+    crumbs={[
+      { name: "Home", url: "/" },
+      { name: "Dashboard", url: "/dashboard/" },
+      { name: zip.zip, url: `/dashboard/${zip.zip}/` },
+    ]}
+  />
+
+  {/* ── Score panel: the one hero number, on the dark instrument panel ── */}
+  <section class="dash-hero">
+    <div class="wrap">
+      <div class="dash-hero-grid">
+        <div class="dash-score-panel">
+          <p class="eyebrow dash-eyebrow">{zip.areaLabel} metro · {zip.countyName} County</p>
+          {/* Every indexed page needs exactly one h1, and this one carries the
+              ZIP so the heading is unique across all 225 pages rather than
+              repeating a generic "Dashboard". */}
+          <h1 class="dash-h1">Home conditions for ZIP {zip.zip}</h1>
+          <div class="dash-score-row">
+            <ScoreRing
+              score={band.score}
+              band={band.band}
+              bandLabel={band.bandLabel}
+              weightCoverage={weightCoverage}
+            />
+            <div class="dash-score-read">
+              <p class={`dash-band status-${token}`} data-band-label>
+                <span class="status-dot" aria-hidden="true"></span>{band.bandLabel}
+              </p>
+              <p class="dash-verdict">{composite.headline}</p>
+              <p class="dash-delta" data-delta>
+                {deltaLabel(delta.change)} since the same reading on{" "}
+                <time datetime={machineDate(delta.comparedTo)}>{formatDate(delta.comparedTo)}</time>
+              </p>
+              {weightCoverage < 1 && (
+                <p class="dash-coverage" data-coverage>
+                  Measured from {Math.round(weightCoverage * 100)}% of the signals —{" "}
+                  {unavailable.map((s) => s.label).join(", ")} not published for this area.
+                </p>
+              )}
+            </div>
+          </div>
+          <p class="dash-caveat">{CONDITIONS_NOT_DAMAGE}</p>
+          <p class="dash-links">
+            <a href="#what-changed">See what changed &rarr;</a>
+            <a href="/methodology/home-stress-index/">How this is calculated &nearr;</a>
+          </p>
+        </div>
+
+        <div class="dash-picker-panel">
+          <ZipPicker current={zip.zip} />
+          <p class="dash-precision" data-precision-note>{zip.precisionNote}</p>
+          {zip.straddlesMetros && (
+            <p class="dash-precision dash-precision--boundary" data-boundary-note>
+              Boundary ZIP: the federal crosswalk lists {zip.zip} in both metros
+              ({zip.straddlesMetros}).
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Five signals ── */}
+  <section class="block">
+    <div class="wrap">
+      <h2>Five home signals</h2>
+      <p class="dash-section-note">
+        Indexes of conditions around {zip.zip}, 0&ndash;100 &mdash; never a prediction of damage to a
+        specific house. <a href="/methodology/home-stress-index/">How scoring works &nearr;</a>
+      </p>
+      <div class="signal-grid">
+        {signals.map((signal) => <SignalCard signal={signal} />)}
+      </div>
+    </div>
+  </section>
+
+  {/* ── What changed ── */}
+  <section class="block alt" id="what-changed">
+    <div class="wrap" style="max-width:760px;">
+      <h2>What changed</h2>
+      {delta.movers.length === 0 ? (
+        <p data-what-changed>
+          Nothing moved. Re-running the same calculation against the records as they stood on{" "}
+          <time datetime={machineDate(delta.comparedTo)}>{formatDate(delta.comparedTo)}</time>{" "}
+          produces the same {band.score}. Several of these sources publish monthly or on a lag, so
+          an unchanged week is the normal case rather than a missing update.
+        </p>
+      ) : (
+        <>
+          <p data-what-changed>
+            Compared with the same calculation anchored to{" "}
+            <time datetime={machineDate(delta.comparedTo)}>{formatDate(delta.comparedTo)}</time>:
+          </p>
+          <ul style="list-style:disc;padding-left:1.25em;">
+            {delta.movers.map((m) => {
+              const signal = signals.find((s) => s.id === m.id)!;
+              return (
+                <li>
+                  <strong>{signal.label}</strong> {m.change > 0 ? "up" : "down"}{" "}
+                  {Math.abs(m.change)} point{Math.abs(m.change) === 1 ? "" : "s"}.
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )}
+      <p class="dash-section-note">
+        This is a recomputation, not a stored history: we compare today&rsquo;s reading with what the
+        same method would have produced a week ago from the same records.
+      </p>
+    </div>
+  </section>
+
+  {/* ── Compare: deliberately no number ── */}
+  <section class="block">
+    <div class="wrap" style="max-width:760px;">
+      <h2>How {zip.zip} compares</h2>
+      <div class="card compare-card" data-compare>
+        <p class="card-tag">Modeled &mdash; per-ZIP coming soon</p>
+        <p>{index.compare.available ? "" : index.compare.reason}</p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Email for launch. Round 4 captures an address and nothing else. ── */}
+  <LaunchNotify zip={zip.zip} areaLabel={zip.areaLabel} />
+</Base>
+
+<script is:inline define:vars={{ zip: zip.zip, area: zip.areaId, band: band.band }}>
+  // Instrumentation. Area-level identifiers only — a ZIP describes a place,
+  // not a person, and nothing here carries an email or anything entered into
+  // a form. `zip_selected` and `unlock_email_submitted` fire from their own
+  // components, next to the interactions they describe.
+  window.__thiTrack?.("dashboard_view", { zip, area, band });
+
+  document.querySelectorAll(".signal-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      window.__thiTrack?.("signal_opened", { zip, signal: card.dataset.signal });
+    });
+  });
+
+  // The compare module is a "seen" event rather than a click: nothing about it
+  // is interactive, and what we want to know is how many readers reach the
+  // point where a per-ZIP comparison would have gone.
+  const compare = document.querySelector("[data-compare]");
+  if (compare && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        window.__thiTrack?.("compare_coming_soon_seen", { zip });
+        io.disconnect();
+      }
+    }, { threshold: 0.5 });
+    io.observe(compare);
+  }
+</script>

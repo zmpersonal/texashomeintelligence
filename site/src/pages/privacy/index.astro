@@ -1,0 +1,91 @@
+---
+/**
+ * /privacy/ — deliberately minimal and factual.
+ *
+ * This exists because the dashboard now collects an email address, and
+ * collecting one without saying what happens to it is not something we should
+ * ship. It describes exactly what is collected today and nothing more; it is
+ * not a general-purpose privacy policy and does not pretend to be. When the
+ * Round 5 account layer stores addresses, this needs rewriting with a real
+ * review (see HANDOFF.md Seam 4).
+ */
+import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+
+const title = "Privacy — What We Collect and Why | Texas Home Intelligence";
+const description =
+  "What Texas Home Intelligence collects, why, how long we keep it, and how to have it removed. " +
+  "We collect an email address only when you ask to be told when the home dashboard launches.";
+---
+
+<Base title={title} description={description}>
+  <Breadcrumbs crumbs={[{ name: "Home", url: "/" }, { name: "Privacy", url: "/privacy/" }]} />
+
+  <section class="hero">
+    <div class="wrap" style="max-width:760px;">
+      <span class="eyebrow">PRIVACY</span>
+      <h1>What we collect and why</h1>
+      <p class="lede">
+        Texas Home Intelligence publishes public data about areas, not about people. Reading
+        anything on this site requires no account, and the data pages and ZIP dashboards store
+        nothing about you.
+      </p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width:760px;">
+      <h2>What we collect</h2>
+      <p>
+        One thing: if you ask to be told when the home dashboard is ready, we store the
+        <strong>email address you enter</strong> and the <strong>ZIP code you were viewing</strong>,
+        along with a record of when you gave consent and which page you gave it on.
+      </p>
+      <p>
+        We do not collect your name, street address, or phone number. We do not ask for them
+        anywhere on this site today.
+      </p>
+
+      <h2>Why we collect it</h2>
+      <p>
+        To send you one message when the home dashboard launches. The ZIP tells us which metro to
+        mention. That is the entire purpose.
+      </p>
+
+      <h2>Nothing is stored unless you consent</h2>
+      <p>
+        The signup form has a consent checkbox, and it is not decorative: the server refuses the
+        submission without it, and the database itself rejects any record that does not carry
+        consent. If you fill in the box and change your mind before ticking it, nothing about you
+        reaches us.
+      </p>
+
+      <h2>We do not sell your data</h2>
+      <p>
+        We do not sell, rent, or share your email address with third parties, including
+        contractors. We are not running an advertising business against it.
+      </p>
+
+      <h2>How to be removed</h2>
+      <p>
+        Email <a href="mailto:privacy@texashomeintelligence.com">privacy@texashomeintelligence.com</a>
+        and ask, and we will delete your record. You do not have to explain why, and you do not
+        need an account to ask.
+      </p>
+
+      <h2>Analytics</h2>
+      <p>
+        We use privacy-respecting page analytics to see which pages get read. We do not send your
+        email address, your ZIP, or any other personal detail to an analytics provider.
+      </p>
+
+      <h2>What this page is not</h2>
+      <p>
+        This is a plain description of what the site does today, kept deliberately short so it
+        stays accurate. It is not legal advice and not a comprehensive policy. As Texas Home
+        Intelligence adds features that handle more of your information &mdash; a home profile, or
+        alerts tied to an address &mdash; this page will be rewritten before those ship, not after.
+      </p>
+    </div>
+  </section>
+</Base>
