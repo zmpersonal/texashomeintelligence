@@ -95,11 +95,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   // links, alerts, the weekly email — one recipient each, the person the
   // message is about. Nothing about this lead is bcc'd, reply-to'd or otherwise
   // routed through that transport. See lib/ops/leadNotify.ts and HANDOFF Seam 5.
-  notifyLeadInBackground(
-    { event: "launch-signup", email, zip, at: now },
-    (locals as { runtime?: { ctx?: { waitUntil?: (p: Promise<unknown>) => void } } })?.runtime?.ctx
-      ?.waitUntil,
-  );
+  notifyLeadInBackground({ event: "launch-signup", email, zip, at: now }, locals);
 
   return json({ message: "Thanks — we'll email you when your home dashboard is ready." }, 200);
 };

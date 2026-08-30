@@ -35,42 +35,26 @@
  * HANDOFF Seam 10). `DESTINATIONS` below is the extension point: add one entry
  * and it inherits the isolation, the no-op-when-unconfigured behaviour, and the
  * per-destination error containment. Nothing else changes. Not built this round.
+ *
+ * ══ WHAT GOES IN THE MESSAGE ══════════════════════════════════════════════
+ *
+ * Not here — `leadMessage.ts`, which imports nothing and can therefore be
+ * tested outside a Worker. That file also carries `LEAD_DETAIL`, the decision
+ * about how much of a person a notification may contain. This file is delivery
+ * only.
  */
 import { env } from "cloudflare:workers";
+import type { Lead } from "./leadMessage";
+import { slackText } from "./leadMessage";
 
-export type LeadEvent = "launch-signup" | "account-created";
-
-export interface Lead {
-  event: LeadEvent;
-  email: string;
-  zip: string;
-  /** Only when the homeowner gave one and consented to it being stored. */
-  address?: string;
-  /** ISO 8601, when the lead was captured. */
-  at: string;
-}
+// Re-exported so callers have one import for the whole notifier.
+export type { LeadEvent, Lead, LeadDetail } from "./leadMessage";
+export { LEAD_DETAIL, slackText } from "./leadMessage";
 
 /** Read at call time so `wrangler secret put` takes effect without a redeploy
  * of anything else. Never assigned to a module-level constant. */
 function secret(name: string): string | undefined {
   return (env as unknown as Record<string, string | undefined>)[name];
-}
-
-const EVENT_LABEL: Record<LeadEvent, string> = {
-  "launch-signup": "Launch signup",
-  "account-created": "Account created",
-};
-
-/** The Slack message body. Plain text, one lead per post. */
-export function slackText(lead: Lead): string {
-  const lines = [
-    `*${EVENT_LABEL[lead.event]}* — Texas Home Intelligence`,
-    `Email: ${lead.email}`,
-    `ZIP: ${lead.zip}`,
-  ];
-  if (lead.address) lines.push(`Address: ${lead.address}`);
-  lines.push(`At: ${lead.at}`);
-  return lines.join("\n");
 }
 
 interface Destination {
@@ -152,21 +136,53 @@ export async function notifyLead(lead: Lead): Promise<DeliveryResult[]> {
 }
 
 /**
+ * Pulls `waitUntil` out of Astro's locals, and cannot throw doing it.
+ *
+ * ── Why this is a function and not an inline property read ────────────────
+ * The first cut read `locals.runtime.ctx.waitUntil` at each call site. That
+ * property is not merely absent in Astro 7 — the adapter defines `runtime.ctx`
+ * as a GETTER THAT THROWS ("removed in Astro v6, use Astro.locals.cfContext").
+ * So the read threw synchronously inside the route handler, after the database
+ * write had already committed.
+ *
+ * Measured, before the fix: POST /api/dashboard/notify/ returned HTTP 500 while
+ * the row sat in D1. The visitor is told their signup failed for a signup that
+ * succeeded — and since the email column is uniquely indexed, resubmitting
+ * would hit the constraint and 500 again, so they could never reach a success
+ * message. The notifier had become the one thing it exists to never be: a way
+ * for an ops nicety to break a real signup.
+ *
+ * Hence the try/catch. It is not defensive clutter about a hypothetical: it is
+ * about the exact failure this file already caused once. A future adapter
+ * shipping another throwing getter costs a missed Slack post, nothing more.
+ */
+function waitUntilFrom(locals: unknown): ((promise: Promise<unknown>) => void) | undefined {
+  try {
+    const ctx = (locals as { cfContext?: { waitUntil?: (p: Promise<unknown>) => void } })?.cfContext;
+    return typeof ctx?.waitUntil === "function" ? ctx.waitUntil.bind(ctx) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * Fire-and-forget wrapper for request handlers.
  *
  * The signup response must not wait on an ops notification, and must not be
  * able to fail because of one. This starts the delivery, attaches a catch so an
  * unexpected rejection can never become an unhandled rejection that fails the
- * request, and returns immediately. `ctx.waitUntil` is used when the caller can
- * supply it, so the Worker stays alive for the POST after the response is sent.
+ * request, and returns immediately. `waitUntil` keeps the Worker alive for the
+ * POST after the response is sent; without it the request context can be torn
+ * down mid-fetch, which costs a notification but still never costs a signup.
+ *
+ * Takes Astro's `locals` rather than a `waitUntil` function on purpose: the
+ * unwrapping is the part that turned out to be dangerous, so it lives here,
+ * behind the guard, instead of being repeated at every call site.
  */
-export function notifyLeadInBackground(
-  lead: Lead,
-  waitUntil?: (promise: Promise<unknown>) => void,
-): void {
+export function notifyLeadInBackground(lead: Lead, locals?: unknown): void {
   const work = notifyLead(lead).catch((error) => {
     console.error("[leads] notifier threw unexpectedly:", error);
-    return [];
+    return [] as DeliveryResult[];
   });
-  if (waitUntil) waitUntil(work);
+  waitUntilFrom(locals)?.(work);
 }

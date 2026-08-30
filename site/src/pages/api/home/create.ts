@@ -79,16 +79,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
   // that transport. See lib/ops/leadNotify.ts and HANDOFF Seam 5.
   notifyLeadInBackground(
     {
-      event: "account-created",
+      event: "home-created",
       email: auth.account.email,
       zip: home.zip,
       // Only ever the address the homeowner explicitly consented to storing;
-      // when they declined, there is nothing here to send.
+      // when they declined, there is nothing here to send. LEAD_DETAIL is the
+      // second gate — by default the notifier does not put it in the message
+      // at all. See leadNotify.ts.
       address: storeAddress ? addressLine.slice(0, 200) : undefined,
       at: new Date().toISOString(),
     },
-    (locals as { runtime?: { ctx?: { waitUntil?: (p: Promise<unknown>) => void } } })?.runtime?.ctx
-      ?.waitUntil,
+    locals,
   );
 
   return json({ ok: true, zip: home.zip, area: home.areaId, addressStored: storeAddress }, 200);
