@@ -246,6 +246,69 @@ limits and terms). Until then the conditional framing is the honest ceiling, and
 
 ---
 
+## Seam 12 — Lead notification: how much of a person goes into Slack 🟡 YOUR DECISION
+
+The notifier (`site/src/lib/ops/leadNotify.ts`) is built, wired at both capture
+points, and ships sending **event · ZIP · timestamp — and no identifier.**
+
+**`wrangler secret put SLACK_LEADS_WEBHOOK_URL`** is yours; without it the whole
+path no-ops with a debug line and signups are unaffected. A webhook URL is a
+credential — anyone holding it can post into the channel — so it is a secret,
+never a `PUBLIC_` var, and it is never logged, not even on failure.
+
+**Why the payload is deliberately thin.** The privacy page we serve says,
+without qualification:
+
+> We do not sell, rent, or share your email address with third parties,
+> including contractors.
+
+and, further down, "We do not send your email address, your ZIP, or any other
+personal detail to an analytics provider." Posting a homeowner's email or street
+address into Slack is sending a personal detail to a third-party vendor. The
+usual answer is that a vendor is a *processor* rather than a recipient — but that
+page has no service-providers clause, so as written it does not cover this. And
+it is not reversible: once an address is in a Slack workspace it is in that
+workspace's history, search and exports.
+
+So the default answers the ops question ("is anyone signing up, and where?")
+without an identifier, and you can look the person up in D1, where their record
+already sits under a consent you do hold.
+
+**To send more, two things move together** — one constant and one paragraph:
+
+1. `LEAD_DETAIL` in `site/src/lib/ops/leadMessage.ts`: `"zip"` (default) →
+   `"email"` → `"email+address"`. Both fuller levels are built and tested; the
+   street address additionally requires that the homeowner ticked the box to
+   store it at all, so it is two gates, not one.
+2. A service-providers paragraph on `/privacy/`. Drafted, for you to approve,
+   reject or rewrite — **not applied**:
+
+   > **Tools we use to run the service.** A small number of vendors process
+   > data on our behalf so the service can run: our email provider delivers
+   > your sign-in links and any alerts you have asked for, and a signup
+   > notification reaches our own internal channel so we know someone has
+   > joined. They act on our instructions and may not use your data for their
+   > own purposes. This is not selling, renting or sharing your details with
+   > contractors or advertisers, which we do not do.
+
+Flipping the constant without shipping the paragraph would make our own privacy
+page false. The comment on `LEAD_DETAIL` says so at the point of change.
+
+## Seam 10 — Google Sheet mirror of the same leads 🟡 not built
+
+You mentioned wanting the leads mirrored into a spreadsheet. Not built, and
+deliberately not guessed at: what a sheet should hold is a different question
+from what a Slack ping should say (a sheet is a durable record, so Seam 12's
+decision applies to it with more force, not less).
+
+The extension point exists. `DESTINATIONS` in `leadNotify.ts` is an array; a
+second entry — a Google Apps Script Web App URL in a `GSHEET_WEBAPP_URL`
+secret — inherits the isolation, the no-op-when-unconfigured behaviour and the
+per-destination error containment for free, and nothing else in the file
+changes. The round that adds it owns the column decision.
+
+---
+
 ## Seam 1 — Live data APIs ✅ ingestion framework built (Phase 5), every fetch is yours to implement
 
 Built: the normalized schema, the merge/backfill/stale pipeline (real,

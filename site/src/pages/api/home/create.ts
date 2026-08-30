@@ -12,10 +12,11 @@ import { authenticate, json, UNAUTHORIZED } from "../../../lib/auth/guard";
 import { createHome, createReminder, listReminders } from "../../../lib/account/db";
 import { resolveZip } from "../../../lib/zipAreas";
 import { TASK_CATALOGUE, addDays } from "../../../lib/account/reminders";
+import { notifyLeadInBackground } from "../../../lib/ops/leadNotify";
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   const auth = await authenticate(request);
   if (!auth) return UNAUTHORIZED();
 
@@ -67,6 +68,29 @@ export const POST: APIRoute = async ({ request }) => {
       firstDueAt: addDays(now, task.defaultCadenceDays),
     });
   }
+
+  // The account, home and starter reminders are all committed. The ops channel
+  // hears about it now, best-effort: never awaited, never able to fail the
+  // setup the homeowner just completed.
+  //
+  // This is NOT the Resend path. Resend carries homeowner mail only, one
+  // recipient at a time. The address below reaches the owner's own ops channel
+  // and nothing else — it is not bcc'd onto any user email and does not touch
+  // that transport. See lib/ops/leadNotify.ts and HANDOFF Seam 5.
+  notifyLeadInBackground(
+    {
+      event: "home-created",
+      email: auth.account.email,
+      zip: home.zip,
+      // Only ever the address the homeowner explicitly consented to storing;
+      // when they declined, there is nothing here to send. LEAD_DETAIL is the
+      // second gate — by default the notifier does not put it in the message
+      // at all. See leadNotify.ts.
+      address: storeAddress ? addressLine.slice(0, 200) : undefined,
+      at: new Date().toISOString(),
+    },
+    locals,
+  );
 
   return json({ ok: true, zip: home.zip, area: home.areaId, addressStored: storeAddress }, 200);
 };
