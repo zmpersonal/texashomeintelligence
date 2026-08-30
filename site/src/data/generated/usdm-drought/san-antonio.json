@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-08-28T20:50:14.779Z",
-  "lastSuccessAt": "2026-08-28T20:50:14.779Z",
+  "lastAttemptAt": "2026-08-30T01:21:20.966Z",
+  "lastSuccessAt": "2026-08-30T01:21:20.966Z",
   "lastError": null,
   "source": {
     "name": "U.S. Drought Monitor",
@@ -437,10 +437,32 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:15.092Z",
+      "ingestedAt": "2026-08-30T01:21:21.052Z",
       "key": "48029-2026-08-25T00:00:00",
       "value": {
-        "droughtIndex": "D1 — Moderate Drought (32% of county)"
+        "droughtIndex": "D1 — Moderate Drought (32% of county)",
+        "county": "Bexar",
+        "countyFips": "48029"
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-30T01:21:21.138Z",
+      "key": "48091-2026-08-25T00:00:00",
+      "value": {
+        "droughtIndex": "D0 — Abnormally Dry (100% of county)",
+        "county": "Comal",
+        "countyFips": "48091"
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-30T01:21:21.223Z",
+      "key": "48187-2026-08-25T00:00:00",
+      "value": {
+        "droughtIndex": "D1 — Moderate Drought (13% of county)",
+        "county": "Guadalupe",
+        "countyFips": "48187"
       }
     }
   ]

@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-08-28T20:50:08.783Z",
-  "lastSuccessAt": "2026-08-28T20:50:08.783Z",
+  "lastAttemptAt": "2026-08-30T01:21:14.933Z",
+  "lastSuccessAt": "2026-08-30T01:21:14.933Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -19570,7 +19570,7 @@
     },
     {
       "observedAt": "2026-08-27T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
       "key": "2026-002058 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -19580,7 +19580,7 @@
     },
     {
       "observedAt": "2026-08-27T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
       "key": "2026-085966 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -19590,7 +19590,7 @@
     },
     {
       "observedAt": "2026-08-27T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
       "key": "2026-111746 BP",
       "value": {
         "permitType": "Repair",
@@ -19601,7 +19601,7 @@
     },
     {
       "observedAt": "2026-08-27T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
       "key": "2026-108665 EP",
       "value": {
         "permitType": "Upgrade",
@@ -19611,7 +19611,7 @@
     },
     {
       "observedAt": "2026-08-27T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
       "key": "2026-093328 BP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -19622,7 +19622,7 @@
     },
     {
       "observedAt": "2026-08-27T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
       "key": "2026-078438 PP",
       "value": {
         "permitType": "Remodel",
@@ -19632,7 +19632,7 @@
     },
     {
       "observedAt": "2026-08-27T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
       "key": "2026-112666 BP",
       "value": {
         "permitType": "Remodel",
@@ -19643,7 +19643,7 @@
     },
     {
       "observedAt": "2026-08-27T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
       "key": "2026-108879 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -19653,7 +19653,7 @@
     },
     {
       "observedAt": "2026-08-27T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
       "key": "2024-140408 PP",
       "value": {
         "permitType": "New",
@@ -19663,7 +19663,7 @@
     },
     {
       "observedAt": "2026-08-27T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
       "key": "2024-140410 PP",
       "value": {
         "permitType": "New",
@@ -19673,7 +19673,7 @@
     },
     {
       "observedAt": "2026-08-27T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
       "key": "2024-140409 PP",
       "value": {
         "permitType": "New",
@@ -19683,7 +19683,7 @@
     },
     {
       "observedAt": "2026-08-27T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
       "key": "2026-110698 EP",
       "value": {
         "permitType": "Repair",
@@ -19693,13 +19693,53 @@
     },
     {
       "observedAt": "2026-08-27T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:09.287Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
       "key": "2026-112687 BP",
       "value": {
         "permitType": "Remodel",
         "workDescription": "Re-roof/overlay existing metal roof with Duro-Last. No tear-off or structural alterations includes two structures.",
         "status": "Active",
         "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:00:00.000Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
+      "key": "2026-024637 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "*Addressing active code violation* Addition/ remodel of existing 1-story single-family residential to include: carport was converted to garage w/o a permit; converting garage to (space not currently labeled) with addition of window seat utility room and half bath; addition to rear of property to inc",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:00:00.000Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
+      "key": "2026-111870 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Scaife - 40-09000 - Install new 3.8kW rooftop solar system to existing residential only using backfed breaker only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:00:00.000Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
+      "key": "2026-111559 EP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Installation of new 8.600 kW DC / 7.600 kW AC roof-mounted photovoltaic solar system on existing single-family residence at 15621 Belfin Dr Austin TX 78717. System consists of (20) Mate Solar MS430-54H 430W modules with (20) Enphase IQ8HC-72-M-DOM-US microinverters arranged in two branch circuits of",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:00:00.000Z",
+      "ingestedAt": "2026-08-30T01:21:15.406Z",
+      "key": "2023-082189 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "*Addressing active code violation* Addition/ remodel to existing 1-story single family residential to include: addition to existing garage new full bath covered front porch rear screened patio; 2nd floor addition to include game room full bath balcony and roof top deck.",
+        "status": "Active"
       }
     }
   ]

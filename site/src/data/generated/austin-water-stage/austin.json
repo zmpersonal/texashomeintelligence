@@ -1,0 +1,14 @@
+{
+  "datasetId": "austin-water-stage",
+  "location": "austin",
+  "methodologyVersion": "v1",
+  "status": "error",
+  "lastAttemptAt": "2026-08-30T01:21:26.540Z",
+  "lastSuccessAt": null,
+  "lastError": "Austin Water page mentions multiple stages (Conservation Stage, Stage 1) — cannot determine current stage",
+  "source": {
+    "name": "Austin Water",
+    "url": "https://www.austintexas.gov/water/austin-water-drought-response"
+  },
+  "observations": []
+}

@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-08-28T20:50:14.350Z",
-  "lastSuccessAt": "2026-08-28T20:50:14.350Z",
+  "lastAttemptAt": "2026-08-30T01:21:20.223Z",
+  "lastSuccessAt": "2026-08-30T01:21:20.223Z",
   "lastError": null,
   "source": {
     "name": "U.S. Drought Monitor",
@@ -437,10 +437,32 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-08-28T20:50:14.778Z",
+      "ingestedAt": "2026-08-30T01:21:20.602Z",
       "key": "48453-2026-08-25T00:00:00",
       "value": {
-        "droughtIndex": "D2 — Severe Drought (10% of county)"
+        "droughtIndex": "D2 — Severe Drought (10% of county)",
+        "county": "Travis",
+        "countyFips": "48453"
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-30T01:21:20.879Z",
+      "key": "48491-2026-08-25T00:00:00",
+      "value": {
+        "droughtIndex": "D1 — Moderate Drought (92% of county)",
+        "county": "Williamson",
+        "countyFips": "48491"
+      }
+    },
+    {
+      "observedAt": "2026-08-25T00:00:00.000Z",
+      "ingestedAt": "2026-08-30T01:21:20.965Z",
+      "key": "48209-2026-08-25T00:00:00",
+      "value": {
+        "droughtIndex": "D1 — Moderate Drought (50% of county)",
+        "county": "Hays",
+        "countyFips": "48209"
       }
     }
   ]

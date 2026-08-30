@@ -1,0 +1,27 @@
+{
+  "datasetId": "arr-collection-schedule",
+  "location": "austin",
+  "methodologyVersion": "v1",
+  "status": "live",
+  "lastAttemptAt": "2026-08-30T01:21:23.844Z",
+  "lastSuccessAt": "2026-08-30T01:21:23.844Z",
+  "lastError": null,
+  "source": {
+    "name": "Austin Resource Recovery",
+    "url": "https://data.austintexas.gov/Utilities-and-City-Services/Recycling-Schedules/rfif-mmvg"
+  },
+  "observations": [
+    {
+      "observedAt": "2026-08-30T01:21:26.281Z",
+      "ingestedAt": "2026-08-30T01:21:26.281Z",
+      "key": "arr-8340739e",
+      "value": {
+        "rowCount": 178060,
+        "zipCount": 42,
+        "ambiguousCount": 2,
+        "unusableCount": 0,
+        "fingerprint": "8340739e"
+      }
+    }
+  ]
+}
