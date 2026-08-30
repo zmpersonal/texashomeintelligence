@@ -1,0 +1,114 @@
+---
+/**
+ * /email/unsubscribe/ — the one-click unsubscribe.
+ *
+ * The link IS the authorisation: no sign-in, because someone who no longer
+ * wants our mail should not have to prove who they are to stop it. That is
+ * exactly why the token is signed — see `unsubscribeToken.ts`. It carries the
+ * account id and the preference key, so a token cannot be edited into someone
+ * else's, and a weekly token cannot switch off their condition alerts.
+ *
+ * ── Why GET does not unsubscribe ──────────────────────────────────────────
+ * Corporate mail scanners fetch every link in a message before the recipient
+ * ever sees it. A GET that unsubscribed would unsubscribe people who never
+ * clicked. So GET renders a confirmation with a single button, and the actual
+ * change happens on POST.
+ *
+ * That is also what RFC 8058 asks for: the `List-Unsubscribe-Post` header
+ * tells the mail client to POST `List-Unsubscribe=One-Click` to this URL, and
+ * this page handles that POST identically to the button. Both paths land on
+ * the same code; the mail client's built-in unsubscribe works with one click,
+ * and a link scanner changes nothing.
+ *
+ * ── A bad token is told it is a bad token ─────────────────────────────────
+ * The first cut of this page reported success for every POST, valid token or
+ * not, on the theory that one answer to all of them could not be used to probe
+ * which accounts exist. Testing it made the cost obvious: a token a mail
+ * client had line-wrapped or truncated produced "You're unsubscribed" while
+ * the preference stayed on, which is the one thing an unsubscribe page must
+ * never do.
+ *
+ * And the leak it was guarding against does not exist. `verifyUnsubscribe` is
+ * pure arithmetic over the token and the signing key — it never touches the
+ * database — so a forged token for a real account and one for an account that
+ * was never created fail in exactly the same way, at the same point, with the
+ * same answer. Saying "that link didn't work" reveals nothing and tells the
+ * truth, so it says that, with a 400 so a mail client's own unsubscribe
+ * button reports the failure rather than swallowing it.
+ */
+export const prerender = false;
+import Base from "../../layouts/Base.astro";
+import { verifyUnsubscribe } from "../../lib/email/unsubscribeToken";
+import { WEEKLY_PREF_KEY, setWeeklyPref } from "../../lib/email/weeklyRecipients";
+
+const method = Astro.request.method;
+let token = Astro.url.searchParams.get("t") ?? "";
+
+if (method === "POST") {
+  const form = await Astro.request.formData().catch(() => null);
+  // The token may arrive in the body (our own form) or only in the query
+  // string (a mail client posting to the List-Unsubscribe URL verbatim).
+  token = String(form?.get("t") ?? "") || token;
+}
+
+const payload = token ? await verifyUnsubscribe(token) : null;
+// Only the preference this token was minted for. An unknown key is treated as
+// no key at all rather than being written through to the database.
+const valid = payload?.prefKey === WEEKLY_PREF_KEY ? payload : null;
+
+let done = false;
+if (method === "POST") {
+  if (valid) {
+    await setWeeklyPref(valid.accountId, false, "unsubscribe-link");
+    done = true;
+  } else {
+    // The preference was NOT changed, so the page must not say it was.
+    Astro.response.status = 400;
+  }
+}
+---
+
+<Base title="Unsubscribe | Texas Home Intelligence" description="Stop the weekly home email." noindex>
+  <section class="hero">
+    <div class="wrap" style="max-width:520px;">
+      <span class="eyebrow">EMAIL SETTINGS</span>
+      {done ? (
+        <>
+          <h1>You're unsubscribed</h1>
+          <p class="lede">You won't get the weekly home email again.</p>
+          <p>
+            This doesn't close your account and it doesn't stop your sign-in links. Any condition
+            alerts you switched on are unaffected — you can change those from your dashboard.
+          </p>
+          <p><a class="btn secondary" href="/home/">Open your dashboard</a></p>
+        </>
+      ) : valid ? (
+        <>
+          <h1>Stop the weekly email?</h1>
+          <p class="lede">This stops the weekly home email only.</p>
+          <p>
+            Your account stays as it is, sign-in links still work, and any condition alerts you
+            switched on keep running.
+          </p>
+          <form method="post">
+            <input type="hidden" name="t" value={token} />
+            <button class="btn" type="submit">Unsubscribe me</button>
+          </form>
+          <p class="notify-fineprint">
+            Changed your mind? <a href="/home/">Go back to your dashboard</a> instead.
+          </p>
+        </>
+      ) : (
+        <>
+          <h1>That link didn't work</h1>
+          <p class="lede">This unsubscribe link isn't one we can read.</p>
+          <p>
+            It may have been altered by a mail client on the way. You can turn the weekly email off
+            from your dashboard, or reply to any message from us and we'll do it.
+          </p>
+          <p><a class="btn secondary" href="/home/">Open your dashboard</a></p>
+        </>
+      )}
+    </div>
+  </section>
+</Base>

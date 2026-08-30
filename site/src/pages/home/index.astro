@@ -43,6 +43,7 @@ import { buildWateringView } from "../../lib/municipal/watering";
 import {
   BUCKET_LABEL, SEASONAL_SUGGESTIONS, TASK_CATALOGUE, bucketFor, dueLabel, type DueBucket,
 } from "../../lib/account/reminders";
+import { WEEKLY_PREF_KEY, weeklyPrefState } from "../../lib/email/weeklyRecipients";
 
 const auth = await authenticate(Astro.request);
 if (!auth) return Astro.redirect("/home/sign-in/");
@@ -64,10 +65,13 @@ const composite = index.compositeExplanation;
 const band = index.composite;
 const token = BAND_TOKEN[band.band];
 
-const [reminders, prefs, address] = await Promise.all([
+const [reminders, prefs, address, weeklyPref] = await Promise.all([
   listReminders(home.id),
   getAlertPrefs(home.id),
   getAddress(home.id),
+  // Round 9. Reports `available: false` until the migration is applied, and
+  // the control below is omitted rather than shown broken.
+  weeklyPrefState(auth.account.id),
 ]);
 
 // Round 5b. One shard read through ASSETS — this ZIP's file only, never the
@@ -323,6 +327,21 @@ const unused = TASK_CATALOGUE.filter((t) => !reminders.some((r) => r.taskKey ===
             Alerts describe conditions in your area, never your individual house, and they are sent
             only while a condition holds.
           </p>
+
+          {weeklyPref.available && (
+            <div class="v2-weekly-pref" data-weekly-pref>
+              <label class="alert-pref">
+                <input type="checkbox" data-weekly={WEEKLY_PREF_KEY} checked={weeklyPref.enabled} />
+                <span>
+                  <strong>Weekly summary email</strong>
+                  <span class="dash-section-note v2-pref-note">
+                    One email a week with this reading, what moved, one thing worth looking at, and
+                    anything due. Off unless you switch it on; every message can turn it back off.
+                  </span>
+                </span>
+              </label>
+            </div>
+          )}
         </section>
       </div>
 
@@ -391,6 +410,16 @@ const unused = TASK_CATALOGUE.filter((t) => !reminders.some((r) => r.taskKey ===
         window.__thiTrack?.("reminder_created", {});
         window.location.reload();
       }
+    });
+  });
+
+  document.querySelectorAll("[data-weekly]").forEach((node) => {
+    if (!(node instanceof HTMLInputElement)) return;
+    node.addEventListener("change", async () => {
+      await post("/api/account/email-prefs/", {
+        pref_key: node.dataset.weekly!, enabled: node.checked ? "yes" : "no",
+      });
+      window.__thiTrack?.("weekly_email_pref_set", { enabled: String(node.checked) });
     });
   });
 

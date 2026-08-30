@@ -44,6 +44,23 @@ const title = "Sign in | Texas Home Intelligence";
           </span>
         </label>
 
+        {/*
+          A SEPARATE box, unticked, and not required. The consent above covers
+          sign-in links and the alerts they pick; a weekly digest is neither, so
+          it gets asked for on its own rather than folded into a checkbox people
+          tick to create an account at all. Leaving it unticked here is a
+          complete answer — nothing is enrolled by default, and nobody who
+          signed up before this box existed is enrolled retroactively.
+        */}
+        <label class="notify-consent notify-consent--optional">
+          <input type="checkbox" name="weekly" value="yes" data-weekly-optin />
+          <span>
+            <strong>Also send me the weekly summary email.</strong> One message a week: your home's
+            reading, what changed, one thing worth checking, and anything you're tracking. Optional
+            &mdash; and every message can turn it off.
+          </span>
+        </label>
+
         <button class="btn" type="submit">Email me a sign-in link</button>
         <p class="notify-fineprint">
           Nothing is stored until you tick the box and open the link.

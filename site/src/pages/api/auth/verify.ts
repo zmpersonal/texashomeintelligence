@@ -9,6 +9,7 @@ import type { APIRoute } from "astro";
 import { consumeMagicToken, safeNext } from "../../../lib/auth/tokens";
 import { createSession, sessionCookie, signedInMarkerCookie } from "../../../lib/auth/session";
 import { upsertAccount } from "../../../lib/account/db";
+import { setWeeklyPref } from "../../../lib/email/weeklyRecipients";
 
 export const prerender = false;
 
@@ -28,6 +29,27 @@ export const GET: APIRoute = async ({ url }) => {
     consentSource: payload.consentSource,
     consentAt: payload.consentAt,
   });
+  // Round 9. Written only when the person ticked the weekly box on the form
+  // that produced THIS token, so nobody is enrolled by a link they were sent
+  // for another reason, and nobody is enrolled retroactively.
+  //
+  // Only ever a write of `true`. An unticked box means the request did not
+  // mention the weekly email, not that it asked to stop one — so a subscriber
+  // signing in again keeps what they chose.
+  //
+  // In its own try/catch, and after the session is NOT yet created only in the
+  // sense that order does not matter here: what matters is that a preference
+  // write can never cost someone their sign-in. If the Round 9 migration has
+  // not been applied to this database the table does not exist, and a thrown
+  // query would otherwise turn a working magic link into a 500.
+  if (payload.weeklyOptIn) {
+    try {
+      await setWeeklyPref(account.id, true, "signup");
+    } catch (error) {
+      console.error("[weekly] could not record the signup opt-in:", error);
+    }
+  }
+
   const sid = await createSession(account.id);
 
   // Two Set-Cookie headers: the real session (HttpOnly) and the header marker

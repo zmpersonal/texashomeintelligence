@@ -80,6 +80,61 @@ bcc, no operator copy, no reply-to redirect. A magic link is a credential and an
 alert is about someone's home. A lead-notification feed (Slack or otherwise) is
 a separate path that must never be wired into this one.
 
+**Round 9 adds the weekly email to this transport, unchanged in that respect.**
+It uses the same single-recipient call, plus a `List-Unsubscribe` header pair.
+It also introduces a second Worker secret that is yours:
+
+**`wrangler secret put EMAIL_LINK_SIGNING_KEY`** — any long random string. It
+signs the unsubscribe tokens, so that an unsubscribe link authorises exactly one
+account's one preference and cannot be edited into someone else's. **Until it is
+set, the weekly send refuses to run at all** and reports why (HTTP 409): an
+email whose unsubscribe link cannot work is worse than no email. Sign-in links
+and alerts are unaffected — they do not use it.
+
+---
+
+## Seam 11 — The weekly email's schedule lives in GitHub Actions 🟡
+
+`@astrojs/cloudflare` 14.2.3 emits a Worker whose only export is the fetch
+entry point. It has no `workerEntryPoint`/`scheduled` hook (verified against the
+adapter's dist), so a native **Cloudflare Cron Trigger cannot reach a
+`scheduled()` handler** without a build-config or dependency change — ask-first
+under SECURITY.md, and not worth it for a weekly job.
+
+So the clock is `.github/workflows/weekly-email.yml`, which POSTs to
+`/api/email/weekly-run/` on the deployed Worker. The Worker does all the work;
+the workflow only triggers it and prints counts. Moving to a native Cron Trigger
+later replaces that file and changes no application code.
+
+**What you set:**
+
+| Where | Name | What |
+|---|---|---|
+| Worker secret | `WEEKLY_RUN_TOKEN` | Any long random string. **Without it the trigger endpoint is a 404** — an unconfigured deployment exposes nothing. |
+| Repo secret | `WEEKLY_RUN_TOKEN` | The same value. |
+| Repo variable | `WEEKLY_RUN_URL` | The Worker origin, e.g. `https://texashomeintelligence.<subdomain>.workers.dev`. Point it at staging first. |
+| Worker secret | `RESEND_WEBHOOK_SECRET` | Resend's `whsec_…` signing secret, from the webhook you create pointing at `/api/email/resend-webhook/` (subscribe to `email.bounced` and `email.complained`). **Without it that endpoint is a 404**, and bounces simply are not recorded. |
+
+**Consent — decided 2026-08-30, default OFF.** Migration
+`0004_weekly_email.sql` ships `enabled` defaulting to 0 and nothing enrols
+anyone automatically. The account-consent checkbox covers sign-in links and the
+condition alerts; a weekly digest is neither, so it is asked for separately in
+two places, both an explicit act by the person: a separate unticked checkbox on
+the sign-in form (source `signup`), and a toggle on the dashboard beside the
+alert preferences (source `dashboard`). The signed one-click link in every
+weekly email revokes it (source `unsubscribe-link`).
+
+Existing accounts are never enrolled retroactively, and an unticked box is not
+a request to unsubscribe — so a subscriber who signs in again without
+re-ticking keeps what they chose. The first run therefore has zero recipients
+until people opt in, which is the intended shape, not a gap.
+
+**Explicitly NOT built, and not to be built without you saying so:** a one-time
+"the dashboard is live" mail to `dashboard_launch_signups`. Those addresses
+asked to be told when the product was ready — that is a different message, a
+different consent, and a different send. The weekly recipient query never joins
+that table.
+
 ---
 
 ## ⚠️ Cloudflare gotcha — verify this yourself before go-live
