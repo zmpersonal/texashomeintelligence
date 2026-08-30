@@ -151,12 +151,38 @@ table.data-table td { font-variant-numeric: tabular-nums; }
  * image fails to load (see Nav.astro's onerror handler) — the header
  * height is identical either way since both are capped/sized to the same
  * row. */
-.brand-mark { display: flex; align-items: center; gap: 8px; text-decoration: none; }
-.brand-logo { height: 28px; width: auto; max-width: 220px; display: block; }
-.brand-mark-text { display: none; font-family: var(--thi-font-ui); font-weight: 600; font-size: 1.15rem; color: var(--thi-navy); letter-spacing: -0.01em; }
+.brand-mark { display: flex; align-items: center; gap: 10px; text-decoration: none; min-width: 0; }
+/* 40px, not 28: the header row's height is set by .nav-cta (~40.8px incl. its
+ * padding), so the mark can fill that row without the header growing at all.
+ * The asset itself was also carrying a uniform ~8px opaque border, trimmed at
+ * source (112x112 -> 98x94) rather than cropped in CSS — a CSS crop would bake
+ * this particular file's padding into the stylesheet and break the moment the
+ * logo is swapped, which it still will be (BRAND.md). */
+.brand-logo { height: 40px; width: auto; max-width: 220px; display: block; }
+/* Under 360px the header row was already at its limit: the taller mark is
+ * 13.7px wider, which is enough to wrap it. Keep the old size in that band so
+ * this change cannot make any width worse than it was. */
+@media (max-width: 359px) { .brand-logo { height: 28px; } }
+/* The wordmark is real text and is in the DOM on every page at every width:
+ * it carries the entity name for crawlers and AI answer engines, which an
+ * image cannot. "Intelligence" takes the amber accent — one split-colour
+ * treatment, defined here and reused, not re-invented per surface.
+ *
+ * It is only *displayed* from 560px up, and that is a measured constraint
+ * rather than a preference. On one header row at 380px the content needs
+ * 502px (mark 42 + wordmark 201 + hamburger 34 + the My Dashboard actions 183
+ * + gaps) against 340px of usable width, so showing it there wraps the row and
+ * takes the header from 69px to 125px. The brief's hard rule is that the
+ * header height must not grow, so below 560px the wordmark stays in the markup
+ * — crawlable, and read by anything rendering at desktop width — without being
+ * painted. Shortening the mobile CTA would buy the room back; that is a nav
+ * change, so it is the owner's call rather than one to slip in here. */
+.brand-mark-text { display: none; font-family: var(--thi-font-ui); font-weight: 600; font-size: 1.15rem; color: var(--thi-navy); letter-spacing: -0.01em; white-space: nowrap; }
+@media (min-width: 560px) { .brand-mark-text { display: inline-flex; } }
 .brand-mark-text span { color: var(--accent); }
+/* Logo load failure: drop the image, keep the wordmark — the header never
+ * shows a broken-image icon and never loses the brand name. */
 .brand-mark--fallback .brand-logo { display: none; }
-.brand-mark--fallback .brand-mark-text { display: inline-flex; }
 
 .nav-links { display: flex; gap: 20px; list-style: none; margin: 0; padding: 0; font-size: 0.92rem; font-weight: 600; transition: opacity 0.2s ease; }
 .nav-links a { color: var(--ink); text-decoration: none; }
