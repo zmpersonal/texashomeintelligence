@@ -1,0 +1,132 @@
+---
+/**
+ * One signal as an instrument-table row — the v2 logged-in layout.
+ *
+ * This is a re-arrangement of `SignalCard.astro`, not a replacement: five cards
+ * of unequal height became five aligned rows, so the whole set reads in one
+ * glance instead of two screens. Every rung of the information ladder the card
+ * carried is still here, in the same order, just laid across columns:
+ *
+ *   Data           mono value + /100 + band chip + sparkline + provenance
+ *   Analysis       ONE sentence — the rest is behind the disclosure
+ *   Recommendation an observational action, below a divider, from the fixed
+ *                  table in signalActions.ts. Never on a Normal reading.
+ *
+ * `SignalCard.astro` is deliberately left untouched. The public ZIP dashboard
+ * renders it, and Round 4.2's lesson was that a shared component restyled for
+ * one surface silently moves the other. This component is used by `/home/` only.
+ *
+ * The unavailable state is a real state, not an empty one: an em dash rather
+ * than a zero, and the band chip says the reading is not published for this
+ * area. A withheld signal must never read as a measured low score.
+ */
+import { BAND_TOKEN } from "../lib/dashboardShared";
+import type { SignalResult } from "../lib/stressIndex";
+import type { SignalSeries } from "../lib/signalSeries";
+import { actionFor } from "../lib/signalActions";
+import { sparkline } from "../lib/sparkline";
+import { formatDate, machineDate } from "../lib/format";
+
+interface Props {
+  signal: SignalResult;
+  series?: SignalSeries;
+  /** Logged-in only: offer to turn the action into a tracked reminder. */
+  allowReminder?: boolean;
+}
+const { signal, series, allowReminder = false } = Astro.props as Props;
+
+const token = signal.computable ? BAND_TOKEN[signal.layerB.band] : "unknown";
+const sources = [...new Set(signal.layerA.map((a) => a.sourceName))].join(" · ");
+const action = signal.computable ? actionFor(signal.id, signal.layerB.band) : undefined;
+
+// First sentence in the row; the remainder goes behind the disclosure.
+const detail = signal.computable ? signal.layerC.detail : (signal.limitation ?? "");
+const firstStop = detail.indexOf(". ");
+const lead = firstStop > 0 ? detail.slice(0, firstStop + 1) : detail;
+const rest = firstStop > 0 ? detail.slice(firstStop + 2) : "";
+
+// Narrower than the card's sparkline: it sits in its own column now.
+const spark = series && series.values.length > 1 ? sparkline(series.values, { width: 150, height: 28 }) : undefined;
+---
+
+<div class={`sig-row${signal.computable ? "" : " is-unavailable"}`} data-signal={signal.id} data-computable={signal.computable ? "yes" : "no"}>
+  <div class="sig-cell sig-name">
+    <p class="sig-label">{signal.label}</p>
+    {sources && (
+      <p class="data-meta sig-source">
+        Source: {sources}
+        {signal.freshness.dataThrough && (
+          <> · Data through <time datetime={machineDate(signal.freshness.dataThrough)}>{formatDate(signal.freshness.dataThrough)}</time></>
+        )}
+        {signal.freshness.asOf && (
+          <> · Updated <time datetime={machineDate(signal.freshness.asOf)}>{formatDate(signal.freshness.asOf)}</time></>
+        )}
+      </p>
+    )}
+  </div>
+
+  <div class="sig-cell sig-reading">
+    <span class={`sig-value${signal.computable ? "" : " sig-value--absent"}`} data-value>
+      {signal.computable ? signal.layerB.score : "—"}
+    </span>
+    {signal.computable && <span class="sig-scale">/100</span>}
+  </div>
+
+  <div class="sig-cell sig-band">
+    <span class={`status-chip status-${token}`} data-band>
+      <span class="status-dot" aria-hidden="true"></span>
+      {signal.computable ? signal.layerB.bandLabel : "Not published for this area"}
+    </span>
+  </div>
+
+  <div class="sig-cell sig-trend">
+    {spark && series ? (
+      <figure class="sig-spark" data-spark>
+        <svg viewBox={`0 0 ${spark.width} ${spark.height}`} width="100%" height={spark.height}
+             preserveAspectRatio="none" role="img" aria-label={series.label}>
+          <path d={spark.area} class={`spark-area spark-${token}`} />
+          <path d={spark.line} class={`spark-line spark-${token}`} fill="none" />
+          <circle cx={spark.last.x} cy={spark.last.y} r="2.5" class={`spark-dot spark-${token}`} />
+        </svg>
+        <figcaption class="data-meta">{series.label}</figcaption>
+      </figure>
+    ) : (
+      // No honest series for this signal — the column stays empty rather than
+      // drawing a flat line, which would read as "measured, and unchanging".
+      <span class="sig-no-spark" aria-hidden="true"></span>
+    )}
+  </div>
+
+  <div class="sig-cell sig-meaning">
+    <p class="sig-analysis" data-lead>{lead}</p>
+
+    {action && (
+      <div class="sig-action" data-action-code={action.code}>
+        <p class="sig-action-text" data-action-text>{action.text}</p>
+        {allowReminder && action.taskKey && (
+          <form method="post" action="/api/reminders/" class="sig-action-form" data-action-reminder>
+            <input type="hidden" name="task_key" value={action.taskKey} />
+            <button class="btn secondary" type="submit" data-add-reminder-btn>Track this</button>
+          </form>
+        )}
+      </div>
+    )}
+
+    {(rest || signal.computable) && (
+      <details class="sig-why" data-why>
+        <summary>Why this reading &rarr;</summary>
+        {rest && <p class="sig-analysis">{rest}</p>}
+        {signal.computable && signal.layerB.terms.length > 0 && (
+          <ul class="signal-terms">
+            {signal.layerB.terms.map((t) => (
+              <li><span class="signal-term-points">{t.points}</span> {t.label}{t.detail ? ` — ${t.detail}` : ""}</li>
+            ))}
+          </ul>
+        )}
+        <p class="data-meta">
+          <a href="/methodology/home-stress-index/">Full methodology &nearr;</a>
+        </p>
+      </details>
+    )}
+  </div>
+</div>
