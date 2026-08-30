@@ -12,7 +12,8 @@
     "verify-content": "node scripts/verify-content.mjs",
     "ingest": "tsx scripts/ingest.ts",
     "fetch-drought-map": "tsx scripts/fetch-drought-map.ts",
-    "fonts:sync": "node scripts/sync-fonts.mjs"
+    "fonts:sync": "node scripts/sync-fonts.mjs",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.2.3",

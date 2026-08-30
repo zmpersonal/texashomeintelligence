@@ -79,6 +79,17 @@ const AI_REFERRAL_DOMAINS = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="canonical" href={canonicalURL} />
 
+    {/* Icons are generated from the brand mark by `npm run icons` and committed
+        — see scripts/generate-icons.mjs. The mark is still swappable: replace
+        public/images/logo.png, re-run that script, and every size below is
+        regenerated. Nothing here encodes the mark's shape or colours. */}
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0C2340" />
+
     {/* Preload only the two faces that paint above the fold on every page:
         body text and the serif heading. The other four (Plex Sans 600/700,
         Plex Mono 400/700) are discovered from CSS as usual — preloading a face
