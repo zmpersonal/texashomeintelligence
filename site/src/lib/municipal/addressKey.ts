@@ -155,13 +155,18 @@ export function parseAddressLine(line: string, expectedZip: string): ParseResult
   const cleaned = scrub(line ?? "");
   if (!cleaned) return { ok: false, reason: "empty" };
 
-  // A ZIP anywhere in the typed line must agree with the profile's ZIP.
-  const zipInLine = cleaned.match(/\b(\d{5})(?:-\d{4})?\b(?!.*\b\d{5}\b)/);
+  let tokens = cleaned.split(" ").filter(Boolean);
+
+  // A ZIP in the typed line must agree with the profile's ZIP. Skip the first
+  // token: Austin has plenty of five-digit house numbers ("12200 PALOMA BLANCA
+  // WAY"), and reading one as a ZIP rejected ~16% of real addresses outright.
+  const zipInLine = tokens
+    .slice(1)
+    .map((t) => t.match(/^(\d{5})(?:-\d{4})?$/))
+    .find(Boolean);
   if (zipInLine && zipInLine[1] !== expectedZip) {
     return { ok: false, reason: "zip-conflict" };
   }
-
-  let tokens = cleaned.split(" ").filter(Boolean);
 
   // Drop a trailing "AUSTIN TX 78704" tail if present, plus anything after a
   // unit designator. Order matters: unit first, since "APT 5" can precede city.
@@ -171,8 +176,10 @@ export function parseAddressLine(line: string, expectedZip: string): ParseResult
     droppedUnit = tokens.slice(unitAt).join(" ");
     tokens = tokens.slice(0, unitAt);
   }
-  // Trailing state/ZIP and city name are not part of the key.
-  tokens = tokens.filter((t) => !/^\d{5}(-\d{4})?$/.test(t));
+  // Trailing state/ZIP and city name are not part of the key. The house number
+  // is exempt for the same reason the ZIP check above skips it — a five-digit
+  // house number is not a ZIP.
+  tokens = tokens.filter((t, i) => i === 0 || !/^\d{5}(-\d{4})?$/.test(t));
   const txAt = tokens.lastIndexOf("TX");
   if (txAt > 0) tokens = tokens.slice(0, txAt);
   if (tokens.length > 2 && tokens[tokens.length - 1] === "AUSTIN") tokens = tokens.slice(0, -1);
@@ -200,20 +207,17 @@ export function parseAddressLine(line: string, expectedZip: string): ParseResult
     tokens = tokens.slice(1);
   }
 
-  // Leading directional, so "1600 S CONGRESS AVE" lines up with ARR's
-  // ST_DIR=S / STREET_NAM=CONGRESS split rather than becoming part of the name.
-  let dir = "";
-  if (tokens.length > 1 && DIRECTIONAL[tokens[0]]) {
-    dir = DIRECTIONAL[tokens[0]];
-    tokens = tokens.slice(1);
-  }
-
   if (tokens.length === 0) return { ok: false, reason: "no-street-name" };
 
-  // Street type is the trailing token, but only when something remains to be
-  // the name. "1600 PARK" keeps PARK as the street name; "1600 PARK ST" makes
-  // ST the type. Streets genuinely named for a suffix word survive because the
-  // check requires at least one other token.
+  // Street type comes off the right FIRST, before the directional comes off the
+  // left. Order matters: Austin has a street named plain "West Ave", and taking
+  // the directional first consumed WEST as a direction and left AVE as the
+  // street name — every address on it missed. Taking the type first leaves
+  // ["WEST"], which is too short for the directional rule below, so the name
+  // survives intact.
+  //
+  // The type is only taken when something remains to be the name: "1600 PARK"
+  // keeps PARK as the street name, while "1600 PARK ST" splits name/type.
   let streetType = "";
   if (tokens.length > 1) {
     const last = tokens[tokens.length - 1];
@@ -222,6 +226,16 @@ export function parseAddressLine(line: string, expectedZip: string): ParseResult
       streetType = mapped;
       tokens = tokens.slice(0, -1);
     }
+  }
+
+  // Leading directional, so "1600 S CONGRESS AVE" lines up with ARR's
+  // ST_DIR=S / STREET_NAM=CONGRESS split rather than becoming part of the name.
+  // Requires another token to survive as the name, which is what protects
+  // "West Ave" and "East Ave" from losing theirs.
+  let dir = "";
+  if (tokens.length > 1 && DIRECTIONAL[tokens[0]]) {
+    dir = DIRECTIONAL[tokens[0]];
+    tokens = tokens.slice(1);
   }
 
   const streetName = tokens.join(" ");
