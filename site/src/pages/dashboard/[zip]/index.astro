@@ -103,9 +103,18 @@ const jsonLd = {
                 <span class="status-dot" aria-hidden="true"></span>{band.bandLabel}
               </p>
               <p class="dash-verdict">{composite.headline}</p>
+              <p class="dash-interpret" data-interpret>
+                Recent conditions here have been harder than normal on roofs, HVAC systems, and
+                yards. Below: the five signals behind the number and one thing worth checking for
+                each.
+              </p>
               <p class="dash-delta" data-delta>
                 {deltaLabel(delta.change)} since the same reading on{" "}
                 <time datetime={machineDate(delta.comparedTo)}>{formatDate(delta.comparedTo)}</time>
+              </p>
+              <p class="dash-cadence" data-cadence>
+                Recalculated weekly. New drought data lands every Thursday — check back Friday for
+                next week's score.
               </p>
               {weightCoverage < 1 && (
                 <p class="dash-coverage" data-coverage>
@@ -115,11 +124,14 @@ const jsonLd = {
               )}
             </div>
           </div>
-          <p class="dash-caveat">{CONDITIONS_NOT_DAMAGE}</p>
           <p class="dash-links">
             <a href="#what-changed">See what changed &rarr;</a>
             <a href="/methodology/home-stress-index/">How this is calculated &nearr;</a>
           </p>
+          {/* Round 8 moves this below the CTA row — verbatim, per the copy doc.
+              It qualifies the score, so it reads better after the value than as
+              the second thing a first-time visitor sees. */}
+          <p class="dash-caveat">{CONDITIONS_NOT_DAMAGE}</p>
         </div>
 
         <div class="dash-picker-panel">
@@ -139,10 +151,12 @@ const jsonLd = {
   {/* ── Five signals ── */}
   <section class="block">
     <div class="wrap">
-      <h2>Five home signals</h2>
+      <h2>Five signals, five quick checks</h2>
       <p class="dash-section-note">
-        Indexes of conditions around {zip.zip}, 0&ndash;100 &mdash; never a prediction of damage to a
-        specific house. <a href="/methodology/home-stress-index/">How scoring works &nearr;</a>
+        Each signal scores conditions around {zip.zip} on a 0&ndash;100 scale, shows exactly what's
+        driving it, and gives you one specific thing to check on your own house — most take under
+        two minutes from the ground. Never a prediction of damage to a specific house.{" "}
+        <a href="/methodology/home-stress-index/">How scoring works &nearr;</a>
       </p>
       <div class="signal-grid">
         {signals.map((signal) => <SignalCard signal={signal} series={series[signal.id]} />)}
@@ -150,10 +164,25 @@ const jsonLd = {
     </div>
   </section>
 
+  {/* Round 8: mid-page conversion teaser. The copy doc's version reads "add
+      your roof's age and your AC's age, and your dashboard starts flagging what
+      these conditions mean for your house" — held, because age-aware flagging
+      is not built (see LaunchNotify). Reframed onto what a free account
+      actually does today: alerts and self-rescheduling reminders. */}
+  <section class="block">
+    <div class="wrap" style="max-width:760px;">
+      <p class="teaser-line" data-teaser>
+        This score describes your area. A free account adds the part that's yours — alerts for
+        your county and maintenance reminders that reschedule themselves.{" "}
+        <a href="/home/sign-in/">Personalise it — free, 2 minutes &rarr;</a>
+      </p>
+    </div>
+  </section>
+
   {/* ── What changed ── */}
   <section class="block alt" id="what-changed">
     <div class="wrap" style="max-width:760px;">
-      <h2>What changed</h2>
+      <h2>What changed since last week</h2>
       {delta.movers.length === 0 ? (
         <p data-what-changed>
           Nothing moved. Re-running the same calculation against the records as they stood on{" "}
@@ -180,6 +209,13 @@ const jsonLd = {
           </ul>
         </>
       )}
+      <p>
+        Small moves are normal. What matters is the trend — a signal that climbs for three or four
+        straight weeks is your early warning.{" "}
+        <strong>Want us to watch it for you?</strong> A free account emails you when a signal for
+        your county moves meaningfully.{" "}
+        <a href="/home/sign-in/">Get weekly change alerts &rarr;</a>
+      </p>
       <p class="dash-section-note">
         This is a recomputation, not a stored history: we compare today&rsquo;s reading with what the
         same method would have produced a week ago from the same records.
@@ -194,12 +230,17 @@ const jsonLd = {
       <div class="card compare-card" data-compare>
         <p class="card-tag">Modeled &mdash; per-ZIP coming soon</p>
         <p>{index.compare.available ? "" : index.compare.reason}</p>
+        <p>
+          We won't publish a ZIP-vs-ZIP comparison until it's measured rather than modeled — when
+          it is, your dashboard will have it first.{" "}
+          <a href="/home/sign-in/">Get notified when per-ZIP scores launch &rarr;</a> (free account)
+        </p>
       </div>
     </div>
   </section>
 
   {/* ── Email for launch. Round 4 captures an address and nothing else. ── */}
-  <LaunchNotify zip={zip.zip} areaLabel={zip.areaLabel} />
+  <LaunchNotify />
 </Base>
 
 <script is:inline define:vars={{ zip: zip.zip, area: zip.areaId, band: band.band }}>

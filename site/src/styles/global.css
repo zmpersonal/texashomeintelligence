@@ -782,6 +782,16 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
    replaced. */
 .sig-action { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--thi-line); display: flex; flex-wrap: nowrap; align-items: baseline; gap: 10px; }
 .sig-action-text { margin: 0; flex: 1 1 auto; min-width: 0; }
+/* Round 8: the per-signal action gets a label so it reads as this week's task
+   rather than trailing prose. Still below the divider, still observational. */
+/* Capped to the width the hero column already had: this line is new copy in a
+   tuned layout, and letting a longer paragraph widen the column would reflow
+   the score block as a side effect of a copy change. Round 8 is content, not
+   layout. */
+.dash-interpret { max-width: 40ch; }
+.dash-cadence { font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption); color: var(--thi-mist); margin-top: 6px; max-width: 46ch; }
+.teaser-line { padding: 14px 16px; background: var(--thi-mist); border-radius: var(--thi-r-card); max-width: 74ch; }
+.action-label { font-family: var(--thi-font-ui); font-weight: 600; color: var(--thi-navy); }
 .sig-action-form { flex: 0 0 auto; }
 .sig-action-form .btn { padding: 4px 10px; font-size: var(--thi-fs-caption); }
 .sig-why { margin-top: 4px; }

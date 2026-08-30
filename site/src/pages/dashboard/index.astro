@@ -45,15 +45,20 @@ const description =
 
   <section class="hero">
     <div class="wrap" style="max-width:760px;">
-      <span class="eyebrow">FREE ZIP DASHBOARD</span>
-      <h1>Which Texas ZIP do you want the read on?</h1>
+      <span class="eyebrow">FREE ZIP DASHBOARD &middot; UPDATED WEEKLY</span>
+      <h1>What has Texas weather been doing to homes in your ZIP?</h1>
       <p class="lede">
-        Enter a ZIP and you'll see the Home Stress Index for that area, the five signals behind it,
-        and where every figure came from. No account, nothing stored.
+        Pick your ZIP to see its Home Stress Index — a single 0&ndash;100 score for how hard recent
+        hail, drought, and heat have been on houses in your area — plus the five signals behind it
+        and the public record every number comes from.
       </p>
       <ZipPicker current={DEFAULT_ZIP} />
       <p style="margin-top:16px;">
-        <a class="btn" href={`/dashboard/${DEFAULT_ZIP}/`}>Show the read for {DEFAULT_ZIP} &rarr;</a>
+        <a class="btn" href={`/dashboard/${DEFAULT_ZIP}/`}>Show my ZIP's score &rarr;</a>
+      </p>
+      <p class="microcopy">
+        Free, no account, and nothing about you is stored. {total} ZIPs across the Austin and
+        San Antonio metros — more coming.
       </p>
       <p class="dash-notcovered" data-notcovered hidden></p>
     </div>
@@ -61,23 +66,27 @@ const description =
 
   <section class="block">
     <div class="wrap" style="max-width:820px;">
-      <h2>What you'll see</h2>
+      <h2>What you'll see for your ZIP</h2>
       <ul style="list-style:disc;padding-left:1.25em;">
-        <li><strong>One score, 0&ndash;100.</strong> How hard recent weather and drought have been on houses in that area.</li>
-        <li><strong>Five signals.</strong> Roof &amp; Storm, Foundation &amp; Soil, HVAC, Water &amp; Irrigation, Trees &amp; Yard — each with its own reading and its own sources.</li>
-        <li><strong>Where every number came from.</strong> Source, the period the records cover, and when we last confirmed the feed.</li>
-        <li><strong>What we don't know.</strong> Where a signal isn't published for an area, the page says so instead of showing a zero.</li>
+        <li><strong>One score, updated weekly.</strong> How hard recent weather and drought have been on houses in your area, on a 0&ndash;100 scale — and whether it moved since last week.</li>
+        <li><strong>Five signals, in plain English.</strong> Roof &amp; Storm, Foundation &amp; Soil, HVAC, Water &amp; Irrigation, Trees &amp; Yard — each with what's driving it and one specific thing worth checking on your own house this week.</li>
+        <li><strong>The receipt for every number.</strong> Source, the period the records cover, and when we last confirmed the feed. If a contractor tells you a storm hit, you can look it up.</li>
+        <li><strong>Honest gaps.</strong> Where data isn't published for your area, we say so instead of showing a zero.</li>
       </ul>
       <p>
-        Every reading is area-level — a county or a metro, never an address. Scores are indexes of
-        conditions, not claims about any individual house.{" "}
-        <a href="/methodology/home-stress-index/">Read the methodology &rarr;</a>
+        Scores describe conditions in a county or metro — never a claim about any single house.{" "}
+        <a href="/methodology/home-stress-index/">How the score works &rarr;</a>
       </p>
     </div>
   </section>
 
   <section class="block alt">
     <div class="wrap">
+      <p class="dash-section-note">
+        Conditions change every week — drought categories move on Thursdays, and storm records
+        land days after the storm. The score you see today won't be the score next Friday. Worth
+        a look each week.
+      </p>
       <h2>Every ZIP we cover</h2>
       <p class="dash-section-note">
         {total} ZIP codes across {ZIP_AREAS.map((a) => a.label).join(" and ")}, from the U.S. Census

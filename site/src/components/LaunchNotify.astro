@@ -18,37 +18,47 @@
  * that list asked to be told when this went live, and they are owed that
  * message rather than a silent deletion.
  */
-interface Props {
-  zip: string;
-  areaLabel: string;
-}
-const { zip, areaLabel } = Astro.props as Props;
+// No props: Round 8's rewrite made this block ZIP-agnostic. It used to open
+// with "the {areaLabel} reading above is the same for every home in {zip}" —
+// which the copy doc removed on the grounds that leading a conversion pitch
+// with the product's weakest fact is a poor trade.
 ---
 
+{/* Round 8 honesty gate. The copy doc's conversion block leads with "Your
+    house's weak points, flagged — enter your roof's age, your AC's age, and
+    your foundation type", and the mid-page teaser repeats it. That mechanic
+    does not exist: the Round 5 home profile stores an address, reminders and
+    alert preferences, and nothing anywhere reads a component age or a
+    foundation type, let alone flags a signal against one. Shipping it would
+    promise behaviour the build does not have, so the paragraph is held until
+    it is built and the block ships the three benefits that are real. The
+    doc's "paper trail" line is kept — the dated history it describes is
+    exactly what reminder_events and the alert log already record. */}
 <section class="block alt" id="get-notified">
   <div class="wrap" style="max-width:640px;">
     <div class="card unlock-card">
-      <p class="card-tag">Free account</p>
-      <h2>Make this about your house</h2>
+      <p class="card-tag">Free account &middot; Two minutes</p>
+      <h2>The score above is about your area. Let's make it about your house.</h2>
       <p>
-        The {areaLabel} reading above is the same for every home in {zip}. A free account adds
-        the parts that are yours:
+        Conditions are only half the story — the other half is what they're landing on. A free
+        account starts keeping track of your side of it:
       </p>
       <ul style="list-style:disc;padding-left:1.25em;">
-        <li><strong>Maintenance reminders you set</strong> &mdash; filters, gutters, pest treatment, alarm tests. Mark one done and the next due date recalculates from that day.</li>
-        <li><strong>Alerts when conditions change</strong> &mdash; freeze, hail, extreme heat and flooding recorded for your county, with what to check.</li>
-        <li><strong>Your ZIP saved</strong> &mdash; so the reading you want is the one you land on.</li>
+        <li><strong>Alerts when it matters, quiet when it doesn't.</strong> Freeze, hail, extreme heat and flooding recorded for your county, each with what to check. You choose which ones you get.</li>
+        <li><strong>Maintenance that runs itself.</strong> Filters, gutters, pest treatment, alarm tests. Mark one done and the next due date recalculates from that day. No spreadsheet, no sticky notes.</li>
+        <li><strong>Your paper trail.</strong> The checks you log and the conditions we record become a dated history of your home — useful for an insurance claim, and for the day you sell.</li>
+        <li><strong>Your ZIP and home saved</strong> &mdash; so the reading you want is the one you land on.</li>
       </ul>
       <p>
-        No password: we email a sign-in link. No card, no phone number, and we never sell your
-        data. Readings stay county-level &mdash; an account personalises what you track, not the
-        precision of the data.
+        No password — we email you a sign-in link. No credit card, no phone number, and we never
+        sell your data. Area readings stay county-level; an account personalises what you track,
+        not the precision of the data.
       </p>
       <p class="unlock-actions">
-        <a class="btn" href="/home/sign-in/" data-signup-cta>Create your free home dashboard &rarr;</a>
+        <a class="btn" href="/home/sign-in/" data-signup-cta>Create my home's dashboard — free &rarr;</a>
       </p>
       <p class="notify-fineprint">
-        Already have one? <a href="/home/">Open your home dashboard</a> &middot;{" "}
+        Already set up? <a href="/home/">Open my dashboard</a> &middot;{" "}
         <a href="/privacy/">How we handle your data</a>
       </p>
     </div>
