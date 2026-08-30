@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-08-30T01:21:14.933Z",
-  "lastSuccessAt": "2026-08-30T01:21:14.933Z",
+  "lastAttemptAt": "2026-08-30T02:05:00.019Z",
+  "lastSuccessAt": "2026-08-30T02:05:00.019Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -19704,7 +19704,7 @@
     },
     {
       "observedAt": "2026-08-28T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:15.406Z",
+      "ingestedAt": "2026-08-30T02:05:00.504Z",
       "key": "2026-024637 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -19714,7 +19714,7 @@
     },
     {
       "observedAt": "2026-08-28T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:15.406Z",
+      "ingestedAt": "2026-08-30T02:05:00.504Z",
       "key": "2026-111870 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -19724,7 +19724,7 @@
     },
     {
       "observedAt": "2026-08-28T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:15.406Z",
+      "ingestedAt": "2026-08-30T02:05:00.504Z",
       "key": "2026-111559 EP",
       "value": {
         "permitType": "Repair",
@@ -19734,7 +19734,7 @@
     },
     {
       "observedAt": "2026-08-28T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:15.406Z",
+      "ingestedAt": "2026-08-30T02:05:00.504Z",
       "key": "2023-082189 EP",
       "value": {
         "permitType": "Addition and Remodel",

@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-08-30T01:21:15.415Z",
-  "lastSuccessAt": "2026-08-30T01:21:15.415Z",
+  "lastAttemptAt": "2026-08-30T02:05:00.512Z",
+  "lastSuccessAt": "2026-08-30T02:05:00.512Z",
   "lastError": null,
   "source": {
     "name": "City of San Antonio Permits Open Data",
@@ -50553,7 +50553,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202945",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50563,7 +50563,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202946",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50573,7 +50573,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202947",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50583,7 +50583,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202948",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50593,7 +50593,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202949",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50603,7 +50603,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202950",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50613,7 +50613,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202951",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50623,7 +50623,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202952",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50633,7 +50633,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202953",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50643,7 +50643,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202954",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50653,7 +50653,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202955",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50663,7 +50663,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202956",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50673,7 +50673,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202957",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50683,7 +50683,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202958",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50693,7 +50693,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202959",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -50703,7 +50703,7 @@
     },
     {
       "observedAt": "2026-08-21T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T01:21:19.525Z",
+      "ingestedAt": "2026-08-30T02:05:02.934Z",
       "key": "REP-ROF-PMT26-35202960",
       "value": {
         "permitType": "Re-Roof Permit",
