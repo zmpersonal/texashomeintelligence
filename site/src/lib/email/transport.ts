@@ -20,6 +20,15 @@ export interface OutboundEmail {
   to: string;
   subject: string;
   text: string;
+  /**
+   * Extra RFC 5322 headers. Added for the weekly email's `List-Unsubscribe`
+   * pair (RFC 8058), which has to be a real header — a link in the body is not
+   * what a mail client's own unsubscribe button reads.
+   *
+   * Optional, and absent for the magic link and the alerts, so those payloads
+   * are byte-for-byte what they were: `JSON.stringify` omits an undefined key.
+   */
+  headers?: Record<string, string>;
 }
 
 export type EmailTransport = "resend" | "stub";
@@ -67,8 +76,13 @@ export async function sendEmail(message: OutboundEmail): Promise<SendResult> {
     // Stub. Logged to the worker console — which is also how the round's
     // end-to-end test retrieves a magic link, rather than the app carrying a
     // "give me the last email" endpoint that would be a real backdoor.
+    const headerLines = Object.entries(message.headers ?? {})
+      .map(([k, v]) => `[email:stub] header ${k}: ${v}`)
+      .join("\n");
     console.log(
-      `[email:stub] to=${message.to} subject=${JSON.stringify(message.subject)}\n${message.text}`,
+      `[email:stub] to=${message.to} subject=${JSON.stringify(message.subject)}` +
+        (headerLines ? `\n${headerLines}` : "") +
+        `\n${message.text}`,
     );
     return { ok: true, transport: "stub" };
   }
@@ -87,6 +101,7 @@ export async function sendEmail(message: OutboundEmail): Promise<SendResult> {
         to: [message.to],
         subject: message.subject,
         text: message.text,
+        headers: message.headers,
       }),
     });
     if (!res.ok) {

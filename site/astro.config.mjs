@@ -45,6 +45,14 @@ const dataLastUpdated = newestDataUpdate();
 
 export default defineConfig({
   site: "https://texashomeintelligence.com",
+
+  // Off because it cannot be opted out of per route, and RFC 8058 one-click
+  // unsubscribe needs exactly one exemption. The identical check — same
+  // methods, same content types, same origin comparison — is reimplemented in
+  // src/middleware.ts, which explains the single allowlisted path. Turning
+  // this back on without deleting that middleware would double-check every
+  // POST and break the unsubscribe header again.
+  security: { checkOrigin: false },
   // Every internal link in the codebase is written with a trailing slash, and
   // canonicals are emitted that way. Enforcing it here means the non-slash
   // form redirects instead of quietly serving a duplicate.
@@ -67,7 +75,15 @@ export default defineConfig({
       // /dashboard/ was excluded while it was a noindexed placeholder. It is
       // now 225 real per-ZIP pages carrying local data, which is exactly what
       // should be in the sitemap, so the exclusion is gone.
+      //
+      // Round 9: the personal, signed-in surfaces were listed here despite
+      // carrying noindex, which is the exact mistake the note above warns
+      // about — /home/, /home/sign-in/, /home/setup/ and the new
+      // /email/unsubscribe/. Nothing is lost by dropping them: they were
+      // never indexable, and an unsubscribe URL in particular has no business
+      // being advertised to crawlers.
       filter: (page) =>
+        !/^https?:\/\/[^/]+\/(home|email)\//.test(page) &&
         !page.includes("/lp/") &&
         !page.includes("/start/") &&
         !page.includes("/tools/quickconnect/") &&

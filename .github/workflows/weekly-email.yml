@@ -1,0 +1,94 @@
+name: Weekly email
+
+# Calls the deployed Worker's authenticated trigger endpoint, which does the
+# actual sending. Nothing about the email is composed here — this workflow is
+# only a clock.
+#
+# ── Why a workflow and not a Cloudflare Cron Trigger ──────────────────────
+# @astrojs/cloudflare 14.2.3 emits a Worker whose only export is the fetch
+# entry point; the adapter has no `workerEntryPoint`/`scheduled` hook to
+# register a `scheduled()` handler against (verified against its dist). Adding
+# one means a build-config or dependency change, which is ask-first under
+# SECURITY.md. See HANDOFF.md Seam 11 — moving to a native Cron Trigger later
+# is a drop-in replacement for this file and changes no application code.
+#
+# ── Two secrets, both owner-set, neither in the repo ──────────────────────
+#   WEEKLY_RUN_TOKEN   repo secret; must equal the Worker secret of the same
+#                      name. Without the Worker secret the endpoint is a 404,
+#                      so an unconfigured deployment cannot be triggered.
+#   WEEKLY_RUN_URL     repo variable, e.g. https://<worker>.workers.dev
+#                      Points at staging until the owner points it at live.
+#
+# Until both exist this workflow fails loudly on its first run rather than
+# quietly succeeding — a send loop that reports green while sending nothing is
+# the failure mode worth designing against.
+
+on:
+  schedule:
+    # Fridays, 13:00 UTC — 08:00 America/Chicago in CDT, 07:00 in CST. The
+    # Worker itself is the idempotency guard (one row per account per ISO
+    # week), so a retry or a duplicate firing cannot double-send.
+    - cron: "0 13 * * 5"
+  workflow_dispatch:
+    inputs:
+      dryRun:
+        description: "Build the messages and return them without sending"
+        type: boolean
+        default: true
+
+permissions: {}
+
+concurrency:
+  group: weekly-email
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger the weekly run
+        env:
+          URL: ${{ vars.WEEKLY_RUN_URL }}
+          TOKEN: ${{ secrets.WEEKLY_RUN_TOKEN }}
+          DRY: ${{ github.event_name == 'workflow_dispatch' && inputs.dryRun && '1' || '0' }}
+        run: |
+          set -euo pipefail
+          if [ -z "${URL:-}" ] || [ -z "${TOKEN:-}" ]; then
+            echo "::error::WEEKLY_RUN_URL variable and WEEKLY_RUN_TOKEN secret must both be set (HANDOFF Seam 11)."
+            exit 1
+          fi
+          code=$(curl -sS -o /tmp/report.json -w '%{http_code}' \
+            -X POST "${URL%/}/api/email/weekly-run/?dryRun=${DRY}" \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H "Content-Type: application/json")
+
+          # The report is NOT echoed raw. A dry run includes each recipient's
+          # address and rendered message so a person can review them; an
+          # Actions log is world-readable on a public repo and is retained,
+          # so only the counts and the per-recipient STATUS come out here.
+          # To read the messages themselves, call the endpoint directly.
+          python3 - "$code" <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, sys
+          code = sys.argv[1]
+          try:
+              r = json.load(open("/tmp/report.json"))
+          except Exception:
+              # Not a report — a 404 from a missing WEEKLY_RUN_TOKEN Worker
+              # secret, or a wrong token, both of which answer in plain text.
+              body = open("/tmp/report.json").read()[:200]
+              print(f"### Weekly email run — HTTP {code}\n\nNo report returned: `{body}`")
+              sys.exit(0)
+          print(f"### Weekly email run — HTTP {code}")
+          print(f"- week `{r.get('weekKey')}` · transport `{r.get('transport')}` · dryRun `{r.get('dryRun')}`")
+          for k in ("eligible", "attempted", "sent", "failed", "skipped"):
+              print(f"- {k}: {r.get(k)}")
+          if r.get("halted"):
+              print(f"- **halted:** {r['halted']}")
+          for o in r.get("outcomes", []):
+              print(f"  - {o.get('zip')} · {o.get('status')}" + (f" · {o['error']}" if o.get("error") else ""))
+          PY
+
+          if [ "$code" != "200" ]; then
+            echo "::error::Weekly run did not complete (HTTP ${code}) — see the summary above."
+            exit 1
+          fi

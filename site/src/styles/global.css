@@ -797,6 +797,12 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
 .v2-prefs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
 .v2-prefs .alert-pref { display: flex; gap: 10px; align-items: flex-start; }
 .v2-pref-note { display: block; }
+/* Round 9. The weekly email is a different KIND of consent from the condition
+ * alerts above it — those are event-driven and already covered by the sign-up
+ * checkbox; this one is a standing digest the homeowner opts into. The rule
+ * separates them so the switch does not read as a fifth alert type. */
+.v2-weekly-pref { border-top: 1px solid var(--thi-line); padding-top: 12px; margin-top: 4px; }
+.v2-weekly-pref .alert-pref { display: flex; gap: 10px; align-items: flex-start; }
 .v2-account { margin-top: 18px; padding: 16px; background: var(--thi-mist); border-radius: var(--thi-r-card); }
 .v2-account .dash-section-note { max-width: 88ch; }
 .v2-account-links { display: flex; flex-wrap: wrap; gap: 16px; margin: 8px 0 0; }
