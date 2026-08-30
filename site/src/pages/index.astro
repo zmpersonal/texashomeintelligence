@@ -88,18 +88,21 @@ const description =
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <span class="eyebrow">Texas Home Intelligence</span>
-        <h1>Know What Your Texas Home Needs — Before It Gets Expensive.</h1>
+        <span class="eyebrow">Free for Texas homeowners · Austin &amp; San Antonio</span>
+        <h1>Texas is hard on houses. Stay a week ahead of it.</h1>
         <p class="lede">
-          Texas-specific data, tools, and local home-service intelligence to help homeowners
-          understand risks, maintenance, repair costs, and when to take action.
+          Hail, drought, and 100&deg; weeks are working on your home right now — mostly where you
+          can't see it. Get a free weekly read on what conditions in your ZIP are doing to roofs,
+          foundations, and AC systems, built from the same public records insurers and inspectors
+          use.
         </p>
         <div class="hero-actions">
-          <a class="btn" href="/home/">Open My Home Dashboard</a>
-          <a class="btn secondary" href="/data/">Explore Texas Data</a>
+          <a class="btn" href="/dashboard/">Check my ZIP — free, no account</a>
+          <a class="btn secondary" href="/methodology/">See where the data comes from</a>
         </div>
         <p class="microcopy">
-          Updated continuously using weather, property, economic, and home-service data.
+          Takes about two minutes. Updated every week from NOAA, the U.S. Drought Monitor, and
+          city permit records.
         </p>
       </div>
       <LiveConditionsPanel
@@ -118,11 +121,10 @@ const description =
 
   <section class="block">
     <div class="wrap">
-      <h2>Backed by live Texas data</h2>
+      <h2>What Texas threw at homes this week</h2>
       <p style="max-width:44em;">
-        Every figure below is computed from public records we ingest and republish, with the
-        source and the date it was last confirmed on every reading. Follow any card for the full
-        dataset and its limitations.
+        Every number below is computed from public records, with its source and last-confirmed
+        date attached. Follow any card for the full dataset and its limitations.
       </p>
       <div class="grid-4">
         {featured.map(({ spec, dataset, freshness, label, stat }) => (
@@ -140,6 +142,31 @@ const description =
         ))}
       </div>
       <p style="margin-top:20px;"><a href="/data/">See the full data catalog &rarr;</a></p>
+    </div>
+  </section>
+
+  {/* Round 8: the stakes. Deliberately non-numeric — the copy doc invited real
+      local cost figures "if defensible", and nothing in our permit data supports
+      a typical replacement cost (we ingest permit counts and declared
+      valuations for roofing work, which is not the same as what a homeowner
+      pays). Qualitative framing stands until a figure is genuinely derivable. */}
+  <section class="block">
+    <div class="wrap" style="max-width:760px;">
+      <h2>The expensive stuff starts quietly</h2>
+      <p>
+        Most five-figure home repairs in Central Texas don't start with a disaster. They start
+        with an inch of hail nobody documented, a drought year that moved the soil under the
+        slab, or a summer that ran the AC 11 days straight over 100&deg;.
+      </p>
+      <p>
+        A roof replacement, a foundation repair, or a new HVAC system each typically runs well
+        into five figures. Knowing what your area's been through — this week, this season — is
+        how you catch small problems while they're still small, and how you know whether the
+        contractor at your door is telling the truth.
+      </p>
+      <p style="margin-top:20px;">
+        <a href="/dashboard/">See what your ZIP has been through &rarr;</a>
+      </p>
     </div>
   </section>
 
@@ -163,12 +190,20 @@ const description =
           </div>
         ))}
       </div>
+      <p style="margin-top:20px;">
+        Nothing going wrong today? Good — that's the best time to look.{" "}
+        <a href="/dashboard/">Check this week's conditions in your ZIP &rarr;</a>
+      </p>
     </div>
   </section>
 
   <section class="block">
     <div class="wrap">
       <h2>How Texas Home Intelligence works</h2>
+      <p style="max-width:44em;">
+        No black box. Every number on this site falls into one of four buckets, and each one is
+        labeled so you always know what you're looking at.
+      </p>
       <div class="grid-4">
         <div class="card method-card">
           <h3>Public / observed data</h3>
@@ -193,17 +228,17 @@ const description =
 
   <section class="block">
     <div class="wrap" style="max-width:760px;">
-      <h2>Where does Texas sit in the drought right now?</h2>
+      <h2>The map that moves your foundation</h2>
       <p>
-        The U.S. Drought Monitor publishes a new statewide map every Thursday. It is the
-        source behind our county drought readings, and the national picture it shows is the
-        context those readings sit in.
+        The U.S. Drought Monitor publishes a new Texas map every Thursday. In Central Texas clay
+        soil, that map is a slow-motion picture of the ground expanding and shrinking under your
+        slab — which is why it's one of the five signals in your ZIP's score.
       </p>
       <div class="drought-map--inline">
         <DroughtMapHero />
       </div>
       <p style="margin-top:20px;">
-        <a href="/data/austin/drought/">Austin&rsquo;s weekly readings &rarr;</a>
+        <a href="/data/austin/drought/">See your county's weekly drought reading &rarr;</a>
       </p>
     </div>
   </section>
@@ -223,14 +258,12 @@ const description =
     </div>
   </section>
 
-  {/* FLAG (copy round): this band's heading and body are QuoteReady-brief-first
-      copy that predates the authority-first hero above it. The CTA label is
-      neutralized here; the framing itself needs the copy doc. */}
   <section class="cta-band">
     <div class="wrap">
-      <h2>Have something going on with your home?</h2>
+      <h2>Already dealing with a problem? Walk in with the facts.</h2>
       <p style="max-width:40em;margin:0 auto 20px;">
-        Turn what you know into a clear project brief before you start comparing contractors.
+        Turn what you know — and what the data shows for your area — into a clear project brief
+        before you talk to a single contractor. Free, and yours to use with anyone.
       </p>
       <a class="btn" href="/start/">Build a Project Brief</a>
       <p class="microcopy cta-band-note">

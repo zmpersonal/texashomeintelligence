@@ -13,10 +13,10 @@
 -- migration, by the account consent, or by any backfill.
 --
 -- The consent a homeowner ticks to create an account (src/pages/home/sign-in.astro)
--- reads, verbatim: "Create my account and email me sign-in links and the home
--- alerts I choose. I can unsubscribe any time." Sign-in links, and the four
--- condition alerts they toggle. A weekly digest of their score is neither, so
--- it is asked for separately and never carried by that box.
+-- reads, verbatim: "Create my account and email me sign-in links plus the home
+-- alerts I choose. Unsubscribe anytime." Sign-in links, and the four condition
+-- alerts they toggle. A weekly digest of their score is neither, so it is asked
+-- for separately and never carried by that box.
 --
 -- Two places grant it, both an explicit act by the person:
 --

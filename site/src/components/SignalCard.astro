@@ -93,7 +93,9 @@ const spark = series && series.values.length > 1 ? sparkline(series.values, { wi
 
   {action && (
     <div class="signal-action" data-action-code={action.code}>
-      <p class="signal-action-text" data-action-text>{action.text}</p>
+      <p class="signal-action-text" data-action-text>
+        <span class="action-label">This week's check:</span> {action.text}
+      </p>
       {allowReminder && action.taskKey && (
         <form method="post" action="/api/reminders/" class="signal-action-form" data-action-reminder>
           <input type="hidden" name="task_key" value={action.taskKey} />
