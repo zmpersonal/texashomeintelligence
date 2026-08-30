@@ -1,19 +1,22 @@
 ---
 /**
- * "Your home this week" — municipal schedules. Round 5b.
+ * "City services" — municipal schedules on the logged-in dashboard.
+ *
+ * v2 arrangement: three labelled rows in one panel, each with a status chip on
+ * the right, and a counter at the top saying how many are shown. The states are
+ * exactly the states Round 5b built — this changes how they look, not when they
+ * fire or what they claim.
  *
  * Information ladder: everything here is the **Data** rung. A collection day is
- * a fact about the address, not advice, so there is no Recommendation rung on
- * this card and no action verbs — the same honesty guard the signal cards carry,
- * applied by simply not having actions to guard.
+ * a fact about the address, not advice, so there is no Recommendation rung and
+ * no action verbs — the honesty guard that applies to signals applies here by
+ * simply having no actions to guard.
  *
- * Three independent readings, each of which degrades on its own:
- *  - Collection day + recycling week, per address, strictly matched or withheld.
- *  - Austin Water stage, with the watering rule stated conditionally (Tier 1).
- *  - Bulk, which is an entitlement and never a date.
- *
- * A withheld reading always says what we don't know and links the city's own
- * lookup. It never degrades into a metro-level or ZIP-level guess.
+ * Withholds are designed, not empty. Each withheld row keeps its label, gets a
+ * slate "Not shown" chip, states the reason in plain language, and offers a
+ * route forward. Nothing looks like a failed load, and nothing implies a date
+ * we do not have. That is the whole point of the treatment: a reader must be
+ * able to tell "we checked and cannot say" apart from "this is broken".
  */
 import { formatDate, machineDate } from "../lib/format";
 import type { CollectionResult } from "../lib/municipal/match";
@@ -49,112 +52,136 @@ const WITHHELD_COPY: Record<string, string> = {
   malformed:
     "The city's schedule record for this address wasn't in a form we could read.",
 };
+
+// The counter at the top of the panel. Bulk only counts as a row at all in
+// Austin; elsewhere the whole panel is the not-covered state.
+const rows = isAustin ? 3 : 2;
+const shown =
+  (collection.status === "found" ? 1 : 0) +
+  (watering.status === "current" || watering.status === "stale" ? 1 : 0) +
+  (isAustin ? 1 : 0);
+const notShown = rows - shown;
 ---
 
-<div class="card municipal" data-municipal>
-  <p class="card-tag">Your home this week</p>
+<section class="card citysvc" data-municipal aria-labelledby="citysvc-h">
+  <header class="citysvc-head">
+    <h3 id="citysvc-h">City services</h3>
+    <p class="data-meta citysvc-count" data-citysvc-count>
+      {notShown > 0 && <>{notShown} not shown · </>}{shown} shown
+    </p>
+  </header>
+  <p class="citysvc-intro">
+    We show a date only when a city source gives us one for this address.
+  </p>
 
-  {/* ── Collection day ─────────────────────────────────────────────── */}
-  <div class="muni-row" data-muni-collection data-status={collection.status}>
-    <h3 class="muni-heading">Trash &amp; recycling</h3>
+  {/* ── Trash & recycling ─────────────────────────────────────────── */}
+  <div class="citysvc-row" data-muni-collection data-status={collection.status}>
+    <div class="citysvc-row-head">
+      <p class="citysvc-label">Trash &amp; recycling</p>
+      {collection.status === "found" ? (
+        <span class="citysvc-chip citysvc-chip--shown" data-collection-day>{collection.day}</span>
+      ) : (
+        <span class="citysvc-chip citysvc-chip--withheld" data-collection-withheld>Not shown</span>
+      )}
+    </div>
 
     {collection.status === "found" ? (
       <>
-        <p class="muni-value" data-collection-day>{collection.day}</p>
-        <p class="muni-read">
-          Austin Resource Recovery collects trash weekly on this day. Recycling is
-          collected every other week, and this address is on{" "}
+        <p class="citysvc-read">
+          Austin Resource Recovery collects trash weekly on this day. Recycling is collected every
+          other week, and this address is on{" "}
           <strong data-collection-week>Week {collection.week}</strong>.
         </p>
-        <p class="muni-read muni-caveat">
-          We publish the week your address is on, not a date — the city's calendar
-          is what says which week is running now.{" "}
-          <a href={ARR_MY_SCHEDULE_URL} rel="nofollow noopener" target="_blank">
-            See the city's calendar
-          </a>
+        <p class="citysvc-read citysvc-caveat">
+          We publish the week your address is on, not a date — the city's calendar is what says
+          which week is running now.{" "}
+          <a href={ARR_MY_SCHEDULE_URL} rel="nofollow noopener" target="_blank">See the city's calendar</a>
         </p>
         <p class="data-meta muni-source">
           Source: {ARR_SOURCE.name}
           {collection.sourceUpdatedAt && (
             <>
               {" "}· Data through{" "}
-              <time datetime={machineDate(collection.sourceUpdatedAt)}>
-                {formatDate(collection.sourceUpdatedAt)}
-              </time>
+              <time datetime={machineDate(collection.sourceUpdatedAt)}>{formatDate(collection.sourceUpdatedAt)}</time>
             </>
           )}
           {" "}· Updated{" "}
-          <time datetime={machineDate(collection.ingestedAt)}>
-            {formatDate(collection.ingestedAt)}
-          </time>
+          <time datetime={machineDate(collection.ingestedAt)}>{formatDate(collection.ingestedAt)}</time>
         </p>
       </>
     ) : (
-      <>
-        <p class="muni-value muni-unknown" data-collection-withheld>Not shown</p>
-        <p class="muni-read">{WITHHELD_COPY[collection.reason]}</p>
+      <div class="citysvc-withheld">
+        <p class="citysvc-read">{WITHHELD_COPY[collection.reason]}</p>
         {collection.reason !== "not-austin" && (
-          <p class="muni-read">
+          <p class="citysvc-read">
             <a href={ARR_MY_SCHEDULE_URL} rel="nofollow noopener" target="_blank">
-              Look your address up on the city's tool
+              Look your address up on the city's tool &rarr;
             </a>
           </p>
         )}
-      </>
+      </div>
     )}
   </div>
 
-  {/* ── Austin Water ───────────────────────────────────────────────── */}
-  <div class="muni-row" data-muni-watering data-status={watering.status}>
-    <h3 class="muni-heading">Watering</h3>
+  {/* ── Watering ──────────────────────────────────────────────────── */}
+  <div class="citysvc-row" data-muni-watering data-status={watering.status}>
+    <div class="citysvc-row-head">
+      <p class="citysvc-label">Watering</p>
+      {watering.status === "unavailable" ? (
+        <span class="citysvc-chip citysvc-chip--withheld">Not shown</span>
+      ) : (
+        <span
+          class={`citysvc-chip ${watering.status === "stale" ? "citysvc-chip--stale" : "citysvc-chip--shown"}`}
+          data-water-stage
+        >{watering.stage}</span>
+      )}
+    </div>
 
     {watering.status === "unavailable" ? (
-      <>
-        <p class="muni-value muni-unknown">Not shown</p>
-        <p class="muni-read">
+      <div class="citysvc-withheld">
+        <p class="citysvc-read">
           {watering.reason === "not-austin"
             ? "Austin Water's restrictions are Austin-only. We don't have a verified restriction source for your area yet."
             : "We don't have a current reading of Austin Water's restriction stage."}
+          {watering.reason !== "not-austin" && (
+            <>
+              {" "}If you're an Austin Water customer,{" "}
+              <a href={AUSTIN_WATER_FIND_DAY_URL} rel="nofollow noopener" target="_blank">their site has today's stage</a>.
+            </>
+          )}
         </p>
-      </>
+      </div>
     ) : (
       <>
-        <p class="muni-value" data-water-stage>{watering.stage}</p>
         {watering.status === "stale" && (
-          <p class="muni-stale" data-water-stale>
+          <p class="citysvc-stale" data-water-stale>
             Last confirmed{" "}
-            <time datetime={machineDate(watering.observedAt)}>
-              {formatDate(watering.observedAt)}
-            </time>{" "}
-            — {watering.ageDays} days ago. We're showing the last stage we
-            verified, and we're not publishing a watering day from it: the day
-            each address waters changes with the stage.
+            <time datetime={machineDate(watering.observedAt)}>{formatDate(watering.observedAt)}</time>{" "}
+            — {watering.ageDays} days ago. We're showing the last stage we verified, and we're not
+            publishing a watering day from it: the day each address waters changes with the stage.
           </p>
         )}
 
         {watering.status === "current" && watering.rule && (
           <>
             {watering.automaticDay ? (
-              <p class="muni-read" data-water-day>
-                <strong>If your home is an Austin Water customer</strong>, addresses
-                ending in an {watering.parity} number water on{" "}
-                <strong>{watering.automaticDay}</strong> with an automatic irrigation
-                system. {watering.hoseEndDay
+              <p class="citysvc-read" data-water-day>
+                <strong>If your home is an Austin Water customer</strong>, addresses ending in an{" "}
+                {watering.parity} number water on <strong>{watering.automaticDay}</strong> with an
+                automatic irrigation system. {watering.hoseEndDay
                   ? `Hose-end sprinklers: ${watering.hoseEndDay}.`
                   : watering.rule.hoseEndNote}
               </p>
             ) : (
-              <p class="muni-read">
-                <strong>If your home is an Austin Water customer</strong>, your
-                watering day follows your street number — we couldn't read one from
-                your address, so we're not stating a day.
+              <p class="citysvc-read">
+                <strong>If your home is an Austin Water customer</strong>, your watering day follows
+                your street number — we couldn't read one from your address, so we're not stating a day.
               </p>
             )}
-            <p class="muni-read">{watering.rule.hours}</p>
-            <p class="muni-read muni-caveat">
-              Austin Water's service area doesn't match city or county lines, so we
-              can't confirm from your address alone whether these rules apply to
-              your home.{" "}
+            <p class="citysvc-read">{watering.rule.hours}</p>
+            <p class="citysvc-read citysvc-caveat">
+              Austin Water's service area doesn't match city or county lines, so we can't confirm
+              from your address alone whether these rules apply to your home.{" "}
               <a href={AUSTIN_WATER_FIND_DAY_URL} rel="nofollow noopener" target="_blank">
                 Check your watering day with Austin Water
               </a>
@@ -163,9 +190,8 @@ const WITHHELD_COPY: Record<string, string> = {
         )}
 
         {watering.status === "current" && !watering.rule && (
-          <p class="muni-read">
-            We don't have the watering rule for this stage on file, so we're not
-            stating a day.{" "}
+          <p class="citysvc-read">
+            We don't have the watering rule for this stage on file, so we're not stating a day.{" "}
             <a href={AUSTIN_WATER_FIND_DAY_URL} rel="nofollow noopener" target="_blank">
               Check your watering day with Austin Water
             </a>
@@ -174,26 +200,26 @@ const WITHHELD_COPY: Record<string, string> = {
 
         <p class="data-meta muni-source">
           Source: {AUSTIN_WATER_SOURCE.name} · Reading from{" "}
-          <time datetime={machineDate(watering.observedAt)}>
-            {formatDate(watering.observedAt)}
-          </time>
+          <time datetime={machineDate(watering.observedAt)}>{formatDate(watering.observedAt)}</time>
         </p>
       </>
     )}
   </div>
 
-  {/* ── Bulk ───────────────────────────────────────────────────────── */}
+  {/* ── Bulk ──────────────────────────────────────────────────────── */}
   {isAustin && (
-    <div class="muni-row" data-muni-bulk>
-      <h3 class="muni-heading">Bulk &amp; brush</h3>
-      <p class="muni-value" data-bulk-entitlement>
-        {BULK_POLICY.collectionsPerYear} pickups a year
-      </p>
-      <p class="muni-read">
-        Austin collects bulk, brush and household hazardous waste by appointment
-        rather than on a set schedule, so there's no date to show. Each service
-        address gets {BULK_POLICY.collectionsPerYear} collections per service, per
-        year, booked through 311 or the Austin Recycles app.
+    <div class="citysvc-row" data-muni-bulk>
+      <div class="citysvc-row-head">
+        <p class="citysvc-label">Bulk &amp; brush</p>
+        <span class="citysvc-chip citysvc-chip--shown" data-bulk-entitlement>
+          {BULK_POLICY.collectionsPerYear} pickups a year
+        </span>
+      </div>
+      <p class="citysvc-read">
+        Austin collects bulk, brush and household hazardous waste by appointment rather than on a
+        set schedule, so there's no date to show. Each service address gets{" "}
+        {BULK_POLICY.collectionsPerYear} collections per service, per year, booked through 311 or
+        the Austin Recycles app.
       </p>
       <p class="data-meta muni-source">
         Source: {BULK_POLICY.source.name} · On-demand since{" "}
@@ -201,4 +227,4 @@ const WITHHELD_COPY: Record<string, string> = {
       </p>
     </div>
   )}
-</div>
+</section>

@@ -660,54 +660,161 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
 .signal-action-form { margin-top: 8px; }
 .signal-action-form .btn { padding: 6px 12px; font-size: 0.8rem; }
 
-/* ── Logged-in dashboard, desktop rhythm (Round 4.2) ───────────────────────
- * Presentation only, and scoped to `.home-dash` so none of it reaches the
- * public ZIP dashboard, which shares the hero and signal-grid classes.
+/* ── Logged-in dashboard, v2 four-tier layout (Round 7) ────────────────────
+ * Presentation only, and scoped to `.home-dash` / `v2-*` so none of it reaches
+ * the public ZIP dashboard, which shares the hero, card and signal styles.
+ * Round 4.2's lesson: an unscoped rule here silently moves that page too.
  *
- * The problem: /home/ was built mobile-first and every block below the signal
- * grid stayed a full-width single column at 1120px. Prose ran to ~90ch, and
- * the reminder rows used `justify-content: space-between` inside that width,
- * marooning Done/Remind/Skip at the far edge with a dead gap in the middle.
- *
- * The fix borrows the rhythm that already works on the same page: the signal
- * grid's auto-fit columns. Nothing below changes at mobile widths. */
+ * The tiers are status → act → read → keep. Mobile is one column throughout;
+ * the multi-column arrangements start at 900px, where there is room for a
+ * genuine second column rather than two cramped ones.
+ * ───────────────────────────────────────────────────────────────────────── */
 
-/* Comfortable measure for prose, everywhere on this page. 46em on the verdict
- * was ~90 characters at its font size — roughly double what reads well. */
-.home-dash .dash-verdict { max-width: 62ch; }
-.home-dash .dash-caveat { max-width: 68ch; }
-.home-dash .dash-section-note { max-width: 68ch; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Measures — applied at every width so prose never runs the full column. */
+.home-dash .dash-verdict { max-width: 30ch; }
+.home-dash .dash-caveat,
+.home-dash .dash-section-note,
+.home-dash .citysvc-read,
+.home-dash .citysvc-stale { max-width: 68ch; }
 .home-dash .queue-title,
-.home-dash .signal-analysis { max-width: 66ch; }
+.home-dash .sig-analysis { max-width: 66ch; }
 
-@media (min-width: 760px) {
-  /* Reminder rows take the same auto-fit columns as the signal grid, so a row
-   * is ~500px rather than 1080px and the controls sit beside their label
-   * instead of across the page from it. The h3 spans the row so the bucket
-   * heading still reads as a group header. */
+/* ── Tier 1 · status ───────────────────────────────────────────────── */
+.v2-eyebrow-sep, .v2-eyebrow-tag { color: var(--thi-slate-500); }
+.v2-status-grid { display: grid; gap: 20px; }
+.v2-score { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+.v2-score-read { flex: 1 1 320px; min-width: 0; }
+.v2-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 8px; }
+.v2-chips .dash-band { margin: 0; }
+.v2-delta-chip { margin: 0; font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption); color: var(--thi-mist); border: 1px solid rgba(255,255,255,0.18); border-radius: var(--thi-r-chip); padding: 3px 8px; }
+.v2-identity { border: 1px solid rgba(255,255,255,0.16); border-radius: var(--thi-r-card); padding: 16px; align-self: start; }
+.v2-identity .eyebrow { margin-bottom: 8px; }
+
+/* ── Tier 2 · act ──────────────────────────────────────────────────── */
+.v2-act-grid { display: grid; gap: 18px; align-items: start; }
+.v2-act-main { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.v2-act-side { min-width: 0; }
+.v2-event-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }
+/* The 'goes away' note moves to the head, beside the condition chip; the
+   sentence at the foot of the card no longer repeats it. */
+.v2-event-note { margin: 0; color: var(--thi-slate-500); font-size: var(--thi-fs-caption); }
+.v2-event-list { list-style: disc; padding-left: 1.25em; margin: 0 0 10px; }
+.v2-week-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+.v2-week-head h2 { margin: 0; }
+.v2-week-head .data-meta { margin: 0; }
+.v2-week .queue-group > h3 { font-size: var(--thi-fs-label); text-transform: uppercase; letter-spacing: var(--thi-ls-chip); color: var(--thi-slate-700); }
+.v2-allclear { margin: 0 0 12px; }
+.v2-week .add-reminder { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--thi-line); }
+
+/* City services — the withheld rows are designed states, not empty ones. */
+.citysvc-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }
+.citysvc-head h3 { margin: 0; }
+.citysvc-count { margin: 0; }
+.citysvc-intro { color: var(--thi-slate-700); font-size: var(--thi-fs-body-sm); margin: 4px 0 14px; }
+.citysvc-row + .citysvc-row { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--thi-line); }
+.citysvc-row-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.citysvc-label { margin: 0; font-family: var(--thi-font-ui); font-size: var(--thi-fs-label); font-weight: 600; text-transform: uppercase; letter-spacing: var(--thi-ls-chip); color: var(--thi-slate-700); }
+.citysvc-chip { font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption); border-radius: var(--thi-r-chip); padding: 3px 9px; white-space: nowrap; }
+.citysvc-chip--shown { background: var(--thi-safe-bg); color: var(--thi-safe-text); }
+.citysvc-chip--stale { background: var(--thi-elevated-bg); color: var(--thi-elevated-text); }
+.citysvc-chip--withheld { background: var(--thi-mist); color: var(--thi-slate-700); }
+.citysvc-read { margin: 0 0 6px; }
+.citysvc-caveat { color: var(--thi-slate-700); font-size: var(--thi-fs-body-sm); }
+.citysvc-stale { margin: 0 0 6px; color: var(--thi-elevated-text); font-size: var(--thi-fs-body-sm); }
+/* The inset panel is what makes a withhold look deliberate rather than failed. */
+.citysvc-withheld { background: var(--thi-mist); border-radius: var(--thi-r-card); padding: 10px 12px; }
+.citysvc-withheld .citysvc-read:last-child { margin-bottom: 0; }
+.citysvc .muni-source { margin-top: 8px; }
+
+/* ── Tier 3 · read — the signal table ──────────────────────────────── */
+.v2-read-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+.v2-read-head h2 { margin: 0 0 2px; }
+.v2-read-head .data-meta { margin: 0; }
+.v2-read-note { margin: 0; }
+.sig-table { border: 1px solid var(--thi-line); border-radius: var(--thi-r-card); background: var(--surface); overflow: hidden; }
+.sig-header { display: none; }
+.sig-row { padding: 10px 16px; }
+.sig-row + .sig-row { border-top: 1px solid var(--thi-line); }
+.sig-label { margin: 0 0 2px; font-family: var(--thi-font-ui); font-weight: 600; }
+/* Provenance stays on every reading, one size down and in slate, right where
+   the brand kit puts it: instrument furniture rather than clutter. Nothing is
+   dropped — it is the same source · data-through · updated the cards carried. */
+.sig-source { margin: 0; font-size: var(--thi-fs-caption); line-height: 1.3; color: var(--thi-slate-500); }
+.sig-reading { display: flex; align-items: baseline; gap: 2px; }
+.sig-value { font-family: var(--thi-font-mono); font-variant-numeric: tabular-nums; font-size: var(--thi-fs-data-md); color: var(--thi-navy); line-height: 1.1; }
+.sig-value--absent { color: var(--thi-slate-700); }
+.sig-scale { font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption); color: var(--thi-slate-700); }
+.sig-spark { margin: 0; }
+.sig-spark figcaption { font-size: var(--thi-fs-caption); line-height: 1.2; color: var(--thi-slate-500); }
+.sig-spark figcaption { margin-top: 2px; }
+.sig-analysis { margin: 0 0 4px; }
+/* The action sits below a hairline so it can never read as part of the
+   measurement, but it stays on one line with its button: letting "Track this"
+   wrap added ~60px to every row and made the table taller than the cards it
+   replaced. */
+.sig-action { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--thi-line); display: flex; flex-wrap: nowrap; align-items: baseline; gap: 10px; }
+.sig-action-text { margin: 0; flex: 1 1 auto; min-width: 0; }
+.sig-action-form { flex: 0 0 auto; }
+.sig-action-form .btn { padding: 4px 10px; font-size: var(--thi-fs-caption); }
+.sig-why { margin-top: 4px; }
+.sig-why summary { cursor: pointer; font-size: var(--thi-fs-caption); color: var(--thi-slate-700); }
+.sig-why[open] summary { margin-bottom: 6px; }
+.sig-row.is-unavailable { background: var(--thi-mist); }
+
+/* ── Tier 4 · keep ─────────────────────────────────────────────────── */
+.v2-keep-grid { display: grid; gap: 16px; align-items: start; }
+.v2-keep-h { font-size: var(--thi-fs-h3); margin: 0 0 8px; }
+.v2-plain-list { list-style: none; padding: 0; margin: 0 0 8px; }
+.v2-bullet-list { list-style: disc; padding-left: 1.25em; margin: 0 0 8px; }
+.v2-prefs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+.v2-prefs .alert-pref { display: flex; gap: 10px; align-items: flex-start; }
+.v2-pref-note { display: block; }
+.v2-account { margin-top: 18px; padding: 16px; background: var(--thi-mist); border-radius: var(--thi-r-card); }
+.v2-account .dash-section-note { max-width: 88ch; }
+.v2-account-links { display: flex; flex-wrap: wrap; gap: 16px; margin: 8px 0 0; }
+
+/* ── Multi-column from 900px ───────────────────────────────────────────
+ * Below this the page is a single column, which is the right shape on a
+ * phone and on a narrow tablet: two 300px columns read worse than one.
+ * ───────────────────────────────────────────────────────────────────── */
+@media (min-width: 900px) {
+  .v2-status-grid { grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; }
+  .v2-act-grid { grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr); }
+  .v2-keep-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  /* The instrument table: five aligned columns, so the set reads in one pass. */
+  .sig-row {
+    display: grid;
+    grid-template-columns: minmax(230px, 1.15fr) 72px 126px 140px minmax(0, 2.05fr);
+    gap: 14px;
+    align-items: start;
+  }
+  .sig-header {
+    display: grid;
+    background: var(--thi-mist);
+    padding: 8px 16px;
+    font-family: var(--thi-font-ui);
+    font-size: var(--thi-fs-label);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--thi-ls-chip);
+    color: var(--thi-slate-700);
+  }
+  .sig-action { flex-direction: row; }
+
+  /* Reminder rows pair up, as in 4.2 — kept, retuned for the narrower column. */
   .home-dash .queue-group {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 12px;
     align-items: start;
   }
   .home-dash .queue-group > h3 { grid-column: 1 / -1; margin-bottom: 0; }
   .home-dash .queue-item { margin-bottom: 0; height: 100%; }
-
-  /* The event card is prose plus a checklist; at full width its lines ran
-   * past comfortable measure. Same treatment for the municipal placeholder so
-   * the two read as a pair. */
-  .home-dash .event-card,
-  .home-dash .municipal,
-  .home-dash .municipal-pending { max-width: 74ch; }
-  .home-dash .muni-read,
-  .home-dash .muni-stale { max-width: 68ch; }
   .home-dash .event-card p,
   .home-dash .event-card li { max-width: 68ch; }
-
-  /* The add-reminder control belongs with the queue it feeds, not adrift at
-   * the page edge. */
-  .home-dash .add-reminder { max-width: 560px; }
 }
 
 /* Below 760px nothing above applies: the single-column mobile layout that was
