@@ -17,6 +17,8 @@ import { censusAcs } from "./fetchers/censusAcs";
 import { blsWages } from "./fetchers/blsWages";
 import { ercot } from "./fetchers/ercot";
 import { txForestService } from "./fetchers/txForestService";
+import { arrCollectionSchedule } from "./fetchers/arrCollectionSchedule";
+import { austinWaterStage } from "./fetchers/austinWaterStage";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const GENERATED_DIR = path.join(here, "..", "data", "generated");
@@ -70,4 +72,17 @@ export const REGISTRY: RegistryEntry[] = [
   entry("stub", blsWages),
   entry("stub", ercot),
   entry("stub", txForestService),
+
+  // --- Round 5b municipal. Both are Austin-only by design: this is the one
+  // metro whose municipal schedules we have verified sources for, and a home
+  // anywhere else renders the honest "not available for your area" state
+  // rather than being shown Austin's answer.
+  //
+  // `arr-collection-schedule` is the registry's one lookup-table feed rather
+  // than an observation series — its DatasetFile records a summary per run and
+  // the addresses themselves go to public/data/arr-schedule/<zip>.json. See the
+  // fetcher's header. It is deliberately unseeded: a placeholder row here would
+  // be a wrong collection day for a real street.
+  entry("stub", arrCollectionSchedule),
+  entry("stub", austinWaterStage),
 ];

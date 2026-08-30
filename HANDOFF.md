@@ -102,6 +102,63 @@ being right is not sufficient proof the edge agrees with it.
 
 ---
 
+## Seam 6 — Austin Water stage scrape is fragile by construction 🟡
+
+`site/src/ingest/fetchers/austinWaterStage.ts` reads the current drought stage
+off an **HTML page**, not an API, because Austin Water does not publish the
+stage in any queryable form. Every other fetcher in the registry reads JSON;
+this one is the exception, and it was approved on the condition that it fails
+closed.
+
+`extractStage()` matches only the exact names in `WATER_STAGES` and throws when
+the page states **zero** stages or **more than one** (a "we are leaving Stage 2
+for Conservation Stage" announcement mentions both, and text alone cannot say
+which is current). A throw is a failed attempt: the prior reading is preserved,
+the dataset goes `stale`, and the dashboard then shows the last known stage
+clearly marked stale with its date while withholding the watering day — because
+which day goes with which street-number parity changes between stages.
+
+**What this means for you:** if the city restructures that page, this feed goes
+stale and *stays* stale until someone updates the parse. That is intended, not a
+bug — but it is silent unless someone is watching the dataset's status. There is
+deliberately no "assume it's still Conservation Stage" fallback.
+
+---
+
+## Seam 7 — The A/B recycling week has no calendar anchor 🟡
+
+The city's dataset says which week (**A** or **B**) an address is on. It does
+**not** say which letter the current calendar week is running. Without that
+anchor we can publish the letter as a labelled fact, which is what the dashboard
+does — but we cannot turn it into a date, and a wrong week is a missed pickup.
+
+`matchCollection()` therefore returns `week` as a letter and nothing in the
+render path converts it to a day. **Do not add that conversion until a sourced
+anchor exists** — deriving one from a single observed pickup, or assuming the
+year starts on A, is exactly the guess this round was built to avoid. When a
+sourced anchor lands, the change is small: the letter plus the anchor gives the
+date, and the card already has the slot for it.
+
+---
+
+## Seam 8 — Austin Water service-area boundary blocks Tier 2 🟡
+
+The dashboard states the watering rule **conditionally** — "if your home is an
+Austin Water customer" — and never asserts that a given day applies to a given
+home. That is deliberate. Austin Water's service area does not follow city or
+county lines: plenty of 787xx addresses are served by a MUD, Wells Branch,
+Manville WSC or West Travis County PUA, and applying Austin Water's rule to one
+of those homes would produce a confidently wrong day.
+
+Making it personal ("your watering day is Friday") is **Tier 2**, and it needs a
+service-area boundary we do not have — most likely the Austin Water polygon from
+Austin GeoHub, plus a geocoder to place the address in it. Both are additions
+that need approval (a geocoder is a new external dependency with its own rate
+limits and terms). Until then the conditional framing is the honest ceiling, and
+`buildWateringView()`'s doc comment points back here.
+
+---
+
 ## Seam 1 — Live data APIs ✅ ingestion framework built (Phase 5), every fetch is yours to implement
 
 Built: the normalized schema, the merge/backfill/stale pipeline (real,

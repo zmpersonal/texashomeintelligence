@@ -109,3 +109,19 @@
   thiOutput: "Fire and tree intelligence"
   status: stub
   priority: false
+
+- id: arr-collection-schedule
+  name: "Austin Resource Recovery collection schedules"
+  org: "City of Austin"
+  primaryUse: "Per-address trash/recycling collection day and A/B recycling week"
+  thiOutput: "The home dashboard's collection row, matched strictly by address"
+  status: stub
+  priority: false
+
+- id: austin-water-stage
+  name: "Austin Water drought stage"
+  org: "City of Austin"
+  primaryUse: "Current drought restriction stage"
+  thiOutput: "Watering stage and the published watering rule for that stage"
+  status: stub
+  priority: false

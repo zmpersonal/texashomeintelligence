@@ -23,6 +23,7 @@ import { evaluateAlerts } from "../../../lib/account/alerts";
 import { ZIP_AREAS } from "../../../lib/zipAreas";
 import { EXCLUDED_INPUTS, SIGNAL_WEIGHTS, STORM_DECAY_HALF_LIFE_DAYS } from "../../../lib/stressIndex";
 import { areaDefinitions } from "../../../lib/zipAreas";
+import { readStageReading } from "../../../lib/municipal/stageReading";
 
 export const getStaticPaths: GetStaticPaths = () =>
   areaDefinitions().map((area) => ({ params: { area: area.areaId }, props: { area } }));
@@ -51,6 +52,12 @@ export const GET: APIRoute = ({ props }) => {
           compositeHeadline: view.composite.headline,
         }
       : null,
+    // Round 5b: the Austin Water stage rides along in this artifact rather
+    // than getting its own request. It is one small reading, the logged-in
+    // dashboard needs it on the same page load as the score, and reading it
+    // here keeps `stageReading.ts` (which touches the generated-data glob) out
+    // of the Worker bundle entirely.
+    municipal: { waterStage: readStageReading(props.area.areaId) },
     alerts: evaluateAlerts(
       props.area.areaId,
       area.primaryCounty.name,
