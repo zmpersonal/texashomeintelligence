@@ -59,6 +59,11 @@ Built in tiers, by how well the source actually supports the claim:
 The governing rule for the whole round: **a wrong collection day is worse than
 no collection day.** There is no fuzzy matching anywhere in the path.
 
+**Measured coverage (first live ingest):** 178,060 addresses across 42 Austin
+ZIPs; **98.4%** of them round-trip to the city's own key. The remaining 1.6% is
+an ambiguity in the city's `HSE_SUFF` encoding, deferred and recorded as
+HANDOFF seam 9 — it withholds honestly today.
+
 ### 2. Sitewide AI-mention / SEO-organic optimization
 Everything indexed/public, optimized AI-first (see requirements below). Includes the nav
 change (drop Tools + the section directly below the homepage hero; no Services), schema,

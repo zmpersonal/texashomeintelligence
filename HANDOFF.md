@@ -141,6 +141,38 @@ date, and the card already has the slot for it.
 
 ---
 
+## Seam 9 — HSE_SUFF directional ambiguity costs ~1.6% of address coverage 🟡 (deferred, owner-recorded)
+
+Measured against the first real ingest: 175,189 of 178,060 Austin Resource
+Recovery addresses (**98.4%**) round-trip through `parseAddressLine` to the
+same key the city's own pre-parsed columns produce. The remaining **2,826**
+are one recurring shape, and it is an ambiguity in the city's encoding rather
+than a parser bug.
+
+The city records a bare directional letter in `HSE_SUFF` where a reader would
+take it as a street directional:
+
+    "1147 E POQUITO ST"  →  city: HOUSE_NO 1147 | HSE_SUFF E | STREET_NAM POQUITO
+                            ours: HOUSE_NO 1147 | ST_DIR   E | STREET_NAM POQUITO
+
+Nobody typing that address means the letter as a house suffix, so our reading
+is the more natural one — but the keys differ, so the match misses and the
+dashboard withholds. That is the safe direction (an honest "not shown", never
+a wrong day), which is why this is a coverage nicety and not a defect.
+
+**The agreed fix, when it is worth doing:** index *both* readings at ingest —
+emit the row under the suffix key and the directional key — and collapse to
+`AMBIGUOUS` if the two would ever disagree about day or week. That keeps
+exact-match-or-withhold intact at serve time; the ambiguity is resolved once,
+in the emitter, exactly as duplicate-row disagreement already is.
+
+**Do not** solve this by loosening the matcher. A fallback that retries with a
+different interpretation when the first key misses is fuzzy matching wearing a
+hat, and it reintroduces precisely the failure mode the strict rule exists to
+prevent.
+
+---
+
 ## Seam 8 — Austin Water service-area boundary blocks Tier 2 🟡
 
 The dashboard states the watering rule **conditionally** — "if your home is an
