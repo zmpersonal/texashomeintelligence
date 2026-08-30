@@ -7,28 +7,30 @@
 --   weekly_email_sends    have we already sent them this week?
 --   email_suppressions    has this address bounced or complained?
 --
--- ── The consent question, which is the one that needs your decision ────────
+-- ── The consent decision, ratified by the owner 2026-08-30 ─────────────────
 --
--- `enabled` defaults to 0, not 1. That is deliberate and it means the first run
--- has zero recipients until you decide otherwise.
+-- `enabled` defaults to 0, and stays that way. Nobody is enrolled by the
+-- migration, by the account consent, or by any backfill.
 --
--- The consent a homeowner actually ticks today (src/pages/home/sign-in.astro)
+-- The consent a homeowner ticks to create an account (src/pages/home/sign-in.astro)
 -- reads, verbatim: "Create my account and email me sign-in links and the home
--- alerts I choose. I can unsubscribe any time."
+-- alerts I choose. I can unsubscribe any time." Sign-in links, and the four
+-- condition alerts they toggle. A weekly digest of their score is neither, so
+-- it is asked for separately and never carried by that box.
 --
--- Sign-in links, and the four condition alerts they toggle. A weekly digest of
--- their score is neither of those — so defaulting ON would send mail on a
--- consent that does not clearly cover it.
+-- Two places grant it, both an explicit act by the person:
 --
--- Defaulting OFF is the honest reading. Two ways forward, your call:
+--   * a SEPARATE, unticked checkbox on the sign-in form — the opt-in rides the
+--     magic-link token and is written at verification, source 'signup'
+--   * a toggle on the dashboard, beside the alert preferences, source 'dashboard'
 --
---   a) Keep OFF and let people opt in from the dashboard. This round builds
---      that control, next to the alert preferences, so (a) works today.
---   b) Update the consent copy to name the weekly email, and default ON for
---      accounts created after that copy ships — never retroactively for
---      accounts that consented under the current wording.
+-- And one place revokes it: the signed one-click unsubscribe link in every
+-- weekly email, source 'unsubscribe-link'.
 --
--- Nothing in this migration forecloses either.
+-- Existing accounts are NEVER enrolled retroactively. An unticked box is not a
+-- request to unsubscribe either — see MagicTokenPayload.weeklyOptIn, which is
+-- `true | absent` rather than a boolean for exactly that reason, so a returning
+-- subscriber signing in without re-ticking keeps what they chose.
 
 CREATE TABLE IF NOT EXISTS account_email_prefs (
   account_id TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,

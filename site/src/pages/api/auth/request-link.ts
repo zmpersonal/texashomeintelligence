@@ -33,6 +33,9 @@ export const POST: APIRoute = async ({ request, url }) => {
   const consent = String(form.get("consent") ?? "");
   const consentSource = String(form.get("consent_source") ?? "").trim();
   const next = safeNext(String(form.get("next") ?? "") || null);
+  // Separate from the consent box above and never required. Only a tick is
+  // carried; see MagicTokenPayload.weeklyOptIn for why absence is not `false`.
+  const weeklyOptIn = String(form.get("weekly") ?? "") === "yes";
 
   if (consent !== "yes") {
     return json({ error: "We can only create an account if you tick the consent box." }, 400);
@@ -60,6 +63,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     consent: true,
     consentSource,
     consentAt: new Date().toISOString(),
+    ...(weeklyOptIn ? { weeklyOptIn: true as const } : {}),
     next,
     requestedAt: new Date().toISOString(),
   });

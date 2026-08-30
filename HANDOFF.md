@@ -115,13 +115,19 @@ later replaces that file and changes no application code.
 | Repo variable | `WEEKLY_RUN_URL` | The Worker origin, e.g. `https://texashomeintelligence.<subdomain>.workers.dev`. Point it at staging first. |
 | Worker secret | `RESEND_WEBHOOK_SECRET` | Resend's `whsec_…` signing secret, from the webhook you create pointing at `/api/email/resend-webhook/` (subscribe to `email.bounced` and `email.complained`). **Without it that endpoint is a 404**, and bounces simply are not recorded. |
 
-**Also yours, and it is a decision, not a task:** migration
-`0004_weekly_email.sql` is written but **not applied**. Its header explains the
-consent question — today's sign-up checkbox says "sign-in links and the home
-alerts I choose", which does not name a weekly digest, so `enabled` defaults to
-0 and the first run has zero recipients until people opt in from the dashboard
-control this round adds. Changing that default is your call, and the migration
-forecloses neither path.
+**Consent — decided 2026-08-30, default OFF.** Migration
+`0004_weekly_email.sql` ships `enabled` defaulting to 0 and nothing enrols
+anyone automatically. The account-consent checkbox covers sign-in links and the
+condition alerts; a weekly digest is neither, so it is asked for separately in
+two places, both an explicit act by the person: a separate unticked checkbox on
+the sign-in form (source `signup`), and a toggle on the dashboard beside the
+alert preferences (source `dashboard`). The signed one-click link in every
+weekly email revokes it (source `unsubscribe-link`).
+
+Existing accounts are never enrolled retroactively, and an unticked box is not
+a request to unsubscribe — so a subscriber who signs in again without
+re-ticking keeps what they chose. The first run therefore has zero recipients
+until people opt in, which is the intended shape, not a gap.
 
 **Explicitly NOT built, and not to be built without you saying so:** a one-time
 "the dashboard is live" mail to `dashboard_launch_signups`. Those addresses

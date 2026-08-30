@@ -596,6 +596,11 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
 }
 .notify-consent { display: flex; gap: 10px; align-items: flex-start; font-size: var(--thi-fs-body-sm); color: var(--ink-soft); margin-bottom: 14px; }
 .notify-consent input { margin-top: 3px; flex: 0 0 auto; }
+/* Round 9. The optional weekly-email box, set apart from the required consent
+ * above it so the two do not read as one block of small print — the first is
+ * how an account gets created, the second is an extra the reader may skip. */
+.notify-consent--optional { border-top: 1px solid var(--thi-line); padding-top: 12px; }
+.notify-consent--optional strong { color: var(--ink); font-weight: 600; }
 .notify-fineprint { font-size: var(--thi-fs-caption); color: var(--ink-soft); margin: 12px 0 0; }
 .notify-status:not(:empty) { margin-top: 10px; font-size: var(--thi-fs-body-sm); color: var(--thi-navy); font-weight: 600; }
 

@@ -27,6 +27,18 @@ export interface MagicTokenPayload {
   consent: true;
   consentSource: string;
   consentAt: string;
+  /**
+   * Round 9. Present, and only ever `true`, when the person ticked the
+   * separate weekly-email box on the sign-in form.
+   *
+   * ABSENT MEANS "DID NOT ASK", NOT "ASKED TO BE OFF". An unticked box is not
+   * a request to unsubscribe, so `verify.ts` writes a preference row when this
+   * is true and does nothing at all when it is not — a returning subscriber
+   * who signs in without re-ticking keeps the weekly email they already chose.
+   * Modelling this as a boolean would have made "false" indistinguishable from
+   * "not mentioned" and quietly unsubscribed them on every sign-in.
+   */
+  weeklyOptIn?: true;
   /** Where to send the person after verifying. Path-only — see `safeNext`. */
   next?: string;
   requestedAt: string;
