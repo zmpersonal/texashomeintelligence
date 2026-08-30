@@ -68,6 +68,17 @@ jobs:
           if [ -d public/images/drought ]; then
             git add public/images/drought/
           fi
+          # Round 5b: the Austin Resource Recovery shards are the one feed whose
+          # output does NOT live under src/data/generated/. Its DatasetFile
+          # (the per-run summary) does, but the per-ZIP address tables are
+          # written to public/ so they stay out of the build's module graph and
+          # are only ever read one at a time through ASSETS. Without this they
+          # would be regenerated on every run and thrown away, and the dashboard
+          # would withhold forever. Guarded like the drought map above: `git add`
+          # on a non-existent path aborts the whole step.
+          if [ -d public/data/arr-schedule ]; then
+            git add public/data/arr-schedule/
+          fi
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
