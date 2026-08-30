@@ -123,3 +123,18 @@ export const CROSS_METRO_ZIPS: Record<string, { area: string; note: string }> = 
   // Austin row: Hays. San Antonio row: Comal. Judgement.
   "78676": { area: "austin", note: "Hays (Austin) vs Comal (San Antonio)" },
 };
+
+/**
+ * The counties a drought series is ingested for, per area.
+ *
+ * Lives here rather than in `lib/zipAreas.ts` on purpose: that module imports
+ * `zipCrosswalk.ts`, which reads the crosswalk with Vite's `?raw` suffix. Vite
+ * resolves that during `astro build`; plain Node, which is what `npm run
+ * ingest` runs under, cannot — it throws ERR_UNKNOWN_FILE_EXTENSION on the
+ * .csv before a single fetcher runs. The ingest path therefore imports this
+ * function from here, where the only dependency is the ZIP_AREAS literal above.
+ */
+export function ingestCounties(areaId: string): { name: string; fips: string }[] {
+  const area = ZIP_AREAS.find((a) => a.areaId === areaId);
+  return (area?.droughtCounties ?? []).map((c) => ({ name: c.name, fips: c.fips }));
+}

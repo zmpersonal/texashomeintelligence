@@ -1,4 +1,4 @@
-import { ingestCounties } from "../../lib/zipAreas";
+import { ingestCounties } from "../../data/zip-areas";
 import type { FetcherModule, Observation } from "../types";
 
 export interface DroughtValue {

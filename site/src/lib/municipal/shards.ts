@@ -12,28 +12,12 @@
  * to represent and cannot be confused with a fetch failure.
  */
 import { env } from "cloudflare:workers";
+import type { ArrShard } from "./shardFormat";
 
-/** `"TUE|A"` — collection day, then the A/B recycling week. `"*"` marks a key
- * whose rows disagreed at ingest time; see `AMBIGUOUS`. */
-export type ShardValue = string;
-
-/** Written by the emitter when two or more source rows share a normalised key
- * but carry different day/week values. Resolving ambiguity once, at ingest,
- * means the serving path can never be tempted to pick a side. */
-export const AMBIGUOUS = "*";
-
-export interface ArrShard {
-  zip: string;
-  methodologyVersion: string;
-  source: { name: string; url: string };
-  /** When the city last published the underlying dataset. */
-  sourceUpdatedAt: string | null;
-  /** When our ingestion wrote this shard. */
-  ingestedAt: string;
-  rowCount: number;
-  /** normalised address key → "DAY|WEEK", or `AMBIGUOUS`. */
-  rows: Record<string, ShardValue>;
-}
+// The format itself lives in `shardFormat.ts` so the ingest path can share it
+// without importing `cloudflare:workers`, which Node cannot resolve.
+export { AMBIGUOUS } from "./shardFormat";
+export type { ArrShard, ShardValue } from "./shardFormat";
 
 export async function readArrShard(zip: string): Promise<ArrShard | null> {
   if (!/^\d{5}$/.test(zip)) return null;

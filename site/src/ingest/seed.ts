@@ -137,10 +137,31 @@ const GENERATORS: Record<string, Generator> = {
   "tx-forest-service": single({ fireDangerLevel: "Moderate" }),
 };
 
+/**
+ * Feeds that must NEVER be seeded, and why.
+ *
+ * A seeded row is a labelled placeholder, which is harmless for a series — a
+ * sample AQI reading tells nobody to do anything. These two are different in
+ * kind, and a placeholder would be actively wrong rather than merely unhelpful:
+ *
+ *  - `arr-collection-schedule` is a lookup table keyed by real street
+ *    addresses. A fabricated row is a confidently wrong collection day for a
+ *    real home, and the reader misses their pickup.
+ *  - `austin-water-stage` drives a watering day through the published
+ *    stage-to-parity rule. A fabricated drought stage produces a real-looking
+ *    watering day off invented drought conditions.
+ *
+ * Both withhold honestly with no file at all, so absence is the correct
+ * bootstrap state rather than a gap to paper over.
+ */
+const NEVER_SEED = new Set(["arr-collection-schedule", "austin-water-stage"]);
+
 /** Skips any file that already exists — seeding is a one-time bootstrap,
  * never a way to reset real accumulated history. */
 export function seedIfMissing(entry: RegistryEntry): "seeded" | "already-exists" {
   if (existsSync(entry.filePath)) return "already-exists";
+
+  if (NEVER_SEED.has(entry.fetcher.datasetId)) return "already-exists";
 
   const generator = GENERATORS[entry.fetcher.datasetId];
   if (!generator) {

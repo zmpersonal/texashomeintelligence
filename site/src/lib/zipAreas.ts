@@ -130,10 +130,9 @@ export function areaDefinitions() {
 
 /** Counties whose drought series we ingest, per area. Consumed by the USDM
  * fetcher so the ingested county set and the published set cannot drift. */
-export function ingestCounties(areaId: string): { name: string; fips: string }[] {
-  const area = ZIP_AREAS.find((a) => a.areaId === areaId);
-  return (area?.droughtCounties ?? []).map((c) => ({ name: c.name, fips: c.fips }));
-}
+// Defined in `data/zip-areas.ts` so the Node-only ingest path can import it
+// without pulling in `zipCrosswalk.ts`'s Vite-only `?raw` CSV import.
+export { ingestCounties } from "../data/zip-areas";
 
 export function coverageSummary() {
   return ZIP_AREAS.map((a) => {

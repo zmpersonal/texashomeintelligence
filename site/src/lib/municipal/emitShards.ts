@@ -17,7 +17,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ARR_SOURCE, MUNICIPAL_METHODOLOGY_VERSION } from "./config";
-import { AMBIGUOUS } from "./shards";
+import { AMBIGUOUS } from "./shardFormat";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const SHARD_DIR = path.join(here, "..", "..", "..", "public", "data", "arr-schedule");

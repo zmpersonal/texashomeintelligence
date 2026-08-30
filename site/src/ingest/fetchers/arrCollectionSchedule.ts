@@ -27,7 +27,7 @@
 import type { FetcherModule, Observation } from "../types";
 import { ARR_SOURCE, MUNICIPAL_METHODOLOGY_VERSION } from "../../lib/municipal/config";
 import { keyFromArrRow } from "../../lib/municipal/addressKey";
-import { AMBIGUOUS } from "../../lib/municipal/shards";
+import { AMBIGUOUS } from "../../lib/municipal/shardFormat";
 import { coveredArrZips } from "../../lib/municipal/coverage";
 import { emitArrShards } from "../../lib/municipal/emitShards";
 
