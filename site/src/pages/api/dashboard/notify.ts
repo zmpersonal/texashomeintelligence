@@ -13,6 +13,7 @@
  */
 import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
+import { notifyLeadInBackground } from "../../../lib/ops/leadNotify";
 
 export const prerender = false;
 
@@ -28,7 +29,7 @@ function json(body: unknown, status: number): Response {
   });
 }
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   let form: FormData;
   try {
     form = await request.formData();
@@ -84,6 +85,21 @@ export const POST: APIRoute = async ({ request }) => {
     console.error("dashboard signup insert failed", error);
     return json({ error: "We couldn't save that. Please try again." }, 500);
   }
+
+  // The row is committed. Only now does the owner's ops channel hear about it,
+  // and only on a best-effort basis: `notifyLeadInBackground` never throws and
+  // is never awaited, so a Slack outage cannot cost a signup that D1 already
+  // accepted.
+  //
+  // This is NOT the Resend path. Resend carries homeowner mail only — magic
+  // links, alerts, the weekly email — one recipient each, the person the
+  // message is about. Nothing about this lead is bcc'd, reply-to'd or otherwise
+  // routed through that transport. See lib/ops/leadNotify.ts and HANDOFF Seam 5.
+  notifyLeadInBackground(
+    { event: "launch-signup", email, zip, at: now },
+    (locals as { runtime?: { ctx?: { waitUntil?: (p: Promise<unknown>) => void } } })?.runtime?.ctx
+      ?.waitUntil,
+  );
 
   return json({ message: "Thanks — we'll email you when your home dashboard is ready." }, 200);
 };
