@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-08-30T14:24:54.230Z",
-  "lastSuccessAt": "2026-08-30T14:24:54.230Z",
+  "lastAttemptAt": "2026-08-31T17:03:31.018Z",
+  "lastSuccessAt": "2026-08-31T17:03:31.018Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -19704,7 +19704,7 @@
     },
     {
       "observedAt": "2026-08-28T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T14:24:54.675Z",
+      "ingestedAt": "2026-08-31T17:03:31.615Z",
       "key": "2026-024637 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -19714,7 +19714,7 @@
     },
     {
       "observedAt": "2026-08-28T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T14:24:54.675Z",
+      "ingestedAt": "2026-08-31T17:03:31.615Z",
       "key": "2026-111870 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -19724,7 +19724,7 @@
     },
     {
       "observedAt": "2026-08-28T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T14:24:54.675Z",
+      "ingestedAt": "2026-08-31T17:03:31.615Z",
       "key": "2026-111559 EP",
       "value": {
         "permitType": "Repair",
@@ -19734,11 +19734,21 @@
     },
     {
       "observedAt": "2026-08-28T00:00:00.000Z",
-      "ingestedAt": "2026-08-30T14:24:54.675Z",
+      "ingestedAt": "2026-08-31T17:03:31.615Z",
       "key": "2023-082189 EP",
       "value": {
         "permitType": "Addition and Remodel",
         "workDescription": "*Addressing active code violation* Addition/ remodel to existing 1-story single family residential to include: addition to existing garage new full bath covered front porch rear screened patio; 2nd floor addition to include game room full bath balcony and roof top deck.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-30T00:00:00.000Z",
+      "ingestedAt": "2026-08-31T17:03:31.615Z",
+      "key": "2026-102505 PP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "Bldg. 3 - New construction of 3 story SFR w/ attached carport covered front porch and uncovered wood steps at rear and rooftop uncovered balcony. 3 bedroom 3.5 baths",
         "status": "Active"
       }
     }
