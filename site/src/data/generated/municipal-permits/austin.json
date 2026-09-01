@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-08-31T17:03:31.018Z",
-  "lastSuccessAt": "2026-08-31T17:03:31.018Z",
+  "lastAttemptAt": "2026-09-01T14:08:22.134Z",
+  "lastSuccessAt": "2026-09-01T14:08:22.134Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -19744,12 +19744,43 @@
     },
     {
       "observedAt": "2026-08-30T00:00:00.000Z",
-      "ingestedAt": "2026-08-31T17:03:31.615Z",
+      "ingestedAt": "2026-09-01T14:08:23.375Z",
       "key": "2026-102505 PP",
       "value": {
         "permitType": "New",
         "workDescription": "Bldg. 3 - New construction of 3 story SFR w/ attached carport covered front porch and uncovered wood steps at rear and rooftop uncovered balcony. 3 bedroom 3.5 baths",
         "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-31T00:00:00.000Z",
+      "ingestedAt": "2026-09-01T14:08:23.375Z",
+      "key": "2026-112049 MP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "After-the-fact permit for previously installed commercial Type I kitchen exhaust hood ductwork rooftop exhaust fan and associated components serving existing bakery kitchen. No change in occupancy or building area.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-31T00:00:00.000Z",
+      "ingestedAt": "2026-09-01T14:08:23.375Z",
+      "key": "2026-114327 EP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "EXPRESS: We are replacing a garage door that is rotting with a new one. replacing 3 windows in the master bathroom with new ones that are the exact same\nsize and brand. replacing some of the facia shingle mold and soffit around the house as needed due to rot repairing or replacing siding as needed a",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-08-31T00:00:00.000Z",
+      "ingestedAt": "2026-09-01T14:08:23.375Z",
+      "key": "2022-139482 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "ePlan: Expedited Review - Finish-Outs for Units on Level 55 with Roof Terrace (16551 SF)",
+        "status": "Active",
+        "valuationUsd": 180000000
       }
     }
   ]
