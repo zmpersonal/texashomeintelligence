@@ -49,6 +49,9 @@ const RESOURCE_NAME_MATCH = /permits?\s*issued/i;
 const PERMIT_TYPE_CANDIDATES = ["PERMIT TYPE", "PERMIT_TYPE", "PERMITTYPE", "TYPE"];
 const DESCRIPTION_CANDIDATES = ["WORK TYPE", "PROJECT NAME", "WORK DESCRIPTION", "DESCRIPTION", "WORK_DESCRIPTION", "SCOPE OF WORK"];
 const VALUATION_CANDIDATES = ["DECLARED VALUATION", "VALUATION", "JOB VALUATION", "ESTIMATED COST", "PROJECT VALUATION"];
+/** Round 6. The fetcher's issue-date candidate list, in its order. `cols.issueDate`
+ * is the one column it treats as mandatory — it throws if none of these resolve. */
+const ISSUE_DATE_CANDIDATES = ["DATE ISSUED", "ISSUE DATE", "ISSUED DATE", "ISSUE_DATE", "ISSUED_DATE", "APPROVED DATE", "DATE SUBMITTED"];
 
 /**
  * A descriptive User-Agent, and the reason the step failed on run #31.
@@ -74,6 +77,9 @@ async function get(url: string, accept: string): Promise<Response> {
 }
 
 /** Fails loudly if a copied literal no longer matches the fetcher's source. */
+/** Number of literals `assertNoDrift` checks — reported, never hardcoded. */
+let driftChecksRun = 0;
+
 function assertNoDrift(): string[] {
   const here = dirname(fileURLToPath(import.meta.url));
   const src = readFileSync(resolve(here, "../src/ingest/fetchers/sanAntonioPermits.ts"), "utf8");
@@ -84,7 +90,9 @@ function assertNoDrift(): string[] {
     ["permit-type header candidates", arr(PERMIT_TYPE_CANDIDATES)],
     ["description header candidates", arr(DESCRIPTION_CANDIDATES)],
     ["valuation header candidates", arr(VALUATION_CANDIDATES)],
+    ["issue-date header candidates", arr(ISSUE_DATE_CANDIDATES)],
   ];
+  driftChecksRun = checks.length;
   return checks.filter(([, literal]) => !src.includes(literal)).map(([label]) => label);
 }
 
@@ -151,6 +159,7 @@ function parseValuation(raw: string | undefined): number | undefined {
 
 const money = (n: number) => n.toLocaleString("en-US", { maximumFractionDigits: 0 });
 const pct = (n: number, d: number) => (d === 0 ? "n/a" : `${((100 * n) / d).toFixed(2)}%`);
+const num = (n: number) => n.toLocaleString("en-US");
 
 function quantiles(sorted: number[]): string {
   const q = (p: number) => sorted[Math.min(Math.floor(p * sorted.length), sorted.length - 1)];
@@ -198,7 +207,7 @@ async function main(): Promise<void> {
     console.log(`⚠️  DRIFT: these copied literals no longer appear in sanAntonioPermits.ts: ${drift.join("; ")}`);
     console.log("⚠️  The columns enumerated below may not be the columns ingestion reads. Re-sync before trusting them.\n");
   } else {
-    console.log("drift check: all 5 copied literals still match sanAntonioPermits.ts verbatim.\n");
+    console.log(`drift check: all ${driftChecksRun} copied literals still match sanAntonioPermits.ts verbatim.\n`);
   }
 
   // Offline escape hatch, for verifying the report itself without the
@@ -319,6 +328,93 @@ async function main(): Promise<void> {
           `      ${b.values.length} of ${b.total} row(s) carry a value (${pct(b.values.length, b.total)})` +
             (b.values.length > 0 ? `  |  ${quantiles(b.values)}` : ""),
         );
+      }
+    }
+  }
+
+  // ── DATE ISSUED: the range, so the two metros can be normalised ────────
+  //
+  // Round 6. Austin's enumeration reads a measured 365-day window. This file
+  // is read whole, with no date filter at all, so until this block existed the
+  // two row counts covered different and unknown spans and could not be
+  // compared. Parsed exactly as the fetcher parses it -- `new Date(raw)`, the
+  // same call, so a date this reports as unparseable is a date ingestion also
+  // drops.
+  const issueDate = resolveHeader(header, ISSUE_DATE_CANDIDATES);
+  console.log(`\n── ${issueDate ? JSON.stringify(issueDate.name) : "ISSUE DATE"}: RANGE AND DISTRIBUTION ──`);
+  if (!issueDate) {
+    console.log("  COLUMN NOT FOUND among the fetcher's candidates — it would throw on this file.");
+  } else {
+    console.log(`  column index ${issueDate.index}, resolved from candidate list position ` +
+      `${ISSUE_DATE_CANDIDATES.findIndex((c) => c.toUpperCase() === issueDate.name.trim().toUpperCase()) + 1} of ${ISSUE_DATE_CANDIDATES.length}`);
+
+    const rawSamples: string[] = [];
+    const shapes = new Map<string, number>();
+    let blank = 0, unparseable = 0;
+    const parsed: { iso: string; raw: string }[] = [];
+    for (const rec of records) {
+      const raw = at(rec, issueDate).trim();
+      if (raw === "") { blank++; continue; }
+      if (rawSamples.length < 5) rawSamples.push(raw);
+      // Shape, not value: digits collapsed so "2026-08-28" and "2025-01-02"
+      // report as one format rather than 139,124 of them.
+      const shape = raw.replace(/\d/g, "9");
+      shapes.set(shape, (shapes.get(shape) ?? 0) + 1);
+      const dt = new Date(raw);           // exactly what sanAntonioPermits.ts does
+      if (Number.isNaN(dt.getTime())) { unparseable++; continue; }
+      parsed.push({ iso: dt.toISOString(), raw });
+    }
+
+    console.log(`\n  EXACT FORMAT ENCOUNTERED (digits shown as 9, so one line per real format):`);
+    for (const [shape, n] of [...shapes.entries()].sort((a, b) => b[1] - a[1])) {
+      console.log(`    ${JSON.stringify(shape).padEnd(30)} ${num(n).padStart(9)} row(s)  (${pct(n, records.length)})`);
+    }
+    console.log(`  first five raw values, verbatim: ${rawSamples.map((r) => JSON.stringify(r)).join(", ")}`);
+    console.log(`  PARSED WITH: new Date(raw) — the same call sanAntonioPermits.ts makes, so anything`);
+    console.log(`               unparseable here is a row ingestion also drops.`);
+    console.log(`  blank: ${num(blank)}   unparseable: ${num(unparseable)}   parsed: ${num(parsed.length)} of ${num(records.length)}`);
+
+    if (parsed.length > 0) {
+      const sorted = [...parsed].sort((a, b) => a.iso.localeCompare(b.iso));
+      const min = sorted[0], max = sorted[sorted.length - 1];
+      console.log(`\n  MIN DATE ISSUED: ${min.iso.slice(0, 10)}   (raw ${JSON.stringify(min.raw)})`);
+      console.log(`  MAX DATE ISSUED: ${max.iso.slice(0, 10)}   (raw ${JSON.stringify(max.raw)})`);
+      const spanDays = Math.round((Date.parse(max.iso) - Date.parse(min.iso)) / 86_400_000);
+      console.log(`  SPAN: ${num(spanDays)} day(s) = ${(spanDays / 365).toFixed(2)} year(s)`);
+      console.log(`  => rows per 365 days across the whole file: ${num(Math.round((records.length * 365) / Math.max(spanDays, 1)))}`);
+
+      const years = new Map<string, number>();
+      const months = new Map<string, number>();
+      for (const p of parsed) {
+        const y = p.iso.slice(0, 4), m = p.iso.slice(0, 7);
+        years.set(y, (years.get(y) ?? 0) + 1);
+        months.set(m, (months.get(m) ?? 0) + 1);
+      }
+      console.log(`\n  ── COUNT PER CALENDAR YEAR ──`);
+      for (const [y, n] of [...years.entries()].sort()) {
+        console.log(`    ${y}  ${num(n).padStart(9)}  (${pct(n, parsed.length)})`);
+      }
+      console.log(`\n  ── COUNT PER CALENDAR MONTH, MOST RECENT 24 ──`);
+      const recent = [...months.entries()].sort().slice(-24);
+      for (const [m, n] of recent) console.log(`    ${m}  ${num(n).padStart(9)}`);
+      console.log(`    (${num(months.size)} distinct month(s) in the file; the ${num(recent.length)} most recent are listed)`);
+
+      // The comparison this whole block exists to enable.
+      if (permitType) {
+        console.log(`\n  ── PER-TYPE COUNTS NORMALISED TO 365 DAYS (count x 365 / ${num(spanDays)}) ──`);
+        console.log(`     Austin's enumeration reads a measured 365-day window, so these are the directly`);
+        console.log(`     comparable figures. Rows with an unparseable date are excluded from the rate.`);
+        const perType = new Map<string, number>();
+        for (const rec of records) {
+          const raw = at(rec, issueDate).trim();
+          if (raw === "" || Number.isNaN(new Date(raw).getTime())) continue;
+          const t = at(rec, permitType);
+          perType.set(t, (perType.get(t) ?? 0) + 1);
+        }
+        for (const [t, n] of [...perType.entries()].sort((a, b) => b[1] - a[1]).slice(0, 20)) {
+          const rate = Math.round((n * 365) / Math.max(spanDays, 1));
+          console.log(`    ${num(n).padStart(8)} total -> ${num(rate).padStart(8)} per 365d   ${JSON.stringify(t)}`);
+        }
       }
     }
   }

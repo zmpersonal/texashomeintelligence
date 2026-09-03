@@ -84,6 +84,12 @@ jobs:
       # CKAN resource by the same freshest-by-last_modified tiebreak, and sends a
       # descriptive User-Agent.
       #
+      # Round 6: also reports DATE ISSUED's min, max, span, per-calendar-year and
+      # per-month counts, and per-permit-type counts normalised to 365 days. Until
+      # that existed the SA file (read whole, no date filter) and Austin's window
+      # (a measured 365 days) covered different and unknown spans, so the two row
+      # counts could not be compared at all.
+      #
       # `continue-on-error` because a diagnostic must never fail the ingestion it
       # is riding along with. The script prints a single ::error:: annotation on
       # failure, so a future failure is legible from the run summary without
@@ -117,6 +123,14 @@ jobs:
       # SOCRATA_APP_TOKEN is passed through exactly as the ingestion step above
       # passes it: optional, only raises the anonymous rate limit, sent as
       # X-App-Token when present.
+      #
+      # Round 6: also measures ALL ELEVEN valuation fields the dataset carries --
+      # the three parseValuation() reads and the eight nothing reads -- with
+      # non-empty / > 0 / <= 10 / > 10 counts and a distribution over the values
+      # above 10, plus a computed usable-or-placeholder-poisoned verdict per
+      # field. The <= 10 split is the point: a $1 permit valuation is a filled-in
+      # field, not a small job, and without separating those out "89% null" hides
+      # that most of the remainder is junk too.
       #
       # `continue-on-error` because a diagnostic must never fail the ingestion it
       # is riding along with. The script prints a single ::error:: annotation on

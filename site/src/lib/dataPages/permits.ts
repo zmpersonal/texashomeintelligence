@@ -223,8 +223,25 @@ export const sanAntonioRoofPermits: DataPageSpec<PermitValue> = {
 
 /** Descriptions that explicitly describe replacing a roof covering, as opposed
  * to any of the other work the city's text match sweeps in. A deliberate,
- * labeled text match — reported on the page as derived, never as the headline. */
-const RE_ROOF_TEXT = /\bre-?roof|roof\s+replacement|replace\s+(the\s+)?roof|shingle\s+replacement/i;
+ * labeled text match — reported on the page as derived, never as the headline.
+ *
+ * Round 6: widened, because the previous pattern required `replace` followed by
+ * whitespace and so missed the city's single commonest phrasing for exactly the
+ * thing being counted — "Replacement of roof", "REPLACEMENT OF ROOF" (29 rows
+ * between them), plus "Replacing Roof" and "replace roofing". Measured against
+ * the live archive: 336 -> 366 of 1,945, and one old FALSE positive drops out
+ * ("Replace rooftop equipment", which is rooftop mechanical work, not a roof
+ * covering) because `roof(ing)?\b` no longer matches "rooftop".
+ *
+ * Deliberately still conservative, so the number stays a floor rather than an
+ * estimate. Known residue, measured not guessed: one row reading "replacement
+ * of roof ladder" matches and should not, and phrasings like "TPO Roof overlay"
+ * or "replacement of TPO flat roof metal panels" do not match and arguably
+ * should. Roughly 30 rows sit in that gap. Widening further starts sweeping in
+ * repair-and-adjacency wording ("exterior wall repair and replacement roof
+ * repair"), which is why it stops here. */
+const RE_ROOF_TEXT =
+  /\bre-?roof|roof\s+replacement|replacement\s+of\s+(the\s+)?roof(ing)?\b|replac(e|ing)\s+(the\s+)?roof(ing)?\b|shingle\s+replacement/i;
 
 export const austinRoofPermits: DataPageSpec<PermitValue> = {
   location: "austin",
@@ -268,7 +285,7 @@ export const austinRoofPermits: DataPageSpec<PermitValue> = {
     return [
       `The City of Austin issued ${observations.length.toLocaleString("en-US")} roof-related permits between ${coverageRange(observations)}, about ${avg.toLocaleString("en-US")} a month.`,
       `By the city's own work class, the largest groups were ${list(byClass.slice(0, 4).map(([c, n]) => `${c} (${n.toLocaleString("en-US")})`))}.`,
-      `${explicit.length.toLocaleString("en-US")} of those ${observations.length.toLocaleString("en-US")} permits — ${Math.round((explicit.length / observations.length) * 100)}% — describe replacing a roof covering. The rest reference a roof for another reason.`,
+      `${explicit.length.toLocaleString("en-US")} of those ${observations.length.toLocaleString("en-US")} permits — ${Math.round((explicit.length / observations.length) * 100)}% — use wording that explicitly describes replacing a roof covering. Most of the rest reference a roof for another reason, but some describe replacement in phrasing this match does not catch, so read that share as a floor rather than an exact split.`,
       `Austin publishes no roof-specific permit class, so this total is a text match and is broader than roof replacement. Rooftop solar is the single largest contributor.`,
     ];
   },
