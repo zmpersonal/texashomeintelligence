@@ -2,9 +2,16 @@ name: Data ingestion
 
 # Runs the ingestion pipeline (site/scripts/ingest.ts) on a schedule,
 # commits whatever changed under site/src/data/generated/, and pushes.
-# Cloudflare Pages is configured to auto-deploy on push to `main` — this
-# workflow doesn't (and shouldn't) trigger a separate rebuild itself; the
-# push IS the trigger. See HANDOFF.md "Seam 1" for what's still stubbed.
+#
+# The site deploys as a Cloudflare WORKER via Wrangler, built by Git-connected
+# Cloudflare Workers Builds (not Cloudflare Pages — see CLAUDE.md "Repo
+# reality" and HANDOFF.md). This workflow does not build or deploy anything
+# itself; the push to `main` is what Workers Builds picks up.
+#
+# That was the intent from the start, and until 2026-09-03 it did not work —
+# see the commit step at the bottom of this file for why, and check a real
+# Cloudflare version exists for a scheduled run before trusting it again.
+# HANDOFF.md "Seam 1" covers what is still stubbed in the pipeline itself.
 on:
   schedule:
     # Once a day, off-peak UTC. Every registered feed's `requiredEnvVars`
@@ -82,6 +89,29 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "Data ingestion: update generated datasets [skip ci]"
+            # ── NO `[skip ci]` HERE. It is load-bearing that this stays out. ──
+            #
+            # `[skip ci]` is a GitHub Actions convention, but Cloudflare
+            # Workers Builds honors it too — and that is what silently
+            # suppressed the deployment of every ingestion commit this
+            # workflow has ever made. The data was committed to `main` and
+            # never built, so the live site kept serving whatever was baked in
+            # at the last hand-authored merge while `main` accumulated fresh
+            # readings nobody could see. No error, no failed build: the
+            # Cloudflare build simply reported "skipped".
+            #
+            # Confirmed 2026-09-03 from build `2d70ac3` ("Data ingestion:
+            # update generated datasets [skip ci]"), which shows status
+            # skipped, and from Version History containing no version for any
+            # ingestion commit — only merges and dashboard secret changes.
+            #
+            # Removing it is safe from a re-trigger standpoint: no workflow in
+            # this repo has a `push` trigger (both are `schedule` +
+            # `workflow_dispatch` only), and GitHub does not start workflows
+            # from pushes made with the default GITHUB_TOKEN, which is what
+            # the bare `git push` below uses. Two independent reasons, either
+            # sufficient. If a `push` trigger is ever added to this repo,
+            # re-check this before assuming it still holds.
+            git commit -m "Data ingestion: update generated datasets"
             git push
           fi

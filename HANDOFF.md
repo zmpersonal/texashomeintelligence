@@ -59,6 +59,41 @@ run into.
   crawlers at the edge.** `robots.txt` and `llms.txt` allow them; the edge has no
   obligation to agree. Still unverified now that the site is live. (Also described in the
   Cloudflare-gotcha block below.)
+- **The five stub datasets carry a placeholder freshness window.** `ercot`, `fema-nfhl`,
+  `noaa-climate`, `tdi-losses` and `tx-forest-service` are set to 30 days in
+  `site/src/lib/dataFreshness.ts` — a deliberately conservative placeholder, not a real
+  cadence. Each is `sample`-status today, so the window is never reached; the moment one is
+  wired to a live source its real publication cadence has to replace that 30 and the
+  comment beside it says so. (The brief that raised this said "four" and listed five;
+  there are five.)
+
+### ✅ Resolved — `[skip ci]` suppressed every ingestion deployment
+
+**Confirmed 2026-09-03 and fixed on the Round 1 branch.** Recorded here rather than
+deleted, because the failure mode is worth remembering.
+
+`[skip ci]` is a GitHub Actions convention, and **Cloudflare Workers Builds honors it
+too.** The ingestion workflow put it in every commit message, so every scheduled data
+commit landed on `main` and was never built. The live site kept serving whatever was baked
+in at the last hand-authored merge while `main` accumulated fresh readings nobody could
+see. Silent by construction: no error, no failed build — the Cloudflare build reported
+"skipped".
+
+Evidence: build `2d70ac3` ("Data ingestion: update generated datasets [skip ci]") shows
+status **skipped**, and Version History contains **no version for any ingestion commit** —
+only merges and dashboard secret changes.
+
+Two things follow that are worth carrying forward:
+
+1. **GitHub Pages did the opposite.** Pages ignores `[skip ci]` and rebuilt the legacy
+   Jekyll site on every ingestion push — so the one surface that kept redeploying was the
+   retired one. The owner is unpublishing Pages and clearing its custom domain by hand; the
+   root `CNAME` (which re-established Pages' claim on the domain) is deleted on this branch.
+2. **The fix is not verifiable before merge.** Removing `[skip ci]` is a one-word change,
+   but the only real proof is a scheduled run producing an actual Cloudflare version instead
+   of a skipped build. That can first be observed at the **next 09:17 UTC ingestion run
+   after this merges**. Check Workers & Pages → `texashomeintelligence` → Deployments for a
+   version whose commit is a `Data ingestion: update generated datasets` commit.
 - **`BANNED_ACTION_PATTERNS` guards rendered dashboard actions and the weekly email only.**
   It is referenced from `signalActions.ts` and `email/weekly.ts` and nowhere else — page
   titles, headings and slugs are not checked against it.
