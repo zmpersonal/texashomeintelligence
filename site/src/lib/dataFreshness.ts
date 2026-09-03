@@ -116,6 +116,13 @@ export const MAX_DATA_AGE_DAYS: Record<string, number> = {
   // dates at all). Each carries the conservative 30-day window so that if one
   // is ever wired to a real source without revisiting this table, it errs
   // toward admitting staleness rather than claiming currency.
+  // Round 8. Trade-activity aggregates are rebuilt from the same city tables
+  // municipal-permits reads, on the same daily cadence. But each observation is
+  // dated to the FIRST of the month it counts, so the newest row is up to a
+  // month old by construction - the window has to absorb that or a perfectly
+  // healthy feed would read as out of date on the 30th.
+  "permit-trade-activity": 45 * DAY,
+
   ercot: 30 * DAY, // ERCOT load; real cadence unverified.
   "fema-nfhl": 30 * DAY, // NFHL flood layers; republication cadence unverified.
   "noaa-climate": 30 * DAY, // Climate normals; update cadence unverified.

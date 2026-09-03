@@ -30,6 +30,14 @@
   status: live
   priority: false
 
+- id: permit-trade-activity
+  name: "Permit Trade Activity (by category and month)"
+  org: "City of Austin (Socrata) / City of San Antonio (CKAN)"
+  primaryUse: "Monthly permit counts per trade category, each row carrying the metro-native source values and how they were classified"
+  thiOutput: "Permit activity and timing by trade, per city. Counts and trend only. Never a cost."
+  status: live
+  priority: false
+
 - id: municipal-permits
   name: "Local Municipal Permit Feeds"
   org: "City of Austin (Socrata) / City of San Antonio (CKAN)"
