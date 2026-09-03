@@ -131,17 +131,59 @@ rate — a direct instrument for KPI #1. Reserved now; see the skill.
 
 ---
 
-## Future rounds (rough order, not a commitment)
+## Shipped
 
-1. Copy-rewrite round(s) on the ported/old sections (realign voice per `THI-Brand-Kit.md`).
-2. Austin **Roofing** authority cluster (hub → how-to-choose flagship → replacement-cost →
-   storm/hail → repair-vs-replace → materials → finding-a-roofer → insurance → permits →
-   Texas-wide) + Roof Stress Index + `/methodology/roof-stress-index/` + `/data/austin/roofing/`.
-3. SEMrush **content-demand system** build (two-domain schema, ingestion, scoring, editorial
-   queue, visibility recheck).
-4. Cost Calculator (roofing first), then re-introduce the Tools hub + the below-hero section.
-5. QuoteReady lead funnel (reactivates the leads KPI and the "expose vs. gate" tension).
-6. Postgres migration (only when the archive/tooling genuinely needs it).
-7. HVAC + Plumbing clusters; San Antonio roofing; Houston.
+The site is **live at `texashomeintelligence.com`** (DNS cut over from the old GitHub-Pages
+Jekyll site; the Jekyll root is legacy and no longer serving). Sign-in email and the Slack
+lead notification are **confirmed working in production** by the owner.
+
+Rounds 4–10, in order:
+
+- **Round 4 — public ZIP dashboard.** Open, no account, stores nothing. Home Stress Index +
+  five signals + "what changed this week", server-rendered.
+- **Round 4.1 / 4.2 — nav, cards, logged-in layout.** "My Home" routing, the conditions →
+  "check/look" action guardrail, desktop layout polish.
+- **Round 5 — accounts, home profile, reminders, condition alerts.** Passwordless sign-in,
+  PII to D1 with consent, the reminder engine.
+- **Round 5b / 5b.1 — Austin municipal schedules.** Watering, trash/recycling (strict
+  match-or-withhold), bulk as an entitlement. Austin Water stage scraper, fail-closed.
+- **Round 7 — v2 logged-in dashboard.** The four-tier redesign; presentation only.
+- **Round 8 — copy rewrite** across the homepage, dashboard, ZIP page and sign-in, per the
+  approved copy doc. The doc's component-age flagging block is **held** — that mechanic does
+  not exist and shipping it would promise behaviour the build does not have.
+- **Round 9 — weekly-email infrastructure.** Recipient gate, send loop, signed one-click
+  unsubscribe, suppression. **Default OFF**, opt-in only. Inert until the owner sets secrets.
+- **Round 10 — Slack lead notification.** Internal ops only, a separate code path from the
+  homeowner email transport. **ZIP-only payload** — no email, no address (see `COST.md` and
+  the notifier's own `LEAD_DETAIL` note for why).
+- Favicon and app-icon set, generated from the brand mark.
+
+---
+
+## Next rounds — owner-approved sequence
+
+**This supersedes the prior ordering.** The earlier "future rounds" list (copy rewrite →
+roofing cluster → SEMrush build → cost calculator → QuoteReady → Postgres → more clusters)
+is retired; where the two disagree, this list wins.
+
+1. **County data model + Home Stress Index score history.**
+2. **San Antonio data parity** — permits, census, soil, BLS, NWS.
+3. **Location×service content rework + AI/SEO optimization.**
+4. **County rankings page.**
+5. **Social poster.**
+6. **Article poster.**
+7. **AI content poster.**
+8. **Tools (conversion).**
+9. **Additional content and geographies.**
+
+**The SEMrush content-demand system remains reserved and unbuilt.** Its architecture stays
+described in the `content-demand-ingestion` skill and is not to be built without a
+greenlight. By owner decision, its **keyword output is being used as an input to round (3)**
+— that is a human handing over research, not a licence to build the ingestion, scoring or
+visibility-recheck system.
+
+**Round (7), the AI content poster, has an unresolved cost/architecture question** against
+`COST.md`'s "no LLM per data refresh" rule. Flagged there; it needs an explicit owner
+decision before that round is scoped.
 
 Do not build ahead of the current round. Tool functionality only in its dedicated round.

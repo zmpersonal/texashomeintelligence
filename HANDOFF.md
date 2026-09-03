@@ -29,6 +29,40 @@ Workers build-time environment variables in the Workers Builds config.
   `wrangler.jsonc` (or bound in the dashboard) before a production-grade
   deploy — the committed IDs are local/Miniflare placeholders.
 
+## Open items — carried into the county/parity rounds
+
+Recorded, not resolved. Each was verified against the code on 2026-08-30; none is a
+decision, a plan, or a commitment to fix. They are the known gaps the first two rounds of
+the approved sequence (county data model + score history, then San Antonio parity) will
+run into.
+
+- **`sanAntonioPermits.ts` discards every non-roofing permit at ingest.**
+  `if (!haystack.includes("roof")) continue;` (line 131) filters on type + description, so
+  SA plumbing and HVAC have no permit data at all — not sparse data, none.
+- **SA permit observations carry no `valuationUsd`; Austin's do.** Measured: Austin
+  1,923 observations / 501 with a valuation; San Antonio 5,148 / 0. **Cause unverified** —
+  it could be the source field, the mapping, or the roofing filter interacting with it.
+- **`census-acs`, `usda-soil` and `bls` have `austin.json` only.** No San Antonio file
+  exists for any of the three.
+- **NWS has no San Antonio feed.** `COORDS` in the NWS fetcher is typed
+  `Record<"austin", …>` — San Antonio is excluded by the type, not just absent from the
+  data, so there is no forecast or alert feed for it.
+- **`compute.ts` keeps no score history.** Its own comment: "a recomputation, not a stored
+  snapshot — we keep no score history." Every delta is recalculated from the archive at
+  build time. A snapshot archive is planned (round 1 of the sequence).
+- **225 ZIP dashboards are indexed, and per `COMPARE_UNAVAILABLE` every ZIP in a metro
+  resolves to the same reading.** Every input is recorded at county or metro level, so a
+  ZIP-vs-metro comparison would be modelled rather than measured, and none is published.
+- **Cloudflare Bot Fight Mode / WAF has never been verified as not blocking citation
+  crawlers at the edge.** `robots.txt` and `llms.txt` allow them; the edge has no
+  obligation to agree. Still unverified now that the site is live. (Also described in the
+  Cloudflare-gotcha block below.)
+- **`BANNED_ACTION_PATTERNS` guards rendered dashboard actions and the weekly email only.**
+  It is referenced from `signalActions.ts` and `email/weekly.ts` and nowhere else — page
+  titles, headings and slugs are not checked against it.
+
+---
+
 ## Seam 4 — Dashboard consent/PII capture (reserved; build round pending)
 
 The dashboard's home-unlock (address + email → D1) requires, before

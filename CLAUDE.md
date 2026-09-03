@@ -106,26 +106,33 @@ and the brand voice.
 
 ## Definition of done
 
-"Done" for any round = **the owner reviews and approves it on staging**
-(`texashomeintelligence.<...>.workers.dev`). After approval, **Claude Code may push it live
-— but only on the owner's explicit command** (see `SECURITY.md`). DNS cutover from the old
-GitHub-Pages Jekyll site to the Cloudflare Worker is owner-owned.
+"Done" for any round = **the owner reviews and approves it**. Approval is the gate; the
+surface it is reviewed on is whatever the round makes sense on.
+
+**This matters more than it used to.** The site is live: `main` auto-deploys to
+`texashomeintelligence.com` via Workers Builds, so a merge to `main` *is* a production
+deploy. The branch is therefore the only thing standing between a commit and the live
+domain. Work on a branch, show the diff, and **merge only on the owner's explicit
+command** (see `SECURITY.md`).
 
 ---
 
 ## Repo reality (verify before trusting)
 
-Two sites live in this one repo:
-- **Repo root = the OLD Jekyll site** (`_data/`, `_layouts/`, `CNAME`) — still the *current
-  live site on GitHub Pages*. Leave it running until DNS cutover.
-- **`site/` = the Astro app** — the real build, deployed as a **Cloudflare Worker** and
-  served at the workers.dev **staging** URL. **All new work happens in `site/`.**
+Two sites live in this one repo, but only one of them serves:
+- **`site/` = the Astro app — the live site.** Deployed as a **Cloudflare Worker** and
+  serving **`https://texashomeintelligence.com`**. **All work happens here.**
+- **Repo root = the OLD Jekyll site** (`_data/`, `_layouts/`, `CNAME`) — **legacy, no
+  longer serving.** DNS is cut over. It is kept as history; don't edit it, and don't treat
+  anything in it as current.
 
 **Stack (in `site/`):** Astro 7 + TypeScript + Tailwind 4 + `@astrojs/cloudflare`,
-deployed via **Wrangler** (`site/wrangler.jsonc`, worker name `texashomeintelligence`).
-Bindings already exist: **D1** (`DB` = `texas-home-intelligence-db`) and **KV**
-(`PROJECTS_KV`, `SESSION`) — IDs in `wrangler.jsonc` are local placeholders the owner
-swaps for real ones. `robots.txt` + `llms.txt` already allow citation crawlers.
+deployed via **Wrangler** (`site/wrangler.jsonc`, worker name `texashomeintelligence`),
+built and deployed by **Git-connected Workers Builds on push to `main`**. Bindings:
+**D1** (`DB` = `texas-home-intelligence-db`) and **KV** (`PROJECTS_KV`, `SESSION`) — the
+IDs in `wrangler.jsonc` are the **real** ones, verified against the owner's Cloudflare
+account (that file's own comment records the check); the older "local placeholders" note
+is stale. `robots.txt` + `llms.txt` already allow citation crawlers.
 
 **Known scripts (run from `site/`; verify against `site/package.json` before relying):**
 `npm run dev` · `npm run build` · `npm run preview` · `npm run check` (astro check =

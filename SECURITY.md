@@ -27,7 +27,9 @@ Governed by `CLAUDE.md` Rule 1. This project is **lead-gen-grade secure now** an
 - Anything that could call other sites/services or "rack up bills."
 
 ### 🔴 Human-owns — never do without the owner performing/commanding it
-- **DNS cutover** (old GitHub-Pages Jekyll → the Cloudflare Worker) — owner does this.
+- ~~**DNS cutover** (old GitHub-Pages Jekyll → the Cloudflare Worker)~~ — **done.** The
+  owner cut DNS over; `texashomeintelligence.com` is served by the Worker and the Jekyll
+  root no longer serves. Kept here as a record, not a pending task.
 - **Billing / plan changes / provisioning paid infra.**
 - **Real secrets / API keys / real Cloudflare KV+D1 IDs** — owner sets these; you reference
   env/secret names only.
@@ -36,18 +38,24 @@ Governed by `CLAUDE.md` Rule 1. This project is **lead-gen-grade secure now** an
 
 ---
 
-## The push → deploy boundary (read carefully)
+## The push → deploy boundary (read carefully — the site is live)
 
-Committing to a deploy-tracked branch triggers a rebuild, so "editing repo files that get
-merged" can equal "deploying." Therefore:
+**`main` auto-deploys to `texashomeintelligence.com`.** Cloudflare Workers Builds is
+connected to this repo and builds + deploys on every push to `main`. There is no separate
+"promote to production" step and no approval gate on the Cloudflare side.
 
-- **Staging** (the `*.workers.dev` URL) is the **freely testable** surface. Iterate there.
-- The **DNS-live domain** is the **protected** surface.
+**So the branch is the only thing standing between a commit and production.** Merging to
+`main` IS deploying to the live domain — treat the two as the same action, because they
+are.
+
 - **Default: work on a feature branch.** Show the diff + a change summary. **Request
-  approval** to merge/deploy. Do **not** merge to `main` or deploy on your own initiative.
-- **Deploying to live IS allowed — but only on the owner's explicit command** ("push it
-  live" / "deploy to production"). Staging approval alone is **not** a deploy command.
-- "Done" = owner approves on staging. Live push is a **separate, explicit** step after that.
+  approval** to merge. Do **not** merge to `main` on your own initiative, ever.
+- **Merging IS allowed — but only on the owner's explicit command** ("merge it" / "push it
+  live" / "deploy"). Approval of a *branch* is not approval to merge it.
+- "Done" = the owner approves. The merge is a **separate, explicit** step after that.
+- The `*.workers.dev` hostname still resolves to the **same** Worker as the live domain —
+  it is not an independent staging environment. Anything deployed is deployed for both.
+  Pre-merge verification therefore happens on a branch, locally, not on a staging deploy.
 
 ---
 
