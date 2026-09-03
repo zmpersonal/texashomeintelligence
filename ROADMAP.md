@@ -96,10 +96,12 @@ Bring these back in later rounds; do **not** build them now:
 ## AI-optimization requirements (apply to every indexed authority page — NOT the dashboard)
 
 1. **Exact AI-prompt phrasings as H2s**, with the answer in the **first 1–2 sentences**.
-2. **Publish original data** (permit-valuation costs, hail counts, branded indices) — be the
-   primary source for prompts that currently cite nothing.
-3. **Extractable formats:** cost-by-material tables, key-findings blocks, ranges (not false
-   precision) — all in **server-rendered HTML**.
+2. **Publish original data** (permit activity counts, month-by-month permit timing,
+   within-city trade mix, hail counts, branded indices) — be the primary source for prompts
+   that currently cite nothing.
+3. **Extractable formats:** key-findings blocks, ranges (not false precision), and tables of
+   anything the data supports — all in **server-rendered HTML**. ⛔ **Cost-by-material tables
+   are BLOCKED** — not merely unbuilt. See the cost note below this list.
 4. **Schema:** FAQPage + Article + Dataset/DataCatalog + Organization (consistent "Texas Home
    Intelligence" entity, logo, sameAs) + WebSite + BreadcrumbList.
 5. **Own the "how to choose" decision frameworks** — a large share of homeowner AI demand.
@@ -112,6 +114,20 @@ Bring these back in later rounds; do **not** build them now:
 8. **Canonicals everywhere**, consistent trailing-slash policy, per-page OG/Twitter overrides.
 9. **Don't lead with "AI"** in user-facing copy. The visible value is Texas-specific
    intelligence and useful tools. AI optimization is how we get *found*, not the pitch.
+
+> ⛔ **No cost figure is publishable from permit data, in either metro.** Measured end to end
+> in rounds 4b–6 — `docs/audits/round-6-permit-measurement.md`. San Antonio's `DECLARED
+> VALUATION` is 0.00% populated on every residential and trade permit type; Austin's coalesced
+> `valuationUsd` has a **median of 1**, and its trade-named fields carry whole-project
+> construction values (plumbing median $900k, mechanical median $1m) rather than trade costs.
+> Declared valuation is in any case an applicant's fee-basis statement to the city, **not a
+> paid invoice**, so even a clean field would not be a homeowner cost.
+>
+> Requirement (2) previously named "permit-valuation costs" and (3) named "cost-by-material
+> tables". Both were falsified by that measurement and are corrected above. What permits
+> **do** license is activity, timing, seasonality and within-city trade mix (see the permit
+> rule in `CLAUDE.md`'s engineering rules). Unblocking a cost figure needs a **different
+> source**, not a better read of this one — a Rule 1 conversation, not a round to pick up.
 
 **Content grounding:** ground content in the roofing keyword research, not the retired
 AHI-AI-PHRASES file. ~Half of roofing AI prompts are "recommend/choose a roofer" — own that
