@@ -59,6 +59,54 @@ run into.
   crawlers at the edge.** `robots.txt` and `llms.txt` allow them; the edge has no
   obligation to agree. Still unverified now that the site is live. (Also described in the
   Cloudflare-gotcha block below.)
+- **A temporary enumeration step is riding along with the ingestion cron, and has to be
+  removed.** `.github/workflows/data-ingestion.yml` runs
+  `site/scripts/enumerate-sa-permits.ts` under `continue-on-error`, purely to print the real
+  San Antonio permit taxonomy to the run log so the roof-only filter can be widened against
+  measured values. It is read-only and commits nothing. **Delete the step and the script**
+  once the trade-permit question is settled. The script also re-states five constants copied
+  out of `sanAntonioPermits.ts`, because the pieces worth reusing there
+  (`findPermitsIssuedCsvUrl`, `PACKAGE_SHOW_URL`, `RESOURCE_NAME_MATCH`, `resolveHeader`) are
+  module-private and Round 4c placed fetcher edits out of scope. A drift check in the script
+  reads the fetcher's source and warns if a copied literal stops matching — but exporting
+  those four and deleting the copies would be the better fix if this step outlives the round.
+  🟡 owner's call.
+
+- **`fema-nfhl` is a working fetcher against a dead endpoint, and the run summary cannot
+  say so.** Reported in Round 4c; **not fixed.** Three separate findings, all read off the
+  code and the committed dataset files:
+  1. **It is not a stub.** `femaFlood.ts` has a real `fetchRaw()` that builds and issues an
+     ArcGIS query. It is nonetheless registered as `entry("stub", femaFlood)`
+     (`registry.ts:64`) and grouped with the genuine stubs both here (the item below) and in
+     `dataFreshness.ts`. The tier label and the implementation disagree, so "stub" in the run
+     log does not mean "unimplemented" for this one dataset.
+  2. **A dead endpoint and an untouched stub print the same word.** `failAttempt()` keeps
+     `status: "sample"` when a dataset was never `live`, and reports the outcome as
+     `sample-unchanged` whenever the file still holds its seeded row
+     (`runIngestion.ts:141`). So a fetcher that ran, was refused, and changed nothing is
+     summarised identically to one that never attempted anything. The evidence is not
+     wholly lost — `lastError` **is** written into the dataset file and committed — but it
+     is only visible by opening the JSON, never from the run summary.
+  3. **The diagnostic detail regressed between runs, and the regression overwrote the
+     useful message.** Run #30 recorded
+     `FEMA NFHL query failed: HTTP 404 from …/NFHL/MapServer/28/query?…` — the server
+     answered, so the path or the layer number is wrong (layer 28 was never verified live;
+     the fetcher's own header says to list the service's layers rather than guess another
+     number). Run #31 recorded a bare `fetch failed`, which is undici's wrapper for a
+     transport failure — DNS, TLS, reset or timeout — meaning no HTTP response arrived at
+     all. Those are different faults with different fixes, and the second is now the only
+     one on record: `lastError` is a single overwritten field, so `main`'s copy of
+     `fema-nfhl/austin.json` carries `"fetch failed"` and the 404 detail is gone.
+     The cause is one line: `runIngestion.ts:118` does
+     `err instanceof Error ? err.message : String(err)` and never reads `err.cause`, which
+     is exactly where undici puts the real reason. Every transport-level failure in every
+     fetcher therefore collapses to the same three words.
+  Adjacent, noted while reading and also unfixed: when the query *succeeds* but returns no
+  features, `femaFlood.ts` substitutes `floodZone: "X (unshaded)"` with a note calling it
+  "FEMA's default outside a mapped hazard area." That is an inference presented in the same
+  shape as a measurement. It cannot be reached today (no query has ever succeeded), but it
+  is worth settling before this feed goes live.
+
 - **The five stub datasets carry a placeholder freshness window.** `ercot`, `fema-nfhl`,
   `noaa-climate`, `tdi-losses` and `tx-forest-service` are set to 30 days in
   `site/src/lib/dataFreshness.ts` — a deliberately conservative placeholder, not a real
