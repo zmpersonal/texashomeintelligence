@@ -13,7 +13,10 @@
     "ingest": "tsx scripts/ingest.ts",
     "fetch-drought-map": "tsx scripts/fetch-drought-map.ts",
     "fonts:sync": "node scripts/sync-fonts.mjs",
-    "icons": "node scripts/generate-icons.mjs"
+    "icons": "node scripts/generate-icons.mjs",
+    "fixture": "tsx scripts/local-fixture.ts",
+    "fixture:check": "tsx scripts/local-fixture.ts --check",
+    "worker": "scripts/local-worker.sh"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.2.3",
