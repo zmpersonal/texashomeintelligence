@@ -76,6 +76,45 @@ run into.
   `parseValuation`. **A different source is needed** for San Antonio cost figures — Austin's
   approach does not port, and publishing an SA cost page off these rows would mean
   publishing commercial construction values under a homeowner heading.
+- **The local verification harness now survives a build - what it guarantees, and what it
+  still does not.** Round 9. `wrangler dev` persists local D1 and KV to `.wrangler/state`
+  **relative to cwd**, and the replays start the worker from `dist/server`, so state landed
+  inside Astro's output directory and `npm run build` destroyed it every time. That cost
+  three rounds of re-diagnosis. Two things fix it together:
+  `site/scripts/local-worker.sh` starts the worker with `--persist-to site/.wrangler/state`
+  (outside `dist/`, matched by `site/.gitignore`'s `.wrangler/` rule, so the test database is
+  never committed), and `site/scripts/local-fixture.ts` rebuilds the fixture from nothing.
+  **Guaranteed now:** migrations 0001-0004 and the four fixture accounts (POP, NOTRASH, SA,
+  EMPTY) with home profiles, addresses, reminders and KV sessions are reproducible from an
+  empty database; the script is idempotent (fixed ids, `INSERT OR REPLACE`, reminders
+  re-created each run so a replay that snoozes them does not leave the fixture that way);
+  session ids are written to `.wrangler/state/sessions.json` beside the database they
+  describe, so the two cannot disagree; a missing fixture makes a replay exit(2) naming the
+  script to run, instead of dying on `getComputedStyle(null)`; and the six durable replays
+  now live in `site/scripts/replays/` rather than an ephemeral scratchpad that died with the
+  session. The script cannot touch remote D1: every wrangler call is assembled in one place,
+  always carries `--local`, never `--remote`, and is re-checked before execution against four
+  refusal conditions (no `--local`, any remote-shaped argument, a persist path outside the
+  repo, a persist path inside `dist/`). All four were exercised and refuse.
+  **Operational constraint, discovered and now enforced:** the fixture must be applied while
+  the worker is STOPPED. A running worker keeps local D1 in memory and flushes its own state
+  back over anything written underneath it - measured: a `DELETE` applied while it was up
+  left the row untouched. `local-fixture.ts` now refuses if anything is listening on the
+  port, naming the fix. The order is: build, fixture, worker, replays.
+  **NOT guaranteed:** `playwright` is still not a repo dependency - it has only ever existed
+  in the session scratchpad, so the three RENDER replays cannot run from a clean checkout
+  until it is added to `devDependencies` (owner approval pending; the unit replays and
+  `verify-trade-mapping` have no such dependency and run anywhere). The fixture also does not
+  reproduce the ARR per-ZIP address shards or the generated dataset files - those come from
+  ingestion, and a replay asserting on them needs a prior `npm run ingest` or the committed
+  data. `r9render`'s unsubscribe section needs `EMAIL_LINK_SIGNING_KEY` and `WEEKLY_RUN_TOKEN` in a
+  gitignored `site/.dev.vars`; without them that endpoint 404s and the replay stops after its
+  first 12 assertions (all passing). `local-worker.sh` says so on startup.
+  And three `r7replay` assertions are data-dependent rather than fixture-dependent:
+  two event-card ones only pass while an Austin condition is active (there is none today, so
+  no event card renders - the feature working, not a regression), and one pixel-geometry
+  assertion has drifted 391px -> 398px. Those are recorded as findings, not fixed.
+
 - **Round 8 stores trade-permit activity as MONTHLY AGGREGATES, not per-permit rows — an
   owner decision, with a known and recoverable cost.** Widening both cities to the seven
   trade categories at per-permit granularity was measured, from the Round 6 enumerations, at
