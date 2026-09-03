@@ -22,11 +22,21 @@ esac
 # r9render's unsubscribe section calls /api/email/weekly-run/, which 404s
 # without these two. They are LOCAL TEST values, not secrets - but .dev.vars is
 # gitignored, so say what is missing rather than letting a replay fail opaquely.
-if [ ! -f "$SITE/.dev.vars" ]; then
+#
+# Round 9b: .dev.vars must be passed EXPLICITLY. wrangler looks for it relative
+# to its cwd, and this script runs from dist/server, so site/.dev.vars was never
+# being read - the same cwd-relative trap that put --persist-to inside dist/.
+# The endpoint's 404-on-missing-secret is deliberate (it does not reveal itself
+# to an unauthenticated caller), which made the omission look like a route bug.
+ENV_ARGS=()
+if [ -f "$SITE/.dev.vars" ]; then
+  ENV_ARGS=(--env-file "$SITE/.dev.vars")
+else
   echo "note: no site/.dev.vars - EMAIL_LINK_SIGNING_KEY and WEEKLY_RUN_TOKEN are unset." >&2
   echo "      Everything runs except r9render's unsubscribe section, which needs them." >&2
 fi
 
 mkdir -p "$STATE"
 cd "$SITE/dist/server"
-exec npx wrangler dev --config wrangler.json --local --persist-to "$STATE" --port "$PORT" "$@"
+exec npx wrangler dev --config wrangler.json --local \
+  --persist-to "$STATE" --port "$PORT" "${ENV_ARGS[@]+"${ENV_ARGS[@]}"}" "$@"

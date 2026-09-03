@@ -1,6 +1,6 @@
-import { chromium } from 'playwright';
+import { launchChromium } from './browser.mjs';
 const B='http://127.0.0.1:9400';
-const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
+const b=await launchChromium();
 let pass=0,fail=0;
 const A=(l,c,n='')=>{c?pass++:fail++;console.log(`  ${c?'PASS':'**FAIL**'}  ${l}${n?'  — '+n:''}`)};
 for (const w of [1440, 380]) {

@@ -1,5 +1,5 @@
 /** Round 9 — render-side checks for the pieces a green build cannot see. */
-import { chromium } from 'playwright';
+import { launchChromium } from './browser.mjs';
 import fs from 'node:fs';
 const B = 'http://127.0.0.1:9400';
 import path from 'node:path';
@@ -23,7 +23,7 @@ if (!fs.existsSync(SESSIONS_FILE)) {
   process.exit(2);
 }
 const S = JSON.parse(fs.readFileSync(SESSIONS_FILE, 'utf8'));
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const b = await launchChromium();
 let pass=0, fail=0;
 const A=(l,ok,n='')=>{ok?pass++:fail++;console.log(`  ${ok?'PASS':'**FAIL**'}  ${l}${n?'  — '+n:''}`)};
 
@@ -89,6 +89,26 @@ console.log('\n══ UNSUBSCRIBE PAGE ══');
   const res = await fetch(`${B}/api/email/weekly-run/?dryRun=1`, {
     method:'POST', headers:{Authorization:'Bearer local-test-run-token','Content-Type':'application/json'},
   });
+  // Round 9b. Without EMAIL_LINK_SIGNING_KEY and WEEKLY_RUN_TOKEN this endpoint
+  // 404s with plain text, and `res.json()` used to die on "Unexpected token 'N'"
+  // ten assertions in. Say what is missing instead.
+  if (!res.ok) {
+    console.error(`
+[x] /api/email/weekly-run/ returned ${res.status} - the unsubscribe section cannot run.
+
+    It needs two LOCAL TEST values in site/.dev.vars (gitignored, not secrets):
+
+        EMAIL_LINK_SIGNING_KEY=<any string>
+        WEEKLY_RUN_TOKEN=local-test-run-token
+
+    WEEKLY_RUN_TOKEN must match the Bearer token above exactly. Restart the
+    worker after writing the file.
+
+    The ${pass} assertion(s) above all passed; only this section is blocked.
+`);
+    await b.close();
+    process.exit(2);
+  }
   const report = await res.json();
   const body = report.outcomes.find(o=>o.body)?.body ?? '';
   const token = (body.match(/\?t=(\S+)/)||[])[1];
