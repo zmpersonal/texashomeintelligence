@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-03T16:41:55.204Z",
-  "lastSuccessAt": "2026-09-03T16:41:55.204Z",
+  "lastAttemptAt": "2026-09-03T17:22:04.890Z",
+  "lastSuccessAt": "2026-09-03T17:22:04.890Z",
   "lastError": null,
   "source": {
     "name": "Census ACS",
@@ -13,7 +13,7 @@
   "observations": [
     {
       "observedAt": "2023-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-03T16:41:55.699Z",
+      "ingestedAt": "2026-09-03T17:22:22.116Z",
       "key": "acs5-2023",
       "value": {
         "medianHomeAgeYears": 37,
