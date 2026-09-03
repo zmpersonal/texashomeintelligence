@@ -76,26 +76,56 @@ run into.
   `parseValuation`. **A different source is needed** for San Antonio cost figures — Austin's
   approach does not port, and publishing an SA cost page off these rows would mean
   publishing commercial construction values under a homeowner heading.
-- **Austin's permit taxonomy is still unobserved.** `austinPermits.ts` filters `%ROOF%` in a
-  SoQL `$where` BEFORE download and again in `isRoofingRelated()`, so nothing in this repo
-  has ever seen the full Austin vocabulary. A second temporary step
-  (`site/scripts/enumerate-austin-permits.ts`, Round 5) is wired to print it. **Until that
-  has run, do not widen the San Antonio filter** — the two metros would end up measuring
-  different things.
+- **Permit valuation is unusable as a cost signal in BOTH metros.** Measured run #34; full
+  tables in `docs/audits/round-6-permit-measurement.md`. San Antonio's `DECLARED VALUATION`
+  is commercial-only: **0.00%** populated on Mechanical (0/16,395), Electrical General
+  (0/13,977), Plumbing Irrigation (0/11,514), Re-Roof (0/10,161) and Foundation Repair
+  (0/5,243), against 100% on Comm New Building (915/915) and Comm Finish Out (258/258).
+  Exactly three non-commercial types carry anything at all — 13 rows between them (Plumbing
+  General 4, Plumbing Gas 8, On Premise Sign 1). Austin's trade-named fields are worse than
+  empty: they carry **whole-project construction values against a trade sub-permit** —
+  `plumbing_valuation_remodel` median **$900,000** across its 81 usable values,
+  `mechanical_valuation_remodel` median **$1,000,000** across 60. Austin's coalesced
+  `valuationUsd` holds 5,893 positive values of which 4,594 are ≤ 10 — **median 1**. The one
+  survivor is `electrical_valuation_remodel` restricted to Electrical Permits (7,088 of
+  15,932, median $4,700, IQR $1,200–$15,000), and **there is no electrical vertical**, so it
+  serves nothing today. Do not build a cost page, calculator or "typical spend" figure on
+  permit valuation in either metro.
+- **Austin has no roofing permit type; its roof count is a text match dominated by solar.**
+  `work_class = "Roof"` has **one row** in 54,798, and none of the five `permit_type_desc`
+  values mentions roofing, so essentially every match comes from free-text `description`. Of
+  the 1,945 stored roof-matched observations, **633 (32.54%) mention solar, photovoltaic or
+  PV**, and `work_class = "Auxiliary Power"` is **469 rows, 98.7% solar**. A hand-classified
+  random sample of 40 came out 35% actually re-roofing, 32.5% roof-adjacent, 32.5%
+  unrelated — the unrelated set including an event permit at a venue called "Moody Rooftop"
+  and a sign permit for a business named Hargrove Roofing. `/data/austin/roof-permits/`
+  labels this honestly today; the risk is a future round reading the count as roofing demand.
+- **Austin and San Antonio roofing counts must NEVER be compared or shown side by side.**
+  San Antonio counts a dedicated `Re-Roof Permit` type (10,161 rows, 100% roof); Austin runs
+  a `%ROOF%` text search that discards 96.57% of permits and is a third solar. Normalised
+  they differ **3.27×** (SA 6,140/365d vs Austin 1,878), or 16.78× against Austin's explicit
+  re-roof floor of 366. That gap is a measurement-method artefact, not a demand difference,
+  and two adjacent numbers on a page assert comparability whether or not the prose does.
+- **Cross-metro plumbing comparison is classification-dependent — do not publish as demand.**
+  SA's nine plumbing types aggregate to 41,277 → **24,945/365d** against Austin's single
+  Plumbing Permit type at **14,801** (1.69×). Most of the gap is irrigation: SA Plumbing
+  Irrigation is **6,958/365d** against Austin's `work_class = "Irrigation"` at **1,851**, a
+  3.8× difference in a category where the two cities plausibly have different permitting
+  rules rather than different plumbing. Excluding irrigation both sides gives ≈1.4×.
+- **Mechanical is the one cross-metro comparison the data licenses.** SA aggregate
+  (Mechanical 16,395 + LSR Mechanical 1,766 + Mechanical Completion 268 = 18,429) normalises
+  to **11,137/365d** against Austin's measured **10,703** — **1.04×**. Two cities, two
+  permitting systems, two independently written parsers, agreeing within 4%. That agreement
+  is also the best evidence both feeds are being read correctly.
 
-- **A temporary enumeration step is riding along with the ingestion cron, and has to be
-  removed.** `.github/workflows/data-ingestion.yml` runs
-  `site/scripts/enumerate-sa-permits.ts` and `site/scripts/enumerate-austin-permits.ts`
-  under `continue-on-error`, purely to print the real permit taxonomy of each metro to the
-  run log so the roof-only filter can be widened against measured values. Both are read-only
-  and commit nothing. **Delete both steps and both scripts** once the trade-permit question
-  is settled. The script also re-states five constants copied
-  out of `sanAntonioPermits.ts`, because the pieces worth reusing there
-  (`findPermitsIssuedCsvUrl`, `PACKAGE_SHOW_URL`, `RESOURCE_NAME_MATCH`, `resolveHeader`) are
-  module-private and Round 4c placed fetcher edits out of scope. A drift check in the script
-  reads the fetcher's source and warns if a copied literal stops matching — but exporting
-  those four and deleting the copies would be the better fix if this step outlives the round.
-  🟡 owner's call.
+- **The two TEMP enumeration steps and their scripts were removed in Round 7**, their
+  purpose served. Every measurement they produced is preserved in
+  `docs/audits/round-6-permit-measurement.md` with the run number for each figure, and both
+  scripts are recoverable from git history at the Round 6 commit if a re-measure is ever
+  needed. One thing genuinely goes away with them: the Austin step cross-checked the
+  server-side `%ROOF%` count against a local reproduction of `isRoofingRelated()` on every
+  run — a live consistency check between the fetcher's SoQL predicate and its JavaScript
+  one. It never failed, and nothing replaces it.
 
 - **`fema-nfhl` is a working fetcher against a dead endpoint, and the run summary cannot
   say so.** Reported in Round 4c; **not fixed.** Three separate findings, all read off the
