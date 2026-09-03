@@ -27,7 +27,9 @@ Governed by `CLAUDE.md` Rule 1. This project is **lead-gen-grade secure now** an
 - Anything that could call other sites/services or "rack up bills."
 
 ### 🔴 Human-owns — never do without the owner performing/commanding it
-- **DNS cutover** (old GitHub-Pages Jekyll → the Cloudflare Worker) — owner does this.
+- ~~**DNS cutover** (old GitHub-Pages Jekyll → the Cloudflare Worker)~~ — **done.** The
+  owner cut DNS over; `texashomeintelligence.com` is served by the Worker and the Jekyll
+  root no longer serves. Kept here as a record, not a pending task.
 - **Billing / plan changes / provisioning paid infra.**
 - **Real secrets / API keys / real Cloudflare KV+D1 IDs** — owner sets these; you reference
   env/secret names only.
@@ -36,18 +38,49 @@ Governed by `CLAUDE.md` Rule 1. This project is **lead-gen-grade secure now** an
 
 ---
 
-## The push → deploy boundary (read carefully)
+## The push → deploy boundary (read carefully — the site is live)
 
-Committing to a deploy-tracked branch triggers a rebuild, so "editing repo files that get
-merged" can equal "deploying." Therefore:
+**`main` auto-deploys to `texashomeintelligence.com`.** Cloudflare Workers Builds is
+connected to this repo and builds + deploys on every push to `main`. There is no separate
+"promote to production" step and no approval gate on the Cloudflare side.
 
-- **Staging** (the `*.workers.dev` URL) is the **freely testable** surface. Iterate there.
-- The **DNS-live domain** is the **protected** surface.
+**So the branch is the only thing standing between a commit and production.** Merging to
+`main` IS deploying to the live domain — treat the two as the same action, because they
+are.
+
 - **Default: work on a feature branch.** Show the diff + a change summary. **Request
-  approval** to merge/deploy. Do **not** merge to `main` or deploy on your own initiative.
-- **Deploying to live IS allowed — but only on the owner's explicit command** ("push it
-  live" / "deploy to production"). Staging approval alone is **not** a deploy command.
-- "Done" = owner approves on staging. Live push is a **separate, explicit** step after that.
+  approval** to merge. Do **not** merge to `main` on your own initiative, ever.
+- **Merging IS allowed — but only on the owner's explicit command** ("merge it" / "push it
+  live" / "deploy"). Approval of a *branch* is not approval to merge it.
+- "Done" = the owner approves. The merge is a **separate, explicit** step after that.
+- The `*.workers.dev` hostname still resolves to the **same** Worker as the live domain —
+  it is not an independent staging environment. Anything deployed is deployed for both.
+  Pre-merge verification therefore happens on a branch, locally, not on a staging deploy.
+
+### 🟡 Open item — there is no review surface. Needs an owner decision.
+
+**Recorded, not solved.** Removing the staging claim above leaves a real gap rather than
+just a wording fix, and it should be decided deliberately.
+
+`wrangler.jsonc` defines one Worker with no environments (`definedEnvironments: []`), so
+**no deployed pre-production surface exists.** Under the old model "done" meant the owner
+reviewed a running deployment before it reached the public. Today it cannot mean that.
+
+What "the owner approves before merge" actually means right now:
+
+- the **diff** on a branch, and
+- a **report of local verification** — `build`, `check`, `verify-content`, the Playwright
+  render checks and assertion replays run against a local Miniflare worker.
+
+Nobody looks at the change on a real deployment before it becomes production. Local
+verification has caught things a green build could not (a dropped `@import`, a missing
+`h1`, a 308 on a POST, a throwing adapter getter), so this is not nothing — but it is a
+narrower gate than reviewing a deployed artifact, and it is worth naming as such rather
+than letting "approves before merge" quietly carry its old meaning.
+
+**This needs an owner decision before any structurally significant round** — the county
+data model and the San Antonio parity work both change the serving path. No option is
+proposed here on purpose; the decision is the owner's to frame.
 
 ---
 
@@ -57,8 +90,10 @@ merged" can equal "deploying." Therefore:
   client JS.
 - All keyed calls and all tool/scoring logic run **server-side** (Astro server routes on the
   Worker). The browser gets outputs, never keys or proprietary constants.
-- `wrangler.jsonc` KV/D1 IDs in the repo are **local placeholders**; real IDs are the
-  owner's to set in the Cloudflare environment.
+- `wrangler.jsonc` KV/D1 IDs in the repo are the **real** ones, verified against the
+  owner's Cloudflare account (that file's own comment records the check). They are resource
+  identifiers, not credentials — useless without account authentication — which is why they
+  are committed. The older "local placeholders" note was stale.
 - If a task seems to require a secret you don't have, **stop and stub** with a documented
   TODO in `HANDOFF.md` — never hardcode or fake it.
 

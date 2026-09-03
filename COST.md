@@ -40,6 +40,33 @@ The good news: the chosen architecture already points this way. These rules keep
 
 ---
 
+## Open item — the AI content poster (round 7) 🟡 needs an owner decision
+
+**Unresolved. Recorded here so it is decided deliberately rather than discovered mid-build.**
+
+The owner-approved sequence in `ROADMAP.md` includes an **AI content poster** running on a
+**recurring cadence**. That pulls directly against rule (2) above: *AI tokens are spent at
+authoring/build time only, never per pageview or per data refresh.* A poster that generates
+copy on a schedule is, by construction, spending tokens on a recurring automated trigger —
+which is what that rule exists to prevent.
+
+It is not obviously a violation, and the distinction matters:
+
+- **Per data refresh / per pageview** is what rule (2) forbids — cost that scales with
+  traffic or with the ingestion cron, and output nobody reviewed.
+- **A scheduled authoring job** could be closer to authoring-time spend: bounded volume, a
+  human in the loop, output reviewed before it is published.
+
+Which of those it is depends on decisions nobody has made yet — cadence, volume per run,
+model, whether output publishes automatically or queues for review, and whether any of it
+touches the serving or ingestion path (it must not).
+
+**This resolves nothing.** Before round (7) is scoped, the owner decides whether the rule
+bends, and if so exactly how far. Rounds (5) and (6) — the social and article posters — may
+raise the same question depending on how they are built; the same decision covers them.
+
+---
+
 ## Don't-over-build
 
 - Target scale is **~90–300 leads/month**. Prefer **boring, cheap, reliable** over clever and

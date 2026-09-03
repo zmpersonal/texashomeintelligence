@@ -342,6 +342,12 @@ section.block h2 { max-width: 40em; }
 .error-badge::before { background: var(--thi-severe); }
 .live-badge { background: var(--thi-safe-bg); color: var(--thi-safe-text); }
 .live-badge::before { background: var(--thi-safe); }
+/* Round 1. Data that is real and successfully fetched but older than its
+ * source's publication cadence allows. Watch, not elevated: the number is
+ * measured and its date is printed beside it — this is "know how old it is",
+ * not "the feed is broken", which is what .stale-badge now means. */
+.aged-badge { background: var(--thi-watch-bg); color: var(--thi-watch-text); }
+.aged-badge::before { background: var(--thi-watch); }
 .data-card { border-left: 3px solid var(--thi-link); }
 .data-card .metric-label { font-size: 0.82rem; color: var(--ink-soft); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
 .data-card .metric-note { font-size: 0.82rem; margin-top: 6px; }

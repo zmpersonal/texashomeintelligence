@@ -3,7 +3,7 @@ import Base from "../../layouts/Base.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import DataStatus from "../../components/DataStatus.astro";
 import { getCollection } from "astro:content";
-import { findDataset } from "../../lib/datasets";
+import { findDataset, freshnessOf, type DisplayStatus } from "../../lib/datasets";
 
 const title = "Methodology | Texas Home Intelligence";
 const description =
@@ -21,6 +21,15 @@ const description =
 const sources = await getCollection("dataSources");
 const LOCATIONS = ["austin", "san-antonio", "texas"];
 
+/** Least to most severe, for reducing a multi-location source to one badge. */
+const DISPLAY_SEVERITY: DisplayStatus[] = [
+  "current",
+  "out-of-date",
+  "feed-down",
+  "unavailable",
+  "sample",
+];
+
 const sourceRows = sources.map((entry) => {
   const datasets = LOCATIONS.map((loc) => findDataset(entry.data.id, loc)).filter(
     (d) => d !== undefined,
@@ -32,9 +41,33 @@ const sourceRows = sources.map((entry) => {
     .filter((v): v is string => Boolean(v))
     .sort()
     .at(-1);
+  // The OLDEST record across this source's files — the one that decides the
+  // badge, so it is also the one the row must show. Without it a row could
+  // read "OUT OF DATE · Last checked: today" and leave the reader with no way
+  // to see how old the data actually is.
+  const oldestThrough = datasets
+    .map((d) => freshnessOf(d).dataThrough)
+    .filter((v): v is string => Boolean(v))
+    .sort()
+    .at(0);
   const status: "live" | "stale" | "sample" =
     live.length > 0 ? "live" : stale.length > 0 ? "stale" : "sample";
-  return { ...entry.data, status, asOf: status === "sample" ? undefined : newest, connected: datasets.length > 0 };
+  // One row covers a source across every location it publishes for, so the
+  // row reports its WORST state: a source that is current in Austin and out
+  // of date in San Antonio is not simply "current". `display` is resolved
+  // per file, then reduced by severity.
+  const display = datasets
+    .map((d) => freshnessOf(d).display)
+    .sort((a, b) => DISPLAY_SEVERITY.indexOf(b) - DISPLAY_SEVERITY.indexOf(a))
+    .at(0);
+  return {
+    ...entry.data,
+    status,
+    display: display ?? "sample",
+    asOf: status === "sample" ? undefined : newest,
+    dataThrough: status === "sample" ? undefined : oldestThrough,
+    connected: datasets.length > 0,
+  };
 });
 
 const connectedCount = sourceRows.filter((r) => r.status === "live").length;
@@ -101,7 +134,7 @@ const dateModified = sourceRows
                 <td>{row.thiOutput}</td>
                 <td>
                   {row.connected && row.status !== "sample" ? (
-                    <DataStatus status={row.status} asOf={row.asOf} />
+                    <DataStatus status={row.display} asOf={row.asOf} dataThrough={row.dataThrough} />
                   ) : (
                     <span class="sample-badge">Not yet connected</span>
                   )}

@@ -1,26 +1,46 @@
 ---
 /**
- * Generic status/source/last-updated renderer for any data card, driven
- * entirely by the shared `sampleValue` shape from content.config.ts
- * ({status, asOf, source}). No page should need its own "is this real?"
- * conditional — this component is the single place that logic lives.
+ * Generic status/source/last-updated renderer for any data card. No page
+ * should need its own "is this real?" conditional — this component is the
+ * single place that logic lives.
  *
- * status:
- *  - "sample"  → illustrative placeholder, not a live fact yet
- *  - "stale"   → last known-good value, preserved rather than zeroed out
- *  - "error"   → feed failed and no valid value has ever been obtained
- *  - "live"    → a real, currently-fresh value
+ * ── WHAT THE BADGE MEANS ──────────────────────────────────────────────────
+ * The status passed in is `Freshness.display` from `datasets.ts`, RESOLVED at
+ * render time from the age of the data. It is not `DatasetFile.status`, which
+ * records only whether the last ingest attempt succeeded and therefore cannot
+ * answer "is this current?" — a successful fetch of an annual series still
+ * returns a year-old record.
  *
+ *  - "current"      → the newest record is inside the window that source's
+ *                     publication cadence allows (see `dataFreshness.ts`).
+ *                     The ONLY state that claims currency.
+ *  - "out-of-date"  → the fetch worked; the data itself is older than that
+ *                     window. The number is real and still shown — with its
+ *                     date — but it is not current.
+ *  - "feed-down"    → the last fetch failed. Showing the last known good
+ *                     value rather than a blank or a zero.
+ *  - "unavailable"  → the feed failed and no valid value has ever been
+ *                     obtained. Nothing to show.
+ *  - "sample"       → illustrative placeholder, not a live fact.
+ *
+ * `out-of-date` and `feed-down` are separate on purpose. "We could not reach
+ * the source" and "we reached it and it has nothing newer" are different facts
+ * about the number on screen, and a reader deciding whether to trust it needs
+ * to tell them apart.
+ *
+ * ── WHY TWO DATES ─────────────────────────────────────────────────────────
  * `asOf` (when we last confirmed the feed) and `dataThrough` (how far the
- * records themselves actually run) are deliberately separate: several sources
- * publish on a lag, so a feed checked today can still only cover through
- * months ago. Collapsing the two would overstate how current the data is.
- * Callers may pass a raw ISO timestamp or an already-human string.
+ * records themselves run) stay separate: several sources publish on a lag, so
+ * a feed checked today can still only cover through months ago. Collapsing the
+ * two would overstate how current the data is — and it was collapsing the
+ * BADGE into the fetch outcome that produced exactly that overstatement before
+ * this round. Callers may pass a raw ISO timestamp or an already-human string.
  */
 import { formatDate, machineDate } from "../lib/format";
+import type { DisplayStatus } from "../lib/dataFreshness";
 
 interface Props {
-  status: "sample" | "stale" | "live" | "error";
+  status: DisplayStatus;
   asOf?: string;
   dataThrough?: string;
   source?: string;
@@ -28,23 +48,35 @@ interface Props {
 
 const { status, asOf, dataThrough, source } = Astro.props;
 
+// Status colour carries the ramp, as a small chip only (BRAND.md): safe for
+// current, watch for data that is merely old, elevated for a failing feed,
+// severe for nothing-to-show.
 const badgeClass = {
+  current: "live-badge",
+  "out-of-date": "aged-badge",
+  "feed-down": "stale-badge",
+  unavailable: "error-badge",
   sample: "sample-badge",
-  stale: "stale-badge",
-  error: "error-badge",
-  live: "live-badge",
 }[status];
 
+// Each label states its own fact and claims nothing beyond it. "LIVE" is
+// correct only inside the expectation window, which is the only place it is
+// now used.
 const badgeLabel = {
+  current: "LIVE",
+  "out-of-date": "OUT OF DATE",
+  "feed-down": "FEED DOWN",
+  unavailable: "UNAVAILABLE",
   sample: "SAMPLE",
-  stale: "STALE",
-  error: "UNAVAILABLE",
-  live: "LIVE",
 }[status];
+
+// How the date beside the badge is introduced, so the two always agree.
+const asOfLabel =
+  status === "feed-down" ? "Last known value:" : status === "out-of-date" ? "Last checked:" : "Updated:";
 ---
 
 <span class={badgeClass}>{badgeLabel}</span>
-{status === "error" ? (
+{status === "unavailable" ? (
   <p class="metric-note">
     This feed is temporarily unavailable and no prior value has been
     recorded yet. We do not substitute a zero or blank value for missing
@@ -58,7 +90,7 @@ const badgeLabel = {
     {dataThrough && asOf && <span aria-hidden="true" class="data-meta-sep">·</span>}
     {asOf && (
       <span>
-        {status === "stale" ? "Last known value:" : "Updated:"}{" "}
+        {asOfLabel}{" "}
         <time datetime={machineDate(asOf)}>{formatDate(asOf)}</time>
       </span>
     )}

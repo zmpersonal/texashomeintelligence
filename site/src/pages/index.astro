@@ -133,7 +133,7 @@ const description =
             <p class="metric-value">{stat.value}</p>
             <p class="metric-note">{stat.label}</p>
             <DataStatus
-              status={dataset.status}
+              status={freshness.display}
               asOf={freshness.asOf}
               dataThrough={freshness.dataThrough}
               source={dataset.source.name}

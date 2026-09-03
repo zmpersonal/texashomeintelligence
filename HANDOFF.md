@@ -25,9 +25,80 @@ Workers build-time environment variables in the Workers Builds config.
   wraps the same two steps for manual deploys)
 - Build-time env vars when analytics go live: `PUBLIC_GA4_MEASUREMENT_ID`,
   `PUBLIC_CF_BEACON_TOKEN`
-- Real KV/D1 namespace IDs substituted for the placeholder IDs in
-  `wrangler.jsonc` (or bound in the dashboard) before a production-grade
-  deploy — the committed IDs are local/Miniflare placeholders.
+- ~~Real KV/D1 namespace IDs substituted for the placeholder IDs in
+  `wrangler.jsonc`~~ — **done, and the "placeholders" note was wrong.** All
+  three committed IDs are the real ones, verified against the owner's
+  Cloudflare account (that file's own comment records the check). Nothing
+  needs swapping before a deploy.
+
+## Open items — carried into the county/parity rounds
+
+Recorded, not resolved. Each was verified against the code on 2026-08-30; none is a
+decision, a plan, or a commitment to fix. They are the known gaps the first two rounds of
+the approved sequence (county data model + score history, then San Antonio parity) will
+run into.
+
+- **`sanAntonioPermits.ts` discards every non-roofing permit at ingest.**
+  `if (!haystack.includes("roof")) continue;` (line 131) filters on type + description, so
+  SA plumbing and HVAC have no permit data at all — not sparse data, none.
+- **SA permit observations carry no `valuationUsd`; Austin's do.** Measured: Austin
+  1,923 observations / 501 with a valuation; San Antonio 5,148 / 0. **Cause unverified** —
+  it could be the source field, the mapping, or the roofing filter interacting with it.
+- **`census-acs`, `usda-soil` and `bls` have `austin.json` only.** No San Antonio file
+  exists for any of the three.
+- **NWS has no San Antonio feed.** `COORDS` in the NWS fetcher is typed
+  `Record<"austin", …>` — San Antonio is excluded by the type, not just absent from the
+  data, so there is no forecast or alert feed for it.
+- **`compute.ts` keeps no score history.** Its own comment: "a recomputation, not a stored
+  snapshot — we keep no score history." Every delta is recalculated from the archive at
+  build time. A snapshot archive is planned (round 1 of the sequence).
+- **225 ZIP dashboards are indexed, and per `COMPARE_UNAVAILABLE` every ZIP in a metro
+  resolves to the same reading.** Every input is recorded at county or metro level, so a
+  ZIP-vs-metro comparison would be modelled rather than measured, and none is published.
+- **Cloudflare Bot Fight Mode / WAF has never been verified as not blocking citation
+  crawlers at the edge.** `robots.txt` and `llms.txt` allow them; the edge has no
+  obligation to agree. Still unverified now that the site is live. (Also described in the
+  Cloudflare-gotcha block below.)
+- **The five stub datasets carry a placeholder freshness window.** `ercot`, `fema-nfhl`,
+  `noaa-climate`, `tdi-losses` and `tx-forest-service` are set to 30 days in
+  `site/src/lib/dataFreshness.ts` — a deliberately conservative placeholder, not a real
+  cadence. Each is `sample`-status today, so the window is never reached; the moment one is
+  wired to a live source its real publication cadence has to replace that 30 and the
+  comment beside it says so. (The brief that raised this said "four" and listed five;
+  there are five.)
+
+### ✅ Resolved — `[skip ci]` suppressed every ingestion deployment
+
+**Confirmed 2026-09-03 and fixed on the Round 1 branch.** Recorded here rather than
+deleted, because the failure mode is worth remembering.
+
+`[skip ci]` is a GitHub Actions convention, and **Cloudflare Workers Builds honors it
+too.** The ingestion workflow put it in every commit message, so every scheduled data
+commit landed on `main` and was never built. The live site kept serving whatever was baked
+in at the last hand-authored merge while `main` accumulated fresh readings nobody could
+see. Silent by construction: no error, no failed build — the Cloudflare build reported
+"skipped".
+
+Evidence: build `2d70ac3` ("Data ingestion: update generated datasets [skip ci]") shows
+status **skipped**, and Version History contains **no version for any ingestion commit** —
+only merges and dashboard secret changes.
+
+Two things follow that are worth carrying forward:
+
+1. **GitHub Pages did the opposite.** Pages ignores `[skip ci]` and rebuilt the legacy
+   Jekyll site on every ingestion push — so the one surface that kept redeploying was the
+   retired one. The owner is unpublishing Pages and clearing its custom domain by hand; the
+   root `CNAME` (which re-established Pages' claim on the domain) is deleted on this branch.
+2. **The fix is not verifiable before merge.** Removing `[skip ci]` is a one-word change,
+   but the only real proof is a scheduled run producing an actual Cloudflare version instead
+   of a skipped build. That can first be observed at the **next 09:17 UTC ingestion run
+   after this merges**. Check Workers & Pages → `texashomeintelligence` → Deployments for a
+   version whose commit is a `Data ingestion: update generated datasets` commit.
+- **`BANNED_ACTION_PATTERNS` guards rendered dashboard actions and the weekly email only.**
+  It is referenced from `signalActions.ts` and `email/weekly.ts` and nowhere else — page
+  titles, headings and slugs are not checked against it.
+
+---
 
 ## Seam 4 — Dashboard consent/PII capture (reserved; build round pending)
 
@@ -662,7 +733,7 @@ data-access layer — seeded with obviously-fake sample rows only
 | D1 seed script (sample rows) | `site/migrations/seed.sql` | ✅ built |
 | KV binding (project state + return tokens) | `site/src/lib/kv.ts` | ✅ built (`getProject`, `putProject`, `mapTokenToProject`, `resolveToken`) |
 | Data-access layer (typed, used by the API routes) | `site/src/lib/db.ts` | ✅ built (`insertProject`, `updateProjectServiceLocation`, `updateProjectStatus`, `insertIntakeResponse`, `insertGeneratedBrief`, `insertContractorRequest`) |
-| `wrangler.jsonc` bindings | `site/wrangler.jsonc` | ✅ present, with **local placeholder IDs only** (`local-placeholder-projects-kv`, `local-placeholder-d1-database`) — these are not real Cloudflare resource IDs |
+| `wrangler.jsonc` bindings | `site/wrangler.jsonc` | ✅ present, with the **real Cloudflare resource IDs**, verified against the owner's account. (This row previously said "local placeholder IDs only — `local-placeholder-projects-kv`, `local-placeholder-d1-database`". Those strings are long gone from the file; the note outlived them.) |
 
 Verified locally end-to-end via `wrangler dev` (real Miniflare-backed KV +
 D1, no mocks): project creation, PATCH-driven answer saves, resume via
@@ -683,13 +754,14 @@ no such table: projects`). Locally we now always apply migrations with
 here; this is purely a local-dev-loop detail and has no bearing on how
 you provision production D1.
 
-**What you do:** provision the real D1 database + KV namespace in your
+**What you do:** ~~provision the real D1 database + KV namespace in your
 Cloudflare account, bind them in the Pages project settings (replacing the
 local placeholder IDs in `wrangler.jsonc` with real ones, or via
-environment-specific config), run `migrations/0001_init.sql` against
-production, and continue building out any schema beyond what's scaffolded
-here. Do **not** run `migrations/seed.sql` against production — it's
-sample data only.
+environment-specific config)~~ — **done.** The resources exist and
+`wrangler.jsonc` carries their real IDs. What remains: run
+`migrations/0001_init.sql` against production, and continue building out any
+schema beyond what's scaffolded here. Do **not** run `migrations/seed.sql`
+against production — it's sample data only.
 
 ---
 

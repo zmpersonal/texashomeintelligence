@@ -134,7 +134,7 @@ const dateModified = signalReading?.freshness.asOf;
           <p class="metric-label">{signalReading.stats[0].label}</p>
           <p class="metric-value">{signalReading.stats[0].value}</p>
           <DataStatus
-            status={signalReading.dataset.status}
+            status={signalReading.freshness.display}
             asOf={signalReading.freshness.asOf}
             dataThrough={signalReading.freshness.dataThrough}
             source={signalReading.dataset.source.name}

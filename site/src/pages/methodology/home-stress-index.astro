@@ -8,6 +8,7 @@
  */
 import Base from "../../layouts/Base.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import { resolveDisplayStatus } from "../../lib/dataFreshness";
 import DataStatus from "../../components/DataStatus.astro";
 import FaqAccordion from "../../components/FaqAccordion.astro";
 import {
@@ -26,6 +27,22 @@ import { areaDefinitions, coverageSummary, coverageTotals } from "../../lib/zipA
 import { formatDate, machineDate } from "../../lib/format";
 
 const areas = areaDefinitions().map((a) => computeStressIndex(a));
+
+/**
+ * The composite is only as current as its STALEST input, and
+ * `freshnessOfInputs` already records which dataset that is. So judge it
+ * against that dataset's own window rather than a blanket one: NOAA Storm
+ * Events running three months behind is that source working normally, and
+ * measuring the composite against a two-day forecast window would call it
+ * permanently out of date for a lag that is not a fault.
+ */
+function compositeDisplay(f: { dataThrough?: string; limitingDatasetId?: string }) {
+  return resolveDisplayStatus({
+    datasetId: f.limitingDatasetId ?? "",
+    feedStatus: "live",
+    dataThrough: f.dataThrough,
+  });
+}
 const coverage = coverageSummary();
 const totals = coverageTotals();
 
@@ -243,7 +260,7 @@ const description =
         <div class="card" style="margin-bottom:16px;">
           <h3>{area.areaLabel} — {area.composite.score}/100 ({area.composite.bandLabel})</h3>
           <DataStatus
-            status="live"
+            status={compositeDisplay(area.freshness)}
             asOf={area.freshness.asOf}
             dataThrough={area.freshness.dataThrough}
             source="Composite of the sources listed above"

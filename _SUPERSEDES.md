@@ -1,3 +1,12 @@
+> **Superseded — historical record only, as of 2026-08-30.** Every instruction in this file
+> has been carried out, including the last outstanding one ("update `README.md` as part of
+> go-live"). The current governance set is `CLAUDE.md` (hub) → `ROADMAP.md`, `SECURITY.md`,
+> `COST.md`, `BRAND.md`, `REVIEW.md`, `HANDOFF.md`. Read those, not this.
+>
+> Kept for two reasons: it is the only record of *why* the governance layer was swapped
+> (a diff shows what changed, not the intent), and it carries the only root-level warning
+> that `THI-round-homepage-nav.md` — still present in the repo — is partly stale.
+
 # _SUPERSEDES.md — what replaced what (read once, then delete if you like)
 
 This bundle refreshes the **governance layer** of the repo. Here's the map so nothing is lost
@@ -25,8 +34,9 @@ and nothing is duplicated.
   you next touch a seam.
 - **`BUILD_PLAN.md`** — the historical Phase 0–5 build log. Kept as reference. Where it
   disagrees with `ROADMAP.md`, **`ROADMAP.md` wins** (it's the forward-looking scope).
-- **`README.md`** — currently describes the **old Jekyll** site. Leave it until DNS cutover;
-  update it to describe the Astro app in `site/` as part of go-live.
+- **`README.md`** — ~~currently describes the **old Jekyll** site. Leave it until DNS
+  cutover; update it to describe the Astro app in `site/` as part of go-live.~~ **Done.**
+  DNS is cut over and `README.md` now describes the Astro app.
 - **`THI-round-homepage-nav.md`** — an earlier homepage/nav round spec. **Partly stale:** it
   still assumes a `/tools/` hub and four cards below the hero, which this build **drops**.
   Treat `ROADMAP.md` + `CLAUDE.md` as current; use that file only for historical context.
