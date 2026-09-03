@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-03T15:58:44.293Z",
-  "lastSuccessAt": "2026-09-03T15:58:44.293Z",
+  "lastAttemptAt": "2026-09-03T16:04:50.459Z",
+  "lastSuccessAt": "2026-09-03T16:04:50.459Z",
   "lastError": null,
   "source": {
     "name": "USDA Soil Data Access",
@@ -20,8 +20,8 @@
       }
     },
     {
-      "observedAt": "2026-09-03T15:58:46.766Z",
-      "ingestedAt": "2026-09-03T15:58:46.766Z",
+      "observedAt": "2026-09-03T16:04:51.079Z",
+      "ingestedAt": "2026-09-03T16:04:51.079Z",
       "key": "2026-09",
       "value": {
         "soilType": "Urban land, 0 to 6 percent slopes"

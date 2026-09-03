@@ -1,0 +1,24 @@
+{
+  "datasetId": "bls",
+  "location": "san-antonio",
+  "methodologyVersion": "v1",
+  "status": "live",
+  "lastAttemptAt": "2026-09-03T16:05:00.501Z",
+  "lastSuccessAt": "2026-09-03T16:05:00.501Z",
+  "lastError": null,
+  "source": {
+    "name": "BLS Occupational Employment and Wage Statistics",
+    "url": "https://www.bls.gov/oes/"
+  },
+  "observations": [
+    {
+      "observedAt": "2025-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T16:05:00.699Z",
+      "key": "OEUM004170000000047215208-2025",
+      "value": {
+        "trade": "Plumbers, Pipefitters, and Steamfitters (San Antonio-New Braunfels MSA)",
+        "medianHourlyWageUsd": 27.97
+      }
+    }
+  ]
+}

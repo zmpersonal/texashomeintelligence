@@ -1,0 +1,24 @@
+{
+  "datasetId": "census-acs",
+  "location": "san-antonio",
+  "methodologyVersion": "v1",
+  "status": "live",
+  "lastAttemptAt": "2026-09-03T16:04:53.543Z",
+  "lastSuccessAt": "2026-09-03T16:04:53.543Z",
+  "lastError": null,
+  "source": {
+    "name": "Census ACS",
+    "url": "https://www.census.gov/data/developers/data-sets/acs-5year.html"
+  },
+  "observations": [
+    {
+      "observedAt": "2023-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T16:04:59.996Z",
+      "key": "acs5-2023",
+      "value": {
+        "medianHomeAgeYears": 37,
+        "ownerOccupiedPct": 59.1
+      }
+    }
+  ]
+}
