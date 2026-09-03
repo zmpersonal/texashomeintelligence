@@ -1,0 +1,2427 @@
+{
+  "datasetId": "permit-trade-activity",
+  "location": "san-antonio",
+  "methodologyVersion": "v1",
+  "status": "live",
+  "lastAttemptAt": "2026-09-03T21:05:28.489Z",
+  "lastSuccessAt": "2026-09-03T21:05:28.489Z",
+  "lastError": null,
+  "source": {
+    "name": "City of San Antonio Permits Open Data",
+    "url": "https://data.sanantonio.gov/"
+  },
+  "observations": [
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/electrical/2025-09",
+      "value": {
+        "category": "electrical",
+        "month": "2025-09",
+        "permitCount": 880,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical General Permit",
+            "count": 670
+          },
+          {
+            "value": "Electrical TOPS Permit",
+            "count": 121
+          },
+          {
+            "value": "Electrical TML Permit",
+            "count": 53
+          },
+          {
+            "value": "Electrical Reconnect Permit",
+            "count": 22
+          },
+          {
+            "value": "Electrical Completion Permit",
+            "count": 12
+          },
+          {
+            "value": "LSR Electrical Permit",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/foundation/2025-09",
+      "value": {
+        "category": "foundation",
+        "month": "2025-09",
+        "permitCount": 211,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Foundation Repair Permit",
+            "count": 211
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/hvac/2025-09",
+      "value": {
+        "category": "hvac",
+        "month": "2025-09",
+        "permitCount": 947,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 819
+          },
+          {
+            "value": "LSR Mechanical Permit",
+            "count": 92
+          },
+          {
+            "value": "Mechanical Completion Permit",
+            "count": 36
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/plumbing/2025-09",
+      "value": {
+        "category": "plumbing",
+        "month": "2025-09",
+        "permitCount": 2140,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing General Permit",
+            "count": 795
+          },
+          {
+            "value": "Plumbing Irrigation Permit",
+            "count": 509
+          },
+          {
+            "value": "LSR Plumbing Permit",
+            "count": 349
+          },
+          {
+            "value": "Plumbing Gas Permit",
+            "count": 226
+          },
+          {
+            "value": "Plumbing Sewer Permit",
+            "count": 210
+          },
+          {
+            "value": "Plumbing Backflow Permit",
+            "count": 28
+          },
+          {
+            "value": "Plumbing Medical Gas Permit",
+            "count": 14
+          },
+          {
+            "value": "Plumbing Completion Permit",
+            "count": 9
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/roofing/2025-09",
+      "value": {
+        "category": "roofing",
+        "month": "2025-09",
+        "permitCount": 634,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Re-Roof Permit",
+            "count": 634
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/solar/2025-09",
+      "value": {
+        "category": "solar",
+        "month": "2025-09",
+        "permitCount": 111,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Solar - Photovoltaic Permit",
+            "count": 111
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/trees/2025-09",
+      "value": {
+        "category": "trees",
+        "month": "2025-09",
+        "permitCount": 176,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Tree Affidavit Permit",
+            "count": 139
+          },
+          {
+            "value": "Tree Permit",
+            "count": 37
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/electrical/2025-10",
+      "value": {
+        "category": "electrical",
+        "month": "2025-10",
+        "permitCount": 940,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical General Permit",
+            "count": 739
+          },
+          {
+            "value": "Electrical TOPS Permit",
+            "count": 132
+          },
+          {
+            "value": "Electrical TML Permit",
+            "count": 41
+          },
+          {
+            "value": "Electrical Reconnect Permit",
+            "count": 18
+          },
+          {
+            "value": "Electrical Completion Permit",
+            "count": 10
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/foundation/2025-10",
+      "value": {
+        "category": "foundation",
+        "month": "2025-10",
+        "permitCount": 314,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Foundation Repair Permit",
+            "count": 311
+          },
+          {
+            "value": "Comm Foundation Permit",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/hvac/2025-10",
+      "value": {
+        "category": "hvac",
+        "month": "2025-10",
+        "permitCount": 882,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 796
+          },
+          {
+            "value": "LSR Mechanical Permit",
+            "count": 80
+          },
+          {
+            "value": "Mechanical Completion Permit",
+            "count": 6
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/plumbing/2025-10",
+      "value": {
+        "category": "plumbing",
+        "month": "2025-10",
+        "permitCount": 2338,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing General Permit",
+            "count": 766
+          },
+          {
+            "value": "Plumbing Irrigation Permit",
+            "count": 539
+          },
+          {
+            "value": "LSR Plumbing Permit",
+            "count": 436
+          },
+          {
+            "value": "Plumbing Gas Permit",
+            "count": 293
+          },
+          {
+            "value": "Plumbing Sewer Permit",
+            "count": 232
+          },
+          {
+            "value": "Plumbing Backflow Permit",
+            "count": 40
+          },
+          {
+            "value": "Plumbing Completion Permit",
+            "count": 22
+          },
+          {
+            "value": "Plumbing Medical Gas Permit",
+            "count": 10
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/roofing/2025-10",
+      "value": {
+        "category": "roofing",
+        "month": "2025-10",
+        "permitCount": 587,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Re-Roof Permit",
+            "count": 587
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/solar/2025-10",
+      "value": {
+        "category": "solar",
+        "month": "2025-10",
+        "permitCount": 107,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Solar - Photovoltaic Permit",
+            "count": 107
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/trees/2025-10",
+      "value": {
+        "category": "trees",
+        "month": "2025-10",
+        "permitCount": 188,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Tree Affidavit Permit",
+            "count": 157
+          },
+          {
+            "value": "Tree Permit",
+            "count": 31
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/electrical/2025-11",
+      "value": {
+        "category": "electrical",
+        "month": "2025-11",
+        "permitCount": 827,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical General Permit",
+            "count": 616
+          },
+          {
+            "value": "Electrical TOPS Permit",
+            "count": 131
+          },
+          {
+            "value": "Electrical TML Permit",
+            "count": 44
+          },
+          {
+            "value": "Electrical Reconnect Permit",
+            "count": 20
+          },
+          {
+            "value": "Electrical Completion Permit",
+            "count": 12
+          },
+          {
+            "value": "LSR Electrical Permit",
+            "count": 4
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/foundation/2025-11",
+      "value": {
+        "category": "foundation",
+        "month": "2025-11",
+        "permitCount": 248,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Foundation Repair Permit",
+            "count": 248
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/hvac/2025-11",
+      "value": {
+        "category": "hvac",
+        "month": "2025-11",
+        "permitCount": 664,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 587
+          },
+          {
+            "value": "LSR Mechanical Permit",
+            "count": 70
+          },
+          {
+            "value": "Mechanical Completion Permit",
+            "count": 7
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/plumbing/2025-11",
+      "value": {
+        "category": "plumbing",
+        "month": "2025-11",
+        "permitCount": 1923,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing General Permit",
+            "count": 743
+          },
+          {
+            "value": "Plumbing Irrigation Permit",
+            "count": 397
+          },
+          {
+            "value": "LSR Plumbing Permit",
+            "count": 295
+          },
+          {
+            "value": "Plumbing Sewer Permit",
+            "count": 224
+          },
+          {
+            "value": "Plumbing Gas Permit",
+            "count": 215
+          },
+          {
+            "value": "Plumbing Backflow Permit",
+            "count": 28
+          },
+          {
+            "value": "Plumbing Medical Gas Permit",
+            "count": 12
+          },
+          {
+            "value": "Plumbing Completion Permit",
+            "count": 9
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/roofing/2025-11",
+      "value": {
+        "category": "roofing",
+        "month": "2025-11",
+        "permitCount": 345,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Re-Roof Permit",
+            "count": 345
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/solar/2025-11",
+      "value": {
+        "category": "solar",
+        "month": "2025-11",
+        "permitCount": 86,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Solar - Photovoltaic Permit",
+            "count": 86
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/trees/2025-11",
+      "value": {
+        "category": "trees",
+        "month": "2025-11",
+        "permitCount": 130,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Tree Affidavit Permit",
+            "count": 107
+          },
+          {
+            "value": "Tree Permit",
+            "count": 23
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/electrical/2025-12",
+      "value": {
+        "category": "electrical",
+        "month": "2025-12",
+        "permitCount": 768,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical General Permit",
+            "count": 579
+          },
+          {
+            "value": "Electrical TOPS Permit",
+            "count": 103
+          },
+          {
+            "value": "Electrical TML Permit",
+            "count": 52
+          },
+          {
+            "value": "Electrical Reconnect Permit",
+            "count": 20
+          },
+          {
+            "value": "Electrical Completion Permit",
+            "count": 14
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/foundation/2025-12",
+      "value": {
+        "category": "foundation",
+        "month": "2025-12",
+        "permitCount": 257,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Foundation Repair Permit",
+            "count": 257
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/hvac/2025-12",
+      "value": {
+        "category": "hvac",
+        "month": "2025-12",
+        "permitCount": 639,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 581
+          },
+          {
+            "value": "LSR Mechanical Permit",
+            "count": 49
+          },
+          {
+            "value": "Mechanical Completion Permit",
+            "count": 9
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/plumbing/2025-12",
+      "value": {
+        "category": "plumbing",
+        "month": "2025-12",
+        "permitCount": 1739,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing General Permit",
+            "count": 699
+          },
+          {
+            "value": "Plumbing Irrigation Permit",
+            "count": 393
+          },
+          {
+            "value": "Plumbing Sewer Permit",
+            "count": 204
+          },
+          {
+            "value": "Plumbing Gas Permit",
+            "count": 203
+          },
+          {
+            "value": "LSR Plumbing Permit",
+            "count": 189
+          },
+          {
+            "value": "Plumbing Backflow Permit",
+            "count": 26
+          },
+          {
+            "value": "Plumbing Completion Permit",
+            "count": 21
+          },
+          {
+            "value": "Plumbing Medical Gas Permit",
+            "count": 4
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/roofing/2025-12",
+      "value": {
+        "category": "roofing",
+        "month": "2025-12",
+        "permitCount": 270,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Re-Roof Permit",
+            "count": 270
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/solar/2025-12",
+      "value": {
+        "category": "solar",
+        "month": "2025-12",
+        "permitCount": 50,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Solar - Photovoltaic Permit",
+            "count": 50
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/trees/2025-12",
+      "value": {
+        "category": "trees",
+        "month": "2025-12",
+        "permitCount": 116,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Tree Affidavit Permit",
+            "count": 98
+          },
+          {
+            "value": "Tree Permit",
+            "count": 18
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/electrical/2026-01",
+      "value": {
+        "category": "electrical",
+        "month": "2026-01",
+        "permitCount": 881,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical General Permit",
+            "count": 678
+          },
+          {
+            "value": "Electrical TOPS Permit",
+            "count": 110
+          },
+          {
+            "value": "Electrical TML Permit",
+            "count": 60
+          },
+          {
+            "value": "Electrical Reconnect Permit",
+            "count": 20
+          },
+          {
+            "value": "Electrical Completion Permit",
+            "count": 13
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/foundation/2026-01",
+      "value": {
+        "category": "foundation",
+        "month": "2026-01",
+        "permitCount": 255,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Foundation Repair Permit",
+            "count": 254
+          },
+          {
+            "value": "Comm Foundation Permit",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/hvac/2026-01",
+      "value": {
+        "category": "hvac",
+        "month": "2026-01",
+        "permitCount": 731,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 676
+          },
+          {
+            "value": "LSR Mechanical Permit",
+            "count": 51
+          },
+          {
+            "value": "Mechanical Completion Permit",
+            "count": 4
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/plumbing/2026-01",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-01",
+        "permitCount": 2035,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing General Permit",
+            "count": 843
+          },
+          {
+            "value": "Plumbing Irrigation Permit",
+            "count": 450
+          },
+          {
+            "value": "LSR Plumbing Permit",
+            "count": 254
+          },
+          {
+            "value": "Plumbing Sewer Permit",
+            "count": 236
+          },
+          {
+            "value": "Plumbing Gas Permit",
+            "count": 202
+          },
+          {
+            "value": "Plumbing Backflow Permit",
+            "count": 27
+          },
+          {
+            "value": "Plumbing Medical Gas Permit",
+            "count": 12
+          },
+          {
+            "value": "Plumbing Completion Permit",
+            "count": 11
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/roofing/2026-01",
+      "value": {
+        "category": "roofing",
+        "month": "2026-01",
+        "permitCount": 270,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Re-Roof Permit",
+            "count": 270
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/solar/2026-01",
+      "value": {
+        "category": "solar",
+        "month": "2026-01",
+        "permitCount": 43,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Solar - Photovoltaic Permit",
+            "count": 43
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/trees/2026-01",
+      "value": {
+        "category": "trees",
+        "month": "2026-01",
+        "permitCount": 164,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Tree Affidavit Permit",
+            "count": 140
+          },
+          {
+            "value": "Tree Permit",
+            "count": 24
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/electrical/2026-02",
+      "value": {
+        "category": "electrical",
+        "month": "2026-02",
+        "permitCount": 867,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical General Permit",
+            "count": 697
+          },
+          {
+            "value": "Electrical TOPS Permit",
+            "count": 99
+          },
+          {
+            "value": "Electrical TML Permit",
+            "count": 34
+          },
+          {
+            "value": "Electrical Completion Permit",
+            "count": 18
+          },
+          {
+            "value": "Electrical Reconnect Permit",
+            "count": 18
+          },
+          {
+            "value": "LSR Electrical Permit",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/foundation/2026-02",
+      "value": {
+        "category": "foundation",
+        "month": "2026-02",
+        "permitCount": 304,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Foundation Repair Permit",
+            "count": 303
+          },
+          {
+            "value": "Comm Foundation Permit",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/hvac/2026-02",
+      "value": {
+        "category": "hvac",
+        "month": "2026-02",
+        "permitCount": 660,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 595
+          },
+          {
+            "value": "LSR Mechanical Permit",
+            "count": 59
+          },
+          {
+            "value": "Mechanical Completion Permit",
+            "count": 6
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/plumbing/2026-02",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-02",
+        "permitCount": 1947,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing General Permit",
+            "count": 789
+          },
+          {
+            "value": "Plumbing Irrigation Permit",
+            "count": 482
+          },
+          {
+            "value": "LSR Plumbing Permit",
+            "count": 215
+          },
+          {
+            "value": "Plumbing Gas Permit",
+            "count": 215
+          },
+          {
+            "value": "Plumbing Sewer Permit",
+            "count": 200
+          },
+          {
+            "value": "Plumbing Backflow Permit",
+            "count": 30
+          },
+          {
+            "value": "Plumbing Medical Gas Permit",
+            "count": 11
+          },
+          {
+            "value": "Plumbing Completion Permit",
+            "count": 5
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/roofing/2026-02",
+      "value": {
+        "category": "roofing",
+        "month": "2026-02",
+        "permitCount": 328,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Re-Roof Permit",
+            "count": 328
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/solar/2026-02",
+      "value": {
+        "category": "solar",
+        "month": "2026-02",
+        "permitCount": 34,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Solar - Photovoltaic Permit",
+            "count": 34
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/trees/2026-02",
+      "value": {
+        "category": "trees",
+        "month": "2026-02",
+        "permitCount": 195,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Tree Affidavit Permit",
+            "count": 128
+          },
+          {
+            "value": "Tree Permit",
+            "count": 67
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/electrical/2026-03",
+      "value": {
+        "category": "electrical",
+        "month": "2026-03",
+        "permitCount": 1030,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical General Permit",
+            "count": 813
+          },
+          {
+            "value": "Electrical TOPS Permit",
+            "count": 131
+          },
+          {
+            "value": "Electrical TML Permit",
+            "count": 43
+          },
+          {
+            "value": "Electrical Reconnect Permit",
+            "count": 27
+          },
+          {
+            "value": "Electrical Completion Permit",
+            "count": 15
+          },
+          {
+            "value": "LSR Electrical Permit",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/foundation/2026-03",
+      "value": {
+        "category": "foundation",
+        "month": "2026-03",
+        "permitCount": 275,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Foundation Repair Permit",
+            "count": 273
+          },
+          {
+            "value": "Comm Foundation Permit",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/hvac/2026-03",
+      "value": {
+        "category": "hvac",
+        "month": "2026-03",
+        "permitCount": 1052,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 944
+          },
+          {
+            "value": "LSR Mechanical Permit",
+            "count": 96
+          },
+          {
+            "value": "Mechanical Completion Permit",
+            "count": 12
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/plumbing/2026-03",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-03",
+        "permitCount": 2207,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing General Permit",
+            "count": 877
+          },
+          {
+            "value": "Plumbing Irrigation Permit",
+            "count": 625
+          },
+          {
+            "value": "Plumbing Sewer Permit",
+            "count": 253
+          },
+          {
+            "value": "LSR Plumbing Permit",
+            "count": 193
+          },
+          {
+            "value": "Plumbing Gas Permit",
+            "count": 190
+          },
+          {
+            "value": "Plumbing Backflow Permit",
+            "count": 50
+          },
+          {
+            "value": "Plumbing Medical Gas Permit",
+            "count": 10
+          },
+          {
+            "value": "Plumbing Completion Permit",
+            "count": 9
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/roofing/2026-03",
+      "value": {
+        "category": "roofing",
+        "month": "2026-03",
+        "permitCount": 382,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Re-Roof Permit",
+            "count": 382
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/solar/2026-03",
+      "value": {
+        "category": "solar",
+        "month": "2026-03",
+        "permitCount": 47,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Solar - Photovoltaic Permit",
+            "count": 47
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/trees/2026-03",
+      "value": {
+        "category": "trees",
+        "month": "2026-03",
+        "permitCount": 269,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Tree Affidavit Permit",
+            "count": 204
+          },
+          {
+            "value": "Tree Permit",
+            "count": 65
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/electrical/2026-04",
+      "value": {
+        "category": "electrical",
+        "month": "2026-04",
+        "permitCount": 832,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical General Permit",
+            "count": 682
+          },
+          {
+            "value": "Electrical TOPS Permit",
+            "count": 97
+          },
+          {
+            "value": "Electrical TML Permit",
+            "count": 26
+          },
+          {
+            "value": "Electrical Reconnect Permit",
+            "count": 17
+          },
+          {
+            "value": "Electrical Completion Permit",
+            "count": 10
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/foundation/2026-04",
+      "value": {
+        "category": "foundation",
+        "month": "2026-04",
+        "permitCount": 296,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Foundation Repair Permit",
+            "count": 294
+          },
+          {
+            "value": "Comm Foundation Permit",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/hvac/2026-04",
+      "value": {
+        "category": "hvac",
+        "month": "2026-04",
+        "permitCount": 807,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 752
+          },
+          {
+            "value": "LSR Mechanical Permit",
+            "count": 51
+          },
+          {
+            "value": "Mechanical Completion Permit",
+            "count": 4
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/plumbing/2026-04",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-04",
+        "permitCount": 2082,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing General Permit",
+            "count": 786
+          },
+          {
+            "value": "Plumbing Irrigation Permit",
+            "count": 649
+          },
+          {
+            "value": "Plumbing Gas Permit",
+            "count": 222
+          },
+          {
+            "value": "LSR Plumbing Permit",
+            "count": 191
+          },
+          {
+            "value": "Plumbing Sewer Permit",
+            "count": 180
+          },
+          {
+            "value": "Plumbing Backflow Permit",
+            "count": 39
+          },
+          {
+            "value": "Plumbing Completion Permit",
+            "count": 9
+          },
+          {
+            "value": "Plumbing Medical Gas Permit",
+            "count": 6
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/roofing/2026-04",
+      "value": {
+        "category": "roofing",
+        "month": "2026-04",
+        "permitCount": 424,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Re-Roof Permit",
+            "count": 424
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/solar/2026-04",
+      "value": {
+        "category": "solar",
+        "month": "2026-04",
+        "permitCount": 53,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Solar - Photovoltaic Permit",
+            "count": 53
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/trees/2026-04",
+      "value": {
+        "category": "trees",
+        "month": "2026-04",
+        "permitCount": 236,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Tree Affidavit Permit",
+            "count": 160
+          },
+          {
+            "value": "Tree Permit",
+            "count": 76
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/electrical/2026-05",
+      "value": {
+        "category": "electrical",
+        "month": "2026-05",
+        "permitCount": 848,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical General Permit",
+            "count": 700
+          },
+          {
+            "value": "Electrical TOPS Permit",
+            "count": 89
+          },
+          {
+            "value": "Electrical TML Permit",
+            "count": 35
+          },
+          {
+            "value": "Electrical Reconnect Permit",
+            "count": 12
+          },
+          {
+            "value": "Electrical Completion Permit",
+            "count": 11
+          },
+          {
+            "value": "LSR Electrical Permit",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/foundation/2026-05",
+      "value": {
+        "category": "foundation",
+        "month": "2026-05",
+        "permitCount": 256,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Foundation Repair Permit",
+            "count": 254
+          },
+          {
+            "value": "Comm Foundation Permit",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/hvac/2026-05",
+      "value": {
+        "category": "hvac",
+        "month": "2026-05",
+        "permitCount": 902,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 842
+          },
+          {
+            "value": "LSR Mechanical Permit",
+            "count": 58
+          },
+          {
+            "value": "Mechanical Completion Permit",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/plumbing/2026-05",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-05",
+        "permitCount": 2082,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing General Permit",
+            "count": 726
+          },
+          {
+            "value": "Plumbing Irrigation Permit",
+            "count": 702
+          },
+          {
+            "value": "Plumbing Gas Permit",
+            "count": 216
+          },
+          {
+            "value": "Plumbing Sewer Permit",
+            "count": 210
+          },
+          {
+            "value": "LSR Plumbing Permit",
+            "count": 183
+          },
+          {
+            "value": "Plumbing Backflow Permit",
+            "count": 26
+          },
+          {
+            "value": "Plumbing Completion Permit",
+            "count": 11
+          },
+          {
+            "value": "Plumbing Medical Gas Permit",
+            "count": 8
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/roofing/2026-05",
+      "value": {
+        "category": "roofing",
+        "month": "2026-05",
+        "permitCount": 424,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Re-Roof Permit",
+            "count": 424
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/solar/2026-05",
+      "value": {
+        "category": "solar",
+        "month": "2026-05",
+        "permitCount": 32,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Solar - Photovoltaic Permit",
+            "count": 32
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/trees/2026-05",
+      "value": {
+        "category": "trees",
+        "month": "2026-05",
+        "permitCount": 299,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Tree Affidavit Permit",
+            "count": 235
+          },
+          {
+            "value": "Tree Permit",
+            "count": 64
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/electrical/2026-06",
+      "value": {
+        "category": "electrical",
+        "month": "2026-06",
+        "permitCount": 777,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical General Permit",
+            "count": 635
+          },
+          {
+            "value": "Electrical TOPS Permit",
+            "count": 73
+          },
+          {
+            "value": "Electrical TML Permit",
+            "count": 33
+          },
+          {
+            "value": "Electrical Reconnect Permit",
+            "count": 19
+          },
+          {
+            "value": "Electrical Completion Permit",
+            "count": 16
+          },
+          {
+            "value": "LSR Electrical Permit",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/foundation/2026-06",
+      "value": {
+        "category": "foundation",
+        "month": "2026-06",
+        "permitCount": 250,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Foundation Repair Permit",
+            "count": 247
+          },
+          {
+            "value": "Comm Foundation Permit",
+            "count": 3
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/hvac/2026-06",
+      "value": {
+        "category": "hvac",
+        "month": "2026-06",
+        "permitCount": 1195,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 1088
+          },
+          {
+            "value": "LSR Mechanical Permit",
+            "count": 101
+          },
+          {
+            "value": "Mechanical Completion Permit",
+            "count": 6
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/plumbing/2026-06",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-06",
+        "permitCount": 2087,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing General Permit",
+            "count": 781
+          },
+          {
+            "value": "Plumbing Irrigation Permit",
+            "count": 644
+          },
+          {
+            "value": "LSR Plumbing Permit",
+            "count": 214
+          },
+          {
+            "value": "Plumbing Sewer Permit",
+            "count": 213
+          },
+          {
+            "value": "Plumbing Gas Permit",
+            "count": 191
+          },
+          {
+            "value": "Plumbing Backflow Permit",
+            "count": 30
+          },
+          {
+            "value": "Plumbing Completion Permit",
+            "count": 9
+          },
+          {
+            "value": "Plumbing Medical Gas Permit",
+            "count": 5
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/roofing/2026-06",
+      "value": {
+        "category": "roofing",
+        "month": "2026-06",
+        "permitCount": 456,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Re-Roof Permit",
+            "count": 456
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/solar/2026-06",
+      "value": {
+        "category": "solar",
+        "month": "2026-06",
+        "permitCount": 43,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Solar - Photovoltaic Permit",
+            "count": 43
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/trees/2026-06",
+      "value": {
+        "category": "trees",
+        "month": "2026-06",
+        "permitCount": 289,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Tree Affidavit Permit",
+            "count": 241
+          },
+          {
+            "value": "Tree Permit",
+            "count": 48
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/electrical/2026-07",
+      "value": {
+        "category": "electrical",
+        "month": "2026-07",
+        "permitCount": 944,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical General Permit",
+            "count": 789
+          },
+          {
+            "value": "Electrical TOPS Permit",
+            "count": 66
+          },
+          {
+            "value": "Electrical TML Permit",
+            "count": 44
+          },
+          {
+            "value": "Electrical Reconnect Permit",
+            "count": 39
+          },
+          {
+            "value": "Electrical Completion Permit",
+            "count": 6
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/foundation/2026-07",
+      "value": {
+        "category": "foundation",
+        "month": "2026-07",
+        "permitCount": 292,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Foundation Repair Permit",
+            "count": 292
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/hvac/2026-07",
+      "value": {
+        "category": "hvac",
+        "month": "2026-07",
+        "permitCount": 1188,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 1089
+          },
+          {
+            "value": "LSR Mechanical Permit",
+            "count": 94
+          },
+          {
+            "value": "Mechanical Completion Permit",
+            "count": 5
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/plumbing/2026-07",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-07",
+        "permitCount": 2230,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing General Permit",
+            "count": 906
+          },
+          {
+            "value": "Plumbing Irrigation Permit",
+            "count": 599
+          },
+          {
+            "value": "Plumbing Gas Permit",
+            "count": 235
+          },
+          {
+            "value": "LSR Plumbing Permit",
+            "count": 209
+          },
+          {
+            "value": "Plumbing Sewer Permit",
+            "count": 197
+          },
+          {
+            "value": "Plumbing Backflow Permit",
+            "count": 66
+          },
+          {
+            "value": "Plumbing Completion Permit",
+            "count": 12
+          },
+          {
+            "value": "Plumbing Medical Gas Permit",
+            "count": 6
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/roofing/2026-07",
+      "value": {
+        "category": "roofing",
+        "month": "2026-07",
+        "permitCount": 382,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Re-Roof Permit",
+            "count": 382
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/solar/2026-07",
+      "value": {
+        "category": "solar",
+        "month": "2026-07",
+        "permitCount": 41,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Solar - Photovoltaic Permit",
+            "count": 41
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/trees/2026-07",
+      "value": {
+        "category": "trees",
+        "month": "2026-07",
+        "permitCount": 376,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Tree Affidavit Permit",
+            "count": 316
+          },
+          {
+            "value": "Tree Permit",
+            "count": 60
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/electrical/2026-08",
+      "value": {
+        "category": "electrical",
+        "month": "2026-08",
+        "permitCount": 793,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical General Permit",
+            "count": 673
+          },
+          {
+            "value": "Electrical TOPS Permit",
+            "count": 62
+          },
+          {
+            "value": "Electrical TML Permit",
+            "count": 31
+          },
+          {
+            "value": "Electrical Completion Permit",
+            "count": 13
+          },
+          {
+            "value": "Electrical Reconnect Permit",
+            "count": 12
+          },
+          {
+            "value": "LSR Electrical Permit",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/foundation/2026-08",
+      "value": {
+        "category": "foundation",
+        "month": "2026-08",
+        "permitCount": 277,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Foundation Repair Permit",
+            "count": 275
+          },
+          {
+            "value": "Comm Foundation Permit",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/hvac/2026-08",
+      "value": {
+        "category": "hvac",
+        "month": "2026-08",
+        "permitCount": 1083,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 985
+          },
+          {
+            "value": "LSR Mechanical Permit",
+            "count": 79
+          },
+          {
+            "value": "Mechanical Completion Permit",
+            "count": 19
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/plumbing/2026-08",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-08",
+        "permitCount": 2039,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing General Permit",
+            "count": 819
+          },
+          {
+            "value": "Plumbing Irrigation Permit",
+            "count": 572
+          },
+          {
+            "value": "LSR Plumbing Permit",
+            "count": 202
+          },
+          {
+            "value": "Plumbing Gas Permit",
+            "count": 201
+          },
+          {
+            "value": "Plumbing Sewer Permit",
+            "count": 193
+          },
+          {
+            "value": "Plumbing Backflow Permit",
+            "count": 39
+          },
+          {
+            "value": "Plumbing Completion Permit",
+            "count": 11
+          },
+          {
+            "value": "Plumbing Medical Gas Permit",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/roofing/2026-08",
+      "value": {
+        "category": "roofing",
+        "month": "2026-08",
+        "permitCount": 369,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Re-Roof Permit",
+            "count": 369
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/solar/2026-08",
+      "value": {
+        "category": "solar",
+        "month": "2026-08",
+        "permitCount": 32,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Solar - Photovoltaic Permit",
+            "count": 32
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:30.731Z",
+      "key": "trades-v1/trees/2026-08",
+      "value": {
+        "category": "trees",
+        "month": "2026-08",
+        "permitCount": 405,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Tree Affidavit Permit",
+            "count": 384
+          },
+          {
+            "value": "Tree Permit",
+            "count": 21
+          }
+        ]
+      }
+    }
+  ]
+}

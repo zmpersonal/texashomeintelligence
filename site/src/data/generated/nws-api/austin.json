@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-03T17:59:09.973Z",
-  "lastSuccessAt": "2026-09-03T17:59:09.973Z",
+  "lastAttemptAt": "2026-09-03T21:05:23.164Z",
+  "lastSuccessAt": "2026-09-03T21:05:23.164Z",
   "lastError": null,
   "source": {
     "name": "National Weather Service API",
@@ -197,6 +197,16 @@
       "value": {
         "forecastHighF": 99,
         "forecastLowF": 78
+      }
+    },
+    {
+      "observedAt": "2026-09-03T20:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:23.402Z",
+      "key": "2026-09-03T15:00:00-05:00",
+      "value": {
+        "forecastHighF": 99,
+        "forecastLowF": 78,
+        "activeAlert": "Special Weather Statement issued September 3 at 3:23PM CDT by NWS Austin/San Antonio TX"
       }
     }
   ]

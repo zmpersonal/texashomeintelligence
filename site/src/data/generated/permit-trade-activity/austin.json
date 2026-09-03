@@ -1,0 +1,1385 @@
+{
+  "datasetId": "permit-trade-activity",
+  "location": "austin",
+  "methodologyVersion": "v1",
+  "status": "live",
+  "lastAttemptAt": "2026-09-03T21:05:27.156Z",
+  "lastSuccessAt": "2026-09-03T21:05:27.156Z",
+  "lastError": null,
+  "source": {
+    "name": "City of Austin Issued Construction Permits (Socrata)",
+    "url": "https://data.austintexas.gov/"
+  },
+  "observations": [
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/electrical/2025-09",
+      "value": {
+        "category": "electrical",
+        "month": "2025-09",
+        "permitCount": 1075,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical Permit",
+            "count": 1075
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/hvac/2025-09",
+      "value": {
+        "category": "hvac",
+        "month": "2025-09",
+        "permitCount": 812,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 812
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/plumbing/2025-09",
+      "value": {
+        "category": "plumbing",
+        "month": "2025-09",
+        "permitCount": 1080,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing Permit",
+            "count": 1080
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/roofing/2025-09",
+      "value": {
+        "category": "roofing",
+        "month": "2025-09",
+        "permitCount": 201,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "description contains \"roof\"",
+            "count": 201
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/solar/2025-09",
+      "value": {
+        "category": "solar",
+        "month": "2025-09",
+        "permitCount": 131,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "work-class",
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "Auxiliary Power",
+            "count": 92
+          },
+          {
+            "value": "description mentions solar/photovoltaic/PV",
+            "count": 39
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/electrical/2025-10",
+      "value": {
+        "category": "electrical",
+        "month": "2025-10",
+        "permitCount": 1288,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical Permit",
+            "count": 1288
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/hvac/2025-10",
+      "value": {
+        "category": "hvac",
+        "month": "2025-10",
+        "permitCount": 841,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 841
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/plumbing/2025-10",
+      "value": {
+        "category": "plumbing",
+        "month": "2025-10",
+        "permitCount": 1041,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing Permit",
+            "count": 1041
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/roofing/2025-10",
+      "value": {
+        "category": "roofing",
+        "month": "2025-10",
+        "permitCount": 199,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "description contains \"roof\"",
+            "count": 199
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/solar/2025-10",
+      "value": {
+        "category": "solar",
+        "month": "2025-10",
+        "permitCount": 160,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "work-class",
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "Auxiliary Power",
+            "count": 102
+          },
+          {
+            "value": "description mentions solar/photovoltaic/PV",
+            "count": 58
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/electrical/2025-11",
+      "value": {
+        "category": "electrical",
+        "month": "2025-11",
+        "permitCount": 1106,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical Permit",
+            "count": 1106
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/hvac/2025-11",
+      "value": {
+        "category": "hvac",
+        "month": "2025-11",
+        "permitCount": 683,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 683
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/plumbing/2025-11",
+      "value": {
+        "category": "plumbing",
+        "month": "2025-11",
+        "permitCount": 1026,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing Permit",
+            "count": 1026
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/roofing/2025-11",
+      "value": {
+        "category": "roofing",
+        "month": "2025-11",
+        "permitCount": 168,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "description contains \"roof\"",
+            "count": 168
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/solar/2025-11",
+      "value": {
+        "category": "solar",
+        "month": "2025-11",
+        "permitCount": 128,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "work-class",
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "Auxiliary Power",
+            "count": 94
+          },
+          {
+            "value": "description mentions solar/photovoltaic/PV",
+            "count": 34
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/electrical/2025-12",
+      "value": {
+        "category": "electrical",
+        "month": "2025-12",
+        "permitCount": 1248,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical Permit",
+            "count": 1248
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/hvac/2025-12",
+      "value": {
+        "category": "hvac",
+        "month": "2025-12",
+        "permitCount": 712,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 712
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/plumbing/2025-12",
+      "value": {
+        "category": "plumbing",
+        "month": "2025-12",
+        "permitCount": 1085,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing Permit",
+            "count": 1085
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/roofing/2025-12",
+      "value": {
+        "category": "roofing",
+        "month": "2025-12",
+        "permitCount": 159,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "description contains \"roof\"",
+            "count": 159
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/solar/2025-12",
+      "value": {
+        "category": "solar",
+        "month": "2025-12",
+        "permitCount": 90,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "work-class",
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "Auxiliary Power",
+            "count": 56
+          },
+          {
+            "value": "description mentions solar/photovoltaic/PV",
+            "count": 34
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/electrical/2026-01",
+      "value": {
+        "category": "electrical",
+        "month": "2026-01",
+        "permitCount": 1277,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical Permit",
+            "count": 1277
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/hvac/2026-01",
+      "value": {
+        "category": "hvac",
+        "month": "2026-01",
+        "permitCount": 714,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 714
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/plumbing/2026-01",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-01",
+        "permitCount": 1159,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing Permit",
+            "count": 1159
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/roofing/2026-01",
+      "value": {
+        "category": "roofing",
+        "month": "2026-01",
+        "permitCount": 120,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "description contains \"roof\"",
+            "count": 120
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/solar/2026-01",
+      "value": {
+        "category": "solar",
+        "month": "2026-01",
+        "permitCount": 48,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "work-class",
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "Auxiliary Power",
+            "count": 30
+          },
+          {
+            "value": "description mentions solar/photovoltaic/PV",
+            "count": 18
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/electrical/2026-02",
+      "value": {
+        "category": "electrical",
+        "month": "2026-02",
+        "permitCount": 1306,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical Permit",
+            "count": 1306
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/hvac/2026-02",
+      "value": {
+        "category": "hvac",
+        "month": "2026-02",
+        "permitCount": 638,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 638
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/plumbing/2026-02",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-02",
+        "permitCount": 1306,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing Permit",
+            "count": 1306
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/roofing/2026-02",
+      "value": {
+        "category": "roofing",
+        "month": "2026-02",
+        "permitCount": 137,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "description contains \"roof\"",
+            "count": 137
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/solar/2026-02",
+      "value": {
+        "category": "solar",
+        "month": "2026-02",
+        "permitCount": 55,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "work-class",
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "Auxiliary Power",
+            "count": 34
+          },
+          {
+            "value": "description mentions solar/photovoltaic/PV",
+            "count": 21
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/electrical/2026-03",
+      "value": {
+        "category": "electrical",
+        "month": "2026-03",
+        "permitCount": 1357,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical Permit",
+            "count": 1357
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/hvac/2026-03",
+      "value": {
+        "category": "hvac",
+        "month": "2026-03",
+        "permitCount": 934,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 934
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/plumbing/2026-03",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-03",
+        "permitCount": 1342,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing Permit",
+            "count": 1342
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/roofing/2026-03",
+      "value": {
+        "category": "roofing",
+        "month": "2026-03",
+        "permitCount": 128,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "description contains \"roof\"",
+            "count": 128
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/solar/2026-03",
+      "value": {
+        "category": "solar",
+        "month": "2026-03",
+        "permitCount": 33,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "work-class",
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "Auxiliary Power",
+            "count": 22
+          },
+          {
+            "value": "description mentions solar/photovoltaic/PV",
+            "count": 11
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/electrical/2026-04",
+      "value": {
+        "category": "electrical",
+        "month": "2026-04",
+        "permitCount": 1392,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical Permit",
+            "count": 1392
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/hvac/2026-04",
+      "value": {
+        "category": "hvac",
+        "month": "2026-04",
+        "permitCount": 929,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 929
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/plumbing/2026-04",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-04",
+        "permitCount": 1404,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing Permit",
+            "count": 1404
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/roofing/2026-04",
+      "value": {
+        "category": "roofing",
+        "month": "2026-04",
+        "permitCount": 149,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "description contains \"roof\"",
+            "count": 149
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/solar/2026-04",
+      "value": {
+        "category": "solar",
+        "month": "2026-04",
+        "permitCount": 84,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "work-class",
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "Auxiliary Power",
+            "count": 52
+          },
+          {
+            "value": "description mentions solar/photovoltaic/PV",
+            "count": 32
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/electrical/2026-05",
+      "value": {
+        "category": "electrical",
+        "month": "2026-05",
+        "permitCount": 1329,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical Permit",
+            "count": 1329
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/hvac/2026-05",
+      "value": {
+        "category": "hvac",
+        "month": "2026-05",
+        "permitCount": 950,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 950
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/plumbing/2026-05",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-05",
+        "permitCount": 1230,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing Permit",
+            "count": 1230
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/roofing/2026-05",
+      "value": {
+        "category": "roofing",
+        "month": "2026-05",
+        "permitCount": 114,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "description contains \"roof\"",
+            "count": 114
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/solar/2026-05",
+      "value": {
+        "category": "solar",
+        "month": "2026-05",
+        "permitCount": 48,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "work-class",
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "Auxiliary Power",
+            "count": 24
+          },
+          {
+            "value": "description mentions solar/photovoltaic/PV",
+            "count": 24
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/electrical/2026-06",
+      "value": {
+        "category": "electrical",
+        "month": "2026-06",
+        "permitCount": 1516,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical Permit",
+            "count": 1516
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/hvac/2026-06",
+      "value": {
+        "category": "hvac",
+        "month": "2026-06",
+        "permitCount": 1116,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 1116
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/plumbing/2026-06",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-06",
+        "permitCount": 1383,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing Permit",
+            "count": 1383
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/roofing/2026-06",
+      "value": {
+        "category": "roofing",
+        "month": "2026-06",
+        "permitCount": 190,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "description contains \"roof\"",
+            "count": 190
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/solar/2026-06",
+      "value": {
+        "category": "solar",
+        "month": "2026-06",
+        "permitCount": 79,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "work-class",
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "description mentions solar/photovoltaic/PV",
+            "count": 40
+          },
+          {
+            "value": "Auxiliary Power",
+            "count": 39
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/electrical/2026-07",
+      "value": {
+        "category": "electrical",
+        "month": "2026-07",
+        "permitCount": 1377,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical Permit",
+            "count": 1377
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/hvac/2026-07",
+      "value": {
+        "category": "hvac",
+        "month": "2026-07",
+        "permitCount": 1226,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 1226
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/plumbing/2026-07",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-07",
+        "permitCount": 1277,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing Permit",
+            "count": 1277
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/roofing/2026-07",
+      "value": {
+        "category": "roofing",
+        "month": "2026-07",
+        "permitCount": 151,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "description contains \"roof\"",
+            "count": 151
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/solar/2026-07",
+      "value": {
+        "category": "solar",
+        "month": "2026-07",
+        "permitCount": 94,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "work-class",
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "Auxiliary Power",
+            "count": 64
+          },
+          {
+            "value": "description mentions solar/photovoltaic/PV",
+            "count": 30
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/electrical/2026-08",
+      "value": {
+        "category": "electrical",
+        "month": "2026-08",
+        "permitCount": 1515,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical Permit",
+            "count": 1515
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/hvac/2026-08",
+      "value": {
+        "category": "hvac",
+        "month": "2026-08",
+        "permitCount": 1037,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 1037
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/plumbing/2026-08",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-08",
+        "permitCount": 1344,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing Permit",
+            "count": 1344
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/roofing/2026-08",
+      "value": {
+        "category": "roofing",
+        "month": "2026-08",
+        "permitCount": 144,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "work-class",
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "description contains \"roof\"",
+            "count": 143
+          },
+          {
+            "value": "Roof",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/solar/2026-08",
+      "value": {
+        "category": "solar",
+        "month": "2026-08",
+        "permitCount": 224,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "work-class",
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "Auxiliary Power",
+            "count": 193
+          },
+          {
+            "value": "description mentions solar/photovoltaic/PV",
+            "count": 31
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/electrical/2026-09",
+      "value": {
+        "category": "electrical",
+        "month": "2026-09",
+        "permitCount": 146,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Electrical Permit",
+            "count": 146
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/hvac/2026-09",
+      "value": {
+        "category": "hvac",
+        "month": "2026-09",
+        "permitCount": 111,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Mechanical Permit",
+            "count": 111
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/plumbing/2026-09",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-09",
+        "permitCount": 124,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing Permit",
+            "count": 124
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/roofing/2026-09",
+      "value": {
+        "category": "roofing",
+        "month": "2026-09",
+        "permitCount": 18,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "description contains \"roof\"",
+            "count": 18
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T21:05:28.488Z",
+      "key": "trades-v1/solar/2026-09",
+      "value": {
+        "category": "solar",
+        "month": "2026-09",
+        "permitCount": 9,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "work-class",
+          "description-text"
+        ],
+        "sourceValues": [
+          {
+            "value": "Auxiliary Power",
+            "count": 6
+          },
+          {
+            "value": "description mentions solar/photovoltaic/PV",
+            "count": 3
+          }
+        ]
+      }
+    }
+  ]
+}

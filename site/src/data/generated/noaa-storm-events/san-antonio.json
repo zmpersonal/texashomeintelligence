@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-03T17:59:03.099Z",
-  "lastSuccessAt": "2026-09-03T17:59:03.099Z",
+  "lastAttemptAt": "2026-09-03T21:05:17.214Z",
+  "lastSuccessAt": "2026-09-03T21:05:17.214Z",
   "lastError": null,
   "source": {
     "name": "NOAA Storm Events Database",
@@ -695,7 +695,7 @@
     },
     {
       "observedAt": "2026-05-26T23:00:00.000Z",
-      "ingestedAt": "2026-09-03T17:59:05.440Z",
+      "ingestedAt": "2026-09-03T21:05:19.371Z",
       "key": "1340783",
       "value": {
         "eventType": "Flood",
