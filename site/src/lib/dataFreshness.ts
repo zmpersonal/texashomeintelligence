@@ -99,6 +99,18 @@ export const MAX_DATA_AGE_DAYS: Record<string, number> = {
   // nothing new to say. 400 days re-checks it about annually.
   "usda-soil": 400 * DAY,
 
+  // ── Round 4b. The three windows above are keyed by dataset id, not by
+  // dataset+location, so San Antonio's new census-acs / usda-soil / bls
+  // files inherit exactly the same window as Austin's. That is correct
+  // rather than convenient: a source's publication cadence is a property of
+  // the source, and ACS, OEWS and SSURGO publish on one national schedule
+  // for every county. No new entries are needed, and adding per-metro
+  // duplicates would invite the two drifting apart.
+  //
+  //   census-acs  → 400d, ACS 5-year is annual for Bexar exactly as for Travis
+  //   bls         → 400d, OEWS is annual for the San Antonio MSA as for Austin's
+  //   usda-soil   → 400d, SSURGO is the same reference dataset either point
+
   // ── Cadence NOT established. These five are stub fetchers with sample
   // data, so they never reach the age check today (a `sample` file reports no
   // dates at all). Each carries the conservative 30-day window so that if one
