@@ -76,6 +76,35 @@ run into.
   `parseValuation`. **A different source is needed** for San Antonio cost figures — Austin's
   approach does not port, and publishing an SA cost page off these rows would mean
   publishing commercial construction values under a homeowner heading.
+- **Round 8 stores trade-permit activity as MONTHLY AGGREGATES, not per-permit rows — an
+  owner decision, with a known and recoverable cost.** Widening both cities to the seven
+  trade categories at per-permit granularity was measured, from the Round 6 enumerations, at
+  **98,835 San Antonio rows (71.0% of 139,124) and 41,436+ Austin rows (75.6% of 54,798)** —
+  roughly **101,000 observations a year**, against the ~7,000 the archive holds today. That
+  archive is append-only, committed to git by the daily cron, and loaded into the build's
+  module graph by `import.meta.glob({eager:true})`, so the growth would land on repo size,
+  build memory and build time together, against `COST.md` rule 5. The signal the owner
+  specified is counts, timing and trend, none of which needs a row per permit.
+  So `permit-trade-activity` stores **one observation per category per month** — about 170
+  rows a year across both metros — while `municipal-permits` is untouched and keeps
+  per-permit rows for roofing only, which is what `/data/{metro}/roof-permits/` publishes.
+  **What is given up:** per-permit detail for the six non-roof categories — no permit
+  numbers, no descriptions, no day-level dates, so no "50 most recent" table and no
+  within-month timing for hvac, plumbing, electrical, foundation, solar or trees.
+  **It is recoverable:** both cities publish the full history, and a future round can
+  re-ingest at row level from source. Nothing is lost permanently; it is simply not being
+  stored now.
+  Every aggregate row carries `mappingVersion` (`trades-v1`), `mechanisms` and `sourceValues`
+  so a count is never read without knowing which metro-native values produced it and whether
+  the city assigned the trade or a text match inferred it — and so counts computed under
+  different mappings are never silently compared.
+- **Austin has no foundation and no tree permit source at all.** Its five `permit_type_desc`
+  values and 29 `work_class` values contain neither, measured run #34. Both categories could
+  in principle be text-matched out of `description`, but Round 6 never measured that and
+  Round 8 classifies only from observed values, so they are recorded in
+  `CATEGORIES_WITHOUT_SOURCE` as **absent, not zero**. A page must not render them as an
+  empty chart for Austin — that would assert a measurement nobody made.
+
 - **Permit valuation is unusable as a cost signal in BOTH metros.** Measured run #34; full
   tables in `docs/audits/round-6-permit-measurement.md`. San Antonio's `DECLARED VALUATION`
   is commercial-only: **0.00%** populated on Mechanical (0/16,395), Electrical General

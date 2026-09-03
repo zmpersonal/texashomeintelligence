@@ -154,7 +154,14 @@ const GENERATORS: Record<string, Generator> = {
  * Both withhold honestly with no file at all, so absence is the correct
  * bootstrap state rather than a gap to paper over.
  */
-const NEVER_SEED = new Set(["arr-collection-schedule", "austin-water-stage"]);
+// Round 8 adds permit-trade-activity for the same reason: a fabricated permit
+// count is an invented fact about a real city, and the honest bootstrap state
+// is no file at all until a real fetch succeeds.
+const NEVER_SEED = new Set([
+  "arr-collection-schedule",
+  "austin-water-stage",
+  "permit-trade-activity",
+]);
 
 /** Skips any file that already exists — seeding is a one-time bootstrap,
  * never a way to reset real accumulated history. */

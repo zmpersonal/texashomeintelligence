@@ -19,6 +19,10 @@ import { ercot } from "./fetchers/ercot";
 import { txForestService } from "./fetchers/txForestService";
 import { arrCollectionSchedule } from "./fetchers/arrCollectionSchedule";
 import { austinWaterStage } from "./fetchers/austinWaterStage";
+import {
+  permitTradeActivityAustin,
+  permitTradeActivitySanAntonio,
+} from "./fetchers/permitTradeActivity";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const GENERATED_DIR = path.join(here, "..", "data", "generated");
@@ -73,6 +77,10 @@ export const REGISTRY: RegistryEntry[] = [
   entry("stub", censusAcsSanAntonio), // Round 4b
   entry("stub", blsWagesAustin),
   entry("stub", blsWagesSanAntonio), // Round 4b
+  // Round 8: permit activity by trade category and month. Deliberately NOT in
+  // INDEX_DATASETS - the Home Stress Index never reads it.
+  entry("deep", permitTradeActivityAustin),
+  entry("deep", permitTradeActivitySanAntonio),
   entry("stub", ercot),
   entry("stub", txForestService),
 
