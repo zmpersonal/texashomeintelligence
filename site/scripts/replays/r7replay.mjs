@@ -6,7 +6,7 @@
  * lets an action say "fix" is a failure of the round, so these run first and
  * the screenshots come second.
  */
-import { chromium } from 'playwright';
+import { launchChromium } from './browser.mjs';
 import fs from 'node:fs';
 const B = 'http://127.0.0.1:9400';
 import pathMod from 'node:path';
@@ -30,7 +30,7 @@ if (!fs.existsSync(SESSIONS_FILE)) {
   process.exit(2);
 }
 const S = JSON.parse(fs.readFileSync(SESSIONS_FILE, 'utf8'));
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const b = await launchChromium();
 
 let pass = 0, fail = 0;
 const results = [];

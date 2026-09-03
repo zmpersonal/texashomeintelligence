@@ -101,19 +101,55 @@ run into.
   back over anything written underneath it - measured: a `DELETE` applied while it was up
   left the row untouched. `local-fixture.ts` now refuses if anything is listening on the
   port, naming the fix. The order is: build, fixture, worker, replays.
-  **NOT guaranteed:** `playwright` is still not a repo dependency - it has only ever existed
-  in the session scratchpad, so the three RENDER replays cannot run from a clean checkout
-  until it is added to `devDependencies` (owner approval pending; the unit replays and
-  `verify-trade-mapping` have no such dependency and run anywhere). The fixture also does not
-  reproduce the ARR per-ZIP address shards or the generated dataset files - those come from
-  ingestion, and a replay asserting on them needs a prior `npm run ingest` or the committed
-  data. `r9render`'s unsubscribe section needs `EMAIL_LINK_SIGNING_KEY` and `WEEKLY_RUN_TOKEN` in a
-  gitignored `site/.dev.vars`; without them that endpoint 404s and the replay stops after its
-  first 12 assertions (all passing). `local-worker.sh` says so on startup.
-  And three `r7replay` assertions are data-dependent rather than fixture-dependent:
-  two event-card ones only pass while an Austin condition is active (there is none today, so
-  no event card renders - the feature working, not a regression), and one pixel-geometry
-  assertion has drifted 391px -> 398px. Those are recorded as findings, not fixed.
+  **Round 9b closed the dependency gap and one more cwd trap.** `playwright` is now a
+  pinned devDependency (`1.62.1`, exact, dev-only), so the three RENDER replays run from a
+  clean checkout - proved by a full cold start: `rm -rf .wrangler dist node_modules`,
+  `npm ci`, `npm run build`, fixture, worker, all seven replays. It does **not** reach the
+  Worker: `npm ls playwright --omit=dev` is empty, no file under `dist/` contains the string
+  `playwright`, and all 402 built files are byte-identical to the pre-dependency build except
+  Astro's per-build server-island `key`, which is freshly random on every build regardless
+  (two consecutive builds off identical sources differ in exactly those 41 bytes).
+  The BROWSER BINARY is separate: playwright 1.62.1 has no install script, so `npm ci`
+  installs the driver and nothing else - `npx playwright install chromium` is a real second
+  step, now stated in `site/scripts/replays/README.md`. `scripts/replays/browser.mjs` is the
+  one place that resolves it (`$THI_CHROMIUM_PATH`, else `/opt/pw-browsers/chromium`, else
+  playwright's own directory) and exits 2 naming that command when there is none. The sandbox
+  image's Chromium is revision **1194** while playwright 1.62.1 looks for **1234**, so that
+  path must be passed explicitly; playwright's own lookup would miss it.
+  **The `.dev.vars` trap, same shape as the `--persist-to` one.** `wrangler dev` resolves
+  `.dev.vars` relative to its cwd, and `local-worker.sh` runs it from `dist/server`, so
+  `site/.dev.vars` was never being read - the file existed and the endpoint still 404'd.
+  `/api/email/weekly-run/` returns 404 rather than 401 on a missing secret **by design** (it
+  does not reveal itself to an unauthenticated caller), which made the omission look like a
+  route bug. `local-worker.sh` now passes `--env-file "$SITE/.dev.vars"` when the file is
+  present. With that, `r9render` is **18/18** for the first time; without the file it now
+  exits 2 naming the two variables instead of dying on `JSON.parse("Not found")`.
+  **Also enforced by documentation, not code:** re-apply the fixture between runs of the same
+  replay. `r9render` turns the weekly-email toggle on, so a second run without a fresh
+  `npm run fixture` fails "toggle persists across a reload" - replay-mutated state, not a
+  regression.
+  **NOT guaranteed:** the fixture does not reproduce the ARR per-ZIP address shards or the
+  generated dataset files - those come from ingestion, and a replay asserting on them needs a
+  prior `npm run ingest` or the committed data.
+  And three `r7replay` assertions are data-dependent rather than fixture-dependent, all three
+  now diagnosed (Round 9b) and none of them a defect:
+  - Two event-card assertions only pass while an Austin condition is active. There is none
+    today: `[data-alert]` matches zero elements, so no card renders. The assertions are
+    written as unconditional presence checks (`r.event && ...`), so absence reads as failure
+    even though absence is correct. What they actually guard - that the card, WHEN it exists,
+    says "area" and never "at your home", and states that it goes away when the condition
+    does - is a copy-honesty guard that cannot fire with nothing to check.
+  - The pixel-geometry assertion (`verdict 391px`) is **not** a CSS regression and is not
+    traceable to a commit. `.dash-score-read` is a `flex: 0 1 auto` item, so its width is its
+    widest child's max-content width, and that child is the verdict sentence itself:
+    "Conditions across Austin scored 46 of 100 (Moderate)." The pinned 391px is the rendered
+    width of that sentence with the band word **Elevated**; today's band word is
+    **Moderate**, which measures 397.72px -> 398. Measured directly: every two-digit score
+    renders identically, `(Elevated)` gives 391.13px and `(Moderate)` gives 397.72px. Austin's
+    composite score is 46, and the band edge for Elevated is 50 (`stressIndex/config.ts:205`),
+    so the score crossed a band edge downward since the assertion was written. The sibling
+    `.signal-card` measurement in the same assertion is still exactly 351px - the layout did
+    not move; one word in the copy got wider.
 
 - **Round 8 stores trade-permit activity as MONTHLY AGGREGATES, not per-permit rows — an
   owner decision, with a known and recoverable cost.** Widening both cities to the seven
