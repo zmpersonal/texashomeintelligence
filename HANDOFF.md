@@ -25,9 +25,11 @@ Workers build-time environment variables in the Workers Builds config.
   wraps the same two steps for manual deploys)
 - Build-time env vars when analytics go live: `PUBLIC_GA4_MEASUREMENT_ID`,
   `PUBLIC_CF_BEACON_TOKEN`
-- Real KV/D1 namespace IDs substituted for the placeholder IDs in
-  `wrangler.jsonc` (or bound in the dashboard) before a production-grade
-  deploy — the committed IDs are local/Miniflare placeholders.
+- ~~Real KV/D1 namespace IDs substituted for the placeholder IDs in
+  `wrangler.jsonc`~~ — **done, and the "placeholders" note was wrong.** All
+  three committed IDs are the real ones, verified against the owner's
+  Cloudflare account (that file's own comment records the check). Nothing
+  needs swapping before a deploy.
 
 ## Open items — carried into the county/parity rounds
 
@@ -696,7 +698,7 @@ data-access layer — seeded with obviously-fake sample rows only
 | D1 seed script (sample rows) | `site/migrations/seed.sql` | ✅ built |
 | KV binding (project state + return tokens) | `site/src/lib/kv.ts` | ✅ built (`getProject`, `putProject`, `mapTokenToProject`, `resolveToken`) |
 | Data-access layer (typed, used by the API routes) | `site/src/lib/db.ts` | ✅ built (`insertProject`, `updateProjectServiceLocation`, `updateProjectStatus`, `insertIntakeResponse`, `insertGeneratedBrief`, `insertContractorRequest`) |
-| `wrangler.jsonc` bindings | `site/wrangler.jsonc` | ✅ present, with **local placeholder IDs only** (`local-placeholder-projects-kv`, `local-placeholder-d1-database`) — these are not real Cloudflare resource IDs |
+| `wrangler.jsonc` bindings | `site/wrangler.jsonc` | ✅ present, with the **real Cloudflare resource IDs**, verified against the owner's account. (This row previously said "local placeholder IDs only — `local-placeholder-projects-kv`, `local-placeholder-d1-database`". Those strings are long gone from the file; the note outlived them.) |
 
 Verified locally end-to-end via `wrangler dev` (real Miniflare-backed KV +
 D1, no mocks): project creation, PATCH-driven answer saves, resume via
@@ -717,13 +719,14 @@ no such table: projects`). Locally we now always apply migrations with
 here; this is purely a local-dev-loop detail and has no bearing on how
 you provision production D1.
 
-**What you do:** provision the real D1 database + KV namespace in your
+**What you do:** ~~provision the real D1 database + KV namespace in your
 Cloudflare account, bind them in the Pages project settings (replacing the
 local placeholder IDs in `wrangler.jsonc` with real ones, or via
-environment-specific config), run `migrations/0001_init.sql` against
-production, and continue building out any schema beyond what's scaffolded
-here. Do **not** run `migrations/seed.sql` against production — it's
-sample data only.
+environment-specific config)~~ — **done.** The resources exist and
+`wrangler.jsonc` carries their real IDs. What remains: run
+`migrations/0001_init.sql` against production, and continue building out any
+schema beyond what's scaffolded here. Do **not** run `migrations/seed.sql`
+against production — it's sample data only.
 
 ---
 

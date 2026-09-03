@@ -57,6 +57,31 @@ are.
   it is not an independent staging environment. Anything deployed is deployed for both.
   Pre-merge verification therefore happens on a branch, locally, not on a staging deploy.
 
+### 🟡 Open item — there is no review surface. Needs an owner decision.
+
+**Recorded, not solved.** Removing the staging claim above leaves a real gap rather than
+just a wording fix, and it should be decided deliberately.
+
+`wrangler.jsonc` defines one Worker with no environments (`definedEnvironments: []`), so
+**no deployed pre-production surface exists.** Under the old model "done" meant the owner
+reviewed a running deployment before it reached the public. Today it cannot mean that.
+
+What "the owner approves before merge" actually means right now:
+
+- the **diff** on a branch, and
+- a **report of local verification** — `build`, `check`, `verify-content`, the Playwright
+  render checks and assertion replays run against a local Miniflare worker.
+
+Nobody looks at the change on a real deployment before it becomes production. Local
+verification has caught things a green build could not (a dropped `@import`, a missing
+`h1`, a 308 on a POST, a throwing adapter getter), so this is not nothing — but it is a
+narrower gate than reviewing a deployed artifact, and it is worth naming as such rather
+than letting "approves before merge" quietly carry its old meaning.
+
+**This needs an owner decision before any structurally significant round** — the county
+data model and the San Antonio parity work both change the serving path. No option is
+proposed here on purpose; the decision is the owner's to frame.
+
 ---
 
 ## Secrets
@@ -65,8 +90,10 @@ are.
   client JS.
 - All keyed calls and all tool/scoring logic run **server-side** (Astro server routes on the
   Worker). The browser gets outputs, never keys or proprietary constants.
-- `wrangler.jsonc` KV/D1 IDs in the repo are **local placeholders**; real IDs are the
-  owner's to set in the Cloudflare environment.
+- `wrangler.jsonc` KV/D1 IDs in the repo are the **real** ones, verified against the
+  owner's Cloudflare account (that file's own comment records the check). They are resource
+  identifiers, not credentials — useless without account authentication — which is why they
+  are committed. The older "local placeholders" note was stale.
 - If a task seems to require a secret you don't have, **stop and stub** with a documented
   TODO in `HANDOFF.md` — never hardcode or fake it.
 
