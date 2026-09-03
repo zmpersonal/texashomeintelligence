@@ -366,50 +366,120 @@ async function main(): Promise<void> {
   }
 
   // ── Valuation ──────────────────────────────────────────────────────────
-  console.log(`\n── VALUATION FIELDS ──`);
-  console.log(`  Austin has no single "declared valuation" column. parseValuation() coalesces three, in this order:`);
-  for (const f of VALUATION_FIELDS) {
-    const present = rows.filter((r) => {
-      const n = parseFloat(String(at(r, f)));
-      return Number.isFinite(n) && n > 0;
-    }).length;
-    console.log(`    ${JSON.stringify(f).padEnd(30)} ${keys.has(f) ? "present in data" : "NOT PRESENT in any row read"} — > 0 on ${num(present)} row(s) (${pct(present, rows.length)})`);
+  // ── Valuation: all eleven fields, measured the same way ────────────────
+  //
+  // Round 6. The three parseValuation() reads were already known to be
+  // placeholder-poisoned (the coalesced median came back as 1). The question
+  // this answers is whether ANY of the eleven is clean enough to carry a cost
+  // figure, so all eleven get the identical treatment and the verdict is
+  // computed from the numbers rather than asserted.
+  //
+  // `<= 10` is the placeholder test. A permit valuation of one dollar is not a
+  // small job, it is a field someone had to put a number in; separating those
+  // out is the difference between "89% null" and "89% null AND two thirds of
+  // what remains is junk".
+  console.log(`\n── VALUATION FIELDS: ALL ELEVEN, MEASURED ──`);
+  console.log(`  Austin publishes no single "declared valuation" column. parseValuation() reads three of these`);
+  console.log(`  eleven, marked READ below; the other eight are ingested by nothing today.`);
+  console.log(`  "usable" = numeric and > 10. Values of exactly 1, 5 etc. are counted separately as placeholders,`);
+  console.log(`  because a $1 permit valuation is a filled-in field, not a small job.\n`);
+
+  const ALL_VALUATION_FIELDS = [...new Set([...VALUATION_FIELDS, ...ordered.filter((k) => /valuation/i.test(k))])];
+  const numeric = (r: Row, f: string): number | undefined => {
+    const raw = String(at(r, f)).replace(/[$,]/g, "").trim();
+    if (raw === "") return undefined;
+    const n = parseFloat(raw);
+    return Number.isFinite(n) ? n : undefined;
+  };
+
+  interface FieldStat { field: string; read: boolean; nonEmpty: number; positive: number; small: number; big: number[] }
+  const fieldStats: FieldStat[] = [];
+  for (const f of ALL_VALUATION_FIELDS) {
+    const read = (VALUATION_FIELDS as readonly string[]).includes(f);
+    let nonEmpty = 0, positive = 0, small = 0;
+    const big: number[] = [];
+    for (const r of rows) {
+      const n = numeric(r, f);
+      if (n === undefined) continue;
+      nonEmpty++;
+      if (n > 0) positive++;
+      if (n > 0 && n <= 10) small++;
+      if (n > 10) big.push(n);
+    }
+    big.sort((a, b) => a - b);
+    fieldStats.push({ field: f, read, nonEmpty, positive, small, big });
   }
+
+  for (const st of fieldStats.sort((a, b) => b.nonEmpty - a.nonEmpty)) {
+    console.log(`  ${JSON.stringify(st.field)}${st.read ? "   [READ by parseValuation]" : ""}`);
+    console.log(
+      `      non-empty ${num(st.nonEmpty).padStart(7)} (${pct(st.nonEmpty, rows.length).padStart(7)})   ` +
+        `> 0 ${num(st.positive).padStart(7)}   <= 10 ${num(st.small).padStart(7)}   > 10 ${num(st.big.length).padStart(7)}`,
+    );
+    if (st.big.length > 0) console.log(`      values > 10: ${quantiles(st.big)}`);
+    // The verdict, computed. A field is placeholder-poisoned when the junk
+    // outweighs the signal among the values it does carry.
+    const poisonShare = st.positive > 0 ? st.small / st.positive : 0;
+    const verdict =
+      st.nonEmpty === 0
+        ? "NOT PRESENT — nothing to judge"
+        : st.big.length === 0
+          ? "PLACEHOLDER-POISONED — no value above 10 anywhere"
+          : poisonShare >= 0.5
+            ? `PLACEHOLDER-POISONED — ${pct(st.small, st.positive)} of its positive values are <= 10`
+            : poisonShare >= 0.1
+              ? `MIXED — ${pct(st.small, st.positive)} of positive values are <= 10; unusable without excluding them`
+              : `USABLE AS A COST SIGNAL on the ${num(st.big.length)} row(s) that carry one (${pct(st.big.length, rows.length)} of the window), ` +
+                `${pct(st.small, st.positive)} placeholders`;
+    console.log(`      VERDICT: ${verdict}`);
+  }
+
+  // The three best-populated, broken out per permit type — the cut that decides
+  // whether any of them could anchor a per-trade cost figure.
+  if (permitTypeField) {
+    const top3 = [...fieldStats].sort((a, b) => b.nonEmpty - a.nonEmpty).slice(0, 3);
+    for (const st of top3) {
+      console.log(`\n  ── ${JSON.stringify(st.field)} per ${JSON.stringify(permitTypeField)} (values > 10 only) ──`);
+      const byType = new Map<string, { total: number; small: number; big: number[] }>();
+      for (const r of rows) {
+        const t = at(r, permitTypeField);
+        const b = byType.get(t) ?? { total: 0, small: 0, big: [] };
+        b.total++;
+        const n = numeric(r, st.field);
+        if (n !== undefined && n > 0 && n <= 10) b.small++;
+        if (n !== undefined && n > 10) b.big.push(n);
+        byType.set(t, b);
+      }
+      for (const [t, b] of [...byType.entries()].sort((a, b) => b[1].total - a[1].total)) {
+        b.big.sort((x, y) => x - y);
+        console.log(`    ${JSON.stringify(t)}`);
+        console.log(
+          `      ${num(b.big.length)} of ${num(b.total)} row(s) > 10 (${pct(b.big.length, b.total)}), ` +
+            `${num(b.small)} placeholder(s) <= 10` + (b.big.length > 0 ? `  |  ${quantiles(b.big)}` : ""),
+        );
+      }
+    }
+  }
+
+  // ── The coalesced field the fetcher would actually store ───────────────
   const valuationOf = (r: Row): number | undefined => {
     for (const f of VALUATION_FIELDS) {
-      const n = parseFloat(String(at(r, f)));
-      if (Number.isFinite(n) && n > 0) return n;
+      const n = numeric(r, f);
+      if (n !== undefined && n > 0) return n;
     }
     return undefined;
   };
-  const allVals = rows.map(valuationOf);
-  const usable = allVals.filter((v): v is number => v !== undefined);
-  console.log(`\n  COALESCED (what the fetcher would store as valuationUsd):`);
-  console.log(`    carrying a usable value: ${num(usable.length)}  (${pct(usable.length, rows.length)})`);
-  console.log(`    null/blank/zero rate:    ${pct(rows.length - usable.length, rows.length)}`);
+  const usable = rows.map(valuationOf).filter((v): v is number => v !== undefined);
+  const usableBig = usable.filter((v) => v > 10).sort((a, b) => a - b);
+  console.log(`\n  COALESCED (what the fetcher stores as valuationUsd, first > 0 of the three READ fields):`);
+  console.log(`    carrying any positive value: ${num(usable.length)}  (${pct(usable.length, rows.length)})`);
+  console.log(`    of which <= 10 (placeholder): ${num(usable.length - usableBig.length)}  (${pct(usable.length - usableBig.length, usable.length)} of them)`);
+  console.log(`    genuinely > 10:               ${num(usableBig.length)}  (${pct(usableBig.length, rows.length)} of the window)`);
   if (usable.length > 0) {
-    const s = [...usable].sort((a, b) => a - b);
-    console.log(`    distribution: ${quantiles(s)}`);
+    console.log(`    distribution, all positive values: ${quantiles([...usable].sort((a, b) => a - b))}`);
   }
-  if (permitTypeField) {
-    console.log(`\n  ── per ${JSON.stringify(permitTypeField)}: rows / with a usable valuation / distribution ──`);
-    const byType = new Map<string, { total: number; values: number[] }>();
-    for (const r of rows) {
-      const t = at(r, permitTypeField);
-      const b = byType.get(t) ?? { total: 0, values: [] };
-      b.total++;
-      const v = valuationOf(r);
-      if (v !== undefined) b.values.push(v);
-      byType.set(t, b);
-    }
-    for (const [t, b] of [...byType.entries()].sort((a, b) => b[1].total - a[1].total)) {
-      b.values.sort((x, y) => x - y);
-      console.log(`    ${JSON.stringify(t)}`);
-      console.log(
-        `      ${num(b.values.length)} of ${num(b.total)} row(s) carry a value (${pct(b.values.length, b.total)})` +
-          (b.values.length > 0 ? `  |  ${quantiles(b.values)}` : ""),
-      );
-    }
+  if (usableBig.length > 0) {
+    console.log(`    distribution, > 10 only:           ${quantiles(usableBig)}`);
   }
 
   // ── What the live filter keeps ─────────────────────────────────────────
