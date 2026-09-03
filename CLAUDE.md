@@ -167,6 +167,17 @@ Treat that as the truth; if you find evidence it's actually Pages, surface it (R
   per data refresh. (See `COST.md`.)
 - **Scale reality:** target ~90–300 leads/month equivalent. Prefer boring, cheap, reliable.
   Don't over-build. (See `COST.md`.)
+- **Permit data is an activity instrument, not a price instrument.** Measured end to end in
+  rounds 4b–6 (`docs/audits/round-6-permit-measurement.md`). **Supported:** permit counts,
+  timing, month-by-month seasonality, and trade mix *within* a single city. **Not
+  supported:** any price, cost, or "typical spend" figure, in either metro, for any trade.
+  San Antonio's `DECLARED VALUATION` is 0.00% populated on every residential and trade
+  permit type; Austin's coalesced `valuationUsd` has a median of **1**, and its trade-named
+  valuation fields carry whole-project construction values (plumbing median $900k, mechanical
+  median $1m) rather than trade costs. Declared valuation is in any case **an applicant's
+  fee-basis statement to the city, not a paid invoice**, and nothing in either dataset
+  bridges that gap — so even a clean valuation field would not be a homeowner cost. If a
+  round needs a cost figure, it needs a different source (Rule 1).
 
 ---
 

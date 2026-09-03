@@ -33,8 +33,8 @@
 - id: municipal-permits
   name: "Local Municipal Permit Feeds"
   org: "City of Austin (Socrata) / City of San Antonio (CKAN)"
-  primaryUse: "Mechanical, plumbing, electrical, building, roofing/tree where available"
-  thiOutput: "Service activity, permit trends, and timing proxies"
+  primaryUse: "Roof-related permits only — Austin by text match on work class and description, San Antonio by its Re-Roof permit type"
+  thiOutput: "Roof-related permit counts and month-by-month timing. No cost figures: declared valuation is unusable in both cities."
   status: live
   priority: true
 
