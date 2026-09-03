@@ -92,6 +92,42 @@ jobs:
         continue-on-error: true
         run: npx tsx scripts/enumerate-sa-permits.ts
 
+      # ══ ROUND 5 — TEMPORARY. REMOVE once the trade-permit question is settled. ══
+      #
+      # Read-only diagnostic, the Austin half of the pair above. Prints the full
+      # Austin permit taxonomy so the roof-only filter can be widened against
+      # measured values in BOTH metros rather than one. It writes nothing into
+      # site/src/data/, commits nothing, and modifies no fetcher.
+      #
+      # Why it is needed at all: austinPermits.ts filters to roofing TWICE --
+      # a `%ROOF%` SoQL $where clause applied server-side BEFORE download, and
+      # isRoofingRelated() again on what comes back -- so Austin's full taxonomy
+      # has never been observed by anything in this repo. The San Antonio
+      # enumeration (run #32) showed why that matters: SA's two largest
+      # categories are Mechanical and Plumbing, and its DECLARED VALUATION is a
+      # commercial-only field. Widening San Antonio without the equivalent view
+      # of Austin would leave the two metros measuring different things.
+      #
+      # The script issues the SAME dataset (3syk-w9eu), the SAME date column
+      # (issue_date) and a window computed by the SAME function
+      # (computeFetchWindow, imported from src/ingest/merge.ts) -- with only the
+      # roof clause removed, for enumeration. It prints both resolved query URLs
+      # so that claim is checkable from this log rather than taken on trust.
+      #
+      # SOCRATA_APP_TOKEN is passed through exactly as the ingestion step above
+      # passes it: optional, only raises the anonymous rate limit, sent as
+      # X-App-Token when present.
+      #
+      # `continue-on-error` because a diagnostic must never fail the ingestion it
+      # is riding along with. The script prints a single ::error:: annotation on
+      # failure, so a future failure is legible from the run summary without
+      # opening the log.
+      - name: "TEMP (Round 5): enumerate Austin permit taxonomy"
+        continue-on-error: true
+        env:
+          SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
+        run: npx tsx scripts/enumerate-austin-permits.ts
+
       - name: Fetch current U.S. Drought Monitor Texas map
         run: npm run fetch-drought-map
 
