@@ -59,6 +59,129 @@ jobs:
           CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
           BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
 
+      # ══ ROUND 4b — TEMPORARY. REMOVE once the trade-permit question is settled. ══
+      #
+      # Read-only diagnostic. Downloads the San Antonio CKAN "Permits Issued"
+      # CSV and prints its taxonomy to this log. It writes nothing into
+      # site/src/data/, commits nothing, and touches no fetcher — the commit
+      # step below only ever stages the paths it names, and /tmp is not among
+      # them.
+      #
+      # Why it exists: the container Claude Code runs in is network-blocked by
+      # policy (403 to CONNECT on data.sanantonio.gov), so the permit taxonomy
+      # cannot be enumerated there, and the round refused to infer permit codes
+      # from memory. This runner is not blocked. See
+      # docs/audits/round-4-parity-blockers.md.
+      #
+      # `continue-on-error` because a diagnostic must never fail the ingestion
+      # it is riding along with.
+      - name: "TEMP (Round 4b): enumerate San Antonio permit taxonomy"
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          python3 - <<'PY'
+          import csv, io, json, urllib.request, collections, re
+
+          PKG = "https://data.sanantonio.gov/api/3/action/package_show?id=building-permits"
+          NAME = re.compile(r"permits?\s*issued", re.I)
+
+          with urllib.request.urlopen(PKG, timeout=120) as r:
+              pkg = json.load(r)
+          res = [x for x in pkg["result"]["resources"] if x.get("name") and NAME.search(x["name"])]
+          # Same freshest-by-last_modified tiebreak the fetcher uses, so this
+          # enumerates the resource ingestion actually reads.
+          res.sort(key=lambda x: x.get("last_modified") or "", reverse=True)
+          print("candidate resources (freshest first):")
+          for x in res:
+              print(f"  {x.get('name')!r}  last_modified={x.get('last_modified')}  {x.get('url')}")
+          chosen = res[0]
+          print(f"\nCHOSEN: {chosen['name']!r} -> {chosen['url']}\n")
+
+          with urllib.request.urlopen(chosen["url"], timeout=300) as r:
+              text = r.read().decode("utf-8-sig", errors="replace")
+          rows = list(csv.reader(io.StringIO(text)))
+          header, body = rows[0], rows[1:]
+
+          print("── HEADER ROW, VERBATIM AND IN ORDER ──")
+          for i, h in enumerate(header):
+              print(f"  [{i:2}] {h!r}")
+          print(f"\nheader field count: {len(header)}   data rows: {len(body)}\n")
+
+          print("── FIELD-COUNT DISTRIBUTION vs header ──")
+          print("   (separates 'columns genuinely empty' from 'rows shorter than header',")
+          print("    where rowsToRecords does r[i] ?? \"\" and DECLARED VALUATION is late)")
+          for n, c in sorted(collections.Counter(len(r) for r in body).items()):
+              flag = "  <-- MATCHES HEADER" if n == len(header) else "  <-- SHORT" if n < len(header) else "  <-- LONG"
+              print(f"  {n:4} fields : {c:7} rows{flag}")
+
+          def idx(*names):
+              for n in names:
+                  for i, h in enumerate(header):
+                      if h.strip().upper() == n.upper():
+                          return i
+              return None
+
+          for label, i in [("PERMIT TYPE", idx("PERMIT TYPE", "PERMIT_TYPE", "TYPE")),
+                           ("WORK TYPE",   idx("WORK TYPE", "WORK_TYPE", "PROJECT NAME"))]:
+              print(f"\n── DISTINCT {label} (column index {i}) ──")
+              if i is None:
+                  print("  COLUMN NOT FOUND in header")
+                  continue
+              vals = collections.Counter((r[i] if i < len(r) else "") for r in body)
+              print(f"  {len(vals)} distinct value(s)")
+              for v, c in vals.most_common():
+                  print(f"  {c:7}  {v!r}")
+
+          vi = idx("DECLARED VALUATION", "VALUATION", "JOB VALUATION")
+          print(f"\n── DECLARED VALUATION (column index {vi}) ──")
+          if vi is None:
+              print("  COLUMN NOT FOUND in header")
+          else:
+              raw = [(r[vi] if vi < len(r) else "") for r in body]
+              missing_field = sum(1 for r in body if vi >= len(r))
+              blank = sum(1 for v in raw if v.strip() == "")
+              nums, zeros, unparsed = [], 0, 0
+              for v in raw:
+                  t = v.replace("$", "").replace(",", "").strip()
+                  if t == "":
+                      continue
+                  try:
+                      f = float(t)
+                      zeros += 1 if f == 0 else 0
+                      if f > 0:
+                          nums.append(f)
+                  except ValueError:
+                      unparsed += 1
+              print(f"  rows where the field does not exist (row too short): {missing_field}")
+              print(f"  present but blank: {blank}")
+              print(f"  parsed as zero:    {zeros}")
+              print(f"  unparseable:       {unparsed}")
+              print(f"  positive values:   {len(nums)}   null rate: {100*(len(body)-len(nums))/max(len(body),1):.2f}%")
+              if nums:
+                  nums.sort()
+                  q = lambda p: nums[min(int(p*len(nums)), len(nums)-1)]
+                  print(f"  min={nums[0]:,.0f}  p25={q(.25):,.0f}  median={q(.5):,.0f}  p75={q(.75):,.0f}  max={nums[-1]:,.0f}")
+
+              # Same breakdown per permit type, so an all-empty column can be
+              # told apart from one that is empty only for re-roof rows.
+              pi = idx("PERMIT TYPE", "PERMIT_TYPE", "TYPE")
+              if pi is not None:
+                  print("\n  positive-valuation count per PERMIT TYPE:")
+                  tot = collections.Counter()
+                  pos = collections.Counter()
+                  for r in body:
+                      t = r[pi] if pi < len(r) else ""
+                      tot[t] += 1
+                      v = (r[vi] if vi < len(r) else "").replace("$", "").replace(",", "").strip()
+                      try:
+                          if float(v) > 0:
+                              pos[t] += 1
+                      except ValueError:
+                          pass
+                  for t, n in tot.most_common():
+                      print(f"    {pos[t]:7}/{n:<7} {t!r}")
+          PY
+
       - name: Fetch current U.S. Drought Monitor Texas map
         run: npm run fetch-drought-map
 

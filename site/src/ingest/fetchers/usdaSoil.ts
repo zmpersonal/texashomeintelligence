@@ -25,19 +25,31 @@ export interface SoilValue {
  * Static data, not a time series — one "observation" per calendar month
  * (a monthly re-check updates in place) until the Dashboard's real
  * address lookup replaces this fixed representative point.
+ *
+ * Round 4b: one module per metro via `makeFetcher`, same pattern as
+ * `airnow.ts`. Both representative points are the `point` already recorded
+ * for each area in `src/data/zip-areas.ts`, so the two agree with the rest
+ * of the app rather than being separately chosen coordinates.
  */
 const SDA_URL = "https://sdmdataaccess.nrcs.usda.gov/Tabular/post.rest";
-const REPRESENTATIVE_POINT = { lat: 30.2672, lon: -97.7431 }; // downtown Austin
 
-const QUERY = `
+/** Matches `AREA_DEFINITIONS[].point` in `src/data/zip-areas.ts`. */
+const REPRESENTATIVE_POINT: Record<"austin" | "san-antonio", { lat: number; lon: number }> = {
+  austin: { lat: 30.2672, lon: -97.7431 }, // downtown Austin
+  "san-antonio": { lat: 29.4241, lon: -98.4936 }, // downtown San Antonio
+};
+
+function queryFor(point: { lat: number; lon: number }): string {
+  return `
 SELECT TOP 1 mu.muname, c.compname, c.drainagecl
 FROM mapunit mu
 INNER JOIN component c ON c.mukey = mu.mukey AND c.majcompflag = 'Yes'
 WHERE mu.mukey IN (
-  SELECT DISTINCT mukey FROM SDA_Get_Mukey_from_intersection_with_WktWgs84('point(${REPRESENTATIVE_POINT.lon} ${REPRESENTATIVE_POINT.lat})')
+  SELECT DISTINCT mukey FROM SDA_Get_Mukey_from_intersection_with_WktWgs84('point(${point.lon} ${point.lat})')
 )
 ORDER BY c.comppct_r DESC
 `.trim();
+}
 
 interface SdaResponse {
   Table?: string[][];
@@ -47,16 +59,18 @@ function monthKey(d: Date): string {
   return d.toISOString().slice(0, 7);
 }
 
-export const usdaSoil: FetcherModule<SoilValue> = {
+function makeFetcher(location: "austin" | "san-antonio"): FetcherModule<SoilValue> {
+  const point = REPRESENTATIVE_POINT[location];
+  return {
   datasetId: "usda-soil",
-  location: "austin",
+  location,
   source: { name: "USDA Soil Data Access", url: "https://sdmdataaccess.nrcs.usda.gov" },
   requiredEnvVars: [],
   async fetchRaw(_ctx): Promise<Observation<SoilValue>[]> {
     const res = await fetch(SDA_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ format: "JSON+COLUMNNAME", query: QUERY }),
+      body: JSON.stringify({ format: "JSON+COLUMNNAME", query: queryFor(point) }),
     });
     if (!res.ok) {
       throw new Error(`USDA Soil Data Access query failed: HTTP ${res.status} from ${SDA_URL}`);
@@ -64,7 +78,7 @@ export const usdaSoil: FetcherModule<SoilValue> = {
     const body = (await res.json()) as SdaResponse;
     const [header, dataRow] = body.Table ?? [];
     if (!header || !dataRow) {
-      throw new Error(`USDA Soil Data Access returned no map unit at ${REPRESENTATIVE_POINT.lat},${REPRESENTATIVE_POINT.lon}`);
+      throw new Error(`USDA Soil Data Access returned no map unit at ${point.lat},${point.lon} (${location})`);
     }
     const col = (name: string) => dataRow[header.indexOf(name)];
 
@@ -82,4 +96,8 @@ export const usdaSoil: FetcherModule<SoilValue> = {
       },
     ];
   },
-};
+  };
+}
+
+export const usdaSoilAustin = makeFetcher("austin");
+export const usdaSoilSanAntonio = makeFetcher("san-antonio");

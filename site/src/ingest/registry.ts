@@ -11,10 +11,10 @@ import { noaaClimate } from "./fetchers/noaaClimate";
 import { femaFlood } from "./fetchers/femaFlood";
 import { tdiLosses } from "./fetchers/tdiLosses";
 import { usdmAustin, usdmSanAntonio } from "./fetchers/usdm";
-import { usdaSoil } from "./fetchers/usdaSoil";
+import { usdaSoilAustin, usdaSoilSanAntonio } from "./fetchers/usdaSoil";
 import { airnowAustin, airnowSanAntonio } from "./fetchers/airnow";
-import { censusAcs } from "./fetchers/censusAcs";
-import { blsWages } from "./fetchers/blsWages";
+import { censusAcsAustin, censusAcsSanAntonio } from "./fetchers/censusAcs";
+import { blsWagesAustin, blsWagesSanAntonio } from "./fetchers/blsWages";
 import { ercot } from "./fetchers/ercot";
 import { txForestService } from "./fetchers/txForestService";
 import { arrCollectionSchedule } from "./fetchers/arrCollectionSchedule";
@@ -65,11 +65,14 @@ export const REGISTRY: RegistryEntry[] = [
   entry("stub", tdiLosses),
   entry("stub", usdmAustin),
   entry("stub", usdmSanAntonio),
-  entry("stub", usdaSoil),
+  entry("stub", usdaSoilAustin),
+  entry("stub", usdaSoilSanAntonio), // Round 4b
   entry("stub", airnowAustin),
   entry("stub", airnowSanAntonio),
-  entry("stub", censusAcs),
-  entry("stub", blsWages),
+  entry("stub", censusAcsAustin),
+  entry("stub", censusAcsSanAntonio), // Round 4b
+  entry("stub", blsWagesAustin),
+  entry("stub", blsWagesSanAntonio), // Round 4b
   entry("stub", ercot),
   entry("stub", txForestService),
 
