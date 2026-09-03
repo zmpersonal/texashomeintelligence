@@ -18,6 +18,29 @@ import { parseCsv, rowsToRecords } from "../csv";
  * hardcoding the exact real names, so a future column rename degrades
  * gracefully instead of breaking outright.
  *
+ * ── WHAT THE COLUMNS ACTUALLY CONTAIN (enumerated live, run #32) ──────
+ * Two of them do not carry what their names suggest, and both mattered:
+ *
+ * `WORK TYPE` -- which `cols.description` below resolves to -- is NOT a
+ * description field. It is a construction-status flag: blank on 111,797 of
+ * 139,124 rows (80.4%), and otherwise only "New", "Existing" or "Other".
+ * That is the whole reason `workDescription` is "" on every San Antonio
+ * observation. It is not a mapping bug and there is no better column to
+ * point at: this resource has no free-text scope-of-work field at all. It
+ * also means the roof filter below is effectively matching on PERMIT TYPE
+ * alone for San Antonio, since the other half of its haystack is empty
+ * four times out of five.
+ *
+ * `DECLARED VALUATION` is populated only on COMMERCIAL permit types. It is
+ * 97.78% null across the file, and the per-type split is close to binary:
+ * 0.00% on every residential and trade type (Mechanical 0/16,395, Re-Roof
+ * 0/10,161, Electrical 0/13,977, Foundation Repair 0/5,243) against
+ * near-100% on commercial ones (Comm New Building 915/915, Comm Finish Out
+ * 258/258). San Antonio requires a declared valuation only on commercial
+ * permits. This is a property of the source, not of `parseValuation`, and
+ * it is why San Antonio cost figures cannot be anchored on permit
+ * valuation the way Austin's can.
+ *
  * The package also contains a frozen historical archive resource,
  * "PERMITS ISSUED 2020-2024" (capped at 2024-12-31), whose name also
  * matches a loose "permits issued" pattern — see findPermitsIssuedCsvUrl's

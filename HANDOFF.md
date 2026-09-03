@@ -59,12 +59,37 @@ run into.
   crawlers at the edge.** `robots.txt` and `llms.txt` allow them; the edge has no
   obligation to agree. Still unverified now that the site is live. (Also described in the
   Cloudflare-gotcha block below.)
+- **San Antonio's `WORK TYPE` is a construction-status flag, not a description.** Enumerated
+  live (run #32): blank on 111,797 of 139,124 rows (80.4%), and otherwise only "New",
+  "Existing" or "Other". `sanAntonioPermits.ts` resolves it as its `description` column
+  because the resource has **no free-text scope-of-work field at all**, which is why
+  `workDescription` is `""` on every San Antonio observation. Consequence worth stating
+  separately: the roof filter is effectively matching on `PERMIT TYPE` alone for San
+  Antonio, since the other half of its haystack is empty four times out of five. Not a
+  mapping bug; there is no better column to point at.
+- **San Antonio's `DECLARED VALUATION` is a commercial-only field, so SA cost pages cannot
+  be anchored on permit valuation.** 97.78% null across the file, and the per-type split is
+  close to binary: 0.00% on every residential and trade type (Mechanical 0/16,395, Re-Roof
+  0/10,161, Electrical 0/13,977, Foundation Repair 0/5,243) against near-100% on commercial
+  ones (Comm New Building 915/915, Comm Finish Out 258/258). The city requires a declared
+  valuation only on commercial permits. This is a property of the source, not of
+  `parseValuation`. **A different source is needed** for San Antonio cost figures — Austin's
+  approach does not port, and publishing an SA cost page off these rows would mean
+  publishing commercial construction values under a homeowner heading.
+- **Austin's permit taxonomy is still unobserved.** `austinPermits.ts` filters `%ROOF%` in a
+  SoQL `$where` BEFORE download and again in `isRoofingRelated()`, so nothing in this repo
+  has ever seen the full Austin vocabulary. A second temporary step
+  (`site/scripts/enumerate-austin-permits.ts`, Round 5) is wired to print it. **Until that
+  has run, do not widen the San Antonio filter** — the two metros would end up measuring
+  different things.
+
 - **A temporary enumeration step is riding along with the ingestion cron, and has to be
   removed.** `.github/workflows/data-ingestion.yml` runs
-  `site/scripts/enumerate-sa-permits.ts` under `continue-on-error`, purely to print the real
-  San Antonio permit taxonomy to the run log so the roof-only filter can be widened against
-  measured values. It is read-only and commits nothing. **Delete the step and the script**
-  once the trade-permit question is settled. The script also re-states five constants copied
+  `site/scripts/enumerate-sa-permits.ts` and `site/scripts/enumerate-austin-permits.ts`
+  under `continue-on-error`, purely to print the real permit taxonomy of each metro to the
+  run log so the roof-only filter can be widened against measured values. Both are read-only
+  and commit nothing. **Delete both steps and both scripts** once the trade-permit question
+  is settled. The script also re-states five constants copied
   out of `sanAntonioPermits.ts`, because the pieces worth reusing there
   (`findPermitsIssuedCsvUrl`, `PACKAGE_SHOW_URL`, `RESOURCE_NAME_MATCH`, `resolveHeader`) are
   module-private and Round 4c placed fetcher edits out of scope. A drift check in the script
