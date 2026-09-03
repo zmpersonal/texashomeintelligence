@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-02T13:38:41.333Z",
-  "lastSuccessAt": "2026-09-02T13:38:41.333Z",
+  "lastAttemptAt": "2026-09-03T13:35:01.472Z",
+  "lastSuccessAt": "2026-09-03T13:35:01.472Z",
   "lastError": null,
   "source": {
     "name": "U.S. Drought Monitor",
@@ -437,7 +437,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-09-02T13:38:41.397Z",
+      "ingestedAt": "2026-09-03T13:35:01.692Z",
       "key": "48029-2026-08-25T00:00:00",
       "value": {
         "droughtIndex": "D1 — Moderate Drought (32% of county)",
@@ -447,7 +447,7 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-09-02T13:38:41.450Z",
+      "ingestedAt": "2026-09-03T13:35:01.803Z",
       "key": "48091-2026-08-25T00:00:00",
       "value": {
         "droughtIndex": "D0 — Abnormally Dry (100% of county)",
@@ -457,8 +457,38 @@
     },
     {
       "observedAt": "2026-08-25T00:00:00.000Z",
-      "ingestedAt": "2026-09-02T13:38:41.509Z",
+      "ingestedAt": "2026-09-03T13:35:02.219Z",
       "key": "48187-2026-08-25T00:00:00",
+      "value": {
+        "droughtIndex": "D1 — Moderate Drought (13% of county)",
+        "county": "Guadalupe",
+        "countyFips": "48187"
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:35:01.692Z",
+      "key": "48029-2026-09-01T00:00:00",
+      "value": {
+        "droughtIndex": "D1 — Moderate Drought (32% of county)",
+        "county": "Bexar",
+        "countyFips": "48029"
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:35:01.803Z",
+      "key": "48091-2026-09-01T00:00:00",
+      "value": {
+        "droughtIndex": "D0 — Abnormally Dry (100% of county)",
+        "county": "Comal",
+        "countyFips": "48091"
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:35:02.219Z",
+      "key": "48187-2026-09-01T00:00:00",
       "value": {
         "droughtIndex": "D1 — Moderate Drought (13% of county)",
         "county": "Guadalupe",

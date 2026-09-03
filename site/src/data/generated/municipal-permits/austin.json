@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-02T13:38:36.358Z",
-  "lastSuccessAt": "2026-09-02T13:38:36.358Z",
+  "lastAttemptAt": "2026-09-03T13:34:54.618Z",
+  "lastSuccessAt": "2026-09-03T13:34:54.618Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -19754,7 +19754,7 @@
     },
     {
       "observedAt": "2026-08-31T00:00:00.000Z",
-      "ingestedAt": "2026-09-02T13:38:36.946Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
       "key": "2026-112049 MP",
       "value": {
         "permitType": "Remodel",
@@ -19764,7 +19764,7 @@
     },
     {
       "observedAt": "2026-08-31T00:00:00.000Z",
-      "ingestedAt": "2026-09-02T13:38:36.946Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
       "key": "2026-114327 EP",
       "value": {
         "permitType": "Repair",
@@ -19774,13 +19774,195 @@
     },
     {
       "observedAt": "2026-08-31T00:00:00.000Z",
-      "ingestedAt": "2026-09-02T13:38:36.946Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
       "key": "2022-139482 BP",
       "value": {
         "permitType": "Remodel",
         "workDescription": "ePlan: Expedited Review - Finish-Outs for Units on Level 55 with Roof Terrace (16551 SF)",
         "status": "Active",
         "valuationUsd": 180000000
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-111002 BP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Replacing the shingles of the roof removing pantry removing 1 bedroom closet removing and replacing a bearing wall with a 16 ft x 1 ft beam. Converting some of the garage to habitable space proposed 221 SF.",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-112049 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "After-the-fact permit for previously installed commercial Type I kitchen exhaust hood ductwork rooftop exhaust fan and associated components serving existing bakery kitchen. No change in occupancy or building area.",
+        "status": "Final"
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-106037 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "adding a solar pv rooftop system to an existing residence",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-036955 PP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "ePlan: Commercial Expedited Review - Exterior Remodel of an Existing Pool Bar Area and Addition of New Roof Area Over Two Portions of Level 3 (16000 SF)",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-036955 MP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "ePlan: Commercial Expedited Review - Exterior Remodel of an Existing Pool Bar Area and Addition of New Roof Area Over Two Portions of Level 3 (16000 SF)",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-056100 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition and remodel\n\nRemodel of kitchen and living spaces and adding a master suite pool bathroom and new roof",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-093796 BP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "AT&T Rooftop/Parking Structure Antenna Collocation. 2026-082218 DA.",
+        "status": "Active",
+        "valuationUsd": 49000
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2025-113049 EP",
+      "value": {
+        "permitType": "Upgrade",
+        "workDescription": "REQUEST TO DISCONNECT\n\nNewton 39-92630. Disconnect/reconnect power to tie in PV component. Upgrading MSP to 200  Amps. 200 - Main Breaker. \nUpgrading revenue meter to 200 Amps. Extending overhead mast/weather head to over 8ft above roof plane only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-038825 MP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express: Replace siding insulation drywall doors and windows; new electrical new A/C drain line re-roof",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-02T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-094769 EP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Install new 5.67 kwdc rooftop solar system servicing new resi only. BBEC",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-02T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-108737 PP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Interior remodel of existing 2-story single-family residence with 70 SF conditioned 2nd floor addition (new roof at 2:12 pitch). New uncovered wood deck at\nrear (272 SF at 50%). Removal of existing pergola carport shed and concrete steps. Two protected trees on site; CRZ tree protection per site pla",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-02T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-034244 PP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "All Interior remodel with New Roof. No addition to the footprint or increase in house square \nfootage. However a new roof will be added due to tree damage and itll increase the height of the \nstructure from 14-4.5 to 15-8.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-02T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-111469 EP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Have a customer with a 100amp service that needs the service panel replaced. The overhead riser is an old SER feeder so we were asked to replace the overhead with a rigid conduit thru the roof eave. The meter can has no issues but since replacing the riser and the panel we are going to go ahead and ",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-02T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-109628 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Rooftop solar installation (10.12 kw DC) on a new construction Residential roof.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-02T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-024637 MP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "*Addressing active code violation* Addition/ remodel of existing 1-story single-family residential to include: carport was converted to garage w/o a permit; converting garage to (space not currently labeled) with addition of window seat utility room and half bath; addition to rear of property to inc",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-02T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-034244 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "All Interior remodel with New Roof. No addition to the footprint or increase in house square \nfootage. However a new roof will be added due to tree damage and itll increase the height of the \nstructure from 14-4.5 to 15-8.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-02T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-092155 PP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition\n\nPrimary suite and laundry addition raising the roof line on the entire house to increase the pitch and extending the front covered patio.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-02T00:00:00.000Z",
+      "ingestedAt": "2026-09-03T13:34:55.312Z",
+      "key": "2026-068172 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "AT&T Rooftop Collocation.",
+        "status": "Active"
       }
     }
   ]

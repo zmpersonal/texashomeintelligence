@@ -3,7 +3,7 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-09-02T13:38:40.677Z",
+  "lastAttemptAt": "2026-09-03T13:35:00.313Z",
   "lastSuccessAt": null,
   "lastError": "FEMA NFHL query failed: HTTP 404 from https://hazards.fema.gov/gis/nfhl/rest/services/public/NFHL/MapServer/28/query?geometry=-97.7431%2C30.2672&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=FLD_ZONE%2CZONE_SUBTY&returnGeometry=false&f=json",
   "source": {
