@@ -100,7 +100,7 @@ const description = `What we measure for ${loc.name}, TX homeowners — storm hi
             <p class="metric-value">{stat.value}</p>
             <p class="metric-note">{stat.label}</p>
             <DataStatus
-              status={dataset.status}
+              status={freshness.display}
               asOf={freshness.asOf}
               dataThrough={freshness.dataThrough}
               source={dataset.source.name}

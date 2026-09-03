@@ -7,6 +7,9 @@
  * resolve feeds identically.
  */
 import type { DatasetFile, Observation } from "../ingest/types";
+import { resolveDisplayStatus, type DisplayStatus } from "./dataFreshness";
+
+export type { DisplayStatus };
 
 const generatedFiles = import.meta.glob<{ default: DatasetFile<unknown> }>(
   "../data/generated/*/*.json",
@@ -43,18 +46,38 @@ export interface Freshness {
   /** How far the records themselves run — several sources publish on a lag,
    * so this is routinely months behind `asOf`. */
   dataThrough?: string;
+  /**
+   * What a badge may claim about this reading — computed, not stored.
+   *
+   * `DatasetFile.status` is the ingest outcome and cannot answer "is this
+   * current?", because a successful fetch of a feed that publishes annually
+   * still returns a year-old record. This field is the answer, resolved
+   * against the per-source window in `dataFreshness.ts` at the moment of
+   * rendering. Pass THIS to `DataStatus`, never `dataset.status`.
+   */
+  display: DisplayStatus;
 }
 
 /**
  * Freshness for a card or page header. A "sample" dataset reports no dates at
  * all: a fabricated placeholder has no honest "updated" or "data through"
  * value, and printing the seed's timestamps would imply it was measured.
+ *
+ * `now` is injectable so the round's verification can render a dataset at a
+ * chosen age without editing committed data.
  */
-export function freshnessOf<T>(dataset: DatasetFile<T>): Freshness {
-  if (dataset.status === "sample") return {};
+export function freshnessOf<T>(dataset: DatasetFile<T>, now?: Date): Freshness {
+  if (dataset.status === "sample") return { display: "sample" };
+  const dataThrough = latestObservedAt(dataset.observations);
   return {
     asOf: dataset.lastSuccessAt ?? undefined,
-    dataThrough: latestObservedAt(dataset.observations),
+    dataThrough,
+    display: resolveDisplayStatus({
+      datasetId: dataset.datasetId,
+      feedStatus: dataset.status,
+      dataThrough,
+      now,
+    }),
   };
 }
 

@@ -92,7 +92,7 @@ const datasetJsonLd = {
                       <li>
                         <a href={`/data/${spec.location}/${spec.topic}/`}>{spec.h1}</a>
                         <DataStatus
-                          status={dataset.status}
+                          status={freshness.display}
                           asOf={freshness.asOf}
                           dataThrough={freshness.dataThrough}
                           source={dataset.source.name}

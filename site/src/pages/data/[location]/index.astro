@@ -83,7 +83,7 @@ const description = `Published datasets for ${locationName}: what we track, wher
             <p>{spec.description}</p>
             <p class="metric-label">{recordCount.toLocaleString("en-US")} records</p>
             <DataStatus
-              status={dataset.status}
+              status={freshness.display}
               asOf={freshness.asOf}
               dataThrough={freshness.dataThrough}
               source={dataset.source.name}
