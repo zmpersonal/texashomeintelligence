@@ -1,5 +1,5 @@
 # ══════════════════════════════════════════════════════════════════════════
-# ROUND 16b — TEMPORARY. DELETE THIS ENTIRE FILE once the parcel-data
+# ROUNDS 16b + 16c — TEMPORARY. DELETE THIS ENTIRE FILE once the parcel-data
 # question is settled. It is a diagnostic, not infrastructure.
 # ══════════════════════════════════════════════════════════════════════════
 #
@@ -46,7 +46,9 @@ concurrency:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # Round 16c reads ~595 MB of CSV across four members; 30 was Round 16b's
+    # budget for one member's header.
+    timeout-minutes: 60
     steps:
       # No checkout of the repo is needed and none is done: the probe touches
       # nothing in this repository. That is the strongest guarantee available
@@ -377,4 +379,440 @@ jobs:
           print(f"\nTCAD_PROBE_STATUS=complete pages={ok['pages']} "
                 f"candidates={ok['candidates']} downloaded={ok['downloaded']} "
                 f"rows={ok['inspected']}")
+          PY
+
+      # ══ ROUND 16c — step 2 of 4. THE LAYOUT FILE. ══════════════════════
+      # Run 33916199229 found improvement_detail carries pID/pImprovementID/
+      # pDetailID and NO ADDRESS. If the shard design is to survive, some other
+      # file in the export family must map pID → situs address. The published
+      # layout is where that is documented, so it is opened first and in full.
+      - name: "TEMP (Round 16c): read the appraisal export layout"
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          python3 - <<'PY'
+          import os, re, sys, zipfile, urllib.request, urllib.error, urllib.parse
+
+          UA = ("TexasHomeIntelligence-probe/1.0 (one-off read-only characterisation; "
+                "contact via github.com/zmpersonal/texashomeintelligence)")
+          TMP = os.environ.get("RUNNER_TEMP", "/tmp")
+          CEIL = 20 * 1024 * 1024          # a layout doc has no business being bigger
+
+          def get(url, timeout=180, method="GET", headers=None):
+              h = {"User-Agent": UA}; h.update(headers or {})
+              return urllib.request.urlopen(
+                  urllib.request.Request(url, method=method, headers=h), timeout=timeout)
+
+          print("== 16c.1  LAYOUT / DATA DICTIONARY ==")
+          pages, links = {}, {}
+          for url in ("https://traviscad.org/publicinformation", "https://traviscad.org/"):
+              try:
+                  with get(url, 60) as r:
+                      pages[url] = r.read().decode(r.headers.get_content_charset() or "utf-8",
+                                                   errors="replace")
+              except Exception as e:
+                  print(f"  {url}: {type(e).__name__}: {e}")
+          for url, body in pages.items():
+              for m in re.finditer(r'''(?:href|src)\s*=\s*["']([^"']+)["']''', body, re.I):
+                  links.setdefault(urllib.parse.urljoin(url, m.group(1)), url)
+              for m in re.finditer(r'''https?://[^\s"'<>)]+''', body):
+                  links.setdefault(m.group(0), url)
+
+          # Discovered, never typed. Run 33916199229 saw the page advertise
+          # "EXPORT LAYOUT FILE EXPLANATION / Export Layouts".
+          LAYOUT = re.compile(r"(layout|dictionar|explanation|appraisalexport)", re.I)
+          cands = sorted(u for u in links if LAYOUT.search(u))
+          print(f"\n  {len(cands)} candidate layout link(s):")
+          for u in cands:
+              print(f"    {u}")
+          if not cands:
+              print("  *** none discovered. Cannot document the export family from here.")
+              print("\nTCAD_16C1_STATUS=no-layout-link")
+              sys.exit(0)
+
+          for url in cands[:4]:
+              print(f"\n  ── {url} ──")
+              try:
+                  with get(url, method="HEAD") as r:
+                      cl = r.headers.get("Content-Length")
+                      n = int(cl) if cl and cl.isdigit() else None
+                      print(f"    HTTP {r.status}  {n:,} bytes" if n else f"    HTTP {r.status}")
+                      ctype = r.headers.get("Content-Type")
+                      print(f"    type={ctype}  modified={r.headers.get('Last-Modified')}")
+                  if n and n > CEIL:
+                      print(f"    *** exceeds the {CEIL:,} ceiling — not downloaded.")
+                      continue
+                  path = os.path.join(TMP, "layout_" + re.sub(r"\W+", "_", url)[-60:])
+                  with get(url) as r, open(path, "wb") as f:
+                      f.write(r.read())
+                  got = os.path.getsize(path)
+                  print(f"    downloaded {got:,} bytes")
+
+                  if zipfile.is_zipfile(path):
+                      with zipfile.ZipFile(path) as z:
+                          print(f"\n    ── ARCHIVE: {len(z.namelist())} entries ──")
+                          for i in z.infolist():
+                              print(f"      {i.filename:<62} {i.file_size:>12,} B")
+                          for i in z.infolist():
+                              low = i.filename.lower()
+                              if i.file_size > 2_000_000 or low.endswith((".pdf",".xlsx",".doc",".docx")):
+                                  print(f"\n    ---- {i.filename}: {i.file_size:,} B, "
+                                        f"binary/oversized — not printed ----")
+                                  continue
+                              txt = z.read(i).decode("utf-8", errors="replace")
+                              print(f"\n    ---- {i.filename} ({i.file_size:,} B) ----")
+                              print(txt[:24000])
+                              if len(txt) > 24000:
+                                  print(f"    …[truncated, {len(txt):,} chars total]")
+                              # The one question this whole round turns on.
+                              for m in re.finditer(
+                                      r"[^\n]*\b(situs|addr|address|street|house.?num|city|zip)\b[^\n]*",
+                                      txt, re.I):
+                                  print(f"      ADDRESS-FIELD HIT: {m.group(0).strip()[:200]}")
+                  else:
+                      head = open(path, "rb").read(60000).decode("utf-8", errors="replace")
+                      print(f"\n    ---- first 60 KB, verbatim ----\n{head}")
+              except Exception as e:
+                  print(f"    FAILED: {type(e).__name__}: {e}")
+              finally:
+                  try: os.remove(path)
+                  except Exception: pass
+
+          print("\nTCAD_16C1_STATUS=complete")
+          PY
+
+      # ══ ROUND 16c — step 3 of 4. THE BIG EXPORTS, WITHOUT DOWNLOADING. ══
+      # The certified/supplemental exports are ~530 MiB each. The round's rule
+      # is not to pull them. A zip's central directory sits at the END of the
+      # file, so two HTTP Range requests — a 64 KB tail, then the directory
+      # itself — list every member and its size for a few hundred KB of
+      # transfer instead of half a gigabyte. That is the whole technique.
+      - name: "TEMP (Round 16c): list big-export members via HTTP range"
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          python3 - <<'PY'
+          import re, struct, zlib, urllib.request, urllib.error, urllib.parse
+
+          UA = ("TexasHomeIntelligence-probe/1.0 (one-off read-only characterisation; "
+                "contact via github.com/zmpersonal/texashomeintelligence)")
+
+          def req(url, headers=None, timeout=180, method="GET"):
+              h = {"User-Agent": UA}; h.update(headers or {})
+              return urllib.request.urlopen(
+                  urllib.request.Request(url, method=method, headers=h), timeout=timeout)
+
+          def rng(url, start, end):
+              """Bytes [start, end] inclusive. Returns None if the server ignores Range."""
+              with req(url, {"Range": f"bytes={start}-{end}"}) as r:
+                  if r.status != 206:
+                      return None
+                  return r.read()
+
+          def central_directory(url, size):
+              tail_len = min(66000, size)
+              tail = rng(url, size - tail_len, size - 1)
+              if tail is None:
+                  return None, "server ignored Range (no 206)"
+              i = tail.rfind(b"PK\x05\x06")
+              if i < 0:
+                  return None, "no end-of-central-directory signature in the tail"
+              n_ent, cd_size, cd_off = struct.unpack("<HII", tail[i+10:i+20])
+              # ZIP64 when any field is saturated.
+              if 0xFFFFFFFF in (cd_size, cd_off) or n_ent == 0xFFFF:
+                  j = tail.rfind(b"PK\x06\x07")
+                  if j < 0:
+                      return None, "ZIP64 indicated but no locator found"
+                  z64_off = struct.unpack("<Q", tail[j+8:j+16])[0]
+                  z64 = rng(url, z64_off, z64_off + 55)
+                  if z64 is None or z64[:4] != b"PK\x06\x06":
+                      return None, "ZIP64 EOCD unreadable"
+                  n_ent, cd_size, cd_off = struct.unpack("<QQQ", z64[32:56])
+                  print(f"    (ZIP64: {n_ent:,} entries)")
+              cd = rng(url, cd_off, cd_off + cd_size - 1)
+              if cd is None:
+                  return None, "central directory range refused"
+              out, p = [], 0
+              while p + 46 <= len(cd) and cd[p:p+4] == b"PK\x01\x02":
+                  method_, = struct.unpack("<H", cd[p+10:p+12])
+                  csize, usize = struct.unpack("<II", cd[p+20:p+28])
+                  nlen, elen, clen = struct.unpack("<HHH", cd[p+28:p+34])
+                  lho, = struct.unpack("<I", cd[p+42:p+46])
+                  name = cd[p+46:p+46+nlen].decode("utf-8", errors="replace")
+                  out.append({"name": name, "csize": csize, "usize": usize,
+                              "method": method_, "lho": lho})
+                  p += 46 + nlen + elen + clen
+              return out, None
+
+          def peek_header(url, ent, want=600_000):
+              """Inflate the first chunk of one member to read its CSV header,
+              without pulling the rest of the archive."""
+              lh = rng(url, ent["lho"], ent["lho"] + 29)
+              if lh is None or lh[:4] != b"PK\x03\x04":
+                  return None
+              nlen, elen = struct.unpack("<HH", lh[26:30])
+              start = ent["lho"] + 30 + nlen + elen
+              chunk = rng(url, start, start + min(want, ent["csize"]) - 1)
+              if chunk is None:
+                  return None
+              if ent["method"] == 0:
+                  return chunk.decode("utf-8", errors="replace")
+              try:
+                  return zlib.decompressobj(-15).decompress(chunk).decode("utf-8", errors="replace")
+              except Exception:
+                  return None
+
+          print("== 16c.2  BIG EXPORTS — central directory by HTTP range ==")
+          pages, links = {}, {}
+          for url in ("https://traviscad.org/publicinformation",):
+              with req(url, timeout=60) as r:
+                  pages[url] = r.read().decode(r.headers.get_content_charset() or "utf-8",
+                                               errors="replace")
+          for url, body in pages.items():
+              for m in re.finditer(r'''(?:href|src)\s*=\s*["']([^"']+)["']''', body, re.I):
+                  links.setdefault(urllib.parse.urljoin(url, m.group(1)), url)
+              for m in re.finditer(r'''https?://[^\s"'<>)]+''', body):
+                  links.setdefault(m.group(0), url)
+
+          BIG = re.compile(r"(certified.*export|appraisal.*export|website.*export|supp)", re.I)
+          cands = sorted(u for u in links
+                         if u.lower().endswith(".zip") and BIG.search(u))
+          print(f"\n  {len(cands)} big-export candidate(s):")
+          for u in cands:
+              print(f"    {u}")
+
+          ADDRESSY = re.compile(r"(situs|addr|prop|owner|roll|land|abs|subd)", re.I)
+          for url in cands[:6]:
+              print(f"\n  ══ {url} ══")
+              try:
+                  with req(url, method="HEAD") as r:
+                      cl = r.headers.get("Content-Length")
+                      size = int(cl) if cl and cl.isdigit() else None
+                      accepts = r.headers.get("Accept-Ranges")
+                  print(f"    {size:,} bytes ({size/1048576:.1f} MiB)  Accept-Ranges={accepts}")
+                  if not size:
+                      print("    no Content-Length — cannot range-read."); continue
+                  ents, err = central_directory(url, size)
+                  if err:
+                      print(f"    central directory unreadable: {err}")
+                      print("    NOT downloading the whole archive — reporting instead.")
+                      continue
+                  print(f"\n    ── {len(ents)} MEMBER(S) ──")
+                  for e in ents:
+                      print(f"      {e['name']:<58} {e['usize']:>14,} B uncompressed")
+                  # Headers for anything that might carry an address.
+                  for e in ents:
+                      if not ADDRESSY.search(e["name"]):
+                          continue
+                      txt = peek_header(url, e)
+                      if not txt:
+                          print(f"\n      {e['name']}: header not readable by range")
+                          continue
+                      lines = txt.splitlines()
+                      print(f"\n      ── {e['name']} — first 2 lines ──")
+                      for ln in lines[:2]:
+                          print(f"        {ln[:700]!r}")
+                      hdr = lines[0] if lines else ""
+                      hits = [f for f in re.split(r"[,|\t]", hdr)
+                              if re.search(r"(situs|addr|street|city|zip|house)", f, re.I)]
+                      print(f"      ADDRESS-BEARING FIELDS: {hits or 'NONE'}")
+                      fields = re.split(r"[,|\t]", hdr)
+                      id_fields = [f for f in fields if re.search(r"id", f, re.I)]
+                      if id_fields:
+                          print(f"      pID-LIKE FIELDS: {id_fields}")
+              except Exception as e:
+                  print(f"    FAILED: {type(e).__name__}: {e}")
+
+          print("\nTCAD_16C2_STATUS=complete")
+          PY
+
+      # ══ ROUND 16c — step 4 of 4. WHAT A PROPERTY-LEVEL RECORD WOULD BE. ══
+      #
+      # Run 33916199229 read only `improvement_detail_2026_4.csv` — the largest
+      # member — and reported 1,067,067 rows. THAT WAS ONE FILE OF FOUR. This
+      # step reads all four (~595 MB uncompressed) and groups by pID, because
+      # "rows per property" cannot be answered from a quarter of the rows.
+      #
+      # Two hypotheses from the sample rows in that run, both TESTED not assumed:
+      #   pID 700000 / pImprovementID 8249970 had area 2406.5 on `1st Floor` and
+      #   32.0 on `PORCH OPEN 1ST F`, while grossArea (5652.0) and TotgrossArea
+      #   (5659.6) were IDENTICAL on both rows. If those two are denormalised
+      #   improvement- and property-level totals, no summing is needed at all.
+      #   If they are not constant within their key, the sum is required and the
+      #   detail-type whitelist below is what makes it a living-area sum rather
+      #   than a garage-and-porch sum.
+      - name: "TEMP (Round 16c): property-level aggregation + HVAC year test"
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          python3 - <<'PY'
+          import csv, io, os, re, zipfile, urllib.request
+          from collections import Counter, defaultdict
+
+          UA = ("TexasHomeIntelligence-probe/1.0 (one-off read-only characterisation; "
+                "contact via github.com/zmpersonal/texashomeintelligence)")
+          TMP = os.environ.get("RUNNER_TEMP", "/tmp")
+          URL = "https://traviscad.org/wp-content/largefiles/improvement_detail_2026.zip"
+          CEIL = 200 * 1024 * 1024
+
+          # LIVING SPACE ONLY. Summing every `area` row would add porches,
+          # garages, decks and pools to the house — which is exactly the wrong
+          # answer for "how big is my home", and the reason this list exists
+          # rather than a bare SUM(area). Membership is by the detail-type
+          # description the district itself publishes, and every description
+          # actually seen is reported below so the list can be audited.
+          LIVING = re.compile(r"^(1st floor|2nd floor|3rd floor|4th floor|"
+                              r"upper floor|half story|attic finished|"
+                              r"basement finished|living area)", re.I)
+          NOT_LIVING = re.compile(r"(porch|garage|carport|deck|terrace|patio|pool|"
+                                  r"shed|barn|canopy|balcony|sketch|fence|"
+                                  r"driveway|storage)", re.I)
+          SYSTEMS = re.compile(r"(hvac|solar|heat|cool|air cond|furnace|boiler|"
+                               r"water heat|generator|septic|well)", re.I)
+
+          print("== 16c.3  PROPERTY-LEVEL RECORD, ALL FOUR MEMBERS ==")
+          path = os.path.join(TMP, "imprv.zip")
+          with urllib.request.urlopen(
+                  urllib.request.Request(URL, headers={"User-Agent": UA}), timeout=900) as r, \
+               open(path, "wb") as f:
+              got = 0
+              while True:
+                  b = r.read(1 << 20)
+                  if not b: break
+                  got += len(b)
+                  if got > CEIL: raise RuntimeError("exceeded ceiling")
+                  f.write(b)
+          print(f"  downloaded {got:,} bytes ({got/1048576:.1f} MiB)")
+
+          # Per-pID accumulators. Values only — never the rows themselves —
+          # so ~3.3M rows collapse into one small tuple per property.
+          rows_per = Counter()
+          living_sum = defaultdict(float)
+          totgross_first, totgross_varies = {}, set()
+          gross_first, gross_varies = {}, set()      # keyed (pID, pImprovementID)
+          state_of = {}
+          floor_year, hvac_year, hvac_eff, floor_eff = {}, {}, {}, {}
+          desc_counts = Counter()
+          desc_area_seen = Counter()
+          hvac_fields = defaultdict(Counter)
+          total_rows = 0
+
+          def num(s):
+              try: return float(s)
+              except Exception: return None
+
+          with zipfile.ZipFile(path) as z:
+              members = [i for i in z.infolist() if i.filename.lower().endswith(".csv")]
+              print(f"  members: {[m.filename for m in members]}")
+              for mi, m in enumerate(members):
+                  with z.open(m) as fh:
+                      rdr = csv.DictReader(io.TextIOWrapper(fh, encoding="utf-8", errors="replace"))
+                      for row in rdr:
+                          total_rows += 1
+                          pid = row.get("pID") or ""
+                          iid = row.get("pImprovementID") or ""
+                          desc = (row.get("imprvDetailTypeDesc") or "").strip()
+                          rows_per[pid] += 1
+                          desc_counts[desc] += 1
+                          state_of[pid] = row.get("stateCd") or ""
+
+                          tg = row.get("TotgrossArea")
+                          if pid in totgross_first:
+                              if totgross_first[pid] != tg: totgross_varies.add(pid)
+                          else: totgross_first[pid] = tg
+                          ga, key = row.get("grossArea"), (pid, iid)
+                          if key in gross_first:
+                              if gross_first[key] != ga: gross_varies.add(key)
+                          else: gross_first[key] = ga
+
+                          a = num(row.get("area"))
+                          if a and LIVING.match(desc):
+                              living_sum[pid] += a
+                              desc_area_seen[desc] += 1
+
+                          ay, ey = row.get("actualYearBuilt"), row.get("imprvEffYearBuilt")
+                          if SYSTEMS.search(desc) and "hvac" in desc.lower():
+                              hvac_year.setdefault(pid, ay); hvac_eff.setdefault(pid, ey)
+                              for f in ("area","imprvUnits","imprvCondition","detailQuality",
+                                        "detailClass","replacementCostNew","imprvStories",
+                                        "pricingUnitPrice","improvementDetailValue"):
+                                  hvac_fields[f][(row.get(f) or "").strip()] += 1
+                          elif LIVING.match(desc):
+                              floor_year.setdefault(pid, ay); floor_eff.setdefault(pid, ey)
+                  print(f"  …{m.filename}: cumulative {total_rows:,} rows")
+          os.remove(path)
+          print("  (archive deleted)")
+
+          # ── the numbers the round asked for ──────────────────────────────
+          print(f"\n  ── ROWS: {total_rows:,} across {len(members)} member(s) ──")
+          print("  *** Run 33916199229 reported 1,067,067 — that was member _4 ALONE. ***")
+          print(f"\n  ── DISTINCT pID: {len(rows_per):,} ──")
+          rp = sorted(rows_per.values())
+          q = lambda p: rp[int(len(rp)*p)] if rp else 0
+          print(f"  rows per pID: min {rp[0]} · p25 {q(.25)} · med {q(.5)} · "
+                f"p75 {q(.75)} · p95 {q(.95)} · max {rp[-1]}")
+          print(f"  mean {total_rows/len(rows_per):.2f} rows per property")
+
+          res = [p for p, s in state_of.items() if s in ("A1", "A4")]
+          print(f"\n  ── RESIDENTIAL (stateCd A1 or A4): {len(res):,} of {len(rows_per):,} "
+                f"pIDs ({len(res)/len(rows_per)*100:.1f}%) ──")
+
+          print("\n  ── HYPOTHESIS 1: is TotgrossArea constant within a pID? ──")
+          print(f"    varies within pID: {len(totgross_varies):,} of {len(totgross_first):,} "
+                f"({len(totgross_varies)/max(1,len(totgross_first))*100:.2f}%)")
+          print("  ── HYPOTHESIS 2: is grossArea constant within (pID, pImprovementID)? ──")
+          print(f"    varies within key: {len(gross_varies):,} of {len(gross_first):,} "
+                f"({len(gross_varies)/max(1,len(gross_first))*100:.2f}%)")
+          print("    If both are ~0%, the totals are already denormalised onto every row")
+          print("    and NO SUM IS NEEDED. If not, the living-area sum below is required.")
+
+          print("\n  ── LIVING-AREA SUM vs TotgrossArea, 20 residential pIDs ──")
+          print(f"    {'pID':>10} {'sum(living area)':>18} {'TotgrossArea':>16} {'rows':>6}")
+          for p in res[:20]:
+              tg = num(totgross_first.get(p, "")) or 0
+              print(f"    {p:>10} {living_sum.get(p,0):>18,.1f} {tg:>16,.1f} {rows_per[p]:>6}")
+
+          print("\n  ── DETAIL TYPES CLASSED AS LIVING SPACE (summed) ──")
+          for d, n in desc_area_seen.most_common(30):
+              print(f"    {d!r:<38} {n:>9,}")
+          print("\n  ── DETAIL TYPES **NOT** SUMMED, 30 most common ──")
+          for d, n in desc_counts.most_common(60):
+              if not LIVING.match(d):
+                  flag = "excluded-by-name" if NOT_LIVING.search(d) else "UNCLASSIFIED — review"
+                  print(f"    {d!r:<38} {n:>9,}  {flag}")
+
+          # ── the question that decides AC Lifespan ────────────────────────
+          print("\n== 16c.4  HVAC ROWS — DOES actualYearBuilt MEAN INSTALL YEAR? ==")
+          both = [p for p in hvac_year if p in floor_year]
+          print(f"  properties with BOTH an HVAC row and a floor row: {len(both):,}")
+          same = sum(1 for p in both if hvac_year[p] == floor_year[p])
+          same_eff = sum(1 for p in both if hvac_eff.get(p) == floor_eff.get(p))
+          if both:
+              print(f"  actualYearBuilt   identical to the floor row: {same:,} "
+                    f"({same/len(both)*100:.2f}%)")
+              print(f"  imprvEffYearBuilt identical to the floor row: {same_eff:,} "
+                    f"({same_eff/len(both)*100:.2f}%)")
+              print("\n  READ THIS AS THE ANSWER:")
+              print("   ~100% identical  → the year is the BUILDING's, not the equipment's.")
+              print("                      AC Lifespan CANNOT read install age from this file;")
+              print("                      it would be reporting house age as equipment age.")
+              print("   materially lower → the field tracks the component and is worth a")
+              print("                      second look before anything is built on it.")
+              diffs = Counter()
+              for p in both[:400000]:
+                  a, b = num(hvac_year[p]), num(floor_year[p])
+                  if a is not None and b is not None: diffs[int(a-b)] += 1
+              print("\n  HVAC year − floor year, 12 most common deltas:")
+              for d, n in diffs.most_common(12):
+                  print(f"    {d:>+6}  {n:>9,}")
+          print("\n  ── WHAT ELSE AN HVAC ROW CARRIES (8 most common per field) ──")
+          for f, c in hvac_fields.items():
+              print(f"    {f}: {c.most_common(8)}")
+
+          print("\n  ── SYSTEM-TYPE ROWS (not structure) ──")
+          for d, n in desc_counts.most_common(400):
+              if SYSTEMS.search(d):
+                  print(f"    {d!r:<38} {n:>9,}")
+
+          print(f"\nTCAD_16C3_STATUS=complete rows={total_rows} pids={len(rows_per)}")
           PY
