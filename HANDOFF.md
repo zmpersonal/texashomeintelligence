@@ -140,6 +140,84 @@ run into.
   generated dataset files - those come from ingestion, and a replay asserting on them needs a
   prior `npm run ingest` or the committed data.
 
+- **Round 11 seam: REMOTE D1 HAS NO MIGRATION LEDGER. The schema is correct; the record of
+  how it got that way does not exist.** Verified 2026-09-04 by read-only query against
+  `texas-home-intelligence-db` (`0b1f11b2-b8f4-4eeb-b36e-4debd9f5c956`): **all four migrations
+  are applied** - all 22 objects (18 tables, 4 indexes) present, and the column-level DDL of
+  every 0003 and 0004 table matches its migration file exactly. Nothing is outstanding to
+  apply.
+  **But `d1_migrations` does not exist.** Migrations were applied with raw
+  `wrangler d1 execute --file`, which records nothing.
+  **What that costs, concretely:** (1) no applied timestamps, anywhere, for any migration;
+  (2) "which of these ran?" is answerable only by inspecting the schema, which cannot
+  distinguish "the migration ran" from "objects of the same shape exist"; (3) the next
+  migration has no baseline; and (4) the failure this round actually caught -
+  `wrangler.jsonc`'s note claimed only 0001 was applied and went stale across three
+  migrations with nothing to contradict it. A ledger would have made that note redundant
+  instead of wrong.
+  **The verification method that substitutes for a ledger**, until one exists: query
+  `sqlite_master` on the remote database read-only, check every object each migration file
+  creates, and compare column-level DDL for the tables the newest migrations touch. That is
+  what was done here. It is sound for the CREATE-only migrations this project has, and it
+  would NOT be sound for a migration that alters or backfills - such a change leaves no
+  distinguishing object behind, so the ledger must exist BEFORE the first `ALTER` or data
+  migration. That is the real deadline on this seam.
+
+- **Round 11 recommendation: how to adopt `wrangler d1 migrations apply` - and the one thing
+  that must happen first.** Recommendation only; nothing was applied, altered or written to
+  remote D1 this round (SECURITY.md 🔴).
+  **⚠️ DO NOT run `wrangler d1 migrations apply --remote` as things stand. It would insert
+  sample rows into production.** `migrations_dir` defaults to `./migrations` and the file
+  pattern is `**/*.sql`, so **`migrations/seed.sql` counts as a migration** - verified
+  empirically by running `wrangler d1 migrations list --local` against a throwaway database,
+  which listed `seed.sql` alongside 0001-0004 as unapplied. `seed.sql` carries four INSERTs of
+  fake projects and `example.com` addresses into `projects` and `intake_responses`, and
+  `wrangler.jsonc` has always said it must never reach production. With an empty ledger,
+  wrangler would run **all five files**.
+  **The steps, in order, with the risk of each:**
+  1. **Move `seed.sql` out of `migrations/`** (e.g. to `site/fixtures/seed.sql`) and update
+     any reference to it. *Risk: none to production - it is a local-only file that nothing in
+     the build imports. This step exists solely to make step 4 safe, and skipping it is the
+     one way to turn this whole exercise into a production data incident.*
+  2. **Add the keys** to the `d1_databases` entry in `wrangler.jsonc`:
+     `"migrations_dir": "migrations"` and `"migrations_table": "d1_migrations"`. Both are the
+     values wrangler already defaults to (confirmed in its config schema), so this is
+     documentation of intent rather than a behaviour change. *Risk: none - config only, no
+     database contact.*
+  3. **Back-register the four applied migrations WITHOUT re-running them.** This IS safely
+     possible. Wrangler has no `--baseline` or `--mark-applied` flag (checked), but its ledger
+     is a plain table it reads with `SELECT * FROM d1_migrations ORDER BY id` and writes with
+     `INSERT INTO d1_migrations (name) values (...)`, so inserting the rows by hand is exactly
+     what wrangler itself would have written. **Owner runs, once:**
+     ```
+     npx wrangler d1 execute texas-home-intelligence-db --remote --command \
+       "CREATE TABLE IF NOT EXISTS d1_migrations(id INTEGER PRIMARY KEY AUTOINCREMENT, \
+        name TEXT UNIQUE, applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL); \
+        INSERT OR IGNORE INTO d1_migrations (name) VALUES \
+        ('0001_init.sql'),('0002_dashboard_launch_signups.sql'), \
+        ('0003_accounts_home_reminders.sql'),('0004_weekly_email.sql');"
+     ```
+     The DDL is character-for-character what wrangler creates (read out of
+     `wrangler-dist/cli.js`, v4.125). *Risk: LOW but real - it is a WRITE to production, and
+     🔴 owner-only. It touches no application table and `INSERT OR IGNORE` makes it safe to
+     re-run. The names must match the filenames EXACTLY; a typo silently leaves that migration
+     "unapplied" and step 4 would then re-run it. The recorded `applied_at` will be the
+     back-registration date, not the true application date - those are lost and cannot be
+     recovered. Worth writing the real dates into a comment rather than pretending the
+     timestamp means what it usually means.*
+  4. **Verify before trusting it:** `npx wrangler d1 migrations list texas-home-intelligence-db
+     --remote` should report **nothing unapplied**. *Risk: none - read-only. If it lists
+     anything, STOP: either a name is mistyped or step 1 was skipped.*
+  **If the owner would rather not write to production at all**, the alternative is to do
+  nothing and keep verifying by schema inspection as above. That is tenable only while every
+  migration stays CREATE-only, and it stops being tenable at the first `ALTER TABLE` or
+  backfill.
+  **One reassurance about the four existing files, since it bears on how bad a mistake here
+  would be:** every DDL statement in 0001-0004 is `CREATE TABLE/INDEX IF NOT EXISTS`, and
+  there is not one `ALTER`, `DROP`, `INSERT`, `UPDATE` or `DELETE` among them (checked
+  statement by statement). Re-running them against production would be a schema no-op that
+  touches no rows. **The hazard in this whole procedure is `seed.sql` and nothing else.**
+
 - **Round 10b CLOSED that seam, and closing it turned up something worth knowing:
   `new Date()` DOES NOT WORK at module scope during an Astro build here.** Astro evaluates
   modules under the Cloudflare Workers runtime, which freezes the clock in global scope.
