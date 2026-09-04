@@ -302,6 +302,143 @@ run into.
   treat removing a specific claim as the safe default rather than a change needing the same
   evidence as adding one.
 
+- **⛔ ROUND 16 — TRAVIS CAD PARCEL DATA AND BUILDING FOOTPRINTS: BOTH SOURCES DENIED, NOTHING
+  BUILT.** Full probe in `docs/audits/round-16-parcel-data-probe.md`. No fetcher, dataset,
+  registry entry or freshness window was written, per the round's own rule that a denied host
+  is a stop rather than an assumption to build against.
+  **The brief's network premise was wrong and had to be measured to find out.** It stated both
+  hosts were in this container's allowlist. `traviscad.org`, `www.traviscad.org` and
+  `minedbuildings.z5.web.core.windows.net` (where **every** footprint `.zip` actually lives)
+  all return `connect_rejected` — a policy 403 on CONNECT, recorded by the proxy's own status
+  endpoint. Only `raw.githubusercontent.com` and `api.github.com` answered.
+  **The wider finding: every data host this project ingests from is denied here** —
+  `data.austintexas.gov`, `data.sanantonio.gov`, `api.weather.gov`, `www.eia.gov`,
+  `droughtmonitor.unl.edu`. Those six fetchers run green in CI daily. **This container's
+  allowlist is narrower than the Actions runner's**, which is the cheapest unblock available:
+  run the probe as a `workflow_dispatch` job on the runner, which needs no infrastructure
+  change at all.
+
+- **🔴 ROUND 16 — Microsoft Building Footprints is ODbL, and that is a stop independent of the
+  network.** Read from the repo's own README (the one thing reachable):
+  *"This data is licensed by Microsoft under the Open Data Commons Open Database License."*
+  **ODbL is share-alike.** It obliges a publisher of a Derivative Database to license that
+  database under ODbL and to attribute Produced Works. Every other feed this site ingests is US
+  federal or municipal public data with no such condition; **this is the first that would
+  attach a continuing obligation to what THI publishes and stores, on a commercial site** — and
+  the line between a Produced Work (a rendered roof-area figure) and a Derivative Database (a
+  stored, queryable table of Travis County roof polygons) is exactly where this project sits.
+  **An owner decision, quite possibly a lawyer's, before any footprint ingestion is written.**
+  It does not affect Travis CAD, which is Texas public record and can proceed first.
+  Also measured from the README: Texas is **10,678,921 footprints, 2.83 GiB compressed**, one
+  statewide file with no county download — a Travis subset means fetching the state and
+  clipping. Vintage is 2019–2020 in focal regions, elsewhere averaging ~2012. It carries
+  polygons only: **no year-built, class or stories attribute.**
+
+- **⚠️ ROUND 16 — the storage decision: per-parcel records CANNOT go in `src/data/generated/`.**
+  `lib/datasets.ts` loads the archive with `import.meta.glob(..., { eager: true })`, so **every
+  generated JSON is parsed into the build whether a page reads it or not.** There is no lazy
+  path and no per-dataset opt-out. Measured today: the whole archive is **2.5 MB across 25
+  files**, the largest single file is 1.4 MB for 5,148 permit observations, i.e. **~272 bytes
+  per stored observation with its envelope**. At that rate 100k parcel records is ~27 MB — one
+  eagerly-imported file **ten to forty times the entire current archive**. Trimming to four
+  fields with no envelope still lands at ~10 MB per 100k and forfeits the provenance the round
+  itself requires. Travis County's parcel count is **unverified** (the file never opened), so
+  the arithmetic is stated per 100k rather than as a total.
+  **The two shapes have different answers and conflating them is what makes this look like one
+  decision.** *(a)* Per-ZIP aggregates — median year built, decade bands, median improvement
+  area — are **single-digit KB**, carry provenance naturally, fit the existing mechanism
+  exactly, and are what the comparison the tools actually sell is made of. *(b)* Per-parcel
+  point lookup belongs in **D1**, not in a file the build parses.
+  **And (b) is already blocked on something Round 16's brief defers anyway**: it is only
+  reachable through an address→parcel join. **The storage question and the join question are
+  the same question** and should be decided together — see the Round 15c address-field item
+  above, which has now settled the provider half of it.
+
+- **Round 16 — annual refresh check: recommended, not built.** Travis CAD certifies a roll
+  annually with supplements through the year, so the event worth catching is "a new file was
+  published". Recommended: a **monthly** (not weekly) Actions job issuing **one HEAD request**
+  against the published file, comparing `Last-Modified` / `ETag` / `Content-Length` to a small
+  committed fingerprint; opens an issue on change, exits silently otherwise, **never fails a
+  build** — the citation-check posture. **Cost: 12 HEAD requests a year on free minutes**, no
+  body read, no storage, no build impact. It must **reuse Round 15b's sentinel discipline** so
+  "a new roll was published" and "the checker crashed" are different issues with different
+  titles. Not built because there is no verified URL to point it at — the same blocked step as
+  everything else in the round.
+
+- **Round 16 — field coverage was NOT measured, and no figure is offered.** Year-built coverage
+  and null rate, improvement-area coverage, class and stories, residential parcel count, and
+  footprint coverage against parcels all require opening files that could not be opened.
+  **This is deliberately left blank rather than estimated**, because Round 6 already proved on
+  this project that a field's name does not tell you what is in it: both cities publish a
+  "valuation" field and in neither does it mean what a homeowner would assume, which was only
+  knowable by reading the distribution. Assuming `year built` is well-populated because a field
+  dictionary lists it would repeat that exact mistake. **Measure on a runner before any tool is
+  designed against it.** Bexar CAD is unchanged — no bulk export, PIA request outstanding, San
+  Antonio stays without parcel data.
+
+- **🟡 ROUND 15c — THE ADDRESS FIELD: provider chosen, constraints recorded before it is built.**
+  The owner has chosen **Google Places, Essentials Autocomplete, free tier** for the four
+  address-based hero tools. No field was built this round and none should be until these six
+  hold. Three of those tools also need parcel data, which Round 16 found is blocked (below).
+
+  1. **Provider and tier.** Google Places Essentials Autocomplete. **10,000 requests/month
+     free, then $2.83 per 1,000.** Billing is **per keystroke request, not per address** —
+     roughly ten requests per lookup, so **about 1,000 addresses a month** inside the free
+     allowance. Dated 2026-09-04; **re-verify against Google's live pricing when building**,
+     because every number below depends on it.
+  2. **The abandoned-session trap.** Session tokens make keystrokes free **only when the
+     session terminates in a Place Details call.** A user who types and never selects is
+     billed per request at full rate, so **an abandoned session can cost more than a completed
+     one** — and abandonment is the common case for an abuser and for anyone who changes their
+     mind. The field MUST use session tokens, MUST terminate them properly, and MUST debounce,
+     not firing until roughly the fifth character.
+  3. **A hard ceiling is required, not optional.** A **KV counter in the Worker** that stops
+     calling Google at a stated monthly threshold and degrades the field to plain text entry.
+     Rate limiting slows an abuser; only a ceiling guarantees the bill cannot run. **The
+     degraded state is a first-class layout, not an error state** — a homeowner who types their
+     address into a plain field must still get a useful result, labelled honestly as
+     homeowner-reported, consistent with the existing four-bucket labelling.
+  4. **Edge rate limiting before the Worker.** Cloudflare Rate Limiting Rules on the
+     autocomplete endpoint path, so an abusive client never reaches the Worker or Google. The
+     free plan includes one rule. **The limit must count sessions or completed lookups, never
+     raw requests** — one legitimate lookup is five to ten requests, and a request-counting
+     limit would lock a user out mid-word. And note what a per-IP limit actually is:
+     **households and offices share an IP, so it limits a building, not a person.** Creating
+     the rule is **🔴 owner-owned.**
+  5. **Geo-gating: considered and deliberately NOT adopted.** The owner raised restricting or
+     CAPTCHA-ing non-Texas IPs. Recorded with the reasoning so it is not re-litigated blindly:
+     VPNs and mobile carriers produce false positives, and **someone researching a Texas
+     property from out of state is plausibly the best-converting visitor on the site.** A
+     CAPTCHA on the front door also sits badly against the site's stated differentiator that no
+     phone number is required and nothing is sold. Revisit if abuse appears; if a challenge is
+     ever added use **Cloudflare Turnstile, scoped to the tool endpoint only, never sitewide.**
+     **Bot Fight Mode must stay off** — it is off deliberately because it would challenge the
+     AI crawlers KPI #1 depends on.
+  6. **The COST.md conflict, surfaced rather than resolved.** COST.md rule (1) says without
+     qualification: *"Do not add a live database query, an external API call, or an LLM call on
+     the public serving path."* **An autocomplete field calling Google on keystrokes is exactly
+     that**, and it is a rule this codebase currently observes AND cites —
+     `lib/municipal/shards.ts` names rule (1) as its reason for reading a static asset rather
+     than calling a city API. The provider choice is the owner's and stands; what is recorded
+     is that **the rule is being bent knowingly and narrowly: one endpoint, one user action, a
+     hard ceiling.** Not a general licence to call third parties from the serving path.
+     SECURITY.md's 🟡 "any paid API… ask first" is satisfied by the owner's decision — logged
+     here as a decision exercised, not a tier skipped.
+
+- **Round 15c finding: the repo ALREADY HAS an address input, and these constraints do not
+  apply to it as it stands.** `/home/setup` carries
+  `<input type="text" name="address" autocomplete="street-address">` — that is the **browser's
+  native autofill attribute, not a third-party API**. The field is optional, consent-gated
+  ("Store my address… I can delete it at any time"), and stored in D1. Downstream,
+  `lib/municipal/addressKey.ts` matches it to the Austin Resource Recovery schedule by
+  **exact normalised string key with no fuzzy matching** — every ambiguity resolves to a
+  withheld read, because a wrong collection day is worse than none — and `shards.ts` reads the
+  matching shard from the **Worker's own static assets, no network hop**.
+  **So today's address path makes zero third-party calls and costs nothing per user.** The
+  Round 15c constraints attach to the PROVIDER, not to the field: they bind the moment Google
+  Places is wired to that input, and not before. A future round should expect to add
+  autocomplete to an input that already exists rather than building a new one.
+
 - **⭐ Round 15b: EVERY CITATION ON EVERY SERVICE PAGE IS NOW HUMAN-CHECKED — the first time
   that has been true.** The owner opened the three Austin URLs Round 15 left unverified on
   2026-09-04 and confirmed each resolves and says what it is cited for:

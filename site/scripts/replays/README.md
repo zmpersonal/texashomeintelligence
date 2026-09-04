@@ -9,6 +9,15 @@ anyway, or an action that says "fix" instead of "check" — these do.
 The worker keeps local D1 **in memory** and flushes its own state back over anything
 written underneath it, so the fixture must be applied while the worker is **stopped**.
 
+> ⚠️ **`npm run fixture:check` can say PRESENT while the render fixture is gone.** It tests one
+> D1 row, and D1 state survives in `.wrangler/state` across builds — but `npm run build`
+> **deletes** `dist/client/data/stress-index/fixture-condition.json`, which is what r7replay's
+> four condition-card assertions actually read. So after any rebuild you must re-run
+> `npm run fixture` even when the check reports PRESENT; skipping it fails those four
+> assertions with "no card rendered", which looks exactly like a product regression and is not
+> one. (Cost an investigation in Round 16.) The reliable check is the file:
+> `ls dist/client/data/stress-index/fixture-condition.json`.
+
 ```bash
 npm ci
 npx playwright install chromium     # browser binary — npm ci does NOT do this
