@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/colors.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/typography.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/shape.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/motion.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/base/primitives.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/styles.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<script src="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/_ds_bundle.js"></script>
+<script src="./image-slot.js"></script>
+<style>
+  body{margin:0;background:var(--thi-paper);color:var(--thi-ink);font-family:var(--thi-font-ui);-webkit-font-smoothing:antialiased}
+  a{color:var(--thi-link);text-decoration:none}
+  a:hover{color:var(--thi-link-deep);text-decoration:underline;text-decoration-color:var(--thi-amber);text-underline-offset:3px}
+  *{box-sizing:border-box}
+  image-slot::part(empty){justify-content:flex-end;align-items:flex-end;padding:20px 24px;text-align:right}
+  image-slot::part(empty) *{max-width:22rem}
+  table{border-collapse:collapse}
+  input::placeholder{color:var(--thi-slate-400);font-weight:400}
+  @keyframes thiChipIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @keyframes thiRevealIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes thiFwd{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+  @keyframes thiBack{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+  @keyframes thiFlag{0%{background:#FBF1E6;box-shadow:0 0 0 3px rgba(196,119,46,.22)}100%{background:#FBF1E6;box-shadow:0 0 0 0 rgba(196,119,46,0)}}
+  @keyframes thiShimmer{from{background-position:-240px 0}to{background-position:240px 0}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--thi-paper)">
+
+<x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.SiteHeader" links="{{ navLinks }}" active="Tools" cta="My Dashboard" cta-href="/dashboard/" hint-size="100%,90px"></x-import>
+
+<main>
+<section style="background:var(--thi-surface)">
+<sc-if value="{{ notInput }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-4) var(--thi-gutter) 0">
+  <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Breadcrumbs" items="{{ crumbs }}" hint-size="auto,16px"></x-import>
+</div>
+</sc-if>
+
+<!-- ══ PHASE 1 · ADDRESS INPUT ══ -->
+<sc-if value="{{ isInput }}" hint-placeholder-val="{{ true }}">
+<div>
+<section style="position:relative;background:linear-gradient(180deg,var(--thi-navy) 0%,var(--thi-navy-deep) 100%);overflow:hidden">
+  <div style="position:absolute;inset:0;color:var(--thi-on-dark)">
+    <image-slot id="thi-aerial-austin" shape="rect" fit="cover" placeholder="Aerial for AC lifespan"></image-slot>
+  </div>
+  <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(8,26,49,.56) 0%,rgba(8,26,49,.74) 48%,rgba(8,26,49,.90) 100%)"></div>
+
+  <div style="position:relative;pointer-events:none;max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-4) var(--thi-gutter) var(--thi-sp-20)">
+    <nav aria-label="Breadcrumb" style="pointer-events:auto;display:flex;flex-wrap:wrap;gap:8px;font-family:var(--thi-font-mono);font-size:var(--thi-fs-caption);color:var(--thi-on-dark-muted)">
+      <a href="/" style="color:var(--thi-on-dark-muted)">Home</a><span aria-hidden="true">&rsaquo;</span><a href="/tools/" style="color:var(--thi-on-dark-muted)">Tools</a><span aria-hidden="true">&rsaquo;</span><span style="color:var(--thi-on-dark)">AC lifespan</span>
+    </nav>
+
+    <div style="max-width:40rem;margin:var(--thi-sp-20) auto 0;text-align:center">
+      <h1 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-display-xl);line-height:1.06;letter-spacing:-.015em;margin:0 0 var(--thi-sp-4);color:#fff;text-wrap:balance">How much life is left in your AC</h1>
+      <p style="font-size:var(--thi-fs-body-lg);line-height:var(--thi-lh-body-lg);color:var(--thi-on-dark);margin:0;text-wrap:pretty">Enter your address and we'll pull the permit history for your property.</p>
+    </div>
+
+    <div style="max-width:39rem;margin:var(--thi-sp-8) auto 0;pointer-events:auto">
+      <label for="thi-addr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Your address</label>
+      <div style="display:flex;gap:var(--thi-sp-2)">
+        <div style="position:relative;flex:1;min-width:0">
+          <input id="thi-addr" type="text" autocomplete="off" placeholder="2107 Newton St, 78704" value="{{ query }}" onChange="{{ onQuery }}" onKeyDown="{{ onKey }}" style="width:100%;height:68px;padding:0 var(--thi-sp-5);font-family:var(--thi-font-mono);font-weight:500;font-size:20px;color:var(--thi-ink);background:var(--thi-surface);border:1px solid var(--thi-surface);border-radius:var(--thi-r-control);outline:none" style-focus="box-shadow:var(--thi-focus-ring);border-color:var(--thi-link)">
+          <!-- suggestions · generic provider -->
+    <sc-if value="{{ aTypingGeneric }}" hint-placeholder-val="{{ false }}">
+    <div role="listbox" aria-label="Address suggestions" style="position:absolute;left:0;right:0;top:calc(100% - 2px);z-index:20;background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-top:none;border-radius:0 0 var(--thi-r-control) var(--thi-r-control);box-shadow:var(--thi-shadow-md);overflow:hidden">
+      <button type="button" role="option" onClick="{{ pickFull }}" style="display:block;width:100%;text-align:left;padding:12px var(--thi-sp-5);background:none;border:none;border-bottom:1px solid var(--thi-line-soft);cursor:pointer;font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink)" style-hover="background:var(--thi-mist)">2107 Newton St, Austin, TX 78704</button>
+      <button type="button" role="option" onClick="{{ pickFull }}" style="display:block;width:100%;text-align:left;padding:12px var(--thi-sp-5);background:none;border:none;border-bottom:1px solid var(--thi-line-soft);cursor:pointer;font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink)" style-hover="background:var(--thi-mist)">2107 Newton Ave, Austin, TX 78702</button>
+      <button type="button" role="option" onClick="{{ pickMulti }}" style="display:block;width:100%;text-align:left;padding:12px var(--thi-sp-5);background:none;border:none;border-bottom:1px solid var(--thi-line-soft);cursor:pointer;font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink)" style-hover="background:var(--thi-mist)">2107 Newton St, San Antonio, TX 78201</button>
+      <div style="display:flex;justify-content:space-between;gap:12px;padding:8px var(--thi-sp-5);background:var(--thi-paper);font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)"><span>Provider attribution slot</span><span>Press ↵ to use what you typed</span></div>
+    </div>
+    </sc-if>
+
+    <!-- suggestions · Google Places rendering -->
+    <sc-if value="{{ aTypingPlaces }}" hint-placeholder-val="{{ false }}">
+    <div role="listbox" aria-label="Address suggestions" style="position:absolute;left:0;right:0;top:calc(100% - 2px);z-index:20;background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-top:none;border-radius:0 0 var(--thi-r-control) var(--thi-r-control);box-shadow:var(--thi-shadow-md);overflow:hidden">
+      <button type="button" role="option" onClick="{{ pickFull }}" style="display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;padding:11px var(--thi-sp-5);background:none;border:none;border-bottom:1px solid var(--thi-line-soft);cursor:pointer" style-hover="background:var(--thi-mist)"><span style="font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink)"><strong style="font-weight:600">2107 Newton St</strong></span><span style="font-family:var(--thi-font-ui);font-size:13px;color:var(--thi-slate-500)">Austin, TX, USA</span></button>
+      <button type="button" role="option" onClick="{{ pickFull }}" style="display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;padding:11px var(--thi-sp-5);background:none;border:none;border-bottom:1px solid var(--thi-line-soft);cursor:pointer" style-hover="background:var(--thi-mist)"><span style="font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink)"><strong style="font-weight:600">2107 Newton</strong> Ave</span><span style="font-family:var(--thi-font-ui);font-size:13px;color:var(--thi-slate-500)">Austin, TX, USA</span></button>
+      <button type="button" role="option" onClick="{{ pickMulti }}" style="display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;padding:11px var(--thi-sp-5);background:none;border:none;border-bottom:1px solid var(--thi-line-soft);cursor:pointer" style-hover="background:var(--thi-mist)"><span style="font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink)"><strong style="font-weight:600">2107 Newton St</strong></span><span style="font-family:var(--thi-font-ui);font-size:13px;color:var(--thi-slate-500)">San Antonio, TX, USA</span></button>
+      <div style="display:flex;justify-content:space-between;gap:12px;padding:8px var(--thi-sp-5);background:var(--thi-paper);font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)"><span>Attribution required in-list · no unit data until details resolve</span><span>↵</span></div>
+    </div>
+    </sc-if>
+
+    <!-- suggestions · Smarty rendering -->
+    <sc-if value="{{ aTypingSmarty }}" hint-placeholder-val="{{ false }}">
+    <div role="listbox" aria-label="Address suggestions" style="position:absolute;left:0;right:0;top:calc(100% - 2px);z-index:20;background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-top:none;border-radius:0 0 var(--thi-r-control) var(--thi-r-control);box-shadow:var(--thi-shadow-md);overflow:hidden">
+      <button type="button" role="option" onClick="{{ pickFull }}" style="display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;padding:11px var(--thi-sp-5);background:none;border:none;border-bottom:1px solid var(--thi-line-soft);cursor:pointer" style-hover="background:var(--thi-mist)"><span style="font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink)">2107 Newton St</span><span style="font-family:var(--thi-font-mono);font-size:13px;color:var(--thi-slate-500);margin-left:auto;font-feature-settings:'tnum' 1">Austin TX 78704-1142</span></button>
+      <button type="button" role="option" onClick="{{ pickFull }}" style="display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;padding:11px var(--thi-sp-5);background:none;border:none;border-bottom:1px solid var(--thi-line-soft);cursor:pointer" style-hover="background:var(--thi-mist)"><span style="font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink)">2107 Newton Ave</span><span style="font-family:var(--thi-font-mono);font-size:13px;color:var(--thi-slate-500);margin-left:auto;font-feature-settings:'tnum' 1">Austin TX 78702-3310</span></button>
+      <button type="button" role="option" onClick="{{ pickMulti }}" style="display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;padding:11px var(--thi-sp-5);background:none;border:none;border-bottom:1px solid var(--thi-line-soft);cursor:pointer" style-hover="background:var(--thi-mist)"><span style="font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink)">2107 Newton St</span><span style="font-family:var(--thi-font-mono);font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;color:var(--thi-slate-700);background:var(--thi-mist);border:1px solid var(--thi-line-strong);border-radius:4px;padding:3px 6px">12 units</span><span style="font-family:var(--thi-font-mono);font-size:13px;color:var(--thi-slate-500);margin-left:auto;font-feature-settings:'tnum' 1">San Antonio TX 78201</span></button>
+      <div style="display:flex;justify-content:space-between;gap:12px;padding:8px var(--thi-sp-5);background:var(--thi-paper);font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)"><span>USPS-verified · unit count known before submit</span><span>↵</span></div>
+    </div>
+    </sc-if>
+        </div>
+        <button type="button" onClick="{{ onSubmit }}" style="width:176px;height:68px;flex:none;display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--thi-amber);color:#231506;border:none;border-radius:var(--thi-r-control);cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:16px" style-hover="background:var(--thi-amber-deep);color:#fff">See my report<i class="ph ph-arrow-right" aria-hidden="true" style="font-size:19px"></i></button>
+      </div>
+      <p style="font-family:var(--thi-font-ui);font-size:var(--thi-fs-body-sm);line-height:var(--thi-lh-body-sm);color:var(--thi-on-dark-muted);margin:var(--thi-sp-3) 0 0;text-align:center">No phone or email required. We don't ask for either, and we don't sell your information.</p>
+    </div>
+
+    <div style="max-width:32rem;margin:var(--thi-sp-10) auto 0;padding-top:var(--thi-sp-5);border-top:1px solid var(--thi-hairline-dark);text-align:center">
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:var(--thi-sp-4)">
+        <span style="display:inline-flex;align-items:baseline;gap:7px"><span style="font-family:var(--thi-font-mono);font-weight:500;font-size:22px;line-height:28px;color:#fff;font-feature-settings:'tnum' 1">12</span><span style="font-family:var(--thi-font-ui);font-size:14px;color:var(--thi-on-dark-muted)">years</span></span>
+        <span aria-hidden="true" style="color:var(--thi-on-dark-muted);opacity:.5">·</span>
+        <span style="display:inline-flex;align-items:baseline;gap:7px"><span style="font-family:var(--thi-font-mono);font-weight:500;font-size:22px;line-height:28px;color:#fff;font-feature-settings:'tnum' 1">2.1×</span><span style="font-family:var(--thi-font-ui);font-size:14px;color:var(--thi-on-dark-muted)">runtime</span></span>
+        <span aria-hidden="true" style="color:var(--thi-on-dark-muted);opacity:.5">·</span>
+        <span style="display:inline-flex;align-items:baseline;gap:7px"><span style="font-family:var(--thi-font-mono);font-weight:500;font-size:22px;line-height:28px;color:#fff;font-feature-settings:'tnum' 1">3.5</span><span style="font-family:var(--thi-font-ui);font-size:14px;color:var(--thi-on-dark-muted)">tons</span></span>
+      </div>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-on-dark-muted);margin:var(--thi-sp-3) 0 0">What comes back, from an example property · not your home</p>
+    </div>
+  </div>
+</section>
+
+<sc-if value="{{ hasStatePanel }}" hint-placeholder-val="{{ false }}">
+<section style="background:var(--thi-paper);border-bottom:1px solid var(--thi-line)">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-8) var(--thi-gutter)">
+<!-- no suggestions returned -->
+  <sc-if value="{{ aNoSuggest }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:44rem;margin-top:var(--thi-sp-6);background:var(--thi-surface);border:1px solid var(--thi-line);border-left:4px solid var(--thi-navy);border-radius:var(--thi-r-card);padding:var(--thi-sp-5) var(--thi-sp-6)">
+    <h2 style="font-family:var(--thi-font-ui);font-weight:600;font-size:var(--thi-fs-card);line-height:var(--thi-lh-card);margin:0 0 6px">No match for that address. Enter it manually and we'll keep going.</h2>
+    <p style="font-size:var(--thi-fs-body-sm);line-height:var(--thi-lh-body-sm);color:var(--thi-slate-700);margin:0 0 var(--thi-sp-4)">Newer subdivisions and unincorporated addresses are often missing from address indexes. The permit and appraisal lookups don't depend on the index — they run off the parcel.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--thi-sp-3)">
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.TextField" label="Street address" mono="{{ true }}" placeholder="2107 Newton St" hint-size="100%,72px"></x-import>
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.TextField" label="City" placeholder="Austin" hint-size="100%,72px"></x-import>
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.TextField" label="ZIP" mono="{{ true }}" placeholder="78704" hint-size="100%,72px"></x-import>
+    </div>
+    <div style="margin-top:var(--thi-sp-4)"><button type="button" onClick="{{ go.loadNoRecord }}" style="display:inline-flex;align-items:center;gap:8px;background:var(--thi-navy);color:#fff;border:none;border-radius:var(--thi-r-control);padding:12px 18px;font-family:var(--thi-font-ui);font-weight:600;font-size:14px;cursor:pointer" style-hover="background:var(--thi-navy-hover)">Continue<i class="ph ph-arrow-right" aria-hidden="true"></i></button></div>
+  </div>
+  </sc-if>
+
+  <!-- provider down / rate limited -->
+  <sc-if value="{{ aDown }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:44rem;margin-top:var(--thi-sp-6);background:var(--thi-surface);border:1px solid var(--thi-line);border-left:4px solid var(--thi-watch);border-radius:var(--thi-r-card);padding:var(--thi-sp-5) var(--thi-sp-6)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.StatusChip" status="watch" label="Feed unavailable" show-glyph="{{ true }}" hint-size="auto,24px"></x-import>
+      <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)">Address index · last confirmed Aug 30, 2026 09:12</span>
+    </div>
+    <h2 style="font-family:var(--thi-font-ui);font-weight:600;font-size:var(--thi-fs-card);line-height:var(--thi-lh-card);margin:0 0 6px">Address lookup is down right now. Type the address in full and we'll continue.</h2>
+    <p style="font-size:var(--thi-fs-body-sm);line-height:var(--thi-lh-body-sm);color:var(--thi-slate-700);margin:0 0 var(--thi-sp-4)">Autocomplete is unavailable — the outage is on the address index, not on the permit or appraisal records. Everything downstream still works.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--thi-sp-3)">
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.TextField" label="Street address" mono="{{ true }}" placeholder="2107 Newton St" hint-size="100%,72px"></x-import>
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.TextField" label="City" placeholder="Austin" hint-size="100%,72px"></x-import>
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.TextField" label="ZIP" mono="{{ true }}" placeholder="78704" hint-size="100%,72px"></x-import>
+    </div>
+    <div style="margin-top:var(--thi-sp-4)"><button type="button" onClick="{{ go.loadFull }}" style="display:inline-flex;align-items:center;gap:8px;background:var(--thi-navy);color:#fff;border:none;border-radius:var(--thi-r-control);padding:12px 18px;font-family:var(--thi-font-ui);font-weight:600;font-size:14px;cursor:pointer" style-hover="background:var(--thi-navy-hover)">Continue<i class="ph ph-arrow-right" aria-hidden="true"></i></button></div>
+  </div>
+  </sc-if>
+
+  <!-- outside coverage, still Texas -->
+  <sc-if value="{{ aOutside }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:44rem;margin-top:var(--thi-sp-6);background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);padding:var(--thi-sp-6)">
+    <span style="display:inline-flex;align-items:center;gap:6px;font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)"><i class="ph ph-map-pin" aria-hidden="true" style="font-size:14px"></i>Lubbock · 79410</span>
+    <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h3);line-height:1.15;margin:10px 0 8px">Property-level records aren't loaded for Lubbock yet — but the ZIP-level read works today.</h2>
+    <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:0 0 var(--thi-sp-5);max-width:46em">Permits and appraisal records are loaded county by county. Travis and Bexar are live; Lubbock County is not. Cooling load, electricity price, and drought all run statewide, so the 79410 dashboard is populated now.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:var(--thi-sp-3);align-items:center">
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" href="/dashboard/79410/" icon="gauge" hint-size="auto,44px">See the 79410 dashboard</x-import>
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" variant="secondary" href="#waitlist" icon="envelope-simple" hint-size="auto,44px">Tell me when Lubbock is live</x-import>
+    </div>
+    <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-4) 0 0">Coverage: Travis · Williamson · Hays · Bexar · Comal · Data through Aug 28, 2026 · Confirmed Aug 30, 2026</p>
+  </div>
+  </sc-if>
+
+  <!-- outside Texas -->
+  <sc-if value="{{ aOutsideTx }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:44rem;margin-top:var(--thi-sp-6);background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);padding:var(--thi-sp-6)">
+    <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h3);line-height:1.15;margin:0 0 8px">That address is in Oklahoma, and we only cover Texas.</h2>
+    <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:0 0 var(--thi-sp-5);max-width:46em">Every number here comes from Texas county and city records, Texas cooling load, and Texas price series. Running it on an Oklahoma address would give you a confident-looking answer that isn't about your house — so we'd rather not.</p>
+    <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:0 0 var(--thi-sp-5);max-width:46em">The method is public if you want to run the same read yourself: our sources and the model are both documented.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:var(--thi-sp-3)">
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" variant="secondary" href="#method" icon="clipboard-text" hint-size="auto,44px">How this is calculated</x-import>
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" variant="tertiary" href="#sources" hint-size="auto,44px">See the source list</x-import>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- multi-unit -->
+  <sc-if value="{{ aMulti }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:44rem;margin-top:var(--thi-sp-6);background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);padding:var(--thi-sp-6)">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <i class="ph ph-buildings" aria-hidden="true" style="font-size:20px;color:var(--thi-slate-500)"></i>
+      <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.06em;color:var(--thi-slate-700);background:var(--thi-mist);border:1px solid var(--thi-line-strong);border-radius:4px;padding:3px 6px">12 units at this address</span>
+    </div>
+    <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h3);line-height:1.15;margin:0 0 8px">This looks like a multi-unit building, and this tool assumes a single-family home.</h2>
+    <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:0 0 var(--thi-sp-5);max-width:46em">Mechanical permits on multi-unit buildings usually cover the whole property or a shared plant, so an age read for one unit would be wrong more often than right. The ZIP and metro data pages are still accurate for you.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:var(--thi-sp-3)">
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" href="/data/78201/" icon="chart-line" hint-size="auto,44px">78201 data page</x-import>
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" variant="secondary" href="#" icon="house-line" hint-size="auto,44px">It's a single-family home — continue anyway</x-import>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</section>
+</sc-if>
+</div>
+</sc-if>
+
+<!-- ══ PHASE 2 · LOADING THAT NARRATES ══ -->
+<sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-12) var(--thi-gutter) var(--thi-sp-16);min-height:62vh">
+  <div style="display:flex;align-items:center;gap:var(--thi-sp-3);padding:12px var(--thi-sp-4);background:var(--thi-mist);border:1px solid var(--thi-line);border-radius:var(--thi-r-control);margin-bottom:var(--thi-sp-8)">
+    <i class="ph ph-map-pin" aria-hidden="true" style="font-size:18px;color:var(--thi-amber-deep)"></i>
+    <span style="font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink)">{{ confirmedAddress }}</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1.15fr .85fr;gap:var(--thi-sp-8);align-items:start">
+    <div>
+      <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.15;margin:0 0 var(--thi-sp-5)">Reading the record for this address</h2>
+      <ol aria-live="polite" style="list-style:none;margin:0;padding:0;display:grid;gap:var(--thi-sp-3);font-family:var(--thi-font-mono);font-size:15px;line-height:22px">
+        <li style="display:flex;gap:10px;align-items:baseline;color:{{ l1color }}"><span style="width:18px;flex:none;color:var(--thi-slate-400)">{{ l1glyph }}</span>Finding your property…</li>
+        <li style="display:flex;gap:10px;align-items:baseline;color:{{ l2color }}"><span style="width:18px;flex:none;color:var(--thi-slate-400)">{{ l2glyph }}</span>{{ l2text }}</li>
+        <li style="display:flex;gap:10px;align-items:baseline;color:{{ l3color }}"><span style="width:18px;flex:none;color:var(--thi-slate-400)">{{ l3glyph }}</span>Pulling cooling-load normals for this ZIP…</li>
+        <li style="display:flex;gap:10px;align-items:baseline;color:{{ l4color }}"><span style="width:18px;flex:none;color:var(--thi-slate-400)">{{ l4glyph }}</span>Matching against expected service life…</li>
+      </ol>
+    </div>
+    <div style="display:grid;gap:var(--thi-sp-3)">
+      <div style="height:120px;border-radius:var(--thi-r-card);border:1px solid var(--thi-line);background:linear-gradient(90deg,var(--thi-mist) 0%,#F4F6F9 40%,var(--thi-mist) 80%);background-size:240px 100%;animation:thiShimmer 1.4s linear infinite"></div>
+      <div style="height:64px;border-radius:var(--thi-r-card);border:1px solid var(--thi-line);background:linear-gradient(90deg,var(--thi-mist) 0%,#F4F6F9 40%,var(--thi-mist) 80%);background-size:240px 100%;animation:thiShimmer 1.4s linear infinite"></div>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:0">Fetching latest readings…</p>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══ PHASE 3 · RESULT ══ -->
+<sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-6) var(--thi-gutter) var(--thi-sp-16)">
+
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:var(--thi-sp-3);padding:10px var(--thi-sp-4);background:var(--thi-mist);border:1px solid var(--thi-line);border-radius:var(--thi-r-control);margin-bottom:var(--thi-sp-6)">
+    <i class="ph ph-map-pin" aria-hidden="true" style="font-size:18px;color:var(--thi-amber-deep)"></i>
+    <span style="font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink)">{{ confirmedAddress }}</span>
+    <button type="button" onClick="{{ go.resting }}" style="margin-left:auto;background:none;border:none;padding:0;cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:13px;color:var(--thi-link)" style-hover="color:var(--thi-link-deep)">Change address</button>
+  </div>
+
+  <sc-if value="{{ outage }}" hint-placeholder-val="{{ false }}">
+  <div style="margin-bottom:var(--thi-sp-5)">
+  <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.AlertCard" status="watch" title="One feed is down: City of Austin mechanical permits" body="Permit history for this address is unavailable right now. The appraisal record, cooling load, and price series all returned normally, so the age read below leans on year built and is labeled accordingly." source="City of Austin Building &amp; Trade Permits" as-of="last confirmed Aug 29, 2026 22:40" hint-size="100%,150px"></x-import>
+  </div>
+  </sc-if>
+
+  <!-- ─ property dossier ─ -->
+  <div style="animation:thiRevealIn 300ms var(--thi-ease) both;background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);margin-bottom:var(--thi-sp-5)">
+    <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:var(--thi-sp-3);padding:var(--thi-sp-4) var(--thi-sp-6);border-bottom:1px solid var(--thi-line-soft)">
+      <h2 style="font-family:var(--thi-font-ui);font-weight:600;font-size:var(--thi-fs-card);line-height:var(--thi-lh-card);margin:0">{{ dossierTitle }}</h2>
+      <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)">{{ dossierMeta }}</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1.25fr;gap:0">
+      <!-- identity fields -->
+      <div style="padding:var(--thi-sp-5) var(--thi-sp-6);border-right:1px solid var(--thi-line-soft);display:grid;gap:var(--thi-sp-4);align-content:start">
+
+        <sc-if value="{{ rNoRecord }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-ink);margin:0 0 var(--thi-sp-4);max-width:34em">We couldn't find property records for this address. That's common for newer construction and some unincorporated areas. Tell us roughly when it was built and we'll continue.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--thi-sp-3)">
+            <div>
+              <label for="thi-yb" style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:5px">Roughly when was it built?</label>
+              <select id="thi-yb" value="{{ yearBand }}" onChange="{{ onYearBand }}" style="width:100%;height:44px;padding:0 12px;font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink);background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-control)"><option>Before 1960</option><option>1960 – 1979</option><option>1980 – 1999</option><option>2000 – 2014</option><option>2015 or later</option><option>I don't know</option></select>
+            </div>
+            <div>
+              <label for="thi-sq" style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:5px">Approximate size</label>
+              <input id="thi-sq" type="text" value="{{ sqft }}" onChange="{{ onSqft }}" placeholder="1,800 sq ft" style="width:100%;height:44px;padding:0 12px;font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink);background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-control)">
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:var(--thi-sp-3)">
+            <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-amber-deep);background:#FBF1E6;border:1px dashed #C9A46E"><i class="ph ph-user-focus" aria-hidden="true" style="font-size:12px"></i>You told us</span>
+            <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)">Everything downstream stays labeled this way</span>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ rFail }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.StatusChip" status="unknown" label="Records not reached" show-glyph="{{ true }}" hint-size="auto,24px"></x-import>
+          </div>
+          <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-ink);margin:0 0 var(--thi-sp-4);max-width:34em">We located the parcel but the appraisal join didn't return. This is on our side, not yours. You can retry, or give us the two values and we'll run the read now.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:var(--thi-sp-3)">
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" variant="secondary" icon="arrow-clockwise" on-click="{{ go.loadFull }}" hint-size="auto,44px">Retry the lookup</x-import>
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" variant="tertiary" on-click="{{ go.norecord }}" hint-size="auto,44px">I'll enter it myself</x-import>
+          </div>
+          <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-4) 0 0">Travis CAD join · failed 3 of 3 attempts · 14:22 CT</p>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ rHasRecord }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;gap:var(--thi-sp-4)">
+          <div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+              <label for="thi-year" style="font-family:var(--thi-font-ui);font-weight:600;font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Year built</label>
+              <sc-if value="{{ edYear }}" hint-placeholder-val="{{ false }}">
+              <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-amber-deep);background:#FBF1E6;border:1px dashed #C9A46E;animation:thiFlag 1200ms var(--thi-ease) both"><i class="ph ph-user-focus" aria-hidden="true" style="font-size:12px"></i>You told us</span>
+              </sc-if>
+              <sc-if value="{{ notEdYear }}" hint-placeholder-val="{{ true }}">
+              <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-database" aria-hidden="true" style="font-size:12px"></i>Public record</span>
+              </sc-if>
+            </div>
+            <input id="thi-year" type="text" value="{{ yearBuilt }}" onChange="{{ onYear }}" style="width:100%;height:48px;margin-top:5px;padding:0 12px;font-family:var(--thi-font-mono);font-weight:500;font-size:20px;color:var(--thi-ink);background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-control)" style-focus="box-shadow:var(--thi-focus-ring);border-color:var(--thi-link)">
+          </div>
+          <div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+              <label for="thi-area" style="font-family:var(--thi-font-ui);font-weight:600;font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Conditioned area</label>
+              <sc-if value="{{ edSqft }}" hint-placeholder-val="{{ false }}">
+              <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-amber-deep);background:#FBF1E6;border:1px dashed #C9A46E;animation:thiFlag 1200ms var(--thi-ease) both"><i class="ph ph-user-focus" aria-hidden="true" style="font-size:12px"></i>You told us</span>
+              </sc-if>
+              <sc-if value="{{ notEdSqft }}" hint-placeholder-val="{{ true }}">
+              <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-database" aria-hidden="true" style="font-size:12px"></i>Public record</span>
+              </sc-if>
+            </div>
+            <input id="thi-area" type="text" value="{{ sqft }}" onChange="{{ onSqft }}" style="width:100%;height:48px;margin-top:5px;padding:0 12px;font-family:var(--thi-font-mono);font-weight:500;font-size:20px;color:var(--thi-ink);background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-control)" style-focus="box-shadow:var(--thi-focus-ring);border-color:var(--thi-link)">
+          </div>
+
+          <sc-if value="{{ rPartial }}" hint-placeholder-val="{{ false }}">
+          <div style="padding-top:var(--thi-sp-3);border-top:1px dashed var(--thi-line-strong)">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+              <label for="thi-stories" style="font-family:var(--thi-font-ui);font-weight:600;font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Stories — not in the record</label>
+              <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-amber-deep);background:#FBF1E6;border:1px dashed #C9A46E"><i class="ph ph-user-focus" aria-hidden="true" style="font-size:12px"></i>You tell us</span>
+            </div>
+            <select id="thi-stories" style="width:100%;height:44px;margin-top:5px;padding:0 12px;font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink);background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-control)"><option>1 story</option><option>2 stories</option><option>3 or more</option></select>
+            <p style="font-size:13px;line-height:20px;color:var(--thi-slate-500);margin:8px 0 0">The 2026 roll has area and year for this parcel but no story count. Two stories changes the tonnage check, so we ask rather than assume.</p>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ rStale }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--thi-paper);border:1px solid var(--thi-line);border-left:4px solid var(--thi-watch);border-radius:var(--thi-r-card)">
+            <i class="ph ph-clock-counter-clockwise" aria-hidden="true" style="font-size:18px;color:var(--thi-watch-text);flex:none;margin-top:2px"></i>
+            <p style="font-size:13px;line-height:20px;color:var(--thi-slate-700);margin:0">This parcel last changed in the 2024 certified roll. Appraisal data is annual with supplements, so a 2025 addition or remodel may not appear yet. Correct anything that's wrong.</p>
+          </div>
+          </sc-if>
+
+          <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:0">Edit either field and we'll relabel it — records and homeowner-reported values never get mixed.</p>
+        </div>
+        </sc-if>
+      </div>
+
+      <!-- permit timeline -->
+      <div style="padding:var(--thi-sp-5) var(--thi-sp-6)">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:var(--thi-sp-5)">
+          <span style="font-family:var(--thi-font-ui);font-weight:600;font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Permit timeline</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-database" aria-hidden="true" style="font-size:12px"></i>Public record</span>
+        </div>
+
+        <sc-if value="{{ hasPermits }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="position:relative;height:2px;background:var(--thi-line);margin:0 8px var(--thi-sp-2)">
+            <span style="position:absolute;left:0;top:-5px;width:12px;height:12px;border-radius:50%;background:var(--thi-surface);border:2px solid var(--thi-slate-400)"></span>
+            <span style="position:absolute;left:44%;top:-5px;width:12px;height:12px;border-radius:50%;background:var(--thi-surface);border:2px solid var(--thi-slate-400)"></span>
+            <span style="position:absolute;left:72%;top:-7px;width:16px;height:16px;border-radius:50%;background:var(--thi-amber);border:2px solid var(--thi-surface);box-shadow:0 0 0 1px var(--thi-amber-deep)"></span>
+            <span style="position:absolute;right:0;top:-5px;width:12px;height:12px;border-radius:50%;background:var(--thi-navy);border:2px solid var(--thi-surface);box-shadow:0 0 0 1px var(--thi-navy)"></span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;font-family:var(--thi-font-mono);font-size:12px;line-height:16px;color:var(--thi-slate-500);font-feature-settings:'tnum' 1">
+            <span>1974</span><span style="text-align:center">1998</span><span style="text-align:center;color:var(--thi-amber-deep);font-weight:500">2011</span><span style="text-align:right">2026</span>
+          </div>
+          <ul style="list-style:none;margin:var(--thi-sp-5) 0 0;padding:0;display:grid;gap:0;border-top:1px solid var(--thi-line-soft)">
+            <li style="display:flex;gap:12px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--thi-line-soft)"><span style="font-family:var(--thi-font-mono);font-size:13px;color:var(--thi-slate-500);width:44px;flex:none;font-feature-settings:'tnum' 1">1974</span><span style="font-size:14px;line-height:22px;color:var(--thi-ink)">Built · original construction</span></li>
+            <li style="display:flex;gap:12px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--thi-line-soft)"><span style="font-family:var(--thi-font-mono);font-size:13px;color:var(--thi-slate-500);width:44px;flex:none;font-feature-settings:'tnum' 1">1998</span><span style="font-size:14px;line-height:22px;color:var(--thi-ink)">Re-roof · asphalt shingle · $4,100 declared</span></li>
+            <li style="display:flex;gap:12px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--thi-line-soft)"><span style="font-family:var(--thi-font-mono);font-size:13px;color:var(--thi-amber-deep);width:44px;flex:none;font-feature-settings:'tnum' 1;font-weight:500">2011</span><span style="font-size:14px;line-height:22px;color:var(--thi-ink)"><strong style="font-weight:600">Mechanical · AC changeout</strong> · $6,200 declared · permit 2011-042871</span></li>
+          </ul>
+          <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">Source: City of Austin Building &amp; Trade Permits · Data through Aug 28, 2026 · Confirmed Aug 30, 2026</p>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ noPermits }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="border:1px dashed var(--thi-line-strong);border-radius:var(--thi-r-card);background:var(--thi-paper);padding:var(--thi-sp-5)">
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <i class="ph ph-file-dashed" aria-hidden="true" style="font-size:22px;color:var(--thi-slate-400);flex:none;margin-top:1px"></i>
+              <div>
+                <p style="font-family:var(--thi-font-ui);font-weight:600;font-size:var(--thi-fs-card);line-height:var(--thi-lh-card);margin:0 0 6px;color:var(--thi-ink)">No permit on record</p>
+                <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:0;max-width:38em">In this area that usually means the work predates digital records, or it was done without a permit. Either way it's a finding, not a blank — an unpermitted changeout is common and worth knowing about before you sell.</p>
+              </div>
+            </div>
+          </div>
+          <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">Searched: Bexar County · City of San Antonio trade permits, 1998–present · Data through Aug 26, 2026 · Confirmed Aug 30, 2026</p>
+          <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:6px 0 0">Pre-1998 permits are paper-only. A public-records request is pending; this tool will backfill when it clears.</p>
+        </div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─ fact chips ─ -->
+  <sc-if value="{{ gNone }}" hint-placeholder-val="{{ false }}">
+  <div>
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:var(--thi-sp-3)">
+    <span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Three things we found</span>
+    <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)">Free · no email</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1.2fr .95fr .95fr;gap:var(--thi-sp-4);align-items:start">
+
+    <!-- chip 1 · system age -->
+    <div style="animation:thiChipIn 220ms var(--thi-ease) both;animation-delay:60ms;background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);padding:var(--thi-sp-5)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--thi-sp-3)"><i class="ph ph-thermometer-simple" aria-hidden="true" style="font-size:18px;color:var(--thi-slate-500)"></i><span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">System age</span></div>
+      <sc-if value="{{ hasPermits }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <span style="font-family:var(--thi-font-mono);font-weight:500;font-size:var(--thi-fs-data-lg);line-height:var(--thi-lh-data-lg);color:var(--thi-ink);font-feature-settings:'tnum' 1">15</span>
+          <span style="font-family:var(--thi-font-ui);font-size:15px;color:var(--thi-slate-700)">years</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-surface);border:1px solid var(--thi-navy)"><i class="ph ph-compass-tool" aria-hidden="true" style="font-size:12px"></i>THI analysis</span>
+        </div>
+        <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:8px 0 0">Last mechanical permit: 2011. That's the changeout date, not the year the house was built.</p>
+        <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">Source: City of Austin permits · Data through Aug 28, 2026 · Confirmed Aug 30, 2026</p>
+      </div>
+      </sc-if>
+      <sc-if value="{{ noPermits }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <span style="font-family:var(--thi-font-ui);font-weight:600;font-size:19px;line-height:26px;color:var(--thi-ink)">No mechanical permit on record</span>
+        </div>
+        <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:8px 0 0">Which is itself a finding: in this ZIP roughly 4 in 10 homes of this age have no filed changeout, so the system is either original or was replaced without a permit.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:var(--thi-sp-3)">
+          <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-slate-700);background:var(--thi-paper);border:1px dashed var(--thi-line-strong)"><i class="ph ph-chart-line" aria-hidden="true" style="font-size:12px"></i>Historical context</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-amber-deep);background:#FBF1E6;border:1px dashed #C9A46E"><i class="ph ph-user-focus" aria-hidden="true" style="font-size:12px"></i>Built 1980–1999, you told us</span>
+        </div>
+        <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">Searched: San Antonio trade permits, 1998–present · Confirmed Aug 30, 2026</p>
+      </div>
+      </sc-if>
+    </div>
+
+    <!-- chip 2 · local runtime -->
+    <div style="animation:thiChipIn 220ms var(--thi-ease) both;animation-delay:140ms;margin-top:var(--thi-sp-2);background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);padding:var(--thi-sp-5)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--thi-sp-3)"><i class="ph ph-fire" aria-hidden="true" style="font-size:18px;color:var(--thi-slate-500)"></i><span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Local runtime</span></div>
+      <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+        <span style="font-family:var(--thi-font-mono);font-weight:500;font-size:var(--thi-fs-data-md);line-height:var(--thi-lh-data-md);color:var(--thi-ink);font-feature-settings:'tnum' 1">{{ runtimeMult }}×</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-slate-700);background:var(--thi-paper);border:1px dashed var(--thi-line-strong)"><i class="ph ph-chart-line" aria-hidden="true" style="font-size:12px"></i>Historical context</span>
+      </div>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:8px 0 0">{{ metro }} cooling load runs about {{ runtimeMult }}× the national average. Same equipment, more hours on it.</p>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">Source: NOAA NCEI cooling degree days · 1991–2020 normals · Confirmed Aug 12, 2026</p>
+    </div>
+
+    <!-- chip 3 · size check -->
+    <div style="animation:thiChipIn 220ms var(--thi-ease) both;animation-delay:220ms;margin-top:var(--thi-sp-4);background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);padding:var(--thi-sp-5)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--thi-sp-3)"><i class="ph ph-gauge" aria-hidden="true" style="font-size:18px;color:var(--thi-slate-500)"></i><span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Size check</span></div>
+      <sc-if value="{{ sizeKnown }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+          <span style="font-family:var(--thi-font-mono);font-weight:500;font-size:var(--thi-fs-data-md);line-height:var(--thi-lh-data-md);color:var(--thi-ink);font-feature-settings:'tnum' 1">3.0</span>
+          <span style="font-family:var(--thi-font-ui);font-size:15px;color:var(--thi-slate-700)">tons</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-surface);border:1px solid var(--thi-navy)"><i class="ph ph-compass-tool" aria-hidden="true" style="font-size:12px"></i>THI analysis</span>
+        </div>
+        <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:8px 0 0">3.0 tons for {{ sqft }} sq ft — inside the normal Austin range of 2.5 to 3.5 tons for this size.</p>
+        <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">From permit 2011-042871 · Data through Aug 28, 2026</p>
+      </div>
+      </sc-if>
+      <sc-if value="{{ sizeUnknown }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <p style="font-family:var(--thi-font-ui);font-weight:600;font-size:17px;line-height:24px;color:var(--thi-ink);margin:0">We don't know your tonnage</p>
+        <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:8px 0 0">This one is genuinely unknown, not a finding. Tonnage appears on the permit or on the outdoor unit's model number — with no permit, we'd be guessing, so we don't.</p>
+        <div style="margin-top:var(--thi-sp-3);display:flex;align-items:center;gap:6px">
+          <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-slate-500);background:var(--thi-unknown-bg);border:1px solid var(--thi-line-strong)"><i class="ph ph-question" aria-hidden="true" style="font-size:12px"></i>Unknown</span>
+          <a href="#method" style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px">How to read it off your unit ↗</a>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <!-- gate opener -->
+  <div style="animation:thiChipIn 220ms var(--thi-ease) both;animation-delay:300ms;margin-top:var(--thi-sp-6);background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);padding:var(--thi-sp-6);display:grid;grid-template-columns:1.4fr auto;gap:var(--thi-sp-6);align-items:center">
+    <div>
+      <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h3);line-height:1.15;margin:0 0 8px">Want the full read?</h2>
+      <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:0;max-width:44em">Your report includes an estimated replacement window, cost range by system size, and what your current system likely costs to run each summer.</p>
+    </div>
+    <div style="display:grid;gap:8px;justify-items:start">
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" size="lg" icon="arrow-right" on-click="{{ go.g2 }}" hint-size="auto,48px">Continue — 4 short steps</x-import>
+      <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)">No phone number required.</span>
+    </div>
+  </div>
+  </div>
+  </sc-if>
+
+  <!-- ─ gate ─ -->
+  <sc-if value="{{ inGate }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <!-- accumulated context -->
+    <div style="display:flex;flex-wrap:wrap;gap:var(--thi-sp-2);margin-bottom:var(--thi-sp-4)">
+      <span style="display:inline-flex;align-items:baseline;gap:7px;padding:6px 10px;background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-chip);font-family:var(--thi-font-mono);font-size:12px;line-height:16px;color:var(--thi-slate-700)"><span style="color:var(--thi-ink);font-weight:500">{{ ageShort }}</span>System age</span>
+      <span style="display:inline-flex;align-items:baseline;gap:7px;padding:6px 10px;background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-chip);font-family:var(--thi-font-mono);font-size:12px;line-height:16px;color:var(--thi-slate-700)"><span style="color:var(--thi-ink);font-weight:500">{{ runtimeMult }}×</span>Local runtime</span>
+      <span style="display:inline-flex;align-items:baseline;gap:7px;padding:6px 10px;background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-chip);font-family:var(--thi-font-mono);font-size:12px;line-height:16px;color:var(--thi-slate-700)"><span style="color:var(--thi-ink);font-weight:500">{{ sizeShort }}</span>Size check</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;font-family:var(--thi-font-mono);font-size:12px;line-height:16px;color:var(--thi-slate-500)"><i class="ph ph-lock-simple-open" aria-hidden="true"></i>Kept — these stay yours either way</span>
+    </div>
+
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px var(--thi-sp-6);border-bottom:1px solid var(--thi-line-soft);background:var(--thi-paper)">
+        <span style="font-family:var(--thi-font-mono);font-size:12px;line-height:16px;color:var(--thi-slate-700)">Step {{ stepNum }} of 5 · {{ stepName }}</span>
+        <button type="button" onClick="{{ back }}" style="display:inline-flex;align-items:center;gap:6px;background:none;border:none;padding:0;cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:13px;color:var(--thi-link)" style-hover="color:var(--thi-link-deep)"><i class="ph ph-arrow-left" aria-hidden="true"></i>Back</button>
+      </div>
+
+      <div style="padding:var(--thi-sp-8) var(--thi-sp-6);animation-name:{{ stepAnim }};animation-duration:200ms;animation-timing-function:var(--thi-ease);animation-fill-mode:both">
+
+        <!-- step 2 · confirm -->
+        <sc-if value="{{ g2 }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:38rem">
+          <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.12;margin:0 0 var(--thi-sp-2)">Does this look right?</h2>
+          <p style="font-family:var(--thi-font-mono);font-size:14px;line-height:22px;color:var(--thi-slate-500);margin:0 0 var(--thi-sp-6)">{{ confirmLine }}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:var(--thi-sp-3)">
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" size="lg" icon="check" on-click="{{ go.g3 }}" hint-size="auto,48px">Yes, that's my house</x-import>
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" variant="secondary" size="lg" icon="pencil-simple" on-click="{{ go.editYear }}" hint-size="auto,48px">Something's off — let me fix it</x-import>
+          </div>
+          <p style="font-size:14px;line-height:22px;color:var(--thi-slate-500);margin:var(--thi-sp-4) 0 0">If you correct a value, we keep your version and label it as yours. We never overwrite a record with a guess, or a guess with a record.</p>
+        </div>
+        </sc-if>
+
+        <!-- step 3 · symptoms (optional) -->
+        <sc-if value="{{ g3 }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:44rem">
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:var(--thi-sp-2)">
+            <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.12;margin:0">Anything going on with it?</h2>
+            <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.06em;color:var(--thi-slate-500)">Optional</span>
+          </div>
+          <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:0 0 var(--thi-sp-5);max-width:44em">This changes the repair-versus-replace framing in your report. It doesn't change any of the record values.</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--thi-sp-3)">
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.ChoiceCard" label="Cooling fine" icon="check-circle" selected="{{ sym1 }}" on-click="{{ pickSym1 }}" hint-size="100%,84px"></x-import>
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.ChoiceCard" label="Not keeping up" icon="thermometer-simple" selected="{{ sym2 }}" on-click="{{ pickSym2 }}" hint-size="100%,84px"></x-import>
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.ChoiceCard" label="Uneven rooms" icon="wind" selected="{{ sym3 }}" on-click="{{ pickSym3 }}" hint-size="100%,84px"></x-import>
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.ChoiceCard" label="Getting loud" icon="waveform" selected="{{ sym4 }}" on-click="{{ pickSym4 }}" hint-size="100%,84px"></x-import>
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.ChoiceCard" label="Just planning ahead" icon="calendar-blank" selected="{{ sym5 }}" on-click="{{ pickSym5 }}" hint-size="100%,84px"></x-import>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:var(--thi-sp-3);margin-top:var(--thi-sp-6)">
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" size="lg" icon="arrow-right" on-click="{{ go.g4 }}" hint-size="auto,48px">Continue</x-import>
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" variant="tertiary" size="lg" on-click="{{ go.g4 }}" hint-size="auto,48px">Skip this</x-import>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- step 4 · email -->
+        <sc-if value="{{ g4 }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:38rem">
+          <sc-if value="{{ sKnown }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.12;margin:0 0 var(--thi-sp-2)">Welcome back — send it to the same address?</h2>
+            <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:0 0 var(--thi-sp-5)">You ran the roof scan on this house in June. Nothing to re-enter.</p>
+            <div style="display:flex;align-items:center;gap:12px;padding:14px var(--thi-sp-4);background:var(--thi-mist);border:1px solid var(--thi-line);border-radius:var(--thi-r-control);margin-bottom:var(--thi-sp-5)">
+              <i class="ph ph-envelope-simple" aria-hidden="true" style="font-size:18px;color:var(--thi-slate-500)"></i>
+              <span style="font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink)">d••••••@gmail.com</span>
+              <button type="button" style="margin-left:auto;background:none;border:none;padding:0;cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:13px;color:var(--thi-link)">Use a different address</button>
+            </div>
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" size="lg" icon="arrow-right" on-click="{{ go.g5 }}" hint-size="auto,48px">Continue</x-import>
+          </div>
+          </sc-if>
+          <sc-if value="{{ sFresh }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.12;margin:0 0 var(--thi-sp-2)">Where should the report go?</h2>
+            <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:0 0 var(--thi-sp-5)">One email with the report. No phone number required — we don't ask for it, and we don't sell it.</p>
+            <label for="thi-email" style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:5px">Email address</label>
+            <input id="thi-email" type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="you@example.com" aria-invalid="{{ sInvalid }}" style="width:100%;height:56px;padding:0 var(--thi-sp-4);font-family:var(--thi-font-mono);font-size:17px;color:var(--thi-ink);background:var(--thi-surface);border:1px solid {{ emailBorder }};border-radius:var(--thi-r-control)" style-focus="box-shadow:var(--thi-focus-ring)">
+            <sc-if value="{{ sInvalid }}" hint-placeholder-val="{{ false }}">
+            <p role="alert" style="display:flex;align-items:center;gap:7px;font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:8px 0 0"><i class="ph ph-info" aria-hidden="true" style="font-size:16px;color:var(--thi-slate-500)"></i>That looks like it's missing an @ — check it and we'll carry on.</p>
+            </sc-if>
+            <div style="margin-top:var(--thi-sp-5);display:flex;flex-wrap:wrap;gap:var(--thi-sp-3)">
+              <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" size="lg" icon="arrow-right" on-click="{{ submitEmail }}" hint-size="auto,48px">Continue</x-import>
+            </div>
+          </div>
+          </sc-if>
+        </div>
+        </sc-if>
+
+        <!-- step 5 · delivery / contractor options -->
+        <sc-if value="{{ g5 }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:42rem">
+          <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.12;margin:0 0 var(--thi-sp-2)">How much do you want us to do?</h2>
+          <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:0 0 var(--thi-sp-5)">All three send you the same report. Nothing here changes what's in it.</p>
+          <fieldset style="border:none;margin:0;padding:0;display:grid;gap:0">
+            <legend style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Report delivery options</legend>
+            <label style="display:flex;gap:12px;align-items:flex-start;padding:16px 0;border-top:1px solid var(--thi-line-soft);cursor:pointer">
+              <input type="radio" name="thi-delivery" checked="{{ d1 }}" onChange="{{ pickD1 }}" style="width:20px;height:20px;margin:2px 0 0;accent-color:var(--thi-navy);flex:none">
+              <span><span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:16px;line-height:24px;color:var(--thi-ink)">Just send my report.</span><span style="display:block;font-size:14px;line-height:22px;color:var(--thi-slate-700);margin-top:2px">No contractor contact, now or later.</span></span>
+            </label>
+            <label style="display:flex;gap:12px;align-items:flex-start;padding:16px 0;border-top:1px solid var(--thi-line-soft);cursor:pointer">
+              <input type="radio" name="thi-delivery" checked="{{ d2 }}" onChange="{{ pickD2 }}" style="width:20px;height:20px;margin:2px 0 0;accent-color:var(--thi-navy);flex:none">
+              <span><span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:16px;line-height:24px;color:var(--thi-ink)">Send my report, and show me local HVAC options in Austin.</span><span style="display:block;font-size:14px;line-height:22px;color:var(--thi-slate-700);margin-top:2px">A list in the report. Nobody is contacted.</span></span>
+            </label>
+            <label style="display:flex;gap:12px;align-items:flex-start;padding:16px 0;border-top:1px solid var(--thi-line-soft);border-bottom:1px solid var(--thi-line-soft);cursor:pointer">
+              <input type="radio" name="thi-delivery" checked="{{ d3 }}" onChange="{{ pickD3 }}" style="width:20px;height:20px;margin:2px 0 0;accent-color:var(--thi-navy);flex:none">
+              <span><span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:16px;line-height:24px;color:var(--thi-ink)">Send my report, and have up to three Austin contractors email me.</span><span style="display:block;font-size:14px;line-height:22px;color:var(--thi-slate-700);margin-top:2px">Email only. We don't have your phone number to give them.</span></span>
+            </label>
+          </fieldset>
+          <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:var(--thi-sp-5) 0 0;max-width:60ch">By continuing you agree to receive this report by email. If you ask to be contacted, we share only the facts in this report with contractors you approve, and never your phone number. You can reply <em>stop</em> to any message and we'll delete the record.</p>
+          <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:8px 0 0">Consent text v2.3 · effective Aug 1, 2026</p>
+          <div style="margin-top:var(--thi-sp-5);display:flex;flex-wrap:wrap;gap:var(--thi-sp-3);align-items:center">
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" size="lg" icon="paper-plane-tilt" on-click="{{ go.submitting }}" hint-size="auto,48px">Send my report</x-import>
+            <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)">Free · no account</span>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- submitting -->
+        <sc-if value="{{ sSubmitting }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:38rem">
+          <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.12;margin:0 0 var(--thi-sp-4)">Building your report</h2>
+          <ol aria-live="polite" style="list-style:none;margin:0;padding:0;display:grid;gap:10px;font-family:var(--thi-font-mono);font-size:15px;line-height:22px;color:var(--thi-slate-700)">
+            <li style="display:flex;gap:10px"><span style="width:18px;color:var(--thi-safe)">✓</span>Locking the record values</li>
+            <li style="display:flex;gap:10px"><span style="width:18px;color:var(--thi-safe)">✓</span>Pricing 3-ton changeouts in 78704</li>
+            <li style="display:flex;gap:10px;color:var(--thi-ink)"><span style="width:18px;color:var(--thi-slate-400)">·</span>Estimating your cooling-season cost…</li>
+          </ol>
+        </div>
+        </sc-if>
+
+        <!-- sending -->
+        <sc-if value="{{ sSending }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:38rem">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:var(--thi-sp-3)"><i class="ph-fill ph-check-circle" aria-hidden="true" style="font-size:22px;color:var(--thi-safe)"></i><h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.12;margin:0">Your report is on its way</h2></div>
+          <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:0 0 var(--thi-sp-5)">Sending to <span style="font-family:var(--thi-font-mono)">d••••••@gmail.com</span>. It usually lands within a minute. You don't have to wait for it — the full report is on screen below.</p>
+          <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" size="lg" icon="arrow-down" on-click="{{ go.repfull }}" hint-size="auto,48px">Read it here</x-import>
+        </div>
+        </sc-if>
+
+        <!-- send failed -->
+        <sc-if value="{{ sFailed }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:40rem">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:var(--thi-sp-3)">
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.StatusChip" status="watch" label="Email not sent" show-glyph="{{ true }}" hint-size="auto,24px"></x-import>
+          </div>
+          <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.12;margin:0 0 var(--thi-sp-2)">The email didn't go out. Your report is finished anyway.</h2>
+          <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:0 0 var(--thi-sp-5);max-width:46em">Our mail provider rejected the send at 14:31. Nothing you entered is lost, and the full report is below — you can read it now and retry the email whenever.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:var(--thi-sp-3)">
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" size="lg" icon="arrow-clockwise" on-click="{{ go.sending }}" hint-size="auto,48px">Retry the email</x-import>
+            <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" variant="secondary" size="lg" icon="arrow-down" on-click="{{ go.repfull }}" hint-size="auto,48px">Read the report here</x-import>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ─ report ─ -->
+  <sc-if value="{{ inReport }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:var(--thi-sp-4)">
+      <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.12;margin:0">Your AC report</h2>
+      <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)">Lifespan model v1.4 · Generated Sep 1, 2026 · Emailed to d••••••@gmail.com</span>
+    </div>
+
+    <sc-if value="{{ repPartial }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-bottom:var(--thi-sp-5);background:var(--thi-surface);border:1px solid var(--thi-line);border-left:4px solid var(--thi-unknown);border-radius:var(--thi-r-card);padding:var(--thi-sp-5) var(--thi-sp-6)">
+      <h3 style="font-family:var(--thi-font-ui);font-weight:600;font-size:var(--thi-fs-card);line-height:var(--thi-lh-card);margin:0 0 8px">Two of five sections are missing, and here's exactly which</h3>
+      <ul style="margin:0;padding-left:1.1em;font-size:14px;line-height:22px;color:var(--thi-slate-700)">
+        <li><strong style="font-weight:600">Replacement window</strong> — needs an install date. No mechanical permit on record, so we won't model one.</li>
+        <li><strong style="font-weight:600">Cooling-season cost</strong> — needs tonnage or a model number. Not available without the permit.</li>
+      </ul>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:var(--thi-sp-3) 0 0">The cost ranges, the local runtime read, and the repair-versus-replace framing below are all complete. If you can read the model number off the outdoor unit, the two missing sections fill in immediately.</p>
+    </div>
+    </sc-if>
+
+    <div style="display:grid;grid-template-columns:1.15fr .85fr;gap:var(--thi-sp-5);align-items:start">
+      <div style="display:grid;gap:var(--thi-sp-5)">
+        <!-- replacement window -->
+        <sc-if value="{{ repFullish }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);padding:var(--thi-sp-6)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:var(--thi-sp-4)">
+            <span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Estimated replacement window</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-amber-deep);background:#FBF1E6;border:1px solid #EDD6B8"><i class="ph ph-function" aria-hidden="true" style="font-size:12px"></i>Estimate</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+            <span style="font-family:var(--thi-font-mono);font-weight:500;font-size:var(--thi-fs-data-lg);line-height:var(--thi-lh-data-lg);color:var(--thi-ink);font-feature-settings:'tnum' 1">2026 – 2029</span>
+          </div>
+          <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:var(--thi-sp-3) 0 0;max-width:46em">A 2011 changeout in Austin's cooling load is at 15 effective years. That's inside the normal replacement window, not past it — plenty of systems this age run three more summers. Budget for it; don't panic about it.</p>
+          <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-4) 0 0">Model: expected service life v1.4 · inputs: permit 2011-042871, NOAA CDD normals · <a href="#method">How this is calculated ↗</a></p>
+        </div>
+        </sc-if>
+
+        <!-- cost by size -->
+        <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);padding:var(--thi-sp-6)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:var(--thi-sp-5)">
+            <span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Replacement cost by system size — {{ costGeo }}</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-amber-deep);background:#FBF1E6;border:1px solid #EDD6B8"><i class="ph ph-function" aria-hidden="true" style="font-size:12px"></i>Estimate</span>
+          </div>
+
+          <sc-if value="{{ repWide }}" hint-placeholder-val="{{ false }}">
+          <p style="display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:0 0 var(--thi-sp-4);padding:10px 12px;background:var(--thi-paper);border:1px dashed var(--thi-line-strong);border-radius:var(--thi-r-card)"><i class="ph ph-arrows-out-line-horizontal" aria-hidden="true" style="font-size:18px;color:var(--thi-slate-500);flex:none;margin-top:2px"></i><span>Not enough permits in 78704 for a local figure — this reflects Austin–Round Rock instead. Wider bands below are the honest consequence, not a display glitch.</span></p>
+          </sc-if>
+
+          <div style="display:grid;gap:var(--thi-sp-4)">
+            <div style="display:grid;grid-template-columns:70px 1fr;gap:14px;align-items:center">
+              <span style="font-family:var(--thi-font-mono);font-size:14px;color:var(--thi-slate-700);font-feature-settings:'tnum' 1">2.5 tons</span>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-family:var(--thi-font-mono);font-size:13px;color:var(--thi-ink);font-feature-settings:'tnum' 1;margin-bottom:5px"><span>$7,900</span><span>$11,400</span></div>
+                <div style="position:relative;height:8px;background:var(--thi-mist);border-radius:var(--thi-r-xs)"><span style="position:absolute;left:8%;width:{{ bandW }};top:0;bottom:0;background:{{ bandFill }};border:1px solid var(--thi-navy);border-radius:var(--thi-r-xs)"></span></div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:70px 1fr;gap:14px;align-items:center">
+              <span style="font-family:var(--thi-font-mono);font-size:14px;color:var(--thi-ink);font-weight:500;font-feature-settings:'tnum' 1">3.0 tons</span>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink);font-weight:500;font-feature-settings:'tnum' 1;margin-bottom:5px"><span>$8,600</span><span>$12,900</span></div>
+                <div style="position:relative;height:12px;background:var(--thi-mist);border-radius:var(--thi-r-xs)"><span style="position:absolute;left:14%;width:{{ bandW }};top:0;bottom:0;background:{{ bandFill }};border:1px solid var(--thi-navy);border-radius:var(--thi-r-xs)"></span></div>
+                <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:5px 0 0">Yours, per permit 2011-042871</p>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:70px 1fr;gap:14px;align-items:center">
+              <span style="font-family:var(--thi-font-mono);font-size:14px;color:var(--thi-slate-700);font-feature-settings:'tnum' 1">3.5 tons</span>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-family:var(--thi-font-mono);font-size:13px;color:var(--thi-ink);font-feature-settings:'tnum' 1;margin-bottom:5px"><span>$9,800</span><span>$14,200</span></div>
+                <div style="position:relative;height:8px;background:var(--thi-mist);border-radius:var(--thi-r-xs)"><span style="position:absolute;left:22%;width:{{ bandW }};top:0;bottom:0;background:{{ bandFill }};border:1px solid var(--thi-navy);border-radius:var(--thi-r-xs)"></span></div>
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:var(--thi-sp-5) 0 0;max-width:56ch">Permit valuations reflect what contractors declare, which often runs below what a homeowner pays. Treat this as a floor, not a quote.</p>
+          <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">Based on {{ permitN }} mechanical permits filed in the last 12 months · Escalated to Aug 2026 using BLS PPI and Dallas Fed wage series · Cost model v2.1</p>
+        </div>
+      </div>
+
+      <div style="display:grid;gap:var(--thi-sp-5)">
+        <!-- running cost -->
+        <sc-if value="{{ repFullish }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--thi-navy);color:var(--thi-on-dark);border-radius:var(--thi-r-card);padding:var(--thi-sp-6);border:1px solid var(--thi-hairline-dark)">
+          <span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-on-dark-muted);margin-bottom:var(--thi-sp-3)">What it costs to run each summer</span>
+          <div style="font-family:var(--thi-font-mono);font-weight:500;font-size:var(--thi-fs-data-lg);line-height:var(--thi-lh-data-lg);color:#fff;font-feature-settings:'tnum' 1">$2,100 – $2,900</div>
+          <p style="font-size:14px;line-height:22px;color:var(--thi-on-dark);margin:var(--thi-sp-3) 0 0">June through September, at 14.6¢ per kWh. A current 16-SEER2 system in the same house would run about $1,500 – $2,050 — roughly $600 to $850 a year of the replacement pays for itself.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:var(--thi-sp-4)">
+            <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;color:#F0DCC4;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18)"><i class="ph ph-function" aria-hidden="true" style="font-size:12px"></i>Estimate</span>
+          </div>
+          <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-on-dark-muted);margin:var(--thi-sp-3) 0 0">Source: EIA Form 861 residential price, Texas · Data through Jun 2026 · Confirmed Aug 22, 2026</p>
+        </div>
+        </sc-if>
+
+        <!-- refrigerant note -->
+        <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-left:4px solid var(--thi-navy);border-radius:var(--thi-r-card);padding:var(--thi-sp-5) var(--thi-sp-6)">
+          <span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:8px">What we'd do in your position</span>
+          <p style="font-family:var(--thi-font-ui);font-weight:600;font-size:var(--thi-fs-card);line-height:var(--thi-lh-card);margin:0 0 6px;color:var(--thi-ink)">Get a refrigerant check before next April, and don't authorize a big repair without it.</p>
+          <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:0">A 2011 install is on the R-410A/R-22 boundary. If it's R-22, a compressor or coil repair can cost more than a third of a replacement, which changes the math well before the unit fails.</p>
+        </div>
+
+        <!-- three questions -->
+        <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);padding:var(--thi-sp-5) var(--thi-sp-6)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:var(--thi-sp-3)">
+            <span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Three questions to ask whoever you call</span>
+            <button type="button" style="display:inline-flex;align-items:center;gap:6px;background:none;border:none;padding:0;cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:13px;color:var(--thi-link)" style-hover="color:var(--thi-link-deep)"><i class="ph ph-copy" aria-hidden="true"></i>Copy</button>
+          </div>
+          <ol style="margin:0;padding-left:1.3em;font-size:15px;line-height:24px;color:var(--thi-ink);display:grid;gap:8px">
+            <li>What refrigerant is in this system, and what does a pound of it cost right now?</li>
+            <li>What's the measured static pressure, and is the duct sized for the tonnage you're quoting?</li>
+            <li>Is this quote a like-for-like changeout or a system redesign, and what's the difference in price?</li>
+          </ol>
+        </div>
+
+        <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.SponsoredBlock" title="Want a second opinion from a local pro?" body="We can connect you with HVAC contractors in Austin who already have the facts above." cta="See local HVAC options" disclosure="This is optional — and it's how we keep the data free." hint-size="100%,220px"></x-import>
+      </div>
+    </div>
+
+    <!-- QuoteReady handoff -->
+    <div style="margin-top:var(--thi-sp-5);background:var(--thi-mist);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);padding:var(--thi-sp-6);display:grid;grid-template-columns:1fr auto;gap:var(--thi-sp-6);align-items:center">
+      <div>
+        <span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:8px">Carry this into a project brief</span>
+        <p style="font-family:var(--thi-font-ui);font-weight:600;font-size:var(--thi-fs-card);line-height:var(--thi-lh-card);margin:0 0 6px;color:var(--thi-ink)">Six facts are already filled in. QuoteReady needs three more.</p>
+        <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:0;max-width:56ch">Address, year built, conditioned area, tonnage, permit history, and your symptom answer all carry over with their labels intact. You'd only add access notes, timing, and whether you want a like-for-like changeout.</p>
+      </div>
+      <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.Button" variant="secondary" size="lg" icon="clipboard-text" href="/start/" hint-size="auto,48px">Continue to QuoteReady</x-import>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+</section>
+
+<!-- ═══ #answer ═══ -->
+<section id="answer" style="background:var(--thi-surface);border-top:1px solid var(--thi-line);border-bottom:1px solid var(--thi-line)">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-16) var(--thi-gutter)">
+  <span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:var(--thi-sp-5)">The short answer</span>
+  <p style="font-family:var(--thi-font-display);font-weight:500;font-size:30px;line-height:1.34;letter-spacing:-.005em;color:var(--thi-ink);margin:0;max-width:34em;text-wrap:pretty">A central air conditioner in Austin typically lasts <strong style="font-weight:600">12–15 years</strong> — shorter than the national range, because cooling demand here runs roughly <strong style="font-weight:600">2.1×</strong> the national average. Systems installed before 2010 are also likely to use a refrigerant that's now expensive to service, which changes the repair-versus-replace math well before the unit fails.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:var(--thi-sp-3);align-items:center;margin-top:var(--thi-sp-6);padding-top:var(--thi-sp-5);border-top:1px solid var(--thi-line-soft)">
+    <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-surface);border:1px solid var(--thi-navy)"><i class="ph ph-compass-tool" aria-hidden="true" style="font-size:12px"></i>THI analysis</span>
+    <span style="font-family:var(--thi-font-mono);font-size:12px;line-height:16px;color:var(--thi-slate-500)">12–15 years · lifespan model v1.4 · from NOAA cooling degree days and 6,410 Austin-area mechanical permits · Data through Aug 28, 2026 · Confirmed Aug 30, 2026</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══ what a report looks like · the credibility argument, second screen ═══ -->
+<section id="sample" style="background:var(--thi-paper)">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-12) var(--thi-gutter)">
+  <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:var(--thi-sp-3);margin-bottom:var(--thi-sp-2)">
+    <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.15;margin:0">What a report looks like</h2>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:4px 7px;border-radius:4px;color:var(--thi-slate-700);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-eye" aria-hidden="true" style="font-size:12px"></i>Example · not your home</span>
+  </div>
+  <p style="font-family:var(--thi-font-mono);font-size:12px;line-height:16px;color:var(--thi-slate-500);margin:0 0 var(--thi-sp-6)">A real 78745 property · built 1996 · 2,120 sq ft</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:var(--thi-sp-4)">
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);padding:var(--thi-sp-5)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--thi-sp-3)"><i class="ph ph-thermometer-simple" aria-hidden="true" style="font-size:18px;color:var(--thi-slate-500)"></i><span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">System age</span></div>
+      <div style="display:flex;align-items:baseline;gap:9px;flex-wrap:wrap">
+        <span style="font-family:var(--thi-font-mono);font-weight:500;font-size:var(--thi-fs-data-lg);line-height:var(--thi-lh-data-lg);color:var(--thi-ink);font-feature-settings:'tnum' 1">12</span>
+        <span style="font-family:var(--thi-font-ui);font-size:15px;color:var(--thi-slate-700)">years</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-database" aria-hidden="true" style="font-size:12px"></i>Public record</span>
+      </div>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:8px 0 0">Last mechanical permit: 2014 — the changeout date, not the year the house was built.</p>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">Source: City of Austin permits · Data through Aug 28, 2026 · Confirmed Aug 30, 2026</p>
+    </div>
+
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);padding:var(--thi-sp-5)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--thi-sp-3)"><i class="ph ph-fire" aria-hidden="true" style="font-size:18px;color:var(--thi-slate-500)"></i><span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Local runtime</span></div>
+      <div style="display:flex;align-items:baseline;gap:9px;flex-wrap:wrap">
+        <span style="font-family:var(--thi-font-mono);font-weight:500;font-size:var(--thi-fs-data-lg);line-height:var(--thi-lh-data-lg);color:var(--thi-ink);font-feature-settings:'tnum' 1">2.1×</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-slate-700);background:var(--thi-paper);border:1px dashed var(--thi-line-strong)"><i class="ph ph-chart-line" aria-hidden="true" style="font-size:12px"></i>Historical context</span>
+      </div>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:8px 0 0">3,015 cooling degree days in this ZIP against a national normal of 1,430. Same equipment, nearly twice the hours on it.</p>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">Source: NOAA NCEI · 1991–2020 normals · Confirmed Aug 12, 2026</p>
+    </div>
+
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);padding:var(--thi-sp-5)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--thi-sp-3)"><i class="ph ph-gauge" aria-hidden="true" style="font-size:18px;color:var(--thi-slate-500)"></i><span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Size check</span></div>
+      <div style="display:flex;align-items:baseline;gap:9px;flex-wrap:wrap">
+        <span style="font-family:var(--thi-font-mono);font-weight:500;font-size:var(--thi-fs-data-lg);line-height:var(--thi-lh-data-lg);color:var(--thi-ink);font-feature-settings:'tnum' 1">3.5</span>
+        <span style="font-family:var(--thi-font-ui);font-size:15px;color:var(--thi-slate-700)">tons</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-surface);border:1px solid var(--thi-navy)"><i class="ph ph-compass-tool" aria-hidden="true" style="font-size:12px"></i>THI analysis</span>
+      </div>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:8px 0 0">3.5 tons for 2,120 sq ft — inside the normal Austin range for a house this size.</p>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">From permit 2014-118203 · Data through Aug 28, 2026</p>
+    </div>
+  </div>
+
+  <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:var(--thi-sp-5) 0 0;max-width:64ch">Those three come back free and instantly. The emailed report adds an estimated replacement window, a cost range by system size, and what the current system costs to run each summer.</p>
+</div>
+</section>
+
+<!-- ═══ #data ═══ -->
+<section id="data" style="background:var(--thi-paper)">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-12) var(--thi-gutter)">
+  <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:var(--thi-sp-4)">
+    <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.15;margin:0">Every value on this page</h2>
+    <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)">13 readings · 6 feeds · 2 models</span>
+  </div>
+  <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);overflow:hidden">
+    <table style="width:100%;font-family:var(--thi-font-ui);font-size:14px">
+      <thead>
+        <tr style="background:var(--thi-mist)">
+          <th scope="col" style="text-align:left;padding:10px var(--thi-sp-5);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);border-bottom:1px solid var(--thi-line)">Reading</th>
+          <th scope="col" style="text-align:right;padding:10px var(--thi-sp-4);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);border-bottom:1px solid var(--thi-line);white-space:nowrap">Value</th>
+          <th scope="col" style="text-align:left;padding:10px var(--thi-sp-4);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);border-bottom:1px solid var(--thi-line)">Label</th>
+          <th scope="col" style="text-align:left;padding:10px var(--thi-sp-5);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);border-bottom:1px solid var(--thi-line)">Source · dated</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);color:var(--thi-ink)">Year built</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft);text-align:right;font-family:var(--thi-font-mono);font-feature-settings:'tnum' 1;color:var(--thi-ink);white-space:nowrap">1974</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft)"><span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-database" aria-hidden="true" style="font-size:12px"></i>Public record</span></td>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500)">Travis CAD 2026 roll · Jul 25, 2026</td>
+        </tr>
+        <tr style="background:var(--thi-paper)">
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);color:var(--thi-ink)">Conditioned area</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft);text-align:right;font-family:var(--thi-font-mono);font-feature-settings:'tnum' 1;color:var(--thi-ink);white-space:nowrap">1,840 sq ft</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft)"><span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-database" aria-hidden="true" style="font-size:12px"></i>Public record</span></td>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500)">Travis CAD 2026 roll · Jul 25, 2026</td>
+        </tr>
+        <tr>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);color:var(--thi-ink)">Last mechanical permit · AC changeout</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft);text-align:right;font-family:var(--thi-font-mono);font-feature-settings:'tnum' 1;color:var(--thi-ink);white-space:nowrap">2011</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft)"><span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-database" aria-hidden="true" style="font-size:12px"></i>Public record</span></td>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500)">City of Austin permits · Aug 28, 2026</td>
+        </tr>
+        <tr style="background:var(--thi-paper)">
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);color:var(--thi-ink)">Declared valuation on that permit</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft);text-align:right;font-family:var(--thi-font-mono);font-feature-settings:'tnum' 1;color:var(--thi-ink);white-space:nowrap">$6,200</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft)"><span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-database" aria-hidden="true" style="font-size:12px"></i>Public record</span></td>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500)">City of Austin permits · Aug 28, 2026</td>
+        </tr>
+        <tr>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);color:var(--thi-ink)">Rated capacity on that permit</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft);text-align:right;font-family:var(--thi-font-mono);font-feature-settings:'tnum' 1;color:var(--thi-ink);white-space:nowrap">3.0 tons</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft)"><span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-database" aria-hidden="true" style="font-size:12px"></i>Public record</span></td>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500)">City of Austin permits · Aug 28, 2026</td>
+        </tr>
+        <tr style="background:var(--thi-paper)">
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);color:var(--thi-ink)">Cooling degree days · 78704, 1991–2020 normal</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft);text-align:right;font-family:var(--thi-font-mono);font-feature-settings:'tnum' 1;color:var(--thi-ink);white-space:nowrap">3,015</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft)"><span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-database" aria-hidden="true" style="font-size:12px"></i>Public record</span></td>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500)">NOAA NCEI · normals through 2020</td>
+        </tr>
+        <tr>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);color:var(--thi-ink)">Cooling load vs. national average</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft);text-align:right;font-family:var(--thi-font-mono);font-feature-settings:'tnum' 1;color:var(--thi-ink);white-space:nowrap">2.1×</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft)"><span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-slate-700);background:var(--thi-paper);border:1px dashed var(--thi-line-strong)"><i class="ph ph-chart-line" aria-hidden="true" style="font-size:12px"></i>Historical context</span></td>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500)">NOAA NCEI · confirmed Aug 12, 2026</td>
+        </tr>
+        <tr style="background:var(--thi-paper)">
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);color:var(--thi-ink)">Effective system age</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft);text-align:right;font-family:var(--thi-font-mono);font-feature-settings:'tnum' 1;color:var(--thi-ink);white-space:nowrap">15 years</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft)"><span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-surface);border:1px solid var(--thi-navy)"><i class="ph ph-compass-tool" aria-hidden="true" style="font-size:12px"></i>THI analysis</span></td>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500)">Lifespan model v1.4 · Sep 1, 2026</td>
+        </tr>
+        <tr>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);color:var(--thi-ink)">Expected service life · Austin</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft);text-align:right;font-family:var(--thi-font-mono);font-feature-settings:'tnum' 1;color:var(--thi-ink);white-space:nowrap">12–15 years</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft)"><span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-surface);border:1px solid var(--thi-navy)"><i class="ph ph-compass-tool" aria-hidden="true" style="font-size:12px"></i>THI analysis</span></td>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500)">Lifespan model v1.4 · Sep 1, 2026</td>
+        </tr>
+        <tr style="background:var(--thi-paper)">
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);color:var(--thi-ink)">Estimated replacement window</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft);text-align:right;font-family:var(--thi-font-mono);font-feature-settings:'tnum' 1;color:var(--thi-ink);white-space:nowrap">2026–2029</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft)"><span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-amber-deep);background:#FBF1E6;border:1px solid #EDD6B8"><i class="ph ph-function" aria-hidden="true" style="font-size:12px"></i>Estimate</span></td>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500)">Lifespan model v1.4 · Sep 1, 2026</td>
+        </tr>
+        <tr>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);color:var(--thi-ink)">3-ton changeout cost range · 78704</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft);text-align:right;font-family:var(--thi-font-mono);font-feature-settings:'tnum' 1;color:var(--thi-ink);white-space:nowrap">$8,600–$12,900</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft)"><span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-amber-deep);background:#FBF1E6;border:1px solid #EDD6B8"><i class="ph ph-function" aria-hidden="true" style="font-size:12px"></i>Estimate</span></td>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500)">Cost model v2.1 · escalated to Aug 2026</td>
+        </tr>
+        <tr style="background:var(--thi-paper)">
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);color:var(--thi-ink)">Cooling-season electricity cost</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft);text-align:right;font-family:var(--thi-font-mono);font-feature-settings:'tnum' 1;color:var(--thi-ink);white-space:nowrap">$2,100–$2,900</td>
+          <td style="padding:9px var(--thi-sp-4);border-bottom:1px solid var(--thi-line-soft)"><span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-amber-deep);background:#FBF1E6;border:1px solid #EDD6B8"><i class="ph ph-function" aria-hidden="true" style="font-size:12px"></i>Estimate</span></td>
+          <td style="padding:9px var(--thi-sp-5);border-bottom:1px solid var(--thi-line-soft);font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500)">EIA Form 861 · data through Jun 2026</td>
+        </tr>
+        <tr>
+          <td style="padding:9px var(--thi-sp-5);color:var(--thi-ink)">Stories</td>
+          <td style="padding:9px var(--thi-sp-4);text-align:right;font-family:var(--thi-font-mono);font-feature-settings:'tnum' 1;color:var(--thi-ink);white-space:nowrap">1</td>
+          <td style="padding:9px var(--thi-sp-4)"><span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-database" aria-hidden="true" style="font-size:12px"></i>Public record</span></td>
+          <td style="padding:9px var(--thi-sp-5);font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500)">Travis CAD 2026 roll · Jul 25, 2026</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">Anything you correct in the tool moves to the homeowner-reported label in this table and stays there.</p>
+</div>
+</section>
+
+<!-- ═══ #method ═══ -->
+<section id="method" style="background:var(--thi-surface);border-top:1px solid var(--thi-line)">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-12) var(--thi-gutter)">
+  <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:var(--thi-sp-8);align-items:start">
+    <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.15;margin:0">How this is calculated</h2>
+    <div>
+      <p style="font-size:var(--thi-fs-body-lg);line-height:var(--thi-lh-body-lg);color:var(--thi-ink);margin:0 0 var(--thi-sp-4);max-width:60ch">We match your address to the county appraisal record and the city's mechanical permit history, then measure the last system-replacement permit against expected service life adjusted for local cooling load. Where no permit exists we fall back to year built, which is a weaker signal and is labeled that way everywhere it appears.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--thi-sp-4);align-items:center">
+        <a href="/methodology/ac-lifespan/" style="font-family:var(--thi-font-ui);font-weight:600;font-size:15px">Full method, with the formula ↗</a>
+        <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)">Lifespan model v1.4 · Cost model v2.1</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ #context ═══ -->
+<section id="context" style="background:var(--thi-mist);border-top:1px solid var(--thi-line)">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-12) var(--thi-gutter)">
+  <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.15;margin:0 0 var(--thi-sp-2)">How 78704 compares</h2>
+  <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:0 0 var(--thi-sp-8);max-width:60ch">Cooling load is the reason Texas service life runs short. It is also the number people are most surprised by.</p>
+  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:var(--thi-sp-6);align-items:start">
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);padding:var(--thi-sp-6)">
+      <span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:var(--thi-sp-5)">Cooling degree days · annual normal</span>
+      <div style="display:grid;gap:var(--thi-sp-4)">
+        <div style="display:grid;grid-template-columns:150px 1fr 66px;gap:var(--thi-sp-3);align-items:center">
+          <span style="font-family:var(--thi-font-ui);font-size:14px;font-weight:600;color:var(--thi-ink)">78704</span>
+          <div style="height:20px;background:var(--thi-mist);border-radius:var(--thi-r-xs)"><span style="display:block;height:100%;width:100%;background:var(--thi-navy);border-radius:var(--thi-r-xs)"></span></div>
+          <span style="font-family:var(--thi-font-mono);font-size:14px;text-align:right;color:var(--thi-ink);font-feature-settings:'tnum' 1">3,015</span>
+        </div>
+        <div style="display:grid;grid-template-columns:150px 1fr 66px;gap:var(--thi-sp-3);align-items:center">
+          <span style="font-family:var(--thi-font-ui);font-size:14px;color:var(--thi-slate-700)">Austin–Round Rock</span>
+          <div style="height:20px;background:var(--thi-mist);border-radius:var(--thi-r-xs)"><span style="display:block;height:100%;width:97.5%;background:var(--thi-link);border-radius:var(--thi-r-xs)"></span></div>
+          <span style="font-family:var(--thi-font-mono);font-size:14px;text-align:right;color:var(--thi-ink);font-feature-settings:'tnum' 1">2,940</span>
+        </div>
+        <div style="display:grid;grid-template-columns:150px 1fr 66px;gap:var(--thi-sp-3);align-items:center">
+          <span style="font-family:var(--thi-font-ui);font-size:14px;color:var(--thi-slate-700)">Texas</span>
+          <div style="height:20px;background:var(--thi-mist);border-radius:var(--thi-r-xs)"><span style="display:block;height:100%;width:86.6%;background:var(--thi-slate-500);border-radius:var(--thi-r-xs)"></span></div>
+          <span style="font-family:var(--thi-font-mono);font-size:14px;text-align:right;color:var(--thi-ink);font-feature-settings:'tnum' 1">2,610</span>
+        </div>
+        <div style="display:grid;grid-template-columns:150px 1fr 66px;gap:var(--thi-sp-3);align-items:center">
+          <span style="font-family:var(--thi-font-ui);font-size:14px;color:var(--thi-slate-700)">United States</span>
+          <div style="height:20px;background:var(--thi-mist);border-radius:var(--thi-r-xs)"><span style="display:block;height:100%;width:47.4%;background:var(--thi-slate-400);border-radius:var(--thi-r-xs)"></span></div>
+          <span style="font-family:var(--thi-font-mono);font-size:14px;text-align:right;color:var(--thi-ink);font-feature-settings:'tnum' 1">1,430</span>
+        </div>
+      </div>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-5) 0 0">Source: <a href="https://www.ncei.noaa.gov/">NOAA NCEI</a> 1991–2020 climate normals · Confirmed Aug 12, 2026</p>
+    </div>
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);padding:var(--thi-sp-6)">
+      <span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:var(--thi-sp-4)">Median years between filed changeouts</span>
+      <div style="display:grid;gap:0">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--thi-line-soft)"><span style="font-size:14px;font-weight:600;color:var(--thi-ink)">78704</span><span style="font-family:var(--thi-font-mono);font-size:16px;color:var(--thi-ink);font-feature-settings:'tnum' 1">12.4</span></div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--thi-line-soft)"><span style="font-size:14px;color:var(--thi-slate-700)">Austin–Round Rock</span><span style="font-family:var(--thi-font-mono);font-size:16px;color:var(--thi-ink);font-feature-settings:'tnum' 1">13.1</span></div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:11px 0"><span style="font-size:14px;color:var(--thi-slate-700)">Texas</span><span style="font-family:var(--thi-font-mono);font-size:16px;color:var(--thi-ink);font-feature-settings:'tnum' 1">13.8</span></div>
+      </div>
+      <p style="font-size:13px;line-height:20px;color:var(--thi-slate-700);margin:var(--thi-sp-4) 0 0">Homes here replace slightly sooner than the state — older housing stock and higher load, not worse equipment.</p>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">Source: THI analysis of 6,410 mechanical permits · Data through Aug 28, 2026</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ #faq ═══ -->
+<section id="faq" style="background:var(--thi-surface);border-top:1px solid var(--thi-line)">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-12) var(--thi-gutter)">
+  <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.15;margin:0 0 var(--thi-sp-6)">Questions people ask about this tool</h2>
+  <div style="max-width:68ch">
+    <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.FaqItem" question="How accurate is this?" default-open="{{ true }}" hint-size="100%,120px">The record values — year built, area, permit date, declared valuation — are as accurate as the county and city files, which is to say very. The effective age and replacement window are our analysis, and they carry a range because equipment of the same age fails across a spread of years, not on a date. If we can't get to a defensible number we say so instead of publishing a thin one.</x-import>
+    <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.FaqItem" question="Where does this data come from?" hint-size="100%,72px">Travis and Bexar appraisal districts, City of Austin and City of San Antonio trade permits, NOAA cooling degree days, EIA residential electricity price, and BLS and Dallas Fed price series. Every feed is named and dated in the sources list below.</x-import>
+    <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.FaqItem" question="What if you don't have records for my house?" hint-size="100%,72px">You still get a read. We ask for the two values we're missing, label them as yours rather than as records, and carry that label through the report and the table. In San Antonio this is currently the common path — pre-1998 trade permits are paper-only and our records request is still open.</x-import>
+    <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.FaqItem" question="Do I have to talk to a contractor?" hint-size="100%,72px">No. The default at the last step is &ldquo;just send my report,&rdquo; and nothing in the report is withheld if you choose it. Contractor introductions are how we fund the free data, and they are opt-in every time.</x-import>
+    <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.FaqItem" question="Will you call me?" hint-size="100%,60px">No. We don't collect phone numbers.</x-import>
+    <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.FaqItem" question="How often is this updated?" hint-size="100%,72px">Permits reload nightly. Appraisal rolls are annual with supplements, so year built and area move once or twice a year. Cooling degree day normals change on NOAA's decade schedule. Each reading shows both how far its records run and when we last confirmed the feed.</x-import>
+    <x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.FaqItem" question="Can I use this with my own contractor?" hint-size="100%,72px">Yes, and it works well that way. Bring the report and the three questions to whoever you already trust — a contractor who sees the permit history and the tonnage check up front tends to quote more precisely.</x-import>
+  </div>
+</div>
+</section>
+
+<!-- ═══ #sources ═══ -->
+<section id="sources" style="background:var(--thi-paper);border-top:1px solid var(--thi-line)">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-12) var(--thi-gutter)">
+  <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:var(--thi-sp-5)">
+    <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.15;margin:0">Sources</h2>
+    <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)">Six feeds · linked to the primary publisher, never an aggregator</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--thi-sp-4)">
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);padding:var(--thi-sp-5)">
+      <a href="https://data.austintexas.gov/" style="font-family:var(--thi-font-ui);font-weight:600;font-size:16px">City of Austin — Building &amp; Trade Permits ↗</a>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:6px 0 0">Mechanical permit dates, declared valuations, rated tonnage, contractor of record.</p>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:10px 0 0">Data through Aug 28, 2026 · Confirmed Aug 30, 2026</p>
+    </div>
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);padding:var(--thi-sp-5)">
+      <a href="https://traviscad.org/" style="font-family:var(--thi-font-ui);font-weight:600;font-size:16px">Travis Central Appraisal District — Certified Roll ↗</a>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:6px 0 0">Year built, conditioned area, story count, parcel geometry.</p>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:10px 0 0">Data through Jul 25, 2026 · Confirmed Aug 29, 2026</p>
+    </div>
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);padding:var(--thi-sp-5)">
+      <a href="https://www.ncei.noaa.gov/" style="font-family:var(--thi-font-ui);font-weight:600;font-size:16px">NOAA NCEI — Climate Normals, cooling degree days ↗</a>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:6px 0 0">ZIP-level cooling load, and the national baseline the multiplier is measured against.</p>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:10px 0 0">1991–2020 normals · Confirmed Aug 12, 2026</p>
+    </div>
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);padding:var(--thi-sp-5)">
+      <a href="https://www.eia.gov/electricity/data.php" style="font-family:var(--thi-font-ui);font-weight:600;font-size:16px">U.S. EIA — Form 861, residential electricity price ↗</a>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:6px 0 0">Texas cents per kWh, used for the cooling-season running cost.</p>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:10px 0 0">Data through Jun 2026 · Confirmed Aug 22, 2026</p>
+    </div>
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);padding:var(--thi-sp-5)">
+      <a href="https://www.bls.gov/ppi/" style="font-family:var(--thi-font-ui);font-weight:600;font-size:16px">U.S. BLS — Producer Price Index, HVAC equipment ↗</a>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:6px 0 0">Equipment cost escalation from the permit date to the current month.</p>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:10px 0 0">Data through Jul 2026 · Confirmed Aug 20, 2026</p>
+    </div>
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);padding:var(--thi-sp-5)">
+      <a href="https://fred.stlouisfed.org/" style="font-family:var(--thi-font-ui);font-weight:600;font-size:16px">Federal Reserve Bank of Dallas, via FRED — Texas construction wages ↗</a>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:6px 0 0">Labor share of the escalation. Series retrieved from FRED, Federal Reserve Bank of St. Louis; citation required by the publisher.</p>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:10px 0 0">Data through Jun 2026 · Confirmed Aug 18, 2026</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ #changelog ═══ -->
+<section id="changelog" style="background:var(--thi-surface);border-top:1px solid var(--thi-line)">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-12) var(--thi-gutter) var(--thi-sp-16)">
+  <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:var(--thi-sp-8);align-items:start">
+    <div>
+      <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.15;margin:0 0 8px">Changelog</h2>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:0;max-width:34em">When a published number changes, this is how you tell whether the market moved or the model did.</p>
+    </div>
+    <ol style="list-style:none;margin:0;padding:0;border-top:1px solid var(--thi-line-soft)">
+      <li style="display:grid;grid-template-columns:110px 1fr;gap:var(--thi-sp-4);padding:11px 0;border-bottom:1px solid var(--thi-line-soft)"><span style="font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500);font-feature-settings:'tnum' 1">Aug 30, 2026</span><span style="font-size:14px;line-height:22px;color:var(--thi-ink)">Permit feed reconfirmed. 412 new Travis County mechanical permits added.</span></li>
+      <li style="display:grid;grid-template-columns:110px 1fr;gap:var(--thi-sp-4);padding:11px 0;border-bottom:1px solid var(--thi-line-soft)"><span style="font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500);font-feature-settings:'tnum' 1">Aug 12, 2026</span><span style="font-size:14px;line-height:22px;color:var(--thi-ink)">Cooling degree day normals moved to the 1991–2020 series. Austin's multiplier went from 1.9× to 2.1×.</span></li>
+      <li style="display:grid;grid-template-columns:110px 1fr;gap:var(--thi-sp-4);padding:11px 0;border-bottom:1px solid var(--thi-line-soft)"><span style="font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500);font-feature-settings:'tnum' 1">Jul 25, 2026</span><span style="font-size:14px;line-height:22px;color:var(--thi-ink)">Travis CAD 2026 certified roll loaded. Year built and conditioned area refreshed for 421,000 parcels.</span></li>
+      <li style="display:grid;grid-template-columns:110px 1fr;gap:var(--thi-sp-4);padding:11px 0;border-bottom:1px solid var(--thi-line-soft)"><span style="font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500);font-feature-settings:'tnum' 1">Jun 03, 2026</span><span style="font-size:14px;line-height:22px;color:var(--thi-ink)">Lifespan model v1.4. R-22 systems are now modeled separately from R-410A, which shortened the window for pre-2010 installs by about a year.</span></li>
+      <li style="display:grid;grid-template-columns:110px 1fr;gap:var(--thi-sp-4);padding:11px 0;border-bottom:1px solid var(--thi-line-soft)"><span style="font-family:var(--thi-font-mono);font-size:12px;color:var(--thi-slate-500);font-feature-settings:'tnum' 1">Apr 18, 2026</span><span style="font-size:14px;line-height:22px;color:var(--thi-ink)">Tool published for Travis and Bexar counties.</span></li>
+    </ol>
+  </div>
+</div>
+</section>
+</main>
+
+<x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.SiteFooter" blurb="Situational awareness for your home. Texas public records, read plainly, with every number labeled by where it came from." columns="{{ footerCols }}" legal="This organizes public records and information you provide. It is not an inspection, diagnosis, or professional evaluation. · Series retrieved from FRED, Federal Reserve Bank of St. Louis. · © 2026 Texas Home Intelligence" hint-size="100%,320px"></x-import>
+
+<!-- ══════ STATE INSPECTOR · review affordance, not product ══════ -->
+<sc-if value="{{ rail }}" hint-placeholder-val="{{ true }}">
+<aside aria-label="Design review state inspector" style="position:fixed;left:0;right:0;bottom:0;z-index:80;background:var(--thi-navy-deep);border-top:1px solid rgba(255,255,255,.14);color:var(--thi-on-dark);font-family:var(--thi-font-mono);font-size:11px;line-height:16px;box-shadow:0 -4px 12px rgba(14,23,38,.18)">
+  <div style="max-width:1400px;margin:0 auto;padding:10px 16px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+      <span style="text-transform:uppercase;letter-spacing:.06em;color:#fff">State inspector</span>
+      <span style="color:var(--thi-on-dark-muted)">review only · not part of the product</span>
+      <button type="button" onClick="{{ toggleNotes }}" style="margin-left:auto;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:var(--thi-on-dark);border-radius:4px;padding:4px 9px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">Design notes</button>
+      <button type="button" onClick="{{ toggleRail }}" style="background:none;border:1px solid rgba(255,255,255,.18);color:var(--thi-on-dark);border-radius:4px;padding:4px 9px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">Hide</button>
+    </div>
+    <sc-if value="{{ notes }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-bottom:10px;padding:12px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:6px;display:grid;gap:8px;max-width:96ch">
+      <p style="margin:0;color:#fff;text-transform:uppercase;letter-spacing:.06em">Open question · address autocomplete provider</p>
+      <p style="margin:0;color:var(--thi-on-dark);line-height:18px">The field is designed provider-agnostically: one oversized input, manual entry always reachable, and an attribution row reserved at the bottom of the suggestion list. Switch the <em>Autocomplete provider</em> tweak to see the two divergent renderings. Six things change downstream:</p>
+      <ol style="margin:0;padding-left:1.3em;color:var(--thi-on-dark);line-height:18px;display:grid;gap:4px">
+        <li><strong style="color:#fff">Attribution.</strong> Places requires the provider logo inside the list; Smarty does not. The row is reserved either way so the list height doesn't change between builds.</li>
+        <li><strong style="color:#fff">Multi-unit timing.</strong> Smarty returns a unit count with the suggestion, so the multi-unit screen can fire before submit. Places reveals nothing until Place Details resolves, so that screen must also work post-submit. Both paths are designed.</li>
+        <li><strong style="color:#fff">Unit entry.</strong> Smarty can prompt for a secondary designator as a structured second field; Places needs a free-text unit line. Not yet drawn — flagging it.</li>
+        <li><strong style="color:#fff">&ldquo;No suggestions&rdquo; meaning.</strong> With Smarty it is a real signal the address isn't deliverable, which justifies a caution above manual entry. With Places it's weak, so the copy stays neutral. Current screen is written for the neutral case.</li>
+        <li><strong style="color:#fff">Latency.</strong> Places needs a second Details call before we can geocode, which adds a confirm beat the loading narration has to absorb. Smarty returns components with the pick.</li>
+        <li><strong style="color:#fff">Outside-Texas frequency.</strong> Smarty filters server-side, so that state is rare. Places can only bias, so it will happen often and needs to stay gracious.</li>
+      </ol>
+      <p style="margin:0;color:var(--thi-on-dark-muted)">Same divergence applies to roof-scan, pipe-report, and storm-check.</p>
+    </div>
+    </sc-if>
+    <div style="display:flex;flex-wrap:wrap;gap:14px">
+      <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center"><span style="color:var(--thi-on-dark-muted);margin-right:2px">Address</span>
+        <button type="button" onClick="{{ go.resting }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">resting</button>
+        <button type="button" onClick="{{ go.typing }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">suggestions</button>
+        <button type="button" onClick="{{ go.nosuggest }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">no matches</button>
+        <button type="button" onClick="{{ go.down }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">provider down</button>
+        <button type="button" onClick="{{ go.outside }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">outside coverage</button>
+        <button type="button" onClick="{{ go.outsidetx }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">outside TX</button>
+        <button type="button" onClick="{{ go.multi }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">multi-unit</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center"><span style="color:var(--thi-on-dark-muted);margin-right:2px">Lookup</span>
+        <button type="button" onClick="{{ go.loading }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">loading</button>
+        <button type="button" onClick="{{ go.full }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">full match</button>
+        <button type="button" onClick="{{ go.partial }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">partial</button>
+        <button type="button" onClick="{{ go.norecord }}" style="background:var(--thi-amber);border:1px solid var(--thi-amber-deep);color:#1A1206;border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px;font-weight:500">no record · SA default</button>
+        <button type="button" onClick="{{ go.stale }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">stale</button>
+        <button type="button" onClick="{{ go.fail }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">lookup failed</button>
+        <button type="button" onClick="{{ go.editYear }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">disputed · relabel</button>
+        <button type="button" onClick="{{ go.outage }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">feed outage</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center"><span style="color:var(--thi-on-dark-muted);margin-right:2px">Gate</span>
+        <button type="button" onClick="{{ go.g2 }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">2 confirm</button>
+        <button type="button" onClick="{{ go.g3 }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">3 symptoms</button>
+        <button type="button" onClick="{{ go.g4 }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">4 email</button>
+        <button type="button" onClick="{{ go.invalid }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">email invalid</button>
+        <button type="button" onClick="{{ go.known }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">returning user</button>
+        <button type="button" onClick="{{ go.g5 }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">5 delivery</button>
+        <button type="button" onClick="{{ go.submitting }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">submitting</button>
+        <button type="button" onClick="{{ go.sending }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">sending</button>
+        <button type="button" onClick="{{ go.sendfailed }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">send failed</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center"><span style="color:var(--thi-on-dark-muted);margin-right:2px">Report</span>
+        <button type="button" onClick="{{ go.repfull }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">full</button>
+        <button type="button" onClick="{{ go.reppartial }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">partial</button>
+        <button type="button" onClick="{{ go.repwide }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:var(--thi-on-dark);border-radius:4px;padding:4px 8px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">wide band</button>
+      </div>
+    </div>
+  </div>
+</aside>
+</sc-if>
+<sc-if value="{{ railHidden }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ toggleRail }}" style="position:fixed;right:16px;bottom:16px;z-index:80;background:var(--thi-navy-deep);border:1px solid rgba(255,255,255,.2);color:var(--thi-on-dark);border-radius:6px;padding:8px 12px;cursor:pointer;font-family:var(--thi-font-mono);font-size:11px">State inspector</button>
+</sc-if>
+<div style="height:132px"></div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;providerMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;generic&quot;,&quot;places&quot;,&quot;smarty&quot;],&quot;default&quot;:&quot;generic&quot;,&quot;tsType&quot;:&quot;'generic' | 'places' | 'smarty'&quot;,&quot;section&quot;:&quot;Unresolved&quot;,&quot;label&quot;:&quot;Autocomplete provider&quot;}}">
+const STEPS = { 2: 'Confirm the property', 3: 'Anything going on with it', 4: 'Where the report goes', 5: 'How much we do' };
+
+class Component extends DCLogic {
+  state = {
+    phase: 'input',      // input | loading | result
+    addr: 'empty',       // empty | typing | nosuggest | down | outside | outsidetx | multi | selected
+    rec: 'full',         // full | partial | norecord | stale | fail
+    step: 0,             // 0 pre-gate · 2..5 gate · 6 report
+    sub: null,           // invalid | known | submitting | sending | failed
+    report: 'full',      // full | partial | wide
+    edYear: false, edSqft: false,
+    outage: false,
+    loadStep: 0,
+    dir: 'fwd',
+    query: '', email: '', symptom: 5, delivery: 1,
+    yearBuilt: '1974', sqft: '1,840', yearBand: '1980 – 1999',
+    rail: true, notes: false
+  };
+
+  componentWillUnmount() { clearInterval(this._t); }
+
+  runLoad(rec) {
+    clearInterval(this._t);
+    this.setState({ phase: 'loading', rec, loadStep: 0, step: 0, sub: null });
+    this._t = setInterval(() => {
+      this.setState(s => {
+        if (s.loadStep >= 4) { clearInterval(this._t); return { phase: 'result' }; }
+        return { loadStep: s.loadStep + 1 };
+      });
+    }, 620);
+  }
+
+  set(patch) { this.setState(patch); }
+
+  renderVals() {
+    const s = this.state;
+    const sa = p => () => this.setState(p);
+    const rec = s.rec;
+    const hasRecord = rec === 'full' || rec === 'partial' || rec === 'stale';
+    const hasPermits = (rec === 'full' || rec === 'partial' || rec === 'stale') && !s.outage;
+    const sanAntonio = rec === 'norecord';
+    const metro = sanAntonio ? 'San Antonio' : 'Austin';
+
+    const go = {
+      resting: sa({ phase: 'input', addr: 'empty', step: 0, sub: null, query: '', edYear: false, edSqft: false }),
+      typing: sa({ phase: 'input', addr: 'typing', query: '2107 Newton' }),
+      nosuggest: sa({ phase: 'input', addr: 'nosuggest', query: '14802 Ranch Rd 1431' }),
+      down: sa({ phase: 'input', addr: 'down', query: '2107 Newton St' }),
+      outside: sa({ phase: 'input', addr: 'outside', query: '3810 21st St, Lubbock, TX 79410' }),
+      outsidetx: sa({ phase: 'input', addr: 'outsidetx', query: '1200 N Broadway, Oklahoma City, OK' }),
+      multi: sa({ phase: 'input', addr: 'multi', query: '2107 Newton St, San Antonio, TX 78201' }),
+      loading: () => this.runLoad('full'),
+      loadFull: () => this.runLoad('full'),
+      loadNoRecord: () => this.runLoad('norecord'),
+      full: sa({ phase: 'result', rec: 'full', step: 0, sub: null, outage: false, edYear: false, edSqft: false }),
+      partial: sa({ phase: 'result', rec: 'partial', step: 0, sub: null, outage: false }),
+      norecord: sa({ phase: 'result', rec: 'norecord', step: 0, sub: null, outage: false }),
+      stale: sa({ phase: 'result', rec: 'stale', step: 0, sub: null, outage: false }),
+      fail: sa({ phase: 'result', rec: 'fail', step: 0, sub: null, outage: false }),
+      outage: sa({ phase: 'result', rec: 'full', step: 0, sub: null, outage: true }),
+      editYear: sa({ phase: 'result', rec: 'full', step: 0, sub: null, edYear: true, yearBuilt: '1979' }),
+      g2: sa({ phase: 'result', step: 2, sub: null, dir: 'fwd' }),
+      g3: sa({ step: 3, sub: null, dir: 'fwd' }),
+      g4: sa({ step: 4, sub: null, dir: 'fwd' }),
+      g5: sa({ step: 5, sub: null, dir: 'fwd' }),
+      invalid: sa({ phase: 'result', step: 4, sub: 'invalid', email: 'dana.example.com' }),
+      known: sa({ phase: 'result', step: 4, sub: 'known' }),
+      submitting: sa({ step: 5, sub: 'submitting' }),
+      sending: sa({ step: 5, sub: 'sending' }),
+      sendfailed: sa({ step: 5, sub: 'failed' }),
+      repfull: sa({ step: 6, sub: null, report: 'full' }),
+      reppartial: sa({ phase: 'result', rec: 'norecord', step: 6, sub: null, report: 'partial' }),
+      repwide: sa({ phase: 'result', rec: 'full', step: 6, sub: null, report: 'wide' })
+    };
+
+    const inGate = s.step >= 2 && s.step <= 5;
+    const stepAnim = s.dir === 'back' ? 'thiBack' : 'thiFwd';
+
+    const l = n => {
+      const done = s.loadStep > n;
+      return {
+        glyph: done ? '✓' : (s.loadStep === n ? '·' : ''),
+        color: done ? 'var(--thi-slate-500)' : (s.loadStep === n ? 'var(--thi-ink)' : 'var(--thi-slate-400)')
+      };
+    };
+    const L1 = l(0), L2 = l(1), L3 = l(2), L4 = l(3);
+    const l2text = sanAntonio
+      ? (s.loadStep > 1 ? 'No permits on record for this parcel' : 'Checking permit records…')
+      : 'Checking permit records…';
+
+    return {
+      navLinks: [
+        { label: 'Tools', href: '/tools/' },
+        { label: 'Methodology', href: '/methodology/' }
+      ],
+      crumbs: [{ label: 'Home', href: '/' }, { label: 'Tools', href: '/tools/' }, { label: 'AC lifespan' }],
+      footerCols: [
+        { title: 'Tools', links: [{ label: 'AC lifespan', href: '/tools/ac-lifespan/' }, { label: 'Roof scan', href: '/tools/roof-scan/' }, { label: 'Plumbing triage', href: '/tools/plumbing-triage/' }, { label: 'All nine tools', href: '/tools/' }] },
+        { title: 'Data', links: [{ label: 'Data catalog', href: '/data/' }, { label: 'Methodology', href: '/methodology/' }, { label: 'Source list', href: '#sources' }] },
+        { title: 'Coverage', links: [{ label: 'Austin', href: '/austin/' }, { label: 'San Antonio', href: '/san-antonio/' }, { label: 'Other Texas metros', href: '/coverage/' }] },
+        { title: 'Company', links: [{ label: 'About', href: '/about/' }, { label: 'Data catalog', href: '/data/' }, { label: 'Contact', href: '/contact/' }] }
+      ],
+      rail: s.rail, railHidden: !s.rail, notes: s.notes,
+      toggleRail: sa({ rail: !s.rail }), toggleNotes: sa({ notes: !s.notes }),
+
+      isInput: s.phase === 'input',
+      notInput: s.phase !== 'input',
+      hasStatePanel: s.phase === 'input' && ['nosuggest', 'down', 'outside', 'outsidetx', 'multi'].includes(s.addr),
+      isLoading: s.phase === 'loading',
+      isResult: s.phase === 'result',
+
+      aEmpty: s.addr === 'empty',
+      aTypingGeneric: s.addr === 'typing' && (this.props.providerMode ?? 'generic') === 'generic',
+      aTypingPlaces: s.addr === 'typing' && this.props.providerMode === 'places',
+      aTypingSmarty: s.addr === 'typing' && this.props.providerMode === 'smarty',
+      aNoSuggest: s.addr === 'nosuggest',
+      aDown: s.addr === 'down',
+      aOutside: s.addr === 'outside',
+      aOutsideTx: s.addr === 'outsidetx',
+      aMulti: s.addr === 'multi',
+
+      rFull: rec === 'full', rPartial: rec === 'partial', rNoRecord: rec === 'norecord',
+      rStale: rec === 'stale', rFail: rec === 'fail',
+      rHasRecord: hasRecord,
+      hasPermits, noPermits: !hasPermits && rec !== 'fail',
+      sizeKnown: hasPermits, sizeUnknown: !hasPermits && rec !== 'fail',
+      outage: s.outage,
+
+      metro,
+      runtimeMult: sanAntonio ? '2.0' : '2.1',
+      confirmedAddress: sanAntonio || s.addr === 'multi' ? '2107 Newton St, San Antonio, TX 78201' : '2107 Newton St, Austin, TX 78704',
+      dossierTitle: rec === 'norecord' ? 'What we could and could not find' : (rec === 'fail' ? 'Property lookup incomplete' : 'The property record'),
+      dossierMeta: rec === 'norecord'
+        ? 'Bexar CAD · no matching parcel · Confirmed Aug 30, 2026'
+        : (rec === 'stale' ? 'Travis CAD · 2024 certified roll · Confirmed Aug 29, 2026' : 'Travis CAD · 2026 certified roll · Data through Jul 25, 2026 · Confirmed Aug 29, 2026'),
+
+      yearBuilt: s.yearBuilt, sqft: s.sqft, yearBand: s.yearBand,
+      edYear: s.edYear, notEdYear: !s.edYear,
+      edSqft: s.edSqft, notEdSqft: !s.edSqft,
+
+      l1glyph: L1.glyph, l1color: L1.color,
+      l2glyph: L2.glyph, l2color: L2.color, l2text,
+      l3glyph: L3.glyph, l3color: L3.color,
+      l4glyph: L4.glyph, l4color: L4.color,
+
+      gNone: s.step === 0,
+      inGate, inReport: s.step === 6,
+      g2: s.step === 2 && !s.sub, g3: s.step === 3 && !s.sub,
+      g4: s.step === 4 && s.sub !== 'submitting' && s.sub !== 'sending' && s.sub !== 'failed',
+      g5: s.step === 5 && !s.sub,
+      sInvalid: s.sub === 'invalid', sKnown: s.sub === 'known', sFresh: s.sub !== 'known',
+      sSubmitting: s.sub === 'submitting', sSending: s.sub === 'sending', sFailed: s.sub === 'failed',
+      stepNum: inGate ? s.step : 5,
+      stepName: STEPS[inGate ? s.step : 5],
+      stepAnim,
+      emailBorder: s.sub === 'invalid' ? 'var(--thi-watch)' : 'var(--thi-line-strong)',
+
+      ageShort: hasPermits ? '15 yrs' : 'no permit',
+      sizeShort: hasPermits ? '3.0 t' : 'unknown',
+      confirmLine: rec === 'norecord'
+        ? 'You told us: built 1980–1999 · about 1,800 sq ft'
+        : 'Built ' + s.yearBuilt + ' · ' + s.sqft + ' sq ft · Source: Travis CAD, as of Jul 25, 2026',
+
+      repFull: s.report === 'full', repPartial: s.report === 'partial', repWide: s.report === 'wide',
+      repFullish: s.report !== 'partial',
+      costGeo: s.report === 'wide' ? 'Austin–Round Rock' : '78704',
+      permitN: s.report === 'wide' ? '1,842' : '214',
+      bandW: s.report === 'wide' ? '62%' : '34%',
+      bandFill: s.report === 'wide'
+        ? 'repeating-linear-gradient(135deg,var(--thi-navy) 0 3px,rgba(12,35,64,.28) 3px 7px)'
+        : 'var(--thi-navy)',
+
+      sym1: s.symptom === 1, sym2: s.symptom === 2, sym3: s.symptom === 3, sym4: s.symptom === 4, sym5: s.symptom === 5,
+      pickSym1: sa({ symptom: 1 }), pickSym2: sa({ symptom: 2 }), pickSym3: sa({ symptom: 3 }), pickSym4: sa({ symptom: 4 }), pickSym5: sa({ symptom: 5 }),
+      d1: s.delivery === 1, d2: s.delivery === 2, d3: s.delivery === 3,
+      pickD1: sa({ delivery: 1 }), pickD2: sa({ delivery: 2 }), pickD3: sa({ delivery: 3 }),
+
+      query: s.query, email: s.email,
+      onQuery: e => this.setState({ query: e.target.value, addr: e.target.value.length > 3 ? 'typing' : 'empty' }),
+      onKey: e => { if (e.key === 'Enter') this.runLoad('full'); },
+      onSubmit: () => this.runLoad('full'),
+      pickFull: () => { this.setState({ query: '2107 Newton St, Austin, TX 78704' }); this.runLoad('full'); },
+      pickMulti: sa({ addr: 'multi', query: '2107 Newton St, San Antonio, TX 78201' }),
+      onYear: e => this.setState({ yearBuilt: e.target.value, edYear: true }),
+      onSqft: e => this.setState({ sqft: e.target.value, edSqft: true }),
+      onYearBand: e => this.setState({ yearBand: e.target.value }),
+      onEmail: e => this.setState({ email: e.target.value, sub: null }),
+      submitEmail: () => this.setState(st => (/^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(st.email) ? { step: 5, sub: null, dir: 'fwd' } : { sub: 'invalid' })),
+      back: () => this.setState(st => (st.step <= 2 ? { step: 0, sub: null } : { step: st.step - 1, sub: null, dir: 'back' })),
+      go
+    };
+  }
+}
+
+</script>
+</body>
+</html>

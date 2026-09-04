@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/colors.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/typography.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/shape.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/motion.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/base/primitives.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/styles.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<script src="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/_ds_bundle.js"></script>
+<style>
+  body{margin:0;background:var(--thi-paper);color:var(--thi-ink);font-family:var(--thi-font-ui);-webkit-font-smoothing:antialiased}
+  a{color:var(--thi-link);text-decoration:none}
+  a:hover{color:var(--thi-link-deep);text-decoration:underline;text-decoration-color:var(--thi-amber);text-underline-offset:3px}
+  *{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:{{ pageBg }}">
+<main style="max-width:30rem;margin:0 auto;padding:0 var(--thi-sp-4) var(--thi-sp-12)">
+
+<!-- ── screen 1 · the question IS the page ── -->
+<sc-if value="{{ atStart }}" hint-placeholder-val="{{ true }}">
+<div style="padding-top:var(--thi-sp-8)">
+  <h1 style="font-family:var(--thi-font-display);font-weight:500;font-size:34px;line-height:1.1;letter-spacing:-.01em;margin:0 0 var(--thi-sp-2);color:var(--thi-ink)">Something's wrong. Start here.</h1>
+  <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:0 0 var(--thi-sp-6)">Tell us what's happening. We'll tell you what to do in the next five minutes, whether it's an emergency, and what it usually costs.</p>
+  <div style="display:grid;gap:var(--thi-sp-3)">
+    <button type="button" onClick="{{ pickFloor }}" style="display:flex;align-items:center;gap:14px;width:100%;min-height:76px;padding:16px 18px;text-align:left;background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-card);cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:19px;line-height:26px;color:var(--thi-ink)" style-hover="border-color:var(--thi-navy);background:var(--thi-mist)"><i class="ph ph-drop" aria-hidden="true" style="font-size:26px;color:var(--thi-slate-500);flex:none"></i>Water on the floor<i class="ph ph-arrow-right" aria-hidden="true" style="font-size:20px;color:var(--thi-slate-400);margin-left:auto;flex:none"></i></button>
+    <button type="button" onClick="{{ pickHot }}" style="display:flex;align-items:center;gap:14px;width:100%;min-height:76px;padding:16px 18px;text-align:left;background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-card);cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:19px;line-height:26px;color:var(--thi-ink)" style-hover="border-color:var(--thi-navy);background:var(--thi-mist)"><i class="ph ph-thermometer-simple" aria-hidden="true" style="font-size:26px;color:var(--thi-slate-500);flex:none"></i>No hot water<i class="ph ph-arrow-right" aria-hidden="true" style="font-size:20px;color:var(--thi-slate-400);margin-left:auto;flex:none"></i></button>
+    <button type="button" onClick="{{ pickSewage }}" style="display:flex;align-items:center;gap:14px;width:100%;min-height:76px;padding:16px 18px;text-align:left;background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-card);cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:19px;line-height:26px;color:var(--thi-ink)" style-hover="border-color:var(--thi-navy);background:var(--thi-mist)"><i class="ph ph-warning-octagon" aria-hidden="true" style="font-size:26px;color:var(--thi-slate-500);flex:none"></i>Sewage smell or backup<i class="ph ph-arrow-right" aria-hidden="true" style="font-size:20px;color:var(--thi-slate-400);margin-left:auto;flex:none"></i></button>
+    <button type="button" onClick="{{ pickNone }}" style="display:flex;align-items:center;gap:14px;width:100%;min-height:76px;padding:16px 18px;text-align:left;background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-card);cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:19px;line-height:26px;color:var(--thi-ink)" style-hover="border-color:var(--thi-navy);background:var(--thi-mist)"><i class="ph ph-wind" aria-hidden="true" style="font-size:26px;color:var(--thi-slate-500);flex:none"></i>No water at all<i class="ph ph-arrow-right" aria-hidden="true" style="font-size:20px;color:var(--thi-slate-400);margin-left:auto;flex:none"></i></button>
+    <button type="button" onClick="{{ pickBill }}" style="display:flex;align-items:center;gap:14px;width:100%;min-height:76px;padding:16px 18px;text-align:left;background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-card);cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:19px;line-height:26px;color:var(--thi-ink)" style-hover="border-color:var(--thi-navy);background:var(--thi-mist)"><i class="ph ph-chart-line" aria-hidden="true" style="font-size:26px;color:var(--thi-slate-500);flex:none"></i>Water bill jumped<i class="ph ph-arrow-right" aria-hidden="true" style="font-size:20px;color:var(--thi-slate-400);margin-left:auto;flex:none"></i></button>
+  </div>
+  <p style="font-size:var(--thi-fs-body-sm);line-height:var(--thi-lh-body-sm);color:var(--thi-slate-500);margin:var(--thi-sp-6) 0 0">If you smell gas, don't use this tool — leave the house and call 911 and your gas utility from outside.</p>
+</div>
+</sc-if>
+
+<!-- ── screen 2 · shutoff · the most important layout in the product ── -->
+<sc-if value="{{ atShutoff }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh;display:flex;flex-direction:column;padding-top:var(--thi-sp-4)">
+  <button type="button" onClick="{{ back }}" style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0;background:none;border:none;cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:16px;color:var(--thi-link)"><i class="ph ph-arrow-left" aria-hidden="true" style="font-size:20px"></i>Back</button>
+
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:var(--thi-sp-6) 0">
+    <p style="font-family:var(--thi-font-ui);font-weight:600;font-size:13px;line-height:18px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-amber-deep);margin:0 0 var(--thi-sp-3)">Before anything else</p>
+    <h1 style="font-family:var(--thi-font-display);font-weight:500;font-size:44px;line-height:1.05;letter-spacing:-.015em;margin:0 0 var(--thi-sp-5);color:var(--thi-ink)">Shut off the water.</h1>
+    <p style="font-size:21px;line-height:32px;color:var(--thi-ink);margin:0 0 var(--thi-sp-5)">For a single fixture, the valve is usually under it — turn clockwise.</p>
+    <p style="font-size:21px;line-height:32px;color:var(--thi-ink);margin:0 0 var(--thi-sp-6)">For the whole house, the main is typically near the street or where the line enters.</p>
+    <p style="font-size:19px;line-height:30px;color:var(--thi-slate-700);margin:0;padding-top:var(--thi-sp-5);border-top:1px solid var(--thi-line-strong)">If you can't find it or it won't turn, shut off the water heater too and call a plumber now.</p>
+  </div>
+
+  <div style="display:grid;gap:var(--thi-sp-3);padding-bottom:var(--thi-sp-6)">
+    <button type="button" onClick="{{ toVerdict }}" style="width:100%;min-height:60px;padding:14px 18px;background:var(--thi-navy);color:#fff;border:none;border-radius:var(--thi-r-control);cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:18px" style-hover="background:var(--thi-navy-hover)">Water is off — what now?</button>
+    <button type="button" onClick="{{ toVerdict }}" style="width:100%;min-height:60px;padding:14px 18px;background:var(--thi-surface);color:var(--thi-ink);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-control);cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:18px" style-hover="background:var(--thi-mist)">I can't shut it off</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ── safety interrupt · gas · full screen, flow stops ── -->
+<sc-if value="{{ atGas }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:var(--thi-sp-8) 0">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:var(--thi-sp-4)">
+    <i class="ph-fill ph-warning-octagon" aria-hidden="true" style="font-size:30px;color:var(--thi-severe)"></i>
+    <span style="font-family:var(--thi-font-ui);font-weight:600;font-size:13px;line-height:18px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-severe-text)">Stop</span>
+  </div>
+  <h1 style="font-family:var(--thi-font-display);font-weight:500;font-size:40px;line-height:1.06;letter-spacing:-.015em;margin:0 0 var(--thi-sp-5);color:var(--thi-ink)">If you smell gas, leave the house now.</h1>
+  <p style="font-size:21px;line-height:32px;color:var(--thi-ink);margin:0 0 var(--thi-sp-4)">Don't flip switches. Don't use your phone inside.</p>
+  <p style="font-size:21px;line-height:32px;color:var(--thi-ink);margin:0 0 var(--thi-sp-6)">Call 911 and your gas utility from outside.</p>
+  <p style="font-size:19px;line-height:30px;color:var(--thi-slate-700);margin:0 0 var(--thi-sp-8);padding-top:var(--thi-sp-5);border-top:1px solid var(--thi-line-strong)">Do not continue with this tool.</p>
+  <div style="display:grid;gap:var(--thi-sp-3)">
+    <a href="tel:911" style="display:flex;align-items:center;justify-content:center;width:100%;min-height:64px;padding:14px 18px;background:var(--thi-severe);color:#fff;border-radius:var(--thi-r-control);font-family:var(--thi-font-ui);font-weight:600;font-size:19px">Call 911</a>
+    <button type="button" onClick="{{ back }}" style="width:100%;min-height:56px;padding:12px 18px;background:none;color:var(--thi-slate-700);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-control);cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:16px">I don't smell gas — go back</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ── safety interrupt · sewage ── -->
+<sc-if value="{{ atSewage }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:var(--thi-sp-8) 0">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:var(--thi-sp-4)">
+    <i class="ph-fill ph-warning-octagon" aria-hidden="true" style="font-size:30px;color:var(--thi-elevated)"></i>
+    <span style="font-family:var(--thi-font-ui);font-weight:600;font-size:13px;line-height:18px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-elevated-text)">Health hazard</span>
+  </div>
+  <h1 style="font-family:var(--thi-font-display);font-weight:500;font-size:40px;line-height:1.06;letter-spacing:-.015em;margin:0 0 var(--thi-sp-5);color:var(--thi-ink)">Raw sewage is a health hazard.</h1>
+  <p style="font-size:21px;line-height:32px;color:var(--thi-ink);margin:0 0 var(--thi-sp-4)">Keep people and pets out of the affected area.</p>
+  <p style="font-size:21px;line-height:32px;color:var(--thi-ink);margin:0 0 var(--thi-sp-6)">Don't run any more water into the system — no sinks, no laundry, no flushing.</p>
+  <div style="display:grid;gap:var(--thi-sp-3);margin-top:var(--thi-sp-4)">
+    <button type="button" onClick="{{ toVerdict }}" style="width:100%;min-height:60px;padding:14px 18px;background:var(--thi-navy);color:#fff;border:none;border-radius:var(--thi-r-control);cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:18px" style-hover="background:var(--thi-navy-hover)">Understood — what now?</button>
+    <button type="button" onClick="{{ back }}" style="width:100%;min-height:56px;padding:12px 18px;background:none;color:var(--thi-slate-700);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-control);cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:16px">Back</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ── gas question · gate before the water heater branch ── -->
+<sc-if value="{{ atGasCheck }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh;display:flex;flex-direction:column;padding-top:var(--thi-sp-4)">
+  <button type="button" onClick="{{ back }}" style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0;background:none;border:none;cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:16px;color:var(--thi-link)"><i class="ph ph-arrow-left" aria-hidden="true" style="font-size:20px"></i>Back</button>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:var(--thi-sp-6) 0">
+    <h1 style="font-family:var(--thi-font-display);font-weight:500;font-size:36px;line-height:1.08;letter-spacing:-.01em;margin:0 0 var(--thi-sp-5);color:var(--thi-ink)">Do you smell gas near the water heater?</h1>
+    <div style="display:grid;gap:var(--thi-sp-3)">
+      <button type="button" onClick="{{ toGas }}" style="width:100%;min-height:68px;padding:14px 18px;text-align:left;background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-card);cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:19px;color:var(--thi-ink)" style-hover="border-color:var(--thi-navy);background:var(--thi-mist)">Yes, or I'm not sure</button>
+      <button type="button" onClick="{{ toVerdict }}" style="width:100%;min-height:68px;padding:14px 18px;text-align:left;background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-card);cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:19px;color:var(--thi-ink)" style-hover="border-color:var(--thi-navy);background:var(--thi-mist)">No gas smell</button>
+    </div>
+    <p style="font-size:17px;line-height:26px;color:var(--thi-slate-700);margin:var(--thi-sp-6) 0 0">We ask first because everything else can wait and this can't.</p>
+  </div>
+</div>
+</sc-if>
+
+<!-- ── verdict ── -->
+<sc-if value="{{ atVerdict }}" hint-placeholder-val="{{ false }}">
+<div style="padding-top:var(--thi-sp-4)">
+  <button type="button" onClick="{{ back }}" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0;background:none;border:none;cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:16px;color:var(--thi-link)"><i class="ph ph-arrow-left" aria-hidden="true" style="font-size:20px"></i>Back</button>
+
+  <div style="padding:var(--thi-sp-6) 0 var(--thi-sp-5)">
+    <p style="font-family:var(--thi-font-ui);font-weight:600;font-size:13px;line-height:18px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin:0 0 var(--thi-sp-3)">Our read</p>
+    <h1 style="font-family:var(--thi-font-display);font-weight:500;font-size:40px;line-height:1.06;letter-spacing:-.015em;margin:0;color:var(--thi-ink)">{{ verdictTitle }}</h1>
+    <p style="font-size:19px;line-height:30px;color:var(--thi-slate-700);margin:var(--thi-sp-4) 0 0">{{ verdictBody }}</p>
+  </div>
+
+  <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);padding:var(--thi-sp-5);margin-bottom:var(--thi-sp-4)">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:var(--thi-sp-3)">
+      <span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Typical cost in Austin</span>
+      <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-amber-deep);background:#FBF1E6;border:1px solid #EDD6B8"><i class="ph ph-function" aria-hidden="true" style="font-size:12px"></i>Estimate</span>
+    </div>
+    <div style="font-family:var(--thi-font-mono);font-weight:500;font-size:var(--thi-fs-data-lg);line-height:var(--thi-lh-data-lg);color:var(--thi-ink);font-feature-settings:'tnum' 1">{{ costRange }}</div>
+    <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:8px 0 0">{{ costNote }}</p>
+    <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">Source: City of Austin plumbing permits · Data through Aug 28, 2026 · Escalated to Aug 2026 · Confirmed Aug 30, 2026</p>
+  </div>
+
+  <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);padding:var(--thi-sp-5)">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:var(--thi-sp-3)">
+      <span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Three questions to ask whoever you call</span>
+      <button type="button" style="display:inline-flex;align-items:center;gap:6px;min-height:44px;background:none;border:none;padding:0;cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:14px;color:var(--thi-link)"><i class="ph ph-copy" aria-hidden="true" style="font-size:17px"></i>Copy</button>
+    </div>
+    <ol style="margin:0;padding-left:1.3em;font-size:17px;line-height:27px;color:var(--thi-ink);display:grid;gap:10px">
+      <li>Is this a repair to one fixture or a symptom of the supply line?</li>
+      <li>What's the diagnostic fee, and does it come off the repair if I go ahead?</li>
+      <li>Does this work need a permit, and are you pulling it?</li>
+    </ol>
+  </div>
+
+  <p style="font-size:14px;line-height:22px;color:var(--thi-slate-500);margin:var(--thi-sp-5) 0 0">This organizes public records and information you provide. It is not an inspection, diagnosis, or professional evaluation.</p>
+</div>
+</sc-if>
+
+</main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const V = {
+  floor: {
+    title: 'Call someone now.',
+    body: 'Active water on the floor with the main shut off is still an emergency — the damage clock is running on the flooring and the wall cavity, not the pipe.',
+    cost: '$180 – $650',
+    note: 'Emergency call-out plus a single supply-line or shutoff-valve repair. A slab leak is a different job and a different number.'
+  },
+  sewage: {
+    title: 'Call someone now.',
+    body: 'A backup means the blockage is downstream of every fixture in the house, so nothing drains safely until it clears.',
+    cost: '$250 – $900',
+    note: 'Main-line clearing with a camera inspection. Root intrusion or a collapsed clay line runs well past this.'
+  },
+  hot: {
+    title: 'Today, not next week.',
+    body: 'No hot water without a gas smell is usually a failed thermocouple, a pilot outage, or a spent element — none of it dangerous, none of it worth living without in the meantime.',
+    cost: '$140 – $420',
+    note: 'Diagnostic plus thermocouple or element replacement. A full water heater replacement is $1,400 – $2,600.'
+  },
+  none: {
+    title: 'Today, not next week.',
+    body: 'No water at all is either a utility-side interruption or a main valve or pressure regulator failure. Check with a neighbor first — that answer is free.',
+    cost: '$180 – $700',
+    note: 'Pressure regulator or main valve replacement. If the utility is at fault, there is nothing to pay.'
+  },
+  bill: {
+    title: 'This can wait, but don\u2019t forget it.',
+    body: 'A jump with no visible water is usually a running toilet flapper or an irrigation leak. Both waste real money monthly, neither will damage the house this week.',
+    cost: '$0 – $340',
+    note: 'A flapper is a $12 part you can fit yourself. An irrigation leak located and repaired runs to the top of this range.'
+  }
+};
+
+class Component extends DCLogic {
+  state = { screen: 'start', symptom: 'floor', prev: 'start' };
+
+  go(screen) { this.setState(s => ({ screen, prev: s.screen })); }
+
+  renderVals() {
+    const s = this.state;
+    const v = V[s.symptom];
+    const set = (symptom, screen) => () => this.setState(st => ({ symptom, screen, prev: st.screen }));
+
+    return {
+      pageBg: 'var(--thi-paper)',
+      atStart: s.screen === 'start',
+      atShutoff: s.screen === 'shutoff',
+      atGasCheck: s.screen === 'gascheck',
+      atGas: s.screen === 'gas',
+      atSewage: s.screen === 'sewage',
+      atVerdict: s.screen === 'verdict',
+
+      pickFloor: set('floor', 'shutoff'),
+      pickHot: set('hot', 'gascheck'),
+      pickSewage: set('sewage', 'sewage'),
+      pickNone: set('none', 'verdict'),
+      pickBill: set('bill', 'verdict'),
+      toGas: () => this.go('gas'),
+      toVerdict: () => this.go('verdict'),
+      back: () => this.setState(st => ({ screen: st.prev === st.screen ? 'start' : st.prev })),
+
+      verdictTitle: v.title, verdictBody: v.body, costRange: v.cost, costNote: v.note
+    };
+  }
+}
+
+</script>
+</body>
+</html>
