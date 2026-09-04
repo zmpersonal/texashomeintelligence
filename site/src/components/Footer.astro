@@ -35,10 +35,16 @@ const orderedServices = serviceOrder
           <li><a href="/san-antonio/">San Antonio</a></li>
         </ul>
       </div>
+      {/* Round 10b: the "All services" link to /services/ is gone. ROADMAP is
+          explicit — Services is permanently removed from nav and must not be
+          re-added or linked — and this footer link was the last piece of chrome
+          re-adding it. The individual location x service links STAY: those are
+          the fourteen indexed content pages, and dropping them would cut a
+          third of the site's internal linking to nothing (KPI #1). The column
+          heading describes what the links are, not a hub. */}
       <div>
         <h4>Services</h4>
         <ul>
-          <li><a href="/services/">All services</a></li>
           {orderedServices.map((svc) => (
             <li><a href={`/austin/${svc.id}/`}>{svc.data.name}</a></li>
           ))}
@@ -52,7 +58,6 @@ const orderedServices = serviceOrder
           <li><a href="/home/sign-in/">Sign in</a></li>
           <li><a href="/privacy/">Privacy</a></li>
           <li><a href="/dashboard/">My Dashboard</a></li>
-          <li><a href="/start/">Project Brief</a></li>
         </ul>
       </div>
     </div>

@@ -27,6 +27,127 @@ export interface ServiceNotice {
   reviewEveryDays: number;
 }
 
+/**
+ * ── THE BUILD-TIME GATE (Round 10b) ───────────────────────────────────────
+ * Round 10 wrote the cadence down and left enforcing it as a seam. A cadence
+ * nothing checks is a comment, so this checks it: every notice is verified at
+ * BUILD time, and one past its review date FAILS THE BUILD rather than
+ * shipping quietly.
+ *
+ * The argument these pages make is that other people's pages are stale. A page
+ * making that argument cannot be allowed to go stale itself without anyone
+ * noticing — and "without anyone noticing" is the only failure mode that
+ * matters here, because a wrong tax-credit date reads exactly like a right one.
+ *
+ * This is deliberately a HARD failure, not a warning. A warning in build output
+ * is a thing nobody reads on the run that matters. The cost is real and
+ * accepted: 90 days after `confirmedOn`, the build stops until a human opens
+ * irs.gov, confirms the fact still holds, and moves the date. That is the
+ * process the seam was asking for.
+ *
+ * It runs at module load, so anything that imports the notices — the page, the
+ * build, `astro check` — triggers it. There is no path that renders a notice
+ * without passing through it.
+ */
+/**
+ * The clock this gate runs against.
+ *
+ * NOT `new Date()`, and this is the whole reason the gate works at all.
+ * Astro evaluates modules under the Cloudflare Workers runtime, which freezes
+ * the clock at the Unix epoch in global scope — measured during this round:
+ * a module-level `new Date().toISOString()` returns `1970-01-01T00:00:00.000Z`
+ * during `npm run build`. A staleness check written the obvious way compares
+ * every review date against 1970, finds nothing overdue, and never fires. It
+ * would have looked like a closed seam and been a decoration.
+ *
+ * `__THI_BUILD_TIME__` is injected by `astro.config.mjs` via Vite's `define`,
+ * read in real Node when the config loads. Outside a Vite build — `tsx`, the
+ * unit replay — the constant is undefined and the real system clock is used.
+ */
+declare const __THI_BUILD_TIME__: string | undefined;
+export function buildNow(): Date {
+  const injected = typeof __THI_BUILD_TIME__ === "string" ? __THI_BUILD_TIME__ : undefined;
+  if (!injected) return new Date();
+  const d = new Date(injected);
+  return Number.isNaN(d.getTime()) ? new Date() : d;
+}
+
+export interface StaleNotice {
+  key: string;
+  heading: string;
+  confirmedOn: string;
+  dueOn: string;
+  daysOverdue: number;
+  sourceName: string;
+  sourceUrl: string;
+}
+
+/** Adding `reviewEveryDays` to any future dated claim opts it into this gate. */
+export function reviewDueDate(notice: ServiceNotice): Date {
+  const confirmed = new Date(notice.confirmedOn);
+  if (Number.isNaN(confirmed.getTime())) {
+    throw new Error(
+      `serviceNotices: "${notice.heading}" has an unparseable confirmedOn ("${notice.confirmedOn}"). ` +
+        `A dated claim whose date cannot be read is worse than an undated one.`,
+    );
+  }
+  return new Date(confirmed.getTime() + notice.reviewEveryDays * 86_400_000);
+}
+
+/** Every notice whose review date has passed. Pure — takes `now` so it is
+ * testable without waiting three months. */
+export function staleNotices(
+  notices: Record<string, ServiceNotice[]>,
+  now: Date = new Date(),
+): StaleNotice[] {
+  const out: StaleNotice[] = [];
+  for (const [key, list] of Object.entries(notices)) {
+    for (const n of list) {
+      if (!Number.isFinite(n.reviewEveryDays) || n.reviewEveryDays <= 0) {
+        throw new Error(
+          `serviceNotices: "${n.heading}" (${key}) has a non-positive reviewEveryDays ` +
+            `(${n.reviewEveryDays}). Every dated volatile claim must carry a real cadence.`,
+        );
+      }
+      const due = reviewDueDate(n);
+      if (now.getTime() > due.getTime()) {
+        out.push({
+          key,
+          heading: n.heading,
+          confirmedOn: n.confirmedOn,
+          dueOn: due.toISOString().slice(0, 10),
+          daysOverdue: Math.floor((now.getTime() - due.getTime()) / 86_400_000),
+          sourceName: n.sourceName,
+          sourceUrl: n.sourceUrl,
+        });
+      }
+    }
+  }
+  return out;
+}
+
+export function assertNoticesFresh(
+  notices: Record<string, ServiceNotice[]>,
+  now: Date = new Date(),
+): void {
+  const stale = staleNotices(notices, now);
+  if (stale.length === 0) return;
+  const lines = stale.map(
+    (s) =>
+      `  • ${s.key} — "${s.heading}"\n` +
+      `      confirmed ${s.confirmedOn}, review was due ${s.dueOn} (${s.daysOverdue} day${s.daysOverdue === 1 ? "" : "s"} overdue)\n` +
+      `      re-verify against: ${s.sourceName} — ${s.sourceUrl}`,
+  );
+  throw new Error(
+    `\n\nBUILD STOPPED — ${stale.length} dated claim${stale.length === 1 ? " is" : "s are"} past ` +
+      `${stale.length === 1 ? "its" : "their"} review date:\n\n${lines.join("\n\n")}\n\n` +
+      `These are volatile facts on indexed pages. Open the primary source, confirm the claim still\n` +
+      `holds, then update \`confirmedOn\` in src/data/serviceNotices.ts — or change the claim.\n` +
+      `Do NOT move the date without re-reading the source: that is the one thing this check exists\n` +
+      `to prevent.\n`,
+  );
+}
+
 export const SERVICE_NOTICES: Record<string, ServiceNotice[]> = {
   "san-antonio/hvac": [
     {
@@ -48,3 +169,7 @@ export const SERVICE_NOTICES: Record<string, ServiceNotice[]> = {
     },
   ],
 };
+
+// Runs on import. Any page, build, or `astro check` that reaches the notices
+// reaches this first.
+assertNoticesFresh(SERVICE_NOTICES, buildNow());

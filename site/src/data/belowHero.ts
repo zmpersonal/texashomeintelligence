@@ -113,6 +113,16 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
     contextHeading: "What else bears on a San Antonio HVAC decision",
     context: [
       {
+        heading: "What a system costs to run depends on the rate as much as the equipment",
+        body:
+          "This is the average price Texas households paid per kilowatt-hour in the most recent " +
+          "month the U.S. Energy Information Administration has published — a statewide figure, " +
+          "not a San Antonio one, and not your plan's rate. We publish the rate and stop there: " +
+          "turning it into a monthly bill or a payback period needs this home's actual " +
+          "consumption, which we do not have and will not assume.",
+        topic: "electricity-rate",
+      },
+      {
         heading: "Air quality is the one condition we measure that changes what a filter has to do",
         body:
           "A system's filter is doing more work on a high-particulate day than a clear one. This is the current " +
@@ -148,6 +158,11 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
     sources: [
       SA_PERMIT_SOURCE,
       {
+        name: "U.S. Energy Information Administration",
+        used: "Average monthly residential retail electricity price for Texas, in cents per kilowatt-hour. The rate only — no bill, payback or saving is derived from it.",
+        url: "https://www.eia.gov/electricity/data.php",
+      },
+      {
         name: "AirNow (U.S. EPA)",
         used: "Current air-quality index for the San Antonio reporting area.",
         url: "https://www.airnow.gov/",
@@ -174,11 +189,6 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
         reading: "Typical HVAC replacement cost in San Antonio",
         needed:
           "A cost source that is not permit valuation. Blocked, not merely unbuilt — see the measurement in docs/audits/round-6-permit-measurement.md.",
-      },
-      {
-        reading: "Electricity price as running-cost context",
-        needed:
-          "Nothing — the EIA Texas residential series is live and current. Withheld this round because the round bars any price figure, and a utility rate is a price. Worth an owner decision: it is a published rate, not a project cost.",
       },
     ],
   },

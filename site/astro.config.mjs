@@ -97,5 +97,20 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    define: {
+      /**
+       * A REAL wall-clock timestamp, read here in Node when this config loads.
+       *
+       * Round 10b needed one and discovered the hard way that it could not use
+       * `new Date()` for it: modules are evaluated under the Cloudflare Workers
+       * runtime, which FREEZES THE CLOCK AT THE UNIX EPOCH in global scope —
+       * measured, `new Date().toISOString()` at module top level returns
+       * `1970-01-01T00:00:00.000Z`. A staleness check written the obvious way
+       * silently never fires. `newestDataUpdate()` above already reads the
+       * filesystem in real Node at this point, so this is the same trick for
+       * the same reason.
+       */
+      __THI_BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+    },
   },
 });
