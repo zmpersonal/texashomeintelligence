@@ -26,6 +26,9 @@ npx tsx scripts/replays/badgeunit.ts         # unit
 npx tsx scripts/replays/alertcopyunit.ts     # unit — alert-copy honesty, no data dependency
 npx tsx scripts/replays/noticefreshunit.ts   # unit — the dated-claim review gate (Round 10b)
 npx tsx scripts/verify-trade-mapping.ts      # unit
+npx tsx scripts/check-citations.ts           # network — cited URLs resolve.
+                                             #   Runs weekly in CI, not in the build.
+                                             #   Fails in this sandbox: every host is proxied.
 node scripts/replays/signinrender.mjs        # render
 node scripts/replays/r9render.mjs            # render
 node scripts/replays/saservicerender.mjs     # render — the SA service pages (Round 10)

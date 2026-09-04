@@ -1,0 +1,110 @@
+name: Citation link check
+
+# Checks that every external URL the site CITES still resolves. One HEAD request
+# per distinct cited URL — seven today — once a week.
+#
+# ── WHY THIS IS A WORKFLOW AND NOT PART OF `npm run build` ────────────────
+# Because a build must not depend on the internet. Workers Builds runs on every
+# push to `main`, so putting this in the build would (a) make a deploy fail for
+# reasons unrelated to the commit — a government site down for maintenance would
+# block a release — and (b) turn "check a few links" into polling at whatever
+# rate anyone happens to commit. It also cannot run in the agent sandbox, where
+# every one of these hosts is proxy-denied, so it would fail every local build
+# for a reason that has nothing to do with the code.
+#
+# ── THE COST, AGAINST COST.md RULE 3 ──────────────────────────────────────
+# ~7 HEAD requests a week — about 364 a year, roughly one per site per week — on
+# free Action minutes. No response body is read and nothing is stored. Rule 3
+# governs the INGESTION path, where request volume scales with data refresh and
+# the result becomes a number on a page. This touches no dataset, runs on a fixed
+# weekly clock regardless of traffic or commits, and its only output is a GitHub
+# issue for a human. If it never ran, no number on the site would change.
+#
+# ── WHAT A PASS MEANS, AND WHAT IT DOES NOT ───────────────────────────────
+# That the URL responded on that date. NOT that the page still says what we cite
+# it for. That second question is `reviewEveryDays` in serviceNotices.ts, which
+# fails the BUILD when a dated claim ages past its cadence. Neither mechanism
+# substitutes for the other: one catches a link rotting, the other a fact.
+#
+# It opens an issue; it never fails a build or a deploy. A red X on a scheduled
+# job is a thing people stop seeing — an issue is a thing with an assignee.
+
+on:
+  schedule:
+    # Mondays 14:00 UTC — 09:00 America/Chicago in CDT, 08:00 in CST. Start of
+    # the week, so a dead citation gets found on a working day rather than
+    # sitting over a weekend.
+    - cron: "0 14 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: citation-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install
+        working-directory: site
+        run: npm ci
+
+      - name: Check cited URLs
+        id: check
+        working-directory: site
+        # Never fails the job — the report is the product, and the issue step
+        # below decides what to do with it.
+        continue-on-error: true
+        run: |
+          set +e
+          npx tsx scripts/check-citations.ts | tee "$RUNNER_TEMP/report.txt"
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Open an issue if any citation is dead
+        if: steps.check.outputs.exit_code != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: "Citation link check: one or more cited URLs did not resolve"
+        run: |
+          set -euo pipefail
+          # One open issue at a time. A new one every Monday for the same dead
+          # link is how a useful signal becomes noise people filter out.
+          existing=$(gh issue list --state open --search "$TITLE in:title" \
+            --json number --jq '.[0].number // empty')
+
+          {
+            echo "The weekly citation link check found a URL that did not resolve."
+            echo
+            echo "A failure here means the URL did not respond, **not** that the claim is wrong."
+            echo "Conversely a pass would mean only that the URL responded — whether the page still"
+            echo "says what we cite it for is what \`reviewEveryDays\` answers, separately."
+            echo
+            echo "Fix by replacing the URL in \`site/src/data/belowHero.ts\` (\`SourceRef.url\`) or"
+            echo "\`site/src/data/serviceNotices.ts\` (\`ServiceNotice.sourceUrl\`), and set"
+            echo "\`checkedByHumanOn\` to the date you opened the replacement."
+            echo
+            echo '```'
+            cat "$RUNNER_TEMP/report.txt"
+            echo '```'
+            echo
+            echo "_Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}_"
+          } > "$RUNNER_TEMP/body.md"
+
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file "$RUNNER_TEMP/body.md"
+            echo "commented on existing issue #$existing"
+          else
+            gh issue create --title "$TITLE" --body-file "$RUNNER_TEMP/body.md"
+          fi
