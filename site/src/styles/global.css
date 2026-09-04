@@ -875,3 +875,31 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
  * — a common tablet width — a full-width row still left a ~300px gap between
  * a reminder's label and its buttons, which is the defect this round exists to
  * fix rather than an acceptable in-between state. */
+
+/* ── Round 10 · the below-hero content layer ───────────────────────────────
+   #answer is the extraction target: the largest text after the H1, so an
+   answer engine that lifts one passage from the page lifts the thesis. Sized
+   between the h2 above it and body copy, in IBM Plex Sans (BRAND.md — body
+   and UI, never Newsreader, which is for headings). */
+.answer-lede {
+  font-family: var(--thi-font-ui);
+  font-size: clamp(1.12rem, 1.7vw, 1.32rem);
+  line-height: 1.55;
+  color: var(--ink);
+  max-width: 40em;
+  margin-bottom: 16px;
+}
+.answer-lede strong { font-family: var(--thi-font-mono); font-variant-numeric: tabular-nums; font-weight: 600; }
+.answer-support { color: var(--ink-soft); max-width: 44em; }
+#context .context-item { margin-bottom: 28px; }
+#context .context-item:last-of-type { margin-bottom: 0; }
+/* Wide tables scroll inside their own container; the page never scrolls
+   sideways (REVIEW.md 5). Scoped to this layer's blocks on purpose — the same
+   rule sitewide would restyle every existing data page, which is not this
+   round's to change. */
+#data table.data-table, #method table.data-table, #sources table.data-table {
+  display: block; overflow-x: auto; max-width: 100%;
+}
+@media (min-width: 700px) {
+  #data table.data-table, #method table.data-table, #sources table.data-table { display: table; }
+}

@@ -1,0 +1,323 @@
+---
+/**
+ * The below-hero content layer for a location × service page.
+ *
+ * Block order is fixed: #answer · #data · #method · #context · #faq · #sources.
+ *
+ *  - #answer is the extraction target. It is the largest text after the H1 and
+ *    it is written as a THESIS — the figure lands in the first sentence, not
+ *    after a paragraph of scene-setting. An answer engine that quotes one
+ *    passage from this page should quote this one and be right.
+ *  - #data is the table. Facts render in server HTML in a real <table>
+ *    (CLAUDE.md); nothing here needs JavaScript to be readable.
+ *  - #method says how the count was assembled, because a count whose
+ *    construction is hidden is not citable.
+ *  - #context carries the other live readings that bear on the decision.
+ *  - #faq is a real FAQPage, marked up in place — not a thin standalone page.
+ *  - #sources is CONTENT, not footer chrome: named feeds, dated, linked to
+ *    primary sources.
+ *
+ * Every figure is computed at build time from src/data/generated/**. Nothing
+ * in the content config states a number.
+ */
+import DataStatus from "./DataStatus.astro";
+import FaqAccordion from "./FaqAccordion.astro";
+import { monthLabel, monthDatetime, pct, type TradeActivity } from "../lib/tradeActivity";
+import { contextReading } from "../lib/belowHeroReadings";
+import type { BelowHeroSpec } from "../data/belowHero";
+import { formatDate, machineDate } from "../lib/format";
+
+interface Props {
+  spec: BelowHeroSpec;
+  activity: TradeActivity;
+  cityName: string;
+  location: string;
+  /** Dated, volatile external facts. Reviewed on a cadence — see HANDOFF. */
+  notices?: { heading: string; body: string; sourceName: string; sourceUrl: string; confirmedOn: string }[];
+}
+
+const { spec, activity, cityName, location, notices = [] } = Astro.props;
+const noun = spec.subjectNoun;
+
+const a = activity;
+const windowLabel = `${monthLabel(a.windowStart)} to ${monthLabel(a.windowEnd)}`;
+const issuedTypes = a.sourceTypes.length;
+
+// The trend sentence. This is the one place the threshold turns into words,
+// so a claim can never outrun the arithmetic that licenses it.
+const trendSentence = a.clearsThreshold
+  ? `Activity ${a.direction === "rose" ? "rose" : "fell"} about ${pct(Math.abs(a.changePct))} between the first ` +
+    `and second halves of the window — ${a.firstHalf.toLocaleString()} permits to ${a.secondHalf.toLocaleString()} — ` +
+    `which clears the ±${a.noisePct.toFixed(1)}% counting-noise threshold for a monthly total this size.`
+  : `Activity held roughly flat: the first and second halves of the window differ by ${pct(a.changePct)} ` +
+    `(${a.firstHalf.toLocaleString()} permits to ${a.secondHalf.toLocaleString()}), which does not clear the ` +
+    `±${a.noisePct.toFixed(1)}% counting-noise threshold for a monthly total this size. We do not report that as a trend.`;
+
+const peaksSentence =
+  `The busiest months in the window were ` +
+  a.peakMonths.map((p) => `${monthLabel(p.month)} (${p.permitCount.toLocaleString()})`).join(", ") + ".";
+
+const typesSentence =
+  `The mapping covers ${a.mappedTypeCount} San Antonio ${noun.toLowerCase()} permit type` +
+  `${a.mappedTypeCount === 1 ? "" : "s"}, ${issuedTypes} of which issued at least one permit in this window: ` +
+  a.sourceTypes.map((t) => t.value).join(", ") + ".";
+
+const seasonSentence = a.clearsThreshold
+  ? peaksSentence
+  : `${peaksSentence} The spread between the busiest and quietest month is narrow enough that we do not describe it as a season.`;
+
+// FAQ answers are filled from the computed reading — the config holds the
+// question and the framing, never the figure.
+const fill = (s: string) =>
+  s
+    .replace(/\{MEAN\}/g, `About ${a.meanPerMonth.toLocaleString()} permits`)
+    .replace(/\{MONTHS\}/g, String(a.monthCount))
+    .replace(/\{WINDOW\}/g, windowLabel)
+    .replace(/\{TOTAL\}/g, a.total.toLocaleString())
+    .replace(/\{PEAKS\}/g, peaksSentence)
+    .replace(/\{TREND_SENTENCE\}/g, trendSentence)
+    .replace(/\{TYPES_SENTENCE\}/g, typesSentence)
+    .replace(/\{SEASON_SENTENCE\}/g, seasonSentence)
+    .replace(/\{NOISE\}/g, `±${a.noisePct.toFixed(1)}%`);
+
+const faq = spec.faq.map((f) => ({ q: f.q, a: fill(f.a) }));
+if (faq.some((f) => /\{[A-Z_]+\}/.test(f.a))) {
+  throw new Error(
+    `BelowHero: an unfilled placeholder survived into a rendered FAQ answer for ${location}/${spec.category}. ` +
+      `A published page must never show a template token.`,
+  );
+}
+
+const mechanismWords: Record<string, string> = {
+  "permit-type": "the city's own permit-type field",
+  "work-class": "the permit's work-class field",
+  "description-text": "a text match on the permit description",
+};
+const mechanismLabel = a.mechanisms.map((m) => mechanismWords[m] ?? m).join(" and ");
+const quietest = [...a.months].sort((x, y) => x.permitCount - y.permitCount)[0];
+---
+
+{/* ── #answer — the extraction target ──────────────────────────────────── */}
+<section class="block" id="answer">
+  <div class="wrap" style="max-width:820px;">
+    <h2>{spec.answerHeading}</h2>
+    <p class="answer-lede">
+      The City of San Antonio issued about <strong>{a.meanPerMonth.toLocaleString()}</strong>{" "}
+      {noun} permits a month over the {a.monthCount} months from {windowLabel} —{" "}
+      <strong>{a.total.toLocaleString()}</strong> in total. {trendSentence}
+    </p>
+    <p class="answer-support">
+      {peaksSentence} Every permit in this count is identified by {mechanismLabel}, across{" "}
+      {issuedTypes} San Antonio permit type{issuedTypes === 1 ? "" : "s"}. This is a measure of
+      activity and timing only — the city's permit record does not support a cost figure, and none
+      is published here.
+    </p>
+    <DataStatus
+      status={a.freshness.display}
+      asOf={a.freshness.asOf}
+      dataThrough={a.freshness.dataThrough}
+      source={a.dataset.source.name}
+    />
+  </div>
+</section>
+
+{/* ── #data — the table, in server HTML ────────────────────────────────── */}
+<section class="block alt" id="data">
+  <div class="wrap" style="max-width:820px;">
+    <h2>{spec.dataHeading}</h2>
+    <table class="data-table">
+      <caption>
+        {noun} permits issued by the City of San Antonio, by month.
+        Window: {windowLabel}. Classification mapping {a.mappingVersion}.
+      </caption>
+      <thead>
+        <tr><th scope="col">Month</th><th scope="col">Permits issued</th><th scope="col">Share of window</th></tr>
+      </thead>
+      <tbody>
+        {a.months.map((m) => (
+          <tr>
+            <th scope="row">
+              <time datetime={monthDatetime(m.month)}>{monthLabel(m.month)}</time>
+            </th>
+            <td class="num">{m.permitCount.toLocaleString()}</td>
+            <td class="num">{((m.permitCount / a.total) * 100).toFixed(1)}%</td>
+          </tr>
+        ))}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row">Total</th>
+          <td class="num">{a.total.toLocaleString()}</td>
+          <td class="num">100.0%</td>
+        </tr>
+      </tfoot>
+    </table>
+    <p class="metric-note">
+      Busiest month in the window: {monthLabel(a.peakMonths[0].month)} at{" "}
+      {a.peakMonths[0].permitCount.toLocaleString()} permits — {(
+        (a.peakMonths[0].permitCount / (a.total / a.monthCount) - 1) * 100
+      ).toFixed(0)}% above the monthly average of {a.meanPerMonth.toLocaleString()}. Quietest:{" "}
+      {monthLabel(quietest.month)} at {quietest.permitCount.toLocaleString()}.
+    </p>
+    <DataStatus
+      status={a.freshness.display}
+      asOf={a.freshness.asOf}
+      dataThrough={a.freshness.dataThrough}
+      source={a.dataset.source.name}
+    />
+  </div>
+</section>
+
+{/* ── #method ──────────────────────────────────────────────────────────── */}
+<section class="block" id="method">
+  <div class="wrap" style="max-width:820px;">
+    <h2>{spec.methodHeading}</h2>
+    <p>{spec.methodBody}</p>
+    <table class="data-table">
+      <caption>San Antonio permit types counted in this category, {windowLabel}.</caption>
+      <thead>
+        <tr><th scope="col">City permit type</th><th scope="col">Permits</th><th scope="col">Share</th></tr>
+      </thead>
+      <tbody>
+        {a.sourceTypes.map((t) => (
+          <tr>
+            <th scope="row">{t.value}</th>
+            <td class="num">{t.count.toLocaleString()}</td>
+            <td class="num">{((t.count / a.total) * 100).toFixed(1)}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <ul class="key-findings">
+      <li>
+        Classification mechanism: {mechanismLabel}. No description-text matching is used for this
+        category in San Antonio, so the count does not depend on how a clerk worded a job.
+      </li>
+      <li>
+        Mapping version {a.mappingVersion}. {a.mappedTypeCount} permit type
+        {a.mappedTypeCount === 1 ? " is" : "s are"} mapped to this category;{" "}
+        {issuedTypes} issued at least one permit in this window.
+      </li>
+      <li>
+        Trend threshold: ±{a.noisePct.toFixed(1)}%. A permit count is a count of events, so its
+        month-to-month wobble is Poisson — the standard deviation of a monthly count averaging{" "}
+        {a.meanPerMonth.toLocaleString()} is about {Math.round(Math.sqrt(a.meanPerMonth))}, or{" "}
+        {a.noisePct.toFixed(1)}%. A half-over-half change smaller than that is not reported as a trend.
+      </li>
+      <li>
+        Not published from this feed: any cost, price or typical-spend figure. San Antonio's
+        DECLARED VALUATION field is 0.00% populated on every residential and trade permit type,
+        and declared valuation is an applicant's fee-basis statement to the city rather than a
+        paid invoice.
+      </li>
+    </ul>
+  </div>
+</section>
+
+{/* ── #context ─────────────────────────────────────────────────────────── */}
+<section class="block alt" id="context">
+  <div class="wrap" style="max-width:820px;">
+    <h2>{spec.contextHeading}</h2>
+    {spec.context.map((c) => {
+      const reading = c.topic ? contextReading(c.topic, location) : undefined;
+      return (
+        <div class="context-item">
+          <h3>{c.heading}</h3>
+          <p>{c.body}</p>
+          {reading && (
+            <div class="card data-card">
+              <p class="metric-label">{reading.label}</p>
+              <p class="metric-value">{reading.value}</p>
+              <DataStatus
+                status={reading.freshness.display}
+                asOf={reading.freshness.asOf}
+                dataThrough={reading.freshness.dataThrough}
+                source={reading.sourceName}
+              />
+              {reading.href && (
+                <p style="margin-top:12px;">
+                  <a href={reading.href}>Full {c.topic} data, sources and limitations &rarr;</a>
+                </p>
+              )}
+            </div>
+          )}
+          {c.topic && !reading && (
+            <p class="metric-note">
+              We hold no current reading for this in {cityName}. We would rather show nothing than
+              attach an unrelated measurement to this page.
+            </p>
+          )}
+        </div>
+      );
+    })}
+
+    {notices.map((n) => (
+      <div class="context-item">
+        <h3>{n.heading}</h3>
+        <p>{n.body}</p>
+        <p class="data-meta">
+          Source: <a href={n.sourceUrl}>{n.sourceName}</a>
+          <span aria-hidden="true" class="data-meta-sep">·</span>
+          <span>
+            Confirmed{" "}
+            <time datetime={machineDate(n.confirmedOn)}>{formatDate(n.confirmedOn)}</time>
+          </span>
+        </p>
+      </div>
+    ))}
+
+    <h3>What we looked for and did not publish</h3>
+    <p>
+      These readings would belong on this page. Each is missing a specific input, named here
+      rather than left as a gap a reader has to notice.
+    </p>
+    <ul class="key-findings">
+      {spec.omitted.map((o) => (
+        <li><strong>{o.reading}.</strong> {o.needed}</li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+{/* ── #faq ─────────────────────────────────────────────────────────────── */}
+<section class="block" id="faq">
+  <div class="wrap" style="max-width:820px;">
+    <FaqAccordion heading={spec.faqHeading} items={faq} />
+  </div>
+</section>
+
+{/* ── #sources — content, not chrome ───────────────────────────────────── */}
+<section class="block alt" id="sources">
+  <div class="wrap" style="max-width:820px;">
+    <h2>{spec.sourcesHeading}</h2>
+    <table class="data-table">
+      <caption>Every source this page draws on, what was taken from it, and when.</caption>
+      <thead>
+        <tr><th scope="col">Source</th><th scope="col">What this page uses it for</th></tr>
+      </thead>
+      <tbody>
+        {spec.sources.map((s) => (
+          <tr>
+            <th scope="row"><a href={s.url}>{s.name}</a></th>
+            <td>{s.used}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <p class="data-meta">
+      <span>
+        Permit data through{" "}
+        <time datetime={machineDate(a.freshness.dataThrough ?? "")}>
+          {a.freshness.dataThrough ? formatDate(a.freshness.dataThrough) : "unknown"}
+        </time>
+      </span>
+      <span aria-hidden="true" class="data-meta-sep">·</span>
+      <span>
+        Confirmed{" "}
+        <time datetime={machineDate(a.freshness.asOf ?? "")}>
+          {a.freshness.asOf ? formatDate(a.freshness.asOf) : "unknown"}
+        </time>
+      </span>
+    </p>
+  </div>
+</section>

@@ -27,6 +27,7 @@ npx tsx scripts/replays/alertcopyunit.ts     # unit — alert-copy honesty, no d
 npx tsx scripts/verify-trade-mapping.ts      # unit
 node scripts/replays/signinrender.mjs        # render
 node scripts/replays/r9render.mjs            # render
+node scripts/replays/saservicerender.mjs     # render — the SA service pages (Round 10)
 node scripts/replays/r7replay.mjs            # render — the big one
 ```
 
