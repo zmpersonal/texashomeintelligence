@@ -59,12 +59,20 @@ export interface BelowHeroSpec {
   /** How the trade is named in a sentence. Not derivable from the service
    * name: lowercasing "HVAC" gives "hvac", which reads as a typo. */
   subjectNoun: string;
+  /** The noun as it appears at the START of the #data table caption, where a
+   * lowercase word reads as a typo. Optional, and set only where it differs —
+   * so adding it cannot change a page that does not opt in. */
+  dataCaptionNoun?: string;
   /** Question-shaped H2s. The answer's first sentence carries the figure. */
   answerHeading: string;
   dataHeading: string;
   methodHeading: string;
   /** How the metro's source classifies these rows, in plain words. */
   methodBody: string;
+  /** Reconciles this count against another THI page that counts the same thing
+   * differently. Two of our own pages disagreeing on one fact is a citation
+   * liability, so where that happens the page says why. */
+  dataReconciliation?: string;
   contextHeading: string;
   context: ContextBlock[];
   faqHeading: string;
@@ -189,6 +197,128 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
         reading: "Typical HVAC replacement cost in San Antonio",
         needed:
           "A cost source that is not permit valuation. Blocked, not merely unbuilt — see the measurement in docs/audits/round-6-permit-measurement.md.",
+      },
+    ],
+  },
+
+  "san-antonio/roofing": {
+    hero: {
+      eyebrow: "SAN ANTONIO ROOFING PERMIT ACTIVITY",
+      h1: "Roofing work in San Antonio, counted from a dedicated permit class",
+      lede:
+        "San Antonio issues a Re-Roof Permit — its own permit type for replacing a roof covering. " +
+        "That makes roof activity here countable rather than inferred, and this is what the count says.",
+      microcopy:
+        "A permit-class count, not a text search · No cost figures — permit valuation does not support them",
+    },
+    category: "roofing",
+    subjectNoun: "re-roof",
+    dataCaptionNoun: "Re-roof",
+    answerHeading: "How much roofing work is happening in San Antonio?",
+    dataHeading: "San Antonio re-roof permits, month by month",
+    methodHeading: "Why this count is firmer than most permit counts",
+    methodBody:
+      "San Antonio has a permit type called Re-Roof Permit, and it is the only type that rolls into this " +
+      "category — every permit counted here is one the city itself classified as a re-roof. Nothing is " +
+      "inferred from a description field, so nothing depends on how a clerk worded the job, and the count " +
+      "does not quietly absorb work that merely mentions a roof. That is unusual: most trade activity has " +
+      "to be recovered from free text, and a text match picks up whatever happens to share a word.",
+    dataReconciliation:
+      "Our own /data/san-antonio/roof-permits/ page reports a larger number over a longer window, and the " +
+      "two are not in conflict. That page is a per-permit archive that accumulates records as the city " +
+      "publishes them, starting before this window opens; this is a rolling count of the last twelve " +
+      "complete calendar months, recomputed each run. Different questions, different answers, both from " +
+      "the same Re-Roof Permit type.",
+    contextHeading: "What else bears on a San Antonio roofing decision",
+    context: [
+      {
+        heading: "What NOAA actually recorded in Bexar County",
+        body:
+          "Roof damage claims follow storms, so the honest starting point is what the record holds for " +
+          "this county specifically — not for the region, and not for a county next door. This is every " +
+          "storm event NOAA logged in Bexar County over the window it covers.",
+        topic: "storm-exposure",
+      },
+      {
+        heading: "Drought moves a roof less than it moves a foundation, but it moves the timing",
+        body:
+          "Dry stretches are when roofing crews are most available and least weather-delayed, and wet ones " +
+          "are when a small leak stops being small. This is the U.S. Drought Monitor reading for the San " +
+          "Antonio area — a county-level measurement, not a reading at any address.",
+        topic: "drought",
+      },
+    ],
+    faqHeading: "San Antonio roofing questions",
+    faq: [
+      {
+        q: "Do you need a permit to replace a roof in San Antonio?",
+        a: "The city issues a dedicated Re-Roof Permit, and it issued {TOTAL} of them in the {MONTHS} months from {WINDOW} — so a permitted re-roof is the ordinary case here, not the exception. Whether your specific job needs one is a question for San Antonio's Development Services Department; the permit record shows what was issued, not what the rule requires.",
+      },
+      {
+        q: "How many roofs are replaced in San Antonio each year?",
+        a: "{MEAN} a month on average, {TOTAL} across the {MONTHS}-month window. That is a count of permits the city issued, which is the closest public measure of roof replacement volume — it is not a count of roofs, since a permit can cover more than one structure and unpermitted work leaves no record.",
+      },
+      {
+        q: "What does a roof replacement cost in San Antonio?",
+        a: "We do not publish that, and this data cannot support it. San Antonio's DECLARED VALUATION field is 0.00% populated on every residential and trade permit type including Re-Roof, and declared valuation is in any case an applicant's fee-basis statement to the city rather than a paid invoice. A credible cost figure needs a different source — contractor-reported job data, insurance claim settlements, or a materials-and-labour index — none of which we hold. We would rather publish nothing than a number derived from an empty field.",
+      },
+      {
+        q: "Is roofing work in San Antonio seasonal?",
+        a: "{SEASON_SENTENCE}",
+      },
+      {
+        q: "How do you tell if a roof has hail damage?",
+        a: "From the ground, and then with someone qualified on the roof. Look for dents on gutters, downspouts, vents and any metal flashing — soft metal shows a strike before shingles do — and for granules collecting at downspout outlets. Photograph what you find with the date. What we can tell you from the public record is whether NOAA logged hail in your county in the window we hold; what we cannot tell you is whether your roof was hit, because no public dataset records that.",
+      },
+      {
+        q: "Does homeowners insurance cover roof replacement in Texas?",
+        a: "That depends on your policy and the cause, and no public dataset we hold can answer it for your home. What is worth knowing before you call: Texas policies commonly distinguish replacement cost from actual cash value, and many carry a separate wind-and-hail deductible set as a percentage of the dwelling coverage rather than a flat sum. Both change the arithmetic more than the headline price does. Your declarations page states which applies.",
+      },
+      {
+        q: "Do roofing contractors need a licence in Texas?",
+        a: "No. Texas has no state roofing licence, which makes a licence number the wrong thing to check here. See the note above for what is checkable instead.",
+      },
+    ],
+    sourcesHeading: "Sources for this page",
+    sources: [
+      SA_PERMIT_SOURCE,
+      {
+        name: "NOAA Storm Events Database (NCEI)",
+        used: "Storm events recorded in Bexar County, by type. Published on a two-to-four-month lag, which the page states rather than smoothing over.",
+        url: "https://www.ncdc.noaa.gov/stormevents/",
+      },
+      {
+        name: "U.S. Drought Monitor",
+        used: "Weekly drought category for Bexar County.",
+        url: "https://droughtmonitor.unl.edu/",
+      },
+      {
+        name: "Texas Department of Licensing and Regulation",
+        used: "Which trades Texas licenses, and the absence of roofing among them.",
+        url: "https://www.tdlr.texas.gov/programs.htm",
+      },
+      THI_METHODOLOGY,
+    ],
+    omitted: [
+      {
+        reading: "Roof age, or how much of the local housing stock is due for replacement",
+        needed:
+          "Parcel-level year-built data, and a prior re-roof date per parcel. The Bexar Appraisal District records request has not returned, and no public source records when a specific roof was last replaced.",
+      },
+      {
+        reading: "Hail exposure scored per ZIP or neighbourhood",
+        needed:
+          "A signal that varies within the metro. NOAA storm events carry a county, not a ZIP, and every other San Antonio feed we hold is metro- or county-level — so a per-ZIP hail score would be invented, not measured.",
+      },
+      {
+        reading: "Typical roof replacement cost, or a cost range by material",
+        needed:
+          "A cost source that is not permit valuation. Blocked, not merely unbuilt — measured end to end in docs/audits/round-6-permit-measurement.md.",
+      },
+      {
+        reading: "Insurance claim rates or average settlement for roof damage",
+        needed:
+          "Texas Department of Insurance loss data at county level. We ingest a TDI series for Austin only, and it is a SAMPLE feed carrying no San Antonio rows.",
       },
     ],
   },

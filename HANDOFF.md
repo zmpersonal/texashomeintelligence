@@ -218,6 +218,62 @@ run into.
   statement by statement). Re-running them against production would be a schema no-op that
   touches no rows. **The hazard in this whole procedure is `seed.sql` and nothing else.**
 
+- **Round 12: `/san-antonio/roofing/` joins the below-hero layer, and the round turned up a
+  latent bug in the Round 10 component.** The page reuses `BelowHero.astro` unchanged in
+  structure; three additions were needed and all three came from the data refusing to fit.
+  **(1) SEASONALITY IS NOT THE TREND TEST, and the component had been conflating them.**
+  Roofing is flat half-over-half — **+0.1%** against a ±5.0% noise floor — so no trend is
+  reportable. But the window runs **634 permits in September 2025 and 270 in December**, a
+  **2.3× spread at 12σ**. The old code asserted, whenever the trend failed to clear, that "the
+  spread between the busiest and quietest month is narrow enough that we do not describe it as
+  a season" — which here would have been **false by a factor of twelve**. `tradeActivity.ts`
+  now computes `amplitude` (peak-minus-trough against √(peak+trough)) as a separate question
+  from trend, and the page says both: flat across the year, and moving hard within it.
+  **Only the non-clearing branch changed**, and HVAC (+37.7%) and plumbing (+5.0%) both clear,
+  so neither Round 10 page moved a byte.
+  **(2) BEXAR COUNTY RECORDED NO HAIL in the window, and the page says so.** The San Antonio
+  storm file spans **eight counties**; all eleven hail events in it are in the surrounding
+  ones. A hail reading built on the file total would have implied hail in Bexar that NOAA did
+  not record. The reader counts the home county only and reports zero as a finding, noting
+  that hail was recorded nearby — "a reason to check a roof, not evidence that one was hit".
+  **(3) NCEI's publication lag is MEASURED, not asserted.** The page states the newest record's
+  actual age (**101 days** at this build) rather than repeating the documented two-to-four
+  months, and says it is the publisher's cadence rather than a stale feed. It uses `buildNow()`
+  — a module-scope `new Date()` reads 1970 under the Workers runtime (Round 10b).
+
+- **Round 12 finding: two THI pages count the same thing differently, and the page now says
+  why.** `/data/san-antonio/roof-permits/` reports **5,148** re-roof permits; the new page
+  reports **4,871**. Both are correct and both come from the same `Re-Roof Permit` type.
+  `municipal-permits` is a **per-permit append-only archive** (5,054 rows ingested 2026-08-24,
+  73 more on 08-30, 21 on 09-04) spanning 2025-08-25..2026-08-28; `permit-trade-activity` is a
+  **rolling aggregate** over the last twelve complete calendar months, recomputed each run.
+  Restricting the archive to the same months gives **4,945** — so ~203 of the gap is the wider
+  window and **74 is the archive's late arrivals**, records the city published after the
+  aggregate was last computed. Neither is wrong; they answer different questions. The page
+  carries a reconciliation paragraph rather than leaving a reader to find two of our own
+  numbers in conflict, which would be a citation liability. **Not fixed, and probably should
+  not be** — the divergence is inherent to one feed being an archive and the other a window.
+
+- **Round 12 owner seam: the TDLR citation URL could not be fetch-verified from this
+  environment.** `/san-antonio/roofing/` states that Texas does not license roofing
+  contractors, cited to `https://www.tdlr.texas.gov/programs.htm`. **This sandbox's egress
+  proxy denies that host** — 403 on CONNECT, confirmed against the proxy's own status endpoint
+  — so the link was never loaded from here. The CLAIM is not in doubt; the LINK is unchecked.
+  `ServiceNotice` now carries `urlVerifiedByFetch`, set `false` on this notice so the gap is
+  machine-visible rather than buried, and `noticefreshunit` prints it. **Owner action: open
+  that URL once and confirm it resolves and still lists the regulated programs.** Review
+  cadence is 180 days — an occupation entering state licensure is a legislative act, and the
+  Texas Legislature meets in regular session in odd-numbered years.
+  Round 12 also **widened the primary-source guard** in `noticefreshunit`: it was a federal
+  allow-list and rejected `tdlr.texas.gov`, which is exactly the kind of primary state source
+  these pages should cite. It now accepts any `.gov` publisher plus the USDM's university host.
+
+- **Round 12 known cosmetic defect, left deliberately:** the `#data` caption on
+  `/san-antonio/plumbing/` reads "plumbing permits issued by…" with a lowercase first word.
+  Fixing it in the shared template also changed that page, and the round required the two
+  Round 10 pages to stay byte-identical — so the fix is scoped to roofing via an optional
+  `dataCaptionNoun`, and plumbing keeps the typo until a round is allowed to touch it.
+
 - **Round 10b CLOSED that seam, and closing it turned up something worth knowing:
   `new Date()` DOES NOT WORK at module scope during an Astro build here.** Astro evaluates
   modules under the Cloudflare Workers runtime, which freezes the clock in global scope.

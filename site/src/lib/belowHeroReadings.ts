@@ -6,6 +6,9 @@
  * Each reader states the ONE fact its feed supports and nothing beyond it.
  */
 import { findDataset, freshnessOf, type Freshness } from "./datasets";
+// Round 10b: a module-scope `new Date()` reads 1970 under the Workers runtime
+// that Astro builds against. Anything that needs the real build date uses this.
+import { buildNow } from "../data/serviceNotices";
 
 export interface ContextReading {
   label: string;
@@ -18,6 +21,11 @@ export interface ContextReading {
   /** Link text. Named here rather than derived from the topic slug, which
    * produces "Full electricity-rate data" — a slug leaking into copy. */
   linkLabel?: string;
+  /** A qualification the number cannot carry on its own. Rendered beneath it. */
+  note?: string;
+  /** Age of the newest record, in days, for a source that publishes on a lag.
+   * MEASURED from the data, never asserted from documentation. */
+  lagDays?: number;
 }
 
 type Reader = (location: string) => ContextReading | undefined;
@@ -76,6 +84,61 @@ const READERS: Record<string, Reader> = {
       sourceUrl: hit.dataset.source.url,
       href: "/data/texas/electricity-prices/",
       linkLabel: "Full Texas electricity price series, sources and limitations",
+    };
+  },
+  /**
+   * Round 12. Storm exposure for the home county, from NOAA/NCEI.
+   *
+   * TWO THINGS THIS READER REFUSES TO DO, both learned from the data itself.
+   *
+   * It does not present the feed as current. NCEI publishes Storm Events as
+   * monthly bulk files running two to four months behind real time — measured
+   * here, not assumed: the reader computes the actual lag from the newest
+   * record and states it. `dataFreshness.ts` already allows 150 days for this
+   * source, so the badge stays honest without anyone pretending the number
+   * describes last week.
+   *
+   * And it does not report hail that is not in the home county. The San Antonio
+   * file spans eight counties; all eleven hail events in the current window are
+   * in the surrounding ones and BEXAR HAS NONE. A "hail exposure" reading built
+   * on the file total would have implied hail in Bexar that NOAA did not
+   * record. So the reader counts the home county only, and when the count is
+   * zero it says zero — which is a real finding about the window, not a gap.
+   */
+  "storm-exposure": (location) => {
+    const dataset = findDataset<{ eventType?: string; county?: string; magnitude?: string }>(
+      "noaa-storm-events",
+      location,
+    );
+    if (!dataset || dataset.status === "sample") return undefined;
+    const county = location === "san-antonio" ? "Bexar" : "Travis";
+    const rows = dataset.observations
+      .filter((o) => !o.seed && o.value.county === county)
+      .sort((a, b) => b.observedAt.localeCompare(a.observedAt));
+    if (rows.length === 0) return undefined;
+
+    const counts = new Map<string, number>();
+    for (const r of rows) counts.set(r.value.eventType ?? "Other", (counts.get(r.value.eventType ?? "Other") ?? 0) + 1);
+    const hail = counts.get("Hail") ?? 0;
+    const parts = [...counts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([type, n]) => `${n} ${type.toLowerCase()}`);
+
+    return {
+      label: `NOAA storm events recorded in ${county} County`,
+      value: `${rows.length} — ${parts.join(", ")}`,
+      note:
+        hail === 0
+          ? `No hail was recorded in ${county} County in this window. NOAA did record hail elsewhere in ` +
+            `the San Antonio area during the same period, in surrounding counties — which is a reason to ` +
+            `check a roof, not evidence that one was hit.`
+          : `${hail} hail event${hail === 1 ? "" : "s"} recorded in ${county} County in this window.`,
+      freshness: freshnessOf(dataset),
+      sourceName: dataset.source.name,
+      sourceUrl: dataset.source.url,
+      href: `/data/${location}/storms/`,
+      linkLabel: "Full storm and flood event data, sources and limitations",
+      lagDays: Math.round((buildNow().getTime() - new Date(rows[0].observedAt).getTime()) / 86_400_000),
     };
   },
   drought: (location) => {

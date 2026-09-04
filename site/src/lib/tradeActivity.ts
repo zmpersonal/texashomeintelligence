@@ -75,6 +75,32 @@ export interface TradeActivity {
   direction: "rose" | "fell" | "flat";
   /** Highest-count months, highest first. */
   peakMonths: { month: string; permitCount: number }[];
+  /** Lowest-count month in the window. */
+  troughMonth: { month: string; permitCount: number };
+  /**
+   * Round 12. SEASONALITY IS A DIFFERENT QUESTION FROM TREND, and conflating
+   * them produces a false claim. San Antonio roofing is the case that proves
+   * it: half-over-half it is flat to 0.1%, well inside the noise floor, so no
+   * trend is reportable — and yet the window runs 634 permits in one month and
+   * 270 in another, a 2.3x swing that is nowhere near noise.
+   *
+   * Trend asks "is the second half different from the first". Seasonality asks
+   * "is the peak different from the trough". A series can be dead flat on the
+   * first and violently seasonal on the second, which is exactly what a roofing
+   * series does: it rises and falls within the year and lands where it started.
+   *
+   * Tested the same way as the trend — against counting noise. The difference
+   * between two Poisson counts has standard deviation sqrt(peak + trough), so
+   * `amplitudeSigma` is how many of those the observed spread is. Above 2 the
+   * spread cannot be explained by counting noise.
+   */
+  amplitude: {
+    spread: number;
+    ratio: number;
+    sigma: number;
+    /** True when the peak-to-trough spread exceeds counting noise. */
+    significant: boolean;
+  };
   /** The metro's own permit-type names that rolled into this category. */
   sourceTypes: SourceType[];
   /** How rows were classified: permit-type / work-class / description-text. */
@@ -127,6 +153,8 @@ export function tradeActivity(location: string, category: string): TradeActivity
   const noisePct = mean > 0 ? (100 * Math.sqrt(mean)) / mean : Infinity;
   const clearsThreshold = Math.abs(changePct) > noisePct;
 
+  const sortedDesc = [...months].sort((a, b) => b.permitCount - a.permitCount);
+
   const agg = new Map<string, number>();
   for (const r of rows) {
     for (const s of r.sourceValues) agg.set(s.value, (agg.get(s.value) ?? 0) + s.count);
@@ -148,7 +176,20 @@ export function tradeActivity(location: string, category: string): TradeActivity
     noisePct,
     clearsThreshold,
     direction: !clearsThreshold ? "flat" : changePct > 0 ? "rose" : "fell",
-    peakMonths: [...months].sort((a, b) => b.permitCount - a.permitCount).slice(0, 3),
+    peakMonths: sortedDesc.slice(0, 3),
+    troughMonth: sortedDesc[sortedDesc.length - 1],
+    amplitude: (() => {
+      const peak = sortedDesc[0].permitCount;
+      const trough = sortedDesc[sortedDesc.length - 1].permitCount;
+      const spread = peak - trough;
+      const sigmaUnit = Math.sqrt(peak + trough);
+      return {
+        spread,
+        ratio: trough > 0 ? peak / trough : Infinity,
+        sigma: sigmaUnit > 0 ? spread / sigmaUnit : 0,
+        significant: sigmaUnit > 0 && spread / sigmaUnit > 2,
+      };
+    })(),
     sourceTypes,
     mechanisms: [...new Set(rows.flatMap((r) => r.mechanisms))],
     mappingVersion: rows[0].mappingVersion,

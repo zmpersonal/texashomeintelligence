@@ -25,6 +25,18 @@ export interface ServiceNotice {
   confirmedOn: string;
   /** How often it must be re-verified. Recorded in HANDOFF.md. */
   reviewEveryDays: number;
+  /**
+   * Whether `sourceUrl` was confirmed to RESOLVE, as distinct from whether the
+   * CLAIM was confirmed. They are different things and collapsing them is how a
+   * citation quietly rots into a dead link.
+   *
+   * Round 12: this sandbox's egress proxy denies `www.tdlr.texas.gov` (403 on
+   * CONNECT, verified against the proxy's own status endpoint), so the roofing
+   * notice's URL could not be fetched from here. The claim is not in doubt; the
+   * link is unchecked. Recorded rather than glossed, and carried as an owner
+   * seam in HANDOFF.md. Absent means verified.
+   */
+  urlVerifiedByFetch?: false;
 }
 
 /**
@@ -166,6 +178,32 @@ export const SERVICE_NOTICES: Record<string, ServiceNotice[]> = {
       // successor credit would make this page wrong by omission rather than by
       // error. Quarterly is the cadence for a fact of this shape.
       reviewEveryDays: 90,
+    },
+  ],
+
+  "san-antonio/roofing": [
+    {
+      heading: "Texas does not license roofing contractors",
+      body:
+        "There is no state roofing licence in Texas. The Texas Department of Licensing and Regulation " +
+        "licenses air-conditioning and refrigeration contractors and mold remediation, among other " +
+        "trades, but roofing is not among the occupations it regulates, and no other Texas agency " +
+        "licenses it either. Roofing registration in Texas is voluntary and industry-run. " +
+        "That does not make a roofer unqualified — it means a licence number is not the thing to check. " +
+        "What is checkable: liability and workers' compensation insurance carried in the company's own " +
+        "name, how long the business has traded under that name, and the manufacturer certification " +
+        "behind whatever workmanship warranty is offered.",
+      sourceName: "Texas Department of Licensing and Regulation — regulated programs",
+      sourceUrl: "https://www.tdlr.texas.gov/programs.htm",
+      // NOT fetched from here: the egress proxy denies tdlr.texas.gov. The
+      // claim stands; the link is unchecked. See HANDOFF.md, Round 12.
+      urlVerifiedByFetch: false,
+      confirmedOn: "2026-09-04",
+      // An occupation entering state licensure is a legislative act, and the
+      // Texas Legislature meets in regular session in odd-numbered years. A
+      // half-year cadence catches a change well before a session's laws take
+      // effect, without pretending a statutory fact needs monthly review.
+      reviewEveryDays: 180,
     },
   ],
 };
