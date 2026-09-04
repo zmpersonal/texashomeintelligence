@@ -302,6 +302,70 @@ run into.
   treat removing a specific claim as the safe default rather than a change needing the same
   evidence as adding one.
 
+- **⛔ ROUND 16c — THE PARCEL PLAN HAS TWO BLOCKING PROBLEMS AND ONE OPPORTUNITY.** Analysis in
+  `docs/audits/round-16c-parcel-join-probe.md`; the probe is extended with three read-only steps
+  and nothing else was built.
+  1. **`improvement_detail` CARRIES NO ADDRESS.** Its keys are `pID`, `pImprovementID`,
+     `pDetailID`, and its 31 fields contain no situs, street, city or ZIP. **`addressKey.ts` has
+     nothing to match against**, so Round 16b's shard-by-address design cannot be built on this
+     file. Whether *any* file in the export family maps `pID` → address is now the single
+     question the whole plan turns on.
+  2. **It is improvement-DETAIL data — a row is a COMPONENT, not a property.** `1st Floor`,
+     `PORCH OPEN 1ST F`, `BATHROOM`, `HVAC RESIDENTIAL`, `GARAGE ATT 1ST F`. The `area`
+     distribution (med 1,691, max 732,704) is component area, not home size.
+  3. **The opportunity:** `HVAC RESIDENTIAL` and `SOLAR DEVICES RESIDENTIAL` are a per-property
+     record of system presence at parcel level — more direct than inferring it from permits.
+     **Presence is not age**, and whether age is readable is measured, not assumed (below).
+
+- **✏️ ROUND 16c CORRECTION — "1,067,067 rows" was ONE MEMBER OF FOUR.** Run 33916199229's own
+  log shows `improvement_detail_2026.zip` holds four CSVs (110 MB, 101 MB, 192 MB, 193 MB), and
+  the Round 16b probe read only the largest via `max(members, key=file_size)`. **The dataset is
+  ~595 MB uncompressed, roughly 3.3M rows.** Every distribution from that run — HVAC 114,732,
+  solar 11,085, `stateCd` A1 706,059 — is **a quarter of the data**. Still valid as proportions;
+  wrong as totals. The extended probe reads all four.
+
+- **Round 16c — the aggregation rule, proposed and reasoned rather than coded.** For home square
+  footage: **SUM(`area`) over an explicit living-space whitelist keyed on the district's own
+  `imprvDetailTypeDesc`, withholding when an unrecognised description carries material area.**
+  Not `SUM(area)` over all rows — that adds porches (205,172 rows in one member), garages
+  (107,849), decks, terraces and pools to the house. **Not `TotgrossArea` either**, even though
+  the sample rows suggest it is a denormalised property total: it is *gross*, 5,659.6 against
+  2,406.5 of living space on the same property — **2.35×**. Right for a cost model, wrong for
+  "how big is my home", and wrong in a way that looks authoritative because it came straight
+  from a field. Year built: `actualYearBuilt` from the improvement with the largest living area,
+  with `imprvEffYearBuilt` carried **separately and labelled separately** — never blended, never
+  a bare MIN/MAX across a property, because an outbuilding's year is not the house's.
+  **`stateCd` A1/A4 are used for the residential test but their meaning is NOT asserted** until
+  the layout file confirms it; inferring a code's meaning is the Round 6 valuation mistake.
+
+- **Round 16c — the probe reads the ~530 MiB exports WITHOUT downloading them.** A zip's central
+  directory lives at the end of the file, so the new step range-reads a 64 KB tail, parses the
+  end-of-central-directory (ZIP64-aware), range-reads the directory itself, lists every member,
+  and then inflates only the first ~600 KB of any address-looking member to read its CSV header
+  — **roughly 0.2% of the file instead of 100%**. If the origin ignores `Range` it **reports and
+  stops** rather than falling back to a full download. Verified offline against a real zip: it
+  recovered `situsAddress`/`situsCity`/`situsZip` and `pID` from a member's header by range
+  alone, and refused correctly on a no-Range origin.
+
+- **🟡 ROUND 16c — IF NO ADDRESS JOIN EXISTS, three of the four address tools lose their key.**
+  Recorded now so it is not discovered late. There would be no join to make — not a harder one.
+  Round 16b's shard design fails as specified; **the Round 16 (a)/(b) split then becomes the
+  whole answer**: per-ZIP aggregates still work and are still worth publishing, per-parcel lookup
+  does not. Google Places still resolves an address to a **ZIP**, so a tool can honestly say
+  "homes in 78704 are typically…" while withholding "your home is…" — a smaller product than the
+  brief imagined and an honest one. The alternatives are a TCAD GIS parcel layer carrying situs
+  (if one is published) or a commercial address→parcel provider, **which is a cost and a Rule 1
+  conversation, not a default.**
+
+- **Round 16c licensing: still unresolved, and absence of a restriction is not a grant.** Run
+  33916199229's terms search returned **WordPress boilerplate only** — cookie notices,
+  accessibility settings, a page-load script. No use restriction, no redistribution condition, no
+  Texas Tax Code reference on either page fetched. **Not yet checked:** the layout archive's own
+  contents (the new step prints and searches them), any separate legal page not linked from those
+  two pages, and the Tax Code provisions themselves. The one thing found bearing on republication
+  is a **"Copyright 2026 | Travis Central Appraisal District"** footer line, which points away
+  from "unconditioned public data" rather than toward it.
+
 - **✏️ CORRECTION — Round 16 OVERSTATED the ODbL finding. It is deferred, not rejected.**
   Round 16 called Microsoft Building Footprints' licence "a stop… independent of the network"
   and put a 🔴 on it. That was wrong in the direction of caution, and the correction matters
