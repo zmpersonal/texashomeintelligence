@@ -163,60 +163,59 @@ run into.
   distinguishing object behind, so the ledger must exist BEFORE the first `ALTER` or data
   migration. That is the real deadline on this seam.
 
-- **Round 11 recommendation: how to adopt `wrangler d1 migrations apply` - and the one thing
-  that must happen first.** Recommendation only; nothing was applied, altered or written to
-  remote D1 this round (SECURITY.md 🔴).
-  **⚠️ DO NOT run `wrangler d1 migrations apply --remote` as things stand. It would insert
-  sample rows into production.** `migrations_dir` defaults to `./migrations` and the file
-  pattern is `**/*.sql`, so **`migrations/seed.sql` counts as a migration** - verified
-  empirically by running `wrangler d1 migrations list --local` against a throwaway database,
-  which listed `seed.sql` alongside 0001-0004 as unapplied. `seed.sql` carries four INSERTs of
-  fake projects and `example.com` addresses into `projects` and `intake_responses`, and
-  `wrangler.jsonc` has always said it must never reach production. With an empty ledger,
-  wrangler would run **all five files**.
-  **The steps, in order, with the risk of each:**
-  1. **Move `seed.sql` out of `migrations/`** (e.g. to `site/fixtures/seed.sql`) and update
-     any reference to it. *Risk: none to production - it is a local-only file that nothing in
-     the build imports. This step exists solely to make step 4 safe, and skipping it is the
-     one way to turn this whole exercise into a production data incident.*
-  2. **Add the keys** to the `d1_databases` entry in `wrangler.jsonc`:
-     `"migrations_dir": "migrations"` and `"migrations_table": "d1_migrations"`. Both are the
-     values wrangler already defaults to (confirmed in its config schema), so this is
-     documentation of intent rather than a behaviour change. *Risk: none - config only, no
-     database contact.*
-  3. **Back-register the four applied migrations WITHOUT re-running them.** This IS safely
-     possible. Wrangler has no `--baseline` or `--mark-applied` flag (checked), but its ledger
-     is a plain table it reads with `SELECT * FROM d1_migrations ORDER BY id` and writes with
-     `INSERT INTO d1_migrations (name) values (...)`, so inserting the rows by hand is exactly
-     what wrangler itself would have written. **Owner runs, once:**
-     ```
-     npx wrangler d1 execute texas-home-intelligence-db --remote --command \
-       "CREATE TABLE IF NOT EXISTS d1_migrations(id INTEGER PRIMARY KEY AUTOINCREMENT, \
-        name TEXT UNIQUE, applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL); \
-        INSERT OR IGNORE INTO d1_migrations (name) VALUES \
-        ('0001_init.sql'),('0002_dashboard_launch_signups.sql'), \
-        ('0003_accounts_home_reminders.sql'),('0004_weekly_email.sql');"
-     ```
-     The DDL is character-for-character what wrangler creates (read out of
-     `wrangler-dist/cli.js`, v4.125). *Risk: LOW but real - it is a WRITE to production, and
-     🔴 owner-only. It touches no application table and `INSERT OR IGNORE` makes it safe to
-     re-run. The names must match the filenames EXACTLY; a typo silently leaves that migration
-     "unapplied" and step 4 would then re-run it. The recorded `applied_at` will be the
-     back-registration date, not the true application date - those are lost and cannot be
-     recovered. Worth writing the real dates into a comment rather than pretending the
-     timestamp means what it usually means.*
-  4. **Verify before trusting it:** `npx wrangler d1 migrations list texas-home-intelligence-db
-     --remote` should report **nothing unapplied**. *Risk: none - read-only. If it lists
-     anything, STOP: either a name is mistyped or step 1 was skipped.*
-  **If the owner would rather not write to production at all**, the alternative is to do
-  nothing and keep verifying by schema inspection as above. That is tenable only while every
-  migration stays CREATE-only, and it stops being tenable at the first `ALTER TABLE` or
-  backfill.
-  **One reassurance about the four existing files, since it bears on how bad a mistake here
-  would be:** every DDL statement in 0001-0004 is `CREATE TABLE/INDEX IF NOT EXISTS`, and
-  there is not one `ALTER`, `DROP`, `INSERT`, `UPDATE` or `DELETE` among them (checked
-  statement by statement). Re-running them against production would be a schema no-op that
-  touches no rows. **The hazard in this whole procedure is `seed.sql` and nothing else.**
+- **Round 13: steps 1 and 2 of the ledger adoption are DONE. Step 3 is the owner's, and the
+  command is below.** Round 11 recommended four steps; this round did the two that are safe
+  for an agent to do, and nothing was written to remote D1 (SECURITY.md 🔴).
+  **Done — the hazard is removed.** `seed.sql` now lives at `site/fixtures/seed.sql`, outside
+  `migrations_dir`. Before the move, `wrangler d1 migrations list --local` against a throwaway
+  database listed it alongside 0001-0004 as unapplied; after, the same command lists exactly
+  the four numbered migrations and zero occurrences of `seed.sql`. Its own header now explains
+  why it is not in `migrations/`, so the move cannot be casually undone.
+  *(Worth knowing: `scripts/local-fixture.ts` was never exposed to this. It selects migrations
+  with `/^\d{4}_.*\.sql$/`, so the numeric prefix already excluded `seed.sql`. The hazard was
+  wrangler's `**/*.sql` glob alone — the local harness was always safe.)*
+  **Done — the config states its intent.** `wrangler.jsonc` now carries `"migrations_dir":
+  "migrations"` and `"migrations_table": "d1_migrations"` on the `d1_databases` entry. Both are
+  wrangler's own defaults, quoted from its config schema ("defaults to './migrations'",
+  "defaults to 'd1_migrations'"), so behaviour is unchanged — what changes is that the
+  directory whose contents get run against production is now explicit where someone would edit
+  it. **The rule that keeps this safe: `migrations/` contains exactly the files wrangler may
+  run against production, and nothing else.**
+
+- **⚠️ OWNER ACTION — back-register the ledger. One command, run once.** This is a WRITE to the
+  production database and therefore 🔴 owner-only; it was not run.
+  **What it writes:** the `d1_migrations` table, and four rows naming the migrations already
+  applied. **What it does not touch:** any application table, any row of homeowner data, any
+  schema object. It creates one bookkeeping table and inserts four filenames.
+  ```
+  npx wrangler d1 execute texas-home-intelligence-db --remote --command \
+    "CREATE TABLE IF NOT EXISTS d1_migrations(id INTEGER PRIMARY KEY AUTOINCREMENT, \
+     name TEXT UNIQUE, applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL); \
+     INSERT OR IGNORE INTO d1_migrations (name) VALUES \
+     ('0001_init.sql'), \
+     ('0002_dashboard_launch_signups.sql'), \
+     ('0003_accounts_home_reminders.sql'), \
+     ('0004_weekly_email.sql');"
+  ```
+  The DDL is character-for-character what wrangler itself creates, read out of
+  `node_modules/wrangler/wrangler-dist/cli.js` (v4.125) rather than from memory. `INSERT OR
+  IGNORE` makes the whole command safe to re-run. **The four names must match the filenames
+  exactly** — a typo silently leaves that migration recorded as unapplied, and the next
+  `migrations apply --remote` would re-run it. (That would be a schema no-op today, since every
+  statement in 0001-0004 is `CREATE ... IF NOT EXISTS` with no `ALTER`, `DROP` or `INSERT`
+  among them — but it is not a habit to rely on.)
+  **Then verify, read-only:**
+  ```
+  npx wrangler d1 migrations list texas-home-intelligence-db --remote
+  ```
+  **Expected: "No migrations to apply!"** A NON-EMPTY result means the back-registration did
+  not take — most likely a mistyped filename, or the command was run against the wrong
+  database. **Do not run `migrations apply` to "fix" it**; re-read the names first. If the list
+  ever shows a file that is not one of the four numbered migrations, something has been put
+  into `migrations/` that does not belong there.
+  **One thing the ledger will not recover:** `applied_at` records the back-registration date,
+  not when each migration was actually applied. Those dates were never recorded and are lost.
+  The true state, verified 2026-09-04 by schema inspection, is in `wrangler.jsonc`'s comment.
 
 - **Round 12: `/san-antonio/roofing/` joins the below-hero layer, and the round turned up a
   latent bug in the Round 10 component.** The page reuses `BelowHero.astro` unchanged in
@@ -1296,7 +1295,7 @@ data-access layer — seeded with obviously-fake sample rows only
 | Piece | File (actual) | Status |
 |---|---|---|
 | D1 schema/migration (`projects`, `intake_responses`, `generated_briefs`, `contractor_requests`) | `site/migrations/0001_init.sql` | ✅ built, verified against a real local D1 (Miniflare) instance |
-| D1 seed script (sample rows) | `site/migrations/seed.sql` | ✅ built |
+| D1 seed script (sample rows) | `site/fixtures/seed.sql` (moved out of `migrations/` in Round 13) | ✅ built |
 | KV binding (project state + return tokens) | `site/src/lib/kv.ts` | ✅ built (`getProject`, `putProject`, `mapTokenToProject`, `resolveToken`) |
 | Data-access layer (typed, used by the API routes) | `site/src/lib/db.ts` | ✅ built (`insertProject`, `updateProjectServiceLocation`, `updateProjectStatus`, `insertIntakeResponse`, `insertGeneratedBrief`, `insertContractorRequest`) |
 | `wrangler.jsonc` bindings | `site/wrangler.jsonc` | ✅ present, with the **real Cloudflare resource IDs**, verified against the owner's account. (This row previously said "local placeholder IDs only — `local-placeholder-projects-kv`, `local-placeholder-d1-database`". Those strings are long gone from the file; the note outlived them.) |
@@ -1326,8 +1325,9 @@ local placeholder IDs in `wrangler.jsonc` with real ones, or via
 environment-specific config)~~ — **done.** The resources exist and
 `wrangler.jsonc` carries their real IDs. What remains: run
 `migrations/0001_init.sql` against production, and continue building out any
-schema beyond what's scaffolded here. Do **not** run `migrations/seed.sql`
-against production — it's sample data only.
+schema beyond what's scaffolded here. Do **not** run `fixtures/seed.sql`
+against production — it's sample data only. (Round 13 moved it out of
+`migrations/` precisely so the migrations workflow cannot run it by accident.)
 
 ---
 

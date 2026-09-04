@@ -231,7 +231,7 @@ Only two `sendEmail` call sites exist — the magic link and the weekly run.
 | `0003_accounts_home_reminders.sql` | `accounts`, `home_profiles`, `home_addresses`, `reminders`, `reminder_events`, `alert_preferences`, `alert_deliveries` + 2 indexes |
 | `0004_weekly_email.sql` | `account_email_prefs`, `weekly_email_sends`, `email_suppressions` + 1 index |
 
-**What `seed.sql` currently provides:** two QuoteReady intake projects with responses, one
+**What `seed.sql` currently provides:** *(Round 13 note: the file moved from `migrations/seed.sql` to `site/fixtures/seed.sql`; the assessment below is unchanged and still describes its contents.)* two QuoteReady intake projects with responses, one
 generated brief, one contractor request — all `example.com`, all `0001_init` tables only.
 Its own header says local development only, and `wrangler.jsonc` records that it has never
 been applied to production and must not be.
@@ -377,7 +377,7 @@ Exact names, matching the existing convention:
   `site/wrangler.jsonc`, once the resources in (6)–(8) exist and their IDs are known.
 - Change the Workers Builds deploy command so non-production branches upload a version
   rather than deploy — currently `wrangler deploy` promotes to production regardless.
-- Extend `migrations/seed.sql`, or add a separate preview fixture path, to cover the
+- Extend `site/fixtures/seed.sql` (was `migrations/seed.sql` when this was written), or add a separate preview fixture path, to cover the
   `0003`/`0004` tables per §5.
 - Add a branch guard to `data-ingestion.yml`.
 

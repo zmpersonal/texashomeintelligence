@@ -58,27 +58,37 @@
   // was correct when written and went stale across three migrations without
   // anything noticing — which is the cost of having no ledger, stated plainly.
   //
-  // THERE IS NO MIGRATION LEDGER. Migrations were applied with raw
-  // `wrangler d1 execute --file`, which records nothing, so no `d1_migrations`
-  // table exists (confirmed absent, same read). Adopting
-  // `wrangler d1 migrations apply` is recommended but NOT yet done, and it is
-  // NOT a one-liner — see the seed.sql hazard below and HANDOFF.md.
+  // THERE IS STILL NO MIGRATION LEDGER — no `d1_migrations` table exists on the
+  // remote database (confirmed absent, same read). Round 13 did the two things
+  // that have to happen BEFORE one can safely be created; creating it is a
+  // write to production and remains the owner's to run. HANDOFF.md carries the
+  // exact command.
   //
-  // migrations/seed.sql has NOT been applied and must not be — it inserts
-  // sample rows (fake names, example.com emails), which have no place in a
-  // production store.
-  // ⚠️ AND IT IS A MIGRATION AS FAR AS WRANGLER IS CONCERNED. `migrations_dir`
-  // defaults to ./migrations and the file pattern is `**/*.sql`, so seed.sql is
-  // listed as an UNAPPLIED MIGRATION — verified by running
-  // `wrangler d1 migrations list --local` against a throwaway database, which
-  // printed it alongside 0001-0004. Running `d1 migrations apply --remote`
-  // today would therefore execute its four INSERTs against production.
-  // Move or exclude seed.sql BEFORE adopting the migrations workflow.
+  // ⚠️ THE HAZARD ROUND 13 REMOVED, recorded so nobody reintroduces it.
+  // `wrangler d1 migrations apply` globs `**/*.sql` under `migrations_dir`, so
+  // EVERY .sql file in that directory is a migration it will run. `seed.sql`
+  // used to live there, and it inserts sample rows (fake names, example.com
+  // addresses). With an empty ledger, the first `--remote` run would have
+  // executed those INSERTs against production. Verified before the move by
+  // running `wrangler d1 migrations list --local` against a throwaway database,
+  // which printed seed.sql alongside 0001-0004 as unapplied.
+  // It now lives at `site/fixtures/seed.sql`, outside `migrations_dir`, and the
+  // same command lists only 0001-0004. THE RULE THAT KEEPS THIS TRUE:
+  // `migrations/` contains exactly the files wrangler may run against
+  // production, and nothing else. Never put a fixture, a backfill or a one-off
+  // script there.
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "texas-home-intelligence-db",
-      "database_id": "0b1f11b2-b8f4-4eeb-b36e-4debd9f5c956"
+      "database_id": "0b1f11b2-b8f4-4eeb-b36e-4debd9f5c956",
+      // Both values are wrangler's OWN DEFAULTS, quoted from its config schema:
+      // migrations_dir "defaults to './migrations'", migrations_table "defaults
+      // to 'd1_migrations'". Stating them changes no behaviour — it makes the
+      // directory whose contents get run against production explicit at the
+      // point someone would edit it, rather than implicit in a tool default.
+      "migrations_dir": "migrations",
+      "migrations_table": "d1_migrations"
     }
   ]
 }
