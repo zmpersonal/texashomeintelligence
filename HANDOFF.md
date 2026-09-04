@@ -302,6 +302,123 @@ run into.
   treat removing a specific claim as the safe default rather than a change needing the same
   evidence as adding one.
 
+- **⛔ ROUND 17 — PLUMBING TRIAGE WAS NOT BUILT: the design and all five companion specs are
+  unreachable.** Full search in `docs/audits/round-17-plumbing-triage-blocked.md`. Searched the
+  whole tree, every branch, `git log --all --diff-filter=A`, the stash, untracked files, and the
+  artifact list (which holds **one** artifact — "Round 1 Review Packet"). `docs/source/design/`
+  contains only the four Round 0 reference screens. **No `Plumbing Triage.dc.html`, no
+  `page-brief.md`, `copy-deck.md`, `component-states.md`, `data-labeling-spec.md` or
+  `motion-and-imagery.md` exists anywhere.** Same shape as Round 0, whose plan recorded the
+  design system as "not yet reachable in this session" until the owner supplied it.
+  **Why this is a stop and not an approximation.** The brief specifies the structure well enough
+  to build — but the missing piece is the COPY, and this tool's copy is safety-critical. The
+  screen the brief itself calls *"the most important layout in the product"* is a shutoff
+  instruction read by someone standing in water, and three paths are gas / sewage / electrical
+  safety interrupts where the flow stops. `CLAUDE.md`'s copy discipline reserves authored-by-
+  Claude copy to AI-phrase content pages; a hero tool is not that exception. **Shipping the
+  structure with placeholder safety text would also be the wrong thing to review** — it invites
+  sign-off on a layout whose most important element is invented.
+  **To unblock: the `.dc.html` plus, above all, `copy-deck.md`** — the five symptom labels, each
+  shutoff instruction verbatim, the three interrupt screens including their acknowledgment
+  wording, and each verdict's headline, check-list and three questions. If the copy deck does not
+  exist yet, this is a COPY round before it is a build round.
+
+- **Round 17 — decided without the design, and worth keeping: `/tools/plumbing-triage/`, indexed,
+  replacing nothing.** `/tools/` holds three placeholders — Cost Calculators, Home Risk Report,
+  QuickConnect — and **Plumbing Triage is none of them**, so this is a new route, not a
+  replacement. It should be **indexed** unlike the placeholders (they are noindexed because they
+  have no functionality, which is honest for a shell and wrong for a working tool), and it needs
+  **no metro segment**, because the tool reads no local data and per-metro URLs would serve
+  identical content.
+
+- **⚠️ Round 17 finding: `THI-round-homepage-nav.md` is STALE and should not be confirmed.** The
+  round asked me to confirm its nav rules still hold. They do not. That document specifies
+  **"Tools · Services · Data · Locations"**; `CLAUDE.md` supersedes it with **`Data · Locations` +
+  My Dashboard**, no Tools item, and Services *"removed permanently from nav; do not re-add"*.
+  `Nav.astro` matches CLAUDE.md. **Consequence: `/tools/` is reachable only from the footer and
+  in-body links**, and any tool placed there inherits that. If Plumbing Triage is meant to be a
+  hero surface, its discoverability is a **Rule 1 decision for the owner** — not something to fix
+  by quietly re-adding a nav item the governance permanently removed.
+
+- **Round 17 labelling rule, decided and reusable: the four-bucket label attaches to a READING,
+  not to an instruction.** "Turn the valve clockwise until it stops" is general plumbing guidance
+  — not measured, not dated, true in Ohio as in Travis County — and a freshness badge on it would
+  imply a provenance it does not have. **The test: could this sentence become false because a
+  FEED changed? If yes it is a reading and it carries a label; if it could only become false
+  because plumbing changed, it is guidance.** On the flow as specified **nothing is in the reading
+  category** — the tool reads no dataset, which is exactly why it ships in both metros ungated.
+
+- **⭐ ROUND 17b — OWNER DECISION: cost figures ARE publishable as NATIONAL AVERAGES. Five
+  requirements, not preferences.** ROADMAP's blocked entry is updated in place, keeping the
+  measurement visible rather than deleting it. **The Round 6 finding stands and is not softened**
+  — no LOCAL cost figure is publishable in either metro. What changed is the response: Round 7
+  read "no local price source" as "no cost figure at all"; the owner's reading is narrower and
+  better. **Any round that publishes a cost figure meets all five or publishes none:**
+  1. **Labelled national in the visible copy**, not a footnote, carrying the **Estimates** bucket.
+     Never labelled, implied or positioned as an Austin or San Antonio figure.
+  2. **Sourced to a primary publisher.** **HomeAdvisor, Angi, Thumbtack and equivalents are
+     explicitly unacceptable** — they publish figures derived from their own lead flow with no
+     checkable method. Candidates worth evaluating: **BLS Producer Price Index**, **Census
+     construction cost data**, **RSMeans**.
+  3. **The page states plainly why there is no local figure**, citing the measurement: San
+     Antonio's `DECLARED VALUATION` is **0.00% populated** on every residential and trade permit
+     type; Austin's coalesced valuation is two-thirds the literal value 1 or below 10. **That
+     absence is itself a finding worth publishing** — it is what makes a national number honest
+     rather than evasive.
+  4. **A `reviewEveryDays` cadence**, because material prices move — the same build-time gate that
+     governs `serviceNotices.ts`.
+  5. **Ranges never collapse to a single number.** False precision about a quantity that varies by
+     material, scope, region and month.
+
+- **Round 17b — source evaluation. NONE of the four is reachable from this container; the runner
+  is a different question.** Probed directly, all five endpoints returned `HTTP 000`:
+  `api.bls.gov`, `www.bls.gov/ppi/`, `www.census.gov/construction/`, `www.rsmeans.com`,
+  `download.bls.gov`. That is the same policy denial Round 16 measured across every data host, and
+  it says nothing about the Actions runner, which reaches `api.bls.gov` for the existing wage
+  feed. Evaluated on what each would give:
+  - **BLS PPI — the strongest candidate, and the transport already exists.** `blsWages.ts` calls
+    the **BLS Time Series API v2**, which is **survey-agnostic**: the same endpoint and the same
+    optional `registrationkey` serve PPI as it serves OEWS. So a PPI series needs **no new
+    transport, no new dependency and no new secret** — it needs a **sibling fetcher**, not an edit
+    to `blsWages.ts`, because a price index and a wage are different quantities and the file's
+    one-module-per-metro shape does not fit a national series.
+    ⚠️ **The series id must NOT be guessed.** `blsWages.ts`'s own header records that both of its
+    ids are *"UNVERIFIED CONSTRUCTIONS, NOT CONFIRMED RESPONSES"* because api.bls.gov is blocked
+    here — and Round 16 is the standing lesson about asserting an identifier nobody has
+    round-tripped. **What is needed is the id confirmed against BLS's own lookup**
+    (`data.bls.gov`), not a plausible-looking string. PPI commodity series are the `WPU`/`PCU`
+    families; naming a specific one here would repeat exactly the mistake that file warns about.
+    **What it gives:** an INDEX, not a dollar figure — it measures how prices *moved*, not what a
+    roof *costs*. On its own it cannot answer "what does this cost"; it can honestly answer "how
+    much have roofing material prices risen since 2020", which is a different and defensible page.
+  - **Census construction cost data** — public, free, no licence obstacle. Gives national
+    construction spending and cost indices, again at index/aggregate level rather than a per-job
+    homeowner price.
+  - **RSMeans** — the only one that gives an actual per-unit installed cost, and **commercial and
+    subscription-licensed**. Any use needs a licence check before ingestion, and republication of
+    its figures is very likely restricted. **Treat as 🔴 owner/legal, not as a feed to wire.**
+  - **Bottom line:** the reachable free sources give **indices**, not prices. A genuine national
+    dollar range for "replace a roof" most likely needs a licensed source. **Publishing an index
+    as though it were a price would be the same class of error as publishing permit valuation as
+    a cost** — worth stating now, before a round tries it.
+
+- **🟡 Round 17b — COPY CONFLICT FOUND, and it is one sentence.** The six service pages carry two
+  different no-cost statements and **only one of them stays true if a national figure appears
+  elsewhere on the site**:
+  - **SAFE — the `#method` bullet:** *"**Not published from this feed**: any cost, price or
+    typical-spend figure."* Scoped to the permit feed. A national figure from BLS or Census is not
+    from this feed, so no contradiction arises. No change needed.
+  - **⚠️ NOT SAFE — the FAQ opener, on all six pages (6 occurrences in `belowHero.ts`):** *"**We
+    do not publish that**, and this data cannot support it."* "We do not publish that" is a claim
+    about **the site**, not the feed. The moment a national cost page exists, a reader who finds
+    both is reading a contradiction.
+  - **How to phrase both truthfully:** narrow the FAQ opener from a site-wide claim to a local one
+    — *"We do not publish a **local** cost figure, and this data cannot support one"* — and, once
+    a national page exists, link to it from the same answer. **Both statements are then true
+    simultaneously**: no local figure exists, a national one does, and the reader is told which is
+    which. **Do this in the round that publishes the first cost figure, not before** — changing it
+    earlier would leave a dangling promise of a page that does not exist.
+
 - **⛔ ROUND 16c — THE PARCEL PLAN HAS TWO BLOCKING PROBLEMS AND ONE OPPORTUNITY.** Analysis in
   `docs/audits/round-16c-parcel-join-probe.md`; the probe is extended with three read-only steps
   and nothing else was built.
