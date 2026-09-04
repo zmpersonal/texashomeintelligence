@@ -89,20 +89,58 @@ export interface BelowHeroSpec {
   omitted: OmittedReading[];
 }
 
+/**
+ * The San Antonio dataset citation, DERIVED FROM THE FETCHER rather than typed
+ * out beside it.
+ *
+ * Round 14 cited a UUID the owner supplied and flagged that it could not be
+ * confirmed against our own code — both fetchers resolve the package by SLUG,
+ * `package_show?id=building-permits`, and the UUID appeared nowhere in the repo.
+ * Round 14b resolved it: the owner opened
+ * `data.sanantonio.gov/dataset/building-permits` and confirmed the dataset —
+ * title "Building Permits", organization "Land and Building Development", four
+ * resources including PERMITS ISSUED. So the slug is right, and it is also the
+ * identifier the code actually requests.
+ *
+ * ── WHY THIS IS PARSED AND NOT TYPED ──────────────────────────────────────
+ * A citation and a fetch that name the same dataset in two places drift apart
+ * the first time one of them changes. Reading the id out of the fetcher's own
+ * source makes that impossible: change `PACKAGE_SHOW_URL` and this citation
+ * follows, or the build fails saying so. It is the same trick
+ * `scripts/fixture-condition.ts` uses to take alert copy from `alerts.ts`
+ * instead of restating it.
+ *
+ * `?raw` is a Vite build-time import — the source text becomes a string
+ * constant at build, so this costs nothing at runtime and pulls no ingest code
+ * into any bundle.
+ */
+import saPermitsFetcherSource from "../ingest/fetchers/sanAntonioPermits.ts?raw";
+
+function sanAntonioDatasetUrl(): string {
+  const m = saPermitsFetcherSource.match(
+    /package_show\?id=([A-Za-z0-9_-]+)/,
+  );
+  if (!m) {
+    throw new Error(
+      "belowHero: could not read the CKAN package id out of " +
+        "src/ingest/fetchers/sanAntonioPermits.ts. The citation on all three San Antonio " +
+        "pages is derived from it so the two cannot drift — fix this extractor rather than " +
+        "hardcoding the URL back.",
+    );
+  }
+  return `https://data.sanantonio.gov/dataset/${m[1]}`;
+}
+
+/** Exported so a replay can assert the derivation, not just the rendered page. */
+export const SA_DATASET_URL = sanAntonioDatasetUrl();
+
 const SA_PERMIT_SOURCE: SourceRef = {
   name: "City of San Antonio Permits Open Data",
   used: "Every residential trade permit issued in the window, by permit type and issue date. Counted and grouped by month; no other field is read.",
-  // Round 14: was /dataset/permits-and-inspections, which the owner confirmed
-  // is DEAD. This UUID is the dataset page the owner supplied.
-  //
-  // ⚠️ IT COULD NOT BE CONFIRMED AGAINST OUR OWN CODE, and that is worth knowing
-  // rather than assuming. Both fetchers resolve the package by SLUG —
-  // `package_show?id=building-permits` in `sanAntonioPermits.ts:50` and
-  // `permitTradeActivity.ts:149` — and this UUID appears nowhere in the repo.
-  // CKAN accepts either a name or an id for the same package, so the two very
-  // likely address the same dataset, but nothing here proves it and the proxy
-  // denies data.sanantonio.gov so it could not be checked. See HANDOFF, Round 14.
-  url: "https://data.sanantonio.gov/dataset/05012dcb-ba1b-4ade-b5f3-7403bc7f52eb",
+  url: SA_DATASET_URL,
+  // Owner opened it 2026-09-04: title "Building Permits", organization "Land
+  // and Building Development", four resources including PERMITS ISSUED and the
+  // PERMITS ISSUED 2020-2024 archive. Last Updated August 29, 2026.
   checkedByHumanOn: "2026-09-04",
 };
 
@@ -193,8 +231,8 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
         checkedByHumanOn: "2026-09-04",
       },
       {
-        name: "IRS — FAQs on the OBBB modification of section 25C (and 25D, 25E, 30C, 30D, 45L, 45W, 179D)",
-        used: "The end date of the 25C Energy Efficient Home Improvement Credit, the absence of a grandfather provision, and the test that governs work spanning the cutoff.",
+        name: "IRS Fact Sheet 2025-05 — FAQs on the OBBB modification of section 25C (and 25D, 25E, 30C, 30D, 45L, 45W, 179D)",
+        used: "Q1: the section 25C credit is not allowed for property placed in service after December 31, 2025. Q6: no grandfather provision for equipment bought earlier.",
         // Round 14: was /newsroom/fs-2025-05, which the owner confirmed is dead.
         url: "https://www.irs.gov/newsroom/faqs-for-modification-of-sections-25c-25d-25e-30c-30d-45l-45w-and-179d-under-public-law-119-21-139-stat-72-july-4-2025-commonly-known-as-the-one-big-beautiful-bill-obbb",
         checkedByHumanOn: "2026-09-04",

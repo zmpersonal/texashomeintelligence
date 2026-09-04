@@ -50,6 +50,16 @@ for (const { k, n } of all) {
   A(`[${k}] cites a primary source, not an aggregator`,
     /^https:\/\/([a-z0-9-]+\.)*gov\//.test(n.sourceUrl) || /^https:\/\/droughtmonitor\.unl\.edu/.test(n.sourceUrl),
     n.sourceUrl);
+  // Round 14b. "Verified" without a date is a claim nobody can audit — and this
+  // field now records a POSITIVE claim, not just a known gap, so it needs one.
+  if (n.wordingVerifiedAgainstSource === true) {
+    A(`[${k}] wording verified against source carries the date it was checked`,
+      typeof n.wordingVerifiedOn === "string" && /^\d{4}-\d{2}-\d{2}$/.test(n.wordingVerifiedOn),
+      n.wordingVerifiedOn ?? "(missing)");
+  }
+  if (n.wordingVerifiedAgainstSource === false) {
+    console.log(`          note: wording NOT checked against the source text — owner seam`);
+  }
   if (n.urlVerifiedByFetch === false) {
     console.log(`          note: sourceUrl NOT fetch-verified from this environment — owner seam, see HANDOFF.md`);
   }

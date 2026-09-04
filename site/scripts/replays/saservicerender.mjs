@@ -153,6 +153,13 @@ for (const page of PAGES) {
   A('#sources names the city permit source',
     r.sourceLinks.some(l => /sanantonio\.gov/.test(l.href)),
     r.sourceLinks.map(l => l.href).join(' '));
+  // Round 14b. The citation is DERIVED from the package id the fetchers request
+  // (`package_show?id=building-permits`), so it cannot drift from the fetch.
+  // Asserting the slug rather than any URL also catches a silent revert to the
+  // UUID Round 14 could not confirm against our own code.
+  A('the dataset citation is the slug the fetchers actually request',
+    r.sourceLinks.some(l => l.href === 'https://data.sanantonio.gov/dataset/building-permits'),
+    r.sourceLinks.filter(l => /sanantonio/.test(l.href)).map(l => l.href).join(' '));
 
   const BANNED = /QuoteReady|Project Brief|quote tool|Get Better [A-Za-z]+ Quotes/i;
   const bodyOnly = r.bodyText.replace(r.footerText, '');
@@ -227,6 +234,24 @@ for (const page of PAGES) {
     A('does not claim more than the one cited page supports',
       !/no other Texas agency/i.test(bodyOnly),
       (bodyOnly.match(/[^.]*no other Texas agency[^.]*\./) || ['no over-broad claim'])[0].slice(0, 70));
+  }
+
+  if (page.category === 'hvac') {
+    // Round 14b. The 25C claim was wrong twice in opposite directions — first
+    // asserted without checking, then softened without checking. These pin the
+    // SUBSTANCE the owner verified against FS-2025-05, so a future edit that
+    // loses either half fails here rather than on the page.
+    A('states the 25C test the IRS states: placed in service after Dec 31 2025',
+      /will not be allowed for any property placed in service after December 31, 2025/.test(bodyOnly));
+    A('draws the placed-in-service vs purchased distinction',
+      /Placed in service, not purchased/.test(bodyOnly));
+    A('keeps the no-grandfather point', /no grandfather provision/i.test(bodyOnly));
+    A('carries the IRS\'s own qualification about these FAQs',
+      /not published in the Internal Revenue Bulletin/.test(bodyOnly) &&
+      /accuracy-related penalties/.test(bodyOnly));
+    A('does not overstate that qualification into doubt',
+      !/may be wrong|might not be accurate|cannot be relied on by anyone/i.test(bodyOnly));
+    A('cites the fact sheet by number', /Fact Sheet 2025-05/.test(bodyOnly));
   }
 
   if (page.category === 'hvac') {

@@ -54,11 +54,19 @@ export interface ServiceNotice {
    */
   checkedByHumanOn?: string;
   /**
-   * Set to `false` when the CLAIM'S WORDING has not been checked against the
-   * source text — as distinct from the URL resolving. A live link under a
-   * paraphrase nobody verified is the quieter failure of the two.
+   * Whether the CLAIM'S WORDING has been checked against the source TEXT — as
+   * distinct from the URL resolving. A live link under a paraphrase nobody read
+   * is the quieter failure of the two, and Round 14 nearly shipped the inverse
+   * error: it softened a claim that turned out to be verbatim correct, on a
+   * suspicion it could not check.
+   *
+   * `true` means a human read the source and confirmed the wording. It does NOT
+   * mean the build fetched anything — nothing here ever has. Pair it with
+   * `wordingVerifiedOn`.
    */
-  wordingVerifiedAgainstSource?: false;
+  wordingVerifiedAgainstSource?: boolean;
+  /** ISO date the wording was checked against the source text, by a human. */
+  wordingVerifiedOn?: string;
 }
 
 /**
@@ -188,32 +196,39 @@ export const SERVICE_NOTICES: Record<string, ServiceNotice[]> = {
       heading: "The federal 25C credit for HVAC equipment expired on December 31, 2025",
       body:
         "The Energy Efficient Home Improvement Credit under Internal Revenue Code section 25C — the " +
-        "credit homeowners claimed for qualifying heat pumps, air conditioners and furnaces — ended on " +
-        "December 31, 2025 under the One Big Beautiful Bill Act, and there is no grandfather provision: " +
-        "equipment bought before July 4, 2025 but installed after the cutoff does not qualify. " +
-        "For work that straddles the cutoff, the test that decides eligibility is set out in the IRS " +
-        "guidance linked below — read that rather than any summary of it, including this one. " +
-        "If a quote or an installer's page still prices the credit in, that is a reason to ask, not a " +
-        "reason to hurry.",
+        "credit homeowners claimed for qualifying heat pumps, air conditioners and furnaces — was " +
+        "ended by the One Big Beautiful Bill Act. The IRS states the test plainly: the credit " +
+        "\u201Cwill not be allowed for any property placed in service after December 31, 2025.\u201D " +
+        "Placed in service, not purchased — so equipment bought before July 4, 2025 but not placed in " +
+        "service until after the cutoff does not qualify. There is no grandfather provision. " +
+        "If a quote or an installer\u2019s page still prices the credit in, that is a reason to ask, " +
+        "not a reason to hurry. " +
+        "One qualification the IRS attaches to this guidance itself: these FAQs are not published in " +
+        "the Internal Revenue Bulletin, so the IRS will not rely on them to resolve a case \u2014 " +
+        "though a taxpayer who relies on them reasonably and in good faith is protected from " +
+        "accuracy-related penalties.",
       sourceName:
-        "IRS — FAQs on the OBBB modification of sections 25C, 25D, 25E, 30C, 30D, 45L, 45W and 179D",
+        "IRS Fact Sheet 2025-05, Q1 — FAQs on the OBBB modification of sections 25C, 25D, 25E, 30C, 30D, 45L, 45W and 179D",
       // Round 14: was /newsroom/fs-2025-05, which the owner confirmed is DEAD.
       // This is the full FAQ slug, supplied by the owner.
       sourceUrl:
         "https://www.irs.gov/newsroom/faqs-for-modification-of-sections-25c-25d-25e-30c-30d-45l-45w-and-179d-under-public-law-119-21-139-stat-72-july-4-2025-commonly-known-as-the-one-big-beautiful-bill-obbb",
       checkedByHumanOn: "2026-09-04",
       urlVerifiedByFetch: false,
-      // ⚠️ ROUND 14 COULD NOT READ THIS SOURCE. The proxy denies www.irs.gov, so
-      // the FAQ text was never loaded and the paraphrase above is unchecked
-      // against it. The previous wording asserted the credit terminated for
-      // property "PLACED IN SERVICE" after Dec 31 2025 — a specific statutory
-      // test — and 25C has historically treated an expenditure as made when the
-      // original INSTALLATION IS COMPLETED, a different test that gives a
-      // different answer for work spanning the date. Rather than guess which
-      // governs, the copy now states the cutoff and the no-grandfather rule
-      // (both owner-confirmed) and sends the reader to the FAQ for the
-      // straddling case. Owner action in HANDOFF.
-      wordingVerifiedAgainstSource: false,
+      // ROUND 14b RESTORED "placed in service", and the correction is worth
+      // recording because the mistake was mine and it ran the wrong way.
+      // Round 14 could not fetch irs.gov, suspected the statutory test might be
+      // installation-completed, and SOFTENED A CLAIM THAT WAS VERBATIM CORRECT.
+      // The owner read FS-2025-05 in full: Q1's table states for section 25C
+      // that the credit "will not be allowed for any property placed in service
+      // after December 31, 2025". The installation-completed test in Q7 is real
+      // but governs section 25D, the residential clean energy credit — a
+      // different section, stated in the same document. Two adjacent tests, and
+      // the hedge picked the wrong one to worry about.
+      // The lesson kept: hedging is not free. An unverified softening is still
+      // an unverified change to what the page tells a reader.
+      wordingVerifiedAgainstSource: true,
+      wordingVerifiedOn: "2026-09-04",
       confirmedOn: "2026-09-04",
       // Statutory dates do not drift, but IRS guidance on them does, and a
       // successor credit would make this page wrong by omission rather than by
