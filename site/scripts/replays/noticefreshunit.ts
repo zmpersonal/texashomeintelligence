@@ -43,9 +43,16 @@ for (const { k, n } of all) {
   A(`[${k}] "${n.heading.slice(0, 48)}…" is inside its cadence`,
     Date.now() <= due.getTime(),
     `confirmed ${n.confirmedOn}, every ${n.reviewEveryDays}d, due ${due.toISOString().slice(0, 10)}`);
+  // A primary source is a government publisher — federal (.gov), a state
+  // agency (*.<state>.gov), or the USDM's university host. Round 12 widened
+  // this: the original list was federal-only and rejected tdlr.texas.gov,
+  // which is exactly the kind of primary state source a page should cite.
   A(`[${k}] cites a primary source, not an aggregator`,
-    /^https:\/\/(www\.)?(irs|eia|epa|census|noaa|weather|droughtmonitor|data\.[a-z]+)\.gov|droughtmonitor\.unl\.edu/.test(n.sourceUrl),
+    /^https:\/\/([a-z0-9-]+\.)*gov\//.test(n.sourceUrl) || /^https:\/\/droughtmonitor\.unl\.edu/.test(n.sourceUrl),
     n.sourceUrl);
+  if (n.urlVerifiedByFetch === false) {
+    console.log(`          note: sourceUrl NOT fetch-verified from this environment — owner seam, see HANDOFF.md`);
+  }
   A(`[${k}] carries a real cadence`, Number.isFinite(n.reviewEveryDays) && n.reviewEveryDays > 0,
     `${n.reviewEveryDays} days`);
 }

@@ -62,9 +62,22 @@ const typesSentence =
   `${a.mappedTypeCount === 1 ? "" : "s"}, ${issuedTypes} of which issued at least one permit in this window: ` +
   a.sourceTypes.map((t) => t.value).join(", ") + ".";
 
+// Round 12. Seasonality is NOT the trend test. A series can be flat
+// half-over-half and still swing hard within the year — San Antonio roofing
+// does exactly that — so the flat case asks the amplitude question rather than
+// assuming the answer. The previous version asserted the spread was "narrow"
+// whenever the trend did not clear, which for roofing would have been false by
+// a factor of twelve. Only the non-clearing branch changed; every page whose
+// trend clears renders exactly as before.
 const seasonSentence = a.clearsThreshold
   ? peaksSentence
-  : `${peaksSentence} The spread between the busiest and quietest month is narrow enough that we do not describe it as a season.`;
+  : a.amplitude.significant
+    ? `${peaksSentence} The quietest was ${monthLabel(a.troughMonth.month)} at ` +
+      `${a.troughMonth.permitCount.toLocaleString()} — a ${a.amplitude.ratio.toFixed(1)}× spread ` +
+      `between busiest and quietest, far beyond what counting noise explains ` +
+      `(${a.amplitude.sigma.toFixed(0)}σ). The volume moves through the year even though the ` +
+      `year as a whole is flat.`
+    : `${peaksSentence} The spread between the busiest and quietest month is narrow enough that we do not describe it as a season.`;
 
 // FAQ answers are filled from the computed reading — the config holds the
 // question and the framing, never the figure.
@@ -107,10 +120,17 @@ const quietest = [...a.months].sort((x, y) => x.permitCount - y.permitCount)[0];
       <strong>{a.total.toLocaleString()}</strong> in total. {trendSentence}
     </p>
     <p class="answer-support">
-      {peaksSentence} Every permit in this count is identified by {mechanismLabel}, across{" "}
-      {issuedTypes} San Antonio permit type{issuedTypes === 1 ? "" : "s"}. This is a measure of
-      activity and timing only — the city's permit record does not support a cost figure, and none
-      is published here.
+      {peaksSentence}{" "}
+      {issuedTypes === 1 ? (
+        <>Every permit in this count comes from a single dedicated permit class, matched on{" "}
+          {mechanismLabel} — not recovered from a description field, so nothing here depends on
+          how a job was worded.</>
+      ) : (
+        <>Every permit in this count is identified by {mechanismLabel}, across {issuedTypes} San
+          Antonio permit types.</>
+      )}{" "}
+      This is a measure of activity and timing only — the city's permit record does not support a
+      cost figure, and none is published here.
     </p>
     <DataStatus
       status={a.freshness.display}
@@ -127,7 +147,7 @@ const quietest = [...a.months].sort((x, y) => x.permitCount - y.permitCount)[0];
     <h2>{spec.dataHeading}</h2>
     <table class="data-table">
       <caption>
-        {noun} permits issued by the City of San Antonio, by month.
+        {spec.dataCaptionNoun ?? noun} permits issued by the City of San Antonio, by month.
         Window: {windowLabel}. Classification mapping {a.mappingVersion}.
       </caption>
       <thead>
@@ -159,6 +179,9 @@ const quietest = [...a.months].sort((x, y) => x.permitCount - y.permitCount)[0];
       ).toFixed(0)}% above the monthly average of {a.meanPerMonth.toLocaleString()}. Quietest:{" "}
       {monthLabel(quietest.month)} at {quietest.permitCount.toLocaleString()}.
     </p>
+    {spec.dataReconciliation && (
+      <p class="metric-note reconcile-note">{spec.dataReconciliation}</p>
+    )}
     <DataStatus
       status={a.freshness.display}
       asOf={a.freshness.asOf}
@@ -228,12 +251,20 @@ const quietest = [...a.months].sort((x, y) => x.permitCount - y.permitCount)[0];
             <div class="card data-card">
               <p class="metric-label">{reading.label}</p>
               <p class="metric-value">{reading.value}</p>
+              {reading.note && <p class="metric-note">{reading.note}</p>}
               <DataStatus
                 status={reading.freshness.display}
                 asOf={reading.freshness.asOf}
                 dataThrough={reading.freshness.dataThrough}
                 source={reading.sourceName}
               />
+              {reading.lagDays !== undefined && (
+                <p class="metric-note">
+                  This source publishes on a lag: its newest record is{" "}
+                  <strong>{reading.lagDays} days old</strong>, which is the publisher's cadence
+                  rather than a stale feed. It describes the window it covers, not this week.
+                </p>
+              )}
               {reading.href && (
                 <p style="margin-top:12px;">
                   <a href={reading.href}>{reading.linkLabel ?? "Full data, sources and limitations"} &rarr;</a>

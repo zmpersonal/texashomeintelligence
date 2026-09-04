@@ -49,8 +49,11 @@ function expected(category) {
 const b = await launchChromium();
 const PAGES = [
   // Round 10b: the HVAC page carries the restored EIA rate alongside AirNow.
-  { path: '/san-antonio/hvac/', category: 'hvac', noun: 'HVAC', readings: 4 },
-  { path: '/san-antonio/plumbing/', category: 'plumbing', noun: 'plumbing', readings: 3 },
+  { path: '/san-antonio/hvac/', category: 'hvac', noun: 'HVAC', readings: 4, faqs: 5 },
+  { path: '/san-antonio/plumbing/', category: 'plumbing', noun: 'plumbing', readings: 3, faqs: 5 },
+  // Round 12. Roofing is the page whose trend does NOT clear the threshold, so
+  // it is the one that proves the page declines to make the claim.
+  { path: '/san-antonio/roofing/', category: 'roofing', noun: 're-roof', readings: 4, faqs: 7 },
 ];
 
 /** The rate as the archive holds it — never pinned as a literal here. */
@@ -119,6 +122,14 @@ for (const page of PAGES) {
   A('window total matches the archive', r.answerText.includes(e.total.toLocaleString()), e.total.toLocaleString());
   A('half-over-half change matches the archive',
     r.answerText.includes(`${Math.abs(e.changePct).toFixed(1)}%`), `${e.changePct.toFixed(1)}%`);
+  // The claim must follow the arithmetic in BOTH directions: a series that
+  // clears the threshold says so, and one that does not says it does not.
+  const clears = Math.abs(e.changePct) > e.noisePct;
+  A(clears ? 'clears the threshold, and the page reports a trend'
+           : 'does NOT clear the threshold, and the page declines to claim a trend',
+    clears ? /clears the ±/.test(r.answerText)
+           : /does not clear the ±/.test(r.answerText) && /do not report that as a trend/.test(r.answerText),
+    `${Math.abs(e.changePct).toFixed(1)}% vs ±${e.noisePct.toFixed(1)}%`);
   A('trend threshold matches Poisson noise on the monthly mean',
     r.answerText.includes(`${e.noisePct.toFixed(1)}%`), `±${e.noisePct.toFixed(1)}%`);
   A('#data table has one row per month, values matching the archive',
@@ -154,7 +165,7 @@ for (const page of PAGES) {
     /does not support a cost figure|cannot support it/i.test(bodyOnly));
   A('page stays indexed', !/noindex/.test(r.noindex), r.noindex || '(none)');
   A('no horizontal scroll at 1440px', r.overflow <= 0, `${r.overflow}px`);
-  A('#faq renders real disclosure elements', r.faqDetails === 5, `${r.faqDetails} items`);
+  A('#faq renders real disclosure elements', r.faqDetails === page.faqs, `${r.faqDetails} items`);
 
   // A collapsed <details> keeps its answer out of innerText. The text IS in the
   // served HTML — crawlers and screen readers reach it — so open them before
@@ -167,12 +178,44 @@ for (const page of PAGES) {
   const faq = ld.find(x => x['@type'] === 'FAQPage');
   A('Article schema present with a dateModified', !!article?.dateModified, article?.dateModified);
   A('FAQPage schema present with every answer filled',
-    !!faq && faq.mainEntity.length === 5 &&
+    !!faq && faq.mainEntity.length === page.faqs &&
     faq.mainEntity.every(q => q.acceptedAnswer?.text && !/\{[A-Z_]+\}/.test(q.acceptedAnswer.text)),
     `${faq?.mainEntity.length} questions`);
   A('the schema FAQ answers match the visible ones',
     faq.mainEntity.every(q => openBody.includes(q.acceptedAnswer.text.slice(0, 60).replace(/\s+/g, ' '))),
     `${faq.mainEntity.length} answers compared`);
+
+  if (page.category === 'roofing') {
+    // The seasonality sentence is a FAQ answer, and a collapsed <details> keeps
+    // its text out of innerText. It IS in the served HTML — crawlers and screen
+    // readers reach it — so open them rather than concluding it is absent.
+    await p.evaluate(() => document.querySelectorAll('#faq details').forEach(d => { d.open = true; }));
+    const fullBody = await p.evaluate(() =>
+      (document.querySelector('main') ?? document.body).innerText.replace(/\s+/g, ' '));
+    // The brief's hard rule: never put the two metros' roofing counts side by
+    // side. They differ 3.27x for measurement-method reasons alone, so an
+    // invited comparison would read as a finding about roofs when it is a
+    // finding about permit taxonomies.
+    const austinFigures = /\b1,945\b|\b1,878\b|\b366\b/;
+    A('does not put Austin roofing numbers on the page',
+      !austinFigures.test(bodyOnly), (bodyOnly.match(austinFigures) || ['none'])[0]);
+    A('does not invite a cross-metro roofing comparison',
+      !/\bthan (in )?Austin\b|compared (with|to) Austin|Austin (issues|issued)/i.test(bodyOnly),
+      (bodyOnly.match(/[^.]*Austin[^.]*\./) || ['no mention of Austin'])[0].trim().slice(0, 90));
+    A('reports seasonality even though the trend is flat',
+      /spread between busiest and quietest/.test(fullBody) && /σ\)/.test(fullBody),
+      (fullBody.match(/a [\d.]+× spread[^.]*\./) || ['not found'])[0].slice(0, 90));
+    A('reconciles against our own roof-permits page rather than contradicting it',
+      /roof-permits\/ page reports a larger number/.test(bodyOnly));
+    A('states the storm feed publishes on a lag, with the measured age',
+      /publishes on a lag/.test(bodyOnly) && /\b\d{2,3} days old\b/.test(bodyOnly),
+      (bodyOnly.match(/its newest record is \d+ days old/) || [''])[0]);
+    A('does not imply hail in Bexar that NOAA did not record',
+      /No hail was recorded in Bexar County/.test(bodyOnly));
+    A('states that Texas does not license roofing contractors, cited to the state',
+      /no state roofing licence in Texas/i.test(bodyOnly) &&
+      r.sourceLinks.some(l => /tdlr\.texas\.gov/.test(l.href)));
+  }
 
   if (page.category === 'hvac') {
     const rate = eiaRate();
