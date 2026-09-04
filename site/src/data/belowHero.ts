@@ -295,7 +295,8 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
       {
         name: "Texas Department of Licensing and Regulation",
         used: "Which trades Texas licenses, and the absence of roofing among them.",
-        url: "https://www.tdlr.texas.gov/programs.htm",
+        // Round 13b: /programs.htm was dead. /licenses.htm is the live list.
+        url: "https://www.tdlr.texas.gov/licenses.htm",
       },
       THI_METHODOLOGY,
     ],

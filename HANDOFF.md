@@ -253,19 +253,69 @@ run into.
   numbers in conflict, which would be a citation liability. **Not fixed, and probably should
   not be** — the divergence is inherent to one feed being an archive and the other a window.
 
-- **Round 12 owner seam: the TDLR citation URL could not be fetch-verified from this
-  environment.** `/san-antonio/roofing/` states that Texas does not license roofing
-  contractors, cited to `https://www.tdlr.texas.gov/programs.htm`. **This sandbox's egress
-  proxy denies that host** — 403 on CONNECT, confirmed against the proxy's own status endpoint
-  — so the link was never loaded from here. The CLAIM is not in doubt; the LINK is unchecked.
-  `ServiceNotice` now carries `urlVerifiedByFetch`, set `false` on this notice so the gap is
-  machine-visible rather than buried, and `noticefreshunit` prints it. **Owner action: open
-  that URL once and confirm it resolves and still lists the regulated programs.** Review
-  cadence is 180 days — an occupation entering state licensure is a legislative act, and the
-  Texas Legislature meets in regular session in odd-numbered years.
-  Round 12 also **widened the primary-source guard** in `noticefreshunit`: it was a federal
-  allow-list and rejected `tdlr.texas.gov`, which is exactly the kind of primary state source
-  these pages should cite. It now accepts any `.gov` publisher plus the USDM's university host.
+- **Round 13b: the TDLR citation was DEAD, and the flag is why anyone found out.** Round 12
+  cited `https://www.tdlr.texas.gov/programs.htm` for "Texas does not license roofing
+  contractors" and marked it `urlVerifiedByFetch: false` because the sandbox proxy would not
+  load it. The owner opened it: **404**. It is now
+  `https://www.tdlr.texas.gov/licenses.htm` — "Programs Licensed and Regulated by TDLR" —
+  which carries both halves of the contrast on one page: its list includes Air Conditioning
+  and Refrigeration, Electricians, and Mold Assessors and Remediators, and roofing appears
+  nowhere on it. **The flag did its job**: an unverified link was found by review rather than
+  by a reader, which is the whole point of recording the gap instead of glossing it. The
+  replacement is **still `urlVerifiedByFetch: false`** — the proxy denies
+  `www.tdlr.texas.gov` today as it did then (connect_rejected, confirmed against the proxy's
+  own status endpoint), so nothing about the new URL has been checked *from here*. The owner
+  opened it; the build has not.
+
+- **⚠️ OWNER ACTION — NOT ONE EXTERNAL CITATION ON THIS SITE HAS BEEN FETCH-VERIFIED, and
+  Round 12's flag was quietly implying otherwise.** Round 13b fetch-tested every external URL
+  the below-hero layer cites across the three San Antonio pages. **All seven are denied by
+  this sandbox's egress proxy** — the TDLR host was not special, it was just the one a human
+  happened to open. The `urlVerifiedByFetch` doc-comment said "absent means verified"; that
+  was false and is corrected to "not asserted either way".
+  **Every external URL the three pages cite, and its true state:**
+  | URL | pages | fetch state |
+  |---|---|---|
+  | `https://www.tdlr.texas.gov/licenses.htm` | roofing | ❌ proxy-denied — **replaced a dead link; owner opened this one, build has not** |
+  | `https://data.sanantonio.gov/dataset/permits-and-inspections` | all three | ❌ proxy-denied — never checked |
+  | `https://www.ncdc.noaa.gov/stormevents/` | roofing | ❌ proxy-denied — never checked |
+  | `https://droughtmonitor.unl.edu/` | roofing, plumbing | ❌ proxy-denied — never checked |
+  | `https://www.irs.gov/newsroom/fs-2025-05` | hvac | ❌ proxy-denied — never checked |
+  | `https://www.eia.gov/electricity/data.php` | hvac | ❌ proxy-denied — never checked |
+  | `https://www.airnow.gov/` | hvac | ❌ proxy-denied — never checked |
+  **What to do:** open the six never-checked URLs once and confirm each resolves and still
+  says what the page cites it for. Six links, one sitting. The IRS one matters most — it is a
+  deep link to a specific fact sheet, the shape of URL that rots first, and it is the citation
+  behind a dated claim about an expired tax credit. The four ending in a directory or a
+  homepage are the least likely to have moved.
+  **Why an agent cannot close this:** every fetch from this environment returns `000`. There
+  is no way to distinguish "live" from "dead" here, which is precisely why the state is
+  recorded rather than assumed.
+
+- **Round 13b recommendation — a build-time link check: WORTH BUILDING, but not on every
+  build.** Recommended, not implemented.
+  **The gap it closes is real.** A dead citation on a page whose entire argument is "we show
+  our sources" is worse than a dead link anywhere else on the site, and today nothing catches
+  one. There is no link-checking anywhere in the repo — not in `verify-content`, not in either
+  GitHub workflow.
+  **The shape I would build:** the content layer already declares its citations as data —
+  `SourceRef.url` in `data/belowHero.ts` and `ServiceNotice.sourceUrl` in
+  `data/serviceNotices.ts`. A checker enumerates those (currently seven URLs, not hundreds),
+  issues a `HEAD` per URL, and fails on 4xx. It needs no crawling and no new dependency.
+  **What it must NOT be: a step in `npm run build`.** That is the COST.md rule 3 problem —
+  outbound requests on every build, including every Workers Builds deploy, is polling a
+  handful of government sites on a schedule nobody chose, and it makes the build fail for
+  reasons that have nothing to do with the commit (a site down for maintenance blocks a
+  deploy). It also cannot run in this sandbox at all, so it would fail every local build here.
+  **Where it belongs instead:** its own scheduled GitHub Action, weekly, opening an issue
+  rather than failing anything — the same posture as the `reviewEveryDays` gate, which stops
+  a build only for a fact that has aged past a date the repo already knows, never for a
+  network condition. Roughly 7 HEAD requests a week on free Action minutes: negligible against
+  COST.md, and it would have caught the TDLR 404 without a human opening the page.
+  **One caveat worth stating:** a link check proves a URL RESOLVES. It cannot prove the page
+  still says what we cite it for — TDLR could keep `/licenses.htm` alive and add roofing to
+  it. That is what `reviewEveryDays` is for, and the two mechanisms answer different
+  questions.
 
 - **Round 12 known cosmetic defect, left deliberately:** the `#data` caption on
   `/san-antonio/plumbing/` reads "plumbing permits issued by…" with a lowercase first word.
