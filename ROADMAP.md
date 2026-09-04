@@ -100,8 +100,10 @@ Bring these back in later rounds; do **not** build them now:
    within-city trade mix, hail counts, branded indices) — be the primary source for prompts
    that currently cite nothing.
 3. **Extractable formats:** key-findings blocks, ranges (not false precision), and tables of
-   anything the data supports — all in **server-rendered HTML**. ⛔ **Cost-by-material tables
-   are BLOCKED** — not merely unbuilt. See the cost note below this list.
+   anything the data supports — all in **server-rendered HTML**. 🟡 **Cost-by-material tables are
+   CONDITIONALLY UNBLOCKED (Round 17b)** — as **national averages only**, under the five
+   requirements in the cost note below. No LOCAL cost figure is publishable in either metro,
+   and that measurement is unchanged.
 4. **Schema:** FAQPage + Article + Dataset/DataCatalog + Organization (consistent "Texas Home
    Intelligence" entity, logo, sameAs) + WebSite + BreadcrumbList.
 5. **Own the "how to choose" decision frameworks** — a large share of homeowner AI demand.
@@ -127,7 +129,33 @@ Bring these back in later rounds; do **not** build them now:
 > tables". Both were falsified by that measurement and are corrected above. What permits
 > **do** license is activity, timing, seasonality and within-city trade mix (see the permit
 > rule in `CLAUDE.md`'s engineering rules). Unblocking a cost figure needs a **different
-> source**, not a better read of this one — a Rule 1 conversation, not a round to pick up.
+> source**, not a better read of this one.
+>
+> ### 🟡 Round 17b — OWNER DECISION: national averages are publishable, under conditions
+>
+> **The measurement above stands and is not softened.** What changes is the response to it.
+> Round 7 read "no local price source exists" as "publish no cost figure". The owner's decision
+> is narrower and better: **a national figure, labelled national, is publishable; a national
+> figure presented as local is not.**
+>
+> These are **requirements, not preferences.** A round that publishes a cost figure meets all
+> five or does not publish one:
+>
+> 1. **Labelled national**, in the visible copy — not in a footnote — and carrying the
+>    **Estimates** bucket. Never labelled, implied or positioned as an Austin or San Antonio
+>    figure.
+> 2. **Sourced to a primary publisher.** Never an aggregator and never a contractor-marketing
+>    page. **HomeAdvisor, Angi, Thumbtack and their equivalents are unacceptable sources** — they
+>    publish figures derived from their own lead flow, with no method anyone can check.
+> 3. **The page states plainly why there is no local figure**, citing the measurement above.
+>    That absence is itself a finding worth publishing, and it is the thing that makes a national
+>    number honest rather than evasive.
+> 4. **A `reviewEveryDays` cadence**, because material prices move. The same build-time gate that
+>    governs the dated claims in `serviceNotices.ts`.
+> 5. **Ranges never collapse to a single number.** A single figure is false precision about a
+>    quantity that varies by material, scope, region and month.
+>
+> Full requirement text and the source evaluation are in `HANDOFF.md`.
 
 **Content grounding:** ground content in the roofing keyword research, not the retired
 AHI-AI-PHRASES file. ~Half of roofing AI prompts are "recommend/choose a roofer" — own that
