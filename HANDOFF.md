@@ -2142,3 +2142,54 @@ its own workers.dev staging subdomain independently (see the deploy-target
 correction at the top of this file). Pointing the real domain at this app
 (DNS change + retiring the GitHub Pages deployment) is an explicit,
 separate go-live step — not implied by any phase above being "done."
+
+- **⭐ ROUND 18 — PLUMBING TRIAGE IS BUILT AND WORKING at `/tools/plumbing-triage/`.** Indexed, no
+  metro segment, replacing no placeholder — Round 17's route reasoning stands. 17 screens: entry,
+  gas pre-screen and its interrupt, five symptom paths, the shutoff, the electrical-and-water
+  interrupt, the sewage interrupt, and nine verdicts each carrying its checks and three questions.
+  **No address, no autocomplete, no gate, no feed** — it ships in both metros because it reads no
+  dataset.
+  **Copy lives in `src/data/plumbingTriage.ts`, not in markup**, so a reviewer diffs one file
+  against `docs/source/design/tools/copy-deck-plumbing-triage.md` and the component has no prose
+  to drift.
+
+- **⚠️ Round 18 — THE DISCREPANCY ITEM 6 WARNED ABOUT WAS REAL AND IS NOT BUILT.** The copy deck
+  as delivered still ended the electrical interrupt with *"Only turn off a breaker if the panel is
+  dry and you can reach it standing on dry ground."* ESFI does not support it — its guidance is
+  *don't enter a flooded area until the utility has confirmed power is off* and *don't touch a
+  breaker with wet hands or while standing on a wet surface.* **The line is struck in the repo's
+  copy deck and never rendered**, and `triagerender.mjs` asserts it cannot return. The interrupt
+  carries the owner's corrected text verbatim.
+  Citation added to the config the weekly check reads: **ESFI, "Flooding and Disaster Safety",
+  `https://www.esfi.org/flooding-and-disaster-safety/`, `checkedByHumanOn: 2026-09-05`,
+  `urlVerifiedByFetch` unasserted.** The checker now enumerates **11** URLs, all human-checked.
+  Owner's note carried into the deck: **ESFI covers the substance but not all three points on one
+  page.**
+
+- **Round 18 — one COPY GAP, reported not filled.** The delivered deck supplies a three-questions
+  block for paths 2–5 and **omits one for path 1** (water on the floor, five verdicts). Rather
+  than write three questions, the build reuses the **authored** block from
+  `Plumbing Triage.dc.html`, which storyboards exactly that path. Marked as such in the config and
+  the deck. If those three are wrong for path 1, they are the thing to replace.
+
+- **Round 18 — two defects the render replay caught that a green build could not.**
+  1. **Chrome competed with the shutoff screen.** The topbar, site nav and breadcrumb — fifteen
+     elements — painted above the most important layout in the product. Now hidden on all four
+     focus screens. The first fix silently did nothing because **Astro scopes component styles**,
+     compiling `.site-nav` to `.site-nav[data-astro-cid-…]`; `:global()` is required and the
+     reason is recorded in the file.
+  2. **With scripting off, `#electrical-stop` rendered BLANK.** The safety instruction was
+     reachable by URL and showed no screen at all — `@media (scripting: none)` fighting a
+     server-rendered `hidden` attribute. Rebuilt so `:target` is the base mechanism with no media
+     query and no attribute to override, and JS takes over via a root flag. **Verified with
+     scripting disabled: entry, `#shutoff`, `#electrical-stop` and `#v-bill` each render the right
+     single screen, with chrome correctly hidden on the focus screens.**
+
+- **Round 18 — the guards that protect the owner decisions.** `triagerender.mjs` (127 assertions)
+  asserts **no cost figure or published range**, **no contractor referral**, and that the
+  electrical path **terminates** — no verdict, no checks, no questions, no onward navigation
+  except back. Utility and emergency instructions are present and are explicitly *not* referral.
+  **No four-bucket labels**, confirmed after the build: 0 badges, because nothing reads a dataset.
+  *(The first cost guard was too broad — it matched the word "cost" in an authored question,
+  "what does that cost?", and in the sitewide footer. Narrowed to currency amounts and range
+  phrasing, scoped to the tool's own `<main>`.)*
