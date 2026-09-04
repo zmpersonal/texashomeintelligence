@@ -125,7 +125,6 @@ const GENERATORS: Record<string, Generator> = {
   "municipal-permits": municipalPermits,
   "eia-electricity": eiaElectricityPrice,
   "nws-api": single({ forecastHighF: 96, forecastLowF: 74, activeAlert: undefined }),
-  "noaa-climate": single({ normalHighF: 95, normalLowF: 73 }),
   "fema-nfhl": single({ floodZone: "X (SAMPLE)", note: "SAMPLE — illustrative, not a real parcel lookup." }),
   "tdi-losses": single({ lossType: "Wind/Hail", claimsPaidUsd: 482_000 }),
   "usdm-drought": single({ droughtIndex: "D1 — Moderate Drought (SAMPLE)", rainfallInches: 1.8 }),
@@ -157,10 +156,20 @@ const GENERATORS: Record<string, Generator> = {
 // Round 8 adds permit-trade-activity for the same reason: a fabricated permit
 // count is an invented fact about a real city, and the honest bootstrap state
 // is no file at all until a real fetch succeeds.
+//
+// Round 19 adds noaa-climate for the same reason again. Until this round it
+// was seeded with `{ normalHighF: 95, normalLowF: 73 }`, which is an invented
+// climate reading for a real city — and, because it carried neither a
+// `sample-` key nor the word SAMPLE in its value, one that predates the
+// `seed: true` stamp below and that neither `runIngestion`'s retirement filter
+// nor `verify-content`'s `looksSeeded` could recognise. A cooling-degree-day
+// count is a number a homeowner would act on; the honest bootstrap state is no
+// file at all.
 const NEVER_SEED = new Set([
   "arr-collection-schedule",
   "austin-water-stage",
   "permit-trade-activity",
+  "noaa-climate",
 ]);
 
 /** Skips any file that already exists — seeding is a one-time bootstrap,

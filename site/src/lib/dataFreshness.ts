@@ -111,7 +111,27 @@ export const MAX_DATA_AGE_DAYS: Record<string, number> = {
   //   bls         → 400d, OEWS is annual for the San Antonio MSA as for Austin's
   //   usda-soil   → 400d, SSURGO is the same reference dataset either point
 
-  // ── Cadence NOT established. These five are stub fetchers with sample
+  // Round 19. NOAA NCEI Global Summary of the Month, one cooling-degree-day
+  // row per calendar month, dated to the FIRST of the month it summarises.
+  // Three things have to fit inside this window and each is stated separately
+  // because they are separate:
+  //
+  //   1. month-start dating — up to 31 days by construction, exactly as
+  //      permit-trade-activity above;
+  //   2. GSOM's own publication lag — a month is not summarised the instant it
+  //      ends. THIS IS NOT MEASURED. `www.ncei.noaa.gov` is unreachable from
+  //      the sandbox that wrote this line, so the allowance is a bound, not an
+  //      observation. Section 3 of `.github/workflows/noaa-climate-probe.yml`
+  //      measures it on the runner; revisit this number against that log.
+  //   3. a missed weekly ingestion run.
+  //
+  // 75 days covers (1) plus roughly six weeks of (2) and (3). It errs toward
+  // admitting staleness: if the real lag turns out shorter, a healthy feed is
+  // simply never flagged, whereas a window set too tight would badge a
+  // perfectly current series as out of date every month.
+  "noaa-climate": 75 * DAY,
+
+  // ── Cadence NOT established. These four are stub fetchers with sample
   // data, so they never reach the age check today (a `sample` file reports no
   // dates at all). Each carries the conservative 30-day window so that if one
   // is ever wired to a real source without revisiting this table, it errs
@@ -125,7 +145,6 @@ export const MAX_DATA_AGE_DAYS: Record<string, number> = {
 
   ercot: 30 * DAY, // ERCOT load; real cadence unverified.
   "fema-nfhl": 30 * DAY, // NFHL flood layers; republication cadence unverified.
-  "noaa-climate": 30 * DAY, // Climate normals; update cadence unverified.
   "tdi-losses": 30 * DAY, // TDI loss data; publication cadence unverified.
   "tx-forest-service": 30 * DAY, // TFS wildfire risk; cadence unverified.
 };

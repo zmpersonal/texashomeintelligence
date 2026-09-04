@@ -7,8 +7,8 @@
   "lastSuccessAt": null,
   "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"noaa-climate/austin\" is not implemented yet. Requested window 2025-09-04T13:32:04.286Z .. 2026-09-04T13:32:04.286Z.",
   "source": {
-    "name": "NOAA Climate Data Online",
-    "url": "https://www.ncdc.noaa.gov/cdo-web/"
+    "name": "NOAA NCEI Global Summary of the Month",
+    "url": "https://www.ncei.noaa.gov/access/services/data/v1"
   },
   "observations": [
     {
@@ -18,7 +18,8 @@
       "value": {
         "normalHighF": 95,
         "normalLowF": 73
-      }
+      },
+      "seed": true
     }
   ]
 }
