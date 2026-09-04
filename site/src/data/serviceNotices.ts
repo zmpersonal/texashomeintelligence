@@ -44,6 +44,21 @@ export interface ServiceNotice {
    * a KNOWN-unverified link; it does not imply the unflagged ones are fine.
    */
   urlVerifiedByFetch?: false;
+  /**
+   * ISO date a HUMAN opened this URL and confirmed it resolves and says what it
+   * is cited for. Deliberately a SEPARATE field from `urlVerifiedByFetch`:
+   * a person clicking a link and a build issuing a request are different
+   * evidence with different failure modes, and collapsing them would let one
+   * stand in for the other. Round 14 set these after the owner opened all seven
+   * cited URLs — which is how two of them turned out to be dead.
+   */
+  checkedByHumanOn?: string;
+  /**
+   * Set to `false` when the CLAIM'S WORDING has not been checked against the
+   * source text — as distinct from the URL resolving. A live link under a
+   * paraphrase nobody verified is the quieter failure of the two.
+   */
+  wordingVerifiedAgainstSource?: false;
 }
 
 /**
@@ -173,13 +188,32 @@ export const SERVICE_NOTICES: Record<string, ServiceNotice[]> = {
       heading: "The federal 25C credit for HVAC equipment expired on December 31, 2025",
       body:
         "The Energy Efficient Home Improvement Credit under Internal Revenue Code section 25C — the " +
-        "credit homeowners claimed for qualifying heat pumps, air conditioners and furnaces — terminated " +
-        "for property placed in service after December 31, 2025 under the One Big Beautiful Bill Act. " +
-        "There is no grandfather provision: equipment purchased before July 4, 2025 but installed after " +
-        "the expiry does not qualify. If a quote or an installer's page still prices the credit in, that " +
-        "is a reason to ask, not a reason to hurry.",
-      sourceName: "IRS Fact Sheet 2025-05",
-      sourceUrl: "https://www.irs.gov/newsroom/fs-2025-05",
+        "credit homeowners claimed for qualifying heat pumps, air conditioners and furnaces — ended on " +
+        "December 31, 2025 under the One Big Beautiful Bill Act, and there is no grandfather provision: " +
+        "equipment bought before July 4, 2025 but installed after the cutoff does not qualify. " +
+        "For work that straddles the cutoff, the test that decides eligibility is set out in the IRS " +
+        "guidance linked below — read that rather than any summary of it, including this one. " +
+        "If a quote or an installer's page still prices the credit in, that is a reason to ask, not a " +
+        "reason to hurry.",
+      sourceName:
+        "IRS — FAQs on the OBBB modification of sections 25C, 25D, 25E, 30C, 30D, 45L, 45W and 179D",
+      // Round 14: was /newsroom/fs-2025-05, which the owner confirmed is DEAD.
+      // This is the full FAQ slug, supplied by the owner.
+      sourceUrl:
+        "https://www.irs.gov/newsroom/faqs-for-modification-of-sections-25c-25d-25e-30c-30d-45l-45w-and-179d-under-public-law-119-21-139-stat-72-july-4-2025-commonly-known-as-the-one-big-beautiful-bill-obbb",
+      checkedByHumanOn: "2026-09-04",
+      urlVerifiedByFetch: false,
+      // ⚠️ ROUND 14 COULD NOT READ THIS SOURCE. The proxy denies www.irs.gov, so
+      // the FAQ text was never loaded and the paraphrase above is unchecked
+      // against it. The previous wording asserted the credit terminated for
+      // property "PLACED IN SERVICE" after Dec 31 2025 — a specific statutory
+      // test — and 25C has historically treated an expenditure as made when the
+      // original INSTALLATION IS COMPLETED, a different test that gives a
+      // different answer for work spanning the date. Rather than guess which
+      // governs, the copy now states the cutoff and the no-grandfather rule
+      // (both owner-confirmed) and sends the reader to the FAQ for the
+      // straddling case. Owner action in HANDOFF.
+      wordingVerifiedAgainstSource: false,
       confirmedOn: "2026-09-04",
       // Statutory dates do not drift, but IRS guidance on them does, and a
       // successor credit would make this page wrong by omission rather than by
@@ -190,13 +224,22 @@ export const SERVICE_NOTICES: Record<string, ServiceNotice[]> = {
 
   "san-antonio/roofing": [
     {
-      heading: "Texas does not license roofing contractors",
+      heading: "Texas licenses HVAC, electrical and mold work. It does not license roofing.",
+      // Round 14 NARROWED this to what the ONE cited page actually supports.
+      // It previously said "no other Texas agency licenses it either" — true,
+      // but TDLR's list shows what TDLR regulates, not what every Texas agency
+      // does, and proving that negative needs a source no single page provides.
+      // Rewriting was chosen over adding a second source for exactly that
+      // reason. The contrast is untouched and fully sourced: three named trades
+      // are on TDLR's list, roofing is not, and the practical guidance for a
+      // homeowner — there is no licence number to check — is identical either
+      // way.
       body:
-        "There is no state roofing licence in Texas. The Texas Department of Licensing and Regulation " +
-        "licenses air-conditioning and refrigeration contractors and mold remediation, among other " +
-        "trades, but roofing is not among the occupations it regulates, and no other Texas agency " +
-        "licenses it either. Roofing registration in Texas is voluntary and industry-run. " +
-        "That does not make a roofer unqualified — it means a licence number is not the thing to check. " +
+        "The Texas Department of Licensing and Regulation publishes the list of occupations it " +
+        "regulates. Air Conditioning and Refrigeration Contractors, Electricians, and Mold Assessors " +
+        "and Remediators are on it. Roofing is not — so there is no TDLR licence number to ask a " +
+        "roofer for, the way there is for the trades either side of it. " +
+        "That does not make a roofer unqualified; it means a licence number is not the thing to check. " +
         "What is checkable: liability and workers' compensation insurance carried in the company's own " +
         "name, how long the business has traded under that name, and the manufacturer certification " +
         "behind whatever workmanship warranty is offered.",
@@ -214,6 +257,7 @@ export const SERVICE_NOTICES: Record<string, ServiceNotice[]> = {
       // by the owner, who did open it — which is exactly the human check this
       // flag exists to route work to. It stays false until a fetch confirms it.
       urlVerifiedByFetch: false,
+      checkedByHumanOn: "2026-09-04",
       confirmedOn: "2026-09-04",
       // An occupation entering state licensure is a legislative act, and the
       // Texas Legislature meets in regular session in odd-numbered years. A

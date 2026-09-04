@@ -34,6 +34,10 @@ export interface SourceRef {
   used: string;
   /** Primary source. Never an aggregator. */
   url: string;
+  /** ISO date a HUMAN opened it and confirmed it resolves. Not the same thing
+   * as the build having fetched it — nothing here has ever been fetched from
+   * the build environment. See HANDOFF, Round 13b/14. */
+  checkedByHumanOn?: string;
 }
 
 export interface ContextBlock {
@@ -88,7 +92,18 @@ export interface BelowHeroSpec {
 const SA_PERMIT_SOURCE: SourceRef = {
   name: "City of San Antonio Permits Open Data",
   used: "Every residential trade permit issued in the window, by permit type and issue date. Counted and grouped by month; no other field is read.",
-  url: "https://data.sanantonio.gov/dataset/permits-and-inspections",
+  // Round 14: was /dataset/permits-and-inspections, which the owner confirmed
+  // is DEAD. This UUID is the dataset page the owner supplied.
+  //
+  // ⚠️ IT COULD NOT BE CONFIRMED AGAINST OUR OWN CODE, and that is worth knowing
+  // rather than assuming. Both fetchers resolve the package by SLUG —
+  // `package_show?id=building-permits` in `sanAntonioPermits.ts:50` and
+  // `permitTradeActivity.ts:149` — and this UUID appears nowhere in the repo.
+  // CKAN accepts either a name or an id for the same package, so the two very
+  // likely address the same dataset, but nothing here proves it and the proxy
+  // denies data.sanantonio.gov so it could not be checked. See HANDOFF, Round 14.
+  url: "https://data.sanantonio.gov/dataset/05012dcb-ba1b-4ade-b5f3-7403bc7f52eb",
+  checkedByHumanOn: "2026-09-04",
 };
 
 const THI_METHODOLOGY: SourceRef = {
@@ -169,16 +184,20 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
         name: "U.S. Energy Information Administration",
         used: "Average monthly residential retail electricity price for Texas, in cents per kilowatt-hour. The rate only — no bill, payback or saving is derived from it.",
         url: "https://www.eia.gov/electricity/data.php",
+        checkedByHumanOn: "2026-09-04",
       },
       {
         name: "AirNow (U.S. EPA)",
         used: "Current air-quality index for the San Antonio reporting area.",
         url: "https://www.airnow.gov/",
+        checkedByHumanOn: "2026-09-04",
       },
       {
-        name: "IRS Fact Sheet 2025-05",
-        used: "The expiration date of the 25C Energy Efficient Home Improvement Credit, and the absence of a grandfather provision.",
-        url: "https://www.irs.gov/newsroom/fs-2025-05",
+        name: "IRS — FAQs on the OBBB modification of section 25C (and 25D, 25E, 30C, 30D, 45L, 45W, 179D)",
+        used: "The end date of the 25C Energy Efficient Home Improvement Credit, the absence of a grandfather provision, and the test that governs work spanning the cutoff.",
+        // Round 14: was /newsroom/fs-2025-05, which the owner confirmed is dead.
+        url: "https://www.irs.gov/newsroom/faqs-for-modification-of-sections-25c-25d-25e-30c-30d-45l-45w-and-179d-under-public-law-119-21-139-stat-72-july-4-2025-commonly-known-as-the-one-big-beautiful-bill-obbb",
+        checkedByHumanOn: "2026-09-04",
       },
       THI_METHODOLOGY,
     ],
@@ -286,17 +305,20 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
         name: "NOAA Storm Events Database (NCEI)",
         used: "Storm events recorded in Bexar County, by type. Published on a two-to-four-month lag, which the page states rather than smoothing over.",
         url: "https://www.ncdc.noaa.gov/stormevents/",
+        checkedByHumanOn: "2026-09-04",
       },
       {
         name: "U.S. Drought Monitor",
         used: "Weekly drought category for Bexar County.",
         url: "https://droughtmonitor.unl.edu/",
+        checkedByHumanOn: "2026-09-04",
       },
       {
         name: "Texas Department of Licensing and Regulation",
         used: "Which trades Texas licenses, and the absence of roofing among them.",
         // Round 13b: /programs.htm was dead. /licenses.htm is the live list.
         url: "https://www.tdlr.texas.gov/licenses.htm",
+        checkedByHumanOn: "2026-09-04",
       },
       THI_METHODOLOGY,
     ],
@@ -386,6 +408,7 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
         name: "U.S. Drought Monitor",
         used: "Weekly drought category for Bexar County.",
         url: "https://droughtmonitor.unl.edu/",
+        checkedByHumanOn: "2026-09-04",
       },
       THI_METHODOLOGY,
     ],

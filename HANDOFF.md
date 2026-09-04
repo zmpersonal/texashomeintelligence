@@ -267,55 +267,80 @@ run into.
   own status endpoint), so nothing about the new URL has been checked *from here*. The owner
   opened it; the build has not.
 
-- **⚠️ OWNER ACTION — NOT ONE EXTERNAL CITATION ON THIS SITE HAS BEEN FETCH-VERIFIED, and
-  Round 12's flag was quietly implying otherwise.** Round 13b fetch-tested every external URL
-  the below-hero layer cites across the three San Antonio pages. **All seven are denied by
-  this sandbox's egress proxy** — the TDLR host was not special, it was just the one a human
-  happened to open. The `urlVerifiedByFetch` doc-comment said "absent means verified"; that
-  was false and is corrected to "not asserted either way".
-  **Every external URL the three pages cite, and its true state:**
-  | URL | pages | fetch state |
-  |---|---|---|
-  | `https://www.tdlr.texas.gov/licenses.htm` | roofing | ❌ proxy-denied — **replaced a dead link; owner opened this one, build has not** |
-  | `https://data.sanantonio.gov/dataset/permits-and-inspections` | all three | ❌ proxy-denied — never checked |
-  | `https://www.ncdc.noaa.gov/stormevents/` | roofing | ❌ proxy-denied — never checked |
-  | `https://droughtmonitor.unl.edu/` | roofing, plumbing | ❌ proxy-denied — never checked |
-  | `https://www.irs.gov/newsroom/fs-2025-05` | hvac | ❌ proxy-denied — never checked |
-  | `https://www.eia.gov/electricity/data.php` | hvac | ❌ proxy-denied — never checked |
-  | `https://www.airnow.gov/` | hvac | ❌ proxy-denied — never checked |
-  **What to do:** open the six never-checked URLs once and confirm each resolves and still
-  says what the page cites it for. Six links, one sitting. The IRS one matters most — it is a
-  deep link to a specific fact sheet, the shape of URL that rots first, and it is the citation
-  behind a dated claim about an expired tax credit. The four ending in a directory or a
-  homepage are the least likely to have moved.
-  **Why an agent cannot close this:** every fetch from this environment returns `000`. There
-  is no way to distinguish "live" from "dead" here, which is precisely why the state is
-  recorded rather than assumed.
+- **Round 14: the owner opened all seven citations. TWO MORE WERE DEAD.** After Round 13b
+  replaced the TDLR link, the owner checked the rest: five resolve and say what we cite them
+  for; `irs.gov/newsroom/fs-2025-05` and `data.sanantonio.gov/dataset/permits-and-inspections`
+  were 404s. **Three of seven citations were dead** by the time anyone looked. Both are
+  replaced, and all seven now carry `checkedByHumanOn: "2026-09-04"`.
+  **`checkedByHumanOn` is a NEW field, deliberately separate from `urlVerifiedByFetch`.** A
+  person clicking a link and a build issuing a request are different evidence with different
+  failure modes, and one must not stand in for the other. Every URL on this site is still
+  `urlVerifiedByFetch: false` or unasserted — the proxy denies every host, so the build has
+  never confirmed any of them. What changed is that a human has.
 
-- **Round 13b recommendation — a build-time link check: WORTH BUILDING, but not on every
-  build.** Recommended, not implemented.
-  **The gap it closes is real.** A dead citation on a page whose entire argument is "we show
-  our sources" is worse than a dead link anywhere else on the site, and today nothing catches
-  one. There is no link-checking anywhere in the repo — not in `verify-content`, not in either
-  GitHub workflow.
-  **The shape I would build:** the content layer already declares its citations as data —
-  `SourceRef.url` in `data/belowHero.ts` and `ServiceNotice.sourceUrl` in
-  `data/serviceNotices.ts`. A checker enumerates those (currently seven URLs, not hundreds),
-  issues a `HEAD` per URL, and fails on 4xx. It needs no crawling and no new dependency.
-  **What it must NOT be: a step in `npm run build`.** That is the COST.md rule 3 problem —
-  outbound requests on every build, including every Workers Builds deploy, is polling a
-  handful of government sites on a schedule nobody chose, and it makes the build fail for
-  reasons that have nothing to do with the commit (a site down for maintenance blocks a
-  deploy). It also cannot run in this sandbox at all, so it would fail every local build here.
-  **Where it belongs instead:** its own scheduled GitHub Action, weekly, opening an issue
-  rather than failing anything — the same posture as the `reviewEveryDays` gate, which stops
-  a build only for a fact that has aged past a date the repo already knows, never for a
-  network condition. Roughly 7 HEAD requests a week on free Action minutes: negligible against
-  COST.md, and it would have caught the TDLR 404 without a human opening the page.
-  **One caveat worth stating:** a link check proves a URL RESOLVES. It cannot prove the page
-  still says what we cite it for — TDLR could keep `/licenses.htm` alive and add roofing to
-  it. That is what `reviewEveryDays` is for, and the two mechanisms answer different
-  questions.
+- **⚠️ OWNER ACTION — the 25C WORDING is unverified, and it may be materially wrong.** The
+  HVAC page previously said the credit "terminated for property **placed in service** after
+  December 31, 2025". That is a specific statutory test, and section 25C has historically
+  treated an expenditure as made when the original **installation is completed** — a different
+  test that gives a different answer for work spanning the cutoff. **Round 14 could not read
+  the source to settle it**: the proxy denies `www.irs.gov`, so the FAQ text was never loaded.
+  Rather than guess, the copy now states only what the owner confirmed — the December 31 2025
+  end date and the absence of a grandfather provision — and sends the reader to the FAQ for
+  the straddling case: *"the test that decides eligibility is set out in the IRS guidance
+  linked below — read that rather than any summary of it, including this one."*
+  The notice carries `wordingVerifiedAgainstSource: false`. **Read the FAQ and either restore
+  a precise test or leave the pointer.** This is the failure mode a live link cannot catch: a
+  URL that resolves under a paraphrase nobody checked.
+
+- **⚠️ OWNER ACTION — the San Antonio dataset UUID could not be confirmed against our own
+  code, and the brief that supplied it assumed otherwise.** The replacement URL is
+  `data.sanantonio.gov/dataset/05012dcb-ba1b-4ade-b5f3-7403bc7f52eb`. The round brief said
+  that UUID "is the package your own fetcher resolves every run". **It is not, as far as this
+  repo can show.** Both fetchers resolve the package by SLUG —
+  `package_show?id=building-permits` at `sanAntonioPermits.ts:50` and
+  `permitTradeActivity.ts:149` — and the UUID appears **nowhere in the repository**. CKAN
+  accepts either a name or an id for the same package, so the two very likely address the same
+  dataset, but nothing here proves it and the proxy denies the host so it could not be checked.
+  **Worth confirming once** that `/dataset/05012dcb-…` and `?id=building-permits` are the same
+  package. If they ever diverge, the page would cite one dataset while the ingest reads another
+  — and nothing would notice.
+  **Recommended once someone touches the fetchers** (not done, it would be an ingest change):
+  export the package id from `sanAntonioPermits.ts` and derive the citation URL from it, so the
+  citation and the fetcher cannot drift apart by construction.
+
+- **Round 14 BUILT the weekly citation link check** recommended in Round 13b —
+  `.github/workflows/citation-check.yml` + `site/scripts/check-citations.ts`, no new dependency
+  (Node's built-in fetch; the URLs come from the content config that already declares them).
+  **What it does:** one HEAD per distinct cited URL — seven today — every Monday 14:00 UTC,
+  retrying once on GET when a host answers HEAD with 403/405/501 (several government sites do).
+  On failure it **opens a GitHub issue**, or comments on the existing open one rather than
+  filing a new one every week. **It never fails a build or a deploy** — a red X on a scheduled
+  job is a thing people stop seeing; an issue is a thing with an assignee.
+  **Cost, against COST.md rule 3:** ~7 requests a week, ~364 a year, roughly one per site per
+  week, on free Action minutes. No response body is read; nothing is stored. Rule 3 governs the
+  INGESTION path, where request volume scales with data refresh and the result becomes a number
+  on a page. This touches no dataset, runs on a fixed weekly clock regardless of traffic or
+  commits, and its only output is an issue for a human. **If it never ran, no number on the
+  site would change.**
+  **Deliberately NOT in `npm run build`:** Workers Builds runs on every push to `main`, so a
+  build that issues outbound requests would fail deploys for reasons unrelated to the commit —
+  a government site down for maintenance would block a release — and would turn "check a few
+  links" into polling at whatever rate anyone commits. It also cannot run in the agent sandbox,
+  where every one of these hosts is proxy-denied; it would fail every local build.
+  **What a pass means:** the URL responded that day. **NOT** that the page still says what we
+  cite it for — TDLR could keep `/licenses.htm` alive and add roofing to it, and this stays
+  green. That second question is `reviewEveryDays`, which fails the BUILD when a dated claim
+  ages past its cadence. Two mechanisms, two questions, neither a substitute for the other.
+
+- **Round 14 narrowed the roofing licensing claim to what one page supports.** It said "no
+  other Texas agency licenses it either" — true, but TDLR's list shows what TDLR regulates, not
+  what every Texas agency does. **Rewriting was chosen over adding a second source**, because
+  the broader statement is a negative across every Texas agency and no single primary page
+  establishes it, while the practical guidance for a homeowner is identical either way: there
+  is no licence number to check. **The contrast is untouched and now fully sourced** — the
+  heading reads "Texas licenses HVAC, electrical and mold work. It does not license roofing",
+  and the body names the three trades that ARE on TDLR's list against roofing's absence from
+  it, which is exactly what the one cited page shows.
 
 - **Round 12 known cosmetic defect, left deliberately:** the `#data` caption on
   `/san-antonio/plumbing/` reads "plumbing permits issued by…" with a lowercase first word.

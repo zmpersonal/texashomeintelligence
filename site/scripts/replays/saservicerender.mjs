@@ -212,9 +212,21 @@ for (const page of PAGES) {
       (bodyOnly.match(/its newest record is \d+ days old/) || [''])[0]);
     A('does not imply hail in Bexar that NOAA did not record',
       /No hail was recorded in Bexar County/.test(bodyOnly));
-    A('states that Texas does not license roofing contractors, cited to the state',
-      /no state roofing licence in Texas/i.test(bodyOnly) &&
+    // Round 14. Was pinned to the phrase "no state roofing licence in Texas",
+    // which the narrowing removed. It now tests the SUBSTANCE — the contrast,
+    // and the citation — plus the thing the narrowing was for: the page must
+    // not reclaim more than its one source supports.
+    A('states roofing is not TDLR-licensed, cited to the state',
+      /does not license roofing/i.test(bodyOnly) &&
       r.sourceLinks.some(l => /tdlr\.texas\.gov/.test(l.href)));
+    A('keeps the contrast: names TDLR-licensed trades against roofing\'s absence',
+      /Air Conditioning and Refrigeration/i.test(bodyOnly) &&
+      /Electricians/i.test(bodyOnly) &&
+      /Mold Assessors and Remediators/i.test(bodyOnly) &&
+      /Roofing is not/i.test(bodyOnly));
+    A('does not claim more than the one cited page supports',
+      !/no other Texas agency/i.test(bodyOnly),
+      (bodyOnly.match(/[^.]*no other Texas agency[^.]*\./) || ['no over-broad claim'])[0].slice(0, 70));
   }
 
   if (page.category === 'hvac') {
