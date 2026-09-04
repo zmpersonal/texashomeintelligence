@@ -9,7 +9,14 @@ Plumbing Triage.dc.html        Roof Scan.dc.html
 AC Lifespan.dc.html            Roof Cost Calculator.dc.html
 Pipe Report.dc.html
 specs/  page-brief · copy-deck · component-states · data-labeling-spec · motion-and-imagery
+
+copy-deck-plumbing-triage.md   <- Round 18's source of truth for that tool's copy
 ```
+
+⚠️ **`copy-deck-plumbing-triage.md` carries one applied correction.** The deck as delivered ended
+the electrical-and-water interrupt with a line permitting breaker use "if the panel is dry and you
+can reach it standing on dry ground." ESFI does not support it, the owner struck it, and it is
+**not built**. The file marks the strike; `triagerender.mjs` asserts the line never returns.
 
 ## Two things deliberately NOT committed here
 

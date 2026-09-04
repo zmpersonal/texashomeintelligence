@@ -1,0 +1,274 @@
+---
+/**
+ * Plumbing Triage — Type C: single-column, mobile-first, one decision per
+ * screen. `page-brief.md`: *"design it for one hand, at night, under stress."*
+ *
+ * ── EVERY SCREEN IS IN THE SERVED HTML ────────────────────────────────────
+ * All screens render as sibling <section>s. With JavaScript, one is visible
+ * and the rest carry `hidden`; a tap swaps them with no navigation and no
+ * reload, because a person standing in water does not wait for a page load,
+ * and history is pushed so the phone's Back button is the tool's Back button.
+ *
+ * WITHOUT JavaScript, `:target` CSS does the same job: every screen is
+ * reachable by an ordinary `<a href="#id">`, nothing is hidden behind a
+ * script, and the whole flow is a linked document. That satisfies CLAUDE.md's
+ * rule that facts render in served HTML with JS as progressive enhancement —
+ * and it is why the copy is readable by a crawler in one pass.
+ *
+ * ── NO COST FIGURE, NO REFERRAL, NO LABELS ────────────────────────────────
+ * All three are owner decisions carried in `data/plumbingTriage.ts`; the
+ * reasoning is there rather than repeated here. `saservicerender`'s sibling
+ * replay asserts all three against the rendered page.
+ */
+import Base from "../../../layouts/Base.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import { SCREENS, ENTRY, VERDICT_FOOTER, TOOL_CITATIONS } from "../../../data/plumbingTriage";
+
+const first = SCREENS[0].id;
+---
+
+<Base
+  title="Plumbing Triage — what to shut off and what to check | Texas Home Intelligence"
+  description="Water on the floor, no hot water, a sewage smell, no water, or a bill that jumped. Five questions, no account, no address — what to shut off, what to look at, and when to stop looking."
+>
+  <Breadcrumbs
+    crumbs={[
+      { name: "Home", url: "/" },
+      { name: "Tools", url: "/tools/" },
+      { name: "Plumbing Triage", url: "/tools/plumbing-triage/" },
+    ]}
+  />
+
+  <main class="triage" data-triage data-first={first}>
+    {/* Entry. The only screen with marketing text, and it is two lines. */}
+    <section class="tri-screen" id="start" data-screen="start">
+      <div class="tri-wrap">
+        <h1 class="tri-h1">{ENTRY.h1}</h1>
+        <p class="tri-sub">{ENTRY.sub}</p>
+        <a class="tri-btn tri-btn--go" href={`#${first}`} data-go={first}>Start</a>
+        <p class="tri-foot">{ENTRY.footerLine}</p>
+      </div>
+    </section>
+
+    {SCREENS.map((s) => (
+      <section
+        class:list={["tri-screen", s.focus && "tri-screen--focus", s.end && "tri-screen--end"]}
+        id={s.id}
+        data-screen={s.id}
+        data-end={s.end ? "true" : undefined}
+      >
+        <div class="tri-wrap">
+          {s.back && (
+            <a class="tri-back" href={`#${s.back}`} data-go={s.back}>&larr; Back</a>
+          )}
+
+          {s.eyebrow && <p class="tri-eyebrow">{s.eyebrow}</p>}
+          <h2 class="tri-headline">{s.headline}</h2>
+          {s.body?.map((p) => <p class="tri-body">{p}</p>)}
+
+          {s.steps && (
+            <ol class="tri-steps">{s.steps.map((t) => <li>{t}</li>)}</ol>
+          )}
+          {s.emphasis && <p class="tri-emphasis">{s.emphasis}</p>}
+          {s.sourceLine && <p class="tri-source">{s.sourceLine}</p>}
+
+          {s.verdict && (
+            <div class="tri-verdict">
+              <h3 class="tri-vsub">What to look at</h3>
+              <ul class="tri-list">{s.verdict.lookAt.map((i) => <li>{i}</li>)}</ul>
+              <h3 class="tri-vsub">When to stop looking</h3>
+              <p class="tri-body">{s.verdict.stopLooking}</p>
+              <h3 class="tri-vsub">Three questions to ask</h3>
+              <ol class="tri-questions" data-questions>
+                {s.verdict.questions.map((q) => <li>{q}</li>)}
+              </ol>
+              <button class="tri-copy" type="button" data-copy>Copy the three questions</button>
+              {/* Where a referral block would slot in later. Left empty by
+                  owner decision — the path ends at the verdict. */}
+              <p class="tri-disclaimer">{VERDICT_FOOTER}</p>
+            </div>
+          )}
+
+          {s.choices?.map((c) =>
+            c.href ? (
+              <a class="tri-btn tri-btn--urgent" href={c.href}>{c.label}</a>
+            ) : (
+              <a class="tri-btn" href={`#${c.to}`} data-go={c.to}>{c.label}</a>
+            ),
+          )}
+
+          {s.end && !s.choices?.some((c) => !c.href) && (
+            <a class="tri-btn tri-btn--quiet" href={`#${s.back}`} data-go={s.back}>
+              Understood — go back
+            </a>
+          )}
+        </div>
+      </section>
+    ))}
+
+    <section class="tri-sources">
+      <div class="tri-wrap">
+        <h2 class="tri-vsub">Source</h2>
+        <ul class="tri-list">
+          {TOOL_CITATIONS.map((c) => (
+            <li><a href={c.url}>{c.name}</a> — {c.used}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  /* Tokens only — no new colour values. The palette is thi-tokens'. */
+  .triage { background: var(--thi-paper); min-height: 100vh; }
+  .tri-screen { display: block; padding: 24px 0 56px; }
+  .tri-wrap { max-width: 34rem; margin: 0 auto; padding: 0 20px; }
+
+  .tri-h1 { font-size: 1.9rem; line-height: 1.15; margin: 8px 0 12px; color: var(--thi-ink); }
+  .tri-sub { font-size: 1.05rem; color: var(--thi-slate-700); margin: 0 0 24px; }
+  .tri-foot { font-size: .875rem; color: var(--thi-slate-500); margin-top: 28px; }
+
+  .tri-eyebrow {
+    font-size: .8rem; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--thi-severe); font-weight: 700; margin: 0 0 8px;
+  }
+  .tri-headline { font-size: 1.6rem; line-height: 1.2; margin: 0 0 16px; color: var(--thi-ink); }
+  .tri-body { font-size: 1.05rem; line-height: 1.55; color: var(--thi-slate-700); margin: 0 0 14px; }
+
+  /* Tap targets. `page-brief.md`: generous, assume mis-taps. 64px min. */
+  .tri-btn {
+    display: block; width: 100%; box-sizing: border-box;
+    min-height: 64px; padding: 20px 18px; margin: 0 0 14px;
+    background: var(--thi-surface); border: 2px solid var(--thi-line-strong);
+    border-radius: var(--thi-radius-md, 10px);
+    font-size: 1.1rem; font-weight: 600; color: var(--thi-ink);
+    text-align: left; text-decoration: none; cursor: pointer;
+  }
+  .tri-btn:hover, .tri-btn:focus-visible { border-color: var(--thi-navy); background: var(--thi-mist); }
+  .tri-btn--go { background: var(--thi-navy); color: var(--thi-on-dark); border-color: var(--thi-navy); text-align: center; }
+  .tri-btn--urgent { background: var(--thi-severe); color: #fff; border-color: var(--thi-severe); text-align: center; }
+  .tri-btn--quiet { background: transparent; }
+
+  .tri-back {
+    display: inline-block; min-height: 44px; padding: 12px 4px;
+    font-size: 1rem; color: var(--thi-slate-700); text-decoration: none;
+  }
+  .tri-back:hover, .tri-back:focus-visible { color: var(--thi-navy); text-decoration: underline; }
+
+  /* ── The focus layout ────────────────────────────────────────────────────
+     The shutoff and both interrupts. Nothing competes: larger type, a plain
+     ground, and no siblings — the replay asserts the DOM contains no verdict,
+     no source table and no other section's content while one of these shows. */
+  .tri-screen--focus { background: var(--thi-surface); min-height: 100vh; padding-top: 16px; }
+  .tri-screen--focus .tri-headline { font-size: 2.1rem; line-height: 1.12; }
+  .tri-screen--focus .tri-body { font-size: 1.2rem; line-height: 1.5; color: var(--thi-ink); }
+  .tri-screen--end .tri-eyebrow { font-size: 1rem; }
+
+  .tri-steps { margin: 8px 0 18px; padding-left: 1.3em; }
+  .tri-steps li { font-size: 1.15rem; line-height: 1.5; margin-bottom: 12px; color: var(--thi-ink); }
+  .tri-emphasis {
+    font-size: 1.15rem; line-height: 1.45; font-weight: 700; color: var(--thi-ink);
+    background: var(--thi-severe-bg); border-left: 4px solid var(--thi-severe);
+    padding: 14px 16px; margin: 0 0 16px; border-radius: 0 8px 8px 0;
+  }
+  .tri-source { font-size: .85rem; color: var(--thi-slate-500); margin: 0 0 22px; }
+
+  .tri-vsub { font-size: 1rem; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--thi-slate-500); margin: 26px 0 10px; }
+  .tri-list, .tri-questions { margin: 0 0 14px; padding-left: 1.3em; }
+  .tri-list li, .tri-questions li { font-size: 1.02rem; line-height: 1.5; margin-bottom: 10px; color: var(--thi-slate-700); }
+  .tri-copy { min-height: 48px; padding: 12px 18px; font-size: 1rem; cursor: pointer;
+    background: var(--thi-surface); border: 2px solid var(--thi-line-strong); border-radius: 8px; }
+  .tri-disclaimer { font-size: .875rem; color: var(--thi-slate-500); margin-top: 26px;
+    padding-top: 16px; border-top: 1px solid var(--thi-line); }
+  .tri-sources { padding: 8px 0 48px; }
+  .tri-sources .tri-list li { font-size: .9rem; }
+
+  /* ── NOTHING COMPETES WITH A FOCUS SCREEN ────────────────────────────────
+     `page-brief.md`: *"one instruction, large, high contrast, minimal
+     surrounding chrome. Nothing else on screen competes."* The render replay
+     caught the breadcrumb painting directly above the shutoff instruction —
+     four elements of navigation chrome over the one thing that matters when
+     someone is standing in water. Both selectors are needed: `:not([hidden])`
+     is the JS case, `:target` the no-JS one.
+
+     `:global()` is required, not stylistic: Astro scopes component styles by
+     appending a data attribute to the last compound selector, so an unscoped
+     rule here would compile to `.site-nav[data-astro-cid-…]` and match nothing.
+     The first version did exactly that and the replay caught it still painting
+     fifteen elements of chrome over the shutoff screen. */
+  :global(body:has(.tri-screen--focus:target) .topbar),
+  :global(body:has(.tri-screen--focus:target) .site-nav),
+  :global(body:has(.tri-screen--focus:target) .breadcrumbs),
+  :global(html[data-triage-js] body:has(.tri-screen--focus:not([hidden])) .topbar),
+  :global(html[data-triage-js] body:has(.tri-screen--focus:not([hidden])) .site-nav),
+  :global(html[data-triage-js] body:has(.tri-screen--focus:not([hidden])) .breadcrumbs) { display: none; }
+
+  /* ── WHICH SCREEN SHOWS ──────────────────────────────────────────────────
+     `:target` is the BASE mechanism and works with scripting off: every
+     section is in the document, the URL names the one that shows, and the
+     entry screen shows when nothing is targeted. Anchors do the navigation.
+
+     JavaScript then takes over by flagging the root and driving `hidden`
+     instead — no page load, and the phone's Back button is the tool's Back.
+     The flag is what keeps the two mechanisms from fighting: without it the
+     `:not([hidden])` rules would match every screen at once, because with
+     scripting off nothing carries `hidden` at all.
+
+     An earlier version put the no-JS rules behind `@media (scripting: none)`
+     and set `hidden` server-side. The render replay caught it showing NO
+     screen at all at `#electrical-stop` with scripting off — the safety
+     instruction reachable by URL rendered blank. This mechanism has no media
+     query and no attribute to override. */
+  .tri-screen { display: none; }
+  #start { display: block; }
+  .tri-screen:target { display: block; }
+  body:has(.tri-screen:target) #start { display: none; }
+
+  :global(html[data-triage-js]) .tri-screen { display: none; }
+  :global(html[data-triage-js]) .tri-screen:not([hidden]) { display: block; }
+  .tri-copy { display: none; }
+  :global(html[data-triage-js]) .tri-copy { display: inline-block; }
+
+  @media (min-width: 640px) { .tri-h1 { font-size: 2.3rem; } }
+</style>
+
+<script>
+  // Progressive enhancement only. Everything below is already reachable by
+  // anchor without it — this removes the page load, nothing more.
+  const root = document.querySelector<HTMLElement>("[data-triage]");
+  if (root) {
+      document.documentElement.dataset.triageJs = "";
+    const screens = [...root.querySelectorAll<HTMLElement>("[data-screen]")];
+    const show = (id: string, push: boolean) => {
+      const target = screens.find((s) => s.dataset.screen === id) ?? screens[0];
+      for (const s of screens) s.hidden = s !== target;
+      if (push) history.pushState({ id }, "", `#${id}`);
+      window.scrollTo(0, 0);
+      // Move focus to the heading so a screen reader announces the new screen.
+      target.querySelector<HTMLElement>("h1,h2")?.focus?.();
+    };
+    show(location.hash.slice(1) || "start", false);
+    root.addEventListener("click", (e) => {
+      const a = (e.target as HTMLElement).closest<HTMLElement>("[data-go]");
+      if (!a) return;
+      e.preventDefault();
+      show(a.dataset.go!, true);
+    });
+    addEventListener("popstate", (e) => show((e.state as { id?: string })?.id ?? "start", false));
+
+    for (const btn of root.querySelectorAll<HTMLButtonElement>("[data-copy]")) {
+      btn.addEventListener("click", async () => {
+        const list = btn.parentElement?.querySelector("[data-questions]");
+        const text = [...(list?.querySelectorAll("li") ?? [])].map((li) => li.textContent?.trim()).join("\n");
+        try {
+          await navigator.clipboard.writeText(text);
+          btn.textContent = "Copied";
+        } catch {
+          btn.textContent = "Select and copy the list above";
+        }
+      });
+    }
+  }
+</script>

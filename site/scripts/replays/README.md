@@ -50,6 +50,9 @@ npx tsx --import ./scripts/register-raw.mjs \
                                              #   Reports 10/10 dead in this sandbox: every host
                                              #   is proxied. That is the environment, not a bug —
                                              #   citationcheckunit.ts is the one to trust locally.
+node scripts/replays/triagerender.mjs        # render — Plumbing Triage (Round 18). Every
+                                             #   screen, the focus/terminal proofs, tap
+                                             #   targets, and the no-cost / no-referral guards.
 node scripts/replays/signinrender.mjs        # render
 node scripts/replays/r9render.mjs            # render
 node scripts/replays/saservicerender.mjs     # render — the six below-hero service pages,

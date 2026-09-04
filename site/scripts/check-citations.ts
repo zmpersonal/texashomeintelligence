@@ -45,6 +45,10 @@
  */
 import { BELOW_HERO } from "../src/data/belowHero";
 import { SERVICE_NOTICES } from "../src/data/serviceNotices";
+// Round 18: the tools cite sources too. `TOOL_CITATIONS` is the same shape and
+// is read here so a tool's citation is covered by the weekly check exactly as a
+// service page's is — one config, one checker.
+import { TOOL_CITATIONS } from "../src/data/plumbingTriage";
 
 interface Citation {
   url: string;
@@ -69,6 +73,7 @@ export function citedUrls(): Citation[] {
   for (const [key, list] of Object.entries(SERVICE_NOTICES)) {
     for (const n of list) add(n.sourceUrl, `${key} notice "${n.heading}"`, n.checkedByHumanOn);
   }
+  for (const c of TOOL_CITATIONS) add(c.url, c.citedBy, c.checkedByHumanOn);
   return [...byUrl.values()].sort((a, b) => a.url.localeCompare(b.url));
 }
 
