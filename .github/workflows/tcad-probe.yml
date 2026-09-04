@@ -1,0 +1,380 @@
+# ══════════════════════════════════════════════════════════════════════════
+# ROUND 16b — TEMPORARY. DELETE THIS ENTIRE FILE once the parcel-data
+# question is settled. It is a diagnostic, not infrastructure.
+# ══════════════════════════════════════════════════════════════════════════
+#
+# WHY IT EXISTS
+# Round 16 tried to characterise Travis CAD's parcel data from the Claude Code
+# container and could not: `traviscad.org` answers `connect_rejected` — a policy
+# 403 on CONNECT — as does every other data host this project ingests from,
+# including `data.austintexas.gov`, which the permit fetchers query successfully
+# from THIS runner every day. The container's allowlist is narrower than the
+# runner's. That asymmetry is the whole reason for this file.
+# See docs/audits/round-16-parcel-data-probe.md.
+#
+# WHAT IT IS ALLOWED TO DO
+# Read. That is all. It writes only under `$RUNNER_TEMP`, never under `site/`,
+# and — unlike the ingestion workflow it deliberately does NOT ride along with —
+# **this workflow has no commit step, no write permission, and no token use.**
+# `permissions: contents: read` is set explicitly rather than inherited, so the
+# job could not push even if a future edit tried to.
+#
+# WHY A SEPARATE FILE RATHER THAN A STEP IN data-ingestion.yml
+# Rounds 4b and 5 added TEMP steps inside the ingestion workflow and Round 7
+# had to unpick them. A standalone dispatch-only file is deleted in one
+# `git rm` with nothing left behind, and it cannot fail an ingestion run it is
+# riding along with — because it does not ride along with one.
+#
+# NOTHING HERE IS INFERRED FROM A BRIEF. Round 16 established that no Travis
+# CAD URL in any prior brief has ever been opened, so this DISCOVERS the links
+# from the published page and reports what it finds, rather than fetching a
+# filename someone typed. If discovery finds nothing, it says so and prints
+# enough raw HTML for a human to see why.
+name: "TEMP (Round 16b): Travis CAD parcel data probe"
+
+on:
+  workflow_dispatch:
+
+# Explicit, not inherited. This job reads public files and prints to a log.
+permissions:
+  contents: read
+
+concurrency:
+  group: tcad-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # No checkout of the repo is needed and none is done: the probe touches
+      # nothing in this repository. That is the strongest guarantee available
+      # that it cannot modify site/.
+      - name: Probe Travis CAD
+        # A diagnostic must report what it found even when part of it fails.
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          python3 - <<'PY'
+          import io, os, re, sys, zipfile
+          # urllib.parse is imported EXPLICITLY: `urllib.request` happens to pull it
+          # in today, and `urljoin` below would work by accident. Accidents are not
+          # what a one-shot probe should rest on.
+          import urllib.request, urllib.error, urllib.parse
+          from collections import Counter
+
+          # Courtesy: identify the caller to the county's server rather than
+          # arriving as a bare urllib default.
+          UA = ("TexasHomeIntelligence-probe/1.0 (one-off read-only characterisation; "
+                "contact via github.com/zmpersonal/texashomeintelligence)")
+          TMP = os.environ.get("RUNNER_TEMP", "/tmp")
+
+          # Hard ceiling. If the file is bigger than this the round's rule is to
+          # REPORT it, not to stream-process around it.
+          MAX_DOWNLOAD = 500 * 1024 * 1024
+
+          ok = {"pages": 0, "candidates": 0, "downloaded": 0, "inspected": 0}
+
+          def hr(title):
+              print(f"\n{'='*74}\n== {title}\n{'='*74}")
+
+          def get(url, timeout=120, method="GET", limit=None):
+              req = urllib.request.Request(url, method=method, headers={"User-Agent": UA})
+              return urllib.request.urlopen(req, timeout=timeout)
+
+          # ── 1. WHAT IS PUBLISHED ─────────────────────────────────────────
+          # Several plausible entry points, because the round must not depend on
+          # one path being right. Every one is reported with its real status.
+          hr("1. PAGES — what actually answers, and with what")
+          PAGES = [
+              "https://traviscad.org/publicinformation",
+              "https://traviscad.org/property-data",
+              "https://traviscad.org/",
+          ]
+          html_by_url = {}
+          for url in PAGES:
+              try:
+                  with get(url, timeout=60) as r:
+                      raw = r.read()
+                      enc = r.headers.get_content_charset() or "utf-8"
+                      body = raw.decode(enc, errors="replace")
+                      html_by_url[url] = body
+                      ok["pages"] += 1
+                      print(f"\n  {url}")
+                      print(f"    HTTP {r.status}  {len(raw):,} bytes  "
+                            f"content-type={r.headers.get('Content-Type')}")
+                      print(f"    last-modified={r.headers.get('Last-Modified')}  "
+                            f"server={r.headers.get('Server')}")
+              except urllib.error.HTTPError as e:
+                  print(f"\n  {url}\n    HTTP {e.code} {e.reason}")
+              except Exception as e:
+                  print(f"\n  {url}\n    FAILED: {type(e).__name__}: {e}")
+
+          if ok["pages"] == 0:
+              print("\n  *** NO PAGE ANSWERED. The runner cannot reach traviscad.org either.")
+              print("  *** Per the round rule this is a STOP, not something to work around.")
+              print("\nTCAD_PROBE_STATUS=unreachable pages=0 candidates=0 inspected=0")
+              sys.exit(0)
+
+          # ── 2. DISCOVER THE REAL LINKS ───────────────────────────────────
+          hr("2. CANDIDATE DATA FILES — discovered from the page, not assumed")
+          DATA_EXT = r"\.(zip|csv|txt|xlsx|xls|pdf|gz|7z|accdb|mdb)"
+          seen = {}
+          for url, body in html_by_url.items():
+              # href/src plus bare URLs, so a JS-built link list is still caught.
+              for m in re.finditer(r'''(?:href|src)\s*=\s*["']([^"']+)["']''', body, re.I):
+                  seen.setdefault(urllib.parse.urljoin(url, m.group(1)), url)
+              for m in re.finditer(r'''https?://[^\s"'<>)]+''', body):
+                  seen.setdefault(m.group(0), url)
+
+          cands = sorted(u for u in seen if re.search(DATA_EXT, u, re.I))
+          print(f"\n  {len(seen):,} link(s) found across {ok['pages']} page(s); "
+                f"{len(cands)} look like data files.\n")
+          for u in cands:
+              print(f"    {u}")
+          if not cands:
+              print("    *** none. The link list may be built by JavaScript.")
+              print("    *** First 3000 chars of the primary page, verbatim, so a human can see:")
+              print("    " + repr(list(html_by_url.values())[0][:3000]))
+
+          # ── 3. HEAD EVERY CANDIDATE ──────────────────────────────────────
+          hr("3. HEAD — size, type and last-modified for each candidate")
+          heads = {}
+          for u in cands:
+              try:
+                  with get(u, timeout=60, method="HEAD") as r:
+                      cl = r.headers.get("Content-Length")
+                      heads[u] = {
+                          "status": r.status,
+                          "bytes": int(cl) if cl and cl.isdigit() else None,
+                          "type": r.headers.get("Content-Type"),
+                          "modified": r.headers.get("Last-Modified"),
+                          "etag": r.headers.get("ETag"),
+                      }
+                      n = heads[u]["bytes"]
+                      print(f"\n  {u}\n    HTTP {r.status}  "
+                            f"{(f'{n:,} bytes ({n/1048576:.1f} MiB)' if n else 'size not stated')}")
+                      print(f"    type={heads[u]['type']}  modified={heads[u]['modified']}")
+                      print(f"    etag={heads[u]['etag']}")
+                      ok["candidates"] += 1
+              except Exception as e:
+                  print(f"\n  {u}\n    HEAD FAILED: {type(e).__name__}: {e}")
+
+          # ── 4. PICK THE IMPROVEMENT FILE AND INSPECT IT ──────────────────
+          hr("4. STRUCTURE — the improvement/parcel file, inspected in memory")
+          # Prefer something that names improvement detail; fall back to the
+          # largest zip. Both choices are PRINTED so the reader knows which ran.
+          def rank(u):
+              s = u.lower()
+              score = 0
+              if "improvement" in s: score += 100
+              if "detail" in s: score += 50
+              if s.endswith(".zip"): score += 10
+              return (score, heads.get(u, {}).get("bytes") or 0)
+
+          zips = [u for u in cands if u.lower().endswith(".zip")]
+          target = max(zips, key=rank) if zips else None
+          print(f"\n  chosen target: {target}")
+          if target:
+              size = heads.get(target, {}).get("bytes")
+              if size and size > MAX_DOWNLOAD:
+                  print(f"  *** {size:,} bytes exceeds the {MAX_DOWNLOAD:,} ceiling.")
+                  print("  *** REPORTING rather than working around it, per the round rule.")
+                  target = None
+
+          if target:
+              path = os.path.join(TMP, "tcad_target.zip")
+              try:
+                  with get(target, timeout=900) as r, open(path, "wb") as f:
+                      got = 0
+                      while True:
+                          chunk = r.read(1 << 20)
+                          if not chunk: break
+                          got += len(chunk)
+                          if got > MAX_DOWNLOAD:
+                              raise RuntimeError(f"exceeded {MAX_DOWNLOAD:,} bytes mid-stream")
+                          f.write(chunk)
+                  ok["downloaded"] = got
+                  print(f"  downloaded {got:,} bytes ({got/1048576:.1f} MiB) to $RUNNER_TEMP")
+
+                  with zipfile.ZipFile(path) as z:
+                      print(f"\n  ── ARCHIVE CONTENTS ({len(z.namelist())} entries) ──")
+                      for i in z.infolist():
+                          print(f"    {i.filename:<58} {i.file_size:>14,} bytes  "
+                                f"{'%04d-%02d-%02d' % i.date_time[:3]}")
+
+                      # A layout/dictionary shipped alongside the data is the
+                      # thing the round most wants and the thing most likely to
+                      # be missed — look for it explicitly.
+                      docs = [n for n in z.namelist()
+                              if re.search(r"(layout|dictionar|readme|record|terms|licen|spec)",
+                                           n, re.I)]
+                      print(f"\n  ── LAYOUT / DICTIONARY / TERMS FILES: {docs or 'NONE FOUND'} ──")
+                      for n in docs[:4]:
+                          if z.getinfo(n).file_size < 400_000 and not n.lower().endswith(".pdf"):
+                              print(f"\n    ---- {n} ----")
+                              print(z.read(n).decode("utf-8", errors="replace")[:4000])
+
+                      # The biggest non-doc member is the data.
+                      members = [i for i in z.infolist()
+                                 if not i.is_dir() and i.filename not in docs]
+                      if members:
+                          big = max(members, key=lambda i: i.file_size)
+                          print(f"\n  ── DATA MEMBER: {big.filename} "
+                                f"({big.file_size:,} bytes uncompressed) ──")
+                          with z.open(big) as fh:
+                              head = fh.read(1 << 20).decode("utf-8", errors="replace")
+                          lines = head.splitlines()
+                          print("\n  ── FIRST 3 LINES, VERBATIM (delimiter unknown until seen) ──")
+                          for ln in lines[:3]:
+                              print(f"    {ln[:600]!r}")
+
+                          # Sniff rather than assume. TCAD has historically
+                          # published fixed-width; nothing here presumes CSV.
+                          counts = {d: lines[0].count(d) for d in [",", "|", "\t", ";"]}
+                          print(f"\n  delimiter candidate counts on line 1: {counts}")
+                          delim = max(counts, key=counts.get) if max(counts.values()) > 3 else None
+                          print(f"  → treating as: "
+                                f"{'delimited by ' + repr(delim) if delim else 'FIXED-WIDTH or unknown'}")
+
+                          if delim:
+                              import csv as _csv
+                              hdr = next(_csv.reader([lines[0]], delimiter=delim))
+                              print(f"\n  ── FIELD NAMES, VERBATIM AND IN ORDER ({len(hdr)}) ──")
+                              for i, h in enumerate(hdr):
+                                  print(f"    [{i:>3}] {h!r}")
+
+                              # Full pass for row count + the four fields the
+                              # tools need. Streamed; nothing is retained.
+                              WANT = {"year": r"(yr|year).*(built|blt)|eff.*year",
+                                      "area":  r"(living|improvement|imprv|bldg|building).*(area|sqft|sq_ft)|^area$",
+                                      "class": r"class",
+                                      "stories": r"stor(y|ies)|num_stories",
+                                      "residential": r"(state.*cd|property.*use|imprv.*type|class.*cd)"}
+                              idx = {k: [i for i, h in enumerate(hdr)
+                                         if re.search(v, h, re.I)] for k, v in WANT.items()}
+                              print("\n  ── FIELD MATCHES FOR THE TOOLS ──")
+                              for k, v in idx.items():
+                                  print(f"    {k:<12} → {[hdr[i] for i in v] or 'NO MATCHING FIELD'}")
+
+                              rows = 0
+                              nulls = Counter()
+                              # Keyed by (concept, COLUMN NAME) — never by concept
+                              # alone. Two columns can match one concept, and
+                              # merging their values invents a field.
+                              dist = {(k, hdr[c]): Counter()
+                                      for k, cols in idx.items() for c in cols}
+                              with z.open(big) as fh:
+                                  rdr = _csv.reader(io.TextIOWrapper(fh, encoding="utf-8",
+                                                                     errors="replace"),
+                                                    delimiter=delim)
+                                  next(rdr, None)
+                                  for row in rdr:
+                                      rows += 1
+                                      for k, cols in idx.items():
+                                          for c in cols:
+                                              val = row[c].strip() if c < len(row) else ""
+                                              if not val or val in {"0", "null", "NULL"}:
+                                                  nulls[(k, hdr[c])] += 1
+                                              elif len(dist[(k, hdr[c])]) < 4000:
+                                                  dist[(k, hdr[c])][val] += 1
+                              ok["inspected"] = rows
+                              print(f"\n  ── ROW COUNT: {rows:,} ──")
+                              print("\n  ── NULL RATE ON THE FIELDS THE TOOLS NEED ──")
+                              for (k, h), n in sorted(nulls.items()):
+                                  pct = (n / rows * 100) if rows else 0.0
+                                  print(f"    {k:<12} {h:<28} {n:>10,} null/zero  ({pct:.2f}%)")
+                              for (k, col), c in dist.items():
+                                  if k == "area" or not c:
+                                      continue
+                                  print(f"\n  ── {k.upper()} · column {col!r} — 15 most common ──")
+                                  print(f"     ({len(c):,} distinct values sampled)")
+                                  for v, n in c.most_common(15):
+                                      print(f"    {v!r:<34} {n:>9,}")
+                              for (k, col), c in dist.items():
+                                  if k != "area" or not c:
+                                      continue
+                                  nums = sorted(float(v) for v in c
+                                                if re.fullmatch(r"\d+(\.\d+)?", v))
+                                  if nums:
+                                      q = lambda p: nums[int(len(nums)*p)]
+                                      print(f"\n  ── AREA · column {col!r} "
+                                            f"(sampled {len(nums):,} distinct) ──")
+                                      print(f"    min {nums[0]:,.0f} · p25 {q(.25):,.0f} · "
+                                            f"med {q(.5):,.0f} · p75 {q(.75):,.0f} · "
+                                            f"p95 {q(.95):,.0f} · max {nums[-1]:,.0f}")
+                          else:
+                              print("\n  Fixed-width or unrecognised. The three lines above are the")
+                              print("  evidence; a published record layout is required to parse it,")
+                              print("  and section 5 reports whether one was found.")
+              except Exception as e:
+                  print(f"  DOWNLOAD/INSPECT FAILED: {type(e).__name__}: {e}")
+              finally:
+                  if os.path.exists(path):
+                      os.remove(path)
+                      print("\n  (temp file deleted; nothing was retained)")
+
+          # ── 5. TERMS OF USE — a gate, not a footnote ─────────────────────
+          hr("5. LICENSING / USE TERMS — including Texas Tax Code restrictions")
+          TERMS = re.compile(
+              r"(terms of use|conditions of use|redistribut|share.?alike|attribut|"
+              r"commercial use|copyright|licen[cs]|tax code|11\.48|25\.027|552\.|"
+              r"public information act|confidential|may not be (sold|resold|redistributed))",
+              re.I)
+          hits = 0
+          for url, body in html_by_url.items():
+              text = re.sub(r"<[^>]+>", " ", body)
+              text = re.sub(r"\s+", " ", text)
+              # Merge overlapping windows. Several matches usually sit in ONE
+              # sentence, and printing a near-identical window per match buries
+              # the finding in its own repetition.
+              spans = []
+              for m in TERMS.finditer(text):
+                  a, b = max(0, m.start() - 220), min(len(text), m.end() + 220)
+                  if spans and a <= spans[-1][1]:
+                      spans[-1][1] = max(spans[-1][1], b)
+                  else:
+                      spans.append([a, b])
+              for a, b in spans[:12]:
+                  print(f"\n  [{url}] …{text[a:b].strip()}…")
+                  hits += 1
+          if hits == 0:
+              print("\n  No terms-of-use language matched on any page fetched.")
+              print("  That is NOT the same as 'no conditions apply' — report it as")
+              print("  'none published on these pages', and check the district's")
+              print("  separate terms/legal page before relying on it.")
+
+          # ── 6. REFRESH CADENCE ───────────────────────────────────────────
+          hr("6. STATED REFRESH / SUPPLEMENT CADENCE")
+          CAD = re.compile(r"(updated?|refresh|supplement|certif\w+|annual|monthly|weekly|"
+                           r"roll|as of|20\d\d)\b", re.I)
+          shown = 0
+          for url, body in html_by_url.items():
+              text = re.sub(r"<[^>]+>", " ", body); text = re.sub(r"\s+", " ", text)
+              # Same overlap merge as section 5, and for the same reason: cadence
+              # words cluster in one sentence, so per-match windows repeat it.
+              spans = []
+              for m in CAD.finditer(text):
+                  a, b = max(0, m.start() - 140), min(len(text), m.end() + 140)
+                  if spans and a <= spans[-1][1]:
+                      spans[-1][1] = max(spans[-1][1], b)
+                  else:
+                      spans.append([a, b])
+              for a, b in spans:
+                  frag = text[a:b].strip()
+                  if len(frag) > 40:
+                      print(f"\n  [{url}] …{frag}…")
+                      shown += 1
+                  if shown >= 12: break
+              if shown >= 12: break
+          if shown == 0:
+              print("\n  No cadence language matched.")
+
+          # Round 15b's discipline: a run that reached an answer says so. Its
+          # absence means the probe crashed, which is a different finding from
+          # "the data is not there".
+          print(f"\nTCAD_PROBE_STATUS=complete pages={ok['pages']} "
+                f"candidates={ok['candidates']} downloaded={ok['downloaded']} "
+                f"rows={ok['inspected']}")
+          PY
