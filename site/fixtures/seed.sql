@@ -1,5 +1,22 @@
 -- Sample seed rows for local development only. Obviously-fake data
 -- (example.com emails, placeholder names) — never run against production.
+--
+-- ── WHY THIS FILE IS NOT IN migrations/ (Round 13) ────────────────────────
+-- It used to be, and that was a live hazard. `wrangler d1 migrations apply`
+-- globs `**/*.sql` under `migrations_dir`, so this file counted as a migration
+-- and listed as UNAPPLIED — meaning the first `--remote` run of the migrations
+-- workflow would have inserted these fake rows into the production database.
+-- Verified before the move, against a throwaway local database: it appeared in
+-- `wrangler d1 migrations list` alongside 0001-0004.
+--
+-- `migrations/` is now exactly the set of files wrangler may run. Anything that
+-- must never run against production does not live there. Do not move this back.
+--
+-- To load it locally, name it explicitly:
+--   npx wrangler d1 execute texas-home-intelligence-db --local \
+--     --persist-to .wrangler/state --file fixtures/seed.sql
+-- Note that `scripts/local-fixture.ts` does NOT use this file — it writes its
+-- own richer fixture covering the 0003/0004 tables, which these rows predate.
 
 INSERT INTO projects (id, first_name, email, service, location, status, created_at, updated_at)
 VALUES

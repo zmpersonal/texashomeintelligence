@@ -30,11 +30,18 @@ export interface ServiceNotice {
    * CLAIM was confirmed. They are different things and collapsing them is how a
    * citation quietly rots into a dead link.
    *
-   * Round 12: this sandbox's egress proxy denies `www.tdlr.texas.gov` (403 on
-   * CONNECT, verified against the proxy's own status endpoint), so the roofing
-   * notice's URL could not be fetched from here. The claim is not in doubt; the
-   * link is unchecked. Recorded rather than glossed, and carried as an owner
-   * seam in HANDOFF.md. Absent means verified.
+   * Round 12 set this on the roofing notice; Round 13b found out how right that
+   * was — the owner opened the URL and it was DEAD. The flag is what made the
+   * failure catchable by review instead of by a reader.
+   *
+   * ⚠️ ABSENT DOES NOT MEAN VERIFIED. Round 13b fetch-tested every external URL
+   * the three San Antonio pages cite — all seven — and this sandbox's egress
+   * proxy denies EVERY ONE of them, irs.gov, eia.gov, airnow.gov,
+   * ncdc.noaa.gov, droughtmonitor.unl.edu and data.sanantonio.gov included.
+   * Not one citation on this site has been fetch-verified from here. So absent
+   * means only "not asserted either way", and the honest state of the whole set
+   * is listed in HANDOFF.md as an owner action. Setting this to `false` records
+   * a KNOWN-unverified link; it does not imply the unflagged ones are fine.
    */
   urlVerifiedByFetch?: false;
 }
@@ -193,10 +200,19 @@ export const SERVICE_NOTICES: Record<string, ServiceNotice[]> = {
         "What is checkable: liability and workers' compensation insurance carried in the company's own " +
         "name, how long the business has traded under that name, and the manufacturer certification " +
         "behind whatever workmanship warranty is offered.",
-      sourceName: "Texas Department of Licensing and Regulation — regulated programs",
-      sourceUrl: "https://www.tdlr.texas.gov/programs.htm",
-      // NOT fetched from here: the egress proxy denies tdlr.texas.gov. The
-      // claim stands; the link is unchecked. See HANDOFF.md, Round 12.
+      sourceName: "Texas Department of Licensing and Regulation — Programs Licensed and Regulated by TDLR",
+      // Round 13b: was /programs.htm, which the owner confirmed is DEAD. This is
+      // the live equivalent, and it carries both halves of the contrast on one
+      // page: its program list includes Air Conditioning and Refrigeration,
+      // Electricians, and Mold Assessors and Remediators, and roofing appears
+      // nowhere on it.
+      sourceUrl: "https://www.tdlr.texas.gov/licenses.htm",
+      // STILL not fetched from here, and still not implied to be. The egress
+      // proxy denies www.tdlr.texas.gov (connect_rejected, confirmed against the
+      // proxy's own status endpoint on 2026-09-04), so the replacement URL is as
+      // unchecked from this environment as the one it replaces. It was supplied
+      // by the owner, who did open it — which is exactly the human check this
+      // flag exists to route work to. It stays false until a fetch confirms it.
       urlVerifiedByFetch: false,
       confirmedOn: "2026-09-04",
       // An occupation entering state licensure is a legislative act, and the
