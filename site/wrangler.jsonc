@@ -38,14 +38,42 @@
       "id": "cc7a5a1c29e04852ace9723ed69969bb"
     }
   ],
-  // Durable store for intake projects, answers, generated briefs and
-  // contractor requests (src/lib/db.ts).
-  // migrations/0001_init.sql was applied to the REMOTE database on 2026-08-29
-  // at the owner's instruction. Verified present: tables projects,
-  // intake_responses, generated_briefs, contractor_requests, plus the indexes
-  // idx_intake_responses_project and idx_contractor_requests_project.
+  // Durable store for intake projects, answers, generated briefs, accounts,
+  // home profiles, reminders and the weekly-email tables (src/lib/db.ts,
+  // src/lib/account/db.ts).
+  //
+  // MIGRATION STATE, VERIFIED 2026-09-04 — INFERRED, NOT RECORDED.
+  // All four migrations are applied to the REMOTE database:
+  //   0001_init.sql                    0002_dashboard_launch_signups.sql
+  //   0003_accounts_home_reminders.sql 0004_weekly_email.sql
+  // HOW THAT WAS ESTABLISHED, and the caveat that matters: by READ-ONLY SCHEMA
+  // INSPECTION of the remote database (`sqlite_master`), not by reading a
+  // ledger. All 22 objects those four files create — 18 tables and 4 indexes —
+  // are present, and the column-level DDL of the 0003 and 0004 tables matches
+  // the migration files exactly (every column, type, default and CHECK).
+  // So this is an INFERENCE FROM OBJECT PRESENCE. It cannot distinguish "the
+  // migration ran" from "something else created objects of the same shape", and
+  // it carries NO APPLIED TIMESTAMPS, because none are recorded anywhere.
+  // The previous note here claimed only 0001 was applied, on 2026-08-29. That
+  // was correct when written and went stale across three migrations without
+  // anything noticing — which is the cost of having no ledger, stated plainly.
+  //
+  // THERE IS NO MIGRATION LEDGER. Migrations were applied with raw
+  // `wrangler d1 execute --file`, which records nothing, so no `d1_migrations`
+  // table exists (confirmed absent, same read). Adopting
+  // `wrangler d1 migrations apply` is recommended but NOT yet done, and it is
+  // NOT a one-liner — see the seed.sql hazard below and HANDOFF.md.
+  //
   // migrations/seed.sql has NOT been applied and must not be — it inserts
-  // sample rows, which have no place in a production store.
+  // sample rows (fake names, example.com emails), which have no place in a
+  // production store.
+  // ⚠️ AND IT IS A MIGRATION AS FAR AS WRANGLER IS CONCERNED. `migrations_dir`
+  // defaults to ./migrations and the file pattern is `**/*.sql`, so seed.sql is
+  // listed as an UNAPPLIED MIGRATION — verified by running
+  // `wrangler d1 migrations list --local` against a throwaway database, which
+  // printed it alongside 0001-0004. Running `d1 migrations apply --remote`
+  // today would therefore execute its four INSERTs against production.
+  // Move or exclude seed.sql BEFORE adopting the migrations workflow.
   "d1_databases": [
     {
       "binding": "DB",
