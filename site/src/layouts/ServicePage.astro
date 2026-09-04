@@ -26,6 +26,10 @@ import { getEntry } from "astro:content";
 import { hasDataHub, publishedDataPages } from "../lib/dataPages";
 import { findDataset, freshnessOf } from "../lib/datasets";
 import { SERVICE_SIGNALS, SERVICES_WITHOUT_SIGNAL } from "../lib/serviceSignals";
+import BelowHero from "../components/BelowHero.astro";
+import { belowHeroSpec } from "../data/belowHero";
+import { tradeActivity } from "../lib/tradeActivity";
+import { SERVICE_NOTICES } from "../data/serviceNotices";
 
 interface Props {
   serviceSlug: string;
@@ -44,8 +48,6 @@ const svc = svcEntry.data;
 const loc = locEntry.data;
 
 const cityName = loc.name;
-const heroTagline = svc.heroTagline.replace(/\{CITY\}/g, cityName);
-const eyebrow = svc.eyebrow.replace(/\{CITY\}/g, cityName);
 
 const otherLocationSlug = locationSlug === "austin" ? "san-antonio" : "austin";
 const otherLocationEntry = await getEntry("locations", otherLocationSlug);
@@ -76,10 +78,47 @@ const signalReading = signalSpec
 
 const noSignalReason = SERVICES_WITHOUT_SIGNAL[serviceSlug];
 
-const title = `${svc.name} in ${cityName}, TX — Local Data & What to Know | Texas Home Intelligence`;
-const description = `What ${cityName} homeowners should know before a ${svc.name.toLowerCase()} project: the local conditions we track, what a contractor should evaluate, and the questions worth asking first.`;
+/**
+ * Round 10. The below-hero content layer, when this location AND service has
+ * one. It REPLACES the QuoteReady-era body: the authored sections, the
+ * evaluation/estimate lists, the closing CTA band and the YAML FAQ. Pages
+ * without a layer are untouched, which is how Austin renders byte-identically
+ * while San Antonio's plumbing and HVAC pages are rebuilt.
+ *
+ * `services/*.yaml` is per-SERVICE and shared by both metros, so the San
+ * Antonio replacement could not be an edit to it — see data/belowHero.ts.
+ */
+const belowHero = belowHeroSpec(locationSlug, serviceSlug);
+const activity = belowHero ? tradeActivity(locationSlug, belowHero.category) : undefined;
+if (belowHero && !activity) {
+  throw new Error(
+    `ServicePage: ${locationSlug}/${serviceSlug} has a below-hero layer but no ` +
+      `permit-trade-activity rows for category "${belowHero.category}". The page would ` +
+      `render a content layer with no data behind it — refusing to build it.`,
+  );
+}
+const notices = belowHero ? (SERVICE_NOTICES[`${locationSlug}/${serviceSlug}`] ?? []) : [];
 
-const dateModified = signalReading?.freshness.asOf;
+// The hero's STRUCTURE is unchanged this round — no new tool, no address
+// input; the readings that belong there need parcel data San Antonio does not
+// have. Its COPY is replaced wherever a below-hero layer exists, because the
+// QuoteReady funnel it advertised is retired and a retired funnel's pitch is
+// not a thing to leave on an indexed page.
+const heroTagline = belowHero ? belowHero.hero.h1 : svc.heroTagline.replace(/\{CITY\}/g, cityName);
+const eyebrow = belowHero ? belowHero.hero.eyebrow : svc.eyebrow.replace(/\{CITY\}/g, cityName);
+const heroBody = belowHero ? belowHero.hero.lede : svc.heroBody;
+const heroMicrocopy = belowHero ? belowHero.hero.microcopy : svc.heroMicrocopy;
+
+const title = belowHero
+  ? `${svc.name} permit activity in ${cityName}, TX — counts, timing and sources | Texas Home Intelligence`
+  : `${svc.name} in ${cityName}, TX — Local Data & What to Know | Texas Home Intelligence`;
+// `svc.name.toLowerCase()` renders "a hvac project" — correct for every other
+// service, wrong for an acronym. The layer carries its own noun.
+const description = belowHero
+  ? `How many ${belowHero.subjectNoun} permits ${cityName} issues, month by month, from the city's own permit record — with the permit types behind the count, what the data cannot support, and every source named.`
+  : `What ${cityName} homeowners should know before a ${svc.name.toLowerCase()} project: the local conditions we track, what a contractor should evaluate, and the questions worth asking first.`;
+
+const dateModified = activity?.freshness.asOf ?? signalReading?.freshness.asOf;
 ---
 
 <Base
@@ -100,16 +139,23 @@ const dateModified = signalReading?.freshness.asOf;
       <div>
         <span class="eyebrow">{eyebrow}</span>
         <h1>{heroTagline}</h1>
-        <p class="lede">{svc.heroBody}</p>
+        <p class="lede">{heroBody}</p>
         <div class="hero-actions">
-          <a class="btn" href={`/start/?service=${serviceSlug}&location=${locationSlug}`}>
-            Build a Project Brief
-          </a>
+          {belowHero ? (
+            <>
+              <a class="btn" href="#data">See the permit data</a>
+              <a class="btn secondary" href="#sources">Sources and limitations</a>
+            </>
+          ) : (
+            <a class="btn" href={`/start/?service=${serviceSlug}&location=${locationSlug}`}>
+              Build a Project Brief
+            </a>
+          )}
           {hasHub && (
             <a class="btn secondary" href={`/data/${locationSlug}/`}>See {cityName} data</a>
           )}
         </div>
-        <p class="microcopy" set:html={svc.heroMicrocopy} />
+        <p class="microcopy" set:html={heroMicrocopy} />
         {svc.safetyNote && <p class="disclaimer-note">{svc.safetyNote}</p>}
         {svc.licensingNote && <p class="disclaimer-note">{svc.licensingNote}</p>}
         {svc.permitNote && <p class="disclaimer-note">{svc.permitNote}</p>}
@@ -122,7 +168,7 @@ const dateModified = signalReading?.freshness.asOf;
     </div>
   </section>
 
-  {signalReading && signalSpec && (
+  {!belowHero && signalReading && signalSpec && (
     <section class="block">
       <div class="wrap" style="max-width:820px;">
         <h2>What the local data says about {svc.name.toLowerCase()} in {cityName}</h2>
@@ -149,7 +195,7 @@ const dateModified = signalReading?.freshness.asOf;
     </section>
   )}
 
-  {!signalReading && noSignalReason && (
+  {!belowHero && !signalReading && noSignalReason && (
     <section class="block">
       <div class="wrap" style="max-width:820px;">
         <h2>What local data do you have on {svc.name.toLowerCase()}?</h2>
@@ -164,7 +210,17 @@ const dateModified = signalReading?.freshness.asOf;
     </section>
   )}
 
-  {svc.sections.map((s, i) => (
+  {belowHero && activity && (
+    <BelowHero
+      spec={belowHero}
+      activity={activity}
+      cityName={cityName}
+      location={locationSlug}
+      notices={notices}
+    />
+  )}
+
+  {!belowHero && svc.sections.map((s, i) => (
     <section class={`block ${i % 2 === 1 ? "alt" : ""}`}>
       <div class="wrap" style="max-width: 760px;">
         <h2>{s.heading}</h2>
@@ -175,7 +231,10 @@ const dateModified = signalReading?.freshness.asOf;
 
   {/* Both lists are existing authored content that previously reached nobody:
       the brief generator read them privately. As visible, extractable blocks
-      they are among the most quotable things on the page. */}
+      they are among the most quotable things on the page.
+      Round 10: suppressed where a below-hero layer owns the page — both lists
+      are framed around getting a QUOTE, which is the retired funnel's job. */}
+  {!belowHero && (
   <section class="block alt">
     <div class="wrap" style="max-width:760px;">
       <h2>What should a {svc.name.toLowerCase()} contractor evaluate?</h2>
@@ -217,6 +276,7 @@ const dateModified = signalReading?.freshness.asOf;
       <FaqAccordion heading={`${svc.name} FAQ`} items={svc.faq} />
     </div>
   </section>
+  )}
 
   <section class="block alt">
     <div class="wrap center">
@@ -225,8 +285,16 @@ const dateModified = signalReading?.freshness.asOf;
         <a href={`/${otherLocationSlug}/${serviceSlug}/`}>{otherLocationName}</a>
         {" "}&bull;{" "}
         <a href={`/${locationSlug}/`}>All {cityName} services</a>
-        {" "}&bull;{" "}
-        <a href="/services/">All services</a>
+        {/* ROADMAP: Services is permanently removed from nav — "do not re-add
+            or link". The link survived here. Removed on the pages this round
+            rebuilds; the Austin instances are recorded as a finding rather
+            than changed, because Austin is out of scope this round. */}
+        {!belowHero && (
+          <>
+            {" "}&bull;{" "}
+            <a href="/services/">All services</a>
+          </>
+        )}
       </p>
     </div>
   </section>

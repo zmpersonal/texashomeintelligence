@@ -140,6 +140,80 @@ run into.
   generated dataset files - those come from ingestion, and a replay asserting on them needs a
   prior `npm run ingest` or the committed data.
 
+- **Round 10 seam: the IRS 25C notice on `/san-antonio/hvac/` is a DATED FACT ON A REVIEW
+  CADENCE.** The page states that the Energy Efficient Home Improvement Credit (IRC section
+  25C) terminated for property placed in service after **December 31, 2025** under the One Big
+  Beautiful Bill Act, with **no grandfather provision** for equipment bought before July 4,
+  2025 and installed after. Cited to **IRS Fact Sheet 2025-05** (irs.gov) and nothing else -
+  never an aggregator, a news write-up or an installer's page.
+  **Confirmed 2026-09-04. Re-verify every 90 days** against the primary source. It lives in
+  `site/src/data/serviceNotices.ts`, which carries `confirmedOn` and `reviewEveryDays` per
+  notice; the page renders the confirmed date beside the citation, so a stale one is visible
+  rather than silent. The statutory date itself will not drift, but IRS guidance on it can,
+  and a successor credit would make the page wrong by omission rather than by error - which is
+  the failure mode a cadence exists to catch. **Nothing in the build enforces this**: there is
+  no check that fails when a notice ages past its cadence. That is the seam. A build-time
+  assertion over `reviewEveryDays` would close it and was not in this round's scope.
+
+- **Round 10: the San Antonio below-hero layer, and the three conflicts it had to resolve.**
+  `/san-antonio/hvac/` and `/san-antonio/plumbing/` now render a data layer over
+  `permit-trade-activity` - the Round 8 feed that until this round no page read at all.
+  **(1) `services/*.yaml` is PER-SERVICE, shared by both metros.** The round lifted the copy
+  freeze "for San Antonio" and separately said not to touch Austin's service pages. Editing
+  the shared YAML cannot do both, so the YAML is untouched and San Antonio's replacement lives
+  in `site/src/data/belowHero.ts`, keyed by location AND service. Austin's two pages are
+  content-identical to HEAD (only the content-hashed stylesheet filename differs, because
+  `global.css` gained the layer's rules).
+  **(2) "No hero changes" vs "prove no QuoteReady copy survives".** The hero carried the
+  QuoteReady pitch - eyebrow, H1, lede, microcopy and a "Build a Project Brief" CTA. Those
+  cannot both hold. Resolved by reading the no-hero-changes constraint against its own stated
+  reason ("the tools that belong there need parcel data San Antonio does not have"): the hero
+  STRUCTURE is untouched - no tool, no address input, no layout change - and its COPY is
+  replaced, because a retired funnel's pitch is not a thing to leave on an indexed page.
+  **If the owner meant that literally, reverting is a one-file change** to the four hero
+  ternaries in `ServicePage.astro`.
+  **(3) QuoteReady survives in the FOOTER**, sitewide: a "Project Brief" link to `/start/` and
+  an "All services" link to `/services/` - the latter against ROADMAP's "permanently removed
+  from nav, do not re-add or link". Both are shared chrome on all 29 pages, so changing them is
+  a sitewide edit this round did not have. The inline `/services/` link was removed from the
+  two rebuilt pages; **Austin's twelve service pages still carry it**. Recorded as a finding.
+
+- **Round 10: what the permit feed licensed, and what it did not.** Every figure on both pages
+  is computed at build time from `src/data/generated/permit-trade-activity/san-antonio.json` -
+  no number is a literal anywhere in the content config, and the render replay re-derives them
+  from the archive rather than pinning them, so an assertion cannot pass by agreeing with a
+  figure someone typed into a brief. Two figures in the round brief did not match the data and
+  the data was used: **plumbing is nine MAPPED types, eight of which ISSUED** a permit in the
+  window (`Plumbing MRFPSS Permit` issued none), and plumbing rose **5.0%** half-over-half
+  against a ±2.2% threshold - it clears, so the page reports a small real increase rather than
+  "flat". **The trend threshold is 100/√mean**, the Poisson counting noise on a monthly count;
+  `lib/tradeActivity.ts` computes it and refuses the trend claim when a change does not clear
+  it. It is the conservative form: the noise on a six-month sum is 1/√6 of it.
+  **Four readings were omitted and are named ON THE PAGE**, not left as gaps - cooling degree
+  days (the `noaa-climate` feed has no San Antonio file at all, and its Austin file is a
+  one-observation SAMPLE; there is no San Antonio `nws-api` feed either), any parcel-derived
+  percentile or pipe-era reading (no BCAD data), any cost figure (blocked, not unbuilt), and
+  the **EIA Texas residential electricity rate**. That last one is a Rule 1 flag rather than a
+  gap: the feed is live and current, and the round barred "any price figure". A published
+  utility rate is not a project cost, and it was the HVAC page's existing `SERVICE_SIGNALS`
+  reading before this round - so withholding it is a real loss of context. **Owner decision:
+  does the no-price rule cover a published utility rate?**
+
+- **Round 10 finding: `Article` schema omits `datePublished` and `mainEntityOfPage` sitewide.**
+  Both are Google-recommended rather than required, and both pages validate without them.
+  `datePublished` is absent by an existing deliberate policy in `Base.astro` ("omit rather than
+  guess"); `mainEntityOfPage` is simply not emitted. Adding either is a sitewide `Base.astro`
+  change, not a two-page one.
+
+- **Round 10: the three specs the brief cited do not exist in the repo** - `page-brief.md`,
+  `below-hero-content-spec.md`, `data-labeling-spec.md`. Searched repo-wide; nothing matches.
+  The brief restated enough of each inline to proceed (block order, "#answer is the largest
+  text after the H1", "Data through X, Confirmed Y", reuse `DataStatus`), so the round was
+  built to those restatements. The consequence to know: the instruction "if
+  below-hero-content-spec.md asks for a reading whose feed does not exist, omit it and list
+  what it needed" could not be followed against the spec - the omitted list was derived from
+  the live feeds instead, and may not match what that document actually asks for.
+
 - **Round 9c: the fixture now carries a SYNTHETIC CONDITION, and `r7replay` is 68/68.** The
   three data-dependent assertions diagnosed in Round 9b are deterministic; nothing in the
   suite is red.
