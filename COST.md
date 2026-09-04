@@ -40,6 +40,53 @@ The good news: the chosen architecture already points this way. These rules keep
 
 ---
 
+## Open item — the address field is the first paid per-user-action call 🟡 CONFLICTS WITH RULE 1
+
+**Recorded in Round 15c, before the field is built, so the round that builds it inherits the
+constraint rather than rediscovering it.** The owner has chosen **Google Places, Essentials
+Autocomplete** as the provider for the four address-based hero tools.
+
+**⚠️ Read rule (1) above before this section.** It says, without qualification: *"**Do not** add
+a live database query, an external API call, or an LLM call **on the public serving path.** The
+public site renders from generated JSON/config."* An autocomplete field calling Google on a
+user's keystrokes is an external API call on the public serving path. **This is a direct
+conflict with a rule this codebase currently observes and cites** — `lib/municipal/shards.ts`
+names rule (1) as the reason it reads a static asset instead of calling a city API.
+
+Per Rule 1 the conflict is surfaced, not resolved here. It is the owner's call, and the
+decision to use Google Places is itself the owner's. What this entry does is make sure the
+rule is bent knowingly and narrowly rather than quietly: **the exception is one endpoint, on
+one user action, with a hard ceiling — not a general licence to call third parties from the
+serving path.** Everything else in rule (1) stands.
+
+### The numbers (dated — re-verify at build time)
+
+| | |
+|---|---|
+| Free tier | **10,000 requests/month** |
+| Above it | **$2.83 per 1,000 requests** |
+| Billing unit | **per keystroke request, not per address** |
+| Practical throughput | ~10 requests per lookup → **~1,000 addresses/month** inside the free allowance |
+
+**Verify this against Google's current billing model when the field is built.** Pricing pages
+change, this note is dated 2026-09-04, and the whole ceiling calculation depends on it.
+
+### Why a ceiling and an edge limit are requirements, not hardening
+
+Every other cost surface on this site is bounded by construction: builds are fixed work,
+ingestion is a cron on free feeds, serving is static. This is the first component where **a
+stranger's behaviour moves the bill**, and the abandoned-session trap makes it worse than a
+naive reading suggests — session tokens make keystrokes free only when the session ends in a
+Place Details call, so a user who types and never selects is billed per request at full rate.
+**An abandoned session can cost more than a completed one.**
+
+Rate limiting slows an abuser; only a ceiling guarantees the bill cannot run. Both are
+mandatory, and the full constraint set — session tokens, debounce, the KV ceiling, the degraded
+plain-text state, and the Cloudflare rule — is in `HANDOFF.md` under the address-field open
+item.
+
+---
+
 ## Open item — the AI content poster (round 7) 🟡 needs an owner decision
 
 **Unresolved. Recorded here so it is decided deliberately rather than discovered mid-build.**
