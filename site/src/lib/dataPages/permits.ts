@@ -240,7 +240,7 @@ export const sanAntonioRoofPermits: DataPageSpec<PermitValue> = {
  * should. Roughly 30 rows sit in that gap. Widening further starts sweeping in
  * repair-and-adjacency wording ("exterior wall repair and replacement roof
  * repair"), which is why it stops here. */
-const RE_ROOF_TEXT =
+export const RE_ROOF_TEXT =
   /\bre-?roof|roof\s+replacement|replacement\s+of\s+(the\s+)?roof(ing)?\b|replac(e|ing)\s+(the\s+)?roof(ing)?\b|shingle\s+replacement/i;
 
 export const austinRoofPermits: DataPageSpec<PermitValue> = {

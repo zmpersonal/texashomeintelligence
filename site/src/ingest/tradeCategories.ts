@@ -226,7 +226,9 @@ export function austinRoofHaystack(row: {
 
 /** Solar wording measured in Austin descriptions (633 of 1,945 roof-matched
  * rows). Kept narrow and literal — no inference beyond what was observed. */
-const AUSTIN_SOLAR_TEXT = /\bsolar\b|photovoltaic|\bpv\b/i;
+// Exported so `lib/textMatchComposition.ts` can measure the solar share of the
+// roof text match with THIS predicate rather than a copy of it.
+export const AUSTIN_SOLAR_TEXT = /\bsolar\b|photovoltaic|\bpv\b/i;
 
 export function classifyAustin(row: {
   permit_type_desc?: string;

@@ -302,6 +302,107 @@ run into.
   treat removing a specific claim as the safe default rather than a change needing the same
   evidence as adding one.
 
+- **⚠️ Round 15 found and fixed a REAL DATA BUG the Austin pages would have published: the
+  partial-month contamination.** `computeFetchWindow` runs the ingestion window to `now`, so
+  the CURRENT calendar month is always present in `permit-trade-activity` and always partial.
+  San Antonio never exposed it — its feed lags and its newest month is complete — but Austin's
+  does. Measured on 2026-09-04, with four days of September in the file:
+  **hvac 1,037 in August → 111 in September (an 11× "trough"), solar 224 → 9 (a 25× one).**
+  Every one of those would have rendered as seasonality at ~30σ, and the half-over-half trend
+  would have been dragged down by a sixth of the second half being four days long.
+  `lib/tradeActivity.ts` now drops any month `>= ` the current one, records what it dropped in
+  `droppedIncompleteMonths`, and `saservicerender` asserts on both metros that the window ends
+  before the current month. **This drops one Austin month and zero San Antonio months**, which
+  is why the San Antonio pages are unchanged. Nothing else is inferred: a month that is merely
+  sparse stays in — the only thing the rule uses is the clock.
+
+- **⚠️ Round 14b broke the weekly citation check, and it was broken until Round 15 fixed it.**
+  `scripts/check-citations.ts` imports `src/data/belowHero.ts`, which since Round 14b derives
+  its dataset citations with Vite's `?raw` suffix. Node does not understand `?raw`, so the
+  script died on startup with
+  `SyntaxError: The requested module '...sanAntonioPermits.ts?raw' does not provide an export
+  named 'default'`. The workflow treats a non-zero exit as "a citation is dead", so the failure
+  mode was **a GitHub issue every Monday containing a stack trace instead of a link report**.
+  Nothing on the site was wrong; the check guarding the citations was. Fixed with
+  `scripts/raw-hooks.mjs` + `scripts/register-raw.mjs` — a nine-line Node module hook that does
+  for this one case what Vite does — and the workflow now runs
+  `npx tsx --import ./scripts/register-raw.mjs scripts/check-citations.ts`. Verified locally:
+  the script now enumerates **10 distinct cited URLs** (was 7).
+  *The lesson: a mechanism added in one round can silently disable a mechanism added in the
+  round before it, and neither round's own checks will notice.*
+
+- **Round 15 — the three Austin service pages carry the below-hero layer. 🟡 THREE NEW
+  CITATIONS ARE UNVERIFIED AND NEED YOUR EYES.** The weekly link check will exercise them, but
+  no human and no fetch from this environment has opened any of them. `checkedByHumanOn` is
+  deliberately UNSET on all three, and setting it is an owner action:
+  - `https://data.austintexas.gov/d/3syk-w9eu` — the Austin permit dataset, cited on all three
+    pages. **DERIVED, not typed**: `belowHero.ts` reads the Socrata resource id out of
+    `austinPermits.ts` with `?raw` AND cross-checks it against `permitTradeActivity.ts`,
+    failing the build if the two fetchers ever name different resources. What is unverified is
+    only what a browser shows at `/d/<id>` — the id itself is the one the fetcher has been
+    querying successfully every day.
+  - `https://api.weather.gov/` — the NWS forecast source, cited on `/austin/hvac/`.
+  - `https://www.austintexas.gov/water/austin-water-drought-response` — Austin Water's
+    drought-response page, cited on `/austin/plumbing/`. This is the same URL the scraper in
+    Seam 6 reads, so it is exercised daily by ingestion; still not human-confirmed as a
+    citation target.
+
+- **Round 15: Austin's roofing count states its own softness IN `#answer`, not in `#method`.**
+  Austin publishes no roofing permit class. **1,859 of the 1,860 permits in the window (99.9%)
+  are there because the description contains the word "roof"**; exactly one arrives from a
+  `Roof` work class. Measured on the wider roof-matched archive behind
+  `/data/austin/roof-permits/`: **633 of 1,945 descriptions (33%) mention solar, photovoltaic
+  or PV, and 366 (19%) explicitly describe replacing a roof covering.** Every one of those
+  figures is computed at build time (`lib/textMatchComposition.ts`), using the SAME regexes the
+  data page and the trade classifier use — imported, never copied — so our own two pages cannot
+  disagree about one fact. `saservicerender` has ten assertions on this block, including that
+  the caveat is in `#answer` and not merely in `#method`.
+
+- **Round 15 keeps the Austin/San Antonio roofing counts apart, and the guard is now symmetric.**
+  Neither roofing page may carry the other metro's window total, and neither may invite the
+  comparison. The check is computed from the other metro's archive rather than pinned to
+  literals, so it cannot go stale as the feeds move. *(Its first version also guarded the other
+  metro's mean and text-matched count and immediately produced a false positive: San Antonio's
+  text-matched count is 0, and `\b0\b` matched the "0" in "0.1%". It guards the window total
+  only — a three-digit mean cannot be told apart from a cell in the page's own table.)*
+
+- **🟡 Round 15 put two dollar figures on three pages and the render replay caught it.** The
+  Austin cost-omission prose explained that permit valuation is unusable by quoting the
+  measured medians — "$900,000 on plumbing permits", "$1m on mechanical ones". Those figures
+  ARE permit valuations, which is the exact quantity this layer refuses to publish, and
+  printing them inside the explanation of why we do not publish them would hand an answer
+  engine a dollar figure attached to a trade and a city. `saservicerender`'s
+  `no cost, price or spend figure anywhere on the page` guard failed on all three. The prose
+  now says "runs to six figures" / "to seven". **Nothing about the argument changed; only the
+  numerals are gone.**
+
+- **Round 15: San Antonio's three pages are unchanged in text and differ from the Round 14b
+  build in exactly two bytes-worth of escaping.** Two apostrophes — in "San Antonio's DECLARED
+  VALUATION" and "an applicant's fee-basis statement" — now emit as `&#39;` rather than `'`,
+  because that sentence moved from a literal text node to a spec-supplied one (the two metros
+  refuse a cost figure for different measured reasons, and one sentence could not carry both
+  truthfully). Rendered text, DOM text content and every replay assertion are identical.
+  `/data/austin/roof-permits/` is byte-for-byte identical.
+
+- **🟡 Finding, not fixed: San Antonio's `#data` caption starts with a lowercase word.** It
+  reads "plumbing permits issued by the City of San Antonio, by month." The layer already has
+  `dataCaptionNoun` for exactly this and Austin's page sets it; San Antonio's was left alone
+  because Round 15's instruction was that those three pages stay byte-identical. One-line fix
+  whenever a round is allowed to touch them.
+
+- **Round 15 verification.** `npm run build`, `npm run check` (0 errors), `npm run
+  verify-content`; the full replay suite from a cold `npm run build` → `npm run fixture` →
+  `npm run worker`: **saservicerender 267/267** (was 120 on three pages; now six pages plus the
+  partial-month and text-match guards), r7replay 68/68, r9render 18/18, signinrender 18/18,
+  footerchrome 46/46, alertcopyunit 23/23, noticefreshunit 32/32, verify-trade-mapping 14/14,
+  weeklyunit and r10unit ALL PASS. `dist/server` is **1,002,699 bytes — unchanged** by the two
+  new `?raw` imports, and no ingest symbol appears anywhere in `dist/`.
+  *(`footerchrome` needed one assertion updated rather than fixed: it sampled `/austin/roofing/`
+  as an inbound route to `/services/`, and that page now correctly drops the link because
+  ServicePage suppresses it wherever a below-hero layer exists — the same removal Round 10 made
+  on San Antonio. `/services/` is still reachable from both location hubs and the eight service
+  pages with no layer, which is what the assertion now tests.)*
+
 - **Round 14b: the San Antonio citation is the SLUG, and it is now DERIVED from the fetcher.**
   The owner opened `data.sanantonio.gov/dataset/building-permits` and confirmed it: title
   "Building Permits", organization "Land and Building Development", four resources including
