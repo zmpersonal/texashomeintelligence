@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/colors.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/typography.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/shape.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/motion.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/base/primitives.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/styles.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<script src="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/_ds_bundle.js"></script>
+<script src="./image-slot.js"></script>
+<style>
+  body{margin:0;background:var(--thi-paper);color:var(--thi-ink);font-family:var(--thi-font-ui);-webkit-font-smoothing:antialiased}
+  a{color:var(--thi-link);text-decoration:none}
+  a:hover{color:var(--thi-link-deep);text-decoration:underline;text-decoration-color:var(--thi-amber);text-underline-offset:3px}
+  *{box-sizing:border-box}
+  image-slot::part(empty){justify-content:flex-end;align-items:flex-end;padding:20px 24px;text-align:right}
+  image-slot::part(empty) *{max-width:22rem}
+  input::placeholder{color:var(--thi-slate-400);font-weight:400}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--thi-paper)">
+<x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.SiteHeader" links="{{ navLinks }}" active="Tools" cta="My Dashboard" cta-href="/dashboard/" hint-size="100%,90px"></x-import>
+
+<main>
+<section style="position:relative;background:linear-gradient(180deg,var(--thi-navy) 0%,var(--thi-navy-deep) 100%);overflow:hidden">
+  <div style="position:absolute;inset:0;color:var(--thi-on-dark)">
+    <image-slot id="thi-roof-aerial" shape="rect" fit="cover" placeholder="Aerial for roof scan"></image-slot>
+  </div>
+  <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(8,26,49,.56) 0%,rgba(8,26,49,.74) 48%,rgba(8,26,49,.90) 100%)"></div>
+
+  <div style="position:relative;pointer-events:none;max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-4) var(--thi-gutter) var(--thi-sp-20)">
+    <nav aria-label="Breadcrumb" style="pointer-events:auto;display:flex;flex-wrap:wrap;gap:8px;font-family:var(--thi-font-mono);font-size:var(--thi-fs-caption);color:var(--thi-on-dark-muted)">
+      <a href="/" style="color:var(--thi-on-dark-muted)">Home</a><span aria-hidden="true">&rsaquo;</span><a href="/tools/" style="color:var(--thi-on-dark-muted)">Tools</a><span aria-hidden="true">&rsaquo;</span><span style="color:var(--thi-on-dark)">Roof scan</span>
+    </nav>
+
+    <div style="max-width:40rem;margin:var(--thi-sp-20) auto 0;text-align:center">
+      <h1 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-display-xl);line-height:1.06;letter-spacing:-.015em;margin:0 0 var(--thi-sp-4);color:#fff;text-wrap:balance">What your roof has been through</h1>
+      <p style="font-size:var(--thi-fs-body-lg);line-height:var(--thi-lh-body-lg);color:var(--thi-on-dark);margin:0;text-wrap:pretty">Hail, heat, and age all leave a record. Enter your address and we'll pull the storm history and permit record for your property.</p>
+    </div>
+
+    <div style="max-width:39rem;margin:var(--thi-sp-8) auto 0;pointer-events:auto">
+      <label for="thi-addr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Your address</label>
+      <div style="display:flex;gap:var(--thi-sp-2)">
+        <div style="position:relative;flex:1;min-width:0">
+          <input id="thi-addr" type="text" autocomplete="off" placeholder="2107 Newton St, 78704" value="{{ query }}" onChange="{{ onQuery }}" onKeyDown="{{ onKey }}" style="width:100%;height:68px;padding:0 var(--thi-sp-5);font-family:var(--thi-font-mono);font-weight:500;font-size:20px;color:var(--thi-ink);background:var(--thi-surface);border:1px solid var(--thi-surface);border-radius:var(--thi-r-control);outline:none" style-focus="box-shadow:var(--thi-focus-ring);border-color:var(--thi-link)">
+          <sc-if value="{{ typing }}" hint-placeholder-val="{{ false }}">
+          <div role="listbox" aria-label="Address suggestions" style="position:absolute;left:0;right:0;top:calc(100% - 2px);z-index:20;background:var(--thi-surface);border:1px solid var(--thi-line-strong);border-top:none;border-radius:0 0 var(--thi-r-control) var(--thi-r-control);box-shadow:var(--thi-shadow-md);overflow:hidden">
+            <button type="button" role="option" onClick="{{ pick }}" style="display:block;width:100%;text-align:left;padding:12px var(--thi-sp-5);background:none;border:none;border-bottom:1px solid var(--thi-line-soft);cursor:pointer;font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink)" style-hover="background:var(--thi-mist)">2107 Newton St, Austin, TX 78704</button>
+            <button type="button" role="option" onClick="{{ pick }}" style="display:block;width:100%;text-align:left;padding:12px var(--thi-sp-5);background:none;border:none;border-bottom:1px solid var(--thi-line-soft);cursor:pointer;font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-ink)" style-hover="background:var(--thi-mist)">2107 Newton Ave, Austin, TX 78702</button>
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:8px var(--thi-sp-5);background:var(--thi-paper);font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)"><span>Provider attribution slot</span><span>Press ↵ to use what you typed</span></div>
+          </div>
+          </sc-if>
+        </div>
+        <button type="button" onClick="{{ submit }}" style="width:176px;height:68px;flex:none;display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--thi-amber);color:#231506;border:none;border-radius:var(--thi-r-control);cursor:pointer;font-family:var(--thi-font-ui);font-weight:600;font-size:16px" style-hover="background:var(--thi-amber-deep);color:#fff">See my report<i class="ph ph-arrow-right" aria-hidden="true" style="font-size:19px"></i></button>
+      </div>
+      <p style="font-family:var(--thi-font-ui);font-size:var(--thi-fs-body-sm);line-height:var(--thi-lh-body-sm);color:var(--thi-on-dark-muted);margin:var(--thi-sp-3) 0 0;text-align:center">No phone or email required. We don't ask for either, and we don't sell your information.</p>
+    </div>
+
+    <div style="max-width:34rem;margin:var(--thi-sp-10) auto 0;padding-top:var(--thi-sp-5);border-top:1px solid var(--thi-hairline-dark);text-align:center">
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:var(--thi-sp-4)">
+        <span style="display:inline-flex;align-items:baseline;gap:7px"><span style="font-family:var(--thi-font-mono);font-weight:500;font-size:22px;line-height:28px;color:#fff;font-feature-settings:'tnum' 1">2,240</span><span style="font-family:var(--thi-font-ui);font-size:14px;color:var(--thi-on-dark-muted)">sq ft roof</span></span>
+        <span aria-hidden="true" style="color:var(--thi-on-dark-muted);opacity:.5">·</span>
+        <span style="display:inline-flex;align-items:baseline;gap:7px"><span style="font-family:var(--thi-font-mono);font-weight:500;font-size:22px;line-height:28px;color:#fff;font-feature-settings:'tnum' 1">1998</span><span style="font-family:var(--thi-font-ui);font-size:14px;color:var(--thi-on-dark-muted)">last re-roof</span></span>
+        <span aria-hidden="true" style="color:var(--thi-on-dark-muted);opacity:.5">·</span>
+        <span style="display:inline-flex;align-items:baseline;gap:7px"><span style="font-family:var(--thi-font-mono);font-weight:500;font-size:22px;line-height:28px;color:#fff;font-feature-settings:'tnum' 1">7</span><span style="font-family:var(--thi-font-ui);font-size:14px;color:var(--thi-on-dark-muted)">hail events</span></span>
+      </div>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-on-dark-muted);margin:var(--thi-sp-3) 0 0">What comes back, from an example property · not your home</p>
+    </div>
+  </div>
+</section>
+
+<section id="answer" style="background:var(--thi-surface);border-top:1px solid var(--thi-line);border-bottom:1px solid var(--thi-line)">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-16) var(--thi-gutter)">
+  <span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:var(--thi-sp-5)">The short answer</span>
+  <p style="font-family:var(--thi-font-display);font-weight:500;font-size:30px;line-height:1.34;letter-spacing:-.005em;color:var(--thi-ink);margin:0;max-width:34em;text-wrap:pretty">An asphalt shingle roof in Central Texas typically reaches replacement at <strong style="font-weight:600">15–20 years</strong>, and hail is usually what decides the year. Properties in 78704 saw <strong style="font-weight:600">7 recorded hail events</strong> within a mile in the last decade — a roof that predates the 2021 storm has taken damage the record already knows about.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:var(--thi-sp-3);align-items:center;margin-top:var(--thi-sp-6);padding-top:var(--thi-sp-5);border-top:1px solid var(--thi-line-soft)">
+    <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-surface);border:1px solid var(--thi-navy)"><i class="ph ph-compass-tool" aria-hidden="true" style="font-size:12px"></i>THI analysis</span>
+    <span style="font-family:var(--thi-font-mono);font-size:12px;line-height:16px;color:var(--thi-slate-500)">From NOAA Storm Events hail reports and 3,180 Austin-area re-roof permits · Data through Aug 28, 2026 · Confirmed Aug 30, 2026</span>
+  </div>
+</div>
+</section>
+
+<section id="sample" style="background:var(--thi-paper)">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-12) var(--thi-gutter) var(--thi-sp-16)">
+  <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:var(--thi-sp-3);margin-bottom:var(--thi-sp-2)">
+    <h2 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h2);line-height:1.15;margin:0">What a report looks like</h2>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:4px 7px;border-radius:4px;color:var(--thi-slate-700);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-eye" aria-hidden="true" style="font-size:12px"></i>Example · not your home</span>
+  </div>
+  <p style="font-family:var(--thi-font-mono);font-size:12px;line-height:16px;color:var(--thi-slate-500);margin:0 0 var(--thi-sp-6)">A real 78704 property · built 1974 · 1,840 sq ft conditioned</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:var(--thi-sp-4)">
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);padding:var(--thi-sp-5)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--thi-sp-3)"><i class="ph ph-house-line" aria-hidden="true" style="font-size:18px;color:var(--thi-slate-500)"></i><span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Roof area</span></div>
+      <div style="display:flex;align-items:baseline;gap:9px;flex-wrap:wrap">
+        <span style="font-family:var(--thi-font-mono);font-weight:500;font-size:var(--thi-fs-data-lg);line-height:var(--thi-lh-data-lg);color:var(--thi-ink);font-feature-settings:'tnum' 1">2,240</span>
+        <span style="font-family:var(--thi-font-ui);font-size:15px;color:var(--thi-slate-700)">sq ft</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-surface);border:1px solid var(--thi-navy)"><i class="ph ph-compass-tool" aria-hidden="true" style="font-size:12px"></i>THI analysis</span>
+      </div>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:8px 0 0">About 22 squares, from the parcel footprint at an estimated 6:12 pitch. Not a measurement off the roof itself.</p>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">Source: Travis CAD parcel footprint · Data through Jul 25, 2026 · Confirmed Aug 29, 2026</p>
+    </div>
+
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);padding:var(--thi-sp-5)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--thi-sp-3)"><i class="ph ph-clipboard-text" aria-hidden="true" style="font-size:18px;color:var(--thi-slate-500)"></i><span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Last re-roof permit</span></div>
+      <div style="display:flex;align-items:baseline;gap:9px;flex-wrap:wrap">
+        <span style="font-family:var(--thi-font-mono);font-weight:500;font-size:var(--thi-fs-data-lg);line-height:var(--thi-lh-data-lg);color:var(--thi-ink);font-feature-settings:'tnum' 1">1998</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-database" aria-hidden="true" style="font-size:12px"></i>Public record</span>
+      </div>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:8px 0 0">Asphalt shingle, $4,100 declared. Nothing filed since — so the current roof predates every hail event below.</p>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">Source: City of Austin permits · Data through Aug 28, 2026 · Confirmed Aug 30, 2026</p>
+    </div>
+
+    <div style="background:var(--thi-surface);border:1px solid var(--thi-line);border-radius:var(--thi-r-card);box-shadow:var(--thi-shadow-sm);padding:var(--thi-sp-5)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--thi-sp-3)"><i class="ph ph-cloud-lightning" aria-hidden="true" style="font-size:18px;color:var(--thi-slate-500)"></i><span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Hail within one mile</span></div>
+      <div style="display:flex;align-items:baseline;gap:9px;flex-wrap:wrap">
+        <span style="font-family:var(--thi-font-mono);font-weight:500;font-size:var(--thi-fs-data-lg);line-height:var(--thi-lh-data-lg);color:var(--thi-ink);font-feature-settings:'tnum' 1">7</span>
+        <span style="font-family:var(--thi-font-ui);font-size:15px;color:var(--thi-slate-700)">events</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-navy);background:var(--thi-mist);border:1px solid var(--thi-line-strong)"><i class="ph ph-database" aria-hidden="true" style="font-size:12px"></i>Public record</span>
+      </div>
+      <p style="font-size:14px;line-height:22px;color:var(--thi-slate-700);margin:8px 0 0">Ten years, largest 2.0″ in May 2021. Reported hail size is measured at the observation point, not at your roof.</p>
+      <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);margin:var(--thi-sp-3) 0 0">Source: NOAA Storm Events Database · Data through Jul 2026 · Confirmed Aug 25, 2026</p>
+    </div>
+  </div>
+
+  <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:var(--thi-slate-700);margin:var(--thi-sp-5) 0 0;max-width:64ch">Those three come back free and instantly. The emailed report adds a replacement cost range, an estimated replacement window, and your property's hail exposure compared with the rest of your ZIP.</p>
+</div>
+</section>
+</main>
+
+<x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.SiteFooter" blurb="Situational awareness for your home. Texas public records, read plainly, with every number labeled by where it came from." columns="{{ footerCols }}" legal="This organizes public records and information you provide. It is not an inspection, diagnosis, or professional evaluation. · © 2026 Texas Home Intelligence" hint-size="100%,320px"></x-import>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { query: '', typing: false };
+  renderVals() {
+    return {
+      footerCols: [
+        { title: 'Tools', links: [{ label: 'AC lifespan', href: '/tools/ac-lifespan/' }, { label: 'Roof scan', href: '/tools/roof-scan/' }, { label: 'Pipe report', href: '/tools/pipe-report/' }, { label: 'All nine tools', href: '/tools/' }] },
+        { title: 'Data', links: [{ label: 'Data catalog', href: '/data/' }, { label: 'Methodology', href: '/methodology/' }, { label: 'Source list', href: '#sources' }] },
+        { title: 'Coverage', links: [{ label: 'Austin', href: '/austin/' }, { label: 'San Antonio', href: '/san-antonio/' }, { label: 'Other Texas metros', href: '/coverage/' }] },
+        { title: 'Company', links: [{ label: 'About', href: '/about/' }, { label: 'Data catalog', href: '/data/' }, { label: 'Contact', href: '/contact/' }] }
+      ],
+      navLinks: [
+        { label: 'Tools', href: '/tools/' },
+        { label: 'Methodology', href: '/methodology/' }
+      ],
+      query: this.state.query,
+      typing: this.state.typing,
+      onQuery: e => this.setState({ query: e.target.value, typing: e.target.value.length > 3 }),
+      onKey: e => { if (e.key === 'Enter') this.setState({ typing: false }); },
+      pick: () => this.setState({ query: '2107 Newton St, Austin, TX 78704', typing: false }),
+      submit: () => this.setState({ typing: false })
+    };
+  }
+}
+
+</script>
+</body>
+</html>

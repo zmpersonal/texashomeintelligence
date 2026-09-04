@@ -302,6 +302,73 @@ run into.
   treat removing a specific claim as the safe default rather than a change needing the same
   evidence as adding one.
 
+- **ROUND 17c — the hero tool designs are COMMITTED at `docs/source/design/tools/`, and Round
+  17's blocker is HALF-LIFTED.** Full inventory in `docs/audits/round-17c-tools-inventory.md`.
+  Five `.dc.html` designs and **five** specs landed — **the brief named ten**. Absent:
+  `thi-tools-hero-scope`, `cost-model-spec`, `caliza-architecture`, `photo-capture-spec`,
+  `below-hero-content-spec`. Two of those are documents this round was asked to check for
+  conflicts, so **those checks could not be run against the documents themselves**.
+  *(The owner said the files were also at `assets/design`; that directory does not exist in the
+  repo. They arrived only via the upload and are committed now.)*
+
+- **⭐ Round 17c — the safety-critical copy IS authored and reviewable. That was the reason Round
+  17 stopped, and it is resolved.** The shutoff instruction, the gas interrupt and the sewage
+  interrupt all exist verbatim in `copy-deck.md` and the design, with their actions. The design
+  adds a **gas pre-screen ahead of everything** (*"We ask first because everything else can wait
+  and this can't"*) and — contrary to Round 17's expectation — **the three questions to ask are
+  authored**, not placeholder.
+  **What is still missing, and it is material:** every **verdict body** is a template variable
+  (`{{ verdictTitle }}` / `{{ verdictBody }}`); the deck supplies only three verdict *labels*. The
+  **"what to check" list** has no copy. **The electrical + water interrupt has NO COPY AT ALL** —
+  `page-brief.md` names three interrupts and only two are written, and the missing one is live
+  current plus standing water. **Four of five symptom paths are unstoryboarded** — only "water on
+  the floor" exists. So: buildable in capability, not yet in copy.
+
+- **🔴 Round 17c — THE TOOL DESIGNS ARE BUILT ON PERMIT VALUATION, WHICH ROUND 6 FALSIFIED.**
+  Plumbing Triage renders `Typical cost in Austin · {{ costRange }} · Source: City of Austin
+  plumbing permits · Escalated to Aug 2026`. Austin's trade-named plumbing valuation has a median
+  near **$900k** — a whole-project construction value, not a plumbing job — and San Antonio's
+  `DECLARED VALUATION` is **0.00% populated**. This is not one panel: the **sub-headline** promises
+  cost, **`page-brief.md`'s Type C rule orders "cost range second"**, and **Roof Cost Calculator's
+  entire premise** is *"Built from re-roof permit valuations filed in your area."* Round 17b's
+  national-average decision does not rescue it — the design labels the figure local and sources it
+  to city permits. **`cost-model-spec.md` is one of the five that did not land**, and given the
+  measurement it is the document most worth reading before any cost figure is built.
+  **Recommendation for Plumbing Triage: remove the cost block entirely** — sub-headline promise,
+  panel, and the page-brief ordering. That is an owner decision because it edits the copy deck.
+
+- **✅ Round 17c — the design-system token conflict DOES NOT EXIST.** Compared file by file
+  against `site/src/styles/thi/`: `colors`, `typography`, `spacing`, `shape`, `motion` and
+  `semantic` tokens plus `base/primitives.css` and `styles.css` are **byte-identical**. Only
+  `tokens/fonts.css` differs — **and the repo's version is the correct one**: the delivered file
+  loads the families with a remote `@import` nested inside an imported stylesheet, which the CSS
+  bundler drops so it never reaches a visitor; the repo self-hosts them and documents why.
+  **⚠️ Do NOT sync the repo's `fonts.css` to this delivery — it would silently revert the site to
+  system fallbacks.** Recorded in `docs/source/design/tools/README.md` so a future round does not
+  "fix" it. The `_ds/` tree is deliberately not committed for the same reason: one source of truth.
+
+- **Round 17c — buildable/blocked, per tool, with the named feed each one needs.**
+  - 🟢 **Plumbing Triage — buildable.** Needs **no feed, no address, no parcel data**. Its only
+    data dependency is the cost panel, which must go anyway. Remaining work is **copy, not
+    capability**.
+  - 🔴 **Roof Cost Calculator** — premise falsified by Round 6; needs a **different cost source**.
+  - 🔴 **AC Lifespan** — needs **cooling degree days**. `noaa-climate/austin.json` is a
+    **one-observation SAMPLE** with normal high/low only; no San Antonio file. Also address + CAD.
+  - 🔴 **Pipe Report** — needs **water hardness** ("grains hardness", from Austin Water quality
+    reports). **No hardness feed exists**; `austin-water-stage` carries the drought stage only, and
+    San Antonio has no equivalent. Also address + CAD year built.
+  - 🔴 **Roof Scan** — needs **point-level hail** ("hail events within one mile").
+    `noaa-storm-events` is **county-level**; Round 15 already recorded that even a per-ZIP hail
+    score "would be invented, not measured". Also roof area and address.
+
+- **🟡 Round 17c — scope drift: six, nine, or five tools.** The brief mentions a scope doc naming
+  six; `copy-deck.md` and `page-brief.md` both specify **nine**; **five designs exist**. Four named
+  tools — Storm check, AC cost calculator, Water heater calculator, AC triage — **have copy but no
+  design**. And the specs assume a `/tools/` hub while the owner has said heroes go on service
+  pages — with `thi-tools-hero-scope.md`, the document that would settle it, absent. Compounding
+  it, `/tools/` is **not in the nav**: `CLAUDE.md` supersedes `THI-round-homepage-nav.md` with
+  `Data · Locations` + My Dashboard. An owner decision, not a spec-reading exercise.
+
 - **⛔ ROUND 17 — PLUMBING TRIAGE WAS NOT BUILT: the design and all five companion specs are
   unreachable.** Full search in `docs/audits/round-17-plumbing-triage-blocked.md`. Searched the
   whole tree, every branch, `git log --all --diff-filter=A`, the stash, untracked files, and the

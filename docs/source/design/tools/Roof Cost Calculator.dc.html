@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/colors.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/typography.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/shape.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/motion.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/base/primitives.css">
+<link rel="stylesheet" href="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/styles.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<script src="_ds/texas-home-intelligence-design-system-f449f624-6d41-4bd8-b2fd-ff77464e6e64/_ds_bundle.js"></script>
+<style>
+  body{margin:0;background:var(--thi-paper);color:var(--thi-ink);font-family:var(--thi-font-ui);-webkit-font-smoothing:antialiased}
+  a{color:var(--thi-link);text-decoration:none}
+  a:hover{color:var(--thi-link-deep);text-decoration:underline;text-decoration-color:var(--thi-amber);text-underline-offset:3px}
+  *{box-sizing:border-box}
+  #rc-controls select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--thi-navy) 50%),linear-gradient(135deg,var(--thi-navy) 50%,transparent 50%);background-position:calc(100% - 17px) 20px,calc(100% - 12px) 20px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+  #rc-controls select:hover,#rc-controls button:hover{border-color:var(--thi-navy)}
+  #rc-controls select:focus-visible,#rc-controls button:focus-visible,#rc-sq:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(42,111,176,.35)}
+  #rc-sq{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;border:none;display:block}
+  #rc-sq::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:999px;background:var(--thi-navy);border:3px solid var(--thi-amber);cursor:grab;box-shadow:0 1px 3px rgba(14,23,38,.25)}
+  #rc-sq::-moz-range-thumb{width:22px;height:22px;border-radius:999px;background:var(--thi-navy);border:3px solid var(--thi-amber);cursor:grab}
+  #rc-src a{color:#CFDAE7}
+  #rc-src a:hover{color:#fff;text-decoration-color:var(--thi-amber)}
+  #rc-crumbs a{color:var(--thi-on-dark-muted)}
+  #rc-crumbs a:hover{color:#fff}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--thi-paper)">
+<x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.SiteHeader" links="{{ navLinks }}" active="Tools" cta="My Dashboard" cta-href="/dashboard/" hint-size="100%,90px"></x-import>
+
+<main>
+<section style="background:var(--thi-navy-deep)">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-4) var(--thi-gutter) var(--thi-sp-12)">
+  <nav id="rc-crumbs" aria-label="Breadcrumb" style="display:flex;flex-wrap:wrap;gap:8px;font-family:var(--thi-font-mono);font-size:var(--thi-fs-caption);color:#9FB0C4;margin-bottom:var(--thi-sp-10)">
+    <a href="/">Home</a><span aria-hidden="true">&rsaquo;</span><a href="/tools/">Tools</a><span aria-hidden="true">&rsaquo;</span><span style="color:#CFDAE7">Roof cost calculator</span>
+  </nav>
+
+  <div style="max-width:44rem;margin-bottom:var(--thi-sp-8)">
+    <span style="display:block;width:44px;height:3px;background:var(--thi-amber);margin-bottom:var(--thi-sp-5)"></span>
+    <h1 style="font-family:var(--thi-font-display);font-weight:500;font-size:var(--thi-fs-h1);line-height:1.08;letter-spacing:-.01em;margin:0 0 var(--thi-sp-3);color:#FBFCFE;text-wrap:balance">What a roof replacement costs in your area</h1>
+    <p style="font-size:var(--thi-fs-body-lg);line-height:var(--thi-lh-body-lg);color:var(--thi-on-dark-muted);margin:0;text-wrap:pretty">Built from re-roof permit valuations filed in your area, brought current with published material and labor price indexes.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:var(--thi-sp-6);align-items:start">
+
+    <!-- ─ the answer ─ -->
+    <div style="background:var(--thi-navy);border-radius:var(--thi-r-card);border-top:3px solid var(--thi-amber);padding:var(--thi-sp-6)">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:var(--thi-sp-5)">
+        <span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:#CFDAE7">Typical range · {{ geoLabel }}</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:4px 7px;border-radius:4px;white-space:nowrap;color:var(--thi-navy-deep);background:var(--thi-amber)"><i class="ph ph-function" aria-hidden="true" style="font-size:12px"></i>Estimate</span>
+      </div>
+
+      <div aria-live="polite" style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--thi-sp-4) var(--thi-sp-6)">
+        <div>
+          <span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:10px;line-height:14px;text-transform:uppercase;letter-spacing:.1em;color:#8494A8;margin-bottom:2px">Low</span>
+          <span style="display:block;font-family:var(--thi-font-mono);font-weight:500;font-size:clamp(28px,3vw,44px);line-height:1.04;letter-spacing:-.01em;color:#FFFFFF;font-feature-settings:'tnum' 1;white-space:nowrap">{{ low }}</span>
+        </div>
+        <span aria-hidden="true" style="display:block;width:18px;height:3px;background:var(--thi-amber);margin-bottom:16px"></span>
+        <div>
+          <span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:10px;line-height:14px;text-transform:uppercase;letter-spacing:.1em;color:#8494A8;margin-bottom:2px">High</span>
+          <span style="display:block;font-family:var(--thi-font-mono);font-weight:500;font-size:clamp(28px,3vw,44px);line-height:1.04;letter-spacing:-.01em;color:#FFFFFF;font-feature-settings:'tnum' 1;white-space:nowrap">{{ high }}</span>
+        </div>
+      </div>
+      <p style="font-family:var(--thi-font-mono);font-size:12px;line-height:18px;color:#9FB0C4;margin:var(--thi-sp-4) 0 0;font-feature-settings:'tnum' 1">Midpoint {{ mid }} · {{ perSquare }} per square</p>
+
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:var(--thi-sp-4)">
+        <sc-for list="{{ scopeChips }}" as="chip" hint-placeholder-count="5">
+          <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:#CFDAE7;background:#0D2137;padding:4px 8px;border-radius:4px;white-space:nowrap">{{ chip }}</span>
+        </sc-for>
+      </div>
+
+      <div style="margin-top:var(--thi-sp-6);background:#061529;border-radius:var(--thi-r-card);padding:var(--thi-sp-5)">
+        <span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:#8494A8;margin-bottom:var(--thi-sp-4)">How your scope compares</span>
+        <div style="display:grid;gap:var(--thi-sp-4)">
+          <sc-for list="{{ bars }}" as="bar" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:baseline">
+              <span style="font-size:13px;line-height:18px;color:#CFDAE7">{{ bar.label }}</span>
+              <span style="font-family:var(--thi-font-mono);font-size:12px;line-height:18px;color:#FFFFFF;font-feature-settings:'tnum' 1;white-space:nowrap">{{ bar.value }}</span>
+              <div style="grid-column:1 / -1;position:relative;height:12px;background:#0D2137;border-radius:var(--thi-r-xs)">
+                <div style="position:absolute;top:0;bottom:0;left:{{ bar.left }};width:{{ bar.width }};background:{{ bar.fill }};border-radius:var(--thi-r-xs);transition:left 220ms var(--thi-ease),width 220ms var(--thi-ease)"></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <p style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:#8494A8;margin:var(--thi-sp-4) 0 0">Bars span each low-to-high range · scale {{ axisLabel }}</p>
+      </div>
+
+      <sc-if value="{{ aggregated }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;gap:10px;align-items:flex-start;margin-top:var(--thi-sp-5);padding:12px 14px;background:#0A2C4A;border-left:4px solid var(--thi-watch-on-dark);border-radius:var(--thi-r-card)">
+        <i class="ph ph-arrows-out-line-horizontal" aria-hidden="true" style="font-size:18px;color:var(--thi-watch-on-dark);flex:none;margin-top:2px"></i>
+        <p style="font-size:14px;line-height:22px;color:#DCE4EE;margin:0">Not enough permits in that ZIP for a local figure — this reflects {{ metroLabel }} instead. The wider band is the honest consequence, not a display glitch.</p>
+      </div>
+      </sc-if>
+
+      <p style="font-size:var(--thi-fs-body);line-height:var(--thi-lh-body);color:#DCE4EE;margin:var(--thi-sp-5) 0 0;max-width:56ch">Permit valuations reflect what contractors declare, which often runs below what a homeowner pays. Treat this as a floor, not a quote.</p>
+      <p id="rc-src" style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:#9FB0C4;margin:var(--thi-sp-3) 0 0;max-width:60ch">Based on {{ permits }} permits filed in the last 12 months · Escalated to Aug 2026 using BLS PPI roofing materials and Dallas Fed Texas construction wages · Cost model v2.1 · Confirmed Aug 30, 2026 · <a href="/methodology/roof-cost/">How this is calculated ↗</a></p>
+    </div>
+
+    <!-- ─ controls ─ -->
+    <div id="rc-controls" style="background:var(--thi-surface);border-radius:var(--thi-r-card);box-shadow:0 4px 12px rgba(6,16,32,.28);overflow:hidden">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:var(--thi-sp-5) var(--thi-sp-6);background:var(--thi-mist);border-bottom:1px solid var(--thi-line)">
+        <span style="font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-navy)">Adjust the scope</span>
+        <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)">6 inputs</span>
+      </div>
+
+      <div style="padding:var(--thi-sp-6)">
+      <div style="display:grid;gap:var(--thi-sp-5)">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--thi-sp-4)">
+          <div>
+            <label for="rc-zip" style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:6px">ZIP</label>
+            <select id="rc-zip" value="{{ zip }}" onChange="{{ onZip }}" style="width:100%;height:46px;padding:0 32px 0 12px;font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-navy);background-color:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-control)"><option>78704</option><option>78745</option><option>78201</option><option>78613</option><option>Other Texas ZIP</option></select>
+          </div>
+          <div>
+            <label for="rc-mat" style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:6px">Material</label>
+            <select id="rc-mat" value="{{ material }}" onChange="{{ onMaterial }}" style="width:100%;height:46px;padding:0 32px 0 12px;font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-navy);background-color:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-control)"><option>Asphalt shingle</option><option>Metal standing seam</option><option>Clay or concrete tile</option><option>Other or not sure</option></select>
+          </div>
+        </div>
+
+        <div style="padding:var(--thi-sp-4) 0;border-top:1px solid var(--thi-line-soft);border-bottom:1px solid var(--thi-line-soft)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:var(--thi-sp-4)">
+            <label for="rc-sq" style="font-family:var(--thi-font-ui);font-weight:600;font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700)">Roof size</label>
+            <span style="font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-navy);font-feature-settings:'tnum' 1">{{ sqft }} sq ft · {{ squares }} sq</span>
+          </div>
+          <input id="rc-sq" type="range" min="10" max="50" step="1" value="{{ squares }}" onChange="{{ onSquares }}" style="background-image:linear-gradient(90deg,var(--thi-navy) 0 {{ fillPct }},#DCE2EA {{ fillPct }} 100%)">
+          <div style="display:flex;justify-content:space-between;font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500);font-feature-settings:'tnum' 1;margin-top:6px">
+            <span>1,000</span><span>3,000</span><span>5,000 sq ft</span>
+          </div>
+        </div>
+
+        <div>
+          <label for="rc-pitch" style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:6px">Pitch</label>
+          <select id="rc-pitch" value="{{ pitch }}" onChange="{{ onPitch }}" style="width:100%;height:46px;padding:0 32px 0 12px;font-family:var(--thi-font-mono);font-size:15px;color:var(--thi-navy);background-color:var(--thi-surface);border:1px solid var(--thi-line-strong);border-radius:var(--thi-r-control)"><option>Low · 3:12 or less</option><option>Typical · 4:12 to 7:12</option><option>Steep · 8:12 or more</option><option>Other or not sure</option></select>
+        </div>
+
+        <div>
+          <span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:6px">Layers to tear off</span>
+          <div role="group" aria-label="Layers to tear off" style="display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px">
+            <sc-for list="{{ layerOpts }}" as="o" hint-placeholder-count="3">
+              <button type="button" onClick="{{ o.onPick }}" aria-pressed="{{ o.pressed }}" style="height:44px;padding:0 6px;font-family:var(--thi-font-mono);font-size:13px;border-radius:var(--thi-r-control);cursor:pointer;background:{{ o.bg }};color:{{ o.fg }};border:1px solid {{ o.bd }};transition:background 150ms var(--thi-ease),color 150ms var(--thi-ease)">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div>
+          <span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:11px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:6px">Stories</span>
+          <div role="group" aria-label="Stories" style="display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px">
+            <sc-for list="{{ storyOpts }}" as="o" hint-placeholder-count="3">
+              <button type="button" onClick="{{ o.onPick }}" aria-pressed="{{ o.pressed }}" style="height:44px;padding:0 6px;font-family:var(--thi-font-mono);font-size:13px;border-radius:var(--thi-r-control);cursor:pointer;background:{{ o.bg }};color:{{ o.fg }};border:1px solid {{ o.bd }};transition:background 150ms var(--thi-ease),color 150ms var(--thi-ease)">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <div style="padding:var(--thi-sp-5) var(--thi-sp-6);background:var(--thi-paper);border-top:1px solid var(--thi-line)">
+        <button type="button" onClick="{{ onApply }}" disabled="{{ clean }}" style="width:100%;height:52px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--thi-font-ui);font-weight:600;font-size:16px;border:none;border-radius:var(--thi-r-control);cursor:{{ submitCursor }};background:{{ submitBg }};color:{{ submitFg }};transition:background 150ms var(--thi-ease)">{{ submitLabel }}<i class="ph ph-arrow-right" aria-hidden="true" style="font-size:17px"></i></button>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-top:var(--thi-sp-3)">
+          <span style="font-family:var(--thi-font-mono);font-size:11px;line-height:16px;color:var(--thi-slate-500)">{{ submitNote }}</span>
+          <button type="button" onClick="{{ onReset }}" style="font-family:var(--thi-font-ui);font-weight:600;font-size:13px;color:var(--thi-link);background:none;border:none;padding:0;cursor:pointer">Reset to typical scope</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section style="background:var(--thi-mist)">
+<div style="max-width:var(--thi-container);margin:0 auto;padding:var(--thi-sp-12) var(--thi-gutter) var(--thi-sp-16)">
+  <span style="display:block;font-family:var(--thi-font-ui);font-weight:600;font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--thi-slate-700);margin-bottom:var(--thi-sp-5)">The short answer</span>
+  <p style="font-family:var(--thi-font-display);font-weight:500;font-size:30px;line-height:1.34;letter-spacing:-.005em;color:var(--thi-navy);margin:0;max-width:34em;text-wrap:pretty">A full asphalt shingle re-roof in Austin runs about <strong style="font-weight:600;color:var(--thi-amber-deep)">$11,600 – $17,400</strong> for a typical 22-square, single-story house — roughly <strong style="font-weight:600;color:var(--thi-amber-deep)">$530 to $790 a square</strong>. Steep pitch, a second story, or a second layer to tear off each move the figure up by a predictable amount rather than by a contractor’s discretion.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:var(--thi-sp-3);align-items:center;margin-top:var(--thi-sp-6);padding-top:var(--thi-sp-5);border-top:1px solid var(--thi-line)">
+    <span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--thi-font-mono);font-weight:500;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:4px;white-space:nowrap;color:var(--thi-amber-deep);background:#FBF1E6;border:1px solid #EDD6B8"><i class="ph ph-function" aria-hidden="true" style="font-size:12px"></i>Estimate</span>
+    <span style="font-family:var(--thi-font-mono);font-size:12px;line-height:16px;color:var(--thi-slate-500)">Cost model v2.1 · from 214 Austin re-roof permits filed in the last 12 months · Escalated to Aug 2026 · Confirmed Aug 30, 2026</span>
+  </div>
+</div>
+</section>
+</main>
+
+<x-import component-from-global-scope="TexasHomeIntelligenceDesignSystem_f449f6.SiteFooter" blurb="Situational awareness for your home. Texas public records, read plainly, with every number labeled by where it came from." columns="{{ footerCols }}" legal="This organizes public records and information you provide. It is not an inspection, diagnosis, or professional evaluation. · © 2026 Texas Home Intelligence" hint-size="100%,320px"></x-import>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:1400}}">
+const GEO = {
+  '78704': { label: '78704', metro: 'Austin–Round Rock', permits: 214, spread: 0.20, agg: false, base: 660, med: 26 },
+  '78745': { label: '78745', metro: 'Austin–Round Rock', permits: 188, spread: 0.20, agg: false, base: 640, med: 24 },
+  '78201': { label: '78201', metro: 'San Antonio–New Braunfels', permits: 96, spread: 0.24, agg: false, base: 585, med: 21 },
+  '78613': { label: 'Austin–Round Rock', metro: 'Austin–Round Rock', permits: 1842, spread: 0.34, agg: true, base: 655, med: 25 },
+  'Other Texas ZIP': { label: 'Texas statewide', metro: 'Texas statewide', permits: 9310, spread: 0.42, agg: true, base: 560, med: 22 }
+};
+const UNSURE = 'Other or not sure';
+const PITCH = { 'Low · 3:12 or less': 0.94, 'Typical · 4:12 to 7:12': 1, 'Steep · 8:12 or more': 1.18, [UNSURE]: 1.03 };
+const LAYERS = { '1 layer': 1, '2 layers': 1.09, 'Not sure': 1.045 };
+const STORIES = { '1 story': 1, '2 stories': 1.11, 'Not sure': 1.07 };
+const MATERIAL = { 'Asphalt shingle': 1, 'Metal standing seam': 2.15, 'Clay or concrete tile': 2.6, [UNSURE]: 1.2 };
+const DEFAULTS = { zip: '78704', squares: 22, pitch: 'Typical · 4:12 to 7:12', layers: '1 layer', stories: '1 story', material: 'Asphalt shingle' };
+const usd = n => '$' + (Math.round(n / 100) * 100).toLocaleString('en-US');
+
+class Component extends DCLogic {
+  state = { draft: { ...DEFAULTS }, applied: { ...DEFAULTS } };
+
+  segment(key, options) {
+    const cur = this.state.draft[key];
+    return options.map(label => {
+      const on = cur === label;
+      return {
+        label, pressed: on ? 'true' : 'false',
+        bg: on ? 'var(--thi-navy)' : 'var(--thi-surface)',
+        fg: on ? '#FFFFFF' : 'var(--thi-slate-700)',
+        bd: on ? 'var(--thi-navy)' : 'var(--thi-line-strong)',
+        onPick: () => this.setState(s => ({ draft: { ...s.draft, [key]: label } }))
+      };
+    });
+  }
+
+  renderVals() {
+    const d = this.state.draft, a = this.state.applied;
+    const g = GEO[a.zip];
+    const mult = PITCH[a.pitch] * LAYERS[a.layers] * STORIES[a.stories] * MATERIAL[a.material];
+    const mid = g.base * a.squares * mult;
+    // every "not sure" widens the band — uncertainty compounds honestly
+    const unsure = [a.pitch, a.layers, a.stories, a.material].filter(v => v === UNSURE || v === 'Not sure').length;
+    const spread = g.spread + unsure * 0.05;
+    const lo = mid * (1 - spread / 2), hi = mid * (1 + spread / 2);
+
+    const geoLo = g.base * g.med * (1 - g.spread / 2), geoHi = g.base * g.med * (1 + g.spread / 2);
+    const stLo = 560 * 22 * 0.79, stHi = 560 * 22 * 1.21;
+    const axis = Math.ceil(Math.max(hi, geoHi, stHi) * 1.12 / 5000) * 5000;
+    const pct = v => Math.max(0, Math.min(100, (v / axis) * 100));
+    const bar = (label, l, h, fill) => ({
+      label, value: usd(l) + ' – ' + usd(h), fill,
+      left: pct(l).toFixed(1) + '%',
+      width: Math.max(2, pct(h) - pct(l)).toFixed(1) + '%'
+    });
+
+    const clean = Object.keys(DEFAULTS).every(k => d[k] === a[k]);
+    const set = k => e => this.setState(s => ({ draft: { ...s.draft, [k]: e.target.value } }));
+
+    return {
+      footerCols: [
+        { title: 'Tools', links: [{ label: 'Roof cost calculator', href: '/tools/roof-cost-calculator/' }, { label: 'AC cost calculator', href: '/tools/ac-cost-calculator/' }, { label: 'All nine tools', href: '/tools/' }] },
+        { title: 'Data', links: [{ label: 'Data catalog', href: '/data/' }, { label: 'Methodology', href: '/methodology/' }, { label: 'Cost model v2.1', href: '/methodology/roof-cost/' }] },
+        { title: 'Coverage', links: [{ label: 'Austin', href: '/austin/' }, { label: 'San Antonio', href: '/san-antonio/' }, { label: 'Other Texas metros', href: '/coverage/' }] },
+        { title: 'Company', links: [{ label: 'About', href: '/about/' }, { label: 'Contact', href: '/contact/' }] }
+      ],
+      navLinks: [{ label: 'Tools', href: '/tools/' }, { label: 'Methodology', href: '/methodology/' }],
+
+      zip: d.zip, squares: d.squares, pitch: d.pitch, material: d.material,
+      sqft: (d.squares * 100).toLocaleString('en-US'),
+      fillPct: ((d.squares - 10) / 40 * 100).toFixed(1) + '%',
+      layerOpts: this.segment('layers', ['1 layer', '2 layers', 'Not sure']),
+      storyOpts: this.segment('stories', ['1 story', '2 stories', 'Not sure']),
+
+      geoLabel: g.label, metroLabel: g.metro, permits: g.permits.toLocaleString('en-US'),
+      aggregated: g.agg,
+      low: usd(lo), high: usd(hi), mid: usd(mid),
+      perSquare: '$' + Math.round(lo / a.squares / 10) * 10 + '–$' + Math.round(hi / a.squares / 10) * 10,
+      scopeChips: [a.squares + ' squares', a.material, a.pitch.replace(' · ', ' '), a.layers, a.stories],
+      axisLabel: '$0 – $' + (axis / 1000) + 'k',
+      bars: [
+        bar('Your scope', lo, hi, 'var(--thi-amber)'),
+        bar('Median filed job · ' + g.label + ' (' + g.med + ' squares)', geoLo, geoHi, '#3E6F9E'),
+        bar('Median filed job · Texas (22 squares)', stLo, stHi, '#28496B')
+      ],
+
+      clean,
+      submitLabel: clean ? 'Estimate is current' : 'Update estimate',
+      submitBg: clean ? 'var(--thi-mist)' : 'var(--thi-navy)',
+      submitFg: clean ? 'var(--thi-slate-400)' : '#FFFFFF',
+      submitCursor: clean ? 'default' : 'pointer',
+      submitNote: clean ? 'Showing the scope on the left.' : 'Scope changed — update to recompute the range.',
+      onApply: () => this.setState(s => ({ applied: { ...s.draft } })),
+      onReset: () => this.setState({ draft: { ...DEFAULTS }, applied: { ...DEFAULTS } }),
+
+      onZip: set('zip'),
+      onSquares: e => { const v = Number(e.target.value); this.setState(s => ({ draft: { ...s.draft, squares: v } })); },
+      onPitch: set('pitch'), onMaterial: set('material')
+    };
+  }
+}
+</script>
+</body>
+</html>
