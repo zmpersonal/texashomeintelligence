@@ -236,7 +236,7 @@ const quietest = [...a.months].sort((x, y) => x.permitCount - y.permitCount)[0];
               />
               {reading.href && (
                 <p style="margin-top:12px;">
-                  <a href={reading.href}>Full {c.topic} data, sources and limitations &rarr;</a>
+                  <a href={reading.href}>{reading.linkLabel ?? "Full data, sources and limitations"} &rarr;</a>
                 </p>
               )}
             </div>

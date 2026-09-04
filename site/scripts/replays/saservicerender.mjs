@@ -48,9 +48,19 @@ function expected(category) {
 
 const b = await launchChromium();
 const PAGES = [
-  { path: '/san-antonio/hvac/', category: 'hvac', noun: 'HVAC' },
-  { path: '/san-antonio/plumbing/', category: 'plumbing', noun: 'plumbing' },
+  // Round 10b: the HVAC page carries the restored EIA rate alongside AirNow.
+  { path: '/san-antonio/hvac/', category: 'hvac', noun: 'HVAC', readings: 4 },
+  { path: '/san-antonio/plumbing/', category: 'plumbing', noun: 'plumbing', readings: 3 },
 ];
+
+/** The rate as the archive holds it — never pinned as a literal here. */
+function eiaRate() {
+  const j = JSON.parse(readFileSync(
+    join(SITE, 'src', 'data', 'generated', 'eia-electricity', 'texas.json'), 'utf8'));
+  const newest = j.observations.filter(o => !o.seed)
+    .sort((a, b) => b.observedAt.localeCompare(a.observedAt))[0];
+  return { cents: newest.value.pricePerKwhCents, observedAt: newest.observedAt };
+}
 
 for (const page of PAGES) {
   console.log(`\n══ ${page.path} ══`);
@@ -116,7 +126,8 @@ for (const page of PAGES) {
     `${r.dataRows} rows`);
   A('facts render in real <table> elements', r.tables >= 3, `${r.tables} tables`);
 
-  A('every reading carries a four-bucket label', r.badges.length >= 2, `${r.badges.length} badges`);
+  A('every reading carries a four-bucket label', r.badges.length === page.readings,
+    `${r.badges.length} badges, expected ${page.readings}`);
   A('labels are announced, never aria-hidden', r.badges.every(x => !x.ariaHidden),
     r.badges.map(x => x.label).join(','));
   A('every label carries dual dates: data-through AND confirmed',
@@ -162,6 +173,58 @@ for (const page of PAGES) {
   A('the schema FAQ answers match the visible ones',
     faq.mainEntity.every(q => openBody.includes(q.acceptedAnswer.text.slice(0, 60).replace(/\s+/g, ' '))),
     `${faq.mainEntity.length} answers compared`);
+
+  if (page.category === 'hvac') {
+    const rate = eiaRate();
+    const el = await p.evaluate(() => {
+      const cards = [...document.querySelectorAll('#context .data-card')];
+      const card = cards.find(c => /electricity/i.test(c.querySelector('.metric-label')?.textContent ?? ''));
+      if (!card) return null;
+      const badge = card.querySelector('.live-badge,.aged-badge,.stale-badge,.error-badge,.sample-badge');
+      return {
+        label: card.querySelector('.metric-label')?.textContent?.trim(),
+        value: card.querySelector('.metric-value')?.textContent?.trim(),
+        badge: badge?.textContent?.trim(),
+        badgeAriaHidden: badge?.getAttribute('aria-hidden') === 'true',
+        meta: card.querySelector('.data-meta')?.innerText.replace(/\s+/g, ' ').trim(),
+        link: card.querySelector('a')?.getAttribute('href'),
+        times: [...card.querySelectorAll('time[datetime]')].map(t => t.getAttribute('datetime')),
+      };
+    });
+    A('the EIA electricity rate is restored to the page', !!el, el ? el.label : 'no rate card found');
+    A('the rate matches the archive', !!el?.value?.includes(rate.cents.toFixed(2)),
+      `${el?.value} vs archive ${rate.cents.toFixed(2)}`);
+    A('the rate is labelled STATEWIDE, not as a San Antonio figure',
+      /Texas/.test(el?.label ?? '') && !/San Antonio/.test(el?.label ?? ''), el?.label);
+    A('the rate carries a four-bucket label, announced', !!el?.badge && !el?.badgeAriaHidden, el?.badge);
+    A('the rate carries dual dates',
+      /Data through/.test(el?.meta ?? '') && /(Updated|Last checked|Last known value):/.test(el?.meta ?? ''),
+      el?.meta);
+    A('the rate dates are machine-readable', (el?.times?.length ?? 0) >= 2 &&
+      el.times.every(t => !Number.isNaN(Date.parse(t))), (el?.times ?? []).join(' '));
+    A('the rate links its full data page', el?.link === '/data/texas/electricity-prices/', el?.link);
+    // Forbid the DERIVED FIGURE, not the words. The page's own sentence —
+    // "turning it into a monthly bill or a payback period needs this home's
+    // actual consumption, which we do not have and will not assume" — is the
+    // most useful line in the block, and a word-matching guard would fight it.
+    // What actually must not exist is a second quantity that could only come
+    // from multiplying the rate by a consumption figure we do not hold.
+    const rateBlock = await p.evaluate(() => {
+      const cards = [...document.querySelectorAll('#context .context-item')];
+      const card = cards.find(c => /electricity/i.test(c.innerText));
+      return card ? card.innerText.replace(/\s+/g, ' ') : '';
+    });
+    const numbers = (rateBlock.match(/\d[\d,]*(\.\d+)?/g) ?? [])
+      // The rate itself, and the two dates beside it, are the block's own facts.
+      .filter(n => n !== rate.cents.toFixed(2) && !/^(19|20)\d\d$/.test(n) && Number(n.replace(/,/g, '')) > 31);
+    A('the rate block carries no quantity beyond the rate and its dates',
+      numbers.length === 0, numbers.join(', ') || 'only the rate and its dates');
+    const derivedQty = /\$\s?[\d,]+|\d[\d,]*\s*(kWh\s*(×|x|\*)|per year|a year|\/year)/i;
+    A('no quantity derived from the rate appears anywhere on the page',
+      !derivedQty.test(bodyOnly), (bodyOnly.match(derivedQty) || ['none'])[0]);
+    A('the page says why it stops at the rate',
+      /needs this home's actual\s+consumption|will not assume/i.test(bodyOnly));
+  }
 
   await p.setViewportSize({ width: 380, height: 1400 });
   const m = await p.evaluate(() => ({

@@ -24,10 +24,12 @@ npx tsx scripts/replays/weeklyunit.ts        # unit — no browser, no worker
 npx tsx scripts/replays/r10unit.ts           # unit
 npx tsx scripts/replays/badgeunit.ts         # unit
 npx tsx scripts/replays/alertcopyunit.ts     # unit — alert-copy honesty, no data dependency
+npx tsx scripts/replays/noticefreshunit.ts   # unit — the dated-claim review gate (Round 10b)
 npx tsx scripts/verify-trade-mapping.ts      # unit
 node scripts/replays/signinrender.mjs        # render
 node scripts/replays/r9render.mjs            # render
 node scripts/replays/saservicerender.mjs     # render — the SA service pages (Round 10)
+node scripts/replays/footerchrome.mjs        # render — sitewide footer chrome (Round 10b)
 node scripts/replays/r7replay.mjs            # render — the big one
 ```
 

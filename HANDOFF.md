@@ -140,6 +140,82 @@ run into.
   generated dataset files - those come from ingestion, and a replay asserting on them needs a
   prior `npm run ingest` or the committed data.
 
+- **Round 10b CLOSED that seam, and closing it turned up something worth knowing:
+  `new Date()` DOES NOT WORK at module scope during an Astro build here.** Astro evaluates
+  modules under the Cloudflare Workers runtime, which freezes the clock in global scope.
+  Measured directly this round: a module-level `new Date().toISOString()` prints
+  **`1970-01-01T00:00:00.000Z`** during `npm run build`. The first version of the review gate
+  was written the obvious way, compared every review date against 1970, found nothing overdue,
+  and **passed a build with a claim 156 days past its cadence** - it looked like a closed seam
+  and was a decoration. That is the failure mode this whole feature exists to prevent, so it is
+  written down rather than quietly fixed.
+  The fix: `astro.config.mjs` injects `__THI_BUILD_TIME__` through Vite's `define`, read in
+  real Node when the config loads - the same trick `newestDataUpdate()` in that file already
+  uses. `buildNow()` in `serviceNotices.ts` prefers it and falls back to the system clock
+  outside a Vite build (so `tsx` and the unit replay work unchanged).
+  **Anything at build time that needs the real date must use `buildNow()` or its own injected
+  constant.** A wall clock read at module scope is 1970.
+  **What the gate does now:** `assertNoticesFresh()` runs at module load, so any page, build or
+  `astro check` that reaches the notices reaches it first. A claim past `confirmedOn +
+  reviewEveryDays` **stops the build** - hard, not a warning, because a warning in build output
+  is the thing nobody reads on the run that matters. The error names the page, the claim, how
+  many days overdue, the primary source to re-verify against, and says explicitly not to move
+  the date without re-reading the source. Proved end to end: backdating `confirmedOn` to
+  2026-01-01 failed the build with "156 days overdue"; restoring it passed.
+  It applies to **any** dated volatile claim carrying `reviewEveryDays`, not just 25C - adding
+  the field to a future notice opts it in. Malformed input (zero, negative, or an unparseable
+  date) throws rather than being skipped.
+  `scripts/replays/noticefreshunit.ts` (21 assertions) covers both edges - fires one day past
+  the cadence, does NOT fire on the due date itself - and guards the clock injection against
+  being silently removed, which is the one regression that would restore the 1970 behaviour
+  invisibly.
+
+- **Round 10b: the EIA electricity rate is RESTORED to `/san-antonio/hvac/`.** Round 10
+  withheld it under a blanket reading of "no price figure" and flagged it; the owner's call is
+  that a published, federally-collected utility rate is an observed fact of the same class as
+  an air-quality index, and the no-price rule exists to stop **fabricated cost ranges** built
+  on unusable permit valuation. It renders with its four-bucket label and dual dates like every
+  other reading. **The rate and nothing else**: no monthly bill, no payback, no counterfactual -
+  each needs this home's consumption, which we do not hold. The label says **Texas**, because
+  the EIA series is statewide and presenting it as a San Antonio rate would be exactly the
+  quiet overstatement the labelling rules exist to prevent. `saservicerender` asserts the rate
+  block carries no quantity beyond the rate and its dates.
+
+- **Round 10b: the footer's two QuoteReady links are gone; they were NOT "the last" ones.**
+  Round 10's report said the footer held the last QuoteReady surfaces. That was wrong - it was
+  based on checking only the two San Antonio pages. Removing `"All services" -> /services/` and
+  `"Project Brief" -> /start/` from `Footer.astro` changes all 265 built HTML pages, and
+  **the footer is the only thing that changed on 264 of them** (the 265th is
+  `/san-antonio/hvac/`, which also gained the rate). Verified file by file across the whole
+  build: 76 non-HTML byte-identical, 265 differing only inside `<footer>`, exactly one distinct
+  footer variant, zero unexpected deltas.
+  **`/start/` is still linked from seven other places**: the homepage CTA, `LocationHub` (x3),
+  `PPCPage` (x2), `ServicePage`'s hero and closing CTA on the twelve Austin service pages, and
+  `/brief/[project_id]` (which needs it - that is the resume path for an in-flight intake).
+  `/services/` is still linked in-body from both location hubs and the twelve Austin service
+  pages. So this round retired the CHROME, not the funnel. Retiring the rest is a real round.
+  **Nothing was orphaned**: `/services/` keeps in-body inbound links from `/austin/`,
+  `/san-antonio/` and twelve service pages - verified in the browser.
+
+- **Round 10b recommendation on `/services/` and `/start/`: NEITHER should 301 this round.**
+  - **`/services/`** is not QuoteReady at all. It is a config-generated hub - 39 links, zero
+    QuoteReady mentions, indexed, canonical, in the sitemap - and its own docstring records
+    that it was deliberately reinstated because without it "the 14 location x service pages
+    were reachable only from each other and from one homepage strip, which is thin internal
+    linking for a third of the indexed site." Redirecting it would destroy internal linking to
+    a third of the indexed site to satisfy a rule aimed at a NAV ITEM. **Recommend: keep it
+    indexed and reachable in-body; do not redirect.** If the owner wants the URL gone, the
+    honest move is to rebuild that linking elsewhere first, not to 301 and hope.
+  - **`/start/`** is already `noindex, follow`, absent from the sitemap, and carries the
+    QuoteReady title. It has therefore never accumulated search equity, so a 301 buys nothing
+    for SEO - and it would **break `/brief/[project_id]`'s resume link** for anyone with an
+    in-flight intake. **Recommend: no redirect. Leave it noindexed and unlinked from chrome,
+    and decide its fate when QuoteReady is formally decommissioned** - its four `/api/intake/*`
+    routes and its D1 tables are still live, and the page, the endpoints and the tables should
+    retire together rather than piecemeal.
+  - Finding, unrelated to the funnel: **`/start/` has no `<h1>`.** Pre-existing, on a noindexed
+    page, so low-stakes - but it is an accessibility defect, not just an SEO one.
+
 - **Round 10 seam: the IRS 25C notice on `/san-antonio/hvac/` is a DATED FACT ON A REVIEW
   CADENCE.** The page states that the Energy Efficient Home Improvement Credit (IRC section
   25C) terminated for property placed in service after **December 31, 2025** under the One Big
