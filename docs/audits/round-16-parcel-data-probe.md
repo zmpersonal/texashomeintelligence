@@ -72,7 +72,18 @@ HTTP 200, 13,784 bytes. This is the repository's own README — a primary source
 - **Contents:** polygons. The README documents no year-built, class, or stories attribute.
   It is roof *outlines*, not building characteristics.
 
-### 🔴 The licence is a stop on its own, independent of the network
+### ✏️ CORRECTED IN ROUND 16b — this was overstated
+
+> **The heading below originally read "a stop on its own". That was wrong in the direction of
+> caution.** ODbL permits commercial use outright; share-alike attaches to a *Derivative
+> Database that is publicly used*, not to a Produced Work such as a rendered roof-area figure.
+> The genuinely unsettled question is narrower — whether serving numbers out of a stored
+> polygon table crosses that line. **Deferred, not rejected**, with two alternatives worth
+> pricing first (Overture Maps; CAD improvement area, which yields roof area with no polygon
+> and no licensing question at all). See HANDOFF for the correction in full. The section below
+> is kept as written, minus its verdict, because the measurements in it stand.
+
+### The licence question, which must be answered before any footprint ingestion
 
 > "This data is licensed by Microsoft under the **Open Data Commons Open Database License
 > (ODbL)**."
@@ -88,10 +99,9 @@ what THI publishes and stores, on a commercial site, and the boundary between a 
 (a rendered roof-area figure — attribution) and a Derivative Database (a stored, queryable
 table of Travis County roof polygons — share-alike) is exactly where this project would sit.
 
-**This is an owner decision and quite possibly a lawyer's, not a build decision.** It should be
-resolved before any footprint ingestion is written, because the answer may change whether the
-data is stored at all. Note that it does **not** affect Travis CAD, which is Texas public
-record.
+**This is an owner decision, and it is a question to answer rather than a door that is
+closed** — see the Round 16b correction above. It should be resolved before any footprint
+ingestion is written. It does **not** affect Travis CAD, which is Texas public record.
 
 ---
 

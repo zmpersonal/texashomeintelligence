@@ -302,6 +302,99 @@ run into.
   treat removing a specific claim as the safe default rather than a change needing the same
   evidence as adding one.
 
+- **✏️ CORRECTION — Round 16 OVERSTATED the ODbL finding. It is deferred, not rejected.**
+  Round 16 called Microsoft Building Footprints' licence "a stop… independent of the network"
+  and put a 🔴 on it. That was wrong in the direction of caution, and the correction matters
+  because a wrong "blocked" quietly removes an option nobody revisits.
+  **ODbL permits commercial use outright.** It is not a non-commercial licence and nothing in it
+  forbids a business using the data. The real question is narrower: **share-alike attaches to a
+  Derivative Database that is publicly used, not to a Produced Work** — and a rendered
+  roof-area figure on a page is a Produced Work, which needs attribution, not share-alike.
+  **What is genuinely unsettled** is whether serving numbers out of a stored, queryable table of
+  Travis County polygons is "publicly using a Derivative Database". That is a real question with
+  a real answer somebody has to reach; it is not a blocker, and it is not one this project
+  should decide by reflex in either direction.
+  **Two alternatives worth pricing before that question is even taken up:**
+  1. **Overture Maps** redistributes the same Microsoft footprints under different terms. If
+     those terms are simpler, the question never has to be answered.
+  2. **CAD improvement area** yields roof area **with no polygon and no licensing question at
+     all** — it is a number in a public-record field. For "how big is my roof", this is very
+     likely the cheaper and cleaner path, and it arrives with the parcel data this round is
+     probing for anyway.
+  **And from Round 16's own measurements, footprints were only ever a source of polygons:** the
+  Texas file is **10.7M footprints / 2.83 GiB, statewide only with no county download**, and it
+  carries **no year built, no class, no stories**. Everything the three tools need beyond a roof
+  outline has to come from CAD regardless. **No footprint work was done this round and none
+  should be until the licensing read is taken up as its own task.**
+
+- **Round 16b — a TEMPORARY probe workflow was added to characterise Travis CAD from the
+  Actions runner. `.github/workflows/tcad-probe.yml` — DELETE IT once the question is settled.**
+  It exists because of Round 16's asymmetry finding: this container's allowlist denies
+  `traviscad.org` and every other data host, while the runner reaches them daily.
+  **What it is allowed to do is read.** `workflow_dispatch` only, `permissions: contents: read`
+  set explicitly rather than inherited, **no checkout, no commit step, no token use**, writes
+  only under `$RUNNER_TEMP` and deletes what it downloads. A standalone file rather than a step
+  inside `data-ingestion.yml`, deliberately: Rounds 4b and 5 put TEMP steps in the ingestion
+  workflow and Round 7 had to unpick them. This one is removed with a single `git rm`.
+  **Nothing in it is inferred from a brief.** It DISCOVERS the download links from the published
+  page and reports what it finds, because Round 16 established that no Travis CAD URL in any
+  brief has ever actually been opened. If discovery finds nothing it prints raw HTML so a human
+  can see why; if the runner is also denied it prints `TCAD_PROBE_STATUS=unreachable` and stops
+  rather than working around it; if the file exceeds a 500 MB ceiling it reports the size
+  instead of downloading it.
+  **It was dry-run against a synthetic TCAD-shaped fixture before commit** — the success path,
+  the denied path and the oversized path all exercised offline — which found and fixed two real
+  defects: distributions keyed by concept merged two different columns into one incoherent
+  field, and overlapping regex windows printed the same sentence six times. **Its output can
+  only be seen on a dispatch after merge.**
+  It reports, in order: which pages answer; every discovered data link; HEAD size/type/
+  last-modified per candidate; the archive's contents and any layout/dictionary/terms file
+  shipped inside it; the data member's first three lines verbatim with a **sniffed** delimiter
+  (nothing presumes CSV — TCAD has historically published fixed-width); field names verbatim and
+  in order; row count; **per-column** null rate and value distribution for year built,
+  improvement area, class, stories and the residential-determining field; terms-of-use language
+  including a specific search for **Texas Tax Code 11.48 / 25.027 / 552** restrictions; and the
+  stated refresh cadence. It closes with a Round 15b-style status sentinel so a crash is
+  distinguishable from an empty finding.
+
+- **⚠️ Round 16b — REVISED STORAGE RECOMMENDATION. The answer is already in this repository, and
+  it is not D1.** Round 16 concluded per-parcel records cannot enter the eagerly-globbed archive
+  and gestured at D1 as the home. On looking properly, **D1 is the wrong recommendation** and
+  the right one is a pattern this project already runs in production.
+  **`lib/municipal/shards.ts` solves this exact problem at this exact scale today.** The Austin
+  Resource Recovery schedule is **178,060 rows sharded by ZIP into 42 files, 5.4 MB total,
+  median 88 KB per shard**, served from the Worker's own static assets. Its header states the
+  design: *"One request touches exactly one ZIP's file. The full schedule is ~185k rows across
+  the metro; nothing ever loads all of it, and none of it is bundled."* Measured: `public/` is
+  **not** matched by the `../data/generated/*/*.json` eager glob, so shards never enter the
+  build the way a generated dataset does.
+  **Why this beats D1 on every axis that matters here:**
+  - **No per-request database query on the serving path** — the rule CLAUDE.md states and
+    `shards.ts` was written to honour. A D1 parcel lookup would breach it.
+  - **No third job for D1.** COST.md rule 4 gives the database exactly two: captured PII, and
+    the observations history. A parcel table is neither, and adding it silently would widen a
+    boundary that was drawn deliberately.
+  - **Zero marginal cost per lookup.** Assets are already served from the edge.
+  - **It is built, tested and in production**, rather than a migration to design.
+  **Expected size:** Travis County's parcel count is still unverified — the probe answers that —
+  but at roughly twice the ARR row count the shard set lands near **10–15 MB across ~225 ZIP
+  files**, which is well inside what `public/` already carries.
+  **How an address resolves to a parcel row — and this is the part that is already written.**
+  `lib/municipal/addressKey.ts` normalises a free-text address into a USPS-canonical key and
+  matches by **exact string equality with no fuzzy matching**, resolving every ambiguity to a
+  withheld read on the stated principle that *a wrong collection day is worse than no collection
+  day.* That principle transfers unchanged and gets stronger: **a wrong year built is worse than
+  no year built**, because it silently changes what a tool tells a homeowner about their roof or
+  their pipes. So: Google Places (Round 15c) returns a formatted address → `addressKey` →
+  exact-match against the ZIP's parcel shard → a row or a withheld read. **No new join
+  machinery, no geometry, no point-in-polygon, and no provider lock-in beyond the autocomplete
+  itself.**
+  **What still has to be true, and only the probe can say:** that the improvement file carries a
+  situs address at all (if it keys only on property id, an address join needs a second CAD file
+  and this recommendation changes); that year built and improvement area are populated well
+  enough to be worth serving; and that TCAD's terms permit republication in this shape — which
+  §4 of the probe treats as a gate, not a footnote. **Recommendation only. Nothing was built.**
+
 - **⛔ ROUND 16 — TRAVIS CAD PARCEL DATA AND BUILDING FOOTPRINTS: BOTH SOURCES DENIED, NOTHING
   BUILT.** Full probe in `docs/audits/round-16-parcel-data-probe.md`. No fetcher, dataset,
   registry entry or freshness window was written, per the round's own rule that a denied host
