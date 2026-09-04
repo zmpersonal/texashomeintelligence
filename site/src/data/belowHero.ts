@@ -214,14 +214,18 @@ const AUSTIN_PERMIT_SOURCE: SourceRef = {
   name: "City of Austin Issued Construction Permits (Socrata)",
   used: "Every issued construction permit in the window, by permit type, work class, description and issue date. Counted and grouped by month; no valuation field is read.",
   url: AUSTIN_DATASET_URL,
-  // NOT set. No human has opened this URL and no fetch from this environment
-  // has ever reached data.austintexas.gov — the egress proxy denies it, as it
-  // denies every other citation host on this site. It is derived from the
-  // fetcher that has been successfully querying this resource daily, which is
-  // strong evidence the id is right and no evidence at all about what a
-  // browser sees at /d/<id>. The weekly citation check will be the first thing
-  // to open it. See HANDOFF.
-  // checkedByHumanOn: unset until a human confirms.
+  // Round 15b. The owner opened it 2026-09-04 and confirmed it resolves and is
+  // the dataset this page cites it for. Round 15 left this unset on purpose —
+  // the URL is DERIVED from a resource id the fetcher queries successfully
+  // every day, which is strong evidence the id is right and no evidence at all
+  // about what a browser sees at `/d/<id>`. That second question is what a
+  // human opening it answers, and it is now answered.
+  //
+  // `urlVerifiedByFetch` stays absent-meaning-unasserted for the same reason it
+  // does everywhere: no fetch from this environment has ever reached
+  // data.austintexas.gov, or any other citation host. A person clicking a link
+  // and a build issuing a request remain different evidence.
+  checkedByHumanOn: "2026-09-04",
 };
 
 /** The valuation problem, per metro. Both refuse a cost figure; the reasons
@@ -510,6 +514,12 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
     },
     category: "plumbing",
     subjectNoun: "plumbing",
+    // Round 15b. The #data caption begins with this noun, and "plumbing
+    // permits issued by the City of San Antonio" opened a sentence with a
+    // lowercase word — which reads as a typo, not as a style. Round 15 found
+    // it and set the Austin equivalent but could not touch this page, which
+    // had to stay byte-identical that round. Both metros now agree.
+    dataCaptionNoun: "Plumbing",
     costOmission: SA_COST_OMISSION,
     answerHeading: "How much plumbing work is happening in San Antonio?",
     dataHeading: "San Antonio plumbing permits, month by month",
@@ -700,6 +710,7 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
         name: "National Weather Service API",
         used: "Current point forecast high and low for the Austin area. One forecast, underived.",
         url: "https://api.weather.gov/",
+        checkedByHumanOn: "2026-09-04",
       },
       {
         name: "AirNow (U.S. EPA)",
@@ -963,6 +974,7 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
         name: "Austin Water \u2014 drought response",
         used: "The drought-response stage currently in force. The stage only; the restrictions themselves are the city's to publish and are linked rather than mirrored.",
         url: "https://www.austintexas.gov/water/austin-water-drought-response",
+        checkedByHumanOn: "2026-09-04",
       },
       THI_METHODOLOGY,
     ],

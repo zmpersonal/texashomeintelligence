@@ -126,12 +126,73 @@ export async function checkAll(): Promise<CheckResult[]> {
   return out;
 }
 
+/**
+ * ── THE STATUS SENTINEL (Round 15b) ───────────────────────────────────────
+ * The line that lets a caller tell "a URL is dead" apart from "the checker
+ * never ran".
+ *
+ * Those two are completely different findings and until now they produced the
+ * same signal: a non-zero exit, which the workflow read as "a citation is
+ * dead" either way. That is not a hypothetical. Round 14b gave `belowHero.ts`
+ * a Vite-only `?raw` import, this script imports `belowHero.ts`, and from that
+ * commit it died on startup with a SyntaxError — so every Monday for a month
+ * the workflow would have opened an issue announcing a dead citation and
+ * pasted a stack trace as the evidence.
+ *
+ * The sentinel is the discriminator because A STARTUP CRASH CANNOT PRINT IT.
+ * An exit code can be produced by anything, including a module that failed to
+ * parse; this line only exists if the checker got far enough to have an
+ * answer. Its absence IS the crash signal, and that is the whole design.
+ *
+ * Written to exactly ONE stream so a merged report never shows it twice:
+ * stdout in human mode, where a person reading the report should see it, and
+ * stderr in `--json` mode, where anything extra on stdout would break the
+ * parse. Both the workflow and the replay merge the two streams, so either
+ * way there is exactly one sentinel to grep for.
+ */
+type CheckStatus = "ok" | "dead" | "error";
+export const STATUS_SENTINEL = "CITATION_CHECK_STATUS";
+
+function emitStatus(status: CheckStatus, checked: number, dead: number, human: boolean): void {
+  const line = `${STATUS_SENTINEL}=${status} checked=${checked} dead=${dead}`;
+  if (human) console.log(line);
+  else console.error(line);
+}
+
+/**
+ * Exit codes, which the workflow reads ALONGSIDE the sentinel rather than
+ * instead of it:
+ *   0  every cited URL resolved
+ *   1  at least one did not — the finding this check exists for
+ *   2  the checker itself failed after starting (it caught its own error)
+ *   anything else, or any exit with NO SENTINEL — the checker crashed
+ */
+const EXIT = { ok: 0, dead: 1, error: 2 } as const;
+
 if (process.argv[1]?.endsWith("check-citations.ts")) {
-  const results = await checkAll();
+  const json = process.argv.includes("--json");
+
+  let results: CheckResult[];
+  try {
+    results = await checkAll();
+  } catch (err) {
+    // An error the checker reached and caught. Distinct from a crash, and
+    // reported as its own status so the workflow does not call it a dead link.
+    console.error(`\ncitation check FAILED to complete: ${err instanceof Error ? err.stack : String(err)}`);
+    emitStatus("error", 0, 0, !json);
+    process.exit(EXIT.error);
+  }
+
   const failed = results.filter((r) => !r.ok);
 
-  if (process.argv.includes("--json")) {
-    console.log(JSON.stringify({ checkedAt: new Date().toISOString(), results }, null, 2));
+  if (json) {
+    console.log(JSON.stringify({
+      checkedAt: new Date().toISOString(),
+      status: failed.length === 0 ? "ok" : "dead",
+      checked: results.length,
+      dead: failed.length,
+      results,
+    }, null, 2));
   } else {
     console.log(`\nCitation link check — ${results.length} URL(s)\n`);
     for (const r of results) {
@@ -146,5 +207,7 @@ if (process.argv[1]?.endsWith("check-citations.ts")) {
         `\nit for — that is what reviewEveryDays answers.\n`,
     );
   }
-  process.exit(failed.length === 0 ? 0 : 1);
+
+  emitStatus(failed.length === 0 ? "ok" : "dead", results.length, failed.length, !json);
+  process.exit(failed.length === 0 ? EXIT.ok : EXIT.dead);
 }

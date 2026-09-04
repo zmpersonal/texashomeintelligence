@@ -157,6 +157,7 @@ for (const page of PAGES) {
       answerLedeSize: parseFloat(getComputedStyle(document.querySelector('#answer .answer-lede')).fontSize),
       otherProseSizes: [...document.querySelectorAll('#method p, #context p, #faq p')]
         .map(el => parseFloat(getComputedStyle(el).fontSize)),
+      dataCaption: txt(dataSec?.querySelector('caption')),
       dataRows: dataSec?.querySelectorAll('tbody tr').length ?? 0,
       dataCells: [...(dataSec?.querySelectorAll('tbody tr td.num') ?? [])]
         .filter((_, i) => i % 2 === 0).map(td => txt(td)),
@@ -212,6 +213,13 @@ for (const page of PAGES) {
     r.dataRows === e.months && r.dataCells.join(',') === e.monthly.map(n => n.toLocaleString()).join(','),
     `${r.dataRows} rows`);
   A('facts render in real <table> elements', r.tables >= 3, `${r.tables} tables`);
+  // Round 15b. The #data caption is a sentence, and it opens with the spec's
+  // subject noun — so "plumbing permits issued by the City of San Antonio"
+  // began one on a lowercase word, which reads as a typo rather than a style.
+  // `dataCaptionNoun` is the field that fixes it; this is what stops the next
+  // trade from reintroducing it.
+  A('the #data caption opens on a capital letter',
+    /^[A-Z]/.test(r.dataCaption), r.dataCaption.slice(0, 60));
 
   A('every reading carries a four-bucket label', r.badges.length === page.readings,
     `${r.badges.length} badges, expected ${page.readings}`);

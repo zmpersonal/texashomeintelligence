@@ -20,6 +20,22 @@ name: Citation link check
 # weekly clock regardless of traffic or commits, and its only output is a GitHub
 # issue for a human. If it never ran, no number on the site would change.
 #
+# ── TWO DIFFERENT FAILURES, TWO DIFFERENT ISSUES (Round 15b) ──────────────
+# "A cited URL is dead" and "the checker never ran" are unrelated findings with
+# unrelated fixes, and this job used to report both as the first one: any
+# non-zero exit opened an issue titled "one or more cited URLs did not resolve"
+# and pasted whatever the run printed.
+#
+# That is not hypothetical. Round 14b gave belowHero.ts a Vite-only `?raw`
+# import; this script imports belowHero.ts; from that commit it died on startup
+# with a SyntaxError. Every Monday afterwards this job would have announced a
+# dead citation and offered a stack trace as the evidence.
+#
+# The discriminator is the STATUS SENTINEL the script prints, not the exit
+# code — measured: a dead-link run and a startup crash BOTH exit 1. Only a run
+# that got far enough to have an answer can print the sentinel, so its absence
+# is the crash signal and nothing else can forge it.
+#
 # ── WHAT A PASS MEANS, AND WHAT IT DOES NOT ───────────────────────────────
 # That the URL responded on that date. NOT that the page still says what we cite
 # it for. That second question is `reviewEveryDays` in serviceNotices.ts, which
@@ -64,8 +80,8 @@ jobs:
       - name: Check cited URLs
         id: check
         working-directory: site
-        # Never fails the job — the report is the product, and the issue step
-        # below decides what to do with it.
+        # Never fails the job — the report is the product, and the issue steps
+        # below decide what to do with it.
         continue-on-error: true
         run: |
           set +e
@@ -74,11 +90,28 @@ jobs:
           # fetchers. Without it this step dies on startup with a SyntaxError and
           # the issue below reports a stack trace instead of a link report — which
           # is exactly what it did between Round 14b and Round 15.
-          npx tsx --import ./scripts/register-raw.mjs scripts/check-citations.ts | tee "$RUNNER_TEMP/report.txt"
-          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+          #
+          # Both streams are merged into the report: the sentinel goes to stdout
+          # in human mode, but a crash writes only to stderr, and the crash is
+          # the case this classification exists for.
+          npx tsx --import ./scripts/register-raw.mjs scripts/check-citations.ts \
+            > "$RUNNER_TEMP/report.txt" 2>&1
+          code=$?
+          cat "$RUNNER_TEMP/report.txt"
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+
+          # THE CLASSIFICATION. Sentinel absent => the checker never produced an
+          # answer, whatever it exited with. Sentinel present => trust what it
+          # says. Never infer "dead link" from an exit code alone: a dead-link
+          # run and a startup crash both exit 1.
+          status=$(grep -o 'CITATION_CHECK_STATUS=[a-z]*' "$RUNNER_TEMP/report.txt" \
+            | tail -1 | cut -d= -f2)
+          if [ -z "$status" ]; then status=crashed; fi
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "::notice title=Citation check::status=$status exit=$code"
 
       - name: Open an issue if any citation is dead
-        if: steps.check.outputs.exit_code != '0'
+        if: steps.check.outputs.status == 'dead'
         env:
           GH_TOKEN: ${{ github.token }}
           TITLE: "Citation link check: one or more cited URLs did not resolve"
@@ -112,4 +145,64 @@ jobs:
             echo "commented on existing issue #$existing"
           else
             gh issue create --title "$TITLE" --body-file "$RUNNER_TEMP/body.md"
+          fi
+
+      # ── THE OTHER FAILURE ────────────────────────────────────────────────
+      # The checker did not produce an answer. Its own title, so it can never be
+      # mistaken for — or collapsed into — a dead-link issue, and so the two do
+      # not overwrite each other's comment thread. `error` means the script
+      # caught its own failure; `crashed` means it never got far enough to say
+      # anything, which is the Round 14b shape.
+      - name: Open an issue if the checker itself failed
+        if: steps.check.outputs.status == 'crashed' || steps.check.outputs.status == 'error'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: "Citation link check: the checker did not run"
+          STATUS: ${{ steps.check.outputs.status }}
+          CODE: ${{ steps.check.outputs.exit_code }}
+        run: |
+          set -euo pipefail
+          existing=$(gh issue list --state open --search "$TITLE in:title" \
+            --json number --jq '.[0].number // empty')
+
+          {
+            echo "**The citation checker did not complete. This says nothing about the citations.**"
+            echo
+            echo "No cited URL has been reported dead here — the check never reached an answer,"
+            echo "so the state of every citation is simply unknown until this is fixed."
+            echo
+            echo "| | |"
+            echo "|---|---|"
+            echo "| classification | \`$STATUS\` |"
+            echo "| process exit code | \`$CODE\` |"
+            echo "| status sentinel | $( [ "$STATUS" = crashed ] && echo 'absent — the script never printed one' || echo 'present, reporting its own failure' ) |"
+            echo
+            echo "\`crashed\` means the script did not get far enough to print"
+            echo "\`CITATION_CHECK_STATUS\`. The likeliest cause is the one this guard was built for:"
+            echo "**a module the script imports gained a build-tool-only import that plain Node cannot"
+            echo "load.** \`site/src/data/belowHero.ts\` derives its dataset citations with Vite's"
+            echo "\`?raw\` suffix, which is why this job runs the script through"
+            echo "\`--import ./scripts/register-raw.mjs\`. If a new \`?raw\`-style import appears"
+            echo "somewhere that hook does not cover, this is what it looks like."
+            echo
+            echo "Reproduce and fix locally:"
+            echo
+            echo '```'
+            echo "cd site"
+            echo "npx tsx scripts/replays/citationcheckunit.ts   # the replay that guards this"
+            echo "npx tsx --import ./scripts/register-raw.mjs scripts/check-citations.ts"
+            echo '```'
+            echo
+            echo '```'
+            tail -c 8000 "$RUNNER_TEMP/report.txt"
+            echo '```'
+            echo
+            echo "_Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}_"
+          } > "$RUNNER_TEMP/crash.md"
+
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file "$RUNNER_TEMP/crash.md"
+            echo "commented on existing issue #$existing"
+          else
+            gh issue create --title "$TITLE" --body-file "$RUNNER_TEMP/crash.md"
           fi
