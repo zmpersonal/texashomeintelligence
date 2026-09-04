@@ -26,13 +26,21 @@ npx tsx scripts/replays/badgeunit.ts         # unit
 npx tsx scripts/replays/alertcopyunit.ts     # unit — alert-copy honesty, no data dependency
 npx tsx scripts/replays/noticefreshunit.ts   # unit — the dated-claim review gate (Round 10b)
 npx tsx scripts/verify-trade-mapping.ts      # unit
+npx tsx scripts/replays/citationcheckunit.ts # unit — the CITATION CHECKER itself (Round 15b).
+                                             #   Runs check-citations.ts both ways and proves a
+                                             #   startup crash is told apart from a dead link.
+                                             #   Green in this sandbox even though every host is
+                                             #   proxy-denied: it asks whether the checker works,
+                                             #   not whether the URLs resolve.
 npx tsx --import ./scripts/register-raw.mjs \
   scripts/check-citations.ts                 # network — cited URLs resolve. The --import is
                                              #   NOT optional: belowHero.ts derives its dataset
                                              #   citations with Vite's ?raw, which Node alone
                                              #   cannot load (broken from Round 14b to 15).
                                              #   Runs weekly in CI, not in the build.
-                                             #   Fails in this sandbox: every host is proxied.
+                                             #   Reports 10/10 dead in this sandbox: every host
+                                             #   is proxied. That is the environment, not a bug —
+                                             #   citationcheckunit.ts is the one to trust locally.
 node scripts/replays/signinrender.mjs        # render
 node scripts/replays/r9render.mjs            # render
 node scripts/replays/saservicerender.mjs     # render — the six below-hero service pages,

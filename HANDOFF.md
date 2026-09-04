@@ -302,6 +302,97 @@ run into.
   treat removing a specific claim as the safe default rather than a change needing the same
   evidence as adding one.
 
+- **⭐ Round 15b: EVERY CITATION ON EVERY SERVICE PAGE IS NOW HUMAN-CHECKED — the first time
+  that has been true.** The owner opened the three Austin URLs Round 15 left unverified on
+  2026-09-04 and confirmed each resolves and says what it is cited for:
+  `data.austintexas.gov/d/3syk-w9eu`, `api.weather.gov/`, and
+  `austintexas.gov/water/austin-water-drought-response`. With those set, **10 of 10 distinct
+  cited URLs across all six below-hero pages carry `checkedByHumanOn`, and 0 are unchecked** —
+  verified by enumerating `citedUrls()` rather than by reading the config.
+  **`urlVerifiedByFetch` is still false or unasserted on all ten, and that is not an
+  oversight.** No fetch from the agent sandbox has ever reached a citation host; the egress
+  proxy answers all ten with 403. A person opening a link and a build issuing a request stay
+  separate fields because they are separate evidence with separate failure modes — Round 13b
+  found a dead URL that a human check caught and no build ever would have.
+  **The standing owner action is unchanged: this is a state to re-confirm, not a box now
+  permanently ticked.** The weekly workflow watches whether they still resolve; whether they
+  still SAY what we cite them for is `reviewEveryDays`, and neither is a substitute for the
+  other.
+
+- **⚠️ ROUND 15b, THE PATTERN WORTH KEEPING: A SECOND METRO IS FUNCTIONING AS A TEST ORACLE.**
+  Austin's data has now TWICE surfaced a latent defect in component code that was correct
+  against San Antonio alone and correct-looking in review:
+  1. **Round 12 — trend/amplitude conflation.** The seasonality sentence called any series
+     "narrow" whenever the half-over-half trend failed to clear the noise floor. San Antonio
+     roofing is flat half-over-half *and* swings 2.3× within the year, so the page would have
+     described a twelve-fold-understated spread as no season at all. Trend and seasonality are
+     different questions and the code answered one with the other.
+  2. **Round 15 — the partial-month window.** The ingestion window runs to `now`, so the
+     current calendar month is always present and always partial. San Antonio's feed lags and
+     never exposed it; Austin's does. Four days of September read as an 11× hvac trough and a
+     25× solar trough at ~30σ.
+  **Neither was found by review, by types, or by a green build. Both were found by pointing
+  the same code at a second city.** The mechanism is that San Antonio's feed happens to be
+  benign on exactly the axes the code was sloppy about — one dedicated permit type per trade,
+  a lagging feed with no running month — so its correctness was a property of the DATA, not of
+  the code, and nothing distinguished the two until different data arrived.
+  **Expect the same from any third metro, and treat it as a schedule item rather than a
+  surprise.** The defects a new metro exposes are not caused by the new metro; they are
+  pre-existing bugs that the first city was too well-behaved to reveal. Budget a round for
+  them, look first at anything that assumes one permit type per trade, a complete final month,
+  a county-per-metro feed, or a mechanism that is `permit-type` everywhere. And where a metro
+  now differs, the check is parameterised over BOTH rather than pinned to one — `expected()`
+  in `saservicerender` takes a location, and the cross-metro roofing guard is computed from
+  the other city's archive rather than from literals.
+
+- **Round 15b closes the citation-checker blind spot: "a URL is dead" and "the checker never
+  ran" are now different findings.** They used to produce the same signal — any non-zero exit
+  opened an issue titled "one or more cited URLs did not resolve" — which is how Round 14b's
+  `?raw` regression would have reported a SyntaxError as a dead citation every Monday.
+  **The discriminator is a STATUS SENTINEL, not the exit code, and the reason is measured: a
+  dead-link run and a startup crash BOTH exit 1.** `check-citations.ts` prints
+  `CITATION_CHECK_STATUS=ok|dead|error checked=N dead=M` as its last word; only a run that
+  reached an answer can print it, so its absence is the crash signal and nothing can forge it.
+  Exit codes are now 0 / 1 / 2 (ok / dead / the checker caught its own failure), and the
+  workflow classifies on the sentinel with **two separate issue titles** so a crash can never
+  be collapsed into — or overwrite the thread of — a dead-link report. The crash issue says
+  plainly that no citation has been reported dead and that their state is simply unknown.
+  **`scripts/replays/citationcheckunit.ts` is the local guard**, wired into the cold-start
+  suite. It runs the real script both ways — with the hook, and without it, which reproduces
+  the Round 14b SyntaxError exactly rather than mocking it — and asserts the two are told
+  apart. Proven to bite: with `register-raw.mjs` moved aside it goes from 13/13 to 5 passed,
+  8 failed. It deliberately does NOT assert that any URL resolves, because all ten are
+  proxy-denied here; a replay that is red forever is a replay nobody reads.
+
+- **🟡 Round 15b did NOT normalise the two `&#39;` apostrophes, because the premise turned out
+  to be wrong — they already match the site.** Round 15 reported that two San Antonio
+  apostrophes began emitting as `&#39;` when the cost sentence became spec-supplied, and
+  flagged it as differing from every other apostrophe on the site. Measured across all 265
+  built pages: **`&#39;` appears 320 times in prose, on 240+ pages**, and on these three pages
+  it was ALREADY the form in 8 / 5 / 4 places respectively before Round 15 touched them —
+  Round 15 added 2 to each. It is simply what Astro emits for any apostrophe in
+  expression-interpolated prose, which is every data-driven sentence on the site: the data
+  pages' findings and interpretations, the dashboard, the methodology page. The literal-text
+  form and the interpolated form have coexisted since Round 1.
+  **The only two ways to force a raw `'` are both worse than the thing they would fix:**
+  `set:html` on the field, which opens an HTML-injection path for plain text and would make
+  these two apostrophes inconsistent with the other 318; or moving the sentence back to a
+  literal text node, which means hardcoding "San Antonio" into the component that Round 15
+  parameterised. (A third option — U+2019 — passes through unescaped but changes the rendered
+  character on three indexed pages, and the curly form is a 65-instance minority.)
+  Left alone deliberately. **If the owner wants one apostrophe form sitewide that is a real
+  and separate task**, worth roughly 320 substitutions and its own round, and it is not what
+  Round 15's two characters were evidence of.
+
+- **Round 15b: the San Antonio plumbing `#data` caption is fixed.** It read "plumbing permits
+  issued by the City of San Antonio, by month" — a sentence opening on a lowercase word, which
+  reads as a typo rather than a style. `dataCaptionNoun` exists for exactly this; Austin set it
+  in Round 15 and San Antonio could not, because that round required its three pages to stay
+  byte-identical. Both metros now agree. **Verified as the round's ONLY rendered change: across
+  all 265 built pages exactly one file differs from the Round 15 build, and within it exactly
+  one character.** The three `checkedByHumanOn` dates are metadata read by the citation check
+  and render nowhere, which is why they move no bytes.
+
 - **⚠️ Round 15 found and fixed a REAL DATA BUG the Austin pages would have published: the
   partial-month contamination.** `computeFetchWindow` runs the ingestion window to `now`, so
   the CURRENT calendar month is always present in `permit-trade-activity` and always partial.
