@@ -190,97 +190,110 @@ export function assertNoticesFresh(
   );
 }
 
-export const SERVICE_NOTICES: Record<string, ServiceNotice[]> = {
-  "san-antonio/hvac": [
-    {
-      heading: "The federal 25C credit for HVAC equipment expired on December 31, 2025",
-      body:
-        "The Energy Efficient Home Improvement Credit under Internal Revenue Code section 25C — the " +
-        "credit homeowners claimed for qualifying heat pumps, air conditioners and furnaces — was " +
-        "ended by the One Big Beautiful Bill Act. The IRS states the test plainly: the credit " +
-        "\u201Cwill not be allowed for any property placed in service after December 31, 2025.\u201D " +
-        "Placed in service, not purchased — so equipment bought before July 4, 2025 but not placed in " +
-        "service until after the cutoff does not qualify. There is no grandfather provision. " +
-        "If a quote or an installer\u2019s page still prices the credit in, that is a reason to ask, " +
-        "not a reason to hurry. " +
-        "One qualification the IRS attaches to this guidance itself: these FAQs are not published in " +
-        "the Internal Revenue Bulletin, so the IRS will not rely on them to resolve a case \u2014 " +
-        "though a taxpayer who relies on them reasonably and in good faith is protected from " +
-        "accuracy-related penalties.",
-      sourceName:
-        "IRS Fact Sheet 2025-05, Q1 — FAQs on the OBBB modification of sections 25C, 25D, 25E, 30C, 30D, 45L, 45W and 179D",
-      // Round 14: was /newsroom/fs-2025-05, which the owner confirmed is DEAD.
-      // This is the full FAQ slug, supplied by the owner.
-      sourceUrl:
-        "https://www.irs.gov/newsroom/faqs-for-modification-of-sections-25c-25d-25e-30c-30d-45l-45w-and-179d-under-public-law-119-21-139-stat-72-july-4-2025-commonly-known-as-the-one-big-beautiful-bill-obbb",
-      checkedByHumanOn: "2026-09-04",
-      urlVerifiedByFetch: false,
-      // ROUND 14b RESTORED "placed in service", and the correction is worth
-      // recording because the mistake was mine and it ran the wrong way.
-      // Round 14 could not fetch irs.gov, suspected the statutory test might be
-      // installation-completed, and SOFTENED A CLAIM THAT WAS VERBATIM CORRECT.
-      // The owner read FS-2025-05 in full: Q1's table states for section 25C
-      // that the credit "will not be allowed for any property placed in service
-      // after December 31, 2025". The installation-completed test in Q7 is real
-      // but governs section 25D, the residential clean energy credit — a
-      // different section, stated in the same document. Two adjacent tests, and
-      // the hedge picked the wrong one to worry about.
-      // The lesson kept: hedging is not free. An unverified softening is still
-      // an unverified change to what the page tells a reader.
-      wordingVerifiedAgainstSource: true,
-      wordingVerifiedOn: "2026-09-04",
-      confirmedOn: "2026-09-04",
-      // Statutory dates do not drift, but IRS guidance on them does, and a
-      // successor credit would make this page wrong by omission rather than by
-      // error. Quarterly is the cadence for a fact of this shape.
-      reviewEveryDays: 90,
-    },
-  ],
+/**
+ * ── ONE OBJECT, TWO METROS (Round 15) ─────────────────────────────────────
+ * Both notices below are facts about federal tax law and about Texas
+ * licensure. Neither is about San Antonio, and neither was ever worded as if
+ * it were — so Austin's pages carry the SAME OBJECT rather than a copy.
+ *
+ * Copying would have been the quiet failure here. The review gate keys off
+ * `confirmedOn`, so a duplicated notice can be re-verified in one place and
+ * left stale in the other, and the build would not notice because both dates
+ * would be individually valid. Sharing the identity makes that impossible:
+ * there is one date, one review, and the gate covers both metros at once.
+ */
+const NOTICE_25C_EXPIRY: ServiceNotice = {
+  heading: "The federal 25C credit for HVAC equipment expired on December 31, 2025",
+  body:
+    "The Energy Efficient Home Improvement Credit under Internal Revenue Code section 25C — the " +
+    "credit homeowners claimed for qualifying heat pumps, air conditioners and furnaces — was " +
+    "ended by the One Big Beautiful Bill Act. The IRS states the test plainly: the credit " +
+    "\u201Cwill not be allowed for any property placed in service after December 31, 2025.\u201D " +
+    "Placed in service, not purchased — so equipment bought before July 4, 2025 but not placed in " +
+    "service until after the cutoff does not qualify. There is no grandfather provision. " +
+    "If a quote or an installer\u2019s page still prices the credit in, that is a reason to ask, " +
+    "not a reason to hurry. " +
+    "One qualification the IRS attaches to this guidance itself: these FAQs are not published in " +
+    "the Internal Revenue Bulletin, so the IRS will not rely on them to resolve a case \u2014 " +
+    "though a taxpayer who relies on them reasonably and in good faith is protected from " +
+    "accuracy-related penalties.",
+  sourceName:
+    "IRS Fact Sheet 2025-05, Q1 — FAQs on the OBBB modification of sections 25C, 25D, 25E, 30C, 30D, 45L, 45W and 179D",
+  // Round 14: was /newsroom/fs-2025-05, which the owner confirmed is DEAD.
+  // This is the full FAQ slug, supplied by the owner.
+  sourceUrl:
+    "https://www.irs.gov/newsroom/faqs-for-modification-of-sections-25c-25d-25e-30c-30d-45l-45w-and-179d-under-public-law-119-21-139-stat-72-july-4-2025-commonly-known-as-the-one-big-beautiful-bill-obbb",
+  checkedByHumanOn: "2026-09-04",
+  urlVerifiedByFetch: false,
+  // ROUND 14b RESTORED "placed in service", and the correction is worth
+  // recording because the mistake was mine and it ran the wrong way.
+  // Round 14 could not fetch irs.gov, suspected the statutory test might be
+  // installation-completed, and SOFTENED A CLAIM THAT WAS VERBATIM CORRECT.
+  // The owner read FS-2025-05 in full: Q1's table states for section 25C
+  // that the credit "will not be allowed for any property placed in service
+  // after December 31, 2025". The installation-completed test in Q7 is real
+  // but governs section 25D, the residential clean energy credit — a
+  // different section, stated in the same document. Two adjacent tests, and
+  // the hedge picked the wrong one to worry about.
+  // The lesson kept: hedging is not free. An unverified softening is still
+  // an unverified change to what the page tells a reader.
+  wordingVerifiedAgainstSource: true,
+  wordingVerifiedOn: "2026-09-04",
+  confirmedOn: "2026-09-04",
+  // Statutory dates do not drift, but IRS guidance on them does, and a
+  // successor credit would make this page wrong by omission rather than by
+  // error. Quarterly is the cadence for a fact of this shape.
+  reviewEveryDays: 90,
+};
 
-  "san-antonio/roofing": [
-    {
-      heading: "Texas licenses HVAC, electrical and mold work. It does not license roofing.",
-      // Round 14 NARROWED this to what the ONE cited page actually supports.
-      // It previously said "no other Texas agency licenses it either" — true,
-      // but TDLR's list shows what TDLR regulates, not what every Texas agency
-      // does, and proving that negative needs a source no single page provides.
-      // Rewriting was chosen over adding a second source for exactly that
-      // reason. The contrast is untouched and fully sourced: three named trades
-      // are on TDLR's list, roofing is not, and the practical guidance for a
-      // homeowner — there is no licence number to check — is identical either
-      // way.
-      body:
-        "The Texas Department of Licensing and Regulation publishes the list of occupations it " +
-        "regulates. Air Conditioning and Refrigeration Contractors, Electricians, and Mold Assessors " +
-        "and Remediators are on it. Roofing is not — so there is no TDLR licence number to ask a " +
-        "roofer for, the way there is for the trades either side of it. " +
-        "That does not make a roofer unqualified; it means a licence number is not the thing to check. " +
-        "What is checkable: liability and workers' compensation insurance carried in the company's own " +
-        "name, how long the business has traded under that name, and the manufacturer certification " +
-        "behind whatever workmanship warranty is offered.",
-      sourceName: "Texas Department of Licensing and Regulation — Programs Licensed and Regulated by TDLR",
-      // Round 13b: was /programs.htm, which the owner confirmed is DEAD. This is
-      // the live equivalent, and it carries both halves of the contrast on one
-      // page: its program list includes Air Conditioning and Refrigeration,
-      // Electricians, and Mold Assessors and Remediators, and roofing appears
-      // nowhere on it.
-      sourceUrl: "https://www.tdlr.texas.gov/licenses.htm",
-      // STILL not fetched from here, and still not implied to be. The egress
-      // proxy denies www.tdlr.texas.gov (connect_rejected, confirmed against the
-      // proxy's own status endpoint on 2026-09-04), so the replacement URL is as
-      // unchecked from this environment as the one it replaces. It was supplied
-      // by the owner, who did open it — which is exactly the human check this
-      // flag exists to route work to. It stays false until a fetch confirms it.
-      urlVerifiedByFetch: false,
-      checkedByHumanOn: "2026-09-04",
-      confirmedOn: "2026-09-04",
-      // An occupation entering state licensure is a legislative act, and the
-      // Texas Legislature meets in regular session in odd-numbered years. A
-      // half-year cadence catches a change well before a session's laws take
-      // effect, without pretending a statutory fact needs monthly review.
-      reviewEveryDays: 180,
-    },
-  ],
+const NOTICE_TX_NO_ROOFING_LICENCE: ServiceNotice = {
+  heading: "Texas licenses HVAC, electrical and mold work. It does not license roofing.",
+  // Round 14 NARROWED this to what the ONE cited page actually supports.
+  // It previously said "no other Texas agency licenses it either" — true,
+  // but TDLR's list shows what TDLR regulates, not what every Texas agency
+  // does, and proving that negative needs a source no single page provides.
+  // Rewriting was chosen over adding a second source for exactly that
+  // reason. The contrast is untouched and fully sourced: three named trades
+  // are on TDLR's list, roofing is not, and the practical guidance for a
+  // homeowner — there is no licence number to check — is identical either
+  // way.
+  body:
+    "The Texas Department of Licensing and Regulation publishes the list of occupations it " +
+    "regulates. Air Conditioning and Refrigeration Contractors, Electricians, and Mold Assessors " +
+    "and Remediators are on it. Roofing is not — so there is no TDLR licence number to ask a " +
+    "roofer for, the way there is for the trades either side of it. " +
+    "That does not make a roofer unqualified; it means a licence number is not the thing to check. " +
+    "What is checkable: liability and workers' compensation insurance carried in the company's own " +
+    "name, how long the business has traded under that name, and the manufacturer certification " +
+    "behind whatever workmanship warranty is offered.",
+  sourceName: "Texas Department of Licensing and Regulation — Programs Licensed and Regulated by TDLR",
+  // Round 13b: was /programs.htm, which the owner confirmed is DEAD. This is
+  // the live equivalent, and it carries both halves of the contrast on one
+  // page: its program list includes Air Conditioning and Refrigeration,
+  // Electricians, and Mold Assessors and Remediators, and roofing appears
+  // nowhere on it.
+  sourceUrl: "https://www.tdlr.texas.gov/licenses.htm",
+  // STILL not fetched from here, and still not implied to be. The egress
+  // proxy denies www.tdlr.texas.gov (connect_rejected, confirmed against the
+  // proxy's own status endpoint on 2026-09-04), so the replacement URL is as
+  // unchecked from this environment as the one it replaces. It was supplied
+  // by the owner, who did open it — which is exactly the human check this
+  // flag exists to route work to. It stays false until a fetch confirms it.
+  urlVerifiedByFetch: false,
+  checkedByHumanOn: "2026-09-04",
+  confirmedOn: "2026-09-04",
+  // An occupation entering state licensure is a legislative act, and the
+  // Texas Legislature meets in regular session in odd-numbered years. A
+  // half-year cadence catches a change well before a session's laws take
+  // effect, without pretending a statutory fact needs monthly review.
+  reviewEveryDays: 180,
+};
+
+export const SERVICE_NOTICES: Record<string, ServiceNotice[]> = {
+  "san-antonio/hvac": [NOTICE_25C_EXPIRY],
+  "san-antonio/roofing": [NOTICE_TX_NO_ROOFING_LICENCE],
+  "austin/hvac": [NOTICE_25C_EXPIRY],
+  "austin/roofing": [NOTICE_TX_NO_ROOFING_LICENCE],
 };
 
 // Runs on import. Any page, build, or `astro check` that reaches the notices

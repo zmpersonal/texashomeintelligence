@@ -1,5 +1,10 @@
 /**
- * Round 10 — the San Antonio service pages, verified in a browser.
+ * The below-hero service pages, verified in a browser — BOTH metros.
+ *
+ * Round 10 built this for San Antonio; Round 15 extends it to Austin rather
+ * than forking it, for the same reason the component was extended rather than
+ * forked: two copies of a check drift, and the drift is invisible until the
+ * copy nobody updated is the one that mattered.
  *
  * A green build proves these pages compile. It does not prove the block order
  * survived, that the QuoteReady funnel is actually gone from the body, that a
@@ -9,6 +14,17 @@
  * The figures are re-derived HERE from src/data/generated/permit-trade-activity
  * rather than pinned as literals, so the assertions cannot drift away from the
  * feed — and cannot pass by agreeing with a number someone typed into a brief.
+ *
+ * ── WHAT ROUND 15 ADDS ────────────────────────────────────────────────────
+ *  - The same twelve structural assertions against the three Austin pages.
+ *  - The partial-month rule: the window must END BEFORE the current calendar
+ *    month. Austin's feed carries the running month and San Antonio's does not,
+ *    so this is the assertion that would have caught the false 11×–25× troughs
+ *    the round found in the data.
+ *  - Austin roofing must STATE ITS TEXT-MATCH COMPOSITION IN #answer, with the
+ *    matched share, and must not be allowed to present a text-matched total as
+ *    replacement volume.
+ *  - Neither roofing page may carry the other metro's roofing count.
  */
 import { launchChromium } from './browser.mjs';
 import { readFileSync } from 'node:fs';
@@ -19,41 +35,88 @@ const SITE = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const B = 'http://127.0.0.1:9400';
 const ORDER = ['answer', 'data', 'method', 'context', 'faq', 'sources'];
 
+const MONTHS = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+/** "2026-09" -> "September 2026", the form the page renders. */
+const monthName = (m) => `${MONTHS[Number(m.split('-')[1]) - 1]} ${m.split('-')[0]}`;
+
 let pass = 0, fail = 0;
 const A = (label, ok, note = '') => {
   ok ? pass++ : fail++;
   console.log(`  ${ok ? 'PASS' : '**FAIL**'}  ${label}${note ? '  — ' + note : ''}`);
 };
 
-/** The same arithmetic the page does, straight from the archive. */
-function expected(category) {
+/**
+ * The same arithmetic the page does, straight from the archive.
+ *
+ * INCLUDING the partial-month drop. A month that has not ended cannot be
+ * complete, and the ingestion window runs to `now`, so the current calendar
+ * month is always present and always partial. Reproducing that rule here is
+ * the point: if the page and this check disagreed about the window, one of
+ * them would be wrong and neither would say so.
+ */
+const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
+function expected(location, category) {
   const j = JSON.parse(readFileSync(
-    join(SITE, 'src', 'data', 'generated', 'permit-trade-activity', 'san-antonio.json'), 'utf8'));
-  const rows = j.observations.filter(o => !o.seed && o.value.category === category)
+    join(SITE, 'src', 'data', 'generated', 'permit-trade-activity', `${location}.json`), 'utf8'));
+  const all = j.observations.filter(o => !o.seed && o.value.category === category)
     .map(o => o.value).sort((a, b) => a.month.localeCompare(b.month));
+  const dropped = all.filter(r => r.month >= CURRENT_MONTH).map(r => r.month);
+  const rows = all.filter(r => r.month < CURRENT_MONTH);
   const total = rows.reduce((s, r) => s + r.permitCount, 0);
   const n = rows.length, half = Math.floor(n / 2);
   const h1 = rows.slice(0, half).reduce((s, r) => s + r.permitCount, 0);
   const h2 = rows.slice(n - half).reduce((s, r) => s + r.permitCount, 0);
   const mean = Math.round(total / n);
   const types = new Set(rows.flatMap(r => r.sourceValues.map(s => s.value)));
+  const textMatched = rows.reduce((sum, r) => sum +
+    r.sourceValues.filter(v => /^description /.test(v.value)).reduce((a, v) => a + v.count, 0), 0);
   return {
-    total, months: n, mean,
+    total, months: n, mean, dropped, textMatched,
+    windowEnd: rows[n - 1].month,
     changePct: ((h2 - h1) / h1) * 100,
     noisePct: (100 * Math.sqrt(total / n)) / (total / n),
     issuedTypes: types.size,
+    mechanisms: [...new Set(rows.flatMap(r => r.mechanisms))],
     monthly: rows.map(r => r.permitCount),
   };
 }
 
 const b = await launchChromium();
+const METRO = {
+  'san-antonio': {
+    city: 'San Antonio',
+    permitHost: /sanantonio\.gov/,
+    // Round 14b. The citation is DERIVED from the package id the fetchers
+    // request (`package_show?id=building-permits`), so it cannot drift from
+    // the fetch. Asserting the exact URL also catches a silent revert to the
+    // UUID Round 14 could not confirm against our own code.
+    datasetUrl: 'https://data.sanantonio.gov/dataset/building-permits',
+  },
+  austin: {
+    city: 'Austin',
+    permitHost: /austintexas\.gov/,
+    // Round 15. Same principle, different portal: Austin is Socrata, addressed
+    // by a four-four resource id, and the id is read out of `austinPermits.ts`
+    // and cross-checked against `permitTradeActivity.ts`. Asserting the whole
+    // URL here catches both a drifted id and a San Antonio URL carried over.
+    datasetUrl: 'https://data.austintexas.gov/d/3syk-w9eu',
+  },
+};
+
 const PAGES = [
   // Round 10b: the HVAC page carries the restored EIA rate alongside AirNow.
-  { path: '/san-antonio/hvac/', category: 'hvac', noun: 'HVAC', readings: 4, faqs: 5 },
-  { path: '/san-antonio/plumbing/', category: 'plumbing', noun: 'plumbing', readings: 3, faqs: 5 },
-  // Round 12. Roofing is the page whose trend does NOT clear the threshold, so
-  // it is the one that proves the page declines to make the claim.
-  { path: '/san-antonio/roofing/', category: 'roofing', noun: 're-roof', readings: 4, faqs: 7 },
+  { path: '/san-antonio/hvac/', location: 'san-antonio', category: 'hvac', noun: 'HVAC', readings: 4, faqs: 5 },
+  { path: '/san-antonio/plumbing/', location: 'san-antonio', category: 'plumbing', noun: 'plumbing', readings: 3, faqs: 5 },
+  // Round 12. San Antonio roofing is the page whose trend does NOT clear the
+  // threshold, so it is the one that proves the page declines to make the claim.
+  { path: '/san-antonio/roofing/', location: 'san-antonio', category: 'roofing', noun: 're-roof', readings: 4, faqs: 7 },
+  // Round 15. Austin. HVAC carries four readings — the EIA rate, the NWS
+  // forecast, AirNow and the 25C notice; plumbing carries drought and the
+  // Austin Water stage; roofing carries storms and drought plus the TDLR note.
+  { path: '/austin/hvac/', location: 'austin', category: 'hvac', noun: 'HVAC', readings: 5, faqs: 5 },
+  { path: '/austin/plumbing/', location: 'austin', category: 'plumbing', noun: 'plumbing', readings: 4, faqs: 6 },
+  { path: '/austin/roofing/', location: 'austin', category: 'roofing', noun: 'roof-related', readings: 4, faqs: 8 },
 ];
 
 /** The rate as the archive holds it — never pinned as a literal here. */
@@ -67,7 +130,8 @@ function eiaRate() {
 
 for (const page of PAGES) {
   console.log(`\n══ ${page.path} ══`);
-  const e = expected(page.category);
+  const e = expected(page.location, page.category);
+  const metro = METRO[page.location];
   const c = await b.newContext({ viewport: { width: 1440, height: 1600 } });
   const p = await c.newPage();
   const res = await p.goto(B + page.path, { waitUntil: 'networkidle' });
@@ -118,6 +182,10 @@ for (const page of PAGES) {
     /^[^.]*\b\d[\d,]*\b[^.]*\./.test(r.answerText.replace(/^[^?]*\?\s*/, '')),
     r.answerText.replace(/^[^?]*\?\s*/, '').split('.')[0].slice(0, 90) + '…');
 
+  A('#answer names the issuing city, not the other metro',
+    r.answerText.includes(`The City of ${metro.city} issued`) &&
+      !Object.values(METRO).some(m => m.city !== metro.city && r.bodyText.includes(`The City of ${m.city} issued`)),
+    r.answerText.slice(0, 70));
   A('mean per month matches the archive', r.answerText.includes(e.mean.toLocaleString()), String(e.mean));
   A('window total matches the archive', r.answerText.includes(e.total.toLocaleString()), e.total.toLocaleString());
   A('half-over-half change matches the archive',
@@ -132,6 +200,14 @@ for (const page of PAGES) {
     `${Math.abs(e.changePct).toFixed(1)}% vs ±${e.noisePct.toFixed(1)}%`);
   A('trend threshold matches Poisson noise on the monthly mean',
     r.answerText.includes(`${e.noisePct.toFixed(1)}%`), `±${e.noisePct.toFixed(1)}%`);
+  // Round 15. The partial-month rule, asserted on BOTH metros. Austin's feed
+  // carries the running month; San Antonio's does not. Before the fix, Austin
+  // HVAC read 1,037 in August and 111 in four days of September, and the page
+  // would have published that 11x drop as a trough at 30 sigma.
+  A('the window ends before the current calendar month',
+    e.windowEnd < CURRENT_MONTH && !r.bodyText.includes(monthName(CURRENT_MONTH)),
+    `window ends ${e.windowEnd}, current ${CURRENT_MONTH}` +
+      (e.dropped.length ? `, dropped ${e.dropped.join(',')}` : ', nothing to drop'));
   A('#data table has one row per month, values matching the archive',
     r.dataRows === e.months && r.dataCells.join(',') === e.monthly.map(n => n.toLocaleString()).join(','),
     `${r.dataRows} rows`);
@@ -150,16 +226,18 @@ for (const page of PAGES) {
 
   A('#sources is page content, not footer chrome', r.sourcesInMain);
   A('#sources links primary sources', r.sourceLinks.length >= 3, `${r.sourceLinks.length} links`);
-  A('#sources names the city permit source',
-    r.sourceLinks.some(l => /sanantonio\.gov/.test(l.href)),
+  A(`#sources names the ${metro.city} permit source`,
+    r.sourceLinks.some(l => metro.permitHost.test(l.href)),
     r.sourceLinks.map(l => l.href).join(' '));
-  // Round 14b. The citation is DERIVED from the package id the fetchers request
-  // (`package_show?id=building-permits`), so it cannot drift from the fetch.
-  // Asserting the slug rather than any URL also catches a silent revert to the
-  // UUID Round 14 could not confirm against our own code.
-  A('the dataset citation is the slug the fetchers actually request',
-    r.sourceLinks.some(l => l.href === 'https://data.sanantonio.gov/dataset/building-permits'),
-    r.sourceLinks.filter(l => /sanantonio/.test(l.href)).map(l => l.href).join(' '));
+  A('the dataset citation is the one the fetchers actually request',
+    r.sourceLinks.some(l => l.href === metro.datasetUrl),
+    r.sourceLinks.filter(l => /\.gov/.test(l.href)).map(l => l.href).join(' '));
+  // A citation carried across metros would be the quiet failure: a live link
+  // to the wrong city's portal looks fine in every check but this one.
+  A('does not cite the other metro\'s permit portal',
+    !r.sourceLinks.some(l => Object.entries(METRO)
+      .some(([k, m]) => k !== page.location && m.permitHost.test(l.href))),
+    r.sourceLinks.map(l => l.href).filter(h => /\.gov/.test(h)).join(' '));
 
   const BANNED = /QuoteReady|Project Brief|quote tool|Get Better [A-Za-z]+ Quotes/i;
   const bodyOnly = r.bodyText.replace(r.footerText, '');
@@ -199,26 +277,86 @@ for (const page of PAGES) {
     await p.evaluate(() => document.querySelectorAll('#faq details').forEach(d => { d.open = true; }));
     const fullBody = await p.evaluate(() =>
       (document.querySelector('main') ?? document.body).innerText.replace(/\s+/g, ' '));
-    // The brief's hard rule: never put the two metros' roofing counts side by
-    // side. They differ 3.27x for measurement-method reasons alone, so an
+    // ── THE HARD RULE, NOW ENFORCED IN BOTH DIRECTIONS ──────────────────
+    // Never put the two metros' roofing counts side by side. They differ by
+    // roughly 3x for measurement-method reasons alone — San Antonio counts a
+    // dedicated Re-Roof Permit type, Austin recovers a text match — so an
     // invited comparison would read as a finding about roofs when it is a
-    // finding about permit taxonomies.
-    const austinFigures = /\b1,945\b|\b1,878\b|\b366\b/;
-    A('does not put Austin roofing numbers on the page',
-      !austinFigures.test(bodyOnly), (bodyOnly.match(austinFigures) || ['none'])[0]);
+    // finding about permit taxonomies. Round 15 makes the guard symmetric: it
+    // is computed from the OTHER metro's archive rather than pinned to the
+    // literals one page happened to have, so it cannot go stale as the feeds
+    // move, and it protects the Austin page as well as the San Antonio one.
+    const other = page.location === 'austin' ? 'san-antonio' : 'austin';
+    const o = expected(other, 'roofing');
+    // Only a figure that cannot be confused with this page's own numbers. A
+    // first pass included the other metro's MEAN and its text-matched count;
+    // San Antonio's text-matched count is 0 — it has no description mechanism —
+    // and `\\b0\\b` promptly matched the "0" in "0.1%". A three-digit mean is no
+    // safer: it is indistinguishable from a monthly cell in this page's own
+    // table. The window TOTAL is the figure a cross-metro comparison would
+    // actually reach for, it is four digits and comma-formatted in both metros,
+    // and it is what this guards.
+    const otherFigures = new RegExp(`\\b${o.total.toLocaleString()}\\b`);
+    A(`does not put ${METRO[other].city} roofing numbers on the page`,
+      !otherFigures.test(bodyOnly), (bodyOnly.match(otherFigures) || ['none'])[0]);
     A('does not invite a cross-metro roofing comparison',
-      !/\bthan (in )?Austin\b|compared (with|to) Austin|Austin (issues|issued)/i.test(bodyOnly),
-      (bodyOnly.match(/[^.]*Austin[^.]*\./) || ['no mention of Austin'])[0].trim().slice(0, 90));
-    A('reports seasonality even though the trend is flat',
-      /spread between busiest and quietest/.test(fullBody) && /σ\)/.test(fullBody),
-      (fullBody.match(/a [\d.]+× spread[^.]*\./) || ['not found'])[0].slice(0, 90));
+      !new RegExp(`\\bthan (in )?${METRO[other].city}\\b|compared (with|to) ${METRO[other].city}|` +
+                  `${METRO[other].city} (issues|issued)`, 'i').test(bodyOnly),
+      (bodyOnly.match(new RegExp(`[^.]*${METRO[other].city}[^.]*\\.`)) ||
+       [`no mention of ${METRO[other].city}`])[0].trim().slice(0, 100));
     A('reconciles against our own roof-permits page rather than contradicting it',
       /roof-permits\/ page reports a larger number/.test(bodyOnly));
     A('states the storm feed publishes on a lag, with the measured age',
       /publishes on a lag/.test(bodyOnly) && /\b\d{2,3} days old\b/.test(bodyOnly),
       (bodyOnly.match(/its newest record is \d+ days old/) || [''])[0]);
-    A('does not imply hail in Bexar that NOAA did not record',
-      /No hail was recorded in Bexar County/.test(bodyOnly));
+
+    if (page.location === 'san-antonio') {
+      A('reports seasonality even though the trend is flat',
+        /spread between busiest and quietest/.test(fullBody) && /σ\)/.test(fullBody),
+        (fullBody.match(/a [\d.]+× spread[^.]*\./) || ['not found'])[0].slice(0, 90));
+      A('does not imply hail in Bexar that NOAA did not record',
+        /No hail was recorded in Bexar County/.test(bodyOnly));
+      A('states the count comes from a dedicated permit class, not a text match',
+        /single dedicated permit class/.test(bodyOnly) &&
+        /No description-text matching is used for this category in San Antonio/.test(bodyOnly));
+    }
+
+    if (page.location === 'austin') {
+      // ── THE ROUND 15 GUARD ────────────────────────────────────────────
+      // Austin publishes no roofing permit class. Its count is a text match,
+      // and the page must SAY SO IN #answer — where the figure is — not bury
+      // it in #method. An answer engine that quotes one passage from this page
+      // must get the caveat with the number.
+      const answer = r.answerText;
+      A('#answer states the count is a text match', /on a text match/.test(answer),
+        answer.slice(0, 120));
+      A('#answer names the matching rule from the data',
+        /description contains "roof"/.test(answer));
+      A('#answer carries the matched SHARE, matching the archive',
+        answer.includes(e.textMatched.toLocaleString()) &&
+        answer.includes(((e.textMatched / e.total) * 100).toFixed(1) + '%'),
+        `${e.textMatched.toLocaleString()} of ${e.total.toLocaleString()}`);
+      A('#answer says the city did not classify them this way',
+        /rather than because Austin classified them/.test(answer));
+      A('#answer measures what the match sweeps in',
+        /mention solar, photovoltaic or PV/.test(answer) &&
+        /explicitly describes replacing a roof covering/.test(answer),
+        (answer.match(/[^.]*mention solar[^.]*\./) || ['not found'])[0].slice(0, 110));
+      A('#answer refuses to present the total as replacement volume',
+        /rather than as roof replacement volume/.test(answer));
+      A('the caveat is in #answer, not only in #method',
+        /on a text match/.test(answer),
+        'asserted against #answer text only');
+      A('the source-value table is not mislabelled as permit types',
+        /Austin source values counted in this category/.test(bodyOnly) &&
+        !/Austin permit types counted in this category/.test(bodyOnly));
+      A('does not claim a mapped permit type it does not have',
+        /Austin has no permit type for this category at all/.test(bodyOnly) &&
+        !/\b0 permit types? (is|are) mapped/.test(bodyOnly));
+      A('reports the hail NOAA did record in Travis County',
+        /hail events? recorded in Travis County/.test(bodyOnly),
+        (bodyOnly.match(/\d+ hail events? recorded in Travis County/) || ['not found'])[0]);
+    }
     // Round 14. Was pinned to the phrase "no state roofing licence in Texas",
     // which the narrowing removed. It now tests the SUBSTANCE — the contrast,
     // and the citation — plus the thing the narrowing was for: the page must
@@ -274,8 +412,8 @@ for (const page of PAGES) {
     A('the EIA electricity rate is restored to the page', !!el, el ? el.label : 'no rate card found');
     A('the rate matches the archive', !!el?.value?.includes(rate.cents.toFixed(2)),
       `${el?.value} vs archive ${rate.cents.toFixed(2)}`);
-    A('the rate is labelled STATEWIDE, not as a San Antonio figure',
-      /Texas/.test(el?.label ?? '') && !/San Antonio/.test(el?.label ?? ''), el?.label);
+    A('the rate is labelled STATEWIDE, not as a metro figure',
+      /Texas/.test(el?.label ?? '') && !/San Antonio|Austin/.test(el?.label ?? ''), el?.label);
     A('the rate carries a four-bucket label, announced', !!el?.badge && !el?.badgeAriaHidden, el?.badge);
     A('the rate carries dual dates',
       /Data through/.test(el?.meta ?? '') && /(Updated|Last checked|Last known value):/.test(el?.meta ?? ''),
@@ -314,8 +452,13 @@ for (const page of PAGES) {
   await c.close();
 }
 
-console.log('\n══ AUSTIN UNTOUCHED ══');
-for (const path of ['/austin/hvac/', '/austin/plumbing/']) {
+// Round 15. Austin's three trade pages now HAVE a layer, so the old "Austin
+// untouched" section is retired. What is still worth asserting is the boundary:
+// the eight service pages with no layer must be unaffected by the round, and
+// they are the pages that still carry the QuoteReady body.
+console.log('\n══ PAGES WITHOUT A LAYER ARE UNAFFECTED ══');
+for (const path of ['/austin/electrical/', '/austin/tree-trimming/',
+                    '/san-antonio/electrical/', '/san-antonio/mold-remediation/']) {
   const c = await b.newContext({ viewport: { width: 1440, height: 1200 } });
   const p = await c.newPage();
   await p.goto(B + path, { waitUntil: 'networkidle' });
@@ -323,7 +466,7 @@ for (const path of ['/austin/hvac/', '/austin/plumbing/']) {
     h1: document.querySelector('h1')?.innerText.trim(),
     blocks: [...document.querySelectorAll('section[id]')]
       .map(s => s.id).filter(i => ['answer','data','method','context','faq','sources'].includes(i)).length,
-    quoteReady: /QuoteReady/.test(document.body.innerText),
+    quoteReady: /QuoteReady|Project Brief/.test(document.body.innerText),
   }));
   A(`${path} still renders its own copy`, r.quoteReady && r.blocks === 0,
     `${r.h1} · belowHero blocks=${r.blocks}`);

@@ -73,8 +73,22 @@ for (const [path, expect] of [['/services/', 200], ['/start/', 200]]) {
   console.log(`          robots: ${info.robots}`);
   await c.close();
 }
-// /services/ keeps inbound links from the location hubs and the Austin service pages.
-for (const from of ['/austin/', '/austin/roofing/']) {
+// /services/ keeps inbound links from the location hubs and from every service
+// page that does not carry a below-hero layer.
+//
+// ROUND 15 CHANGED THIS SAMPLE, and the change is the finding rather than a
+// workaround. `/austin/roofing/` used to be one of the two pages sampled here.
+// It now carries a below-hero layer, and ServicePage deliberately suppresses
+// the "All services" link on any page that does, because ROADMAP retires
+// /services/ from navigation — the same removal Round 10 made on the three San
+// Antonio pages. So that page no longer links /services/, correctly, and this
+// assertion was pinned to the one route the round was supposed to remove.
+//
+// What actually matters is the PROPERTY: /services/ must not be orphaned. It
+// is reachable from both location hubs and from the eight service pages with
+// no layer, so the sample tests one of each instead of a page that is now
+// expected to have dropped the link.
+for (const from of ['/austin/', '/austin/electrical/', '/san-antonio/tree-trimming/']) {
   const c = await b.newContext({ viewport: { width: 1440, height: 1200 } });
   const p = await c.newPage();
   await p.goto(B + from, { waitUntil: 'networkidle' });

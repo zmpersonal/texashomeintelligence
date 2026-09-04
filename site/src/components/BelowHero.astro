@@ -24,6 +24,7 @@ import DataStatus from "./DataStatus.astro";
 import FaqAccordion from "./FaqAccordion.astro";
 import { monthLabel, monthDatetime, pct, type TradeActivity } from "../lib/tradeActivity";
 import { contextReading } from "../lib/belowHeroReadings";
+import { textMatchComposition } from "../lib/textMatchComposition";
 import type { BelowHeroSpec } from "../data/belowHero";
 import { formatDate, machineDate } from "../lib/format";
 
@@ -57,10 +58,26 @@ const peaksSentence =
   `The busiest months in the window were ` +
   a.peakMonths.map((p) => `${monthLabel(p.month)} (${p.permitCount.toLocaleString()})`).join(", ") + ".";
 
+// Round 15. The metro is a PROP now, not a literal. Every sentence below read
+// "San Antonio" because San Antonio was the only metro with a layer; Austin
+// gets the same component rather than a fork, so the city is substituted and
+// the San Antonio output is unchanged byte for byte.
+//
+// A second Austin difference is not cosmetic and cannot be substituted away:
+// `mappedTypeCount` counts PERMIT TYPES the mapping assigns to this category,
+// and Austin's roofing count has none — the city publishes no roofing permit
+// type, so the rows arrive by work class and description text instead. The
+// old sentence would have rendered "the mapping covers 0 Austin roof-related
+// permit types, 2 of which issued at least one permit", which is a
+// contradiction. It says what is actually true instead.
 const typesSentence =
-  `The mapping covers ${a.mappedTypeCount} San Antonio ${noun.toLowerCase()} permit type` +
-  `${a.mappedTypeCount === 1 ? "" : "s"}, ${issuedTypes} of which issued at least one permit in this window: ` +
-  a.sourceTypes.map((t) => t.value).join(", ") + ".";
+  a.mappedTypeCount === 0
+    ? `${cityName} publishes no ${noun.toLowerCase()} permit type, so nothing rolls into this count by ` +
+      `permit type. The ${issuedTypes} source value${issuedTypes === 1 ? "" : "s"} behind it ` +
+      `${issuedTypes === 1 ? "is" : "are"}: ` + a.sourceTypes.map((t) => t.value).join(", ") + "."
+    : `The mapping covers ${a.mappedTypeCount} ${cityName} ${noun.toLowerCase()} permit type` +
+      `${a.mappedTypeCount === 1 ? "" : "s"}, ${issuedTypes} of which issued at least one permit in this window: ` +
+      a.sourceTypes.map((t) => t.value).join(", ") + ".";
 
 // Round 12. Seasonality is NOT the trend test. A series can be flat
 // half-over-half and still swing hard within the year — San Antonio roofing
@@ -108,6 +125,53 @@ const mechanismWords: Record<string, string> = {
 };
 const mechanismLabel = a.mechanisms.map((m) => mechanismWords[m] ?? m).join(" and ");
 const quietest = [...a.months].sort((x, y) => x.permitCount - y.permitCount)[0];
+
+/**
+ * Round 15. Whether this count depends on how a job was WORDED.
+ *
+ * Every San Antonio category is classified by the city's own permit-type
+ * field, so the pages could state flatly that no description matching was
+ * involved. Austin's roofing count is the opposite case and the difference is
+ * the single most important thing about the number: 1,859 of its 1,860 rows
+ * are there because the description contains the word "roof". A page that
+ * carried the San Antonio sentence onto Austin would be asserting the reverse
+ * of what its own data says.
+ *
+ * So it is derived from `mechanisms`, never declared in the config, and the
+ * SHARE is counted rather than described — "mostly" is not a measurement.
+ */
+const textMatched = a.sourceTypes
+  .filter((t) => /^description /.test(t.value))
+  .reduce((sum, t) => sum + t.count, 0);
+const usesTextMatch = a.mechanisms.includes("description-text");
+// The matching rules, named from the data. The source values are already
+// self-describing — `description contains "roof"` says exactly what it did —
+// so the page quotes them rather than paraphrasing the predicate.
+const textMatchRules = a.sourceTypes
+  .filter((t) => /^description /.test(t.value))
+  .map((t) => t.value)
+  .join("; ");
+const textMatchPct = a.total > 0 ? (textMatched / a.total) * 100 : 0;
+
+// A table of "permit types" whose rows are text-match rules is mislabelled.
+// San Antonio keeps both strings exactly as they were.
+const sourceValueNoun = usesTextMatch ? "source values" : "permit types";
+const sourceValueHeader = usesTextMatch ? "Source value" : "City permit type";
+
+// The composition paragraph for a text-matched count: what the match sweeps
+// in, measured. Returns undefined for every page that does not declare one,
+// which is every San Antonio page.
+const composition = spec.answerCompositionTopic
+  ? textMatchComposition(spec.answerCompositionTopic, a)
+  : undefined;
+if (spec.answerCompositionTopic && !composition) {
+  throw new Error(
+    `BelowHero: ${location}/${spec.category} declares answerCompositionTopic ` +
+      `"${spec.answerCompositionTopic}" but no composition could be computed for it. The page ` +
+      `would state a text-matched count without saying what the text match includes — refusing ` +
+      `to render it.`,
+  );
+}
 ---
 
 {/* ── #answer — the extraction target ──────────────────────────────────── */}
@@ -115,23 +179,30 @@ const quietest = [...a.months].sort((x, y) => x.permitCount - y.permitCount)[0];
   <div class="wrap" style="max-width:820px;">
     <h2>{spec.answerHeading}</h2>
     <p class="answer-lede">
-      The City of San Antonio issued about <strong>{a.meanPerMonth.toLocaleString()}</strong>{" "}
+      The City of {cityName} issued about <strong>{a.meanPerMonth.toLocaleString()}</strong>{" "}
       {noun} permits a month over the {a.monthCount} months from {windowLabel} —{" "}
       <strong>{a.total.toLocaleString()}</strong> in total. {trendSentence}
     </p>
     <p class="answer-support">
       {peaksSentence}{" "}
-      {issuedTypes === 1 ? (
+      {usesTextMatch ? (
+        <><strong>{textMatched.toLocaleString()} of those {a.total.toLocaleString()} permits
+          ({textMatchPct.toFixed(1)}%) are in this count on a text match — {textMatchRules} —
+          rather than because {cityName} classified them as this kind of work</strong>. That is the
+          most important thing to know about the number, so it is said here rather than left to the
+          method section below.</>
+      ) : issuedTypes === 1 ? (
         <>Every permit in this count comes from a single dedicated permit class, matched on{" "}
           {mechanismLabel} — not recovered from a description field, so nothing here depends on
           how a job was worded.</>
       ) : (
-        <>Every permit in this count is identified by {mechanismLabel}, across {issuedTypes} San
-          Antonio permit types.</>
+        <>Every permit in this count is identified by {mechanismLabel}, across {issuedTypes}{" "}
+          {cityName} permit types.</>
       )}{" "}
       This is a measure of activity and timing only — the city's permit record does not support a
       cost figure, and none is published here.
     </p>
+    {composition && composition.map((line) => <p class="answer-support">{line}</p>)}
     <DataStatus
       status={a.freshness.display}
       asOf={a.freshness.asOf}
@@ -147,7 +218,7 @@ const quietest = [...a.months].sort((x, y) => x.permitCount - y.permitCount)[0];
     <h2>{spec.dataHeading}</h2>
     <table class="data-table">
       <caption>
-        {spec.dataCaptionNoun ?? noun} permits issued by the City of San Antonio, by month.
+        {spec.dataCaptionNoun ?? noun} permits issued by the City of {cityName}, by month.
         Window: {windowLabel}. Classification mapping {a.mappingVersion}.
       </caption>
       <thead>
@@ -197,9 +268,9 @@ const quietest = [...a.months].sort((x, y) => x.permitCount - y.permitCount)[0];
     <h2>{spec.methodHeading}</h2>
     <p>{spec.methodBody}</p>
     <table class="data-table">
-      <caption>San Antonio permit types counted in this category, {windowLabel}.</caption>
+      <caption>{cityName} {sourceValueNoun} counted in this category, {windowLabel}.</caption>
       <thead>
-        <tr><th scope="col">City permit type</th><th scope="col">Permits</th><th scope="col">Share</th></tr>
+        <tr><th scope="col">{sourceValueHeader}</th><th scope="col">Permits</th><th scope="col">Share</th></tr>
       </thead>
       <tbody>
         {a.sourceTypes.map((t) => (
@@ -213,13 +284,26 @@ const quietest = [...a.months].sort((x, y) => x.permitCount - y.permitCount)[0];
     </table>
     <ul class="key-findings">
       <li>
-        Classification mechanism: {mechanismLabel}. No description-text matching is used for this
-        category in San Antonio, so the count does not depend on how a clerk worded a job.
+        Classification mechanism: {mechanismLabel}.{" "}
+        {usesTextMatch ? (
+          <>{textMatched.toLocaleString()} of {a.total.toLocaleString()} permits{" "}
+            ({textMatchPct.toFixed(1)}%) are matched on the description text, so this count does
+            depend on how a job was worded — and on what else happens to use the same word.</>
+        ) : (
+          <>No description-text matching is used for this category in {cityName}, so the count
+            does not depend on how a clerk worded a job.</>
+        )}
       </li>
       <li>
-        Mapping version {a.mappingVersion}. {a.mappedTypeCount} permit type
-        {a.mappedTypeCount === 1 ? " is" : "s are"} mapped to this category;{" "}
-        {issuedTypes} issued at least one permit in this window.
+        Mapping version {a.mappingVersion}.{" "}
+        {a.mappedTypeCount === 0 ? (
+          <>{cityName} has no permit type for this category at all, so none is mapped by permit
+            type; the {issuedTypes} source value{issuedTypes === 1 ? "" : "s"} above{" "}
+            {issuedTypes === 1 ? "is" : "are"} what the count is assembled from instead.</>
+        ) : (
+          <>{a.mappedTypeCount} permit type{a.mappedTypeCount === 1 ? " is" : "s are"} mapped to
+            this category; {issuedTypes} issued at least one permit in this window.</>
+        )}
       </li>
       <li>
         Trend threshold: ±{a.noisePct.toFixed(1)}%. A permit count is a count of events, so its
@@ -227,12 +311,12 @@ const quietest = [...a.months].sort((x, y) => x.permitCount - y.permitCount)[0];
         {a.meanPerMonth.toLocaleString()} is about {Math.round(Math.sqrt(a.meanPerMonth))}, or{" "}
         {a.noisePct.toFixed(1)}%. A half-over-half change smaller than that is not reported as a trend.
       </li>
-      <li>
-        Not published from this feed: any cost, price or typical-spend figure. San Antonio's
-        DECLARED VALUATION field is 0.00% populated on every residential and trade permit type,
-        and declared valuation is an applicant's fee-basis statement to the city rather than a
-        paid invoice.
-      </li>
+      {/* Round 15. Both metros refuse to publish a cost figure, and they refuse
+          for DIFFERENT MEASURED REASONS — San Antonio's valuation field is
+          empty, Austin's is populated with the wrong quantity. One sentence
+          cannot carry both without being false about one of them, so the
+          reason is spec-supplied while the refusal is not. */}
+      <li>Not published from this feed: any cost, price or typical-spend figure. {spec.costOmission}</li>
     </ul>
   </div>
 </section>
@@ -242,7 +326,7 @@ const quietest = [...a.months].sort((x, y) => x.permitCount - y.permitCount)[0];
   <div class="wrap" style="max-width:820px;">
     <h2>{spec.contextHeading}</h2>
     {spec.context.map((c) => {
-      const reading = c.topic ? contextReading(c.topic, location) : undefined;
+      const reading = c.topic ? contextReading(c.topic, location, cityName) : undefined;
       return (
         <div class="context-item">
           <h3>{c.heading}</h3>

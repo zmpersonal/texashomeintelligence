@@ -26,12 +26,17 @@ npx tsx scripts/replays/badgeunit.ts         # unit
 npx tsx scripts/replays/alertcopyunit.ts     # unit — alert-copy honesty, no data dependency
 npx tsx scripts/replays/noticefreshunit.ts   # unit — the dated-claim review gate (Round 10b)
 npx tsx scripts/verify-trade-mapping.ts      # unit
-npx tsx scripts/check-citations.ts           # network — cited URLs resolve.
+npx tsx --import ./scripts/register-raw.mjs \
+  scripts/check-citations.ts                 # network — cited URLs resolve. The --import is
+                                             #   NOT optional: belowHero.ts derives its dataset
+                                             #   citations with Vite's ?raw, which Node alone
+                                             #   cannot load (broken from Round 14b to 15).
                                              #   Runs weekly in CI, not in the build.
                                              #   Fails in this sandbox: every host is proxied.
 node scripts/replays/signinrender.mjs        # render
 node scripts/replays/r9render.mjs            # render
-node scripts/replays/saservicerender.mjs     # render — the SA service pages (Round 10)
+node scripts/replays/saservicerender.mjs     # render — the six below-hero service pages,
+                                             #   both metros (Round 10 SA, Round 15 Austin)
 node scripts/replays/footerchrome.mjs        # render — sitewide footer chrome (Round 10b)
 node scripts/replays/r7replay.mjs            # render — the big one
 ```

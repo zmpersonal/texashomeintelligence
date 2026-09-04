@@ -23,8 +23,9 @@
  * build for a reason that has nothing to do with the code.
  *
  * ── THE COST, STATED ──────────────────────────────────────────────────────
- * One HEAD request per distinct cited URL — SEVEN today — once a week, on
- * GitHub Actions' free minutes. That is ~364 requests a year against public
+ * One HEAD request per distinct cited URL — TEN today, after Round 15 added
+ * Austin's Socrata dataset, the NWS API and Austin Water — once a week, on
+ * GitHub Actions' free minutes. That is ~520 requests a year against public
  * government sites, or roughly one request per site per week. It reads no
  * response body, follows redirects, and stores nothing.
  *

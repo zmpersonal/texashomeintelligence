@@ -33,6 +33,9 @@
  * All arithmetic here is deterministic. No model output, ever (COST.md rule 2).
  */
 import { findDataset, freshnessOf, type Freshness } from "./datasets";
+// Round 10b: a module-scope `new Date()` reads 1970 under the Workers runtime
+// Astro builds against. Anything needing the real build date uses this.
+import { buildNow } from "../data/serviceNotices";
 import type { DatasetFile } from "../ingest/types";
 import {
   SAN_ANTONIO_PERMIT_TYPE_MAP,
@@ -112,6 +115,9 @@ export interface TradeActivity {
    * were issued in this window. `sourceTypes.length` is how many actually
    * issued — the two differ and the page must not conflate them. */
   mappedTypeCount: number;
+  /** Months dropped because the calendar month had not finished at build time.
+   * Reported so a page can say the window is complete rather than implying it. */
+  droppedIncompleteMonths: string[];
   freshness: Freshness;
   dataset: DatasetFile<TradeObservation>;
 }
@@ -132,10 +138,32 @@ export function tradeActivity(location: string, category: string): TradeActivity
   const dataset = findDataset<TradeObservation>("permit-trade-activity", location);
   if (!dataset || dataset.status === "sample") return undefined;
 
-  const rows = dataset.observations
+  /**
+   * ── DROP THE MONTH THAT HAS NOT FINISHED ──────────────────────────────
+   * Round 15. The ingestion window runs to `now` (`computeFetchWindow`), so the
+   * CURRENT calendar month is always present and always partial. San Antonio
+   * never exposed this — its feed lags and its newest month is complete — but
+   * Austin's does, and the damage is not subtle. Measured on 2026-09-04, with
+   * four days of September in the file:
+   *
+   *   hvac      1,037 in August, 111 in September  →  an 11x "trough"
+   *   solar       224 in August,   9 in September  →  a  25x "trough"
+   *
+   * Every one of those would have been reported as seasonality at 30σ, and the
+   * half-over-half trend would have been dragged down by a sixth of the second
+   * half being four days long. A partial month is not a quiet month.
+   *
+   * The rule is the one thing that is provable from the clock: a month that has
+   * not ended cannot be complete. Nothing else is inferred — a month that is
+   * merely sparse stays in.
+   */
+  const currentMonth = buildNow().toISOString().slice(0, 7);
+  const all = dataset.observations
     .filter((o) => !o.seed && o.value.category === category)
     .map((o) => o.value)
     .sort((a, b) => a.month.localeCompare(b.month));
+  const droppedIncompleteMonths = all.filter((r) => r.month >= currentMonth).map((r) => r.month);
+  const rows = all.filter((r) => r.month < currentMonth);
   if (rows.length === 0) return undefined;
 
   const months = rows.map((r) => ({ month: r.month, permitCount: r.permitCount }));
@@ -196,6 +224,7 @@ export function tradeActivity(location: string, category: string): TradeActivity
     windowStart: months[0].month,
     windowEnd: months[n - 1].month,
     mappedTypeCount: mappedTypeCount(location, category),
+    droppedIncompleteMonths,
     freshness: freshnessOf(dataset),
     dataset,
   };

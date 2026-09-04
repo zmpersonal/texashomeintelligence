@@ -1,7 +1,7 @@
 name: Citation link check
 
 # Checks that every external URL the site CITES still resolves. One HEAD request
-# per distinct cited URL — seven today — once a week.
+# per distinct cited URL — ten today — once a week.
 #
 # ── WHY THIS IS A WORKFLOW AND NOT PART OF `npm run build` ────────────────
 # Because a build must not depend on the internet. Workers Builds runs on every
@@ -13,7 +13,7 @@ name: Citation link check
 # for a reason that has nothing to do with the code.
 #
 # ── THE COST, AGAINST COST.md RULE 3 ──────────────────────────────────────
-# ~7 HEAD requests a week — about 364 a year, roughly one per site per week — on
+# ~10 HEAD requests a week — about 520 a year, roughly one per site per week — on
 # free Action minutes. No response body is read and nothing is stored. Rule 3
 # governs the INGESTION path, where request volume scales with data refresh and
 # the result becomes a number on a page. This touches no dataset, runs on a fixed
@@ -69,7 +69,12 @@ jobs:
         continue-on-error: true
         run: |
           set +e
-          npx tsx scripts/check-citations.ts | tee "$RUNNER_TEMP/report.txt"
+          # `--import ./scripts/register-raw.mjs` teaches Node the `?raw` suffix
+          # `src/data/belowHero.ts` uses to derive its dataset citations from the
+          # fetchers. Without it this step dies on startup with a SyntaxError and
+          # the issue below reports a stack trace instead of a link report — which
+          # is exactly what it did between Round 14b and Round 15.
+          npx tsx --import ./scripts/register-raw.mjs scripts/check-citations.ts | tee "$RUNNER_TEMP/report.txt"
           echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
 
       - name: Open an issue if any citation is dead
