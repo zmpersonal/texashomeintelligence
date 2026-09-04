@@ -278,35 +278,52 @@ run into.
   `urlVerifiedByFetch: false` or unasserted — the proxy denies every host, so the build has
   never confirmed any of them. What changed is that a human has.
 
-- **⚠️ OWNER ACTION — the 25C WORDING is unverified, and it may be materially wrong.** The
-  HVAC page previously said the credit "terminated for property **placed in service** after
-  December 31, 2025". That is a specific statutory test, and section 25C has historically
-  treated an expenditure as made when the original **installation is completed** — a different
-  test that gives a different answer for work spanning the cutoff. **Round 14 could not read
-  the source to settle it**: the proxy denies `www.irs.gov`, so the FAQ text was never loaded.
-  Rather than guess, the copy now states only what the owner confirmed — the December 31 2025
-  end date and the absence of a grandfather provision — and sends the reader to the FAQ for
-  the straddling case: *"the test that decides eligibility is set out in the IRS guidance
-  linked below — read that rather than any summary of it, including this one."*
-  The notice carries `wordingVerifiedAgainstSource: false`. **Read the FAQ and either restore
-  a precise test or leave the pointer.** This is the failure mode a live link cannot catch: a
-  URL that resolves under a paraphrase nobody checked.
+- **Round 14b: the 25C wording was RIGHT ALL ALONG, and Round 14's hedge was the error.**
+  The owner read IRS Fact Sheet 2025-05 in full. **Q1's table states verbatim for section
+  25C: "The credit will not be allowed for any property placed in service after December 31,
+  2025."** Round 14 removed that phrasing on a suspicion it could not check — that the test
+  might be installation-completed. **The suspicion was misplaced, and instructively so: Q7 IS
+  the installation-completed test, but it governs section 25D**, the residential clean energy
+  credit. Two adjacent tests for two different sections, stated in the same document, and the
+  hedge picked the wrong one to worry about.
+  The claim is restored and sharpened — the page now quotes the IRS directly and draws the
+  distinction the test turns on ("Placed in service, not purchased"). `wordingVerifiedAgainstSource`
+  is `true` with `wordingVerifiedOn: "2026-09-04"`; that field now records a positive claim, so
+  `noticefreshunit` asserts any `true` carries a date. **`urlVerifiedByFetch` stays `false`** —
+  a human read the source; the build still fetches nothing.
+  **The page also carries the qualification the IRS attaches to its own guidance**: these FAQs
+  are not published in the Internal Revenue Bulletin, so the IRS will not rely on them to
+  resolve a case, though a taxpayer relying on them reasonably and in good faith is protected
+  from accuracy-related penalties. Stated as the IRS states it, not inflated into doubt about
+  the claim.
+  **The lesson worth keeping: hedging is not free.** An unverified softening is still an
+  unverified change to what the page tells a reader, and it can be wrong in the direction of
+  saying less than the source supports. Round 14 was right to refuse to guess; it was wrong to
+  treat removing a specific claim as the safe default rather than a change needing the same
+  evidence as adding one.
 
-- **⚠️ OWNER ACTION — the San Antonio dataset UUID could not be confirmed against our own
-  code, and the brief that supplied it assumed otherwise.** The replacement URL is
-  `data.sanantonio.gov/dataset/05012dcb-ba1b-4ade-b5f3-7403bc7f52eb`. The round brief said
-  that UUID "is the package your own fetcher resolves every run". **It is not, as far as this
-  repo can show.** Both fetchers resolve the package by SLUG —
-  `package_show?id=building-permits` at `sanAntonioPermits.ts:50` and
-  `permitTradeActivity.ts:149` — and the UUID appears **nowhere in the repository**. CKAN
-  accepts either a name or an id for the same package, so the two very likely address the same
-  dataset, but nothing here proves it and the proxy denies the host so it could not be checked.
-  **Worth confirming once** that `/dataset/05012dcb-…` and `?id=building-permits` are the same
-  package. If they ever diverge, the page would cite one dataset while the ingest reads another
-  — and nothing would notice.
-  **Recommended once someone touches the fetchers** (not done, it would be an ingest change):
-  export the package id from `sanAntonioPermits.ts` and derive the citation URL from it, so the
-  citation and the fetcher cannot drift apart by construction.
+- **Round 14b: the San Antonio citation is the SLUG, and it is now DERIVED from the fetcher.**
+  The owner opened `data.sanantonio.gov/dataset/building-permits` and confirmed it: title
+  "Building Permits", organization "Land and Building Development", four resources including
+  PERMITS ISSUED and the PERMITS ISSUED 2020-2024 archive. Round 14's finding was right — both
+  fetchers request `package_show?id=building-permits`, and the UUID appeared nowhere in the
+  repo — so the citation now uses the identifier the code actually asks for.
+  **It is parsed out of `sanAntonioPermits.ts`, not typed beside it.** `belowHero.ts` imports
+  that file with Vite's `?raw` and extracts the package id, so changing `PACKAGE_SHOW_URL`
+  moves the citation automatically or fails the build saying so — the citation and the fetch
+  cannot drift. Verified the raw import costs nothing: no ingest symbol appears anywhere in
+  `dist/`, and `dist/server` is 1,002,699 bytes. `saservicerender` asserts the rendered URL is
+  the slug, which also catches a silent revert to the UUID.
+
+- **Round 14b retires the Round 0d stale-metadata question.** That era flagged the San Antonio
+  portal's metadata as possibly stale — a "Last Updated" reading January 4, 2026. The owner's
+  check shows **Last Updated August 29, 2026**, so the portal is current and the concern is
+  closed. Two things that were true then remain true and remain handled: the **PERMITS ISSUED
+  2020-2024 archive sits directly above the live PERMITS ISSUED resource** on the dataset page,
+  which is a real trap for anyone reading it by eye or by position; and `sanAntonioPermits.ts`
+  already defends against it with a freshest-by-`last_modified` tiebreak rather than taking the
+  first name match. **It was picking correctly all along.** No change needed; recorded so the
+  next person to look at that page knows the trap is known and handled.
 
 - **Round 14 BUILT the weekly citation link check** recommended in Round 13b —
   `.github/workflows/citation-check.yml` + `site/scripts/check-citations.ts`, no new dependency
