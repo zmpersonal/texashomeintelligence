@@ -36,6 +36,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, writeFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve, join } from "node:path";
+import { FIXTURE_AREA_ID, FIXTURE_ARTIFACT, writeFixtureArtifact } from "./fixture-condition";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SITE = resolve(HERE, "..");
@@ -163,6 +164,25 @@ const FIXTURES: Fixture[] = [
     reminders: [{ key: "hvac-filter", label: "Change the HVAC filter", cadence: 90, dueInDays: 5 }],
   },
   {
+    // Round 9c. The one home with an ACTIVE CONDITION, so the event card
+    // renders deterministically instead of only when Austin's weather
+    // cooperates. Its area is a FIXTURE area - `fixture-condition` is in no
+    // ZIP crosswalk and no real home can carry it - so it reads a fixture
+    // artifact and the two real areas are untouched. See fixture-condition.ts
+    // for how the condition is built and why it cannot reach production.
+    label: "FIRED",
+    sid: "c7f4a1e08b52d6349af7e21b5c0d8836ea914f7d2b6c035ae8419d7fc26b0a55",
+    accountId: "fixture-fired-account-0000-00000001",
+    homeId: "fixture-fired-home-0000-00000001",
+    email: "fired@fixture.local",
+    zip: "78704",
+    areaId: FIXTURE_AREA_ID,
+    county: "Travis",
+    fips: "48453",
+    address: "1001 W Milton St",
+    reminders: [{ key: "hvac-filter", label: "Change the HVAC filter", cadence: 90, dueInDays: 5 }],
+  },
+  {
     label: "EMPTY",
     sid: "3db195571f33de3c99709f5b5ffef5c883519df44956bc87c17618db25215d61",
     accountId: "fixture-empty-account-0000-000000001",
@@ -240,6 +260,20 @@ function insertFixtures(): void {
   }
 }
 
+/**
+ * The FIRED account's area artifact. Lives in dist/ (uncommittable) and is
+ * rebuilt here rather than by the build, because the build must never emit it.
+ * `npm run build` clears dist/, so this runs after every build - which is
+ * exactly the fixture's existing contract.
+ */
+function writeCondition(): void {
+  console.log("\nwriting the synthetic condition (FIRED account):");
+  const { alert } = writeFixtureArtifact();
+  console.log(`  ok  ${FIXTURE_ARTIFACT.replace(SITE + "/", "")}`);
+  console.log(`  ok  ${alert.label} - "${alert.headline}"`);
+  console.log(`      copy extracted from src/lib/account/alerts.ts, not restated here`);
+}
+
 function writeSessions(): void {
   console.log("\nwriting KV sessions:");
   const map: Record<string, string> = {};
@@ -308,6 +342,7 @@ function main(): void {
   applyMigrations();
   insertFixtures();
   writeSessions();
+  writeCondition();
 
   const accounts = d1(`SELECT COUNT(*) AS n FROM accounts`).match(/"n":\s*(\d+)/)?.[1];
   const homes = d1(`SELECT COUNT(*) AS n FROM home_profiles`).match(/"n":\s*(\d+)/)?.[1];

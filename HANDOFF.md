@@ -124,6 +124,14 @@ run into.
   route bug. `local-worker.sh` now passes `--env-file "$SITE/.dev.vars"` when the file is
   present. With that, `r9render` is **18/18** for the first time; without the file it now
   exits 2 naming the two variables instead of dying on `JSON.parse("Not found")`.
+  *Correction, Round 9c:* that diagnosis was right about wrangler and incomplete about the
+  build. **The Astro Cloudflare adapter copies `site/.dev.vars` into `dist/server/` at build
+  time**, so a rebuild AFTER creating the file would also have worked. The file has to exist
+  before the build, or be passed with `--env-file`; the latter needs no rebuild, so it stays
+  the fix. Worth knowing when reasoning about the local worker's environment: a stale
+  `dist/server/.dev.vars` from an earlier build keeps supplying secrets after
+  `site/.dev.vars` is gone, which confounded the first attempt to reproduce the stale-state
+  case below.
   **Also enforced by documentation, not code:** re-apply the fixture between runs of the same
   replay. `r9render` turns the weekly-email toggle on, so a second run without a fresh
   `npm run fixture` fails "toggle persists across a reload" - replay-mutated state, not a
@@ -131,8 +139,75 @@ run into.
   **NOT guaranteed:** the fixture does not reproduce the ARR per-ZIP address shards or the
   generated dataset files - those come from ingestion, and a replay asserting on them needs a
   prior `npm run ingest` or the committed data.
-  And three `r7replay` assertions are data-dependent rather than fixture-dependent, all three
-  now diagnosed (Round 9b) and none of them a defect:
+
+- **Round 9c: the fixture now carries a SYNTHETIC CONDITION, and `r7replay` is 68/68.** The
+  three data-dependent assertions diagnosed in Round 9b are deterministic; nothing in the
+  suite is red.
+  **What the fixture guarantees that it did not before.** A fifth account, **FIRED**
+  (`fired@fixture.local`), whose home carries the area **`fixture-condition`**. The logged-in
+  dashboard reads `alerts[]` from the precomputed artifact keyed on `home.area_id`
+  (`src/lib/account/readIndex.ts`), so a fixture area gets a fixture artifact and the two
+  real areas are untouched. `npm run fixture` writes
+  `dist/client/data/stress-index/fixture-condition.json` after the D1 work; `npm run build`
+  clears `dist/`, so the order is unchanged - build, fixture, worker, replays.
+  **How synthetic it actually is: barely.** `evaluateAlerts` fires the heat alert when the
+  LATEST NWS observation forecasts a high at or above 100F. Austin's committed archive holds
+  15 such readings; the most recent (2026-09-03T12:00Z, **102F**) is four observations old,
+  and the current one reads **99F**. So the observation is real, committed, and really did
+  cross the threshold - the only synthetic act is treating it as the current one. One degree
+  and four hours. (That 99F also settles Round 9b's finding: there is genuinely no active
+  Austin condition and no product bug; the heat alert is one degree from firing on its own.)
+  **The copy is the product's, not the fixture's.** `scripts/fixture-condition.ts` EXTRACTS
+  the heat alert's template literals from `src/lib/account/alerts.ts` and fills them the way
+  the product would, on every fixture run. This is the load-bearing part: if the fixture
+  wrote its own sentences, `r7replay` asserting "the card says area, never at your home"
+  would only prove the FIXTURE says it. The extraction throws rather than falling back to its
+  own words if the templates ever move.
+  **PRODUCTION ISOLATION - four independent reasons, two of them enforced at runtime.**
+  (1) The artifact is written into `dist/`, which `site/.gitignore:2` ignores, so it cannot be
+  committed - and the generator runs `git check-ignore` and **refuses to write** if that ever
+  stops being true (proved: unignoring `dist/` makes it refuse).
+  (2) Production builds generate their own `dist/` from a fresh clone at a commit, so a file
+  that cannot be committed cannot exist in that build.
+  (3) `fixture-condition` is in no ZIP crosswalk and no `areaDefinitions()` entry, so the real
+  build never emits an artifact by that name - and the generator **refuses** if the string
+  ever appears in `zipAreas.ts` (proved).
+  (4) Every real `home_profiles.area_id` is set from ZIP->area resolution at signup, so no real
+  home can read it even if it somehow shipped.
+  On top of those it is self-labelling: a `__fixture` block in the artifact and a
+  `FIXTURE:`-prefixed `conditionKey`.
+  **A new never-dormant guard: `scripts/replays/alertcopyunit.ts` (23 assertions).** It reads
+  `src/lib/account/alerts.ts` and checks EVERY alert template - firing or not - frames its
+  reading as area- or county-level, never claims the reading is about the reader's address
+  (a negated mention like the freeze alert's "not a measurement at your home" is correctly
+  allowed), describes a condition rather than damage, and names its source. It also proves
+  the fixture's extraction reproduces the product's sentences. This is the guard that cannot
+  go dormant: `r7replay`'s version only ever checks the one alert that happens to be
+  rendering, which is how it sat red for three rounds.
+  **Worth knowing:** `r7replay`'s `!/at your (home|address|house)/i` is blunter than the
+  product's real standard - it would fail on the FREEZE alert, whose copy says "not a
+  measurement at your home" and is *more* explicit about the same honesty point, not less.
+  `alertcopyunit` encodes the rule properly. The FIRED home also renders "the San Antonio
+  metro" in its precision note, because the page reads
+  `areaId === "austin" ? "Austin" : "San Antonio"`; only the fixture account sees it, and the
+  precision-note assertion runs against POP.
+  **The geometry assertion is rewritten and can no longer break on a band change.** It pins
+  what is structural - the signal card at 351px and the score row at 611px, neither of which
+  depends on copy - then asserts the verdict FITS (no overflow, inside the row, within its
+  62ch prose cap), and re-measures under all six band words the index can produce. Both
+  `Elevated` (391px, the old pinned number) and `Moderate` (398px, today's) pass, along with
+  Calm/Settled/Normal/Severe at 384px.
+  **Item 3, the weekly-toggle state: the reset stays in the FIXTURE, not in a restore step.**
+  `local-fixture.ts` already deletes `account_email_prefs`, `weekly_email_sends` and
+  `email_suppressions` every run. A restore inside `r9render` would only run when the replay
+  finishes, and this replay's history is of not finishing - measured: a run that completes all
+  18 assertions ends by unsubscribing POP and is self-cleaning by accident, while a run that
+  ABORTS at the unsubscribe section (no `.dev.vars`) leaves the toggle ON and fails both
+  weekly assertions on the next run. Exactly the case a restore step cannot cover. Both
+  assertions now carry `STALE FIXTURE? re-run: npm run fixture` in their failure note, so the
+  wrong diagnosis is harder to reach.
+
+- **Round 9b's three findings, for the record (all now closed by Round 9c):**
   - Two event-card assertions only pass while an Austin condition is active. There is none
     today: `[data-alert]` matches zero elements, so no card renders. The assertions are
     written as unconditional presence checks (`r.event && ...`), so absence reads as failure

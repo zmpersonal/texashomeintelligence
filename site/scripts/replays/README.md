@@ -23,6 +23,7 @@ Then, in another terminal:
 npx tsx scripts/replays/weeklyunit.ts        # unit — no browser, no worker
 npx tsx scripts/replays/r10unit.ts           # unit
 npx tsx scripts/replays/badgeunit.ts         # unit
+npx tsx scripts/replays/alertcopyunit.ts     # unit — alert-copy honesty, no data dependency
 npx tsx scripts/verify-trade-mapping.ts      # unit
 node scripts/replays/signinrender.mjs        # render
 node scripts/replays/r9render.mjs            # render
@@ -66,10 +67,37 @@ opaquely inside a page call.
   relative to its cwd, which is `dist/server`, so `site/.dev.vars` was never read
   before Round 9b.
 - **Re-apply the fixture between runs of the same replay.** `r9render` flips the
-  weekly-email toggle on; running it twice without a fresh `npm run fixture` fails
-  "toggle persists across a reload" — replay-mutated state, not a regression.
+  weekly-email toggle on, and its unsubscribe section writes an explicit off-row for
+  POP. The reset lives in the fixture — `local-fixture.ts` deletes
+  `account_email_prefs`, `weekly_email_sends` and `email_suppressions` every run —
+  not in a restore step inside the replay, because a restore only runs when the
+  replay finishes. Both affected assertions now say `STALE FIXTURE?` when they fail,
+  so the wrong diagnosis is harder to reach.
 - **Three `r7replay` assertions are data-dependent**, not fixture-dependent, and are
   recorded as open findings in `HANDOFF.md` rather than fixed.
+
+## The synthetic condition
+
+`r7replay`'s two event-card assertions need a condition to be active. Austin's weather
+does not cooperate on demand, so the fixture supplies one.
+
+- A fifth account, **FIRED**, whose home carries the area `fixture-condition`. That
+  area is in no ZIP crosswalk and in no `areaDefinitions()` entry, so no real home can
+  ever hold it.
+- `npm run fixture` writes `dist/client/data/stress-index/fixture-condition.json`,
+  which the Worker serves through its `ASSETS` binding exactly as it serves the real
+  area artifacts. `dist/` is gitignored, so the file **cannot be committed**; the
+  generator runs `git check-ignore` and refuses to write if that ever stops being true.
+- The condition itself is **a real committed NWS observation** — Austin's
+  2026-09-03T12:00Z reading of 102°F, which really did cross the ≥100°F heat
+  threshold. It is simply not the *latest* reading (the current one is 99°F), which is
+  why the product does not fire on it. The recency is the only synthetic part.
+- The alert **copy is extracted from `src/lib/account/alerts.ts`**, not restated. If
+  the fixture wrote its own sentences, `r7replay` asserting "the card says area" would
+  only prove the fixture says it. `alertcopyunit.ts` proves the extraction is faithful
+  and separately checks every alert template in the product — firing or not.
+
+See `scripts/fixture-condition.ts` for the four independent isolation guarantees.
 
 ## Safety
 

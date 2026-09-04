@@ -168,8 +168,10 @@ A('4.1', 'five signals present', r.signals === 5, r.signalIds.join(','));
 A('4.1', 'Normal band carries no action', r.normalNoAction);
 const hit = BANNED.find(w => new RegExp(`\\b${w}\\b`, 'i').test(r.actions.join(' ')));
 A('4.1', `banned-phrase guard over ${r.actions.length} rendered actions`, !hit, hit ? `HIT: ${hit}` : 'none');
-A('4.1', 'event card present and area-honest', r.event && /area/i.test(r.eventText) && !/at your (home|address|house)/i.test(r.eventText));
-A('4.1', 'event card states it goes away when the condition does', r.eventGoesAway);
+// The two event-card assertions moved to their own block below (Round 9c).
+// They ran here, against POP, and could only pass while an Austin condition
+// happened to be active - which it is not, so they sat red for three rounds.
+// The FIRED fixture account carries a deterministic one instead.
 A('4.1', '"Track this" buttons present', r.trackBtns > 0, `${r.trackBtns}`);
 A('4.1', 'own-county precision note present', !!r.precision && /describe the area/.test(r.precision));
 A('4.1', 'noindex on the logged-in view', r.noindex);
@@ -319,23 +321,117 @@ console.log('\n══ EMPTY / ALL-CLEAR REMINDERS ══');
   await c2.close();
 }
 
+console.log('\n══ CONDITION CARD (FIRED fixture account) ══');
+{
+  // Round 9c. This home's area is `fixture-condition`, whose artifact the local
+  // fixture writes into dist/ (uncommittable - see scripts/fixture-condition.ts).
+  // The alert copy in it is EXTRACTED from src/lib/account/alerts.ts, not
+  // written by the fixture, so the honesty assertions below still test the
+  // product's sentences. `alertcopyunit.ts` proves that extraction is faithful
+  // and checks every alert template, firing or not.
+  if (!S.FIRED) {
+    console.error('\n[x] no FIRED session - the fixture predates Round 9c. Run: npm run fixture\n');
+    process.exit(2);
+  }
+  const { p, c } = await open(S.FIRED);
+  const e = await p.evaluate(() => {
+    const card = document.querySelector('[data-alert]');
+    return {
+      present: !!card,
+      cards: document.querySelectorAll('[data-alert]').length,
+      text: card?.innerText ?? '',
+      hasSource: /Source:/.test(card?.innerText ?? ''),
+      hasTime: !!card?.querySelector('time[datetime]'),
+      checklist: card?.querySelectorAll('li').length ?? 0,
+      h2: card?.querySelector('h2')?.innerText ?? '',
+    };
+  });
+  A('4.1', 'event card present and area-honest',
+    e.present && /area/i.test(e.text) && !/at your (home|address|house)/i.test(e.text),
+    e.present ? e.h2 : 'no card rendered');
+  A('4.1', 'event card states it goes away when the condition does',
+    /goes away when the\s+condition does/i.test(e.text.replace(/\s+/g, ' ')));
+  A('9c', 'exactly one condition card, sourced and dated',
+    e.cards === 1 && e.hasSource && e.hasTime, `${e.cards} card(s)`);
+  A('9c', 'the card carries its checklist', e.checklist >= 3, `${e.checklist} item(s)`);
+  await c.close();
+}
+
 console.log('\n══ PUBLIC ZIP DASHBOARD UNTOUCHED ══');
 {
   const { p, c } = await open(null, 1440, '/dashboard/78704/');
-  const x = await p.evaluate(() => ({
-    cards: document.querySelectorAll('.signal-card').length,
-    rows: document.querySelectorAll('.sig-row').length,
-    homeDash: document.querySelectorAll('.home-dash').length,
-    v2: document.querySelectorAll('[class*="v2-"]').length,
-    verdictW: Math.round(document.querySelector('.dash-verdict').getBoundingClientRect().width),
-    signalCardW: Math.round(document.querySelector('.signal-card').getBoundingClientRect().width),
-  }));
+  // Round 9c. This used to pin `verdict === 391px`. That number was never a
+  // layout fact: `.dash-score-read` is a `flex: 0 1 auto` item, so its width is
+  // its widest child's MAX-CONTENT width, and that child is the verdict
+  // sentence - "Conditions across Austin scored 46 of 100 (Moderate)." The 391
+  // was the rendered width of that sentence with the band word `Elevated`;
+  // Austin's score fell below the Elevated edge of 50 and the word became
+  // `Moderate`, which measures 397.72px. Nothing moved. One word got wider.
+  //
+  // So the assertion now pins what is actually structural - the signal card and
+  // the score row, neither of which depends on the copy - and asserts that the
+  // verdict FITS: no overflow, inside the row, within its own prose cap. Then
+  // it re-measures under every band label the index can produce, so a future
+  // band change cannot break it again.
+  const BAND_WORDS = ['Calm', 'Settled', 'Normal', 'Moderate', 'Elevated', 'Severe'];
+  const x = await p.evaluate((bands) => {
+    const q = s => document.querySelector(s);
+    const v = q('.dash-verdict');
+    const row = q('.dash-score-row');
+    const original = v.textContent;
+
+    const fits = () => {
+      const vr = v.getBoundingClientRect();
+      const rr = row.getBoundingClientRect();
+      const cap = parseFloat(getComputedStyle(v).maxWidth) || Infinity;
+      return {
+        noOverflow: v.scrollWidth <= v.clientWidth + 1,
+        insideRow: vr.right <= rr.right + 1 && vr.left >= rr.left - 1,
+        underCap: vr.width <= cap + 1,
+        w: Math.round(vr.width),
+      };
+    };
+
+    const perBand = {};
+    for (const band of bands) {
+      // Swap only the band word, leaving the sentence otherwise intact.
+      v.textContent = original.replace(/\(([^)]*)\)\.\s*$/, `(${band}).`);
+      const f = fits();
+      perBand[band] = f;
+    }
+    v.textContent = original;
+
+    return {
+      cards: document.querySelectorAll('.signal-card').length,
+      rows: document.querySelectorAll('.sig-row').length,
+      homeDash: document.querySelectorAll('.home-dash').length,
+      v2: document.querySelectorAll('[class*="v2-"]').length,
+      signalCardW: Math.round(q('.signal-card').getBoundingClientRect().width),
+      scoreRowW: Math.round(row.getBoundingClientRect().width),
+      live: fits(),
+      bandWord: (original.match(/\(([^)]*)\)\.\s*$/) || [])[1] ?? '(none)',
+      perBand,
+    };
+  }, BAND_WORDS);
+
   A('4.2', 'public page still uses SignalCard, not the v2 table',
     x.cards === 5 && x.rows === 0, `${x.cards} cards / ${x.rows} rows`);
   A('4.2', 'no .home-dash or v2 classes leaked to the public page',
     x.homeDash === 0 && x.v2 === 0, `home-dash=${x.homeDash} v2=${x.v2}`);
-  A('4.2', 'public geometry unchanged (verdict 391px, card 351px)',
-    x.verdictW === 391 && x.signalCardW === 351, `verdict=${x.verdictW} card=${x.signalCardW}`);
+  A('4.2', 'public layout unchanged (signal card 351px, score row 611px)',
+    x.signalCardW === 351 && x.scoreRowW === 611,
+    `card=${x.signalCardW} row=${x.scoreRowW}`);
+  A('4.2', 'verdict fits its container as rendered',
+    x.live.noOverflow && x.live.insideRow && x.live.underCap,
+    `band=${x.bandWord} w=${x.live.w}px`);
+  const bad = BAND_WORDS.filter(b => {
+    const f = x.perBand[b];
+    return !(f.noOverflow && f.insideRow && f.underCap);
+  });
+  A('4.2', 'verdict still fits under every band word the index can produce',
+    bad.length === 0,
+    bad.length ? `breaks on: ${bad.join(', ')}`
+               : BAND_WORDS.map(b => `${b}=${x.perBand[b].w}px`).join(' '));
   await c.close();
 }
 

@@ -54,7 +54,15 @@ console.log('\n══ WEEKLY-EMAIL CONTROL ON /home/ ══');
     };
   });
   A('control renders (migration applied)', st.present);
-  A('OFF by default — a missing row is never opt-in', st.checked === false);
+  // Round 9c. This replay MUTATES the preference: it toggles it on below, and
+  // its unsubscribe section later writes an explicit off-row for POP. The reset
+  // lives in the fixture (local-fixture.ts deletes account_email_prefs,
+  // weekly_email_sends and email_suppressions on every run) rather than in a
+  // restore step here - a restore only runs when the replay finishes, and this
+  // replay's whole history is of not finishing. So the failure mode to name is
+  // "you did not re-run the fixture", not "the product regressed".
+  A('OFF by default — a missing row is never opt-in', st.checked === false,
+    st.checked === false ? '' : 'STALE FIXTURE? re-run: npm run fixture (worker stopped)');
   A('posts the pref key it was rendered with', st.key === 'weekly', st.key);
   A('names the cadence and the way out', /One email a week/.test(st.text) && /turn it back off/.test(st.text));
   A('separate from the four alert toggles', st.alerts === 4, `${st.alerts} alert toggles`);
@@ -66,8 +74,9 @@ console.log('\n══ WEEKLY-EMAIL CONTROL ON /home/ ══');
   await p.waitForTimeout(500);
   await c.close();
   const {p:p2,c:c2} = await open(S.POP);
-  A('toggle persists across a reload',
-    await p2.evaluate(()=>document.querySelector('[data-weekly]')?.checked === true));
+  const persisted = await p2.evaluate(()=>document.querySelector('[data-weekly]')?.checked === true);
+  A('toggle persists across a reload', persisted,
+    persisted ? '' : 'STALE FIXTURE? re-run: npm run fixture (worker stopped)');
   await c2.close();
 }
 
