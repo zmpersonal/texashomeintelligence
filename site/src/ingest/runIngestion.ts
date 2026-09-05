@@ -139,6 +139,14 @@ function failAttempt<T>(
   const wasLive = existing.status === "live" || existing.status === "stale";
   const updated: DatasetFile<T> = {
     ...existing,
+    // Round 19e. Round 19 fixed this on the SUCCESS path only, and the first
+    // live noaa-climate run showed the gap: both generated files came back
+    // citing sources their fetcher had long since stopped reading —
+    // `austin.json` naming Global Summary of the Month and `san-antonio.json`
+    // naming the normals CSV path, neither matching the fetcher at the time.
+    // A file that has never succeeded still carries a citation, and a stale one
+    // is a wrong citation.
+    source: fetcher.source,
     status: wasLive ? "stale" : existing.status,
     lastAttemptAt: now,
     lastError: reason,

@@ -1,5 +1,6 @@
 import type { FetcherModule, Observation } from "../types";
 import { ZIP_AREAS } from "../../data/zip-areas";
+import { parseCsv, rowsToRecords } from "../csv";
 
 /**
  * Two kinds of cooling-degree-day reading. They answer different questions and
@@ -41,6 +42,8 @@ export interface CoolingDegreeDayValue {
   yearsOfRecord?: number;
   /** NOAA completeness flag for a normal, e.g. "C", "S", "P", "E". */
   completenessFlag?: string;
+  /** NOAA measurement flag for a normal. Provenance, carried not interpreted. */
+  measurementFlag?: string;
 }
 
 /**
@@ -62,8 +65,30 @@ export interface CoolingDegreeDayValue {
  * The endpoint was never the problem. THE BOUNDING BOX WAS. With an explicit
  * station id both datasets answer cleanly, and both are used here:
  *
- *   dataset=normals-monthly-1991-2020&stations=<id>   -> 12 rows, MLY-CLDD-*
  *   dataset=global-summary-of-the-month&stations=<id>&dataTypes=CLDD
+ *
+ * ── ROUND 19e: THE NORMALS COME FROM THE STATIC CSV, NOT THE API, AND THE
+ * DIFFERENCE IS PROVENANCE. Round 19d read normals from
+ * `data/v1?dataset=normals-monthly-1991-2020` and the first live run rejected
+ * every station in both metros: "response carries no years-of-record column".
+ * The gate was right and the source could not satisfy it. Measured, from that
+ * run's own `lastError`:
+ *
+ *   API, Camp Mabry            95 columns, incl. MLY-CLDD-NORMAL and
+ *                              MLY-CLDD-BASE40..72 — but NO years_, NO
+ *                              comp_flag_, NO meas_flag_
+ *   API, Stinson               68 columns, same story
+ *   API, Kelly AFB             47 columns, same story
+ *   static CSV, Camp Mabry    413 columns, incl. years_MLY-CLDD-NORMAL
+ *   static CSV, Stinson       313 columns
+ *   static CSV, Kelly AFB     225 columns
+ *
+ * THE API RETURNS VALUES. THE CSV RETURNS VALUES PLUS THEIR PROVENANCE. They
+ * are not the same product and reading one column list as though it were the
+ * other is what cost this round. Normals therefore come from
+ * `normals-monthly/1991-2020/access/{STATION}.csv` — a static file with no
+ * query parameters at all. GSOM actuals stay on `data/v1`, which answered
+ * correctly with 36 rows and a CLDD column and had no reason to move.
  *
  * NEVER ASK A SERVER TO INTERPRET A BOUNDING BOX. `search/v1/data` rejects one
  * too (400, "Invalid search options"). Station ids are resolved by downloading
@@ -88,8 +113,14 @@ type Metro = "austin" | "san-antonio";
 
 const ACCESS_DATA_V1 = "https://www.ncei.noaa.gov/access/services/data/v1";
 const GHCND_STATIONS = "https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt";
-const NORMALS_DATASET = "normals-monthly-1991-2020";
+const NORMALS_ACCESS = "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/access/";
 const GSOM_DATASET = "global-summary-of-the-month";
+
+/** The CDD normal, and the three per-element companions that qualify it. */
+const CDD_NORMAL_COLUMN = "MLY-CLDD-NORMAL";
+const YEARS_COLUMN = `years_${CDD_NORMAL_COLUMN}`;
+const COMP_FLAG_COLUMN = `comp_flag_${CDD_NORMAL_COLUMN}`;
+const MEAS_FLAG_COLUMN = `meas_flag_${CDD_NORMAL_COLUMN}`;
 
 /** Documented in NCEI's normals readme. Never inferred from a column name. */
 const CDD_BASE_F = 65 as const;
@@ -195,15 +226,50 @@ export function __resetStationTableCacheForTests(): void {
 }
 
 /**
+ * The set of station ids that actually have a published normals file, read from
+ * the `access/` directory index once per process.
+ *
+ * Round 19e added this because the first live run spent five of its eleven
+ * requests on stations with no normals at all — Austin Executive, Lago Vista,
+ * Taylor Muni, Brooks AFB and Boerne Stage Field each came back "no normals
+ * rows returned". They are in `ghcnd-stations.txt`, which lists every GHCN
+ * station, but not in the normals product. Filtering here means the fetcher
+ * stops asking for files that do not exist.
+ */
+let normalsIndexPromise: Promise<Set<string>> | null = null;
+
+async function loadNormalsIndex(): Promise<Set<string>> {
+  if (!normalsIndexPromise) {
+    normalsIndexPromise = (async () => {
+      const res = await fetch(NORMALS_ACCESS);
+      if (!res.ok) {
+        throw new Error(`normals access index fetch failed: HTTP ${res.status} from ${NORMALS_ACCESS}`);
+      }
+      const html = await res.text();
+      const ids = new Set<string>();
+      for (const m of html.matchAll(/href="([A-Za-z0-9_\-]+)\.csv"/g)) ids.add(m[1]);
+      if (ids.size === 0) {
+        throw new Error("normals access index listed no .csv files — the page shape may have changed.");
+      }
+      return ids;
+    })().catch((err) => {
+      normalsIndexPromise = null;
+      throw err;
+    });
+  }
+  return normalsIndexPromise;
+}
+
+/**
  * USW is the first-order/airport tier — the one that reports temperature. USC
  * co-op and US1 CoCoRaHS stations are deliberately excluded rather than ranked
  * lower: Round 19b's whole failure was letting a precipitation-only tier into
  * the running at all.
  */
-async function candidateStations(location: Metro): Promise<Station[]> {
+async function candidateStations(location: Metro, rejections: string[]): Promise<Station[]> {
   const { lat, lon } = pointFor(location);
   const all = await loadStationTable();
-  return all
+  const nearby = all
     .filter(
       (s) =>
         s.id.startsWith("USW") &&
@@ -211,8 +277,34 @@ async function candidateStations(location: Metro): Promise<Station[]> {
         Math.abs(s.lon - lon) <= BOX_PAD_DEGREES,
     )
     .map((s) => ({ ...s, distanceMiles: greatCircleMiles(lat, lon, s.lat, s.lon) }))
-    .sort((a, b) => a.distanceMiles - b.distanceMiles)
-    .slice(0, MAX_CANDIDATES);
+    .sort((a, b) => a.distanceMiles - b.distanceMiles);
+
+  // A failure to read the index must not fail the run: a station with no file
+  // 404s below and is rejected there instead. Losing the pre-filter costs
+  // requests, not correctness.
+  let index: Set<string> | null = null;
+  try {
+    index = await loadNormalsIndex();
+  } catch (err) {
+    console.log(
+      `noaa-climate/${location}: could not read the normals index ` +
+        `(${err instanceof Error ? err.message : String(err)}) — continuing without the pre-filter.`,
+    );
+  }
+
+  const eligible: Station[] = [];
+  for (const s of nearby) {
+    if (index && !index.has(s.id)) {
+      rejections.push(
+        `${s.id} (${s.name}, ${s.distanceMiles.toFixed(1)} mi): not in the normals access/ index — ` +
+          "no normals file is published for it, so it was never requested",
+      );
+      continue;
+    }
+    eligible.push(s);
+    if (eligible.length >= MAX_CANDIDATES) break;
+  }
+  return eligible;
 }
 
 async function getRows(params: Record<string, string>): Promise<ApiRow[]> {
@@ -232,17 +324,24 @@ async function getRows(params: Record<string, string>): Promise<ApiRow[]> {
 }
 
 /**
- * Finds a column by pattern rather than asserting its exact name, preferring a
- * CLDD-scoped one where the response carries per-element companions. The value
- * column itself is matched strictly — `MLY-CLDD-NORMAL` is the measured name,
- * and a loose match there could silently pick up a different statistic.
+ * Reads one station's static normals CSV. Returns `null` when the file does not
+ * exist — a 404 is a rejection for that station, never an abort of the run.
+ *
+ * Static file, no query parameters. There is nothing here for a server to
+ * reject, which after four attempted mechanisms is the point.
  */
-function findColumn(row: ApiRow, strict: RegExp, loose?: RegExp): string | undefined {
-  const keys = Object.keys(row);
-  const exact = keys.find((k) => strict.test(k));
-  if (exact) return exact;
-  if (!loose) return undefined;
-  return keys.find((k) => loose.test(k) && /cldd/i.test(k)) ?? keys.find((k) => loose.test(k));
+async function fetchNormalsCsv(stationId: string): Promise<Record<string, string>[] | null> {
+  const url = `${NORMALS_ACCESS}${stationId}.csv`;
+  const res = await fetch(url);
+  if (res.status === 404) return null;
+  if (!res.ok) {
+    throw new Error(`NOAA normals CSV fetch failed: HTTP ${res.status} from ${url}`);
+  }
+  const text = await res.text();
+  if (text.trim() === "") return [];
+  // A normals row carries a station NAME, which contains commas. A naive
+  // split(",") would shift every one of the 200-400 columns after it.
+  return rowsToRecords(parseCsv(text));
 }
 
 function numberOrNull(raw: string | undefined): number | null {
@@ -256,7 +355,7 @@ function numberOrNull(raw: string | undefined): number | null {
 
 interface NormalsResult {
   station: Station;
-  rows: { month: number; cdd: number; years?: number; flag?: string }[];
+  rows: { month: number; cdd: number; years?: number; flag?: string; measFlag?: string }[];
 }
 
 /**
@@ -266,37 +365,43 @@ interface NormalsResult {
  * to see.
  */
 async function resolveNormals(location: Metro, rejections: string[]): Promise<NormalsResult> {
-  const candidates = await candidateStations(location);
+  const candidates = await candidateStations(location, rejections);
   if (candidates.length === 0) {
     throw new Error(
-      `noaa-climate/${location}: no USW station within ${BOX_PAD_DEGREES} deg of the metro point. ` +
-        "USC co-op and US1 CoCoRaHS stations are excluded on purpose — they do not report temperature.",
+      `noaa-climate/${location}: no USW station with a published normals file within ` +
+        `${BOX_PAD_DEGREES} deg of the metro point. USC co-op and US1 CoCoRaHS stations are ` +
+        `excluded on purpose — they do not report temperature.` +
+        (rejections.length ? ` Skipped: ${rejections.join(" | ")}` : ""),
     );
   }
 
   for (const station of candidates) {
-    const rows = await getRows({
-      dataset: NORMALS_DATASET,
-      stations: station.id,
-      format: "json",
-      units: "standard",
-      includeStationName: "true",
-    });
     const label = `${station.id} (${station.name}, ${station.distanceMiles.toFixed(1)} mi)`;
+    const rows = await fetchNormalsCsv(station.id);
+    if (rows === null) {
+      rejections.push(`${label}: no normals CSV published (HTTP 404)`);
+      continue;
+    }
     if (rows.length === 0) {
-      rejections.push(`${label}: no normals rows returned`);
+      rejections.push(`${label}: normals CSV is empty`);
       continue;
     }
 
-    const valueCol = findColumn(rows[0], /^MLY-CLDD-NORMAL$/i);
-    if (!valueCol) {
+    const columns = Object.keys(rows[0]);
+    if (!columns.includes(CDD_NORMAL_COLUMN)) {
+      rejections.push(`${label}: no ${CDD_NORMAL_COLUMN} column among ${columns.length} columns`);
+      continue;
+    }
+    // Round 19e's whole finding: this is the column the API does not carry.
+    // Without it nothing can tell a two-year record from a thirty-year one, so
+    // its absence stays a rejection rather than something to work around.
+    if (!columns.includes(YEARS_COLUMN)) {
       rejections.push(
-        `${label}: no MLY-CLDD-NORMAL column. Columns present: ${Object.keys(rows[0]).join(", ")}`,
+        `${label}: no ${YEARS_COLUMN} column among ${columns.length} columns, so record ` +
+          "length cannot be checked",
       );
       continue;
     }
-    const yearsCol = findColumn(rows[0], /^years[_-]?$/i, /years/i);
-    const flagCol = findColumn(rows[0], /^comp[_-]?flag[_-]?$/i, /comp[_-]?flag/i);
 
     const parsed: NormalsResult["rows"] = [];
     let estimated = 0;
@@ -304,16 +409,17 @@ async function resolveNormals(location: Metro, rejections: string[]): Promise<No
     let minYears: number | undefined;
     for (const row of rows) {
       const month = Number((row.DATE ?? "").trim());
-      const cdd = numberOrNull(row[valueCol]);
+      const cdd = numberOrNull(row[CDD_NORMAL_COLUMN]);
       if (!Number.isInteger(month) || month < 1 || month > 12 || cdd === null) continue;
-      const years = yearsCol ? numberOrNull(row[yearsCol]) ?? undefined : undefined;
-      const flag = flagCol ? (row[flagCol] ?? "").trim() || undefined : undefined;
+      const years = numberOrNull(row[YEARS_COLUMN]) ?? undefined;
+      const flag = (row[COMP_FLAG_COLUMN] ?? "").trim() || undefined;
+      const measFlag = (row[MEAS_FLAG_COLUMN] ?? "").trim() || undefined;
       if (flag && flag.toUpperCase() === ESTIMATED_FLAG) estimated += 1;
       if (years !== undefined) {
         minYears = minYears === undefined ? years : Math.min(minYears, years);
         if (years < MIN_YEARS_OF_RECORD) short += 1;
       }
-      parsed.push({ month, cdd, years, flag });
+      parsed.push({ month, cdd, years, flag, measFlag });
     }
 
     if (parsed.length < 12) {
@@ -334,16 +440,6 @@ async function resolveNormals(location: Metro, rejections: string[]): Promise<No
       );
       continue;
     }
-    // `yearsCol` missing entirely is its own risk: without it nothing can tell a
-    // two-year record from a thirty-year one, which is exactly the trap this
-    // function exists to avoid.
-    if (!yearsCol) {
-      rejections.push(
-        `${label}: response carries no years-of-record column, so record length cannot be checked. ` +
-          `Columns present: ${Object.keys(rows[0]).join(", ")}`,
-      );
-      continue;
-    }
     return { station, rows: parsed };
   }
 
@@ -357,8 +453,8 @@ function makeFetcher(location: Metro): FetcherModule<CoolingDegreeDayValue> {
     datasetId: "noaa-climate",
     location,
     source: {
-      name: "NOAA NCEI Climate Normals (1991-2020) and Global Summary of the Month",
-      url: "https://www.ncei.noaa.gov/access/services/data/v1",
+      name: "NOAA NCEI U.S. Climate Normals 1991-2020 (station CSV) and Global Summary of the Month",
+      url: NORMALS_ACCESS,
     },
     requiredEnvVars: [],
     async fetchRaw(ctx): Promise<Observation<CoolingDegreeDayValue>[]> {
@@ -398,6 +494,7 @@ function makeFetcher(location: Metro): FetcherModule<CoolingDegreeDayValue> {
             month: r.month,
             yearsOfRecord: r.years,
             completenessFlag: r.flag,
+            measurementFlag: r.measFlag,
             ...stationFields,
           },
         });
