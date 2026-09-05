@@ -78,6 +78,24 @@ npx tsx --import ./scripts/register-raw.mjs \
                                              #   Reports 10/10 dead in this sandbox: every host
                                              #   is proxied. That is the environment, not a bug —
                                              #   citationcheckunit.ts is the one to trust locally.
+node scripts/replays/roofscanrender.mjs      # render — Roof Scan (Round 27). Every county row
+                                             #   RE-DERIVED from noaa-storm-events and both permit
+                                             #   totals re-summed over the window the PAGE names,
+                                             #   so a changed span fails rather than passing on a
+                                             #   pinned number. Then the guards: no hail size in
+                                             #   any unit from either product, no cost, no damage
+                                             #   or replacement timing, every % naming the archive
+                                             #   it was measured on, the radar card naming no
+                                             #   county, and — the defect this file caught on its
+                                             #   first run — Austin's text-match measurement never
+                                             #   appearing under San Antonio's heading, which a
+                                             #   side-by-side check would have passed.
+                                             #   Also 320/360/390, the ZIP label, and the page with
+                                             #   scripting off. Asserts WHICH state swdi-nx3hail is
+                                             #   in: no dataset is committed, so the radar cards
+                                             #   say so instead of showing a zero; the day a run
+                                             #   lands the file, that line is what says the page
+                                             #   changed shape.
 node scripts/replays/dashmobile.mjs          # render — the dashboard on a phone (Round 26).
                                              #   scrollWidth and every element's box at 320/360/390
                                              #   for the public ZIP page (both metros), the ZIP
