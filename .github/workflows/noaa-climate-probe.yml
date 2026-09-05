@@ -1379,3 +1379,415 @@ jobs:
           print(f"\nR21_PROBE_STATUS=complete requests={counts['requests']} ok={counts['ok']} "
                 f"failed={counts['failed']} refused={counts['refused']} pdfs={counts['pdfs']}")
           PY
+
+      # ══ ROUND 21b — I CALLED A REACHABLE SERVICE UNREACHABLE. ══════════
+      #
+      # Round 21 reported "NEITHER SWDI BASE ANSWERED" and stopped. Both bases
+      # answered. Both returned, in the response body my own `get()` printed:
+      #
+      #   ERROR VALIDATING 'dateRange=startDate:endDate'. 'startDate' must be a
+      #   date before 'endDate' and maximum date range currently allowed is
+      #   744 hours.
+      #
+      # 744 hours is 31 days; the probe asked for 365. The service was
+      # reachable, parsed the request, and named the constraint. THE EVIDENCE
+      # WAS IN THE LOG AND THE CODE IGNORED IT.
+      #
+      # THE STRUCTURAL DEFECT, which mattered more than the window. Round 21's
+      # `get()` returns `(status, None, host)` on an HTTPError — it PRINTS the
+      # error body and then throws it away. So at the call site
+      # `if body:` is False for a 500-with-a-validation-message exactly as it is
+      # for a refused connection, and the two are indistinguishable. That is the
+      # rounds 19-19e failure wearing yet another hat: a rejected PARAMETER read
+      # as an unavailable SOURCE. `get()` below returns the error body, and
+      # reachability is classified in three states, never two.
+      - name: "TEMP (Round 21b): SWDI within its 744-hour limit + hardness follow-through"
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          python3 - <<'PY'
+          import csv, io, json, re, sys, time, datetime
+          import urllib.request, urllib.error, urllib.parse
+
+          UA = ("TexasHomeIntelligence-probe/1.0 (one-off read-only characterisation; "
+                "contact via github.com/zmpersonal/texashomeintelligence)")
+          TIMEOUT = 90
+          SMALL = 8 * 1024 * 1024
+          BIG = 24 * 1024 * 1024
+
+          # SWDI's own stated limit, quoted from the error body it returned.
+          SWDI_MAX_HOURS = 744
+          WINDOW_DAYS = 31
+          MONTHS_BACK = 12
+
+          METROS = {
+              "austin":      {"point": (30.2672, -97.7431), "county": "Travis", "fips": "48453"},
+              "san-antonio": {"point": (29.4241, -98.4936), "county": "Bexar",  "fips": "48029"},
+          }
+          PAD = 0.5
+
+          ALLOWED_HOSTS = {
+              "www.saws.org", "saws.org",
+              "www.austintexas.gov", "austintexas.gov",
+              "www.waterqualitydata.us", "waterqualitydata.us",
+              "data.epa.gov",
+              "www.ncei.noaa.gov", "www.ncdc.noaa.gov",
+          }
+
+          counts = {"requests": 0, "ok": 0, "http_error": 0, "no_response": 0, "refused": 0}
+
+          def _crash(exc_type, exc, tb):
+              import traceback
+              traceback.print_exception(exc_type, exc, tb)
+              print(f"\nR21B_PROBE_STATUS=error requests={counts['requests']} "
+                    f"crash={exc_type.__name__}: {exc}")
+          sys.excepthook = _crash
+
+          def hr(t):
+              print("\n" + "=" * 74); print(t); print("=" * 74)
+
+          class Resp:
+              """THREE states, not two.
+
+              `answered` is True whenever the server produced an HTTP response of
+              any status — including a 4xx or 5xx whose body explains what it
+              disliked. Only a transport failure is `unreachable`. Round 21
+              collapsed these and drew the wrong conclusion from its own log.
+              """
+              def __init__(self, status=None, body=None, host="", error=None, refused=False):
+                  self.status, self.body, self.host = status, body, host
+                  self.error, self.refused = error, refused
+              @property
+              def answered(self):
+                  return self.status is not None
+              @property
+              def ok(self):
+                  return self.status is not None and 200 <= self.status < 300 and self.body is not None
+              @property
+              def unreachable(self):
+                  return self.status is None and not self.refused
+
+          def get(url, label="", ceil=SMALL):
+              host = urllib.parse.urlparse(url).netloc.lower()
+              if host not in ALLOWED_HOSTS:
+                  counts["refused"] += 1
+                  print(f"  [{label or 'GET'}] REFUSED — {host} is not a utility or federal host")
+                  return Resp(host=host, refused=True)
+              counts["requests"] += 1
+              req = urllib.request.Request(url, headers={"User-Agent": UA})
+              try:
+                  with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+                      body = r.read(ceil + 1)[:ceil]
+                      counts["ok"] += 1
+                      print(f"  [{label or 'GET'}] HTTP {r.status}, {len(body)} bytes, "
+                            f"{r.headers.get('Content-Type', '?')}")
+                      print(f"    {url}")
+                      return Resp(r.status, body, host)
+              except urllib.error.HTTPError as e:
+                  counts["http_error"] += 1
+                  try:
+                      body = e.read(4000)
+                  except Exception:
+                      body = b""
+                  print(f"  [{label or 'GET'}] HTTP {e.code} {e.reason} — THE SERVER ANSWERED.")
+                  print(f"    {url}")
+                  # Printed AND returned. Round 21 printed it and discarded it.
+                  for line in body.decode("utf-8", "replace").splitlines()[:6]:
+                      if line.strip():
+                          print(f"    body: {line.strip()[:300]}")
+                  return Resp(e.code, body, host, error=f"HTTP {e.code}")
+              except Exception as e:
+                  counts["no_response"] += 1
+                  print(f"  [{label or 'GET'}] NO RESPONSE — {type(e).__name__}: {e}")
+                  print(f"    {url}")
+                  return Resp(host=host, error=f"{type(e).__name__}")
+
+          def swdi_rows(body):
+              """SWDI CSV comments start with '#'. Returns (header, rows)."""
+              lines = [l for l in body.decode("utf-8", "replace").splitlines()
+                       if l.strip() and not l.startswith("#")]
+              if not lines:
+                  return None, []
+              rows = list(csv.reader(io.StringIO("\n".join(lines))))
+              return rows[0], rows[1:]
+
+          today = datetime.date.today()
+          print(f"probe date (runner UTC): {today.isoformat()}")
+          print(f"SWDI stated limit: {SWDI_MAX_HOURS} hours = {SWDI_MAX_HOURS // 24} days; "
+                f"this probe uses {WINDOW_DAYS}-day windows")
+
+          # ══ PART 1 — SWDI, CORRECTLY WINDOWED ═════════════════════════════
+          hr("1. REACHABILITY, classified in three states")
+          BASES = [("ncdc", "https://www.ncdc.noaa.gov/swdiws"),
+                   ("ncei", "https://www.ncei.noaa.gov/swdiws")]
+          w_end = today
+          w_start = today - datetime.timedelta(days=WINDOW_DAYS)
+          probe_bbox = "-98.0,29.9,-97.4,30.6"
+          working_base = None
+          for blabel, base in BASES:
+              r = get(f"{base}/csv/nx3hail/{w_start:%Y%m%d}:{w_end:%Y%m%d}?bbox={probe_bbox}",
+                      f"{blabel} nx3hail, {WINDOW_DAYS}-day window")
+              state = ("OK" if r.ok else
+                       "ANSWERED WITH AN ERROR" if r.answered else
+                       "REFUSED BY ALLOWLIST" if r.refused else "NO RESPONSE")
+              print(f"    -> {state}")
+              if r.ok and working_base is None:
+                  working_base = base
+                  head = r.body[:400].decode("utf-8", "replace")
+                  print("    first 400 bytes:")
+                  for line in head.splitlines()[:6]:
+                      print(f"      {line}")
+                  print("    NO TOKEN WAS SENT on this request. If the body above is data,"
+                        " the service is open; if it names a key, read that instead.")
+          if working_base is None:
+              print("\n  No base returned data. Read the state of each line above before")
+              print("  concluding anything: 'ANSWERED WITH AN ERROR' means the service is")
+              print("  reachable and rejected the request, which is a parameter problem,")
+              print("  NOT an unreachable source. That distinction is this round's whole point.")
+
+          # ── 2/3/4. Columns, coordinates, units, county — per dataset, never merged.
+          # nx3hail is RADAR-DERIVED. plsr is HUMAN REPORTS. Different products.
+          newest = {}
+          totals = {}
+          if working_base:
+              for ds in ("nx3hail", "plsr"):
+                  hr(f"2. SWDI {ds} — columns, coordinates, units, county (live)")
+                  for metro, meta in METROS.items():
+                      lat, lon = meta["point"]
+                      bbox = f"{lon - PAD:.4f},{lat - PAD:.4f},{lon + PAD:.4f},{lat + PAD:.4f}"
+                      r = get(f"{working_base}/csv/{ds}/{w_start:%Y%m%d}:{w_end:%Y%m%d}?bbox={bbox}",
+                              f"{ds} {metro} ({meta['county']} Co. area)", ceil=BIG)
+                      if not r.ok:
+                          continue
+                      header, rows = swdi_rows(r.body)
+                      if header is None:
+                          print(f"    NO DATA ROWS in this {WINDOW_DAYS}-day window. A finding,"
+                                f" not an error.")
+                          continue
+                      idx = {h.strip().upper(): i for i, h in enumerate(header)}
+                      print(f"    {len(rows)} row(s), {len(header)} column(s)")
+                      print(f"    COLUMNS AS RETURNED: {header}")
+                      latc = next((idx[k] for k in idx if k in ("LAT", "LATITUDE")), None)
+                      lonc = next((idx[k] for k in idx if k in ("LON", "LONGITUDE")), None)
+                      print(f"    per-record lat/lon: "
+                            f"{'YES' if latc is not None and lonc is not None else 'NO'}")
+                      sizec = [h for h in header if re.search(r"size|magnitude|sever|prob", h, re.I)]
+                      print(f"    size/magnitude columns: {sizec or 'NONE'}")
+                      for h in sizec[:4]:
+                          vals = [x[idx[h.strip().upper()]] for x in rows[:20]
+                                  if len(x) > idx[h.strip().upper()]]
+                          print(f"      {h}: {vals[:12]}")
+                      unitc = [h for h in header if re.search(r"^unit|units$|_unit", h.strip(), re.I)]
+                      if unitc:
+                          for h in unitc:
+                              vals = sorted({x[idx[h.strip().upper()]] for x in rows
+                                             if len(x) > idx[h.strip().upper()]})
+                              print(f"    UNITS COLUMN PRESENT — {h}: {vals[:8]}")
+                      else:
+                          print("    NO UNITS COLUMN. The size column's unit must be read from")
+                          print("    SWDI documentation before publication — inches and")
+                          print("    millimetres differ by 25x and both look plausible.")
+                      countyc = [h for h in header if re.search(r"county|fips", h, re.I)]
+                      print(f"    county/FIPS columns: {countyc or 'NONE'}"
+                            + ("" if countyc else "  <- a county rollup would have to be derived"
+                                                  " from lat/lon, not read"))
+                      datec = next((idx[k] for k in idx if "TIME" in k or "DATE" in k), None)
+                      if datec is not None:
+                          ds_dates = sorted(x[datec] for x in rows
+                                            if len(x) > datec and x[datec].strip())
+                          if ds_dates:
+                              print(f"    date range: {ds_dates[0]} .. {ds_dates[-1]}")
+                              newest[f"{ds}/{metro}"] = ds_dates[-1]
+                      print(f"    first two rows verbatim:")
+                      for x in rows[:2]:
+                          print(f"      {x}")
+
+              # ── 5. What a twelve-month picture costs, MEASURED.
+              hr(f"3. COST OF A 12-MONTH PICTURE — {MONTHS_BACK} x {WINDOW_DAYS}-day requests")
+              t0 = time.time()
+              made = 0
+              for ds in ("nx3hail", "plsr"):
+                  for metro, meta in METROS.items():
+                      lat, lon = meta["point"]
+                      bbox = f"{lon - PAD:.4f},{lat - PAD:.4f},{lon + PAD:.4f},{lat + PAD:.4f}"
+                      total = 0
+                      empty = 0
+                      for m in range(MONTHS_BACK):
+                          end = today - datetime.timedelta(days=WINDOW_DAYS * m)
+                          start = end - datetime.timedelta(days=WINDOW_DAYS)
+                          r = get(f"{working_base}/csv/{ds}/{start:%Y%m%d}:{end:%Y%m%d}?bbox={bbox}",
+                                  f"{ds} {metro} {start:%Y-%m-%d}..{end:%Y-%m-%d}", ceil=BIG)
+                          made += 1
+                          if not r.ok:
+                              continue
+                          header, rows = swdi_rows(r.body)
+                          if header is None:
+                              empty += 1
+                              continue
+                          total += len(rows)
+                          d = next((i for i, h in enumerate(header)
+                                    if "TIME" in h.upper() or "DATE" in h.upper()), None)
+                          if d is not None:
+                              got = sorted(x[d] for x in rows if len(x) > d and x[d].strip())
+                              if got:
+                                  prev = newest.get(f"{ds}/{metro}", "")
+                                  if got[-1] > prev:
+                                      newest[f"{ds}/{metro}"] = got[-1]
+                      totals[f"{ds}/{metro}"] = (total, empty)
+                      print(f"    == {ds} {metro} ({meta['county']} Co. area): {total} record(s) "
+                            f"across {MONTHS_BACK} windows, {empty} empty window(s)")
+              elapsed = time.time() - t0
+              print(f"\n  MEASURED: {made} request(s) in {elapsed:.1f}s "
+                    f"({elapsed / max(made, 1):.2f}s each).")
+              print(f"  A full 12-month BACKFILL costs {MONTHS_BACK} requests per metro per")
+              print(f"  dataset = {MONTHS_BACK * len(METROS) * 2} requests, ONCE.")
+              print("  An INCREMENTAL run needs one window per metro per dataset =")
+              print(f"  {len(METROS) * 2} requests, which is the number that recurs.")
+              print("  COST.md asks for boring, cheap and reliable and caps nothing here:")
+              print("  SWDI is free, unauthenticated, and this is Actions minutes only.")
+              print("  Judge the recurring number, not the backfill.")
+
+              # ── 6. Lag.
+              hr("4. PUBLICATION LAG, measured against the runner date")
+              if not newest:
+                  print("  No dated rows in any window, so no lag could be measured.")
+              for k, v in sorted(newest.items()):
+                  m = re.search(r"(\d{4})-?(\d{2})-?(\d{2})", v)
+                  if m:
+                      d = datetime.date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+                      print(f"  {k}: newest {d} — {(today - d).days} days behind the runner")
+                  else:
+                      print(f"  {k}: newest {v} (unparsed date shape)")
+
+              hr("5. ROUND 12's BEXAR FINDING vs SWDI, over the same 12 months")
+              for k, (total, empty) in sorted(totals.items()):
+                  print(f"  {k}: {total} record(s), {empty}/{MONTHS_BACK} windows empty")
+              print()
+              print("  Round 12 measured NO HAIL IN BEXAR from NCEI Storm Events — county-level")
+              print("  HUMAN REPORTS. nx3hail is RADAR-DERIVED signatures; plsr is human")
+              print("  reports. A non-zero nx3hail count over Bexar would NOT refute Round 12;")
+              print("  it would mean radar saw a signature nobody reported. Say which product")
+              print("  each number came from.")
+              print()
+              print("  CONTEXT, and it makes an empty result the EXPECTED one: Texas hail")
+              print("  frequency rises sharply north toward Dallas-Fort Worth. Austin sits at")
+              print("  the southern edge of that gradient and San Antonio largely outside it.")
+              print("  The owner has approved an honest 'no hail recorded in this window'")
+              print("  state, so zero is a usable finding for Roof Scan, not a blocker.")
+
+          # ══ PART 2 — HARDNESS ═════════════════════════════════════════════
+          # ── 7. WQP: what the sampling locations ARE.
+          hr("6. USGS WATER QUALITY PORTAL — what is actually being sampled")
+          for metro, meta in METROS.items():
+              q = urllib.parse.urlencode({
+                  "countycode": f"US:48:{meta['fips'][2:]}",
+                  "characteristicName": "Hardness, Ca, Mg",
+                  "mimeType": "csv", "zip": "no",
+                  "dataProfile": "resultPhysChem", "startDateLo": "01-01-2015",
+              })
+              r = get(f"https://www.waterqualitydata.us/data/Result/search?{q}",
+                      f"WQP {meta['county']} County", ceil=BIG)
+              if not r.ok:
+                  continue
+              rows = list(csv.reader(io.StringIO(r.body.decode("utf-8", "replace"))))
+              if not rows:
+                  print("    empty CSV"); continue
+              header, body = rows[0], rows[1:]
+              idx = {h: i for i, h in enumerate(header)}
+              print(f"    [{r.host}] {len(body)} row(s), {len(header)} column(s)")
+              def cell(row, name):
+                  i = idx.get(name)
+                  return row[i].strip() if i is not None and len(row) > i else ""
+              # THE QUESTION THIS SECTION EXISTS FOR: is this tap water?
+              for col in ("ActivityMediaName", "ActivityMediaSubdivisionName",
+                          "MonitoringLocationTypeName"):
+                  if col in idx:
+                      vals = {}
+                      for x in body:
+                          vals[cell(x, col)] = vals.get(cell(x, col), 0) + 1
+                      print(f"    {col}: {sorted(vals.items(), key=lambda kv: -kv[1])[:8]}")
+                  else:
+                      print(f"    {col}: COLUMN NOT PRESENT in this profile")
+              # THE SAME TRAP AS ROUNDS 19-19e, ONE PRODUCT OVER. WQP's Result
+              # profile and its Station profile are different products with
+              # different columns; MonitoringLocationName may live only in the
+              # latter. Absent columns are REPORTED, never keyed on as blanks —
+              # a table of empty names would look like "we found nothing".
+              missing = [c for c in ("MonitoringLocationIdentifier", "MonitoringLocationName")
+                         if c not in idx]
+              if missing:
+                  print(f"    LOCATION COLUMNS ABSENT from this profile: {missing}")
+                  print("    They are published by WQP's STATION profile "
+                        "(/data/Station/search), a different request. Round 21b does not")
+                  print("    assume its columns — it says they were not in what was read.")
+              else:
+                  names = {}
+                  for x in body:
+                      k = (cell(x, "MonitoringLocationIdentifier"), cell(x, "MonitoringLocationName"))
+                      names[k] = names.get(k, 0) + 1
+                  print(f"    {len(names)} distinct monitoring location(s); top 8 by row count:")
+                  for (ident, name), n in sorted(names.items(), key=lambda kv: -kv[1])[:8]:
+                      print(f"      {n:4d}  {ident or '(no id)'}  {name or '(no name)'}")
+              vals = [(cell(x, "ResultMeasureValue"), cell(x, "ResultMeasure/MeasureUnitCode"))
+                      for x in body]
+              nums = [float(v) for v, u in vals if re.fullmatch(r"-?\d+(\.\d+)?", v or "")]
+              if nums:
+                  print(f"    value range: {min(nums)} .. {max(nums)}; "
+                        f"units seen: {sorted({u for _, u in vals if u})[:5]}")
+              print("    READ THIS BEFORE USING ANY OF IT: these are AMBIENT samples — the")
+              print("    location names above say what they are. Ambient water is not what a")
+              print("    tap delivers: it is untreated, and a utility blends and treats")
+              print("    sources before delivery. A homeowner's softener sizing depends on")
+              print("    the TREATED figure, so this series can describe a watershed but")
+              print("    cannot answer 'how hard is my water'.")
+
+          # ── 8. The utility pages Round 21 listed and never followed.
+          hr("7. TREATED FIGURES — the pages Round 21 listed but did not open")
+          # ROUND 21's SECOND DEFECT: candidate selection was `(pdfs or seen)[:3]`,
+          # so the moment a landing page linked ANY pdf, every HTML candidate was
+          # discarded. Austin Water publishes its treated hardness IN PAGE TEXT.
+          # Both kinds are followed here.
+          PAGES = [
+              ("Austin Water quality reports", "https://www.austintexas.gov/page/water-quality-reports"),
+              ("Austin Water dept page", "https://www.austintexas.gov/department/water-quality-reports"),
+              ("SAWS water quality report", "https://www.saws.org/your-water/water-quality/water-quality-report/"),
+              ("SAWS downloads", "https://www.saws.org/your-water/water-quality/download-water-quality-reports/"),
+              ("SAWS mineral analysis", "https://www.saws.org/your-water/water-quality/mineral-analysis/"),
+          ]
+          # Round 21's matcher required NUMBER-then-UNIT. Austin's page is a TABLE
+          # HEADER followed by values — "(ppm) [gpg] ... 70 [4.1] 126 [7.4]" — so
+          # the unit precedes the numbers and nothing matched. Both orders now.
+          VALUE_THEN_UNIT = re.compile(
+              r"([\d,]+(?:\.\d+)?)\s*(grains?(?:\s*per\s*gallon)?|gpg|mg/?l|ppm)", re.I)
+          UNIT_THEN_VALUES = re.compile(
+              r"\(?\s*(ppm|mg/?l|gpg|grains?)\s*\)?\s*(?:\[\s*(ppm|mg/?l|gpg|grains?)\s*\])?", re.I)
+          for label, url in PAGES:
+              r = get(url, label)
+              if not r.ok:
+                  continue
+              text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ",
+                                                r.body.decode("utf-8", "replace")))
+              spots = [m.start() for m in re.finditer(r"hardness", text, re.I)]
+              print(f"    [{r.host}] {len(spots)} mention(s) of 'hardness'")
+              for i, s in enumerate(spots[:4]):
+                  window = text[max(0, s - 80):s + 320].strip()
+                  print(f"      WINDOW {i + 1}: ...{window}...")
+                  pairs = VALUE_THEN_UNIT.findall(window)
+                  units = [u for grp in UNIT_THEN_VALUES.findall(window) for u in grp if u]
+                  nums = re.findall(r"[\d,]+(?:\.\d+)?", window)
+                  print(f"        value+unit pairs: {pairs[:6]}")
+                  print(f"        units named in the window: {sorted(set(u.lower() for u in units))}")
+                  print(f"        every number in the window, in order: {nums[:14]}")
+                  print("        (a chemical formula contributes digits — the 3 of CaCO3 lands"
+                        " in that list; read the window, not the list)")
+              if not spots:
+                  print("      no mention of 'hardness' on this page")
+          print("\n  THE WINDOW IS PRINTED VERBATIM ON PURPOSE. Round 21's matcher wanted")
+          print("  number-then-unit and a table header puts the unit first, so it reported")
+          print("  zero where a figure was plainly present. A human reading the window above")
+          print("  cannot be fooled that way; a regex reporting a count can.")
+
+          print(f"\nR21B_PROBE_STATUS=complete requests={counts['requests']} ok={counts['ok']} "
+                f"http_error={counts['http_error']} no_response={counts['no_response']} "
+                f"refused={counts['refused']}")
+          PY
