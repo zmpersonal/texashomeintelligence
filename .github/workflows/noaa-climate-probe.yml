@@ -1,0 +1,295 @@
+# ══════════════════════════════════════════════════════════════════════════
+# ROUND 19 — TEMPORARY. DELETE THIS ENTIRE FILE once the cooling-degree-day
+# question is settled. It is a diagnostic, not infrastructure.
+# ══════════════════════════════════════════════════════════════════════════
+#
+# WHY IT EXISTS
+# Round 19 must implement `noaa-climate` as a real fetcher. It cannot be
+# characterised from the Claude Code container: `www.ncei.noaa.gov` and
+# `www.ncdc.noaa.gov` both answer `connect_rejected` — a policy 403 on
+# CONNECT — exactly as `traviscad.org` did in Round 16 and as every other
+# data host this project ingests from does. The Actions runner reaches those
+# hosts; the container does not. That asymmetry is the whole reason for this
+# file.
+#
+# WHAT IT IS ALLOWED TO DO
+# Read. That is all. It writes only under `$RUNNER_TEMP`, never under
+# `site/`, and it has no commit step, no write permission and no token use.
+# `permissions: contents: read` is set explicitly rather than inherited, so
+# the job could not push even if a future edit tried to.
+#
+# WHY A SEPARATE FILE RATHER THAN A STEP IN data-ingestion.yml
+# Same reason as Round 16b's `tcad-probe.yml`: a standalone dispatch-only
+# file is deleted in one `git rm` with nothing left behind, and it cannot
+# fail an ingestion run it is riding along with — because it does not ride
+# along with one.
+#
+# NOTHING HERE IS INFERRED FROM A BRIEF. The fetcher this round ships picks
+# its station by bounding box around the representative point already in
+# `site/src/data/zip-areas.ts`, precisely so no station id has to be
+# asserted. This probe exists to confirm that choice against live responses:
+# which endpoint answers without a token, what the degree-day datatype is
+# actually called, which stations fall in each metro's box, how far behind
+# real time the newest row is, and whether a NATIONAL cooling-degree-day
+# baseline is published anywhere reachable without a key. Every section
+# prints what it received, including failures, rather than concluding.
+name: "TEMP (Round 19): NOAA cooling-degree-day probe"
+
+on:
+  workflow_dispatch:
+
+# Explicit, not inherited. This job reads public files and prints to a log.
+permissions:
+  contents: read
+
+concurrency:
+  group: noaa-climate-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # No checkout of the repo is needed and none is done: the probe touches
+      # nothing in this repository. That is the strongest guarantee available
+      # that it cannot modify site/.
+      - name: Probe NOAA NCEI for cooling degree days
+        # A diagnostic must report what it found even when part of it fails.
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          python3 - <<'PY'
+          import json, os, re, sys, datetime
+          import urllib.request, urllib.error, urllib.parse
+
+          UA = ("TexasHomeIntelligence-probe/1.0 (one-off read-only characterisation; "
+                "contact via github.com/zmpersonal/texashomeintelligence)")
+
+          # A probe that streams a climate archive is a bug, not a probe.
+          CEIL = 8 * 1024 * 1024
+          TIMEOUT = 60
+
+          # ── The ONLY inputs. Both are read out of site/src/data/zip-areas.ts
+          # (AREAS[].point) rather than invented here, and they are the same two
+          # points the fetcher shipped this round uses. Nothing else about a
+          # station is assumed.
+          POINTS = {
+              "austin":      (30.2672, -97.7431),
+              "san-antonio": (29.4241, -98.4936),
+          }
+          # ~0.35 deg is roughly 24 mi N-S. Deliberately printed, because the
+          # fetcher's box size is a judgement call the log should expose.
+          PAD = 0.35
+
+          today = datetime.date.today()
+          counts = {"requests": 0, "ok": 0, "failed": 0}
+
+          def hr(title):
+              print("\n" + "=" * 74)
+              print(title)
+              print("=" * 74)
+
+          def get(url, label=""):
+              """Returns (status, body_bytes_or_None, note). Never raises."""
+              counts["requests"] += 1
+              req = urllib.request.Request(url, headers={"User-Agent": UA})
+              try:
+                  with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+                      body = r.read(CEIL + 1)
+                      truncated = len(body) > CEIL
+                      if truncated:
+                          body = body[:CEIL]
+                      counts["ok"] += 1
+                      note = f"HTTP {r.status}, {len(body)} bytes" + (" (TRUNCATED at ceiling)" if truncated else "")
+                      print(f"  [{label or 'GET'}] {note}\n    {url}")
+                      return r.status, body, note
+              except urllib.error.HTTPError as e:
+                  counts["failed"] += 1
+                  detail = b""
+                  try:
+                      detail = e.read(2000)
+                  except Exception:
+                      pass
+                  print(f"  [{label or 'GET'}] HTTP {e.code} {e.reason}\n    {url}")
+                  if detail:
+                      print(f"    body: {detail[:600]!r}")
+                  return e.code, None, f"HTTP {e.code}"
+              except Exception as e:
+                  counts["failed"] += 1
+                  print(f"  [{label or 'GET'}] FAILED {type(e).__name__}: {e}\n    {url}")
+                  return None, None, f"{type(e).__name__}"
+
+          def as_json(body):
+              if body is None:
+                  return None
+              try:
+                  return json.loads(body.decode("utf-8", "replace"))
+              except Exception as e:
+                  print(f"    (not JSON: {type(e).__name__}) first 300 bytes: {body[:300]!r}")
+                  return None
+
+          def box(lat, lon):
+              """NCEI documents bbox as north,west,south,east. That ordering is
+              the single most likely thing in this probe to be wrong, so both
+              orderings are tried in section 2 and the log says which answered."""
+              n, s = round(lat + PAD, 4), round(lat - PAD, 4)
+              w, e = round(lon - PAD, 4), round(lon + PAD, 4)
+              return f"{n},{w},{s},{e}", f"{s},{w},{n},{e}"
+
+          print(f"probe date (runner UTC): {today.isoformat()}")
+          print(f"bounding-box pad: +/-{PAD} deg around each metro's representative point")
+          for k, (la, lo) in POINTS.items():
+              nwse, swne = box(la, lo)
+              print(f"  {k:12s} point=({la}, {lo})  bbox(N,W,S,E)={nwse}  bbox(S,W,N,E)={swne}")
+
+          # ── 1. DOES THE TOKEN-FREE ACCESS SERVICE ANSWER AT ALL? ──────────
+          # The stub this round replaces pointed at CDO v2, which needs a free
+          # token nobody has requested. If the Access Data Service answers
+          # without one, the fetcher needs no secret and no owner seam. That is
+          # the single most consequential thing this probe can establish.
+          hr("1. ENDPOINT REACHABILITY (no token sent on any request)")
+          for label, url in [
+              ("access-data-v1 (bare)",
+               "https://www.ncei.noaa.gov/access/services/data/v1"),
+              ("search-v1 datasets",
+               "https://www.ncei.noaa.gov/access/services/search/v1/datasets?limit=5"),
+              ("normals-monthly index",
+               "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/access/"),
+              ("cdo-web v2 (token-gated; expect 400/401)",
+               "https://www.ncei.noaa.gov/cdo-web/api/v2/datasets?limit=1"),
+          ]:
+              get(url, label)
+
+          # ── 2. WHICH BBOX ORDERING, AND WHICH STATIONS? ───────────────────
+          # Discovery, not assertion: the fetcher picks a station from whatever
+          # this returns. If it returns nothing for a metro, that metro has no
+          # usable station and the round's rule is to leave it unavailable.
+          hr("2. STATION DISCOVERY BY BOUNDING BOX (global-summary-of-the-month)")
+          start = (today.replace(day=1) - datetime.timedelta(days=400)).isoformat()
+          end = today.isoformat()
+          for metro, (la, lo) in POINTS.items():
+              nwse, swne = box(la, lo)
+              for order_label, bb in (("N,W,S,E", nwse), ("S,W,N,E", swne)):
+                  q = urllib.parse.urlencode({
+                      "dataset": "global-summary-of-the-month",
+                      "bbox": bb,
+                      "startDate": start,
+                      "endDate": end,
+                      "format": "json",
+                      "includeStationName": "true",
+                      "includeStationLocation": "1",
+                      "units": "standard",
+                      "limit": "1000",
+                  })
+                  url = f"https://www.ncei.noaa.gov/access/services/data/v1?{q}"
+                  st, body, _ = get(url, f"{metro} bbox {order_label}")
+                  rows = as_json(body)
+                  if not isinstance(rows, list) or not rows:
+                      print("    -> no rows returned for this ordering")
+                      continue
+                  print(f"    -> {len(rows)} row(s)")
+                  # What are the columns actually called? This is how the
+                  # datatype id is LEARNED rather than guessed.
+                  keys = sorted({k for r in rows[:200] for k in r.keys()})
+                  print(f"    columns present: {keys}")
+                  degree_keys = [k for k in keys if re.search(r"(CLDD|HTDD|CDSD|HDSD|DD)", k, re.I)]
+                  print(f"    degree-day-looking columns: {degree_keys or 'NONE'}")
+                  by_station = {}
+                  for r in rows:
+                      sid = r.get("STATION") or r.get("station") or "?"
+                      by_station.setdefault(sid, []).append(r)
+                  print(f"    {len(by_station)} station(s) in box:")
+                  for sid, rs in sorted(by_station.items(), key=lambda kv: -len(kv[1]))[:12]:
+                      dates = sorted(str(r.get("DATE") or r.get("date") or "") for r in rs)
+                      name = rs[0].get("NAME") or rs[0].get("name") or ""
+                      filled = 0
+                      sample = ""
+                      for k in degree_keys:
+                          vals = [(r.get("DATE"), r.get(k)) for r in rs if str(r.get(k) or "").strip() not in ("", "-9999")]
+                          if vals:
+                              filled = max(filled, len(vals))
+                              if not sample:
+                                  sample = f"{k}: " + ", ".join(f"{d}={v}" for d, v in vals[-4:])
+                      print(f"      {sid:16s} n={len(rs):3d} {dates[0]}..{dates[-1]}  filled={filled}  {name}")
+                      if sample:
+                          print(f"        {sample}")
+                  break  # this ordering worked; don't repeat the query
+
+          # ── 3. PUBLICATION LAG ────────────────────────────────────────────
+          # Measured, not assumed: newest DATE returned above vs the runner's
+          # own date. This is what the freshness window in
+          # site/src/lib/dataFreshness.ts has to absorb.
+          hr("3. PUBLICATION LAG (newest monthly row vs runner date)")
+          for metro, (la, lo) in POINTS.items():
+              nwse, _ = box(la, lo)
+              q = urllib.parse.urlencode({
+                  "dataset": "global-summary-of-the-month",
+                  "bbox": nwse,
+                  "startDate": (today - datetime.timedelta(days=200)).isoformat(),
+                  "endDate": end,
+                  "dataTypes": "CLDD",
+                  "format": "json",
+                  "units": "standard",
+              })
+              st, body, _ = get(f"https://www.ncei.noaa.gov/access/services/data/v1?{q}", f"{metro} CLDD-only")
+              rows = as_json(body)
+              if isinstance(rows, list) and rows:
+                  dated = sorted(r for r in {str(x.get("DATE")) for x in rows} if r and r != "None")
+                  print(f"    months returned: {dated}")
+                  if dated:
+                      y, m = (dated[-1].split("-") + ["01"])[:2]
+                      newest = datetime.date(int(y), int(m), 1)
+                      print(f"    newest month start = {newest}; runner date = {today}; "
+                            f"lag from month start = {(today - newest).days} days")
+              else:
+                  print("    -> dataTypes=CLDD returned nothing. If section 2 showed a "
+                        "degree-day column under a DIFFERENT name, THAT is the id to use.")
+
+          # ── 4. IS A NATIONAL BASELINE PUBLISHED, OR WOULD WE DERIVE IT? ───
+          # A "runs N times harder than the national average" claim needs a
+          # national CDD figure on the SAME basis (base 65F, same period,
+          # population-weighted or not). This section only establishes whether
+          # one is reachable without a key. It does not compute a multiplier.
+          hr("4. NATIONAL COOLING-DEGREE-DAY BASELINE — published or derived?")
+          for label, url in [
+              ("CPC population-weighted degree days (index)",
+               "https://ftp.cpc.ncep.noaa.gov/htdocs/degree_days/weighted/monthly_data/"),
+              ("CPC monthly CDD by state/nation (current year)",
+               f"https://ftp.cpc.ncep.noaa.gov/htdocs/degree_days/weighted/monthly_data/{today.year}/Population.Weighted.Monthly.CDD.txt"),
+              ("Climate at a Glance national CDD (JSON)",
+               "https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/national/time-series/110/cdd/1/8/2015-2026.json"),
+          ]:
+              st, body, _ = get(url, label)
+              if body:
+                  head = body[:700].decode("utf-8", "replace")
+                  print("    first 700 bytes:")
+                  for line in head.splitlines()[:14]:
+                      print(f"      {line}")
+
+          # ── 5. 30-YEAR NORMALS (the other candidate basis) ────────────────
+          # If monthly actuals prove unusable, monthly normals are the fallback
+          # basis for a "typical season" figure. Whether the station file names
+          # match the ids found in section 2 is the thing to look at here.
+          hr("5. 1991-2020 MONTHLY NORMALS — station file naming")
+          st, body, _ = get(
+              "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/doc/Normals_Monthly_Documentation_1991-2020.pdf",
+              "normals documentation (existence only)")
+          st, body, _ = get(
+              "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/access/",
+              "normals station-file index")
+          if body:
+              text = body.decode("utf-8", "replace")
+              tx = re.findall(r'href="(USW000\d+\.csv)"', text)
+              print(f"    {len(tx)} station csv links visible in the index page "
+                    f"(first 6: {tx[:6]})")
+              if not tx:
+                  print("    no station csv links matched; first 400 bytes:")
+                  print(f"      {text[:400]!r}")
+
+          # Round 15b's discipline: a run that reached an answer says so. Its
+          # absence means the probe crashed, which is a different finding from
+          # "the data is not there".
+          print(f"\nNOAA_PROBE_STATUS=complete requests={counts['requests']} "
+                f"ok={counts['ok']} failed={counts['failed']}")
+          PY

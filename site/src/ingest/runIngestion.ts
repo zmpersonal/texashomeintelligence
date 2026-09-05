@@ -98,6 +98,15 @@ export async function runIngestion<T>(
     const observations = mergeObservations(retained, fresh);
     const updated: DatasetFile<T> = {
       ...existing,
+      // Round 19: take `source` from the fetcher, not from whatever the file
+      // was first written with. Spreading `existing` alone froze a dataset's
+      // citation at its bootstrap value, so re-pointing a fetcher at a new
+      // upstream left the file — and every page that cites it — naming the old
+      // one indefinitely. `noaa-storm-events` is live today under a
+      // `ncdc.noaa.gov/stormevents/` citation while the fetcher reads
+      // `ncei.noaa.gov/pub/data/swdi/...`; this line is what closes that on the
+      // next successful run.
+      source: fetcher.source,
       status: "live",
       lastAttemptAt: now,
       lastSuccessAt: now,

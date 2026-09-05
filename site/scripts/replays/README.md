@@ -35,6 +35,15 @@ npx tsx scripts/replays/badgeunit.ts         # unit
 npx tsx scripts/replays/alertcopyunit.ts     # unit — alert-copy honesty, no data dependency
 npx tsx scripts/replays/noticefreshunit.ts   # unit — the dated-claim review gate (Round 10b)
 npx tsx scripts/verify-trade-mapping.ts      # unit
+npx tsx scripts/replays/climateunit.ts        # unit — the cooling-degree-day fetcher
+                                             #   (Round 19), against synthetic GSOM payloads.
+                                             #   Green in this sandbox by construction: it stubs
+                                             #   fetch, because www.ncei.noaa.gov is proxy-denied
+                                             #   here. It proves the PARSING — station choice,
+                                             #   -9999 never read as zero, the bbox fallback, the
+                                             #   refusal to report silence as success. It cannot
+                                             #   prove the datatype id, the bbox ordering or the
+                                             #   units; only the runner probe does that.
 npx tsx scripts/replays/citationcheckunit.ts # unit — the CITATION CHECKER itself (Round 15b).
                                              #   Runs check-citations.ts both ways and proves a
                                              #   startup crash is told apart from a dead link.

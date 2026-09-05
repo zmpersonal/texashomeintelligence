@@ -7,7 +7,7 @@ import { austinPermits } from "./fetchers/austinPermits";
 import { sanAntonioPermits } from "./fetchers/sanAntonioPermits";
 import { eiaElectricityPrice } from "./fetchers/eiaElectricityPrice";
 import { nwsAustin } from "./fetchers/nws";
-import { noaaClimate } from "./fetchers/noaaClimate";
+import { noaaClimateAustin, noaaClimateSanAntonio } from "./fetchers/noaaClimate";
 import { femaFlood } from "./fetchers/femaFlood";
 import { tdiLosses } from "./fetchers/tdiLosses";
 import { usdmAustin, usdmSanAntonio } from "./fetchers/usdm";
@@ -59,12 +59,18 @@ export const REGISTRY: RegistryEntry[] = [
   entry("deep", sanAntonioPermits),
   entry("deep", eiaElectricityPrice),
 
+  // Round 19: cooling degree days, one monthly series per metro. Unseeded
+  // (see seed.ts NEVER_SEED) and therefore "deep" rather than "stub" — the
+  // tier describes seed richness, and there is no seed to describe. Not in
+  // INDEX_DATASETS: the Home Stress Index does not read it.
+  entry("deep", noaaClimateAustin),
+  entry("deep", noaaClimateSanAntonio),
+
   // --- stub tier: minimal 1-row seed, but most of these now have real
   // fetchRaw() implementations (Seam 1 round 2) — "stub" here describes
-  // the seed richness, not whether the fetch is real. noaaClimate,
-  // tdiLosses, ercot, txForestService remain true TODO stubs.
+  // the seed richness, not whether the fetch is real. tdiLosses, ercot and
+  // txForestService remain true TODO stubs.
   entry("stub", nwsAustin),
-  entry("stub", noaaClimate),
   entry("stub", femaFlood),
   entry("stub", tdiLosses),
   entry("stub", usdmAustin),

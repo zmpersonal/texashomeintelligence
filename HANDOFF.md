@@ -352,8 +352,11 @@ run into.
     data dependency is the cost panel, which must go anyway. Remaining work is **copy, not
     capability**.
   - 🔴 **Roof Cost Calculator** — premise falsified by Round 6; needs a **different cost source**.
-  - 🔴 **AC Lifespan** — needs **cooling degree days**. `noaa-climate/austin.json` is a
-    **one-observation SAMPLE** with normal high/low only; no San Antonio file. Also address + CAD.
+  - 🔴 **AC Lifespan** — needs **cooling degree days**. Round 19 implemented `noaa-climate`
+    as a real monthly CDD fetcher for both metros, but **no run has happened yet**:
+    `noaa-climate/austin.json` is still the one-observation SAMPLE (now tagged `seed: true`
+    so it retires on first success) and there is still no San Antonio file. Unblocks only
+    once the first ingestion run lands and the Round 19 probe log is read. Also address + CAD.
   - 🔴 **Pipe Report** — needs **water hardness** ("grains hardness", from Austin Water quality
     reports). **No hardness feed exists**; `austin-water-stage` carries the drought stage only, and
     San Antonio has no equivalent. Also address + CAD year built.
@@ -1162,7 +1165,10 @@ run into.
   it. It is the conservative form: the noise on a six-month sum is 1/√6 of it.
   **Four readings were omitted and are named ON THE PAGE**, not left as gaps - cooling degree
   days (the `noaa-climate` feed has no San Antonio file at all, and its Austin file is a
-  one-observation SAMPLE; there is no San Antonio `nws-api` feed either), any parcel-derived
+  one-observation SAMPLE; there is no San Antonio `nws-api` feed either — still true as
+  written, but Round 19 gave `noaa-climate` a real fetcher, so **this sentence and its
+  Austin twin in `site/src/data/belowHero.ts` must be rewritten in the round that first
+  sees a successful CDD run**), any parcel-derived
   percentile or pipe-era reading (no BCAD data), any cost figure (blocked, not unbuilt), and
   the **EIA Texas residential electricity rate**. That last one is a Rule 1 flag rather than a
   gap: the feed is live and current, and the round barred "any price figure". A published
@@ -1386,13 +1392,16 @@ run into.
   shape as a measurement. It cannot be reached today (no query has ever succeeded), but it
   is worth settling before this feed goes live.
 
-- **The five stub datasets carry a placeholder freshness window.** `ercot`, `fema-nfhl`,
-  `noaa-climate`, `tdi-losses` and `tx-forest-service` are set to 30 days in
+- **The four remaining stub datasets carry a placeholder freshness window.** `ercot`,
+  `fema-nfhl`, `tdi-losses` and `tx-forest-service` are set to 30 days in
   `site/src/lib/dataFreshness.ts` — a deliberately conservative placeholder, not a real
   cadence. Each is `sample`-status today, so the window is never reached; the moment one is
   wired to a live source its real publication cadence has to replace that 30 and the
-  comment beside it says so. (The brief that raised this said "four" and listed five;
-  there are five.)
+  comment beside it says so. Round 19 did exactly that for `noaa-climate`, which now
+  carries its own 75-day entry with the month-start dating, the (unmeasured) GSOM
+  publication lag and a missed run each accounted for separately, leaving four.
+  (The brief that first raised this said "four" and listed five; at that point
+  there were five.)
 
 ### ✅ Resolved — `[skip ci]` suppressed every ingestion deployment
 
@@ -1808,9 +1817,12 @@ not be verified against a live response from this sandbox** — its
 network policy blocks every one of these hosts. Each file's doc comment
 says exactly what to check first if the first live GitHub Actions run
 comes back empty for that feed, rather than guessing blind a second
-time. `ercot.ts`, `tdiLosses.ts`, `txForestService.ts`, and
-`noaaClimate.ts` remain untouched TODO stubs (endpoint unconfirmed, or
-need a key not yet provided).
+time. `ercot.ts`, `tdiLosses.ts` and `txForestService.ts` remain untouched
+TODO stubs (endpoint unconfirmed, or need a key not yet provided).
+`noaaClimate.ts` was implemented in Round 19 against NCEI's token-free
+Access Data Service, but not one of its requests has been round-tripped
+against a live response — its header names the three constructions to
+check first.
 
 | Feed | Fetcher file | Real fetch | Env var(s) | Notes |
 |---|---|---|---|---|
@@ -1984,7 +1996,6 @@ The first live run surfaced two bugs, both fixed:
 
 | Feed | Fetcher file | Env var(s) | Generated file |
 |---|---|---|---|
-| NOAA Climate Data Online (normals) | `site/src/ingest/fetchers/noaaClimate.ts` | `NOAA_CDO_TOKEN` (not yet requested — add it if you implement this one) | `noaa-climate/austin.json` |
 | Texas Dept. of Insurance (wind/hail, fire, water loss) | `site/src/ingest/fetchers/tdiLosses.ts` | none confirmed — TDI publishes as periodic data calls, not a standing API | `tdi-losses/austin.json` |
 | ERCOT | `site/src/ingest/fetchers/ercot.ts` | none confirmed — no single documented REST API, some data is CSV/XML downloads | `ercot/texas.json` |
 | Texas A&M Forest Service | `site/src/ingest/fetchers/txForestService.ts` | none confirmed — verify a machine-readable feed exists before assuming one | `tx-forest-service/texas.json` |
@@ -2006,9 +2017,12 @@ whether the GitHub secret it needs is actually set, or whether a given
 `DatasetFile` on disk is currently `"live"` — that's the per-file runtime
 status, a separate concept). It's now `"live"` for every feed with a real
 `fetchRaw()` implementation, including the nine wired in Round 2 —
-`noaa-climate`, `tdi-losses`, `ercot`, and `tx-forest-service` are the
-only ids still `"stub"`, matching the fetcher files that are still true
-TODO stubs.
+`tdi-losses`, `ercot`, and `tx-forest-service` are the only ids still
+`"stub"` that match a true TODO stub. `noaa-climate` is also still
+`"stub"` in `data-sources.yaml`, but for a different reason: Round 19
+gave it a real `fetchRaw()`, and the id flips to `"live"` in the round
+that first sees a successful run — not before, because `/methodology/`
+renders that value.
 
 ---
 
