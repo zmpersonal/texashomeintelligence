@@ -357,10 +357,12 @@ run into.
     "A station is required" — it does not accept bounding-box station discovery). Round 19b
     reverted the fetcher and shipped a second probe. `noaa-climate/austin.json` is still the
     one-observation SAMPLE (tagged `seed: true` so it retires on first success) and there is
-    still no San Antonio file. **Blocked on the Round 19b probe dispatch**, which must settle
-    the metro-to-station-file mapping and the normals CSV layout before a fetcher is written.
+    still no San Antonio file. **Blocked on the Round 19c probe dispatch.** The mapping is
+    solved — `ghcnd-stations.txt`, 132,501 records, filtered locally — but Round 19b sampled
+    `US1` CoCoRaHS volunteer stations (precipitation only) because its ranking sorted by
+    station id ascending, so whether `USW` normals carry a CDD column is **still unmeasured**.
     Its flagship reading is **THI analysis, not a sourced claim** — see
-    `docs/audits/round-19b-cdd-mechanism.md` §4. Also address + CAD.
+    `docs/audits/round-19c-usw-normals.md` §5. Also address + CAD.
   - 🔴 **Pipe Report** — needs **water hardness** ("grains hardness", from Austin Water quality
     reports). **No hardness feed exists**; `austin-water-stage` carries the drought stage only, and
     San Antonio has no equivalent. Also address + CAD year built.
@@ -1832,7 +1834,12 @@ bounding-box station discovery the design rested on. Round 19b reverted it
 to a state that issues no request at all, with the measurement recorded in
 its header. **This is the standing example of the failure mode**: the round
 wrote a probe to settle an assumption and shipped the code depending on that
-assumption in the same round, instead of waiting for the answer.
+assumption in the same round, instead of waiting for the answer. Round 19c
+adds a second lesson from the same feed — a probe's *sampling* can be wrong
+in a way that reads exactly like a finding. Round 19b concluded "no
+degree-day columns" from two stations its own sort key had picked worst-first
+by station-id alphabetical order; both were precipitation-only volunteer
+gauges. When a probe reports an absence, check what it actually looked at.
 
 | Feed | Fetcher file | Real fetch | Env var(s) | Notes |
 |---|---|---|---|---|
