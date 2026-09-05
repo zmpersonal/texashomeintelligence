@@ -57,46 +57,81 @@ const STATIONS = [
   rec("USW00013904", 30.1831, -97.6799, "AUSTIN BERGSTROM INTL AP"),
   rec("USC00410428", 30.2700, -97.7400, "AUSTIN COOP"),
   rec("US1TXTRV001", 30.2650, -97.7420, "AUSTIN COCORAHS"),
+  rec("USW00012931", 29.3400, -98.4400, "SAN ANTONIO BROOKS AFB"),
   rec("USW00012909", 29.3840, -98.5810, "SAN ANTONIO KELLY FIELD"),
   rec("USW00012970", 29.3372, -98.4711, "SAN ANTONIO STINSON MUNI AP"),
 ].join("\n");
 
-function normals(id: string, name: string, cdd: number[], years: number[], flag: string) {
-  return cdd.map((v, i) => ({
-    STATION: id, NAME: name, DATE: String(i + 1).padStart(2, "0"),
-    "MLY-CLDD-NORMAL": v.toFixed(1), "MLY-CLDD-STDDEV": "0.0",
-    years_: String(years[i]), comp_flag_: flag,
-  }));
+/**
+ * A normals CSV in the shape Round 19c measured: the value column plus its
+ * per-element companions `years_`, `comp_flag_`, `meas_flag_`. The API returns
+ * the value WITHOUT these, which is the whole Round 19e finding, so section 4
+ * builds an API-shaped file too and proves it is rejected.
+ */
+function normalsCsv(id: string, name: string, cdd: number[], years: number[], flag: string,
+                    withProvenance = true) {
+  const cols = ["STATION", "DATE", "NAME", "MLY-CLDD-NORMAL", "MLY-CLDD-BASE40", "MLY-TMAX-NORMAL"];
+  if (withProvenance) cols.push("years_MLY-CLDD-NORMAL", "comp_flag_MLY-CLDD-NORMAL", "meas_flag_MLY-CLDD-NORMAL");
+  const lines = [cols.join(",")];
+  for (let i = 0; i < 12; i++) {
+    // The station NAME carries a comma on purpose — a naive split(",") would
+    // shift every column after it, and these files run to 400+ columns.
+    const row = [id, String(i + 1).padStart(2, "0"), `"${name}"`,
+                 cdd[i].toFixed(1), "0.0", "80.0"];
+    if (withProvenance) row.push(String(years[i]), flag, "");
+    lines.push(row.join(","));
+  }
+  return lines.join("\n") + "\n";
 }
-const NORMALS: Record<string, unknown[]> = {
-  USW00013958: normals("USW00013958", "AUSTIN CAMP MABRY, TX US", AUSTIN_CDD,
-                       [29, 29, 30, 30, 30, 30, 30, 30, 29, 30, 29, 29], "C"),
+
+const NORMALS_CSV: Record<string, string> = {
+  USW00013958: normalsCsv("USW00013958", "AUSTIN-CAMP MABRY, TX US", AUSTIN_CDD,
+                          [29, 29, 30, 30, 30, 30, 30, 30, 29, 30, 29, 29], "C"),
   // MEASURED: every row years=2, comp_flag=E. A two-year estimated record.
-  USW00012909: normals("USW00012909", "SAN ANTONIO KELLY FIELD, TX US", STINSON_CDD,
-                       new Array(12).fill(2), "E"),
-  USW00012970: normals("USW00012970", "SAN ANTONIO STINSON MUNI AP, TX US", STINSON_CDD,
-                       [19, 20, 21, 22, 22, 22, 22, 22, 21, 20, 20, 19], "S"),
+  USW00012909: normalsCsv("USW00012909", "SAN ANTONIO KELLY AFB, TX US", STINSON_CDD,
+                          new Array(12).fill(2), "E"),
+  USW00012970: normalsCsv("USW00012970", "SAN ANTONIO STINSON MUNI AP, TX US", STINSON_CDD,
+                          [19, 20, 21, 22, 22, 22, 22, 22, 21, 20, 20, 19], "S"),
 };
+
+/** Only these station ids have a published normals file. */
+const INDEXED = ["USW00013958", "USW00013904", "USW00012909", "USW00012970"];
+const INDEX_HTML = "<html>" + INDEXED.map((i) => `<a href="${i}.csv">x</a>`).join("") + "</html>";
 
 let requested: string[] = [];
 /** `overrides` lets one scenario bend one response without rebuilding the world. */
-function installFetch(overrides: Record<string, unknown[] | null> = {}, stationText = STATIONS) {
+function installFetch(
+  overrides: Record<string, string | null> = {},
+  stationText = STATIONS,
+  indexHtml: string | null = INDEX_HTML,
+) {
   requested = [];
   globalThis.fetch = (async (input: any) => {
     const url = String(input);
     requested.push(url);
     const ok = (body: string) => ({ ok: true, status: 200, async text() { return body; } }) as any;
+    const notFound = { ok: false, status: 404, async text() { return ""; } } as any;
+
     if (url.includes("ghcnd-stations.txt")) return ok(stationText);
-    const u = new URL(url);
-    const ds = u.searchParams.get("dataset");
-    const sid = u.searchParams.get("stations") ?? "";
-    if (ds === "normals-monthly-1991-2020") {
-      const o = overrides[sid];
-      return ok(JSON.stringify(o === null ? [] : o ?? NORMALS[sid] ?? []));
+    if (url.endsWith("/access/")) {
+      return indexHtml === null ? { ok: false, status: 503, async text() { return ""; } } as any
+                                : ok(indexHtml);
     }
-    if (ds === "global-summary-of-the-month") {
+    // Static normals CSV.
+    const csvMatch = url.match(/access\/([A-Z0-9]+)\.csv$/);
+    if (csvMatch) {
+      const sid = csvMatch[1];
+      const o = overrides[sid];
+      if (o === null) return notFound;
+      const body = o ?? NORMALS_CSV[sid];
+      return body === undefined ? notFound : ok(body);
+    }
+    // GSOM actuals still come from data/v1 with an explicit station id.
+    const u = new URL(url);
+    if (u.searchParams.get("dataset") === "global-summary-of-the-month") {
+      const sid = u.searchParams.get("stations") ?? "";
       const o = overrides["__gsom"];
-      if (o !== undefined) return ok(JSON.stringify(o === null ? [] : o));
+      if (o !== undefined) return ok(o === null ? "[]" : o);
       const base = sid === "USW00013958" ? AUSTIN_CDD : STINSON_CDD;
       const rows: unknown[] = [];
       // 2026-09 is deliberately included: it is the current month for WINDOW and
@@ -115,6 +150,7 @@ const run = (f: typeof noaaClimateAustin) =>
   f.fetchRaw({ env: {}, window: WINDOW }) as Promise<Observation<any>[]>;
 
 async function main() {
+  let threw = "";
   // ── 1. Austin: the measured normals come back exactly.
   console.log("\n1. Austin — the measured 1991-2020 normal, value for value");
   installFetch();
@@ -175,6 +211,52 @@ async function main() {
   assert("no US1 station is queried", !requested.some((u) => u.includes("US1TX")),
     "Round 19b sampled US1 CoCoRaHS gauges and concluded the product had no degree days");
 
+  // ── 5b. Round 19e: normals come from the static CSV, actuals from the API.
+  console.log("\n5b. normals read from the static CSV; actuals stay on data/v1");
+  installFetch();
+  await run(noaaClimateAustin);
+  assert("the normals request is a static .csv",
+    requested.some((u) => /normals-monthly\/1991-2020\/access\/USW00013958\.csv$/.test(u)));
+  assert("no normals request goes to data/v1",
+    !requested.some((u) => u.includes("/data/v1") && u.includes("normals")),
+    "the API returns values without years_ — that is what broke the first live run");
+  assert("actuals still come from data/v1 with an explicit station",
+    requested.some((u) => u.includes("/data/v1") && /dataset=global-summary-of-the-month/.test(u)
+                          && /stations=USW/.test(u)));
+
+  // ── 5c. An API-shaped normals file — value present, provenance absent.
+  console.log("\n5c. a normals source with no years_ column is rejected, not worked around");
+  installFetch({
+    USW00013958: normalsCsv("USW00013958", "AUSTIN-CAMP MABRY, TX US", AUSTIN_CDD,
+                            [], "", /* withProvenance */ false),
+    USW00013904: normalsCsv("USW00013904", "AUSTIN BERGSTROM INTL AP, TX US", AUSTIN_CDD,
+                            [], "", false),
+  });
+  threw = "";
+  try { await run(noaaClimateAustin); } catch (e) { threw = e instanceof Error ? e.message : String(e); }
+  assert("a values-only source is refused", threw !== "");
+  assert("and the refusal names the missing column",
+    threw.includes("years_MLY-CLDD-NORMAL"), threw.slice(0, 200));
+
+  // ── 5d. Stations with no published file are never requested.
+  console.log("\n5d. the access/ index pre-filters candidates");
+  installFetch();
+  await run(noaaClimateSanAntonio);
+  assert("Brooks AFB is skipped without a request",
+    !requested.some((u) => u.includes("USW00012931")),
+    "it is in ghcnd-stations.txt but has no normals file — the first live run wasted a request on it");
+  assert("the index is fetched once, not per station",
+    requested.filter((u) => u.endsWith("/access/")).length <= 1);
+
+  // ── 5e. Losing the index costs requests, not correctness.
+  console.log("\n5e. an unreadable index degrades to 404-handling");
+  __resetStationTableCacheForTests();
+  installFetch({ USW00012931: null }, STATIONS, null);
+  const degraded = await run(noaaClimateSanAntonio);
+  assert("the run still succeeds", degraded.length > 0);
+  assert("and still lands on Stinson",
+    degraded[0].value.sourceRef === "USW00012970", degraded[0].value.sourceRef);
+
   // ── 6. Never a bounding box. Three rounds died on this parameter.
   console.log("\n6. no request asks a server to interpret a bounding box");
   assert("no bbox parameter anywhere", !requested.some((u) => /bbox|boundingBox/i.test(u)));
@@ -185,7 +267,7 @@ async function main() {
   // ── 7. Failure paths refuse rather than reporting silence as success.
   console.log("\n7. refusals");
   installFetch({ USW00013958: null, USW00013904: null });
-  let threw = "";
+  threw = "";
   try { await run(noaaClimateAustin); } catch (e) { threw = e instanceof Error ? e.message : String(e); }
   assert("no usable station -> throws", threw !== "");
   assert("the message names what was rejected and why", /record-quality bar|Rejected/.test(threw), threw.slice(0, 160));

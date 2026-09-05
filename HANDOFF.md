@@ -357,7 +357,13 @@ run into.
     `data/v1` with EXPLICIT station ids resolved from `ghcnd-stations.txt` filtered locally.
     It stores the 1991-2020 monthly normal (`MLY-CLDD-NORMAL`, base 65F — documented in NCEI's
     `Readme_By-Variable_By-Station_Normals_Files.txt`, not inferred) alongside recent GSOM
-    monthly actuals, distinguished by `kind` and never combined. Austin reads
+    monthly actuals, distinguished by `kind` and never combined. **Round 19e moved the normals
+    read to the static CSV** at `normals-monthly/1991-2020/access/{STATION}.csv`: the first live
+    run rejected every station in both metros because `data/v1?dataset=normals-monthly-1991-2020`
+    returns the VALUE without its provenance — 47-95 columns, none of them `years_`,
+    `comp_flag_` or `meas_flag_` — while the CSV carries 225-413 columns including
+    `years_MLY-CLDD-NORMAL`. **The API and the CSV are not the same product.** GSOM actuals
+    stay on `data/v1`, which answered correctly. Austin reads
     **USW00013958 Camp Mabry** (29-30 years of record); San Antonio reads
     **USW00012970 Stinson** (19-22 years) after rejecting the nearer **USW00012909 Kelly AFB**
     for a two-year estimated record. **Still blocked on address + CAD year-built**, and on a
@@ -1853,6 +1859,11 @@ all three are worth keeping, because none was a coding error:
     *When a probe reports an absence, check what it actually looked at.*
   - **Round 19c** re-ranked USW-first and found `MLY-CLDD-NORMAL` immediately.
     The endpoint was never the problem; the bounding box was.
+  - **Round 19d** then read that column from the API rather than the CSV it had
+    been measured in. The API omits the `years_`/`comp_flag_` companions, so
+    the record-quality gate could not be satisfied and the first live run
+    rejected every station in both metros. *A column measured in one
+    representation of a product is not evidence it exists in another.*
 
 **NEVER ASK AN NCEI ENDPOINT TO INTERPRET A BOUNDING BOX.** `data/v1` rejects
 one and `search/v1/data` rejects one ("Invalid search options"). Station
