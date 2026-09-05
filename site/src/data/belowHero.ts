@@ -291,6 +291,16 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
     contextHeading: "What else bears on a San Antonio HVAC decision",
     context: [
       {
+        heading: "How much cooling a typical San Antonio year asks for",
+        body:
+          "Cooling degree days measure how much cooling a period demanded, not how hot it felt " +
+          "and not what anything cost. This is the 30-year normal for one weather station near " +
+          "the city, summed across the year. It describes the climate a system here works in. " +
+          "It says nothing about any particular system \u2014 not its size, not its age, and not " +
+          "what it will need next.",
+        topic: "cooling-load",
+      },
+      {
         heading: "What a system costs to run depends on the rate as much as the equipment",
         body:
           "This is the average price Texas households paid per kilowatt-hour in the most recent " +
@@ -357,11 +367,6 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
       THI_METHODOLOGY,
     ],
     omitted: [
-      {
-        reading: "Runtime hours / cooling degree days — how hard a San Antonio system works in a typical season",
-        needed:
-          "A cooling-degree-day series for San Antonio. The noaa-climate feed has no San Antonio file at all, and its Austin file is a one-observation SAMPLE carrying only normal high and low temperatures. There is no NWS forecast feed for San Antonio either.",
-      },
       {
         reading: "Equipment-age or pipe-era percentile — how your system compares to the local housing stock",
         needed:
@@ -644,6 +649,16 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
     contextHeading: "What else bears on an Austin HVAC decision",
     context: [
       {
+        heading: "How much cooling a typical Austin year asks for",
+        body:
+          "Cooling degree days measure how much cooling a period demanded, not how hot it felt " +
+          "and not what anything cost. This is the 30-year normal for one weather station near " +
+          "the city, summed across the year. It describes the climate a system here works in. " +
+          "It says nothing about any particular system \u2014 not its size, not its age, and not " +
+          "what it will need next.",
+        topic: "cooling-load",
+      },
+      {
         heading: "What a system costs to run depends on the rate as much as the equipment",
         body:
           "This is the average price Texas households paid per kilowatt-hour in the most recent " +
@@ -656,7 +671,8 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
       {
         heading: "The one reading on this page that describes this week rather than the year",
         body:
-          "Every other figure here covers a twelve-month window. This is the current National " +
+          "Every other figure here covers a window \u2014 twelve months of permits, or a thirty-year "
+          + "climate normal. This is the current National " +
           "Weather Service point forecast for Austin, and it is the condition a cooling system is " +
           "actually being asked to meet today \u2014 which is when a marginal one announces itself. " +
           "There is no equivalent feed for San Antonio, which is why that city's page does not " +
@@ -727,11 +743,6 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
       THI_METHODOLOGY,
     ],
     omitted: [
-      {
-        reading: "Cooling degree days \u2014 how hard an Austin system works in a typical season",
-        needed:
-          "A cooling-degree-day series. The noaa-climate feed's Austin file is a one-observation SAMPLE carrying normal high and low temperatures only, so there is nothing to accumulate. The forecast reading above describes one day and is not a substitute for a season.",
-      },
       {
         reading: "Equipment-age percentile \u2014 how your system compares to the local housing stock",
         needed:

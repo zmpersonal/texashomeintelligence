@@ -106,7 +106,8 @@ const METRO = {
 
 const PAGES = [
   // Round 10b: the HVAC page carries the restored EIA rate alongside AirNow.
-  { path: '/san-antonio/hvac/', location: 'san-antonio', category: 'hvac', noun: 'HVAC', readings: 4, faqs: 5 },
+  // Round 20 adds the cooling-load reading to both HVAC pages: 4 -> 5, 5 -> 6.
+  { path: '/san-antonio/hvac/', location: 'san-antonio', category: 'hvac', noun: 'HVAC', readings: 5, faqs: 5 },
   { path: '/san-antonio/plumbing/', location: 'san-antonio', category: 'plumbing', noun: 'plumbing', readings: 3, faqs: 5 },
   // Round 12. San Antonio roofing is the page whose trend does NOT clear the
   // threshold, so it is the one that proves the page declines to make the claim.
@@ -114,7 +115,7 @@ const PAGES = [
   // Round 15. Austin. HVAC carries four readings — the EIA rate, the NWS
   // forecast, AirNow and the 25C notice; plumbing carries drought and the
   // Austin Water stage; roofing carries storms and drought plus the TDLR note.
-  { path: '/austin/hvac/', location: 'austin', category: 'hvac', noun: 'HVAC', readings: 5, faqs: 5 },
+  { path: '/austin/hvac/', location: 'austin', category: 'hvac', noun: 'HVAC', readings: 6, faqs: 5 },
   { path: '/austin/plumbing/', location: 'austin', category: 'plumbing', noun: 'plumbing', readings: 4, faqs: 6 },
   { path: '/austin/roofing/', location: 'austin', category: 'roofing', noun: 'roof-related', readings: 4, faqs: 8 },
 ];
@@ -464,6 +465,131 @@ for (const page of PAGES) {
 // untouched" section is retired. What is still worth asserting is the boundary:
 // the eight service pages with no layer must be unaffected by the round, and
 // they are the pages that still carry the QuoteReady body.
+/* ══ ROUND 20 — THE COOLING-LOAD READING ═══════════════════════════════════
+ *
+ * Every figure is recomputed here from the committed generated data and
+ * compared to what the page rendered. Nothing below is a literal: pinning
+ * "3,289.8" in this file would make the assertion pass forever regardless of
+ * what the feed says, which is the failure mode these replays exist to catch.
+ *
+ * The honesty guards matter as much as the arithmetic. This reading sits on an
+ * HVAC page, one click from a homeowner deciding whether to call somebody, and
+ * the one thing it must never do is imply anything about a machine's remaining
+ * life. That framing belongs to AC Lifespan and is not this round.
+ */
+console.log('\n══ ROUND 20 — COOLING LOAD ══');
+
+function climate(loc) {
+  const j = JSON.parse(readFileSync(
+    join(SITE, 'src', 'data', 'generated', 'noaa-climate', `${loc}.json`), 'utf8'));
+  const rows = j.observations.filter(o => !o.seed);
+  const normals = rows.filter(o => o.value.kind === 'normal-1991-2020')
+    .sort((a, b) => a.value.month - b.value.month);
+  const actuals = rows.filter(o => o.value.kind === 'monthly-actual')
+    .sort((a, b) => a.key.localeCompare(b.key));
+  const annual = normals.reduce((t, o) => t + o.value.coolingDegreeDaysF, 0);
+  return { file: j, normals, actuals, annual, v: normals[0]?.value };
+}
+
+const LIFESPAN = new RegExp(
+  '\\b(lifespan|life span|life expectancy|years? of life|wear out|end of life'
+  + '|how long .{0,25}(last|live)|time to replace|due for (a )?replace|when to replace'
+  + '|service interval|tune[- ]?up|maintenance schedule|replace your|replacing your)\\b', 'i');
+
+for (const { path, loc, city } of [
+  { path: '/austin/hvac/', loc: 'austin', city: 'Austin' },
+  { path: '/san-antonio/hvac/', loc: 'san-antonio', city: 'San Antonio' },
+]) {
+  const cl = climate(loc);
+  const c = await b.newContext({ viewport: { width: 1440, height: 1200 } });
+  const p = await c.newPage();
+  await p.goto(B + path, { waitUntil: 'networkidle' });
+
+  const r = await p.evaluate(() => {
+    const items = [...document.querySelectorAll('#context .context-item')];
+    // `.metric-label` is text-transform:uppercase, so innerText returns
+    // "COOLING DEMAND IN A TYPICAL YEAR, AUSTIN". Matching case-sensitively here
+    // found nothing on a page that rendered perfectly — a render-side detail no
+    // amount of reading the source would have surfaced.
+    const item = items.find(i => /cooling demand in a typical year/i.test(i.innerText));
+    if (!item) return null;
+    const card = item.querySelector('.data-card');
+    return {
+      heading: item.querySelector('h3')?.innerText.trim(),
+      label: card?.querySelector('.metric-label')?.innerText.trim(),
+      value: card?.querySelector('.metric-value')?.innerText.trim(),
+      note: [...card.querySelectorAll('.metric-note')].map(n => n.innerText.trim()).join(' '),
+      badge: card?.querySelector('.live-badge,.sample-badge,.stale-badge,.unavailable-badge')?.innerText.trim(),
+      meta: card?.querySelector('.data-meta')?.innerText.replace(/\s+/g, ' ').trim(),
+      omitted: [...document.querySelectorAll('#context .key-findings li')].map(l => l.innerText),
+      mainText: document.querySelector('main').innerText,
+    };
+  });
+
+  A(`${path} renders the cooling-load reading`, r !== null);
+  if (!r) { await c.close(); continue; }
+
+  // ── the figure, recomputed
+  const expected = cl.annual.toLocaleString('en-US', { maximumFractionDigits: 1 });
+  const V = r.value.toUpperCase();
+  A(`${path} shows the annual normal from the data`,
+    V.includes(expected.toUpperCase()), `${r.value} vs computed ${expected}`);
+  A(`${path} states the base temperature`, /base 65°F/i.test(r.value), r.value);
+  A(`${path} names degree days, not degrees`, /cooling degree days/i.test(r.value), r.value);
+  A(`${path} labels the metro`, r.label.toUpperCase().includes(city.toUpperCase()), r.label);
+
+  // ── provenance the reader can check
+  A(`${path} names the station id`, r.note.includes(cl.v.sourceRef), cl.v.sourceRef);
+  A(`${path} names the station`, r.note.includes(cl.v.stationName), cl.v.stationName);
+  A(`${path} states the distance from the metro point`,
+    r.note.includes(`${cl.v.distanceMiles} miles`), `${cl.v.distanceMiles} mi`);
+  const yrs = cl.normals.map(o => o.value.yearsOfRecord);
+  A(`${path} states the years of record`,
+    r.note.includes(`${Math.min(...yrs)}-${Math.max(...yrs)} years of record`),
+    `${Math.min(...yrs)}-${Math.max(...yrs)}`);
+  A(`${path} names the 1991-2020 period`, /1991-2020/.test(r.note), r.note.slice(0, 60));
+
+  // ── THE DUAL DATE. The badge is current; the figure is a 30-year normal.
+  // A reader who takes the badge's date for the figure's date has been misled,
+  // so the reading has to disown it explicitly.
+  A(`${path} badge is LIVE`, r.badge === 'LIVE', r.badge);
+  const newest = cl.actuals.at(-1).key.replace('actual-', '');
+  const [ny, nm] = newest.split('-');
+  const monthName = ['January','February','March','April','May','June','July',
+                     'August','September','October','November','December'][Number(nm) - 1];
+  A(`${path} the badge's date comes from the newest ACTUAL`,
+    r.meta.includes('Data through'), r.meta);
+  A(`${path} the note names that month explicitly`,
+    r.note.includes(`${monthName} ${ny}`), `${monthName} ${ny}`);
+  A(`${path} the note says the figure is NOT the current reading`,
+    /not the figure shown here/.test(r.note) && /typical year, not this one/.test(r.note));
+  A(`${path} the note says the 30-year period ended in 2020`,
+    /period it covers ended in 2020/.test(r.note));
+
+  // ── the retired statements
+  A(`${path} no longer claims the CDD reading is unavailable`,
+    !r.omitted.some(o => /cooling degree day|Runtime hours/i.test(o)),
+    r.omitted.map(o => o.slice(0, 45)).join(' | '));
+  A(`${path} no longer calls noaa-climate a SAMPLE`,
+    !/noaa-climate feed/i.test(r.mainText) && !/one-observation SAMPLE/i.test(r.mainText));
+
+  // ── THE HONESTY GUARD. Not a lifespan claim, not a ratio.
+  const cardText = `${r.heading} ${r.label} ${r.value} ${r.note}`;
+  A(`${path} the reading carries no lifespan or replacement-timing language`,
+    !LIFESPAN.test(cardText), cardText.match(LIFESPAN)?.[0] ?? 'clean');
+  A(`${path} the reading publishes no national ratio`,
+    !/times the national|national average|× the national|vs\.? the nation/i.test(cardText));
+  A(`${path} the reading makes no cost claim`,
+    !/\$|\bcost\b|\bbill\b|\bsave\b/i.test(`${r.label} ${r.value} ${r.note}`));
+  A(`${path} the body disclaims any statement about a particular system`,
+    /says nothing about any particular system/.test(r.heading + ' ' + (await p.evaluate(() => {
+      const items = [...document.querySelectorAll('#context .context-item')];
+      return items.find(i => /cooling demand in a typical year/i.test(i.innerText))?.querySelector('p')?.innerText ?? '';
+    }))));
+
+  await c.close();
+}
+
 console.log('\n══ PAGES WITHOUT A LAYER ARE UNAFFECTED ══');
 for (const path of ['/austin/electrical/', '/austin/tree-trimming/',
                     '/san-antonio/electrical/', '/san-antonio/mold-remediation/']) {

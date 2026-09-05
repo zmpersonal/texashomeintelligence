@@ -1186,14 +1186,13 @@ run into.
   "flat". **The trend threshold is 100/√mean**, the Poisson counting noise on a monthly count;
   `lib/tradeActivity.ts` computes it and refuses the trend claim when a change does not clear
   it. It is the conservative form: the noise on a six-month sum is 1/√6 of it.
-  **Four readings were omitted and are named ON THE PAGE**, not left as gaps - cooling degree
-  days (the `noaa-climate` feed has no San Antonio file at all, and its Austin file is a
-  one-observation SAMPLE; there is no San Antonio `nws-api` feed either — still true as
-  written, but Round 19 gave `noaa-climate` a real fetcher, so **this sentence and its
-  Austin twin in `site/src/data/belowHero.ts` must be rewritten in the round that first
-  sees a successful CDD run**), any parcel-derived
+  **Three readings are omitted and named ON THE PAGE**, not left as gaps — any parcel-derived
   percentile or pipe-era reading (no BCAD data), any cost figure (blocked, not unbuilt), and
-  the **EIA Texas residential electricity rate**. That last one is a Rule 1 flag rather than a
+  the **EIA Texas residential electricity rate**. ✅ **Cooling degree days was the fourth and is
+  now PUBLISHED** — Round 20 retired both omission statements and put the cooling-load reading
+  on `/austin/hvac/` and `/san-antonio/hvac/`, flipped `data-sources.yaml` to `live`, and
+  `/methodology/` now reads "13 are currently connected and live". There is still no San
+  Antonio `nws-api` feed. See `docs/audits/round-20-cooling-load-reading.md`. That last one is a Rule 1 flag rather than a
   gap: the feed is live and current, and the round barred "any price figure". A published
   utility rate is not a project cost, and it was the HVAC page's existing `SERVICE_SIGNALS`
   reading before this round - so withholding it is a real loss of context. **Owner decision:

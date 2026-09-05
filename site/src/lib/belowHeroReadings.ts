@@ -38,6 +38,30 @@ export interface ContextReading {
  */
 type Reader = (location: string, cityName: string) => ContextReading | undefined;
 
+/** The `noaa-climate` observation shape this file reads. */
+interface CoolingDegreeDayRow {
+  kind: "normal-1991-2020" | "monthly-actual";
+  coolingDegreeDaysF: number;
+  baseF: number;
+  month: number;
+  sourceRef: string;
+  stationName: string;
+  distanceMiles: number;
+  yearsOfRecord?: number;
+}
+
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+/** "2026-07" -> "July 2026". Built from the key, so it cannot drift from it. */
+function monthLabel(key: string): string {
+  const [y, m] = key.split("-");
+  const name = MONTH_NAMES[Number(m) - 1];
+  return name ? `${name} ${y}` : key;
+}
+
 function latest<T>(datasetId: string, location: string) {
   const dataset = findDataset<T>(datasetId, location);
   if (!dataset || dataset.status === "sample") return undefined;
@@ -92,6 +116,89 @@ const READERS: Record<string, Reader> = {
       sourceUrl: hit.dataset.source.url,
       href: "/data/texas/electricity-prices/",
       linkLabel: "Full Texas electricity price series, sources and limitations",
+    };
+  },
+  /**
+   * Round 20. How much cooling a typical year demands in this metro.
+   *
+   * ── WHAT THIS IS, AND THE THREE THINGS IT IS NOT.
+   *
+   * It is a CLIMATE reading: the 1991-2020 monthly normals summed to an annual
+   * cooling-degree-day total, base 65F, from one named station.
+   *
+   * It is NOT a statement about equipment. Nothing here says how long a system
+   * lasts, when to replace one, or when to service it. A degree-day total is a
+   * property of the sky over a metro, not of the machine in a house, and the
+   * step from one to the other needs the equipment's age, size, efficiency and
+   * duty cycle — none of which this site holds. That reading belongs to AC
+   * Lifespan (HANDOFF), and this deliberately stops short of it.
+   *
+   * It is NOT a ratio. A "runs N times the national average" figure needs
+   * Climate at a Glance's contiguous-U.S. series, which is reachable and
+   * period-aligned but is NOT in `src/data/generated/**`. Putting it here would
+   * mean either a new feed or a hard-coded national constant — and a literal
+   * number in a lib file is the exact thing `blsWages.ts`'s CBSA warning
+   * exists about. If a ratio is ever published it carries the HANDOFF label:
+   * THI analysis, both sources cited, point-versus-area caveat in the reading.
+   *
+   * It is NOT this year's weather. The value is a 30-year normal.
+   *
+   * ── THE DUAL DATE, WHICH IS THE THING A READER WILL MISREAD.
+   *
+   * The badge's "data through" comes from the newest observation in the file,
+   * and that is a monthly ACTUAL — currently 2026 — while the number shown is
+   * a normal whose period ended in 2020. Left unexplained, a reader sees a
+   * current date beside the figure and takes the figure for a current
+   * measurement. The note says which is which, in the reading itself rather
+   * than a footnote.
+   */
+  "cooling-load": (location, cityName) => {
+    const hit = latest<CoolingDegreeDayRow>("noaa-climate", location);
+    if (!hit) return undefined;
+    const rows = hit.dataset.observations.filter((o) => !o.seed);
+    const normals = rows.filter((o) => o.value.kind === "normal-1991-2020");
+    // Twelve or nothing. A partial year silently understates the total, and an
+    // understated annual figure is indistinguishable from a milder metro.
+    if (normals.length !== 12) return undefined;
+
+    const annual = normals.reduce((sum, o) => sum + o.value.coolingDegreeDaysF, 0);
+    const first = normals[0].value;
+    const years = normals
+      .map((o) => o.value.yearsOfRecord)
+      .filter((y): y is number => typeof y === "number");
+    const minYears = years.length ? Math.min(...years) : undefined;
+    const maxYears = years.length ? Math.max(...years) : undefined;
+    const yearsPhrase =
+      minYears === undefined
+        ? ""
+        : minYears === maxYears
+          ? ` on ${minYears} years of record`
+          : ` on ${minYears}-${maxYears} years of record`;
+
+    // The newest ACTUAL is what makes the badge current. Naming the month it
+    // covers is what stops the badge's date being read as the figure's date.
+    const actuals = rows.filter((o) => o.value.kind === "monthly-actual");
+    const newestActual = actuals
+      .map((o) => o.key.replace(/^actual-/, ""))
+      .sort()
+      .at(-1);
+
+    return {
+      label: `Cooling demand in a typical year, ${cityName}`,
+      value: `${annual.toLocaleString("en-US", { maximumFractionDigits: 1 })} cooling degree days, base ${first.baseF}\u00B0F`,
+      freshness: freshnessOf(hit.dataset),
+      sourceName: hit.dataset.source.name,
+      sourceUrl: hit.dataset.source.url,
+      note:
+        `This is NOAA's 1991-2020 normal for ${first.stationName} (${first.sourceRef}), ` +
+        `${first.distanceMiles} miles from our reference point for ${cityName}, built` +
+        `${yearsPhrase}. It describes a typical year, not this one — the 30-year period it ` +
+        `covers ended in 2020.` +
+        (newestActual
+          ? ` The date on the badge above is newer than that because the same station also ` +
+            `reports month by month, and its newest complete month is ${monthLabel(newestActual)}; ` +
+            `that is what keeps this feed current, and it is not the figure shown here.`
+          : ""),
     };
   },
   /**
