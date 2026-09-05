@@ -1,5 +1,25 @@
 # Round 19b — Rebuilding the CDD mechanism on what the probe measured
 
+> ## ⚠️ TWO FINDINGS BELOW ARE CORRECTED BY ROUND 19c
+>
+> **1. The probe sampled the wrong tier of station.** Section 3's ranking sorted by station id
+> ascending, so `US1` (CoCoRaHS volunteers, precipitation only) sorted ahead of `USC` and
+> `USW`. Both CSVs it opened were `US1` and carried no temperature at all. The
+> `"degree-day-looking columns: NONE"` result is **a fact about the tier that got picked, not
+> about the normals product.** Whether `USW` normals carry a CDD column is **still open** —
+> Round 19c re-ranks USW-first by distance and re-samples.
+>
+> **2. §4's period objection is withdrawn.** Climate at a Glance publishes annual
+> contiguous-U.S. CDD for **1991–2020, base 65 °F — the same period as the normals**, so the
+> periods *can* be aligned. The aggregation objection (area-weighted national mean versus a
+> single station point) stands unchanged, and the verdict — **THI analysis, not a sourced
+> claim** — is unaffected.
+>
+> Also measured: `search/v1/data` with `boundingBox` returns 400 "Invalid search options", so
+> §2's worry about that endpoint was justified. But approach (a) **no longer needs it** —
+> `ghcnd-stations.txt` answered with 132,501 records and is the mapping mechanism, supplying
+> exactly the explicit station ids the data service demanded. See `round-19c-usw-normals.md` §4.
+
 **Outcome: a second probe, not a second fetcher.** Both candidate approaches depend on
 something the 2026-09-05 dispatch did not measure, and Round 19's failure was shipping on
 exactly that kind of gap. The fetcher is reverted to an honest unavailable state.
@@ -55,8 +75,11 @@ each anchored to a measurement:
 The probe showed the index exists. It did **not** show:
 
 1. **Which of the 1,162 files covers Austin, and which covers San Antonio.**
+   → *Answered:* `ghcnd-stations.txt` (132,501 records, id + lat/lon + name), downloaded and
+   filtered locally. The mechanism works; Round 19b's ranking of its output did not.
 2. **What is inside one of them** — whether a cooling-degree-day normal is present at all,
    its column name, its base temperature, and the month layout.
+   → *Still open.* The two files opened were precipitation-only volunteer stations.
 
 **How the mapping gets determined — by download and local filter, not by assertion.** A
 station list carrying id + latitude + longitude is fetched, then filtered *in the probe
@@ -215,9 +238,13 @@ stand.
 1. **Dispatch `TEMP (Round 19b): normals station mapping + CSV layout`.** Nothing about the
    normals path should be treated as known until its log is read. The fetcher is written in
    the round *after* that, not before.
-2. **If section 4 reports no CDD column in the normals files**, (b) is dead too and the
+2. ~~**If section 4 reports no CDD column in the normals files**, (b) is dead too and the
    choice returns to (a) — for which section 3 will already have captured `search/v1`'s
-   response shape.
+   response shape.~~ **Superseded.** Section 4 did report no CDD column, but off the wrong
+   station tier, so it establishes nothing about the product. The fallback reasoning was wrong
+   a second way too: `search/v1`'s bounding-box path returned 400, while
+   `ghcnd-stations.txt` — not `search/v1` — is what approach (a) actually needs. See
+   `round-19c-usw-normals.md` §4.
 3. **AC Lifespan's label is decided** (§4): THI analysis, both sources cited, point-versus-
    area caveat in the reading. Worth confirming before the reading is designed.
 4. **Both TEMP probe steps are deletable together** once the mechanism is settled — one

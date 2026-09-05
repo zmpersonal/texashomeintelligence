@@ -611,3 +611,349 @@ jobs:
           print(f"\nNOAA_PROBE2_STATUS=complete requests={counts['requests']} "
                 f"ok={counts['ok']} failed={counts['failed']} station_csvs={counts['csvs']}")
           PY
+
+      # ══ ROUND 19c — I SAMPLED THE WRONG STATIONS. ══════════════════════
+      #
+      # Round 19b's section 3 ranked candidates with
+      # `key=lambda r: (not r[4], r[0])` — index membership, then station id
+      # ASCENDING. "US1" sorts before "USC" sorts before "USW", so of 533
+      # Austin and 403 San Antonio candidates the two that got sampled were
+      # both US1: CoCoRaHS volunteer observers, who report PRECIPITATION ONLY.
+      # US1TXBRT056 came back with 13 columns and US1TXBXR011 with 81, every
+      # one of them MLY-PRCP-*. "degree-day-looking columns: NONE" was a fact
+      # about the station tier I picked, not about the normals product.
+      #
+      # USW stations are the first-order/airport tier and the one that carries
+      # temperature. Austin-Bergstrom and San Antonio International are both
+      # USW. THE QUESTION THE PROBE WAS MEANT TO ANSWER IS STILL OPEN.
+      #
+      # This step ranks USW first, then USC, then US1, and orders by real
+      # great-circle distance from each metro's representative point rather
+      # than by an accident of the alphabet. It samples the nearest USW
+      # stations and prints their FULL column list, so the answer does not
+      # depend on my regex matching the right name.
+      #
+      # It also does two things Round 19b left undone:
+      #   - reads doc/, which returned a directory listing nobody opened. What
+      #     documents this product's available elements is in there.
+      #   - hits the Access Data Service with a REAL USW station id. That is
+      #     the one path nothing has falsified, and now that ghcnd-stations.txt
+      #     has supplied genuine ids it can be measured rather than deferred.
+      - name: "TEMP (Round 19c): USW normals sampling + doc/ + explicit-station API"
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          python3 - <<'PY'
+          import csv, io, json, math, re, sys, zlib, datetime
+          import urllib.request, urllib.error, urllib.parse
+
+          UA = ("TexasHomeIntelligence-probe/1.0 (one-off read-only characterisation; "
+                "contact via github.com/zmpersonal/texashomeintelligence)")
+          TIMEOUT = 90
+          SMALL = 8 * 1024 * 1024
+          BIG = 32 * 1024 * 1024
+          MAX_CSV_PER_METRO = 2            # enough that one sparse station is not the answer
+          MAX_DOCS = 8
+
+          POINTS = {"austin": (30.2672, -97.7431), "san-antonio": (29.4241, -98.4936)}
+          # Widened in order until a USW station is found. Every widening is
+          # printed, because "we had to look 60 miles out" is itself a finding.
+          PADS = [0.35, 0.75, 1.5]
+
+          NORMALS_ROOT = "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/"
+          ACCESS = NORMALS_ROOT + "access/"
+          DOC = NORMALS_ROOT + "doc/"
+
+          counts = {"requests": 0, "ok": 0, "failed": 0, "csvs": 0, "docs": 0}
+
+          def _crash(exc_type, exc, tb):
+              import traceback
+              traceback.print_exception(exc_type, exc, tb)
+              print(f"\nNOAA_PROBE3_STATUS=error requests={counts['requests']} "
+                    f"ok={counts['ok']} failed={counts['failed']} crash={exc_type.__name__}: {exc}")
+          sys.excepthook = _crash
+
+          def hr(title):
+              print("\n" + "=" * 74)
+              print(title)
+              print("=" * 74)
+
+          def get(url, label="", ceil=SMALL):
+              counts["requests"] += 1
+              req = urllib.request.Request(url, headers={"User-Agent": UA})
+              try:
+                  with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+                      body = r.read(ceil + 1)
+                      trunc = len(body) > ceil
+                      if trunc:
+                          body = body[:ceil]
+                      counts["ok"] += 1
+                      print(f"  [{label or 'GET'}] HTTP {r.status}, {len(body)} bytes"
+                            + (" (TRUNCATED at ceiling)" if trunc else ""))
+                      print(f"    {url}")
+                      return r.status, body
+              except urllib.error.HTTPError as e:
+                  counts["failed"] += 1
+                  detail = b""
+                  try:
+                      detail = e.read(1500)
+                  except Exception:
+                      pass
+                  print(f"  [{label or 'GET'}] HTTP {e.code} {e.reason}\n    {url}")
+                  if detail:
+                      print(f"    body: {detail[:800]!r}")
+                  return e.code, None
+              except Exception as e:
+                  counts["failed"] += 1
+                  print(f"  [{label or 'GET'}] FAILED {type(e).__name__}: {e}\n    {url}")
+                  return None, None
+
+          def miles(lat1, lon1, lat2, lon2):
+              R = 3958.8
+              p1, p2 = math.radians(lat1), math.radians(lat2)
+              dp = math.radians(lat2 - lat1)
+              dl = math.radians(lon2 - lon1)
+              a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+              return 2 * R * math.asin(math.sqrt(a))
+
+          def tier(sid):
+              """USW = first-order/airport (carries temperature). USC = co-op.
+              US1 = CoCoRaHS volunteers, precipitation only — the tier Round 19b
+              sampled by accident."""
+              if sid.startswith("USW"): return (0, "USW first-order/airport")
+              if sid.startswith("USC"): return (1, "USC co-op")
+              if sid.startswith("US1"): return (2, "US1 CoCoRaHS (precip only)")
+              return (3, "other")
+
+          print(f"probe date (runner UTC): {datetime.date.today().isoformat()}")
+
+          # ── 1. THE STATION LIST, RANKED PROPERLY THIS TIME ────────────────
+          hr("1. ghcnd-stations.txt -> metro candidates, ranked USW > USC > US1, by distance")
+          _, body = get("https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt",
+                        "ghcnd-stations.txt", ceil=BIG)
+          stations = []
+          if body:
+              lines = body.decode("utf-8", "replace").splitlines()
+              print(f"    {len(lines)} station record(s)")
+              for line in lines:
+                  try:
+                      sid = line[0:11].strip()
+                      lat = float(line[12:20]); lon = float(line[21:30])
+                      name = line[41:71].strip()
+                  except Exception:
+                      continue
+                  stations.append((sid, name, lat, lon))
+              print(f"    {len(stations)} parsed with usable coordinates")
+          else:
+              print("    UNAVAILABLE — sections 2 and 3 cannot resolve a station this run")
+
+          # Index membership: a station id is only usable if its CSV is published.
+          _, body = get(ACCESS, "normals access index")
+          index_ids = set()
+          if body:
+              text = body.decode("utf-8", "replace")
+              csvs = sorted(set(re.findall(r'href="([A-Za-z0-9_\-]+\.csv)"', text)))
+              index_ids = {c.rsplit(".", 1)[0] for c in csvs}
+              from collections import Counter
+              print(f"    access/ index: {len(csvs)} csv(s); by prefix "
+                    f"{dict(sorted(Counter(c[:3] for c in csvs).items(), key=lambda kv: -kv[1]))}")
+
+          ranked = {}
+          for metro, (mlat, mlon) in POINTS.items():
+              chosen_pad = None
+              rows = []
+              for pad in PADS:
+                  rows = [(sid, name, lat, lon) for sid, name, lat, lon in stations
+                          if abs(lat - mlat) <= pad and abs(lon - mlon) <= pad]
+                  has_usw = any(sid.startswith("USW") and sid in index_ids for sid, *_ in rows)
+                  chosen_pad = pad
+                  if has_usw:
+                      break
+                  print(f"    {metro}: no indexed USW station within +/-{pad} deg — WIDENING")
+              scored = sorted(
+                  ((tier(sid)[0], miles(mlat, mlon, lat, lon), sid, name, lat, lon, sid in index_ids)
+                   for sid, name, lat, lon in rows),
+                  key=lambda r: (r[0], r[1]))
+              ranked[metro] = scored
+              from collections import Counter as C2
+              by_tier = C2(tier(r[2])[1] for r in scored)
+              print(f"\n  {metro}: {len(scored)} candidate(s) within +/-{chosen_pad} deg")
+              print(f"    by tier: {dict(by_tier)}")
+              print(f"    top 10 by tier then distance:")
+              for t, d, sid, name, lat, lon, inx in scored[:10]:
+                  print(f"      {sid:14s} {d:6.1f} mi  {tier(sid)[1]:28s} "
+                        f"{'IN index' if inx else 'not in index':13s} {name}")
+
+          # ── 2. THE USW NORMALS CSVs — FULL COLUMN LIST ────────────────────
+          # The full list is printed unconditionally. Round 19b reported
+          # "degree-day-looking columns: NONE" off a regex; if the regex is
+          # wrong again, the raw list is still in the log to read.
+          hr("2. NEAREST USW NORMALS CSVs — every column, verbatim")
+          findings = {}
+          for metro in POINTS:
+              usw_all = [r for r in ranked.get(metro, []) if r[2].startswith("USW")]
+              skipped = [r for r in usw_all if not r[6]]
+              picks = [r for r in usw_all if r[6]][:MAX_CSV_PER_METRO]
+              if skipped:
+                  print(f"\n  {metro}: {len(skipped)} USW station(s) are NEARER but publish no "
+                        f"normals CSV, so they are not sampled — that is itself a finding:")
+                  for t, d, sid, name, lat, lon, inx in skipped[:5]:
+                      print(f"      {sid:14s} {d:6.1f} mi  not in access/ index  {name}")
+              if not picks:
+                  print(f"\n  {metro}: NO indexed USW station found even at the widest box. "
+                        f"That is the finding — say so, do not substitute a lower tier.")
+                  continue
+              for t, dist, sid, name, lat, lon, inx in picks:
+                  print(f"\n  {metro}: {sid} — {name} — {dist:.1f} mi from the metro point "
+                        f"({lat}, {lon})")
+                  st, b = get(f"{ACCESS}{sid}.csv", f"{metro} {sid}")
+                  if not b:
+                      continue
+                  counts["csvs"] += 1
+                  rows = list(csv.reader(io.StringIO(b.decode("utf-8", "replace"))))
+                  if not rows:
+                      print("    empty csv")
+                      continue
+                  header = rows[0]
+                  print(f"    {len(rows) - 1} data row(s), {len(header)} column(s)")
+                  print(f"    FULL COLUMN LIST:")
+                  for i in range(0, len(header), 6):
+                      print(f"      {header[i:i+6]}")
+                  dd = [h for h in header
+                        if re.search(r"(CLDD|CDD|COOL|HTDD|HDD|HEAT|DEGR|DD)", h, re.I)]
+                  print(f"    degree-day-looking columns: {dd or 'NONE'}")
+                  idx = {h: i for i, h in enumerate(header)}
+                  # All twelve monthly values for each degree-day column.
+                  for h in dd:
+                      vals = []
+                      for r in rows[1:]:
+                          if len(r) > idx[h]:
+                              d = r[idx.get("DATE", 0)] if "DATE" in idx and len(r) > idx["DATE"] else "?"
+                              vals.append(f"{d}={r[idx[h]]}")
+                      print(f"      {h}  ({len(vals)} value(s)): {vals}")
+                  # Is the base temperature STATED, or would it be inferred?
+                  base_in_name = [h for h in dd if re.search(r"BASE\s*\d+|B\d{2}", h, re.I)]
+                  raw = b.decode("utf-8", "replace")
+                  base_in_file = sorted(set(re.findall(r"[Bb][Aa][Ss][Ee][^,\n]{0,20}", raw)))[:6]
+                  print(f"    base stated in a column NAME: {base_in_name or 'NO'}")
+                  print(f"    'base' appearing anywhere in the FILE: {base_in_file or 'NO'}")
+                  if dd and not base_in_name and not base_in_file:
+                      print("    ⚠️ A DEGREE-DAY COLUMN EXISTS BUT ITS BASE IS NOT STATED IN THE DATA.")
+                      print("       Per the round's rule that is NOT usable as-is — section 3's")
+                      print("       documentation read is what would have to settle it.")
+                  findings[f"{metro}/{sid}"] = {"cols": len(header), "dd": dd,
+                                                "base_named": base_in_name}
+                  print("    first two data rows verbatim:")
+                  for r in rows[1:3]:
+                      print(f"      {r}")
+
+          # ── 3. doc/ — WHAT THIS PRODUCT SAYS IT PUBLISHES ─────────────────
+          # Round 19b saw this return a listing and never opened it. Whatever
+          # enumerates the available elements is here, and it settles both
+          # "is there a CDD element" and "on what base" independently of
+          # whichever two stations happened to be sampled above.
+          hr("3. doc/ — the element documentation, read rather than assumed")
+          _, body = get(DOC, "normals doc/ listing")
+          docs = []
+          if body:
+              text = body.decode("utf-8", "replace")
+              docs = [h for h in re.findall(r'href="([^"?][^"]*)"', text)
+                      if not h.endswith("/") and not h.startswith("?")]
+              print(f"    {len(docs)} file(s): {docs}")
+          for href in docs[:MAX_DOCS]:
+              url = urllib.parse.urljoin(DOC, href)
+              st, b = get(url, f"doc {href}")
+              if not b:
+                  continue
+              counts["docs"] += 1
+              if href.lower().endswith(".pdf"):
+                  # Best-effort, stdlib only: inflate each FlateDecode stream and
+                  # look for degree-day tokens. If it yields nothing that is a
+                  # limitation of this extractor, NOT evidence of absence — the
+                  # log says so rather than letting silence read as a finding.
+                  found = []
+                  try:
+                      for m in re.finditer(rb"stream\r?\n(.*?)endstream", b, re.S):
+                          try:
+                              t = zlib.decompress(m.group(1))
+                          except Exception:
+                              continue
+                          for hit in re.finditer(rb"(CLDD|HTDD|CDD|cooling degree|BASE\s*\d+)", t, re.I):
+                              s = max(0, hit.start() - 90)
+                              found.append(t[s:hit.end() + 90].decode("utf-8", "replace"))
+                  except Exception as e:
+                      print(f"    pdf scan failed: {type(e).__name__}: {e}")
+                  print(f"    PDF, {len(b)} bytes; {len(found)} degree-day mention(s) recovered")
+                  for f in found[:12]:
+                      print(f"      …{re.sub(r'[^ -~]+', ' ', f).strip()}…")
+                  if not found:
+                      print("      (none recovered — this extractor only reads FlateDecode text;")
+                      print("       treat as INCONCLUSIVE, not as 'the document says no')")
+              else:
+                  text = b.decode("utf-8", "replace")
+                  hits = [ln for ln in text.splitlines()
+                          if re.search(r"(CLDD|HTDD|CDD|cooling degree|BASE\s*\d+)", ln, re.I)]
+                  print(f"    text, {len(text.splitlines())} line(s); "
+                        f"{len(hits)} degree-day line(s):")
+                  for ln in hits[:20]:
+                      print(f"      {ln.strip()[:160]}")
+                  if not hits:
+                      print(f"      first 10 lines: {text.splitlines()[:10]}")
+
+          # ── 4. THE ACCESS DATA SERVICE, WITH A REAL STATION ID ────────────
+          # The one path nothing has falsified. Round 19's failure was bbox
+          # discovery, not the endpoint — it said "A station is required", and
+          # section 1 has now produced genuine station ids. Measuring it here
+          # costs two requests and removes the need for a fourth dispatch if
+          # the normals turn out to be unusable.
+          hr("4. data/v1 WITH EXPLICIT STATION IDS (the unfalsified path)")
+          for metro in POINTS:
+              usw = [r for r in ranked.get(metro, []) if r[2].startswith("USW")]
+              if not usw:
+                  print(f"  {metro}: no USW id available to test with")
+                  continue
+              # The SAME station section 2 sampled, where there was one, so the
+              # two sections are comparable. Falling back to the nearest USW
+              # otherwise, and saying which was used either way.
+              indexed = [r for r in usw if r[6]]
+              chosen = (indexed or usw)[0]
+              sid = chosen[2]
+              print(f"  {metro}: testing {sid} ({chosen[3]}, {chosen[1]:.1f} mi) — "
+                    f"{'the station section 2 sampled' if indexed else 'nearest USW; section 2 could not sample it'}")
+              for label, params in [
+                  ("GSOM monthly actuals", {
+                      "dataset": "global-summary-of-the-month", "stations": sid,
+                      "dataTypes": "CLDD", "startDate": "2023-01-01", "endDate": "2025-12-31",
+                      "format": "json", "units": "standard", "includeStationName": "true"}),
+                  ("normals-monthly via the API", {
+                      "dataset": "normals-monthly-1991-2020", "stations": sid,
+                      "startDate": "2010-01-01", "endDate": "2010-12-31",
+                      "format": "json", "units": "standard"}),
+              ]:
+                  url = ("https://www.ncei.noaa.gov/access/services/data/v1?"
+                         + urllib.parse.urlencode(params))
+                  st, b = get(url, f"{metro} {sid} {label}")
+                  if not b:
+                      continue
+                  try:
+                      j = json.loads(b.decode("utf-8", "replace"))
+                  except Exception:
+                      print(f"    not JSON; first 400 bytes: {b[:400]!r}")
+                      continue
+                  if isinstance(j, list) and j:
+                      print(f"    {len(j)} row(s); columns: {sorted(j[0].keys())}")
+                      print(f"    first 2 rows: {json.dumps(j[:2])[:700]}")
+                  else:
+                      print(f"    empty or unexpected: {json.dumps(j)[:300]}")
+
+          hr("SUMMARY")
+          if not findings:
+              print("  No USW normals CSV was read this run — the question is STILL open.")
+          for k, v in findings.items():
+              print(f"  {k}: {v['cols']} columns, degree-day columns "
+                    f"{v['dd'] or 'NONE'}, base named in column {v['base_named'] or 'NO'}")
+
+          print(f"\nNOAA_PROBE3_STATUS=complete requests={counts['requests']} "
+                f"ok={counts['ok']} failed={counts['failed']} "
+                f"station_csvs={counts['csvs']} docs={counts['docs']}")
+          PY
