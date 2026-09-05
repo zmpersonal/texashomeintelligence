@@ -8,6 +8,7 @@ import { sanAntonioPermits } from "./fetchers/sanAntonioPermits";
 import { eiaElectricityPrice } from "./fetchers/eiaElectricityPrice";
 import { nwsAustin } from "./fetchers/nws";
 import { noaaClimateAustin, noaaClimateSanAntonio } from "./fetchers/noaaClimate";
+import { swdiHailAustin, swdiHailSanAntonio } from "./fetchers/swdiHail";
 import { femaFlood } from "./fetchers/femaFlood";
 import { tdiLosses } from "./fetchers/tdiLosses";
 import { usdmAustin, usdmSanAntonio } from "./fetchers/usdm";
@@ -71,6 +72,17 @@ export const REGISTRY: RegistryEntry[] = [
   // news. Adding it would make the index move on a number that cannot change.
   entry("deep", noaaClimateAustin),
   entry("deep", noaaClimateSanAntonio),
+
+  // Round 22: NEXRAD radar-derived hail signatures, one file per metro.
+  // SEPARATE FROM noaa-storm-events ON PURPOSE — that feed is human reports of
+  // hail that was observed; this is radar flagging cells as PROBABLE hail.
+  // Merging them would be the sibling-product error rounds 19-19e cost five
+  // rounds to learn. Unseeded (seed.ts NEVER_SEED) and therefore "deep".
+  //
+  // NOT in INDEX_DATASETS. The Home Stress Index must not read a signature
+  // count: it would move the score on radar echoes nobody confirmed.
+  entry("deep", swdiHailAustin),
+  entry("deep", swdiHailSanAntonio),
 
   // --- stub tier: minimal 1-row seed, but most of these now have real
   // fetchRaw() implementations (Seam 1 round 2) — "stub" here describes
