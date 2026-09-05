@@ -2,13 +2,383 @@
   "datasetId": "noaa-climate",
   "location": "san-antonio",
   "methodologyVersion": "v1",
-  "status": "error",
-  "lastAttemptAt": "2026-09-05T15:02:47.985Z",
-  "lastSuccessAt": null,
-  "lastError": "noaa-climate/san-antonio: no USW station passed the record-quality bar. Rejected: USW00012931 (SAN ANTONIO BROOKS AFB, 5.8 mi): no normals rows returned | USW00012970 (SAN ANTONIO STINSON MUNI AP, 6.0 mi): response carries no years-of-record column, so record length cannot be checked. Columns present: MLY-GRDD-BASE57, MLY-TMIN-PRBOCC-LSTH024, MLY-GRDD-BASE55, MLY-HTDD-BASE50, MLY-TMIN-PRBOCC-LSTH020, MLY-GRDD-TB4886, MLY-HTDD-BASE55, MLY-TMIN-AVGNDS-LSTH000, MLY-CLDD-BASE50, MLY-HTDD-NORMAL, MLY-TMIN-PRBOCC-LSTH028, MLY-TMIN-AVGNDS-LSTH040, MLY-CLDD-NORMAL, MLY-CLDD-BASE45, MLY-DUTR-NORMAL, MLY-TMIN-STDDEV, MLY-GRDD-BASE60, MLY-HTDD-BASE45, MLY-PRCP-60PCTL, MLY-GRDD-BASE65, MLY-HTDD-BASE60, MLY-PRCP-33PCTL, STATION, MLY-GRDD-BASE45, MLY-PRCP-20PCTL, MLY-TMIN-PRBOCC-LSTH036, MLY-PRCP-50PCTL, MLY-PRCP-NORMAL, MLY-TMIN-PRBOCC-LSTH032, MLY-PRCP-AVGNDS-GE025HI, MLY-PRCP-AVGNDS-GE600HI, MLY-TMAX-NORMAL, MLY-TMIN-AVGNDS-LSTH010, MLY-CLDD-BASE60, MLY-TMIN-AVGNDS-LSTH050, NAME, DATE, MLY-CLDD-BASE57, MLY-DUTR-STDDEV, MLY-PRCP-75PCTL, MLY-CLDD-BASE55, MLY-TAVG-STDDEV, MLY-HTDD-BASE57, MLY-GRDD-BASE50, MLY-PRCP-80PCTL, MLY-TMAX-STDDEV, MLY-CLDD-BASE72, MLY-TMIN-AVGNDS-LSTH020, MLY-PRCP-AVGNDS-GE200HI, MLY-CLDD-BASE70, MLY-PRCP-AVGNDS-GE010HI, MLY-PRCP-AVGNDS-GE400HI, MLY-PRCP-AVGNDS-GE050HI, MLY-TMIN-AVGNDS-LSTH060, MLY-PRCP-AVGNDS-GE100HI, MLY-GRDD-BASE40, MLY-HTDD-BASE40, MLY-PRCP-25PCTL, MLY-CLDD-BASE40, MLY-TMIN-AVGNDS-LSTH032, MLY-PRCP-AVGNDS-GE001HI, MLY-TMIN-PRBOCC-LSTH016, MLY-TMIN-AVGNDS-LSTH070, MLY-GRDD-TB5086, MLY-TMIN-NORMAL, MLY-PRCP-40PCTL, MLY-GRDD-BASE72, MLY-PRCP-67PCTL, MLY-GRDD-BASE70 | USW00012909 (SAN ANTONIO KELLY AFB, 6.1 mi): response carries no years-of-record column, so record length cannot be checked. Columns present: MLY-GRDD-BASE57, MLY-TMIN-PRBOCC-LSTH024, MLY-GRDD-BASE55, MLY-HTDD-BASE50, MLY-TMIN-PRBOCC-LSTH020, MLY-GRDD-TB4886, MLY-HTDD-BASE55, MLY-TMIN-AVGNDS-LSTH000, MLY-CLDD-BASE50, MLY-CLDD-BASE72, MLY-TMIN-AVGNDS-LSTH020, MLY-HTDD-NORMAL, MLY-TMIN-PRBOCC-LSTH028, MLY-CLDD-BASE70, MLY-TMIN-AVGNDS-LSTH040, MLY-CLDD-NORMAL, MLY-TMIN-AVGNDS-LSTH060, MLY-CLDD-BASE45, MLY-DUTR-NORMAL, MLY-GRDD-BASE60, MLY-HTDD-BASE45, MLY-GRDD-BASE65, MLY-GRDD-BASE40, MLY-HTDD-BASE60, MLY-HTDD-BASE40, STATION, MLY-GRDD-BASE45, MLY-TMIN-PRBOCC-LSTH036, MLY-TMIN-PRBOCC-LSTH032, MLY-CLDD-BASE40, MLY-TMAX-NORMAL, MLY-TMIN-AVGNDS-LSTH010, MLY-TMIN-AVGNDS-LSTH032, MLY-CLDD-BASE60, MLY-TMIN-AVGNDS-LSTH050, MLY-TMIN-PRBOCC-LSTH016, MLY-TMIN-AVGNDS-LSTH070, NAME, MLY-GRDD-TB5086, DATE, MLY-CLDD-BASE57, MLY-TMIN-NORMAL, MLY-CLDD-BASE55, MLY-HTDD-BASE57, MLY-GRDD-BASE50, MLY-GRDD-BASE72, MLY-GRDD-BASE70 | USW00012921 (SAN ANTONIO INTL AP, 8.3 mi): response carries no years-of-record column, so record length cannot be checked. Columns present: MLY-GRDD-BASE57, MLY-TMIN-PRBOCC-LSTH024, MLY-GRDD-BASE55, MLY-HTDD-BASE50, MLY-SNOW-AVGNDS-GE200TI, MLY-SNWD-AVGNDS-GE004WI, MLY-TMIN-PRBOCC-LSTH020, MLY-GRDD-TB4886, MLY-HTDD-BASE55, MLY-TMIN-AVGNDS-LSTH000, MLY-SNWD-AVGNDS-GE002WI, MLY-CLDD-BASE50, MLY-HTDD-NORMAL, MLY-SNOW-60PCTL, MLY-TMIN-PRBOCC-LSTH028, MLY-TMIN-AVGNDS-LSTH040, MLY-CLDD-NORMAL, MLY-SNOW-AVGNDS-GE100TI, MLY-CLDD-BASE45, MLY-DUTR-NORMAL, MLY-TMIN-STDDEV, MLY-GRDD-BASE60, MLY-HTDD-BASE45, MLY-SNOW-AVGNDS-GE040TI, MLY-PRCP-60PCTL, MLY-GRDD-BASE65, MLY-SNOW-20PCTL, MLY-HTDD-BASE60, MLY-PRCP-33PCTL, STATION, MLY-GRDD-BASE45, MLY-PRCP-20PCTL, MLY-TMIN-PRBOCC-LSTH036, MLY-PRCP-50PCTL, MLY-PRCP-NORMAL, MLY-TMIN-PRBOCC-LSTH032, MLY-PRCP-AVGNDS-GE025HI, MLY-PRCP-AVGNDS-GE600HI, MLY-TMAX-NORMAL, MLY-TMIN-AVGNDS-LSTH010, MLY-CLDD-BASE60, MLY-TMIN-AVGNDS-LSTH050, NAME, DATE, MLY-CLDD-BASE57, MLY-DUTR-STDDEV, MLY-PRCP-75PCTL, MLY-CLDD-BASE55, MLY-SNOW-AVGNDS-GE050TI, MLY-TAVG-STDDEV, MLY-HTDD-BASE57, MLY-GRDD-BASE50, MLY-SNOW-40PCTL, MLY-PRCP-80PCTL, MLY-SNOW-AVGNDS-GE010TI, MLY-TMAX-STDDEV, MLY-SNWD-AVGNDS-GE005WI, MLY-SNWD-AVGNDS-GE001WI, MLY-CLDD-BASE72, MLY-SNWD-AVGNDS-GE003WI, MLY-TMIN-AVGNDS-LSTH020, MLY-PRCP-AVGNDS-GE200HI, MLY-SNOW-75PCTL, MLY-CLDD-BASE70, MLY-PRCP-AVGNDS-GE010HI, MLY-PRCP-AVGNDS-GE400HI, MLY-PRCP-AVGNDS-GE050HI, MLY-SNWD-AVGNDS-GE020WI, MLY-TMIN-AVGNDS-LSTH060, MLY-SNOW-67PCTL, MLY-SNOW-AVGNDS-GE020TI, MLY-PRCP-AVGNDS-GE100HI, MLY-SNOW-AVGNDS-GE001TI, MLY-GRDD-BASE40, MLY-SNOW-33PCTL, MLY-SNOW-80PCTL, MLY-SNOW-25PCTL, MLY-SNOW-50PCTL, MLY-HTDD-BASE40, MLY-SNOW-NORMAL, MLY-PRCP-25PCTL, MLY-CLDD-BASE40, MLY-TMIN-AVGNDS-LSTH032, MLY-PRCP-AVGNDS-GE001HI, MLY-TMIN-PRBOCC-LSTH016, MLY-SNWD-AVGNDS-GE010WI, MLY-TMIN-AVGNDS-LSTH070, MLY-GRDD-TB5086, MLY-TMIN-NORMAL, MLY-PRCP-40PCTL, MLY-GRDD-BASE72, MLY-PRCP-67PCTL, MLY-GRDD-BASE70, MLY-SNOW-AVGNDS-GE030TI | USW00012911 (RANDOLPH AFB, 15.8 mi): response carries no years-of-record column, so record length cannot be checked. Columns present: MLY-GRDD-BASE57, MLY-TMIN-PRBOCC-LSTH024, MLY-GRDD-BASE55, MLY-HTDD-BASE50, MLY-TMIN-PRBOCC-LSTH020, MLY-GRDD-TB4886, MLY-HTDD-BASE55, MLY-TMIN-AVGNDS-LSTH000, MLY-CLDD-BASE50, MLY-CLDD-BASE72, MLY-TMIN-AVGNDS-LSTH020, MLY-HTDD-NORMAL, MLY-TMIN-PRBOCC-LSTH028, MLY-CLDD-BASE70, MLY-TMIN-AVGNDS-LSTH040, MLY-CLDD-NORMAL, MLY-TMIN-AVGNDS-LSTH060, MLY-CLDD-BASE45, MLY-DUTR-NORMAL, MLY-GRDD-BASE60, MLY-HTDD-BASE45, MLY-GRDD-BASE65, MLY-GRDD-BASE40, MLY-HTDD-BASE60, MLY-HTDD-BASE40, STATION, MLY-GRDD-BASE45, MLY-TMIN-PRBOCC-LSTH036, MLY-TMIN-PRBOCC-LSTH032, MLY-CLDD-BASE40, MLY-TMAX-NORMAL, MLY-TMIN-AVGNDS-LSTH010, MLY-TMIN-AVGNDS-LSTH032, MLY-CLDD-BASE60, MLY-TMIN-AVGNDS-LSTH050, MLY-TMIN-PRBOCC-LSTH016, MLY-TMIN-AVGNDS-LSTH070, NAME, MLY-GRDD-TB5086, DATE, MLY-CLDD-BASE57, MLY-TMIN-NORMAL, MLY-CLDD-BASE55, MLY-HTDD-BASE57, MLY-GRDD-BASE50, MLY-GRDD-BASE72, MLY-GRDD-BASE70 | USW00000263 (BOERNE STAGE FIELD AP, 24.0 mi): no normals rows returned",
+  "status": "live",
+  "lastAttemptAt": "2026-09-05T15:49:05.324Z",
+  "lastSuccessAt": "2026-09-05T15:49:05.324Z",
+  "lastError": null,
   "source": {
-    "name": "NOAA NCEI U.S. Climate Normals, 1991-2020 (monthly)",
+    "name": "NOAA NCEI U.S. Climate Normals 1991-2020 (station CSV) and Global Summary of the Month",
     "url": "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/access/"
   },
-  "observations": []
+  "observations": [
+    {
+      "observedAt": "2020-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "normal-1991-2020-01",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 11,
+        "month": 1,
+        "yearsOfRecord": 19,
+        "completenessFlag": "R",
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "normal-1991-2020-02",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 35.2,
+        "month": 2,
+        "yearsOfRecord": 19,
+        "completenessFlag": "R",
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "normal-1991-2020-03",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 95.2,
+        "month": 3,
+        "yearsOfRecord": 19,
+        "completenessFlag": "R",
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "normal-1991-2020-04",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 206.6,
+        "month": 4,
+        "yearsOfRecord": 19,
+        "completenessFlag": "R",
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "normal-1991-2020-05",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 408.9,
+        "month": 5,
+        "yearsOfRecord": 19,
+        "completenessFlag": "R",
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "normal-1991-2020-06",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 563.9,
+        "month": 6,
+        "yearsOfRecord": 19,
+        "completenessFlag": "R",
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "normal-1991-2020-07",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 643.3,
+        "month": 7,
+        "yearsOfRecord": 20,
+        "completenessFlag": "R",
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "normal-1991-2020-08",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 667.9,
+        "month": 8,
+        "yearsOfRecord": 19,
+        "completenessFlag": "R",
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "normal-1991-2020-09",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 487.8,
+        "month": 9,
+        "yearsOfRecord": 20,
+        "completenessFlag": "R",
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "normal-1991-2020-10",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 263.9,
+        "month": 10,
+        "yearsOfRecord": 20,
+        "completenessFlag": "R",
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "normal-1991-2020-11",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 70.8,
+        "month": 11,
+        "yearsOfRecord": 20,
+        "completenessFlag": "R",
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "normal-1991-2020-12",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 19.5,
+        "month": 12,
+        "yearsOfRecord": 20,
+        "completenessFlag": "R",
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "actual-2025-09",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 565,
+        "month": 9,
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "actual-2025-10",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 427,
+        "month": 10,
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "actual-2025-11",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 152,
+        "month": 11,
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "actual-2025-12",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 63,
+        "month": 12,
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "actual-2026-01",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 24,
+        "month": 1,
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "actual-2026-02",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 73,
+        "month": 2,
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "actual-2026-03",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 243,
+        "month": 3,
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "actual-2026-04",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 303,
+        "month": 4,
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "actual-2026-05",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 336,
+        "month": 5,
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "actual-2026-06",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 549,
+        "month": 6,
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.381Z",
+      "key": "actual-2026-07",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 607,
+        "month": 7,
+        "sourceRef": "USW00012970",
+        "stationName": "SAN ANTONIO STINSON MUNI AP",
+        "distanceMiles": 6,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    }
+  ]
 }

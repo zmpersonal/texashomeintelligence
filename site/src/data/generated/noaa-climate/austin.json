@@ -2,24 +2,383 @@
   "datasetId": "noaa-climate",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "sample",
-  "lastAttemptAt": "2026-09-05T15:02:46.571Z",
-  "lastSuccessAt": null,
-  "lastError": "noaa-climate/austin: no USW station passed the record-quality bar. Rejected: USW00013958 (AUSTIN-CAMP MABRY, 3.8 mi): response carries no years-of-record column, so record length cannot be checked. Columns present: MLY-GRDD-BASE57, MLY-TMIN-PRBOCC-LSTH024, MLY-GRDD-BASE55, MLY-HTDD-BASE50, MLY-SNOW-AVGNDS-GE200TI, MLY-SNWD-AVGNDS-GE004WI, MLY-TMIN-PRBOCC-LSTH020, MLY-GRDD-TB4886, MLY-HTDD-BASE55, MLY-TMIN-AVGNDS-LSTH000, MLY-SNWD-AVGNDS-GE002WI, MLY-CLDD-BASE50, MLY-HTDD-NORMAL, MLY-SNOW-60PCTL, MLY-TMIN-PRBOCC-LSTH028, MLY-TMIN-AVGNDS-LSTH040, MLY-CLDD-NORMAL, MLY-SNOW-AVGNDS-GE100TI, MLY-CLDD-BASE45, MLY-DUTR-NORMAL, MLY-TMIN-STDDEV, MLY-GRDD-BASE60, MLY-HTDD-BASE45, MLY-SNOW-AVGNDS-GE040TI, MLY-PRCP-60PCTL, MLY-GRDD-BASE65, MLY-SNOW-20PCTL, MLY-HTDD-BASE60, MLY-PRCP-33PCTL, STATION, MLY-GRDD-BASE45, MLY-PRCP-20PCTL, MLY-TMIN-PRBOCC-LSTH036, MLY-PRCP-50PCTL, MLY-PRCP-NORMAL, MLY-TMIN-PRBOCC-LSTH032, MLY-PRCP-AVGNDS-GE025HI, MLY-PRCP-AVGNDS-GE600HI, MLY-TMAX-NORMAL, MLY-TMIN-AVGNDS-LSTH010, MLY-CLDD-BASE60, MLY-TMIN-AVGNDS-LSTH050, NAME, DATE, MLY-CLDD-BASE57, MLY-DUTR-STDDEV, MLY-PRCP-75PCTL, MLY-CLDD-BASE55, MLY-SNOW-AVGNDS-GE050TI, MLY-TAVG-STDDEV, MLY-HTDD-BASE57, MLY-GRDD-BASE50, MLY-SNOW-40PCTL, MLY-PRCP-80PCTL, MLY-SNOW-AVGNDS-GE010TI, MLY-TMAX-STDDEV, MLY-SNWD-AVGNDS-GE005WI, MLY-SNWD-AVGNDS-GE001WI, MLY-CLDD-BASE72, MLY-SNWD-AVGNDS-GE003WI, MLY-TMIN-AVGNDS-LSTH020, MLY-PRCP-AVGNDS-GE200HI, MLY-SNOW-75PCTL, MLY-CLDD-BASE70, MLY-PRCP-AVGNDS-GE010HI, MLY-PRCP-AVGNDS-GE400HI, MLY-PRCP-AVGNDS-GE050HI, MLY-SNWD-AVGNDS-GE020WI, MLY-TMIN-AVGNDS-LSTH060, MLY-SNOW-67PCTL, MLY-SNOW-AVGNDS-GE020TI, MLY-PRCP-AVGNDS-GE100HI, MLY-SNOW-AVGNDS-GE001TI, MLY-GRDD-BASE40, MLY-SNOW-33PCTL, MLY-SNOW-80PCTL, MLY-SNOW-25PCTL, MLY-SNOW-50PCTL, MLY-HTDD-BASE40, MLY-SNOW-NORMAL, MLY-PRCP-25PCTL, MLY-CLDD-BASE40, MLY-TMIN-AVGNDS-LSTH032, MLY-PRCP-AVGNDS-GE001HI, MLY-TMIN-PRBOCC-LSTH016, MLY-SNWD-AVGNDS-GE010WI, MLY-TMIN-AVGNDS-LSTH070, MLY-GRDD-TB5086, MLY-TMIN-NORMAL, MLY-PRCP-40PCTL, MLY-GRDD-BASE72, MLY-PRCP-67PCTL, MLY-GRDD-BASE70, MLY-SNOW-AVGNDS-GE030TI | USW00013904 (AUSTIN BERGSTROM INTL AP, 6.9 mi): response carries no years-of-record column, so record length cannot be checked. Columns present: MLY-GRDD-BASE57, MLY-TMIN-PRBOCC-LSTH024, MLY-GRDD-BASE55, MLY-HTDD-BASE50, MLY-SNOW-AVGNDS-GE200TI, MLY-SNWD-AVGNDS-GE004WI, MLY-TMIN-PRBOCC-LSTH020, MLY-GRDD-TB4886, MLY-HTDD-BASE55, MLY-TMIN-AVGNDS-LSTH000, MLY-SNWD-AVGNDS-GE002WI, MLY-CLDD-BASE50, MLY-HTDD-NORMAL, MLY-SNOW-60PCTL, MLY-TMIN-PRBOCC-LSTH028, MLY-TMIN-AVGNDS-LSTH040, MLY-CLDD-NORMAL, MLY-SNOW-AVGNDS-GE100TI, MLY-CLDD-BASE45, MLY-DUTR-NORMAL, MLY-TMIN-STDDEV, MLY-GRDD-BASE60, MLY-HTDD-BASE45, MLY-SNOW-AVGNDS-GE040TI, MLY-PRCP-60PCTL, MLY-GRDD-BASE65, MLY-SNOW-20PCTL, MLY-HTDD-BASE60, MLY-PRCP-33PCTL, STATION, MLY-GRDD-BASE45, MLY-PRCP-20PCTL, MLY-TMIN-PRBOCC-LSTH036, MLY-PRCP-50PCTL, MLY-PRCP-NORMAL, MLY-TMIN-PRBOCC-LSTH032, MLY-PRCP-AVGNDS-GE025HI, MLY-PRCP-AVGNDS-GE600HI, MLY-TMAX-NORMAL, MLY-TMIN-AVGNDS-LSTH010, MLY-CLDD-BASE60, MLY-TMIN-AVGNDS-LSTH050, NAME, DATE, MLY-CLDD-BASE57, MLY-DUTR-STDDEV, MLY-PRCP-75PCTL, MLY-CLDD-BASE55, MLY-SNOW-AVGNDS-GE050TI, MLY-TAVG-STDDEV, MLY-HTDD-BASE57, MLY-GRDD-BASE50, MLY-SNOW-40PCTL, MLY-PRCP-80PCTL, MLY-SNOW-AVGNDS-GE010TI, MLY-TMAX-STDDEV, MLY-SNWD-AVGNDS-GE005WI, MLY-SNWD-AVGNDS-GE001WI, MLY-CLDD-BASE72, MLY-SNWD-AVGNDS-GE003WI, MLY-TMIN-AVGNDS-LSTH020, MLY-PRCP-AVGNDS-GE200HI, MLY-SNOW-75PCTL, MLY-CLDD-BASE70, MLY-PRCP-AVGNDS-GE010HI, MLY-PRCP-AVGNDS-GE400HI, MLY-PRCP-AVGNDS-GE050HI, MLY-SNWD-AVGNDS-GE020WI, MLY-TMIN-AVGNDS-LSTH060, MLY-SNOW-67PCTL, MLY-SNOW-AVGNDS-GE020TI, MLY-PRCP-AVGNDS-GE100HI, MLY-SNOW-AVGNDS-GE001TI, MLY-GRDD-BASE40, MLY-SNOW-33PCTL, MLY-SNOW-80PCTL, MLY-SNOW-25PCTL, MLY-SNOW-50PCTL, MLY-HTDD-BASE40, MLY-SNOW-NORMAL, MLY-PRCP-25PCTL, MLY-CLDD-BASE40, MLY-TMIN-AVGNDS-LSTH032, MLY-PRCP-AVGNDS-GE001HI, MLY-TMIN-PRBOCC-LSTH016, MLY-SNWD-AVGNDS-GE010WI, MLY-TMIN-AVGNDS-LSTH070, MLY-GRDD-TB5086, MLY-TMIN-NORMAL, MLY-PRCP-40PCTL, MLY-GRDD-BASE72, MLY-PRCP-67PCTL, MLY-GRDD-BASE70, MLY-SNOW-AVGNDS-GE030TI | USW00000230 (AUSTIN EXECUTIVE AP, 13.7 mi): no normals rows returned | USW00000166 (LAGO VISTA RUSTY ALLEN AP, 20.9 mi): no normals rows returned | USW00063904 (TAYLOR MUNI AP, 27.6 mi): no normals rows returned",
+  "status": "live",
+  "lastAttemptAt": "2026-09-05T15:49:04.418Z",
+  "lastSuccessAt": "2026-09-05T15:49:04.418Z",
+  "lastError": null,
   "source": {
-    "name": "NOAA NCEI Global Summary of the Month",
-    "url": "https://www.ncei.noaa.gov/access/services/data/v1"
+    "name": "NOAA NCEI U.S. Climate Normals 1991-2020 (station CSV) and Global Summary of the Month",
+    "url": "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/access/"
   },
   "observations": [
     {
-      "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.615Z",
-      "key": "2026-07",
+      "observedAt": "2020-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "normal-1991-2020-01",
       "value": {
-        "normalHighF": 95,
-        "normalLowF": 73
-      },
-      "seed": true
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 9.6,
+        "month": 1,
+        "yearsOfRecord": 29,
+        "completenessFlag": "S",
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "normal-1991-2020-02",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 24,
+        "month": 2,
+        "yearsOfRecord": 29,
+        "completenessFlag": "S",
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "normal-1991-2020-03",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 73.2,
+        "month": 3,
+        "yearsOfRecord": 29,
+        "completenessFlag": "S",
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "normal-1991-2020-04",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 171.7,
+        "month": 4,
+        "yearsOfRecord": 30,
+        "completenessFlag": "S",
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "normal-1991-2020-05",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 369.9,
+        "month": 5,
+        "yearsOfRecord": 30,
+        "completenessFlag": "S",
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "normal-1991-2020-06",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 541.4,
+        "month": 6,
+        "yearsOfRecord": 30,
+        "completenessFlag": "S",
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "normal-1991-2020-07",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 644.8,
+        "month": 7,
+        "yearsOfRecord": 29,
+        "completenessFlag": "S",
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-08-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "normal-1991-2020-08",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 664.8,
+        "month": 8,
+        "yearsOfRecord": 29,
+        "completenessFlag": "S",
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "normal-1991-2020-09",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 473.7,
+        "month": 9,
+        "yearsOfRecord": 29,
+        "completenessFlag": "S",
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "normal-1991-2020-10",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 238.3,
+        "month": 10,
+        "yearsOfRecord": 29,
+        "completenessFlag": "S",
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "normal-1991-2020-11",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 62.3,
+        "month": 11,
+        "yearsOfRecord": 29,
+        "completenessFlag": "S",
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2020-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "normal-1991-2020-12",
+      "value": {
+        "kind": "normal-1991-2020",
+        "coolingDegreeDaysF": 16.1,
+        "month": 12,
+        "yearsOfRecord": 29,
+        "completenessFlag": "S",
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2025-09-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "actual-2025-09",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 530,
+        "month": 9,
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2025-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "actual-2025-10",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 389,
+        "month": 10,
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2025-11-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "actual-2025-11",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 136,
+        "month": 11,
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2025-12-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "actual-2025-12",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 47,
+        "month": 12,
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2026-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "actual-2026-01",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 23,
+        "month": 1,
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2026-02-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "actual-2026-02",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 64,
+        "month": 2,
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2026-03-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "actual-2026-03",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 233,
+        "month": 3,
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2026-04-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "actual-2026-04",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 261,
+        "month": 4,
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2026-05-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "actual-2026-05",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 324,
+        "month": 5,
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2026-06-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "actual-2026-06",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 560,
+        "month": 6,
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
+    },
+    {
+      "observedAt": "2026-07-01T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:49:05.282Z",
+      "key": "actual-2026-07",
+      "value": {
+        "kind": "monthly-actual",
+        "coolingDegreeDaysF": 644,
+        "month": 7,
+        "sourceRef": "USW00013958",
+        "stationName": "AUSTIN-CAMP MABRY",
+        "distanceMiles": 3.8,
+        "units": "degree-days F",
+        "baseF": 65
+      }
     }
   ]
 }
