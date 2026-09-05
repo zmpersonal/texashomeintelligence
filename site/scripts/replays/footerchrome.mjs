@@ -53,6 +53,15 @@ for (const path of SAMPLE) {
     ['roofing','hvac','plumbing','fire-damage-restoration','mold-remediation','electrical','tree-trimming']
       .every(s => f.hrefs.includes(`/austin/${s}/`)),
     `${f.hrefs.filter(h => h && h.startsWith('/austin/')).length} austin links`);
+  // ROUND 29 — the assertion this file was missing, and the reason it could
+  // not have caught what it should have. It checked what the footer must NOT
+  // link and never what it MUST, so a hub could go unlinked sitewide without a
+  // single assertion moving. /tools/ did exactly that: indexed, three working
+  // tools behind it, and nothing outside its own subtree pointing at it.
+  A(`${path} — the footer links /tools/`, f.hrefs.includes('/tools/'));
+  A(`${path} — and it is the hub, not a tool page`,
+    !f.hrefs.some(h => h && h.startsWith('/tools/') && h !== '/tools/'),
+    f.hrefs.filter(h => h && h.startsWith('/tools/')).join(', '));
   shapes.add(f.hrefs.join('|'));
   await c.close();
 }
@@ -61,7 +70,7 @@ A('the footer is identical on every page sampled', shapes.size === 1, `${shapes.
 console.log('\n══ NOTHING WAS ORPHANED ══');
 // The two pages that lost their footer link must still render, and must still
 // be reachable from somewhere real.
-for (const [path, expect] of [['/services/', 200], ['/start/', 200]]) {
+for (const [path, expect] of [['/services/', 200], ['/start/', 200], ['/tools/', 200]]) {
   const c = await b.newContext({ viewport: { width: 1440, height: 1200 } });
   const p = await c.newPage();
   const res = await p.goto(B + path, { waitUntil: 'networkidle' });
