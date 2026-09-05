@@ -352,17 +352,28 @@ run into.
     data dependency is the cost panel, which must go anyway. Remaining work is **copy, not
     capability**.
   - 🔴 **Roof Cost Calculator** — premise falsified by Round 6; needs a **different cost source**.
-  - 🔴 **AC Lifespan** — needs **cooling degree days**. Round 19 implemented `noaa-climate`
-    against NCEI's data service; the 2026-09-05 probe **falsified that mechanism** (HTTP 400,
-    "A station is required" — it does not accept bounding-box station discovery). Round 19b
-    reverted the fetcher and shipped a second probe. `noaa-climate/austin.json` is still the
-    one-observation SAMPLE (tagged `seed: true` so it retires on first success) and there is
-    still no San Antonio file. **Blocked on the Round 19c probe dispatch.** The mapping is
-    solved — `ghcnd-stations.txt`, 132,501 records, filtered locally — but Round 19b sampled
-    `US1` CoCoRaHS volunteer stations (precipitation only) because its ranking sorted by
-    station id ascending, so whether `USW` normals carry a CDD column is **still unmeasured**.
-    Its flagship reading is **THI analysis, not a sourced claim** — see
-    `docs/audits/round-19c-usw-normals.md` §5. Also address + CAD.
+  - 🟡 **AC Lifespan** — **cooling degree days are solved.** Round 19d implemented
+    `noaa-climate` for both metros on the mechanism the 2026-09-05 dispatch measured:
+    `data/v1` with EXPLICIT station ids resolved from `ghcnd-stations.txt` filtered locally.
+    It stores the 1991-2020 monthly normal (`MLY-CLDD-NORMAL`, base 65F — documented in NCEI's
+    `Readme_By-Variable_By-Station_Normals_Files.txt`, not inferred) alongside recent GSOM
+    monthly actuals, distinguished by `kind` and never combined. Austin reads
+    **USW00013958 Camp Mabry** (29-30 years of record); San Antonio reads
+    **USW00012970 Stinson** (19-22 years) after rejecting the nearer **USW00012909 Kelly AFB**
+    for a two-year estimated record. **Still blocked on address + CAD year-built**, and on a
+    first live runner ingestion — no generated file is committed yet.
+    See `docs/audits/round-19d-cdd-fetcher.md`.
+
+    **THE MULTIPLIER'S LABEL IS DECIDED AND OWNER-APPROVED — the round that builds AC
+    Lifespan must honour it.** A "runs N× the national average" reading is **THI analysis,
+    not a sourced claim.** Climate at a Glance publishes contiguous-U.S. CDD at base 65F for
+    1991-2020, so base and period both align with the local normal — but the national figure
+    is an **area-weighted mean over the contiguous United States** and the local figure is a
+    **single station's point value**. No station is the average of its metro, and no period
+    alignment turns a point into a mean. So: cite both NOAA sources, label the ratio as THI
+    analysis, and carry the point-versus-area caveat **in the reading itself, not a footnote**.
+    Never phrase it as "NOAA says Austin runs N× the national average." A clearly-labeled
+    derived comparison is publishable; a ratio presented as a NOAA finding is not.
   - 🔴 **Pipe Report** — needs **water hardness** ("grains hardness", from Austin Water quality
     reports). **No hardness feed exists**; `austin-water-stage` carries the drought stage only, and
     San Antonio has no equivalent. Also address + CAD year built.
@@ -1827,19 +1838,25 @@ says exactly what to check first if the first live GitHub Actions run
 comes back empty for that feed, rather than guessing blind a second
 time. `ercot.ts`, `tdiLosses.ts` and `txForestService.ts` remain untouched
 TODO stubs (endpoint unconfirmed, or need a key not yet provided).
-`noaaClimate.ts` was implemented in Round 19 against NCEI's token-free
-Access Data Service and **the 2026-09-05 probe falsified it**: that endpoint
-returns HTTP 400 `"A station is required"` and does not support the
-bounding-box station discovery the design rested on. Round 19b reverted it
-to a state that issues no request at all, with the measurement recorded in
-its header. **This is the standing example of the failure mode**: the round
-wrote a probe to settle an assumption and shipped the code depending on that
-assumption in the same round, instead of waiting for the answer. Round 19c
-adds a second lesson from the same feed — a probe's *sampling* can be wrong
-in a way that reads exactly like a finding. Round 19b concluded "no
-degree-day columns" from two stations its own sort key had picked worst-first
-by station-id alphabetical order; both were precipitation-only volunteer
-gauges. When a probe reports an absence, check what it actually looked at.
+`noaaClimate.ts` is **implemented and working as of Round 19d**, on
+`data/v1` with explicit station ids. Getting there cost three wrong turns and
+all three are worth keeping, because none was a coding error:
+
+  - **Round 19** shipped bounding-box station discovery in the same round as
+    the probe meant to validate it. The endpoint returns HTTP 400,
+    `"A station is required"`. *When a probe is being written to settle an
+    assumption, the code depending on that answer waits for it.*
+  - **Round 19b** then chose the static normals CSVs and ranked candidates by
+    station id ascending — which sorts `US1` (CoCoRaHS volunteers,
+    precipitation only) ahead of `USC` and `USW`. Both files it sampled had no
+    temperature at all and it concluded the product publishes no degree days.
+    *When a probe reports an absence, check what it actually looked at.*
+  - **Round 19c** re-ranked USW-first and found `MLY-CLDD-NORMAL` immediately.
+    The endpoint was never the problem; the bounding box was.
+
+**NEVER ASK AN NCEI ENDPOINT TO INTERPRET A BOUNDING BOX.** `data/v1` rejects
+one and `search/v1/data` rejects one ("Invalid search options"). Station
+resolution is a local filter over `ghcnd-stations.txt`.
 
 | Feed | Fetcher file | Real fetch | Env var(s) | Notes |
 |---|---|---|---|---|
@@ -2035,11 +2052,13 @@ whether the GitHub secret it needs is actually set, or whether a given
 status, a separate concept). It's now `"live"` for every feed with a real
 `fetchRaw()` implementation, including the nine wired in Round 2 —
 `tdi-losses`, `ercot`, `tx-forest-service` and `noaa-climate` are the ids
-still `"stub"` in `data-sources.yaml`. That is accurate for all four:
-Round 19 gave `noaa-climate` a real `fetchRaw()` and Round 19b reverted it
-after the probe falsified the mechanism, so it delivers nothing today. The
-id flips to `"live"` in the round that first sees a successful run — not
-before, because `/methodology/` renders that value.
+still `"stub"` in `data-sources.yaml`. That is accurate for all four today:
+Round 19d gave `noaa-climate` a working `fetchRaw()`, but no ingestion run
+has landed, so it has delivered nothing yet. The id flips to `"live"` in the
+round that first sees a successful run — not before, because `/methodology/`
+renders that value, and Round 19d measured exactly what flips there: the
+"12 are currently connected and live" count becomes 13 and the noaa-climate
+row gains a LIVE badge with its data-through date.
 
 ---
 

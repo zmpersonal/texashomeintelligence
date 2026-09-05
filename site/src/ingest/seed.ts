@@ -165,6 +165,15 @@ const GENERATORS: Record<string, Generator> = {
 // nor `verify-content`'s `looksSeeded` could recognise. A cooling-degree-day
 // count is a number a homeowner would act on; the honest bootstrap state is no
 // file at all.
+//
+// Round 19d: noaa-climate now has a WORKING fetcher returning real data, and it
+// STAYS in this set anyway. The two facts are unrelated. This list is not about
+// whether a fetch works — `permit-trade-activity` has been a working deep
+// fetcher for many rounds and is still here. It is about what the file should
+// contain in the window BEFORE the first successful run, and the answer for a
+// figure a homeowner would act on is nothing at all. A seeded cooling-degree-day
+// row would be an invented climate fact about a real city sitting on disk until
+// ingestion happens to run.
 const NEVER_SEED = new Set([
   "arr-collection-schedule",
   "austin-water-stage",
