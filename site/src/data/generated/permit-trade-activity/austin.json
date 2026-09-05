@@ -2,10 +2,10 @@
   "datasetId": "permit-trade-activity",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-09-04T13:32:39.479Z",
+  "status": "stale",
+  "lastAttemptAt": "2026-09-05T12:42:08.041Z",
   "lastSuccessAt": "2026-09-04T13:32:39.479Z",
-  "lastError": null,
+  "lastError": "Austin trade activity: incomplete read - server-side count(1) says 767 for this $where, the paged download returned 598. Refusing to publish counts from a partial read.",
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
     "url": "https://data.austintexas.gov/"

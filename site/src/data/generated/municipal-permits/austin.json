@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-04T13:32:00.352Z",
-  "lastSuccessAt": "2026-09-04T13:32:00.352Z",
+  "lastAttemptAt": "2026-09-05T12:41:59.710Z",
+  "lastSuccessAt": "2026-09-05T12:41:59.710Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -12156,16 +12156,6 @@
     {
       "observedAt": "2026-04-03T00:00:00.000Z",
       "ingestedAt": "2026-08-24T15:57:40.359Z",
-      "key": "2026-038468 EP",
-      "value": {
-        "permitType": "Auxiliary Power",
-        "workDescription": "Install new 444.69kW rooftop solar system to existing commercial only.",
-        "status": "Active"
-      }
-    },
-    {
-      "observedAt": "2026-04-03T00:00:00.000Z",
-      "ingestedAt": "2026-08-24T15:57:40.359Z",
       "key": "2026-038568 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -19877,7 +19867,7 @@
     },
     {
       "observedAt": "2026-09-02T00:00:00.000Z",
-      "ingestedAt": "2026-09-04T13:32:00.830Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
       "key": "2026-094769 EP",
       "value": {
         "permitType": "Repair",
@@ -19887,7 +19877,7 @@
     },
     {
       "observedAt": "2026-09-02T00:00:00.000Z",
-      "ingestedAt": "2026-09-04T13:32:00.830Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
       "key": "2026-108737 PP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -19897,7 +19887,7 @@
     },
     {
       "observedAt": "2026-09-02T00:00:00.000Z",
-      "ingestedAt": "2026-09-04T13:32:00.830Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
       "key": "2026-034244 PP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -19907,7 +19897,7 @@
     },
     {
       "observedAt": "2026-09-02T00:00:00.000Z",
-      "ingestedAt": "2026-09-04T13:32:00.830Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
       "key": "2026-111469 EP",
       "value": {
         "permitType": "Repair",
@@ -19917,7 +19907,7 @@
     },
     {
       "observedAt": "2026-09-02T00:00:00.000Z",
-      "ingestedAt": "2026-09-04T13:32:00.830Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
       "key": "2026-109628 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -19927,7 +19917,7 @@
     },
     {
       "observedAt": "2026-09-02T00:00:00.000Z",
-      "ingestedAt": "2026-09-04T13:32:00.830Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
       "key": "2026-024637 MP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -19937,7 +19927,7 @@
     },
     {
       "observedAt": "2026-09-02T00:00:00.000Z",
-      "ingestedAt": "2026-09-04T13:32:00.830Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
       "key": "2026-034244 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -19947,7 +19937,7 @@
     },
     {
       "observedAt": "2026-09-02T00:00:00.000Z",
-      "ingestedAt": "2026-09-04T13:32:00.830Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
       "key": "2026-092155 PP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -19957,12 +19947,104 @@
     },
     {
       "observedAt": "2026-09-02T00:00:00.000Z",
-      "ingestedAt": "2026-09-04T13:32:00.830Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
       "key": "2026-068172 EP",
       "value": {
         "permitType": "Remodel",
         "workDescription": "AT&T Rooftop Collocation.",
         "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-03T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "key": "2026-038468 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Install new 444.69kW rooftop solar system to existing commercial only.",
+        "status": "Final"
+      }
+    },
+    {
+      "observedAt": "2026-09-03T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "key": "2026-100985 PP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "ePlan: Residential Expedited Review - Addition and Remodel to Existing 2-Story Single Family Res. [4bed 2.5bath] Work to include: Enclosing existing breezeway to create a new office and new bath [4bed 3.5bath] with a new roofed outdoor living area. Redesign & replacement of decks & structure with ne",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-03T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "key": "2026-014406 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "7 DAY - renovation to include like for like HVAC replacement updated lighting fixtures/switches/outlets and replacement of new cabinets countertops and equipment construction of fire-rated partitions between units conversion of tubs to showers replacement of all gypsum board and interior doors found",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-03T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "key": "2026-109947 PP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "LS 8/3/26- Work without permit. Check Attic for structural changes and new electrical cable.\n\nExpress- remodel entire interior of home including paint new roof new bathrooms (plumbing fixtures and vanities) flooring throughout new windows like for like new kitchen cabinets and counters repair partia",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-03T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "key": "2026-014400 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "7 DAY - renovation to include like for like HVAC replacement updated lighting fixtures/switches/outlets and replacement of new cabinets countertops and equipment construction of fire-rated partitions between units conversion of tubs to showers replacement of all gypsum board and interior doors found",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-03T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "key": "2026-014412 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "7 DAY - renovation to include like for like HVAC replacement updated lighting fixtures/switches/outlets and replacement of new cabinets countertops and equipment construction of fire-rated partitions between units conversion of tubs to showers replacement of all gypsum board and interior doors found",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-03T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "key": "2026-115422 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Roof overlay with mechanically fastened TPO. Existing retail.",
+        "status": "Active",
+        "valuationUsd": 24699
+      }
+    },
+    {
+      "observedAt": "2026-09-03T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "key": "2023-015849 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Residential installation of a 3.2kW Roof-mounted solar with 8 panels.PV Array area of 172.92 sqft.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-03T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "key": "2026-114472 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express- Full tear-off of the existing 2002 composition shingle roof to the deck; replace with Class 4 impact-resistant SBS-modified asphalt laminate shingles color Driftwood matching existing. New underlayment valley metal flashing 2 in. drip edge and vent replacement; damaged decking sheets replac",
+        "status": "Active",
+        "valuationUsd": 1
       }
     }
   ]

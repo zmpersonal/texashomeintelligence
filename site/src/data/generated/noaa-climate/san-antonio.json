@@ -1,0 +1,14 @@
+{
+  "datasetId": "noaa-climate",
+  "location": "san-antonio",
+  "methodologyVersion": "v1",
+  "status": "error",
+  "lastAttemptAt": "2026-09-05T12:42:03.590Z",
+  "lastSuccessAt": null,
+  "lastError": "noaa-climate/san-antonio: no implemented fetch path. NOAA NCEI Global Summary of the Month rejects bounding-box station discovery: HTTP 400, errors: [{\"field\":\"stations\",\"message\":\"A station is required.\"}] (measured, Round 19b probe, 2026-09-05, both bbox orderings, both metros). The replacement (1991-2020 monthly normals station CSVs) is blocked on the Round 19b probe, which must establish the metro-to-station-file mapping and the CSV column layout before a fetcher is written — see docs/audits/round-19b-cdd-mechanism.md. Requested window 2025-09-05T12:42:03.590Z .. 2026-09-05T12:42:03.590Z.",
+  "source": {
+    "name": "NOAA NCEI U.S. Climate Normals, 1991-2020 (monthly)",
+    "url": "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/access/"
+  },
+  "observations": []
+}

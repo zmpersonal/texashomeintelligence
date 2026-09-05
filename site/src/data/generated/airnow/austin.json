@@ -2,10 +2,10 @@
   "datasetId": "airnow",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "stale",
-  "lastAttemptAt": "2026-09-04T13:32:05.715Z",
-  "lastSuccessAt": "2026-09-03T21:05:24.875Z",
-  "lastError": "AirNow fetch failed: HTTP 502 from https://www.airnowapi.org/aq/observation/zipCode/current/?format=application%2Fjson&zipCode=78701&distance=25&API_KEY=268D3CB0-045A-4E5E-8322-4BAC530E1A3A",
+  "status": "live",
+  "lastAttemptAt": "2026-09-05T12:42:05.649Z",
+  "lastSuccessAt": "2026-09-05T12:42:05.649Z",
+  "lastError": null,
   "source": {
     "name": "AirNow",
     "url": "https://www.airnow.gov"
@@ -180,6 +180,15 @@
       "value": {
         "aqi": 76,
         "category": "Moderate"
+      }
+    },
+    {
+      "observedAt": "2026-09-05T06:00:00.000Z",
+      "ingestedAt": "2026-09-05T12:42:06.089Z",
+      "key": "Austin-2026-09-05-6",
+      "value": {
+        "aqi": 41,
+        "category": "Good"
       }
     }
   ]
