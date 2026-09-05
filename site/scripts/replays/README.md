@@ -78,6 +78,20 @@ npx tsx --import ./scripts/register-raw.mjs \
                                              #   Reports 10/10 dead in this sandbox: every host
                                              #   is proxied. That is the environment, not a bug —
                                              #   citationcheckunit.ts is the one to trust locally.
+node scripts/replays/toolshubrender.mjs      # render — the /tools/ hub (Round 28). Fetches
+                                             #   EVERY route the hub links and asserts 200, and
+                                             #   asserts 404 on the three placeholders this round
+                                             #   deleted — a hub linking a page a round removed is
+                                             #   the same defect in reverse.
+                                             #   It also reads each tool's own refusal OFF THE TOOL
+                                             #   PAGE and checks the hub card against it, so the
+                                             #   hub cannot drift ahead of what it advertises.
+                                             #   (The dashboard card is verified against a ZIP page:
+                                             #   /dashboard/ is a selector and publishes no reading
+                                             #   to qualify.) Plus 320/360/390 and the card CTAs,
+                                             #   which shipped at 19px on the first build — a card
+                                             #   CTA is a standalone target, not a link in a
+                                             #   sentence, so the inline exception does not cover it.
 node scripts/replays/roofscanrender.mjs      # render — Roof Scan (Round 27). Every county row
                                              #   RE-DERIVED from noaa-storm-events and both permit
                                              #   totals re-summed over the window the PAGE names,
