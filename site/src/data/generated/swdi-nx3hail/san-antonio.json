@@ -1,0 +1,2445 @@
+{
+  "datasetId": "swdi-nx3hail",
+  "location": "san-antonio",
+  "methodologyVersion": "v1",
+  "status": "live",
+  "lastAttemptAt": "2026-09-05T19:00:44.114Z",
+  "lastSuccessAt": "2026-09-05T19:00:44.114Z",
+  "lastError": null,
+  "source": {
+    "name": "NOAA Severe Weather Data Inventory — nx3hail (NEXRAD radar-derived hail signatures, not confirmed hail reports)",
+    "url": "https://www.ncdc.noaa.gov/swdiws/"
+  },
+  "observations": [
+    {
+      "observedAt": "2026-08-27T20:34:56.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:34:56Z-KEWX-J0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "J0",
+        "lat": 29.904,
+        "lon": -98.383,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T20:36:59.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:36:59Z-KGRK-N5",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "N5",
+        "lat": 29.909,
+        "lon": -98.379,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T20:38:35.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:38:35Z-KDFX-R5",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "R5",
+        "lat": 29.894,
+        "lon": -98.382,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T20:40:52.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:40:52Z-KGRK-N5",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "N5",
+        "lat": 29.898,
+        "lon": -98.393,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T20:41:02.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:41:02Z-KEWX-J0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "J0",
+        "lat": 29.907,
+        "lon": -98.403,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T20:44:22.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:44:22Z-KDFX-R5",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "R5",
+        "lat": 29.894,
+        "lon": -98.382,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T20:47:06.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:47:06Z-KEWX-J0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "J0",
+        "lat": 29.893,
+        "lon": -98.391,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T20:47:06.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:47:06Z-KEWX-Q0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Q0",
+        "lat": 29.752,
+        "lon": -98.311,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T20:52:34.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:52:34Z-KGRK-B7",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "B7",
+        "lat": 29.598,
+        "lon": -98.753,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T20:53:11.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:53:11Z-KEWX-Y0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Y0",
+        "lat": 29.592,
+        "lon": -98.745,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 50,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T20:53:11.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:53:11Z-KEWX-Q0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Q0",
+        "lat": 29.756,
+        "lon": -98.31,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 60,
+        "maxSize": 1.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T20:56:00.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:56:00Z-KDFX-M7",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "M7",
+        "lat": 29.6,
+        "lon": -98.74,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T20:56:00.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:56:00Z-KDFX-O6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O6",
+        "lat": 29.751,
+        "lon": -98.31,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T20:56:28.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:56:28Z-KGRK-N6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "N6",
+        "lat": 29.759,
+        "lon": -98.306,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T20:59:16.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T20:59:16Z-KEWX-Q0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Q0",
+        "lat": 29.759,
+        "lon": -98.329,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 90,
+        "maxSize": 2.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T21:00:22.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T21:00:22Z-KGRK-N6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "N6",
+        "lat": 29.759,
+        "lon": -98.306,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 60,
+        "maxSize": 1.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T21:01:56.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T21:01:56Z-KDFX-O6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O6",
+        "lat": 29.751,
+        "lon": -98.31,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 60,
+        "maxSize": 1.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T21:04:16.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T21:04:16Z-KGRK-N6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "N6",
+        "lat": 29.746,
+        "lon": -98.318,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 70,
+        "maxSize": 1.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T21:05:21.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T21:05:21Z-KEWX-Q0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Q0",
+        "lat": 29.755,
+        "lon": -98.33,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 60,
+        "maxSize": 1.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T21:07:51.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T21:07:51Z-KDFX-O6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O6",
+        "lat": 29.777,
+        "lon": -98.338,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T21:08:24.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T21:08:24Z-KGRK-N6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "N6",
+        "lat": 29.76,
+        "lon": -98.338,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 50,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T21:11:26.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T21:11:26Z-KEWX-Q0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Q0",
+        "lat": 29.745,
+        "lon": -98.332,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T21:12:18.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T21:12:18Z-KGRK-N6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "N6",
+        "lat": 29.746,
+        "lon": -98.318,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T21:13:54.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T21:13:54Z-KDFX-O6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O6",
+        "lat": 29.747,
+        "lon": -98.329,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T21:17:30.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T21:17:30Z-KEWX-Q0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Q0",
+        "lat": 29.728,
+        "lon": -98.353,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T21:17:30.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T21:17:30Z-KEWX-Q3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Q3",
+        "lat": 29.636,
+        "lon": -98.886,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T21:19:41.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T21:19:41Z-KDFX-O6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O6",
+        "lat": 29.713,
+        "lon": -98.338,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T23:54:13.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T23:54:13Z-KCRP-I0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "I0",
+        "lat": 29.249,
+        "lon": -98.153,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T23:58:36.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T23:58:36Z-KDFX-N7",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "N7",
+        "lat": 29.289,
+        "lon": -98.107,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T23:59:37.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T23:59:37Z-KEWX-W1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "W1",
+        "lat": 29.691,
+        "lon": -98.756,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 0,
+        "maxSize": 0.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-27T23:59:37.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-27T23:59:37Z-KEWX-Q2",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Q2",
+        "lat": 29.529,
+        "lon": -98.607,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 0,
+        "maxSize": 0.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:20:25.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:20:25Z-KCRP-X0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "X0",
+        "lat": 29.237,
+        "lon": -98.59,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:20:42.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:20:42Z-KEWX-Y1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Y1",
+        "lat": 29.247,
+        "lon": -98.586,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:22:43.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:22:43Z-KGRK-P1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "P1",
+        "lat": 29.239,
+        "lon": -98.563,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:26:11.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:26:11Z-KDFX-Q9",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "Q9",
+        "lat": 29.262,
+        "lon": -98.603,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:26:58.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:26:58Z-KCRP-X0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "X0",
+        "lat": 29.251,
+        "lon": -98.6,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:27:45.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:27:45Z-KEWX-Y1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Y1",
+        "lat": 29.244,
+        "lon": -98.61,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 50,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:33:02.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:33:02Z-KDFX-T9",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "T9",
+        "lat": 29.19,
+        "lon": -98.129,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:33:02.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:33:02Z-KDFX-Q9",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "Q9",
+        "lat": 29.263,
+        "lon": -98.622,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:33:06.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:33:06Z-KGRK-H0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "H0",
+        "lat": 29.197,
+        "lon": -98.119,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:33:06.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:33:06Z-KGRK-P1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "P1",
+        "lat": 29.243,
+        "lon": -98.603,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:33:30.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:33:30Z-KCRP-X0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "X0",
+        "lat": 29.248,
+        "lon": -98.64,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:34:47.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:34:47Z-KEWX-Y1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Y1",
+        "lat": 29.252,
+        "lon": -98.642,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:36:47.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:36:47Z-KGRK-P1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "P1",
+        "lat": 29.248,
+        "lon": -98.644,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:36:47.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:36:47Z-KGRK-H0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "H0",
+        "lat": 29.193,
+        "lon": -98.157,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:46:31.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:46:31Z-KDFX-T9",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "T9",
+        "lat": 29.163,
+        "lon": -98.226,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 0,
+        "maxSize": 0.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:48:52.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:48:52Z-KEWX-W2",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "W2",
+        "lat": 29.146,
+        "lon": -98.286,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:55:11.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:55:11Z-KGRK-H2",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "H2",
+        "lat": 29.19,
+        "lon": -98.513,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-28T00:55:54.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-28T00:55:54Z-KEWX-Z3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Z3",
+        "lat": 29.191,
+        "lon": -98.519,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 50,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T00:09:50.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T00:09:50Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.816,
+        "lon": -98.033,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T00:11:46.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T00:11:46Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.814,
+        "lon": -98.033,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 70,
+        "maxSize": 1.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T00:15:23.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T00:15:23Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.816,
+        "lon": -98.033,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 60,
+        "maxSize": 1.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T00:16:48.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T00:16:48Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.814,
+        "lon": -98.033,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 70,
+        "maxSize": 1.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T00:21:25.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T00:21:25Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.816,
+        "lon": -98.033,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 60,
+        "maxSize": 1.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T00:21:50.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T00:21:50Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.824,
+        "lon": -98.051,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 50,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T00:26:53.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T00:26:53Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.824,
+        "lon": -98.051,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T00:27:28.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T00:27:28Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.812,
+        "lon": -98.051,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T00:27:28.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T00:27:28Z-KDFX-G2",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "G2",
+        "lat": 29.92,
+        "lon": -98.189,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T00:42:02.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T00:42:02Z-KGRK-K0",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "K0",
+        "lat": 29.863,
+        "lon": -98.179,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T00:54:43.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T00:54:43Z-KCRP-K1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "K1",
+        "lat": 29.753,
+        "lon": -98.032,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:08:24.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:08:24Z-KCRP-K1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "K1",
+        "lat": 29.712,
+        "lon": -98.062,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:08:24.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:08:24Z-KCRP-V4",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "V4",
+        "lat": 29.418,
+        "lon": -98.727,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 60,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:09:02.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:09:02Z-KEWX-C2",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "C2",
+        "lat": 29.417,
+        "lon": -98.761,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 70,
+        "maxSize": 1.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:11:19.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:11:19Z-KDFX-X2",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "X2",
+        "lat": 29.427,
+        "lon": -98.764,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 50,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:11:52.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:11:52Z-KGRK-A8",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "A8",
+        "lat": 29.399,
+        "lon": -98.736,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:15:07.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:15:07Z-KCRP-K1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "K1",
+        "lat": 29.671,
+        "lon": -98.09,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:15:07.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:15:07Z-KCRP-V4",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "V4",
+        "lat": 29.413,
+        "lon": -98.77,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 50,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:15:38.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:15:38Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.658,
+        "lon": -98.109,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:16:56.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:16:56Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.66,
+        "lon": -98.112,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:19:58.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:19:58Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.658,
+        "lon": -98.109,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:20:57.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:20:57Z-KCRP-V2",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "V2",
+        "lat": 29.642,
+        "lon": -98.415,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:20:57.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:20:57Z-KCRP-K1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "K1",
+        "lat": 29.646,
+        "lon": -98.122,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:21:32.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:21:32Z-KGRK-C6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C6",
+        "lat": 29.669,
+        "lon": -98.391,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:21:32.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:21:32Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.646,
+        "lon": -98.122,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:22:51.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:22:51Z-KEWX-Y8",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Y8",
+        "lat": 29.674,
+        "lon": -98.41,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:24:14.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:24:14Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.655,
+        "lon": -98.128,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:26:08.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:26:08Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.643,
+        "lon": -98.153,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:26:47.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:26:47Z-KCRP-K1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "K1",
+        "lat": 29.652,
+        "lon": -98.165,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:28:50.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:28:50Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.616,
+        "lon": -98.159,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:30:50.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:30:50Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.627,
+        "lon": -98.195,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:32:36.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:32:36Z-KCRP-K1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "K1",
+        "lat": 29.626,
+        "lon": -98.196,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:33:26.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:33:26Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.614,
+        "lon": -98.177,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:49:53.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:49:53Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.556,
+        "lon": -98.281,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:50:45.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:50:45Z-KEWX-E5",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "E5",
+        "lat": 29.535,
+        "lon": -98.337,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:50:45.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:50:45Z-KEWX-Q5",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Q5",
+        "lat": 29.532,
+        "lon": -98.709,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 50,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:51:19.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:51:19Z-KCRP-K1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "K1",
+        "lat": 29.548,
+        "lon": -98.327,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:51:19.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:51:19Z-KCRP-U9",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "U9",
+        "lat": 29.555,
+        "lon": -98.731,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:51:21.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:51:21Z-KDFX-F4",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "F4",
+        "lat": 29.531,
+        "lon": -98.53,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:51:21.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:51:21Z-KDFX-B3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "B3",
+        "lat": 29.552,
+        "lon": -98.728,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 50,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:54:39.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:54:39Z-KGRK-C6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C6",
+        "lat": 29.531,
+        "lon": -98.561,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:55:45.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:55:45Z-KDFX-B3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "B3",
+        "lat": 29.534,
+        "lon": -98.686,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:57:47.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:57:47Z-KEWX-Q5",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Q5",
+        "lat": 29.527,
+        "lon": -98.727,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:57:53.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:57:53Z-KCRP-K1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "K1",
+        "lat": 29.508,
+        "lon": -98.474,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T01:59:25.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T01:59:25Z-KGRK-E8",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "E8",
+        "lat": 29.526,
+        "lon": -98.697,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:00:24.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:00:24Z-KDFX-B3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "B3",
+        "lat": 29.532,
+        "lon": -98.704,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:03:57.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:03:57Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.473,
+        "lon": -98.38,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:03:57.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:03:57Z-KGRK-E8",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "E8",
+        "lat": 29.494,
+        "lon": -98.685,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:04:12.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:04:12Z-KCRP-Q6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "Q6",
+        "lat": 29.498,
+        "lon": -98.691,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:04:12.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:04:12Z-KCRP-N4",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "N4",
+        "lat": 29.477,
+        "lon": -98.415,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:04:50.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:04:50Z-KEWX-Q5",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Q5",
+        "lat": 29.501,
+        "lon": -98.697,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:04:50.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:04:50Z-KEWX-Y8",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Y8",
+        "lat": 29.491,
+        "lon": -98.527,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 60,
+        "maxSize": 1.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:05:00.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:05:00Z-KDFX-F4",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "F4",
+        "lat": 29.493,
+        "lon": -98.62,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:08:30.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:08:30Z-KGRK-E8",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "E8",
+        "lat": 29.494,
+        "lon": -98.685,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:08:30.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:08:30Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.474,
+        "lon": -98.415,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 50,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:09:15.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:09:15Z-KDFX-F4",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "F4",
+        "lat": 29.507,
+        "lon": -98.7,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 0,
+        "maxSize": 0.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:09:15.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:09:15Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.458,
+        "lon": -98.442,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:10:47.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:10:47Z-KCRP-Q6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "Q6",
+        "lat": 29.498,
+        "lon": -98.691,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 0,
+        "maxSize": 0.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:10:47.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:10:47Z-KCRP-N4",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "N4",
+        "lat": 29.463,
+        "lon": -98.448,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 50,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:11:53.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:11:53Z-KEWX-Q5",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Q5",
+        "lat": 29.529,
+        "lon": -98.767,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:11:53.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:11:53Z-KEWX-Y8",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Y8",
+        "lat": 29.452,
+        "lon": -98.525,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:13:04.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:13:04Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.436,
+        "lon": -98.486,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:13:32.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:13:32Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.449,
+        "lon": -98.537,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:17:37.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:17:37Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.436,
+        "lon": -98.486,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:17:49.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:17:49Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.421,
+        "lon": -98.552,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:17:50.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:17:50Z-KCRP-N4",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "N4",
+        "lat": 29.433,
+        "lon": -98.473,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:18:56.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:18:56Z-KEWX-Y8",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Y8",
+        "lat": 29.42,
+        "lon": -98.547,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:22:11.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:22:11Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.4,
+        "lon": -98.558,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:22:26.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:22:26Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.393,
+        "lon": -98.569,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:24:38.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:24:38Z-KCRP-N4",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "N4",
+        "lat": 29.388,
+        "lon": -98.528,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:25:58.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:25:58Z-KEWX-Y8",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Y8",
+        "lat": 29.395,
+        "lon": -98.551,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:26:31.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:26:31Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.396,
+        "lon": -98.52,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:26:43.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:26:43Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.369,
+        "lon": -98.529,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:30:51.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:30:51Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.369,
+        "lon": -98.542,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:31:20.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:31:20Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.368,
+        "lon": -98.548,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:31:27.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:31:27Z-KCRP-N4",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "N4",
+        "lat": 29.372,
+        "lon": -98.56,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:33:00.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:33:00Z-KEWX-Y8",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Y8",
+        "lat": 29.348,
+        "lon": -98.607,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 60,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:35:12.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:35:12Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.342,
+        "lon": -98.565,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 50,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:35:56.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:35:56Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.34,
+        "lon": -98.585,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1.25,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:38:16.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:38:16Z-KCRP-N4",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "N4",
+        "lat": 29.324,
+        "lon": -98.612,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:40:02.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:40:02Z-KEWX-Y8",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "Y8",
+        "lat": 29.32,
+        "lon": -98.631,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:40:45.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:40:45Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.314,
+        "lon": -98.603,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:43:53.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:43:53Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.321,
+        "lon": -98.627,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 1,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:45:10.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:45:10Z-KDFX-O3",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDFX",
+        "cellId": "O3",
+        "lat": 29.313,
+        "lon": -98.641,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:45:20.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:45:20Z-KCRP-N4",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KCRP",
+        "cellId": "N4",
+        "lat": 29.307,
+        "lon": -98.642,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    },
+    {
+      "observedAt": "2026-08-29T02:48:13.000Z",
+      "ingestedAt": "2026-09-05T19:00:44.680Z",
+      "key": "2026-08-29T02:48:13Z-KGRK-C1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "C1",
+        "lat": 29.294,
+        "lon": -98.65,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county"
+      }
+    }
+  ]
+}
