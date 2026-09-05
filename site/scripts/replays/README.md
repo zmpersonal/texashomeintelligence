@@ -78,6 +78,24 @@ npx tsx --import ./scripts/register-raw.mjs \
                                              #   Reports 10/10 dead in this sandbox: every host
                                              #   is proxied. That is the environment, not a bug —
                                              #   citationcheckunit.ts is the one to trust locally.
+node scripts/replays/aclifespanrender.mjs    # render — AC Lifespan (Round 25). Structure and
+                                             #   both metros' figures RE-DERIVED from
+                                             #   src/data/generated (an assertion cannot pass by
+                                             #   agreeing with a number someone typed into a
+                                             #   brief); the honesty guards — no replacement
+                                             #   timing, no cost beyond the published rate, no
+                                             #   multiplier, no tonnage, and NO PERCENTAGE AT ALL,
+                                             #   which is the guard standing where an unsourced
+                                             #   99.79% sat until review; the homeowner-reported
+                                             #   label changing on the first keystroke and back
+                                             #   when cleared; tap targets at 320px; and the page
+                                             #   with scripting switched off.
+                                             #   Two traps it walked into itself, both recorded in
+                                             #   docs/audits/round-25-ac-lifespan.md: .acl-bucket
+                                             #   is capitalised by CSS so innerText comes back
+                                             #   shouted (compare case-insensitively), and the
+                                             #   first no-payback pattern matched the sentence
+                                             #   that REFUSES to give one.
 node scripts/replays/triagerender.mjs        # render — Plumbing Triage (Round 18). Every
                                              #   screen, the focus/terminal proofs, tap
                                              #   targets, and the no-cost / no-referral guards.
@@ -87,6 +105,21 @@ node scripts/replays/saservicerender.mjs     # render — the six below-hero ser
                                              #   both metros (Round 10 SA, Round 15 Austin)
 node scripts/replays/footerchrome.mjs        # render — sitewide footer chrome (Round 10b)
 node scripts/replays/r7replay.mjs            # render — the big one
+```
+
+## One thing that is not obvious about the stylesheet
+
+**Tailwind 4 auto-detects its sources from the project root, and `scripts/` is inside it.** A bare
+utility-shaped token anywhere in a scanned file — inside a plain CSS declaration, or inside a code
+comment in a replay — emits that utility into the **sitewide** stylesheet, which changes
+`Base.<hash>.css` and therefore the `<link>` on all 267 pages. Round 25 hit it twice: once from the longhand
+flex wrapping property in a page's own `<style>` (rewritten to the `flex-flow` shorthand, which is
+identical CSS and is not a utility name), once from a comment in `aclifespanrender.mjs` naming a
+capitalising `text-transform` (reworded). Neither token is spelled out here, for the same reason. If a round that should be additive rehashes every page, this is
+the first thing to check:
+
+```bash
+ls site/dist/client/_astro/Base.*.css     # same hash before and after = nothing leaked
 ```
 
 ## The browser binary

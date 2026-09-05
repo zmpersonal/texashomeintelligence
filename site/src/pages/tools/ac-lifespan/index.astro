@@ -1,0 +1,349 @@
+---
+/**
+ * /tools/ac-lifespan/ — the second hero tool.
+ *
+ * ── STATIC FIRST, JS FOR ONE THING ────────────────────────────────────────
+ * Every figure on this page is in the served HTML: both metros' cooling load,
+ * the Texas electricity rate, the 25C position and the warranty terms. Nothing
+ * is fetched, nothing is computed in the browser except one piece of
+ * arithmetic on a number the homeowner types, and that piece degrades to the
+ * convention itself with a line saying so. CLAUDE.md: facts render in static
+ * HTML, charts and personalisation are enhancement.
+ *
+ * ── THE READINGS ARE NOT RE-DERIVED HERE ──────────────────────────────────
+ * `contextReading()` is the same function the HVAC service pages call, so the
+ * cooling-load framing Round 20 published and the electricity rate Round 10b
+ * restored arrive already assembled — label, value, freshness, source and the
+ * dual-date note. Re-deriving them would give this page a second place for the
+ * same number to drift.
+ *
+ * ── WHAT IS DELIBERATELY ABSENT ───────────────────────────────────────────
+ * No address field, no parcel lookup, no permit history for a specific home,
+ * no tonnage, no cost range, no runtime multiplier, no replacement window. The
+ * design's copy deck asks for all of them; docs/audits/round-25-ac-lifespan.md
+ * records which data does not exist for each. Approximating any of them would
+ * be inventing a fact about someone's house.
+ */
+import Base from "../../../layouts/Base.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import DataStatus from "../../../components/DataStatus.astro";
+import { contextReading } from "../../../lib/belowHeroReadings";
+import { SERVICE_NOTICES } from "../../../data/serviceNotices";
+import { COPY, LIMITS, METROS, WARRANTY, WARRANTY_VERDICTS } from "../../../data/acLifespan";
+import { formatDate, machineDate } from "../../../lib/format";
+
+const title = "Air conditioning in Austin and San Antonio: cooling load, warranty terms and the 25C credit | Texas Home Intelligence";
+const description =
+  "How much cooling a typical year demands in Austin and San Antonio, from NOAA's 1991-2020 " +
+  "normals; where an entered system age sits against common parts-warranty terms; the Texas " +
+  "residential electricity rate; and the expired federal 25C credit. No replacement advice.";
+
+// Built at build time from the generated datasets — never a literal here.
+const cooling = METROS.map((m) => ({
+  metro: m,
+  reading: contextReading("cooling-load", m.id, m.label),
+}));
+const rate = contextReading("electricity-rate", "austin", "Austin");
+
+// The 25C notice, reused rather than restated. It is an HVAC notice, so it is
+// read from the same catalogue the service pages read.
+const notice = (SERVICE_NOTICES["austin/hvac"] ?? []).find((n) => /25C/.test(n.heading));
+---
+
+<Base title={title} description={description}>
+  <Breadcrumbs
+    crumbs={[
+      { name: "Home", url: "/" },
+      { name: "Tools", url: "/tools/" },
+      { name: "AC Lifespan", url: "/tools/ac-lifespan/" },
+    ]}
+  />
+
+  <section class="hero">
+    <div class="wrap" style="max-width:820px;">
+      <span class="eyebrow">{COPY.eyebrow}</span>
+      <h1>{COPY.h1}</h1>
+      <p class="lede">{COPY.lede}</p>
+      <p class="acl-honesty"><strong>{COPY.honestyLine}</strong></p>
+    </div>
+  </section>
+
+  {/* ── #your-system — the only input, and the label that follows it ────── */}
+  <section class="block" id="your-system">
+    <div class="wrap" style="max-width:820px;">
+      <h2>{COPY.ageHeading}</h2>
+      <p>{COPY.ageBody}</p>
+
+      <div class="card acl-input-card">
+        <label class="acl-label" for="acl-age">{COPY.ageLabel}</label>
+        <div class="acl-field-row">
+          <input
+            id="acl-age"
+            class="acl-age"
+            type="number"
+            min="0"
+            max="60"
+            step="1"
+            inputmode="numeric"
+            autocomplete="off"
+            aria-describedby="acl-age-hint acl-age-bucket"
+          />
+          {/*
+            REQUIREMENT 4 of data-labeling-spec.md, and the case it was written
+            for: the label must change VISIBLY at the moment of edit. It is
+            aria-live so a screen reader is told too — the spec forbids treating
+            these as decoration, so it is never aria-hidden.
+          */}
+          <span
+            id="acl-age-bucket"
+            class="acl-bucket"
+            data-state="empty"
+            role="status"
+            aria-live="polite"
+          >{COPY.ageBucketEmpty}</span>
+        </div>
+        <p class="acl-hint" id="acl-age-hint">{COPY.ageHint}</p>
+      </div>
+
+      <div class="card acl-verdict-card">
+        <p class="metric-label">Parts warranty, common industry terms</p>
+        <p class="acl-term">{WARRANTY.termLine}</p>
+        <p id="acl-verdict" class="acl-verdict" data-empty="true">{COPY.ageEmptyState}</p>
+        <p class="metric-note">{WARRANTY.varianceLine}</p>
+        <p class="acl-nojs">{COPY.ageNoJs}</p>
+      </div>
+    </div>
+  </section>
+
+  {/*
+    ══ GATE SLOT ══════════════════════════════════════════════════════════
+    A gate would go HERE, between #your-system and #cooling-load. Everything
+    above is one input the homeowner already has; everything below is
+    metro-level published data. Ordering the page this way means a gate can be
+    inserted without moving or rewriting a single block below it.
+    NOT BUILT — this round ships ungated by instruction.
+  */}
+
+  <section class="block alt" id="cooling-load">
+    <div class="wrap" style="max-width:820px;">
+      <h2>{COPY.coolingHeading}</h2>
+      <p>{COPY.coolingBody}</p>
+      <div class="acl-cards">
+        {cooling.map(({ metro, reading }) =>
+          reading ? (
+            <div class="card data-card acl-metro-card" data-metro={metro.id}>
+              <p class="metric-label">{reading.label}</p>
+              <p class="metric-value">{reading.value}</p>
+              {reading.note && <p class="metric-note">{reading.note}</p>}
+              <DataStatus
+                status={reading.freshness.display}
+                asOf={reading.freshness.asOf}
+                dataThrough={reading.freshness.dataThrough}
+                source={reading.sourceName}
+              />
+            </div>
+          ) : (
+            <div class="card acl-metro-card" data-metro={metro.id}>
+              <p class="metric-label">{metro.label}</p>
+              <p class="metric-note">
+                We hold no current cooling-load reading for {metro.label}. We would rather show
+                nothing than attach an unrelated measurement to it.
+              </p>
+            </div>
+          ),
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="running-cost">
+    <div class="wrap" style="max-width:820px;">
+      <h2>{COPY.rateHeading}</h2>
+      <p>{COPY.rateBody}</p>
+      {rate && (
+        <div class="card data-card">
+          <p class="metric-label">{rate.label}</p>
+          <p class="metric-value">{rate.value}</p>
+          <DataStatus
+            status={rate.freshness.display}
+            asOf={rate.freshness.asOf}
+            dataThrough={rate.freshness.dataThrough}
+            source={rate.sourceName}
+          />
+          {rate.href && (
+            <p style="margin-top:12px;">
+              <a href={rate.href}>{rate.linkLabel ?? "Full data, sources and limitations"} &rarr;</a>
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  </section>
+
+  {notice && (
+    <section class="block alt" id="tax-credit">
+      <div class="wrap" style="max-width:820px;">
+        <h2>{COPY.creditHeading}</h2>
+        <h3>{notice.heading}</h3>
+        <p>{notice.body}</p>
+        <p class="data-meta">
+          Source: <a href={notice.sourceUrl}>{notice.sourceName}</a>
+          <span aria-hidden="true" class="data-meta-sep">·</span>
+          <span>
+            Confirmed <time datetime={machineDate(notice.confirmedOn)}>{formatDate(notice.confirmedOn)}</time>
+          </span>
+        </p>
+      </div>
+    </section>
+  )}
+
+  <section class="block" id="limits">
+    <div class="wrap" style="max-width:820px;">
+      <h2>{COPY.limitsHeading}</h2>
+      <ul class="key-findings">
+        {LIMITS.map((l) => (
+          <li><strong>{l.heading}.</strong> {l.body}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  {/*
+    ══ REFERRAL SLOT ══════════════════════════════════════════════════════
+    A contractor handoff would go HERE, AFTER #limits and never before it: a
+    homeowner should read what the tool cannot see before being offered an
+    introduction. Round 24's /privacy/ states that nothing is shared with any
+    company and that no list of companies exists — that stays true until a
+    handoff mechanism and a legal read exist.
+    NOT BUILT.
+  */}
+
+  <section class="block alt" id="sources">
+    <div class="wrap" style="max-width:820px;">
+      <h2>{COPY.sourcesHeading}</h2>
+      <ul class="key-findings">
+        {cooling.map(({ metro, reading }) =>
+          reading ? (
+            <li>
+              <strong>{metro.label} cooling load.</strong> {reading.sourceName} &mdash;{" "}
+              <a href={reading.sourceUrl}>{reading.sourceUrl}</a>
+            </li>
+          ) : null,
+        )}
+        {rate && (
+          <li>
+            <strong>Electricity rate.</strong> {rate.sourceName} &mdash;{" "}
+            <a href={rate.sourceUrl}>{rate.sourceUrl}</a>
+          </li>
+        )}
+        {notice && (
+          <li>
+            <strong>Federal tax credit.</strong> {notice.sourceName} &mdash;{" "}
+            <a href={notice.sourceUrl}>{notice.sourceUrl}</a>
+          </li>
+        )}
+        <li>
+          <strong>Warranty terms.</strong> A general industry convention, stated as one. No
+          manufacturer's warranty document was read for this page, and none is cited.
+        </li>
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<script
+  is:inline
+  define:vars={{
+    REG: WARRANTY.registeredYears,
+    UNREG: WARRANTY.unregisteredYears,
+    V: WARRANTY_VERDICTS,
+    EMPTY_LABEL: COPY.ageBucketEmpty,
+    FILLED_LABEL: COPY.ageBucketFilled,
+    EMPTY_STATE: COPY.ageEmptyState,
+  }}
+>
+  (function () {
+    var input = document.getElementById("acl-age");
+    var bucket = document.getElementById("acl-age-bucket");
+    var verdict = document.getElementById("acl-verdict");
+    if (!input || !bucket || !verdict) return;
+    // With scripts running, the no-JS explanation is not true, so it goes.
+    document.documentElement.setAttribute("data-acl-js", "1");
+
+    function update() {
+      var raw = input.value.trim();
+      var n = raw === "" ? NaN : Number(raw);
+      var valid = raw !== "" && Number.isFinite(n) && n >= 0 && n <= 60;
+
+      // The label follows the input. This is the interaction the labelling
+      // spec calls the most important one in the system.
+      bucket.setAttribute("data-state", valid ? "reported" : "empty");
+      bucket.textContent = valid ? FILLED_LABEL : EMPTY_LABEL;
+
+      if (!valid) {
+        verdict.setAttribute("data-empty", "true");
+        verdict.textContent = EMPTY_STATE;
+        return;
+      }
+      verdict.setAttribute("data-empty", "false");
+      var years = Math.floor(n);
+      var line = years < UNREG ? V.withinBoth : years < REG ? V.registeredOnly : V.outsideBoth;
+      verdict.textContent =
+        "You entered " + years + (years === 1 ? " year" : " years") + ". " + line;
+    }
+    input.addEventListener("input", update);
+    input.addEventListener("change", update);
+    update();
+  })();
+</script>
+
+<style>
+  .acl-honesty { margin-top: 14px; }
+  .acl-input-card, .acl-verdict-card { margin-top: 18px; }
+  .acl-label { display: block; font-weight: 600; margin-bottom: 8px; }
+  /*
+    The source list prints each citation as its full URL, and a URL is one
+    unbreakable word. At 320px the NOAA normals URL is 301px wide inside a
+    ~292px column, which put the WHOLE PAGE into horizontal scroll — a defect a
+    green build cannot see and the render replay caught on its first run.
+  */
+  #sources a { overflow-wrap: anywhere; }
+
+  /* flex-flow rather than the two-property spelling of the same thing: Tailwind 4
+     scans this file for class candidates, and the shorthand's hyphenated property
+     name is itself a utility name, so writing it here would emit that utility into
+     the SITEWIDE stylesheet and rehash every page on the site. Identical CSS. */
+  .acl-field-row { display: flex; align-items: center; gap: 12px; flex-flow: row wrap; }
+  /* 48px minimum on the control itself — this is the only tap target on the page. */
+  .acl-age {
+    min-height: 48px; min-width: 8ch; padding: 10px 12px; font-size: 1.05rem;
+    border: 1px solid var(--color-border, #c9ced6); border-radius: 8px;
+  }
+  .acl-hint { margin-top: 10px; font-size: 0.9rem; opacity: 0.8; }
+  .acl-term { margin: 0 0 10px; }
+  .acl-verdict { margin: 0 0 10px; font-weight: 600; }
+  .acl-verdict[data-empty="true"] { font-weight: 400; opacity: 0.85; }
+  .acl-cards { display: grid; gap: 16px; margin-top: 18px; }
+  @media (min-width: 780px) { .acl-cards { grid-template-columns: 1fr 1fr; } }
+
+  /* The bucket chip. Two states, and they must not look alike: an entered
+     value is not a record and the page has to say so at a glance, without a
+     legend (data-labeling-spec.md requirement 1). */
+  .acl-bucket {
+    display: inline-block; padding: 6px 10px; border-radius: 999px;
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em;
+    text-transform: uppercase; border: 1px solid;
+  }
+  .acl-bucket[data-state="empty"] {
+    background: transparent; border-style: dashed;
+    border-color: var(--color-border, #c9ced6); color: var(--color-text-muted, #5a6472);
+  }
+  .acl-bucket[data-state="reported"] {
+    background: var(--color-accent-soft, #fdf1dc); border-style: solid;
+    border-color: var(--color-accent, #b8791f); color: var(--color-accent-ink, #6b4310);
+  }
+
+  /* Present when scripts do not run; removed when they do. */
+  .acl-nojs { margin: 0; font-size: 0.9rem; opacity: 0.85; }
+  :global(html[data-acl-js]) .acl-nojs { display: none; }
+</style>
