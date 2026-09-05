@@ -45,10 +45,28 @@ function row(t: string, lon: number, lat: number, radar: string, cell: string, s
 }
 
 let requested: string[] = [];
-function installFetch(payload: string | { status: number; text: string }) {
+/**
+ * `count` is what SWDI's `stat=count` should answer. `null` makes that query
+ * fail, which must read as "unavailable" and never as "disagrees".
+ */
+function installFetch(
+  payload: string | { status: number; text: string },
+  count: number | string | null = null,
+) {
   requested = [];
   globalThis.fetch = (async (input: any) => {
-    requested.push(String(input));
+    const url = String(input);
+    requested.push(url);
+    if (url.includes("stat=count")) {
+      if (count === null) {
+        return { ok: false, status: 500, async text() { return "no count"; } } as any;
+      }
+      const text = `#SWDI
+${count}
+totalTimeInSeconds,0.02
+`;
+      return { ok: true, status: 200, async text() { return text; } } as any;
+    }
     if (typeof payload === "string") {
       return { ok: true, status: 200, async text() { return payload; } } as any;
     }
@@ -66,7 +84,7 @@ async function main() {
   installFetch(body([
     row("2026-05-14T22:11:00Z", -97.71, 30.31, "KGRK", "K1", 1.75),
     row("2026-06-02T19:40:00Z", -97.80, 30.19, "KGRK", "K2", 1),
-  ]));
+  ]), 2);
   let obs = await run(swdiHailAustin);
   assert("two records survive", obs.length === 2, `got ${obs.length}`);
   assert("no observation came from the trailer",
@@ -85,8 +103,18 @@ async function main() {
                   && !/confirmed|reported|fell/i.test(o.value.observationType)));
   assert("the product is named on every row",
     obs.every((o) => o.value.sourceProduct === "SWDI nx3hail"));
-  assert("the dataset id is NOT noaa-storm-events",
-    swdiHailAustin.datasetId === "swdi-nx3hail" && swdiHailAustin.datasetId !== "noaa-storm-events");
+  // Widened to `string` deliberately. Compared as literals, TypeScript proves
+  // the inequality at compile time and rejects the comparison as pointless —
+  // which is how Round 22 shipped a TS error that `npm run check` does not
+  // look for, because astro check does not typecheck scripts/. The assertion
+  // is about the RUNTIME id a consumer would branch on, so it reads it as one.
+  // Evaluated separately on purpose: chaining them with && lets TypeScript
+  // narrow `hailId` to the literal after the first comparison, and the second
+  // is rejected as provably pointless all over again.
+  const hailId: string = swdiHailAustin.datasetId;
+  const isHailDataset = hailId === "swdi-nx3hail";
+  const isNotStormEvents = !["noaa-storm-events"].includes(hailId);
+  assert("the dataset id is NOT noaa-storm-events", isHailDataset && isNotStormEvents, hailId);
   assert("the feed's own source name says 'not confirmed hail reports'",
     /not confirmed hail reports/.test(swdiHailAustin.source.name), swdiHailAustin.source.name);
 
@@ -124,7 +152,10 @@ async function main() {
   const spanDays = (d(m[2]).getTime() - d(m[1]).getTime()) / 86400000;
   assert("a 365-day request window becomes a 31-day query", spanDays <= 31,
     `${m[1]}..${m[2]} = ${spanDays} days`);
-  assert("exactly one request per run", requested.length === 1);
+  assert("two requests per run: the records, then SWDI's own count",
+    requested.length === 2, requested.length + " request(s)");
+  assert("the count query is the SAME query plus stat=count",
+    requested[1] === `${requested[0]}&stat=count`, requested[1]);
   assert("the bbox is sent, and no token", /bbox=/.test(requested[0])
     && !/token|apikey|[?&]key=/i.test(requested[0]));
   assert("the product path is nx3hail", /\/csv\/nx3hail\//.test(requested[0]));
@@ -159,14 +190,52 @@ async function main() {
 
   // ── 9. Rows without a position are dropped.
   console.log("\n9. a signature with no position is not stored");
+  // Two rows parse; one is dropped for having no position. SWDI counts 2, and
+  // the check must still read "agrees" — it compares against PARSED rows, not
+  // against the observations this fetcher chose to keep.
   installFetch(body([
     row("2026-05-14T22:11:00Z", -97.71, 30.31, "KGRK", "K1", 1.5),
     `2026-05-15T01:00:00Z,,,KGRK,K9,45,220,30,80,${SIZES[0]}`,
-  ]));
+  ]), 2);
   obs = await run(swdiHailAustin);
   assert("only the positioned row survives", obs.length === 1, `got ${obs.length}`);
   assert("it carries both coordinates",
     typeof obs[0].value.lat === "number" && typeof obs[0].value.lon === "number");
+
+  // ── 9b. ROUND 23 — SWDI's own count as a cross-check.
+  console.log("\n9b. the stat=count cross-check");
+  assert("a dropped row does not make the check disagree",
+    obs[0].value.countCheck === "agrees", obs[0].value.countCheck);
+  assert("and the reported count rides on the row", obs[0].value.countCheckReported === 2);
+
+  installFetch(body([
+    row("2026-05-14T22:11:00Z", -97.71, 30.31, "KGRK", "K1", 1.5),
+    row("2026-05-16T02:00:00Z", -97.60, 30.40, "KGRK", "K3", 1),
+  ]), 5);
+  obs = await run(swdiHailAustin);
+  assert("a real disagreement is recorded, not swallowed",
+    obs.every((o) => o.value.countCheck === "disagrees"), obs[0].value.countCheck);
+  assert("what SWDI said is kept verbatim", obs[0].value.countCheckReported === 5);
+  assert("a disagreement does NOT throw away the records",
+    obs.length === 2, "failing on an unverified count semantic would keep the feed dark");
+
+  installFetch(body([row("2026-05-14T22:11:00Z", -97.71, 30.31, "KGRK", "K1", 1.5)]), null);
+  obs = await run(swdiHailAustin);
+  assert("a failed count query reads 'unavailable', not 'disagrees'",
+    obs[0].value.countCheck === "unavailable", obs[0].value.countCheck);
+  assert("and reports null rather than a number it did not receive",
+    obs[0].value.countCheckReported === null);
+
+  installFetch(body([row("2026-05-14T22:11:00Z", -97.71, 30.31, "KGRK", "K1", 1.5)]), "not-a-number");
+  obs = await run(swdiHailAustin);
+  assert("an unparseable count is 'unavailable' too",
+    obs[0].value.countCheck === "unavailable", obs[0].value.countCheck);
+
+  // The count query must never become the source of the data.
+  const src2 = readFileSync(path.join(SITE_DIR, "src", "ingest", "fetchers", "swdiHail.ts"), "utf8");
+  assert("stat=count is never used to build an observation",
+    !/reportedCount[^\n]*observations\.push/.test(src2)
+      && /countCheck: "agrees" \| "disagrees" \| "unavailable"/.test(src2));
 
   // ── 10. Registration, scoring, freshness, seeding.
   console.log("\n10. registration, scoring, freshness, seeding");

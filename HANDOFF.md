@@ -6,6 +6,87 @@ through Phase 5 (ingestion framework) + the governance-layer refresh.
 
 ---
 
+## 🔴 SEAM — THE LEAD HANDOFF (Round 24). Constraints the build must honour.
+
+**Owner decision, new in Round 24 and reversing the prior position:** THI will operate a lead
+handoff. When a homeowner completes a gated tool and opts in, THI sources home-service companies
+for that specific job and introduces them. **There is no pre-existing vetted network** — the
+sourcing happens after the lead arrives, and those companies then become part of a private
+network for future matches.
+
+`/privacy/` was rewritten in Round 24 to disclose this **before** any handoff exists. **No tool
+ships gated until that disclosure is live.** What follows is what the copy and the mechanism must
+honour when they are built; it is not a description of anything that exists.
+
+### 1. The copy must not imply the companies already exist
+
+- ✅ "We will find companies for your job and introduce you."
+- ❌ "Get quotes from our network of companies." ❌ "our vetted pros" ❌ "matched instantly"
+
+The network is **assembled after the fact**. Any phrasing implying a roster is waiting is false at
+the moment it is read. `scripts/replays/privacyunit.ts` guards the privacy page against this
+class of claim; the tool copy will need its own guard.
+
+### 2. Timing expectations must be honest
+
+Sourcing is people making enquiries, not a form hitting a database. The copy must say so and must
+not imply an immediate response. A homeowner who expects three calls in an hour and gets nothing
+for two days has been misled by the interface, not by the companies.
+
+### 3. Licensing: say only what has been checked
+
+Texas licenses some trades and not others. **Round 12 measured and published this:**
+
+| Trade | Licensing body |
+|---|---|
+| Plumbing | TSBPE |
+| HVAC, electrical, mold remediation | TDLR |
+| **Roofing** | **no state licence** |
+
+An introduction must not imply THI has verified any licence it has not checked. Today THI checks
+**none** — the privacy page says so in those words. If licence checking ever becomes real it gets
+added then, to both the page and this section, and not before.
+
+### 4. The four-bucket labelling applies to a lead's report exactly as to a page
+
+A gated report is **not exempt from the honesty rules because someone paid for it with an email**.
+Nationwide averages labelled as nationwide. County or ZIP figures labelled at that resolution.
+Homeowner-reported inputs labelled as such. The same `DataStatus` discipline, the same four
+buckets, the same refusal to present a modelled figure as a measured one.
+
+### 5. Retention
+
+`/privacy/` commits to **two years** for a request record, then deletion, and to deleting sooner
+on request. Whatever stores leads must be able to honour both, and account deletion does **not**
+cascade to a lead record — the page says so, so the code must match.
+
+### ⚠️ OPEN, AND NOT FOR ME TO ANSWER — a regulatory question for someone qualified
+
+**Does introducing companies in a licensed trade carry any obligation on THI itself under Texas
+law?** I can state the question precisely; I cannot answer it and should not try.
+
+**What I can name:**
+
+- Texas regulates the **trades** (TSBPE for plumbing; TDLR for HVAC, electrical and mold
+  remediation) and Round 12 measured that roofing has no state licence. Those regimes govern the
+  people doing the work. Whether any of them reaches a party that merely *introduces* a homeowner
+  to a licensed tradesperson is a separate question and one I have not researched.
+- Adjacent regimes that plainly exist and may or may not apply: the Texas Deceptive Trade
+  Practices–Consumer Protection Act; any advertising or referral rules attached to the licensing
+  statutes above; and, if THI is ever paid per lead or per job, whatever governs that
+  consideration.
+- **Nothing here has been checked against a statute.** No probe, no measurement, no reading of the
+  Occupations Code. Treat the list above as *the shape of the question*, not as findings.
+
+**What I cannot determine:** whether a licence, registration or disclosure obligation attaches to
+the introducer; whether taking a fee changes that; and whether "sourcing companies for a specific
+job" is characterised differently from "operating a directory" under any of it.
+
+**Recommendation: take this to a Texas attorney before the first handoff, not before the first
+line of code.** The build can proceed — the constraints above are honesty constraints and hold
+regardless of the legal answer — but **no homeowner's details should reach any company until
+someone qualified has answered it.**
+
 ## ⚠️ Deploy-target correction (supersedes "Cloudflare Pages" below)
 
 Older sections of this file say "Cloudflare Pages" — ground truth is a
