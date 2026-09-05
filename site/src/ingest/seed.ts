@@ -179,6 +179,12 @@ const NEVER_SEED = new Set([
   "austin-water-stage",
   "permit-trade-activity",
   "noaa-climate",
+  // Round 22. A seeded hail signature is the worst kind of placeholder this
+  // list guards against: it carries a LATITUDE AND LONGITUDE, so it does not
+  // merely state something untrue, it points at a place near a real city and
+  // says a storm was probably there. There is also no generator for it, and
+  // writing one would be writing that fabrication down.
+  "swdi-nx3hail",
 ]);
 
 /** Skips any file that already exists — seeding is a one-time bootstrap,

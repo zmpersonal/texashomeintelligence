@@ -14,6 +14,14 @@
   status: live
   priority: false
 
+- id: swdi-nx3hail
+  name: "NOAA SWDI nx3hail"
+  org: "NOAA NCEI"
+  primaryUse: "NEXRAD radar-derived hail signatures near each metro"
+  thiOutput: "Counts of probable-hail storm cells — not confirmed hail reports"
+  status: stub
+  priority: false
+
 - id: noaa-storm-events
   name: "NOAA Storm Events"
   org: "NOAA"

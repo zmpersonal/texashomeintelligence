@@ -143,6 +143,29 @@ export const MAX_DATA_AGE_DAYS: Record<string, number> = {
   // matters here.
   "noaa-climate": 120 * DAY,
 
+  // Round 22. SWDI nx3hail, radar-derived hail signatures.
+  //
+  // THIS IS THE ONE WINDOW IN THIS TABLE WHERE ABSENCE OF EVENTS AND FAILURE
+  // OF THE FEED LOOK THE SAME. `dataThrough` is the newest SIGNATURE, not the
+  // newest fetch — so a quiet winter and a broken fetcher both age the data
+  // identically. `lastSuccessAt` is what distinguishes them, and DataStatus
+  // renders it beside the badge; the age check cannot.
+  //
+  // Sized from what was measured rather than guessed: the Round 21b dispatch
+  // found signatures in TWELVE OF TWELVE consecutive 31-day windows for both
+  // metros — zero empty. So the longest observed gap is under 31 days, and 200
+  // days is roughly six times that. It tolerates a full quiet season without
+  // crying stale, which is the failure that would matter here: badging a
+  // correct "no hail near the city lately" as a data problem teaches a reader
+  // to distrust an honest empty state.
+  //
+  // Round 15's lesson applies to the CONSUMER, not to the fetcher: the current
+  // 31-day window is always partial, so a count taken from it is a count so
+  // far. No record is dropped for that — dropping a hail signature because the
+  // month is unfinished would discard a real event — but nothing may compare a
+  // partial window's count against a complete one.
+  "swdi-nx3hail": 200 * DAY,
+
   // ── Cadence NOT established. These four are stub fetchers with sample
   // data, so they never reach the age check today (a `sample` file reports no
   // dates at all). Each carries the conservative 30-day window so that if one

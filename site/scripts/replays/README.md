@@ -34,6 +34,15 @@ npx tsx scripts/replays/r10unit.ts           # unit
 npx tsx scripts/replays/badgeunit.ts         # unit
 npx tsx scripts/replays/alertcopyunit.ts     # unit — alert-copy honesty, no data dependency
 npx tsx scripts/replays/noticefreshunit.ts   # unit — the dated-claim review gate (Round 10b)
+npx tsx scripts/replays/hailunit.ts           # unit — the SWDI nx3hail fetcher (Round 22),
+                                             #   against replayed responses. The column set, the
+                                             #   missing units column, the MAXSIZE domain, the
+                                             #   totalTimeInSeconds trailer and the 744-hour
+                                             #   ceiling are MEASURED; coordinates and timestamps
+                                             #   in its fixtures are synthetic and no assertion
+                                             #   treats them as real storms. Pins the trailer
+                                             #   filter, the radar-vs-confirmed discriminant, the
+                                             #   refusal to name a unit, and the not-a-county guard.
 npx tsx scripts/verify-trade-mapping.ts      # unit
 npx tsx scripts/replays/climateunit.ts        # unit — the cooling-degree-day fetcher (Round
                                              #   19d), against REPLAYED NOAA payloads. Every
