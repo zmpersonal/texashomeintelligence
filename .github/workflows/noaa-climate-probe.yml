@@ -957,3 +957,425 @@ jobs:
                 f"ok={counts['ok']} failed={counts['failed']} "
                 f"station_csvs={counts['csvs']} docs={counts['docs']}")
           PY
+
+      # ══ ROUND 21 — TWO BLOCKED TOOLS, ONE FEED EACH. ═══════════════════
+      #
+      # Pipe Report needs WATER HARDNESS for the SAWS and Austin Water service
+      # areas. Roof Scan needs POINT-LEVEL HAIL — reports carrying latitude and
+      # longitude, not the county rollups the existing `noaa-storm-events` feed
+      # provides (NCEI's monthly bulk export, county-level and ~100 days behind).
+      #
+      # THE LESSON THIS STEP EXISTS TO AVOID REPEATING. Cooling degree days took
+      # five attempts because each fetcher was built on column names measured
+      # from a SIBLING product rather than from the source the fetcher actually
+      # read: the API and the static CSV of the same NOAA normals carry
+      # different columns, and reading one list as though it were the other cost
+      # rounds 19 through 19e. So every section below prints the columns THE
+      # QUERIED ENDPOINT RETURNED, and a finding about one product is never
+      # written up as a finding about another.
+      #
+      # THE AGGREGATOR PROBLEM IS HANDLED STRUCTURALLY, NOT BY CARE. Searching
+      # for "San Antonio water hardness" returns softener-vendor pages quoting
+      # several different numbers. This probe cannot reach them: `ALLOWED_HOSTS`
+      # is a hard allowlist of the utilities and federal services, `get()`
+      # refuses anything else, and every figure printed is labelled with the
+      # host that served it.
+      - name: "TEMP (Round 21): water hardness + point-level hail"
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          python3 - <<'PY'
+          import csv, io, json, re, sys, zlib, datetime
+          import urllib.request, urllib.error, urllib.parse
+
+          UA = ("TexasHomeIntelligence-probe/1.0 (one-off read-only characterisation; "
+                "contact via github.com/zmpersonal/texashomeintelligence)")
+          TIMEOUT = 90
+          SMALL = 8 * 1024 * 1024
+          BIG = 24 * 1024 * 1024
+          MAX_PDFS = 4
+
+          # Read out of site/src/data/zip-areas.ts. Nothing about a county
+          # boundary is asserted — see the note in section 5.
+          METROS = {
+              "austin":      {"point": (30.2672, -97.7431), "county": "Travis", "fips": "48453"},
+              "san-antonio": {"point": (29.4241, -98.4936), "county": "Bexar",  "fips": "48029"},
+          }
+          PAD = 0.5
+
+          # ── THE ALLOWLIST. A figure is only worth printing if a utility or a
+          # federal service served it. Everything else is refused before the
+          # request is made, and the refusal is printed.
+          ALLOWED_HOSTS = {
+              "www.saws.org", "saws.org",
+              "www.austintexas.gov", "austintexas.gov",
+              "www.waterqualitydata.us", "waterqualitydata.us",
+              "data.epa.gov", "sdwis.epa.gov", "enviro.epa.gov",
+              "www.ncei.noaa.gov", "www.ncdc.noaa.gov",
+          }
+
+          counts = {"requests": 0, "ok": 0, "failed": 0, "refused": 0, "pdfs": 0}
+
+          def _crash(exc_type, exc, tb):
+              import traceback
+              traceback.print_exception(exc_type, exc, tb)
+              print(f"\nR21_PROBE_STATUS=error requests={counts['requests']} ok={counts['ok']} "
+                    f"failed={counts['failed']} refused={counts['refused']} "
+                    f"crash={exc_type.__name__}: {exc}")
+          sys.excepthook = _crash
+
+          def hr(title):
+              print("\n" + "=" * 74)
+              print(title)
+              print("=" * 74)
+
+          def get(url, label="", ceil=SMALL):
+              host = urllib.parse.urlparse(url).netloc.lower()
+              if host not in ALLOWED_HOSTS:
+                  counts["refused"] += 1
+                  print(f"  [{label or 'GET'}] REFUSED — {host} is not a utility or federal host")
+                  print(f"    {url}")
+                  return None, None, host
+              counts["requests"] += 1
+              req = urllib.request.Request(url, headers={"User-Agent": UA})
+              try:
+                  with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+                      body = r.read(ceil + 1)
+                      trunc = len(body) > ceil
+                      if trunc:
+                          body = body[:ceil]
+                      counts["ok"] += 1
+                      ctype = r.headers.get("Content-Type", "?")
+                      print(f"  [{label or 'GET'}] HTTP {r.status}, {len(body)} bytes, {ctype}"
+                            + (" (TRUNCATED)" if trunc else ""))
+                      print(f"    {url}")
+                      return r.status, body, host
+              except urllib.error.HTTPError as e:
+                  counts["failed"] += 1
+                  detail = b""
+                  try:
+                      detail = e.read(1200)
+                  except Exception:
+                      pass
+                  print(f"  [{label or 'GET'}] HTTP {e.code} {e.reason}\n    {url}")
+                  if detail:
+                      print(f"    body: {detail[:500]!r}")
+                  return e.code, None, host
+              except Exception as e:
+                  counts["failed"] += 1
+                  print(f"  [{label or 'GET'}] FAILED {type(e).__name__}: {e}\n    {url}")
+                  return None, None, host
+
+          # Hardness appears either as grains per gallon or as mg/L of CaCO3.
+          # Both spellings are matched and the UNITS ARE PRINTED WITH EVERY HIT,
+          # because a bare number is unusable and 10 gpg and 171 mg/L are the
+          # same water.
+          HARD = re.compile(
+              r"(hardness[^.\n]{0,160}?|[^.\n]{0,80}?hardness)"
+              r"([\d,]+(?:\.\d+)?)\s*"
+              r"(grains?(?:\s*per\s*gallon)?|gpg|mg/?l|ppm|milligrams?)", re.I)
+          HARD_ANY = re.compile(r"hardness", re.I)
+
+          def pdf_text(body):
+              """Stdlib only: inflate each FlateDecode stream. Recovering nothing
+              is a LIMIT OF THIS EXTRACTOR, never evidence the figure is absent."""
+              out = []
+              for m in re.finditer(rb"stream\r?\n(.*?)endstream", body, re.S):
+                  try:
+                      out.append(zlib.decompress(m.group(1)))
+                  except Exception:
+                      continue
+              return b"\n".join(out).decode("utf-8", "replace")
+
+          def report_hardness(text, host, label):
+              flat = re.sub(r"\s+", " ", text)
+              hits = list(HARD.finditer(flat))
+              print(f"    [{host}] {label}: {len(HARD_ANY.findall(flat))} mention(s) of "
+                    f"'hardness', {len(hits)} with a number and a unit")
+              for m in hits[:10]:
+                  print(f"      value={m.group(2)} units={m.group(3)}  ...{m.group(0)[:150].strip()}...")
+              if HARD_ANY.search(flat) and not hits:
+                  for m in list(HARD_ANY.finditer(flat))[:4]:
+                      s = max(0, m.start() - 120)
+                      print(f"      (no number matched) ...{flat[s:m.end() + 160].strip()}...")
+              return len(hits)
+
+          today = datetime.date.today()
+          print(f"probe date (runner UTC): {today.isoformat()}")
+
+          # ══ PART 1 — WATER HARDNESS ═══════════════════════════════════════
+          # ── 1. Utility publications. Landing pages are LISTED, links are
+          # DISCOVERED from them, and only allowlisted hosts are followed. No
+          # PDF filename is guessed: Round 19b guessed one and got a 404.
+          hr("1. UTILITY PUBLICATIONS — SAWS and Austin Water")
+          LANDINGS = [
+              ("SAWS water quality", "https://www.saws.org/your-water/water-quality/"),
+              ("SAWS annual report", "https://www.saws.org/your-water/water-quality/annual-water-quality-report/"),
+              ("Austin Water quality", "https://www.austintexas.gov/department/water-quality-reports"),
+              ("Austin Water CCR", "https://www.austintexas.gov/page/water-quality-reports"),
+          ]
+          candidates = []
+          for label, url in LANDINGS:
+              st, body, host = get(url, label)
+              if not body:
+                  continue
+              html = body.decode("utf-8", "replace")
+              found = report_hardness(re.sub(r"<[^>]+>", " ", html), host, "landing page text")
+              links = re.findall(r'href="([^"]+)"', html)
+              interesting = []
+              offhost = []
+              for h in links:
+                  full = urllib.parse.urljoin(url, h)
+                  if not re.search(r"(quality|hardness|ccr|consumer|annual|report|mineral)", full, re.I):
+                      continue
+                  if urllib.parse.urlparse(full).netloc.lower() not in ALLOWED_HOSTS:
+                      offhost.append(full)
+                      continue
+                  interesting.append(full)
+              # The aggregator guard, made visible. Dropping these silently
+              # would leave the log unable to show the guard ever fired — and a
+              # softener vendor's page is exactly the kind of link a utility's
+              # own page carries.
+              if offhost:
+                  print(f"    {len(offhost)} off-allowlist link(s) NOT followed:")
+                  for f in offhost[:6]:
+                      print(f"      SKIPPED {f}")
+              seen = []
+              for f in interesting:
+                  if f not in seen:
+                      seen.append(f)
+              pdfs = [f for f in seen if f.lower().endswith(".pdf")]
+              print(f"    {len(seen)} on-host candidate link(s); {len(pdfs)} PDF(s)")
+              for f in seen[:12]:
+                  print(f"      {f}")
+              for f in (pdfs or seen)[:3]:
+                  if f not in [c[1] for c in candidates]:
+                      candidates.append((label, f))
+
+          # ── 2. Is the figure extractable, or does it need a human once a year?
+          hr("2. IS THE FIGURE MACHINE-EXTRACTABLE, OR A HUMAN READ?")
+          if not candidates:
+              print("  No on-host candidate documents were discovered. That is the finding:")
+              print("  the landing pages above did not link a report this probe could follow.")
+          for label, url in candidates[:MAX_PDFS]:
+              st, body, host = get(url, f"{label} document", ceil=BIG)
+              if not body:
+                  continue
+              is_pdf = url.lower().endswith(".pdf") or body[:5] == b"%PDF-"
+              if is_pdf:
+                  counts["pdfs"] += 1
+                  text = pdf_text(body)
+                  print(f"    PDF, {len(body)} bytes; extractor recovered {len(text)} chars")
+                  n = report_hardness(text, host, "PDF text")
+                  if len(text) == 0:
+                      print("      EXTRACTOR RECOVERED NOTHING. Treat as INCONCLUSIVE, not as")
+                      print("      'the report has no hardness figure'. This reads FlateDecode")
+                      print("      streams only; a scanned or differently-encoded PDF needs a")
+                      print("      human read — which is an acceptable answer, once a year.")
+                  elif n == 0:
+                      print("      Text recovered but no number+unit matched — a human read of")
+                      print("      this document is the next step, not another regex.")
+              else:
+                  report_hardness(re.sub(r"<[^>]+>", " ", body.decode("utf-8", "replace")),
+                                  host, "HTML text")
+
+          # ── 3. Federal machine-readable. THE ONLY PATH THAT COULD FEED A
+          # FETCHER WITHOUT A HUMAN IN THE LOOP. Columns printed as returned.
+          hr("3. FEDERAL MACHINE-READABLE — USGS Water Quality Portal, EPA")
+          for metro, meta in METROS.items():
+              q = urllib.parse.urlencode({
+                  "countycode": f"US:48:{meta['fips'][2:]}",
+                  "characteristicName": "Hardness, Ca, Mg",
+                  "mimeType": "csv",
+                  "zip": "no",
+                  "dataProfile": "resultPhysChem",
+                  "startDateLo": "01-01-2015",
+              })
+              st, body, host = get(
+                  f"https://www.waterqualitydata.us/data/Result/search?{q}",
+                  f"WQP hardness, {meta['county']} County", ceil=BIG)
+              if not body:
+                  continue
+              rows = list(csv.reader(io.StringIO(body.decode("utf-8", "replace"))))
+              if not rows:
+                  print("    empty CSV")
+                  continue
+              header = rows[0]
+              print(f"    [{host}] {len(rows) - 1} row(s), {len(header)} column(s)")
+              print(f"    COLUMNS AS RETURNED: {header}")
+              idx = {h: i for i, h in enumerate(header)}
+              def col(*names):
+                  for n in names:
+                      if n in idx:
+                          return idx[n]
+                  return None
+              cv, cu, cd, co = (col("ResultMeasureValue"), col("ResultMeasure/MeasureUnitCode"),
+                                col("ActivityStartDate"), col("OrganizationFormalName"))
+              shown = 0
+              for r in rows[1:]:
+                  if cv is None or len(r) <= cv or not r[cv].strip():
+                      continue
+                  print(f"      value={r[cv]} units={r[cu] if cu is not None and len(r) > cu else '?'} "
+                        f"date={r[cd] if cd is not None and len(r) > cd else '?'} "
+                        f"org={r[co][:40] if co is not None and len(r) > co else '?'}")
+                  shown += 1
+                  if shown >= 6:
+                      break
+              if shown == 0:
+                  print("      no rows carried a ResultMeasureValue — the query returned a shape")
+                  print("      but not a usable hardness figure for this county.")
+
+          for label, url in [
+              ("EPA Envirofacts SDWIS water systems, Bexar",
+               "https://data.epa.gov/efservice/WATER_SYSTEM/PRIMACY_AGENCY_CODE/TX/COUNTIES_SERVED/BEXAR/JSON/rows/0:5"),
+              ("EPA Envirofacts SDWIS water systems, Travis",
+               "https://data.epa.gov/efservice/WATER_SYSTEM/PRIMACY_AGENCY_CODE/TX/COUNTIES_SERVED/TRAVIS/JSON/rows/0:5"),
+          ]:
+              st, body, host = get(url, label)
+              if not body:
+                  continue
+              try:
+                  j = json.loads(body.decode("utf-8", "replace"))
+              except Exception:
+                  print(f"    not JSON; first 300 bytes: {body[:300]!r}")
+                  continue
+              if isinstance(j, list) and j:
+                  print(f"    [{host}] {len(j)} row(s); COLUMNS AS RETURNED: {sorted(j[0].keys())}")
+                  print(f"    first row: {json.dumps(j[0])[:500]}")
+                  print("    NOTE: SDWIS is a COMPLIANCE inventory — systems, violations and")
+                  print("    regulated contaminants. Hardness is not a regulated contaminant, so")
+                  print("    its presence here must be shown, not assumed, before anything is built.")
+              else:
+                  print(f"    empty or unexpected: {json.dumps(j)[:200]}")
+
+          # ══ PART 2 — POINT-LEVEL HAIL ═════════════════════════════════════
+          # ── 4/5. SWDI reachability and the real query.
+          hr("4. SWDI — reachability, token, and what a real query returns")
+          print("  NOTE ON GEOGRAPHY: the bounding boxes below are +/-0.5 deg around each")
+          print("  metro's REPRESENTATIVE POINT from zip-areas.ts. They are NOT county")
+          print("  boundaries and are not claimed to be — no county polygon has been measured.")
+          print("  The county-name field returned by SWDI, if any, is what section 7 counts on.")
+
+          since = (today - datetime.timedelta(days=365)).strftime("%Y%m%d")
+          until = today.strftime("%Y%m%d")
+          print(f"  WINDOW USED THROUGHOUT PART 2: {since}..{until} (365 days to the runner date)")
+
+          BASES = [
+              ("swdiws on ncdc", "https://www.ncdc.noaa.gov/swdiws"),
+              ("swdiws on ncei", "https://www.ncei.noaa.gov/swdiws"),
+          ]
+          # nx3hail is RADAR-DERIVED hail signatures. plsr is PRELIMINARY LOCAL
+          # STORM REPORTS — human reports. They are different products and a
+          # count from one is not a count from the other; both are probed and
+          # reported separately, never merged.
+          DATASETS = ["nx3hail", "plsr"]
+          working_base = None
+          for blabel, base in BASES:
+              st, body, host = get(f"{base}/csv/nx3hail/{since}:{until}"
+                                   f"?bbox=-98.0,29.9,-97.4,30.6&limit=5", f"{blabel} reachability")
+              if body:
+                  working_base = base
+                  head = body[:600].decode("utf-8", "replace")
+                  print("    first 600 bytes:")
+                  for line in head.splitlines()[:8]:
+                      print(f"      {line}")
+                  if re.search(r"token|api[_ ]?key|unauthor", head, re.I):
+                      print("    ^ mentions a token/authorisation — read that before assuming open access")
+                  else:
+                      print("    no token was sent and none was demanded in the body above")
+                  break
+          if not working_base:
+              print("  NEITHER SWDI BASE ANSWERED. Per the round's rule that is where this stops:")
+              print("  no sibling source is substituted, and Roof Scan stays blocked on a")
+              print("  measured 'unreachable' rather than on a guess.")
+
+          # ── 6/7/8. Columns, lag, units, coordinates, and the two counties.
+          newest_seen = {}
+          if working_base:
+              for ds in DATASETS:
+                  hr(f"5. SWDI {ds} — columns, coordinates, units, lag, and county counts")
+                  for metro, meta in METROS.items():
+                      lat, lon = meta["point"]
+                      bbox = f"{lon - PAD:.4f},{lat - PAD:.4f},{lon + PAD:.4f},{lat + PAD:.4f}"
+                      st, body, host = get(
+                          f"{working_base}/csv/{ds}/{since}:{until}?bbox={bbox}",
+                          f"{ds} {metro} ({meta['county']} Co. area)", ceil=BIG)
+                      if not body:
+                          continue
+                      text = body.decode("utf-8", "replace")
+                      # SWDI CSV prefixes comment lines with '#'.
+                      lines = [l for l in text.splitlines() if l.strip() and not l.startswith("#")]
+                      if not lines:
+                          print(f"    [{host}] NO DATA ROWS for {meta['county']} area in this window.")
+                          print(f"      That is a finding, not an error: {ds} recorded nothing here.")
+                          continue
+                      rows = list(csv.reader(io.StringIO("\n".join(lines))))
+                      header = rows[0]
+                      print(f"    [{host}] {len(rows) - 1} row(s), {len(header)} column(s)")
+                      print(f"    COLUMNS AS RETURNED: {header}")
+                      idx = {h.strip().upper(): i for i, h in enumerate(header)}
+                      latc = next((idx[k] for k in idx if k in ("LAT", "LATITUDE")), None)
+                      lonc = next((idx[k] for k in idx if k in ("LON", "LONGITUDE")), None)
+                      print(f"    per-record COORDINATES present: "
+                            f"{'YES' if latc is not None and lonc is not None else 'NO'} "
+                            f"(lat col={latc}, lon col={lonc})")
+                      sizec = [h for h in header if re.search(r"size|magnitude|maxsize|prob|sever", h, re.I)]
+                      print(f"    size/magnitude-looking columns: {sizec or 'NONE'}")
+                      for h in sizec[:4]:
+                          vals = [r[idx[h.strip().upper()]] for r in rows[1:21]
+                                  if len(r) > idx[h.strip().upper()]]
+                          print(f"      {h}: {vals[:12]}")
+                      unitc = [h for h in header if re.search(r"^unit|units$|_unit", h.strip(), re.I)]
+                      if unitc:
+                          for h in unitc:
+                              vals = sorted({r[idx[h.strip().upper()]] for r in rows[1:]
+                                             if len(r) > idx[h.strip().upper()]})
+                              print(f"    UNITS COLUMN PRESENT — {h}: {vals[:8]}")
+                      else:
+                          print("    NO UNITS COLUMN IN THIS RESPONSE. Whatever the size column is")
+                          print("    in, it must be read from SWDI's documentation before anything")
+                          print("    is published — inches and millimetres differ by 25x and both")
+                          print("    look plausible on a hail report.")
+                      countyc = [h for h in header if re.search(r"county|fips|wfo|state", h, re.I)]
+                      print(f"    county/geography columns: {countyc or 'NONE'}")
+                      datec = next((idx[k] for k in idx if "TIME" in k or "DATE" in k), None)
+                      if datec is not None:
+                          dates = sorted(r[datec] for r in rows[1:] if len(r) > datec and r[datec].strip())
+                          if dates:
+                              print(f"    date range in response: {dates[0]} .. {dates[-1]}")
+                              newest_seen[f"{ds}/{metro}"] = dates[-1]
+                      print("    first two data rows verbatim:")
+                      for r in rows[1:3]:
+                          print(f"      {r}")
+
+              hr("6. PUBLICATION LAG, measured against the runner date")
+              if not newest_seen:
+                  print("  No dated rows were returned, so no lag could be measured.")
+              for k, v in sorted(newest_seen.items()):
+                  m = re.search(r"(\d{4})-?(\d{2})-?(\d{2})", v)
+                  if m:
+                      d = datetime.date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+                      print(f"  {k}: newest record {d} — {(today - d).days} days behind the runner")
+                  else:
+                      print(f"  {k}: newest record {v} (unparsed date shape)")
+
+              hr("7. ROUND 12's BEXAR FINDING — confirmed or refuted, and Travis alongside")
+              print("  Round 12 measured, from NCEI Storm Events (county-level, human reports),")
+              print("  that BEXAR RECORDED NO HAIL in its 12-month window. The counts printed in")
+              print("  section 5 are from SWDI over a 365-day window ending on the runner date.")
+              print()
+              print("  THESE ARE NOT THE SAME MEASUREMENT AND A DISAGREEMENT IS NOT A")
+              print("  CONTRADICTION. nx3hail is radar-derived signatures; plsr and Storm Events")
+              print("  are human reports; and the windows differ. A non-zero nx3hail count over")
+              print("  Bexar would NOT refute Round 12 — it would mean radar saw a signature")
+              print("  nobody reported. Whoever writes this up must say which product each")
+              print("  number came from, exactly as rounds 19-19e had to learn to.")
+              print()
+              print("  If SWDI also shows nothing for Bexar, that is worth knowing before Roof")
+              print("  Scan is built: San Antonio renders an honest empty state, and a tool whose")
+              print("  headline reading is empty in one launch metro is a product decision, not")
+              print("  a bug to fix later.")
+
+          print(f"\nR21_PROBE_STATUS=complete requests={counts['requests']} ok={counts['ok']} "
+                f"failed={counts['failed']} refused={counts['refused']} pdfs={counts['pdfs']}")
+          PY
