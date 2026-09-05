@@ -1,81 +1,133 @@
 ---
-// THI-round-homepage-nav.md §3 — the real, indexable /tools/ hub. Every
-// other tool page under /tools/ (and /dashboard/) is a noindexed
-// placeholder linked from here.
+/**
+ * /tools/ — the indexed tools hub.
+ *
+ * ── WHAT THIS PAGE WAS, AND WHY IT CHANGED ────────────────────────────────
+ * Written when every child route was a noindexed "coming soon" placeholder, it
+ * listed five things of which two were real. Three tools have since been built
+ * and the hub had never been told. It now lists what exists, and replaces the
+ * three placeholder listings — and the three placeholder pages, deleted this
+ * round — with one section saying what this site does not publish and the
+ * measurement behind each refusal.
+ *
+ * ── THE ONE RULE ──────────────────────────────────────────────────────────
+ * Every description is written from the BUILT PAGE, and every card carries the
+ * refusal its tool makes. A hub that describes only capabilities re-promises
+ * what each page declines, one click before the reader gets to the page that
+ * declines it.
+ */
 import Base from "../../layouts/Base.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import { NOT_PUBLISHED, WORKING_TOOLS } from "../../data/toolsHub";
 
-interface Tool {
-  name: string;
-  description: string;
-  href: string;
-  cta: string;
-}
-
-const tools: Tool[] = [
-  {
-    name: "Home Dashboard",
-    description:
-      "See the conditions affecting your home right now — weather, HVAC stress, storm exposure, maintenance signals, and more.",
-    href: "/dashboard/",
-    cta: "Check My Home",
-  },
-  {
-    name: "QuoteReady Project Brief",
-    description:
-      "Describe a home repair or improvement project once and get a standardized brief you can send to any contractor.",
-    href: "/start/",
-    cta: "Build My Brief",
-  },
-  {
-    name: "QuickConnect",
-    description: "A faster way to connect with local Texas home-service contractors.",
-    href: "/tools/quickconnect/",
-    cta: "Learn More",
-  },
-  {
-    name: "Home Risk Report",
-    description: "A generated report on the weather, storm, and environmental risks facing your property.",
-    href: "/tools/home-risk-report/",
-    cta: "Learn More",
-  },
-  {
-    name: "Cost Calculators",
-    description: "Texas-specific calculators for repair-vs-replace decisions and project cost ranges.",
-    href: "/tools/cost-calculators/",
-    cta: "Learn More",
-  },
-];
-
-const title = "Free Texas Homeowner Tools | Texas Home Intelligence";
+const title = "Texas homeowner tools — and what each one will not tell you | Texas Home Intelligence";
 const description =
-  "Free tools for Texas homeowners — a home dashboard, the QuoteReady Project Brief, cost calculators, and more.";
+  "Three working tools and the ZIP dashboard for Austin and San Antonio: plumbing triage, " +
+  "cooling load and warranty terms, hail and re-roofing on the public record. Each says what it " +
+  "cannot see. Plus what this site does not publish, and the measurement behind each.";
 ---
 
 <Base title={title} description={description}>
   <Breadcrumbs crumbs={[{ name: "Home", url: "/" }, { name: "Tools", url: "/tools/" }]} />
+
   <section class="hero">
-    <div class="wrap" style="max-width: 760px;">
-      <span class="eyebrow">FREE FOR TEXAS HOMEOWNERS</span>
-      <h1>Free Texas Homeowner Tools</h1>
+    <div class="wrap" style="max-width:820px;">
+      <span class="eyebrow">TOOLS</span>
+      <h1>What we have built, and what we will not publish</h1>
       <p class="lede">
-        Tools built specifically for Texas homeowners — understand what's affecting your home,
-        organize a project, and plan repair or replacement decisions with local data behind you.
+        Four things you can use now, each reading from the same public data as the rest of the
+        site and each carrying its sources and dates. None of them asks for an address, and none
+        of them has seen your house — so every one states what it cannot tell you, and that
+        statement is on the card before you open it.
       </p>
     </div>
   </section>
 
-  <section class="block">
+  <section class="block" id="working">
     <div class="wrap">
       <div class="grid-3">
-        {tools.map((tool) => (
-          <a class="card card-link" href={tool.href}>
-            <h3>{tool.name}</h3>
+        {WORKING_TOOLS.map((tool) => (
+          <div class="card tool-card">
+            <h2 class="tool-name">{tool.name}</h2>
+            <p class="tool-route"><code>{tool.href}</code></p>
             <p>{tool.description}</p>
-            <p style="margin-top:12px;font-weight:700;color:var(--brand);">{tool.cta} &rarr;</p>
-          </a>
+            {/*
+              The refusal, at the same weight as the description and inside the
+              same card. Not a footnote and not smaller type: it is half of what
+              a reader needs to decide whether this page is the one they want.
+            */}
+            <p class="tool-wont"><strong>What it will not do.</strong> {tool.wontDo}</p>
+            <p class="tool-cta"><a href={tool.href}>Open {tool.name} &rarr;</a></p>
+          </div>
         ))}
       </div>
     </div>
   </section>
+
+  <section class="block alt" id="not-published">
+    <div class="wrap" style="max-width:820px;">
+      <h2>What we do not publish, and why</h2>
+      <p>
+        Each of these was tried and stopped by something we measured rather than assumed. They are
+        listed here rather than as pages promising them, because a page that says "coming soon"
+        about a thing blocked on a source that may not exist is a promise we would be making with
+        someone else's data.
+      </p>
+      <ul class="key-findings">
+        {NOT_PUBLISHED.map((n) => (
+          <li><strong>{n.heading}.</strong> {n.body}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="block" id="elsewhere">
+    <div class="wrap" style="max-width:820px;">
+      <h2>Also on the site</h2>
+      <p>
+        The <a href="/data/">data catalog</a> lists every feed behind these tools, with its
+        publisher, its update cadence and its limitations, and
+        <a href="/methodology/">methodology</a> explains how a reading becomes a score. The
+        QuoteReady project brief at <a href="/start/">/start/</a> is an intake form that collects
+        a name, an email and a property address; it is not part of the current build and is not
+        listed above with the tools, because those four ask for nothing.
+      </p>
+    </div>
+  </section>
 </Base>
+
+<style>
+  .tool-card { display: flex; flex-flow: column nowrap; gap: 10px; }
+  .tool-name { font-size: 1.15rem; margin: 0; }
+  .tool-route { margin: 0; }
+  .tool-route code {
+    font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption);
+    color: var(--ink-soft); overflow-wrap: anywhere;
+  }
+  /* The refusal sits on a hairline rather than in a tint: BRAND.md keeps status
+     colour for status, and "what this will not do" is not a warning state. */
+  .tool-wont {
+    margin: 4px 0 0; padding-left: 12px; border-left: 2px solid var(--line);
+    color: var(--ink-soft); font-size: var(--thi-fs-body-sm);
+  }
+  .tool-wont strong { color: var(--ink); }
+  /*
+    A card CTA is a STANDALONE target, so WCAG 2.2 SC 2.5.8's inline exception
+    — the one that covers the citation links elsewhere on the site — does not
+    apply to it. As an inline link in a paragraph it measured 19px; a flex
+    with a min-height makes the whole thing the target rather than the text
+    box, without changing the type scale.
+  */
+  .tool-cta { margin: auto 0 0; font-weight: 700; }
+  .tool-cta a {
+    /* Block-level flex rather than the inline variant of it. The inline one is
+       the obvious choice here, and its hyphenated name is also a Tailwind
+       utility this bundle does not already carry — so writing it, even inside
+       this comment, adds that utility to the SITEWIDE stylesheet and rehashes
+       every page. Measured twice this round; Round 25's mechanism, and the
+       name is deliberately not spelled out here. Block-level costs nothing:
+       the CTA is the last line of a flex column, and spanning the card makes
+       the target larger rather than worse. */
+    display: flex; align-items: center; min-height: 44px; padding: 4px 0;
+  }
+</style>
