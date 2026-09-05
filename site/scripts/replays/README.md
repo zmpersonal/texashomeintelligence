@@ -50,6 +50,18 @@ npx tsx scripts/replays/privacyunit.ts        # unit — /privacy/ says what the
                                              #   replaced, so a source-based check reports "still
                                              #   says X" about the note explaining it no longer
                                              #   does. Needs `npm run build` first.
+node scripts/check-orphans.mjs               # unit — INDEXED PAGES NOTHING LINKS TO.
+                                             #   Round 28 found /tools/ this way and only this
+                                             #   way: indexed, in the sitemap, three working tools
+                                             #   behind it, and the only inbound links were its own
+                                             #   children's breadcrumbs. Every check the site had
+                                             #   asked whether a link RESOLVED; none asked whether
+                                             #   a page was REACHED.
+                                             #   It lost those links in pieces across three
+                                             #   different rounds, which is the shape a per-round
+                                             #   diff cannot show — so this runs over the whole
+                                             #   built site, not over a change. Exits 1 on an
+                                             #   orphan. Needs `npm run build` first.
 npx tsx scripts/verify-trade-mapping.ts      # unit
 npx tsx scripts/replays/climateunit.ts        # unit — the cooling-degree-day fetcher (Round
                                              #   19d), against REPLAYED NOAA payloads. Every
