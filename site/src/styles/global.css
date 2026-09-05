@@ -511,6 +511,23 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
 .dash-hero { background: var(--thi-navy-deep); color: var(--thi-on-dark); padding: 32px 0 36px; }
 .dash-hero-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: start; }
 @media (max-width: 860px) { .dash-hero-grid { grid-template-columns: 1fr; gap: 24px; } }
+/*
+ * Round 26 — the cause of a 451px scrollWidth in a 320px viewport.
+ *
+ * A grid item's automatic minimum size is min-content, not zero. So this
+ * single `1fr` track was sized to the WIDEST UNSHRINKABLE DESCENDANT of either
+ * panel (measured: 430.53px, driven by .zip-picker-row below), and a grid track
+ * that exceeds its container overflows it — the container does not grow and
+ * nothing clips. Both panels were then stretched to 431px inside a 280px
+ * .wrap, and everything in the score panel came along with them: eleven of the
+ * seventeen elements past the viewport were the score panel and its contents,
+ * none of which had a cause of its own.
+ *
+ * min-width: 0 restores the intended behaviour — the track tracks the
+ * container. It is not a clip: with it, the score panel's contents fit at 280px
+ * unaided, which is what makes this the fix rather than a mask.
+ */
+.dash-hero-grid > * { min-width: 0; }
 .dash-eyebrow { color: var(--thi-on-dark-muted); margin-bottom: 10px; }
 
 .dash-score-row { display: flex; gap: 22px; align-items: center; }
@@ -554,7 +571,23 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
   border-radius: var(--thi-r-card); padding: 18px;
 }
 .dash-picker-panel .eyebrow { color: var(--thi-on-dark-muted); }
-.zip-picker-row { display: flex; gap: 8px; margin-bottom: 10px; }
+/*
+ * Round 26 — the second cause, and what made the track 431px wide.
+ *
+ * This row is a select and a submit button on ONE non-wrapping line. A
+ * <select> is intrinsically as wide as its widest option, which here is
+ * "76511 — Williamson County" out of 225 ZIPs: 242px measured. The button
+ * carries white-space: nowrap deliberately (a two-word label should not break)
+ * and is 143px. 242 + 8 + 143 = 393px of min-content, + the panel's 18px
+ * padding and 1px border on each side = the 431px track.
+ *
+ * Allowing the line to wrap lets the button drop below the select on a phone
+ * instead of the select being squeezed to a truncating ~129px. The alternative
+ * — leaving nowrap and letting min-width: 0 above crush the select — would fit
+ * the viewport while hiding which ZIP is selected, and BRAND.md does not permit
+ * buying a fit with legibility. Above ~430px of column the row is unchanged.
+ */
+.zip-picker-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
 .zip-picker select {
   flex: 1 1 auto; min-width: 0; padding: 10px; border-radius: var(--thi-r-control);
   border: 1px solid var(--line); font-family: var(--thi-font-ui); font-size: 0.92rem; background: #fff; color: var(--ink);
