@@ -1,0 +1,477 @@
+---
+/**
+ * /tools/roof-scan/ — the third hero tool.
+ *
+ * ── STATIC FIRST, JS FOR ONE THING ────────────────────────────────────────
+ * Every figure is in the served HTML for BOTH metros: confirmed hail by county,
+ * both permit readings, the licensing position, and the radar feed's honest
+ * unavailable state. Scripts do exactly one job — resolve a typed ZIP to its
+ * county and move that metro's block to the top — and the page says so when
+ * they do not run. CLAUDE.md: facts render in static HTML.
+ *
+ * ── THE READINGS ARE NOT RE-DERIVED HERE ──────────────────────────────────
+ * `confirmedHail` and `radarHail` live in lib/roofScan.ts; the permit reading
+ * is `tradeActivity()`, the same function the roof-permit data page and the
+ * service pages call; and Austin's text-match qualification is
+ * `textMatchComposition()`, the Round 12 sentences already published rather
+ * than a second copy of them. Two of our own pages disagreeing about one fact
+ * is the citation liability this layer exists to avoid.
+ *
+ * ── WHAT IS DELIBERATELY ABSENT ───────────────────────────────────────────
+ * No address field, no satellite image, no footprint, no roof area, no hail
+ * size, no unit, no cost, no replacement window, no damage claim. The design's
+ * reference implementation asks for all of them;
+ * docs/audits/round-27-roof-scan.md records which data each one needed and
+ * which round measured that it does not exist.
+ */
+import Base from "../../../layouts/Base.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import DataStatus from "../../../components/DataStatus.astro";
+import { COPY, DIFFERENCE, LIMITS, METROS } from "../../../data/roofScan";
+import { boxDescription, confirmedHail, radarHail } from "../../../lib/roofScan";
+import { monthLabel, tradeActivity } from "../../../lib/tradeActivity";
+import { textMatchComposition } from "../../../lib/textMatchComposition";
+import { SERVICE_NOTICES } from "../../../data/serviceNotices";
+import { formatDate, machineDate } from "../../../lib/format";
+
+const title =
+  "Hail and re-roofing on the public record in Austin and San Antonio | Texas Home Intelligence";
+const description =
+  "Confirmed hail reports by county from NOAA Storm Events, radar hail signatures from NOAA's " +
+  "Severe Weather Data Inventory, and re-roof permit activity in Austin and San Antonio — each " +
+  "named by product and period. No hail sizes, no cost, no damage claims.";
+
+// Everything below is computed at build time from src/data/generated/**.
+const areas = METROS.map((m) => ({
+  metro: m,
+  confirmed: confirmedHail(m.id),
+  radar: radarHail(m.id),
+  box: boxDescription(m.id),
+  permits: tradeActivity(m.id, "roofing"),
+}));
+
+// The licensing notice, reused rather than restated. It is a roofing notice, so
+// it is read from the same catalogue the roofing service pages read.
+const notice = (SERVICE_NOTICES["austin/roofing"] ?? [])[0];
+
+/** The ZIP → county map the inline script needs, built from the same resolver
+ * the dashboard uses. Emitted as data rather than fetched: no runtime lookup. */
+import { areaDefinitions } from "../../../lib/zipAreas";
+import { CROSSWALK_ROWS } from "../../../lib/zipCrosswalk";
+const zipCounties: Record<string, [string, string]> = {};
+for (const row of CROSSWALK_ROWS) zipCounties[row.zip] = [row.areaId, row.primaryCountyName];
+const areaLabels = Object.fromEntries(areaDefinitions().map((a) => [a.areaId, a.areaLabel]));
+---
+
+<Base title={title} description={description}>
+  <Breadcrumbs
+    crumbs={[
+      { name: "Home", url: "/" },
+      { name: "Tools", url: "/tools/" },
+      { name: "Roof Scan", url: "/tools/roof-scan/" },
+    ]}
+  />
+
+  <section class="hero">
+    <div class="wrap" style="max-width:820px;">
+      <span class="eyebrow">{COPY.eyebrow}</span>
+      <h1>{COPY.h1}</h1>
+      <p class="lede">{COPY.lede}</p>
+      <p class="rs-honesty"><strong>{COPY.honestyLine}</strong></p>
+    </div>
+  </section>
+
+  {/* ── #your-area — the only input, and the label that follows it ───────── */}
+  <section class="block" id="your-area">
+    <div class="wrap" style="max-width:820px;">
+      <h2>{COPY.zipHeading}</h2>
+      <p>{COPY.zipBody}</p>
+
+      <div class="card rs-input-card">
+        <label class="rs-label" for="rs-zip">{COPY.zipLabel}</label>
+        <div class="rs-field-row">
+          <input
+            id="rs-zip"
+            class="rs-zip"
+            type="text"
+            inputmode="numeric"
+            maxlength="5"
+            autocomplete="postal-code"
+            aria-describedby="rs-zip-hint rs-zip-bucket"
+          />
+          {/*
+            REQUIREMENT 4 of data-labeling-spec.md. The label must change
+            VISIBLY at the moment of edit, and what it changes to has to carry
+            the qualification the number cannot: a ZIP a homeowner types is
+            about them, and the readings it selects are still about an area.
+            aria-live so a screen reader is told too; never aria-hidden.
+          */}
+          <span
+            id="rs-zip-bucket"
+            class="rs-bucket"
+            data-state="empty"
+            role="status"
+            aria-live="polite"
+          >{COPY.zipBucketEmpty}</span>
+        </div>
+        <p class="rs-hint" id="rs-zip-hint">{COPY.zipHint}</p>
+        <p id="rs-zip-read" class="rs-read" data-empty="true">{COPY.zipEmptyState}</p>
+        <p class="rs-nojs">{COPY.zipNoJs}</p>
+      </div>
+    </div>
+  </section>
+
+  {/*
+    ══ GATE SLOT ══════════════════════════════════════════════════════════
+    A gate would go HERE, between #your-area and #radar-signatures. Above it
+    is one field the reader already knows; everything below is area-level
+    published data, and no block below depends on another block below, so a
+    gate can be inserted without rewriting one.
+    NOT BUILT — this round ships ungated by instruction.
+  */}
+
+  <section class="block alt" id="radar-signatures">
+    <div class="wrap" style="max-width:820px;">
+      <h2>{COPY.radarHeading}</h2>
+      <p>{COPY.radarBody}</p>
+      {areas.map(({ metro, radar, box }) => (
+        <div class="card rs-metro-card" data-metro={metro.id} data-reading="radar">
+          <p class="metric-label">Radar hail signatures over the {metro.label} box</p>
+          {radar.available ? (
+            <>
+              <p class="metric-value">{radar.signatures.toLocaleString()}</p>
+              <p class="metric-note">
+                {radar.product} signatures recorded {formatDate(radar.windowStart)} to{" "}
+                {formatDate(radar.windowEnd)}, over {box}
+              </p>
+              <DataStatus
+                status={radar.freshness.display}
+                asOf={radar.freshness.asOf}
+                dataThrough={radar.freshness.dataThrough}
+                source={radar.sourceName}
+              />
+            </>
+          ) : (
+            <>
+              {/*
+                No number, and deliberately no zero. A zero here would read as
+                "no hail signatures over your metro", which is the opposite of
+                what we know. CLAUDE.md: never silently substitute zero or null
+                for a feed we do not hold.
+              */}
+              <p class="metric-value metric-value--none">Not published yet</p>
+              <p class="metric-note">
+                We do not hold this reading for {metro.label} yet. It needs {radar.needs}. When
+                that run lands, this card fills in with a count over {box}
+              </p>
+              <p class="data-meta">
+                Source when published: NOAA Severe Weather Data Inventory — nx3hail (NEXRAD
+                radar-derived hail signatures, not confirmed hail reports)
+              </p>
+            </>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="block" id="confirmed-reports">
+    <div class="wrap" style="max-width:820px;">
+      <h2>{COPY.confirmedHeading}</h2>
+      <p>{COPY.confirmedBody}</p>
+      {areas.map(({ metro, confirmed }) =>
+        confirmed ? (
+          <div class="card rs-metro-card" data-metro={metro.id} data-reading="confirmed">
+            <p class="metric-label">
+              Confirmed hail reports, {metro.label} metro counties
+            </p>
+            <p class="metric-value">{confirmed.total}</p>
+            <p class="metric-note">
+              Recorded {formatDate(confirmed.windowStart)} to {formatDate(confirmed.windowEnd)},
+              filed by county. The newest record is {confirmed.lagDays} days old: NCEI publishes
+              this series on a lag because a person confirms every entry, so that gap is the
+              publisher's and not this site's.
+            </p>
+            <div class="rs-table-wrap">
+              <table class="data-table rs-county-table">
+                <caption class="rs-caption">
+                  Every county in our {metro.label} file, including the ones that reported none
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">County</th>
+                    <th scope="col">Confirmed hail</th>
+                    <th scope="col">Other events on record</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {confirmed.counties.map((c) => (
+                    <tr data-county={c.county} data-hail={c.hail}>
+                      <th scope="row">{c.county}</th>
+                      <td>{c.hail}</td>
+                      <td>{c.otherEvents}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p class="metric-note">
+              A county showing 0 in the first column and a number in the second is one NOAA files
+              events for and which reported no hail in this window. That is a reading, not a gap.
+            </p>
+            <DataStatus
+              status={confirmed.freshness.display}
+              asOf={confirmed.freshness.asOf}
+              dataThrough={confirmed.freshness.dataThrough}
+              source={confirmed.sourceName}
+            />
+            <p style="margin-top:12px;">
+              <a href={confirmed.href}>Full storm and flood event data, sources and limitations &rarr;</a>
+            </p>
+          </div>
+        ) : null,
+      )}
+    </div>
+  </section>
+
+  <section class="block alt" id="the-difference">
+    <div class="wrap" style="max-width:820px;">
+      <h2>{COPY.differenceHeading}</h2>
+      <ul class="key-findings">
+        {DIFFERENCE.map((d) => (
+          <li><strong>{d.heading}.</strong> {d.body}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  {/*
+    Permits, ONE METRO AT A TIME and never in a shared table. HANDOFF records
+    that the two metros' roofing counts differ 3.27x for measurement-method
+    reasons alone — San Antonio counts a dedicated Re-Roof Permit class, Austin
+    text-matches "roof" — so a side-by-side would publish a fact about permit
+    vocabularies as though it were a fact about roofs.
+  */}
+  <section class="block" id="permits">
+    <div class="wrap" style="max-width:820px;">
+      <h2>{COPY.permitsHeading}</h2>
+      <p>{COPY.permitsBody}</p>
+      {areas.map(({ metro, permits }) =>
+        permits ? (
+          <div class="card rs-metro-card" data-metro={metro.id} data-reading="permits">
+            <p class="metric-label">Re-roof permits on record, {metro.label}</p>
+            <p class="metric-value">{permits.total.toLocaleString()}</p>
+            <p class="metric-note">
+              Across {permits.monthCount} complete months, {monthLabel(permits.windowStart)} to{" "}
+              {monthLabel(permits.windowEnd)}. Classified by{" "}
+              {permits.mechanisms.includes("permit-type")
+                ? `the city's own permit type — ${permits.sourceTypes.map((s) => `"${s.value}"`).join(", ")}`
+                : "matching text in the permit description, because this city publishes no roofing permit type"}.
+            </p>
+            {/*
+              GATED ON THE MECHANISM, not written once for both. The first
+              build of this page called the Austin composer unconditionally,
+              so San Antonio's card carried Austin's solar measurement as
+              though it described a dedicated Re-Roof Permit class — the
+              exact metro-mixing this section is arranged to prevent, in a
+              shape a side-by-side check would not have caught.
+            */}
+            {permits.mechanisms.includes("description-text") &&
+              textMatchComposition(`${metro.id}-roof-text-match`, permits)?.map((p) => (
+                <p class="metric-note">{p}</p>
+              ))}
+            <p class="metric-note">
+              This is work filed with one city, counted by {metro.label}'s own mechanism. It is
+              not a count of roofs replaced, it says nothing about any particular address, and it
+              is not comparable with the other metro's number on this page.
+            </p>
+            <DataStatus
+              status={permits.freshness.display}
+              asOf={permits.freshness.asOf}
+              dataThrough={permits.freshness.dataThrough}
+              source={permits.dataset.source.name}
+            />
+          </div>
+        ) : null,
+      )}
+    </div>
+  </section>
+
+  {notice && (
+    <section class="block alt" id="licensing">
+      <div class="wrap" style="max-width:820px;">
+        <h2>{COPY.licenceHeading}</h2>
+        <h3>{notice.heading}</h3>
+        <p>{notice.body}</p>
+        <p class="data-meta">
+          Source: <a href={notice.sourceUrl}>{notice.sourceName}</a>
+          <span aria-hidden="true" class="data-meta-sep">·</span>
+          <span>
+            Confirmed <time datetime={machineDate(notice.confirmedOn)}>{formatDate(notice.confirmedOn)}</time>
+          </span>
+        </p>
+      </div>
+    </section>
+  )}
+
+  <section class="block" id="limits">
+    <div class="wrap" style="max-width:820px;">
+      <h2>{COPY.limitsHeading}</h2>
+      <ul class="key-findings">
+        {LIMITS.map((l) => (
+          <li><strong>{l.heading}.</strong> {l.body}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  {/*
+    ══ REFERRAL SLOT ══════════════════════════════════════════════════════
+    A contractor handoff would go HERE, after #limits — and note it is also
+    after #licensing, which is the point: a reader should learn that Texas
+    does not license roofing contractors, and what to check instead, BEFORE
+    being offered an introduction to one. Round 24's /privacy/ states that
+    nothing is shared with any company and that no list of companies exists;
+    that stays true until a handoff mechanism and a legal read exist.
+    NOT BUILT.
+  */}
+
+  <section class="block alt" id="sources">
+    <div class="wrap" style="max-width:820px;">
+      <h2>{COPY.sourcesHeading}</h2>
+      <ul class="key-findings">
+        {areas.map(({ metro, confirmed }) =>
+          confirmed ? (
+            <li>
+              <strong>{metro.label} confirmed hail.</strong> {confirmed.sourceName} &mdash;{" "}
+              <a href={confirmed.sourceUrl}>{confirmed.sourceUrl}</a>
+            </li>
+          ) : null,
+        )}
+        <li>
+          <strong>Radar hail signatures.</strong> NOAA Severe Weather Data Inventory, nx3hail
+          &mdash; <a href="https://www.ncdc.noaa.gov/swdiws/">https://www.ncdc.noaa.gov/swdiws/</a>.
+          Built and registered; no dataset committed yet, so no count is published above.
+        </li>
+        {areas.map(({ metro, permits }) =>
+          permits ? (
+            <li>
+              <strong>{metro.label} re-roof permits.</strong> {permits.dataset.source.name} &mdash;{" "}
+              <a href={permits.dataset.source.url}>{permits.dataset.source.url}</a>
+            </li>
+          ) : null,
+        )}
+        {notice && (
+          <li>
+            <strong>Licensing.</strong> {notice.sourceName} &mdash;{" "}
+            <a href={notice.sourceUrl}>{notice.sourceUrl}</a>
+          </li>
+        )}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<script
+  is:inline
+  define:vars={{
+    ZIPS: zipCounties,
+    AREA_LABELS: areaLabels,
+    EMPTY_LABEL: COPY.zipBucketEmpty,
+    FILLED_LABEL: COPY.zipBucketFilled,
+    EMPTY_STATE: COPY.zipEmptyState,
+  }}
+>
+  (function () {
+    var input = document.getElementById("rs-zip");
+    var bucket = document.getElementById("rs-zip-bucket");
+    var read = document.getElementById("rs-zip-read");
+    if (!input || !bucket || !read) return;
+    // With scripts running, the no-JS explanation is not true, so it goes.
+    document.documentElement.setAttribute("data-rs-js", "1");
+
+    function clearEmphasis() {
+      var els = document.querySelectorAll("[data-metro],[data-county]");
+      for (var i = 0; i < els.length; i++) els[i].removeAttribute("data-emphasis");
+    }
+
+    function update() {
+      var raw = (input.value || "").trim();
+      var hit = raw.length === 5 ? ZIPS[raw] : null;
+      var entered = raw.length > 0;
+
+      // The label follows the input, and says what the reading is about.
+      bucket.setAttribute("data-state", entered ? "reported" : "empty");
+      bucket.textContent = entered ? FILLED_LABEL : EMPTY_LABEL;
+
+      clearEmphasis();
+      if (!hit) {
+        read.setAttribute("data-empty", "true");
+        read.textContent = entered && raw.length === 5
+          ? "We do not cover " + raw + " yet. Both metros are below either way."
+          : EMPTY_STATE;
+        return;
+      }
+
+      var areaId = hit[0], county = hit[1];
+      read.setAttribute("data-empty", "false");
+      read.textContent =
+        raw + " is in " + county + " County, " + (AREA_LABELS[areaId] || areaId) +
+        " metro. Its row is highlighted below. These readings describe the county and the metro, " +
+        "not this address.";
+
+      var cards = document.querySelectorAll('[data-metro="' + areaId + '"]');
+      for (var i = 0; i < cards.length; i++) cards[i].setAttribute("data-emphasis", "1");
+      var rows = document.querySelectorAll('[data-county="' + county + '"]');
+      for (var j = 0; j < rows.length; j++) rows[j].setAttribute("data-emphasis", "1");
+    }
+
+    input.addEventListener("input", update);
+    input.addEventListener("change", update);
+    update();
+  })();
+</script>
+
+<style>
+  .rs-honesty { margin-top: 14px; }
+  .rs-input-card { margin-top: 18px; }
+  .rs-label { display: block; font-weight: 600; margin-bottom: 8px; }
+  /* flex-flow shorthand rather than the longhand pair: Tailwind 4 scans this
+     file for class candidates, and the longhand property name is itself a
+     utility name, so writing it here would emit that utility into the SITEWIDE
+     stylesheet and rehash every page. Identical CSS. (Round 25, twice.) */
+  .rs-field-row { display: flex; align-items: center; gap: 12px; flex-flow: row wrap; }
+  /* 48px minimum on the control itself — the only tap target on the page. */
+  .rs-zip {
+    min-height: 48px; min-width: 7ch; padding: 10px 12px; font-size: 1.05rem;
+    font-family: var(--thi-font-mono); letter-spacing: 0.08em;
+    border: 1px solid var(--color-border, #c9ced6); border-radius: 8px;
+  }
+  .rs-bucket {
+    font-family: var(--thi-font-ui); font-size: var(--thi-fs-caption);
+    text-transform: uppercase; letter-spacing: var(--thi-ls-label);
+    padding: 5px 10px; border-radius: 4px; border: 1px dashed var(--line);
+    color: var(--ink-soft);
+  }
+  .rs-bucket[data-state="reported"] {
+    border-style: solid; border-color: var(--thi-watch);
+    background: var(--thi-watch-bg, #fdf1dc); color: var(--thi-amber-deep, #9E5E22);
+  }
+  .rs-hint { font-size: var(--thi-fs-caption); color: var(--ink-soft); margin: 10px 0 0; }
+  .rs-read { margin: 14px 0 0; }
+  .rs-read[data-empty="true"] { color: var(--ink-soft); }
+  html[data-rs-js] .rs-nojs { display: none; }
+  .rs-nojs { margin: 14px 0 0; font-size: var(--thi-fs-body-sm); color: var(--ink-soft); }
+  .rs-metro-card { margin-top: 18px; }
+  .rs-metro-card[data-emphasis] { border-left: 3px solid var(--thi-watch); }
+  .rs-county-table tr[data-emphasis] { background: var(--thi-watch-bg, #fdf1dc); }
+  .metric-value--none { color: var(--ink-soft); font-size: 1.3rem; }
+  .rs-caption { text-align: left; font-size: var(--thi-fs-caption); color: var(--ink-soft); padding-bottom: 8px; }
+  /* A wide table on a narrow phone scrolls INSIDE its own box rather than
+     taking the document with it. Round 26's measurement is the reason this is
+     here before anyone reports it. */
+  .rs-table-wrap { overflow-x: auto; margin: 14px 0; }
+  /* A bare URL is one unbreakable word, and at 320px the longest source URL is
+     wider than the column. Round 25's defect, fixed on the way in. */
+  #sources a { overflow-wrap: anywhere; }
+</style>
