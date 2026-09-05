@@ -7,11 +7,11 @@
   priority: true
 
 - id: noaa-climate
-  name: "NOAA Climate"
-  org: "NOAA"
-  primaryUse: "Historical normals/extremes"
-  thiOutput: "Current-vs-normal comparisons"
-  status: stub
+  name: "NOAA Climate Normals + Global Summary of the Month"
+  org: "NOAA NCEI"
+  primaryUse: "1991-2020 monthly cooling degree days, base 65F, plus recent monthly actuals"
+  thiOutput: "Cooling demand in a typical year, per metro"
+  status: live
   priority: false
 
 - id: noaa-storm-events
