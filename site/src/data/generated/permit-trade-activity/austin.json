@@ -2,10 +2,10 @@
   "datasetId": "permit-trade-activity",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "stale",
-  "lastAttemptAt": "2026-09-05T12:42:08.041Z",
-  "lastSuccessAt": "2026-09-04T13:32:39.479Z",
-  "lastError": "Austin trade activity: incomplete read - server-side count(1) says 767 for this $where, the paged download returned 598. Refusing to publish counts from a partial read.",
+  "status": "live",
+  "lastAttemptAt": "2026-09-05T15:02:52.498Z",
+  "lastSuccessAt": "2026-09-05T15:02:52.498Z",
+  "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
     "url": "https://data.austintexas.gov/"
@@ -1278,12 +1278,12 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-04T13:32:39.827Z",
+      "ingestedAt": "2026-09-05T15:02:53.137Z",
       "key": "trades-v1/electrical/2026-09",
       "value": {
         "category": "electrical",
         "month": "2026-09",
-        "permitCount": 146,
+        "permitCount": 289,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -1291,19 +1291,19 @@
         "sourceValues": [
           {
             "value": "Electrical Permit",
-            "count": 146
+            "count": 289
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-04T13:32:39.827Z",
+      "ingestedAt": "2026-09-05T15:02:53.137Z",
       "key": "trades-v1/hvac/2026-09",
       "value": {
         "category": "hvac",
         "month": "2026-09",
-        "permitCount": 111,
+        "permitCount": 205,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -1311,19 +1311,19 @@
         "sourceValues": [
           {
             "value": "Mechanical Permit",
-            "count": 111
+            "count": 205
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-04T13:32:39.827Z",
+      "ingestedAt": "2026-09-05T15:02:53.137Z",
       "key": "trades-v1/plumbing/2026-09",
       "value": {
         "category": "plumbing",
         "month": "2026-09",
-        "permitCount": 124,
+        "permitCount": 266,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -1331,19 +1331,19 @@
         "sourceValues": [
           {
             "value": "Plumbing Permit",
-            "count": 124
+            "count": 266
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-04T13:32:39.827Z",
+      "ingestedAt": "2026-09-05T15:02:53.137Z",
       "key": "trades-v1/roofing/2026-09",
       "value": {
         "category": "roofing",
         "month": "2026-09",
-        "permitCount": 18,
+        "permitCount": 30,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "description-text"
@@ -1351,19 +1351,19 @@
         "sourceValues": [
           {
             "value": "description contains \"roof\"",
-            "count": 18
+            "count": 30
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-04T13:32:39.827Z",
+      "ingestedAt": "2026-09-05T15:02:53.137Z",
       "key": "trades-v1/solar/2026-09",
       "value": {
         "category": "solar",
         "month": "2026-09",
-        "permitCount": 9,
+        "permitCount": 49,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "work-class",
@@ -1372,11 +1372,11 @@
         "sourceValues": [
           {
             "value": "Auxiliary Power",
-            "count": 6
+            "count": 44
           },
           {
             "value": "description mentions solar/photovoltaic/PV",
-            "count": 3
+            "count": 5
           }
         ]
       }

@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-05T12:41:59.710Z",
-  "lastSuccessAt": "2026-09-05T12:41:59.710Z",
+  "lastAttemptAt": "2026-09-05T15:02:41.985Z",
+  "lastSuccessAt": "2026-09-05T15:02:41.985Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -19957,7 +19957,7 @@
     },
     {
       "observedAt": "2026-09-03T00:00:00.000Z",
-      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "ingestedAt": "2026-09-05T15:02:42.529Z",
       "key": "2026-038468 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -19967,7 +19967,7 @@
     },
     {
       "observedAt": "2026-09-03T00:00:00.000Z",
-      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "ingestedAt": "2026-09-05T15:02:42.529Z",
       "key": "2026-100985 PP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -19977,7 +19977,7 @@
     },
     {
       "observedAt": "2026-09-03T00:00:00.000Z",
-      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "ingestedAt": "2026-09-05T15:02:42.529Z",
       "key": "2026-014406 EP",
       "value": {
         "permitType": "Remodel",
@@ -19987,7 +19987,7 @@
     },
     {
       "observedAt": "2026-09-03T00:00:00.000Z",
-      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "ingestedAt": "2026-09-05T15:02:42.529Z",
       "key": "2026-109947 PP",
       "value": {
         "permitType": "Repair",
@@ -19997,7 +19997,7 @@
     },
     {
       "observedAt": "2026-09-03T00:00:00.000Z",
-      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "ingestedAt": "2026-09-05T15:02:42.529Z",
       "key": "2026-014400 EP",
       "value": {
         "permitType": "Remodel",
@@ -20007,7 +20007,7 @@
     },
     {
       "observedAt": "2026-09-03T00:00:00.000Z",
-      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "ingestedAt": "2026-09-05T15:02:42.529Z",
       "key": "2026-014412 EP",
       "value": {
         "permitType": "Remodel",
@@ -20017,7 +20017,7 @@
     },
     {
       "observedAt": "2026-09-03T00:00:00.000Z",
-      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "ingestedAt": "2026-09-05T15:02:42.529Z",
       "key": "2026-115422 BP",
       "value": {
         "permitType": "Remodel",
@@ -20028,7 +20028,7 @@
     },
     {
       "observedAt": "2026-09-03T00:00:00.000Z",
-      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "ingestedAt": "2026-09-05T15:02:42.529Z",
       "key": "2023-015849 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -20038,13 +20038,45 @@
     },
     {
       "observedAt": "2026-09-03T00:00:00.000Z",
-      "ingestedAt": "2026-09-05T12:42:00.270Z",
+      "ingestedAt": "2026-09-05T15:02:42.529Z",
       "key": "2026-114472 BP",
       "value": {
         "permitType": "Repair",
         "workDescription": "Express- Full tear-off of the existing 2002 composition shingle roof to the deck; replace with Class 4 impact-resistant SBS-modified asphalt laminate shingles color Driftwood matching existing. New underlayment valley metal flashing 2 in. drip edge and vent replacement; damaged decking sheets replac",
         "status": "Active",
         "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-04T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:02:42.529Z",
+      "key": "2026-115882 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Reroof overlay with totally adhered Carlisle TPO",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-04T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:02:42.529Z",
+      "key": "2026-116568 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express: Removal of existing roof and chimney section and re-roof with standing seam metal roof",
+        "status": "Active",
+        "valuationUsd": 50000
+      }
+    },
+    {
+      "observedAt": "2026-09-04T00:00:00.000Z",
+      "ingestedAt": "2026-09-05T15:02:42.529Z",
+      "key": "2026-115548 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Installation of a new TPO Roofing System. Existing retail.",
+        "status": "Active",
+        "valuationUsd": 19400
       }
     }
   ]
