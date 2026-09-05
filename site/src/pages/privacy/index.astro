@@ -2,12 +2,38 @@
 /**
  * /privacy/ — deliberately minimal and factual.
  *
- * This exists because the dashboard now collects an email address, and
- * collecting one without saying what happens to it is not something we should
- * ship. It describes exactly what is collected today and nothing more; it is
- * not a general-purpose privacy policy and does not pretend to be. When the
- * Round 5 account layer stores addresses, this needs rewriting with a real
- * review (see HANDOFF.md Seam 4).
+ * It describes exactly what is collected today and nothing more; it is not a
+ * general-purpose privacy policy and does not pretend to be.
+ *
+ * ── ROUND 24 CORRECTED FOUR STATEMENTS THAT THE CODE CONTRADICTED ─────────
+ * Each was written when it was true and went stale as the site grew, which is
+ * the failure mode a short page is supposed to prevent and did not:
+ *
+ *  1. "We do not collect your name, street address, or phone number. We do not
+ *     ask for them anywhere on this site today." — /start/ has collected a
+ *     first name and email since Round 1 (`projects.first_name`), the
+ *     contractor-request step collects a phone number
+ *     (`contractor_requests.phone`), and this page's own account section, two
+ *     screens below, described storing a street address. It contradicted the
+ *     code AND itself.
+ *  2. "We use privacy-respecting page analytics." Nothing analytics-related
+ *     renders unless PUBLIC_GA4_MEASUREMENT_ID is set, and it is not set — so
+ *     the page claimed a practice that was not happening. When it is set the
+ *     tool is Google Analytics 4, which is worth naming rather than
+ *     characterising.
+ *  3. Two processors were never disclosed at all: Resend receives an email
+ *     address to deliver each message, and a Slack webhook receives a ZIP and
+ *     a timestamp on signup (`lib/ops/leadMessage.ts`, LEAD_DETAIL = "zip" —
+ *     no email, no address).
+ *  4. "It is not a flag on a row we keep; the records are deleted." True of
+ *     everything the delete touches, but three records outlive it by design
+ *     and the page did not say so.
+ *
+ * ── THE SERVICE-PROVIDERS SECTION IS WRITTEN IN THE FUTURE TENSE ON PURPOSE
+ * The lead handoff does not exist. No tool is gated, nothing is shared with
+ * any company, and describing an unbuilt mechanism in the present tense would
+ * be the same class of error as the four above. It is published now because
+ * the disclosure has to exist BEFORE the first handoff, not alongside it.
  */
 import Base from "../../layouts/Base.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
@@ -42,8 +68,13 @@ const description =
         along with a record of when you gave consent and which page you gave it on.
       </p>
       <p>
-        We do not collect your name, street address, or phone number. We do not ask for them
-        anywhere on this site today.
+        Two other parts of the site ask for more, and only when you use them. A
+        <strong>home dashboard account</strong> holds an email address, a ZIP, and — only if you
+        tick the box for it — a street address; that is described in full further down. The
+        <strong>project brief</strong> at <a href="/start/">/start/</a> asks for a
+        <strong>first name and an email address</strong>, and its optional contractor-request step
+        asks for a <strong>phone number</strong>. Nothing on this site asks for a payment detail,
+        a date of birth, or a government identifier.
       </p>
 
       <h2>Why we collect it</h2>
@@ -62,8 +93,14 @@ const description =
 
       <h2>We do not sell your data</h2>
       <p>
-        We do not sell, rent, or share your email address with third parties, including
-        contractors. We are not running an advertising business against it.
+        We do not sell or rent your email address to anyone, and we are not running an advertising
+        business against it. We have never passed a homeowner's details to a company offering to
+        do work, and we will not start doing it silently — the section below says exactly what
+        would change and when.
+      </p>
+      <p>
+        Two services we pay to run the site do see some of your information, because they cannot
+        do their job without it. Both are named below.
       </p>
 
       <h2>How to be removed</h2>
@@ -73,10 +110,32 @@ const description =
         need an account to ask.
       </p>
 
+      <h2>Services we use to run the site</h2>
+      <p>Three, and this is all of them.</p>
+      <ul style="list-style:disc;padding-left:1.25em;">
+        <li>
+          <strong>Cloudflare</strong> hosts the site and holds the database. Everything described
+          on this page is stored there.
+        </li>
+        <li>
+          <strong>Resend</strong> delivers our email. To send you a sign-in link or a weekly
+          summary, we hand Resend <strong>your email address and the message</strong> — one
+          recipient at a time, never a list. It is a delivery service, not a marketing platform,
+          and it does not get your address, your reminders, or anything else.
+        </li>
+        <li>
+          <strong>Slack</strong> tells us when someone signs up, so we know the site is working.
+          That notification contains <strong>the ZIP code and the time</strong> and nothing else —
+          not your email address, not your street address, not your name.
+        </li>
+      </ul>
+
       <h2>Analytics</h2>
       <p>
-        We use privacy-respecting page analytics to see which pages get read. We do not send your
-        email address, your ZIP, or any other personal detail to an analytics provider.
+        <strong>Page analytics are currently switched off.</strong> No analytics script loads on
+        any page of this site right now. If we turn them on, the tool will be Google Analytics 4
+        and this page will say so before it happens. Either way we do not send your email address,
+        your ZIP, your street address, or anything you typed to an analytics provider.
       </p>
 
       <h2 id="your-account">If you have an account</h2>
@@ -96,6 +155,66 @@ const description =
         provider.
       </p>
 
+      <h2 id="service-providers">Companies we introduce you to</h2>
+      <p>
+        <strong>Nothing on this site does this yet.</strong> No tool asks for a job today, nothing
+        has been shared with any company, and there is no list of companies. This section is here
+        because we are building it, and a description of what will happen to your information
+        belongs on this page before it happens rather than after.
+      </p>
+      <p>
+        Here is what it will be. Some tools will end by asking whether you would like us to find
+        companies who can do the work. <strong>That question is a separate step with its own
+        button.</strong> Using a tool, reading its result, or having an account never triggers it.
+        If you do not answer it, nothing leaves this site.
+      </p>
+
+      <h3>What we would share, and with whom</h3>
+      <p>
+        If you say yes, we would send a company <strong>your first name, your email address, the
+        job you described, and the area you are in</strong> &mdash; and your phone number only if
+        you gave us one. We would send the description of the work you wrote. We would not send
+        your dashboard, your reminders, what you have marked done, or anything you entered
+        elsewhere on this site.
+      </p>
+
+      <h3>The companies do not already exist</h3>
+      <p>
+        This is the part most worth being clear about, because it is the opposite of how these
+        services usually work. <strong>We do not have a network of companies waiting.</strong> When
+        you ask, we go and look for companies that do that particular job in your area, and we
+        approach them. That takes time &mdash; it is people making enquiries, not a form hitting a
+        database. Companies we find this way may be ones we contact again for later requests.
+      </p>
+
+      <h3>What an introduction is not</h3>
+      <p>
+        We do not inspect your home, diagnose the problem, or supervise the work. We do not check
+        licences, insurance, bonding, or complaint history, and we do not rate or rank anyone.
+        <strong>An introduction is not a recommendation and not an endorsement.</strong> We are
+        telling a company that you are looking; deciding whether to hire them is entirely yours,
+        and so is asking them for their licence, their insurance, and their references.
+      </p>
+
+      <h3>Changing your mind</h3>
+      <p>
+        Email <a href="mailto:privacy@texashomeintelligence.com">privacy@texashomeintelligence.com</a>
+        and we will stop. If we have not sent your details to anyone yet, nothing goes out. If we
+        already have, we will tell you which companies received them and ask each of them to
+        delete what we sent &mdash; and we will say plainly that we can ask, not compel.
+        <strong>Information already in someone else's hands is out of ours</strong>, and anyone who
+        tells you otherwise is overpromising. Their own privacy practices are theirs, not ours.
+      </p>
+
+      <h3>How long we keep it</h3>
+      <p>
+        A request record &mdash; what you asked for, when, and who we introduced you to &mdash;
+        is kept for <strong>two years</strong>, then deleted. We keep it that long so that if you
+        come back and ask what happened, we can tell you. You can have it deleted sooner by
+        asking. Deleting your dashboard account does not automatically delete a request record,
+        because the two are separate; ask for both if you want both gone.
+      </p>
+
       <h2>Deleting your account</h2>
       <p>
         There is a delete option on your dashboard. It removes your account, your email address,
@@ -106,6 +225,15 @@ const description =
       <p>
         You can also remove just your street address and keep the account, since the address is
         stored on its own.
+      </p>
+      <p>
+        <strong>Three things outlive that delete, and they are worth naming rather than leaving
+        you to discover.</strong> If you asked to be told when the dashboard launched, that
+        signup is a separate record and is not removed by deleting an account &mdash; ask and we
+        will delete it. If an email to you ever bounced or you marked one as spam, we keep the
+        address on a do-not-send list, because the alternative is emailing you again. And a
+        project brief you started at <a href="/start/">/start/</a> is stored separately from
+        accounts entirely. Ask for any of them and they go.
       </p>
 
       <h2>What this page is not</h2>

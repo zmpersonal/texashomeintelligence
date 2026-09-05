@@ -43,6 +43,13 @@ npx tsx scripts/replays/hailunit.ts           # unit — the SWDI nx3hail fetche
                                              #   treats them as real storms. Pins the trailer
                                              #   filter, the radar-vs-confirmed discriminant, the
                                              #   refusal to name a unit, and the not-a-county guard.
+npx tsx scripts/replays/privacyunit.ts        # unit — /privacy/ says what the code does
+                                             #   (Round 24). Asserts against the RENDERED page,
+                                             #   not the .astro: source is line-wrapped and the
+                                             #   file's header comment quotes the stale wording it
+                                             #   replaced, so a source-based check reports "still
+                                             #   says X" about the note explaining it no longer
+                                             #   does. Needs `npm run build` first.
 npx tsx scripts/verify-trade-mapping.ts      # unit
 npx tsx scripts/replays/climateunit.ts        # unit — the cooling-degree-day fetcher (Round
                                              #   19d), against REPLAYED NOAA payloads. Every
