@@ -1791,3 +1791,204 @@ jobs:
                 f"http_error={counts['http_error']} no_response={counts['no_response']} "
                 f"refused={counts['refused']}")
           PY
+
+      # ══ ROUND 23 — WHAT IS THE REAL WINDOW LIMIT, AND WHAT IS stat=count? ══
+      #
+      # TWO PIECES OF EVIDENCE CONTRADICT EACH OTHER AND ONLY ONE WAS MEASURED.
+      #   MEASURED  : Round 21 asked nx3hail for 365 days and got HTTP 500,
+      #               "maximum date range currently allowed is 744 hours" (31 days).
+      #   DOCUMENTED: SWDI's REST usage page states "The current limit of the
+      #               date range size is one year."
+      #
+      # Round 22 clamped to 31 days on the strength of the error, which was the
+      # right call on the evidence available and may still be too tight. The
+      # 744-hour ceiling may be specific to nx3hail, or to the SHAPE of Round
+      # 21's request — which also carried `limit=5`, a parameter the working
+      # Round 21b request did not send. That variable was never isolated.
+      #
+      # This section isolates it: 31 / 90 / 180 / 365 days, each WITH and
+      # WITHOUT `limit`, every error body printed in full. It also characterises
+      # stat=count and stat=countGroupBy, whose response SHAPES have never been
+      # seen — the Round 23 fetcher parses the count defensively for exactly
+      # that reason and records "unavailable" rather than guessing.
+      #
+      # NOTHING HERE CHANGES THE FETCHER. Raise MAX_WINDOW_DAYS against this
+      # log, never against the documentation alone: the documentation is what
+      # the 744-hour error already contradicted.
+      - name: "TEMP (Round 23): SWDI window limit + stat=count semantics"
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          python3 - <<'PY'
+          import datetime, re, sys, urllib.request, urllib.error, urllib.parse
+
+          UA = ("TexasHomeIntelligence-probe/1.0 (one-off read-only characterisation; "
+                "contact via github.com/zmpersonal/texashomeintelligence)")
+          TIMEOUT = 120
+          CEIL = 24 * 1024 * 1024
+          BASE = "https://www.ncdc.noaa.gov/swdiws"
+          # The Austin box the fetcher uses: +/-0.5 deg around the zip-areas.ts
+          # reference point. NOT a county.
+          BBOX = "-98.2431,29.7672,-97.2431,30.7672"
+
+          counts = {"requests": 0, "ok": 0, "http_error": 0, "no_response": 0}
+
+          def _crash(t, e, tb):
+              import traceback; traceback.print_exception(t, e, tb)
+              print(f"\nR23_PROBE_STATUS=error requests={counts['requests']} crash={t.__name__}: {e}")
+          sys.excepthook = _crash
+
+          def hr(t):
+              print("\n" + "=" * 74); print(t); print("=" * 74)
+
+          def get(url, label=""):
+              """Returns (status, body_text, kind). The BODY OF AN ERROR IS
+              RETURNED, not just printed — Round 21 printed it, discarded it,
+              and called a reachable service unreachable."""
+              counts["requests"] += 1
+              req = urllib.request.Request(url, headers={"User-Agent": UA})
+              try:
+                  with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+                      body = r.read(CEIL).decode("utf-8", "replace")
+                      counts["ok"] += 1
+                      print(f"  [{label}] HTTP {r.status}, {len(body)} bytes")
+                      return r.status, body, "ok"
+              except urllib.error.HTTPError as e:
+                  counts["http_error"] += 1
+                  try:
+                      body = e.read(8000).decode("utf-8", "replace")
+                  except Exception:
+                      body = ""
+                  print(f"  [{label}] HTTP {e.code} {e.reason} — THE SERVER ANSWERED")
+                  print("    FULL ERROR BODY:")
+                  for line in body.splitlines()[:10]:
+                      if line.strip():
+                          print(f"      {line.strip()[:400]}")
+                  if not body.strip():
+                      print("      (empty body)")
+                  return e.code, body, "http_error"
+              except Exception as e:
+                  counts["no_response"] += 1
+                  print(f"  [{label}] NO RESPONSE — {type(e).__name__}: {e}")
+                  return None, "", "no_response"
+
+          def data_rows(body):
+              """SWDI rows minus '#' comments and the totalTimeInSeconds trailer
+              — the trailer Round 21b read as a date and Round 22 filtered."""
+              lines = [l for l in body.splitlines()
+                       if l.strip() and not l.startswith("#")
+                       and not l.lower().startswith("totaltimeinseconds")]
+              return max(0, len(lines) - 1), (lines[0] if lines else "")
+
+          today = datetime.date.today()
+          print(f"probe date (runner UTC): {today.isoformat()}")
+          print(f"bbox: {BBOX}  (+/-0.5 deg around the Austin reference point — NOT a county)")
+
+          # ── 1. THE WINDOW LIMIT, with `limit` isolated as a variable.
+          hr("1. WINDOW LIMIT — 31 / 90 / 180 / 365 days, with and without `limit`")
+          results = {}
+          for days in (31, 90, 180, 365):
+              for tag, extra in (("no limit", ""), ("with limit=5", "&limit=5")):
+                  end = today
+                  start = today - datetime.timedelta(days=days)
+                  url = (f"{BASE}/csv/nx3hail/{start:%Y%m%d}:{end:%Y%m%d}"
+                         f"?bbox={urllib.parse.quote(BBOX)}{extra}")
+                  st, body, kind = get(url, f"{days}d, {tag}")
+                  print(f"    {url}")
+                  if kind == "ok":
+                      n, header = data_rows(body)
+                      print(f"    -> ACCEPTED: {n} data row(s); header: {header[:120]}")
+                      results[(days, tag)] = ("accepted", n)
+                  elif kind == "http_error":
+                      hours = re.search(r"(\d+)\s*hours", body)
+                      print(f"    -> REJECTED"
+                            + (f"; the server named a ceiling of {hours.group(1)} hours"
+                               if hours else "; no hour ceiling named in the body"))
+                      results[(days, tag)] = ("rejected", st)
+                  else:
+                      results[(days, tag)] = ("no response", None)
+
+          print("\n  SUMMARY — read this before touching MAX_WINDOW_DAYS:")
+          for (days, tag), (verdict, extra) in sorted(results.items()):
+              print(f"    {days:>3}d {tag:<14} {verdict}"
+                    + (f" ({extra} rows)" if verdict == "accepted" else
+                       f" (HTTP {extra})" if extra else ""))
+          accepted = sorted({d for (d, t), (v, _) in results.items() if v == "accepted"})
+          if accepted:
+              print(f"\n  LONGEST ACCEPTED WINDOW: {max(accepted)} days.")
+              if max(accepted) > 31:
+                  print("  THAT CHANGES THE BACKFILL DECISION. Round 22 chose no backfill")
+                  print("  because twelve 31-day requests of one-shot loop logic would run")
+                  print("  their guard every day forever to do nothing. If one request covers")
+                  print("  a year, a backfill is ONE request and that reasoning no longer")
+                  print("  holds — raise MAX_WINDOW_DAYS and let computeFetchWindow's own")
+                  print("  backfill window through unclamped.")
+              else:
+                  print("  31 days stands as the real ceiling for this query shape. Keep the")
+                  print("  clamp and record that the documentation's 'one year' does not")
+                  print("  describe nx3hail with a bbox.")
+              if any(t == "no limit" for (d, t), (v, _) in results.items()
+                     if v == "accepted" and d > 31) != any(
+                     t == "with limit=5" for (d, t), (v, _) in results.items()
+                     if v == "accepted" and d > 31):
+                  print("  NOTE: `limit` CHANGED THE OUTCOME. Round 21's failing request")
+                  print("  carried it and Round 21b's working request did not — that")
+                  print("  variable was never isolated until now.")
+          else:
+              print("\n  NO WINDOW WAS ACCEPTED. Read the bodies above before concluding")
+              print("  anything: a rejection is not unreachability.")
+
+          # ── 2. stat=count semantics. The fetcher parses this defensively
+          # because its shape has never been seen; this is what settles it.
+          hr("2. stat=count — response shape, and whether it equals the row count")
+          for days in (31, 90):
+              start = today - datetime.timedelta(days=days)
+              plain = (f"{BASE}/csv/nx3hail/{start:%Y%m%d}:{today:%Y%m%d}"
+                       f"?bbox={urllib.parse.quote(BBOX)}")
+              st, body, kind = get(plain, f"{days}d records")
+              rows = data_rows(body)[0] if kind == "ok" else None
+              st2, cbody, kind2 = get(plain + "&stat=count", f"{days}d stat=count")
+              if kind2 == "ok":
+                  print("    RESPONSE VERBATIM:")
+                  for line in cbody.splitlines()[:8]:
+                      print(f"      {line[:200]}")
+                  nums = re.findall(r"\d+", "\n".join(
+                      l for l in cbody.splitlines()
+                      if not l.startswith("#") and "totaltimeinseconds" not in l.lower()))
+                  print(f"    integers found (excluding the timing trailer): {nums[:6]}")
+                  if rows is not None and nums:
+                      agree = int(nums[0]) == rows
+                      print(f"    per-record rows: {rows}; stat=count first integer: {nums[0]}"
+                            f"  -> {'AGREE' if agree else 'DISAGREE'}")
+                      if not agree:
+                          print("    A DISAGREEMENT HERE IS THE ANSWER TO ROUND 23's OPEN")
+                          print("    QUESTION: it means stat=count counts something other than")
+                          print("    the rows it returns, and the fetcher's cross-check must")
+                          print("    STAY a warning rather than being promoted to a throw.")
+                      else:
+                          print("    AGREEMENT ON A LIVE RUN IS THE CONDITION Round 23 set for")
+                          print("    promoting the cross-check from a warning to a hard failure.")
+
+          # ── 3. countGroupBy. Assessed against the response, not from the name.
+          hr("3. stat=countGroupBy — is a server-side monthly breakdown possible?")
+          start = today - datetime.timedelta(days=31)
+          plain = (f"{BASE}/csv/nx3hail/{start:%Y%m%d}:{today:%Y%m%d}"
+                   f"?bbox={urllib.parse.quote(BBOX)}")
+          for col in ("ZTIME", "WSR_ID", "MAXSIZE"):
+              st, body, kind = get(f"{plain}&stat=countGroupBy:{col}", f"countGroupBy:{col}")
+              if kind == "ok":
+                  print("    RESPONSE (first 8 lines):")
+                  for line in body.splitlines()[:8]:
+                      print(f"      {line[:200]}")
+                  print(f"    distinct groups returned: {max(0, len(body.splitlines()) - 2)}")
+          print("\n  THE QUESTION IS NOT WHETHER IT GROUPS — IT IS WHETHER IT GROUPS BY MONTH.")
+          print("  nx3hail's only time column is ZTIME, a full timestamp. Grouping by it")
+          print("  yields one group per scan, not one per month, unless SWDI accepts a")
+          print("  date-part expression — which the output above either shows or does not.")
+          print("  If it does not, countGroupBy cannot replace anything the product needs,")
+          print("  and the per-record fetch stays the source: coordinates, timestamps and")
+          print("  MAXSIZE are what a per-address reading requires, and a count has none.")
+
+          print(f"\nR23_PROBE_STATUS=complete requests={counts['requests']} ok={counts['ok']} "
+                f"http_error={counts['http_error']} no_response={counts['no_response']}")
+          PY

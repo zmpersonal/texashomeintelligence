@@ -64,6 +64,20 @@ export interface RadarHailSignatureValue {
    * reading only the data.
    */
   areaBasis: "box-around-metro-reference-point-not-a-county";
+  /**
+   * Round 23. Whether SWDI's OWN `stat=count` for the identical query agreed
+   * with the number of data rows this fetcher parsed from it.
+   *
+   * It rides on the row rather than living only in a log line because a log
+   * scrolls away and a stored record does not: anyone reading one observation
+   * can see whether the fetch that produced it was checked, and against what.
+   *
+   * "unavailable" means the count query failed or could not be parsed — which
+   * is not the same as disagreeing, and is not treated as one.
+   */
+  countCheck: "agrees" | "disagrees" | "unavailable";
+  /** What SWDI's `stat=count` reported, verbatim, or null if it did not answer. */
+  countCheckReported: number | null;
 }
 
 /**
@@ -92,8 +106,24 @@ const SWDI_BASE = "https://www.ncdc.noaa.gov/swdiws";
 const PRODUCT = "nx3hail";
 
 /**
- * SWDI's stated ceiling, quoted from the error body it returned: 744 hours.
- * Requesting more is answered with a 500, not truncated results.
+ * ⚠️ THIS NUMBER IS PROVISIONAL AND THE EVIDENCE FOR IT CONFLICTS.
+ *
+ *   MEASURED: a Round 21 request for 365 days returned HTTP 500 carrying
+ *     "maximum date range currently allowed is 744 hours" — 31 days.
+ *   DOCUMENTED: SWDI's REST usage page states "The current limit of the date
+ *     range size is one year."
+ *
+ * Both cannot describe the same request. The 744-hour error may be specific to
+ * `nx3hail`, or to the query shape Round 21 used — that request also carried a
+ * `limit=5` parameter, which the working Round 21b request did not.
+ *
+ * 31 days is kept because it is the only ceiling anything has actually
+ * OBSERVED, and a clamp that is too tight costs requests while a clamp that is
+ * too loose costs a failed run. The Round 23 probe step in
+ * `.github/workflows/noaa-climate-probe.yml` tries 31, 90, 180 and 365 days
+ * with and without `limit` and prints every error body. **Raise this only
+ * against that log, never against the documentation alone** — the
+ * documentation is what the 744-hour error already contradicted.
  */
 const MAX_WINDOW_DAYS = 31;
 
@@ -233,6 +263,88 @@ function makeFetcher(location: Metro): FetcherModule<RadarHailSignatureValue> {
             "read the response before changing this fetcher.",
         );
       }
+      // ── ROUND 23: SWDI'S OWN COUNT, AS A CROSS-CHECK ONLY.
+      //
+      // This does NOT replace the per-record fetch and must not. `stat=count`
+      // returns a number and nothing else — no coordinates, no timestamps, no
+      // MAXSIZE — and a future per-address reading needs all three. It is
+      // cheaper, not more accurate: it is the same number SWDI would produce by
+      // counting the rows it would otherwise send.
+      //
+      // WHAT IT IS FOR: the `totalTimeInSeconds` trailer silently became a
+      // record until Round 22 caught it. A parser that loses or invents rows
+      // fails in exactly that shape — quietly, with plausible output. Asking
+      // the server how many rows it thinks it sent is the one cheap check that
+      // catches that class, and it is worth its request for that alone.
+      //
+      // COMPARED AGAINST THE PARSED ROW COUNT, NOT THE EMITTED OBSERVATIONS.
+      // This fetcher deliberately drops positionless rows and de-duplicates on
+      // key, so emitted < parsed is expected and correct; only parsed vs SWDI
+      // isolates the parser.
+      const countUrl = `${url}&stat=count`;
+      let reportedCount: number | null = null;
+      try {
+        const countRes = await fetch(countUrl);
+        if (countRes.ok) {
+          const raw = (await countRes.text()).trim();
+          // Shape unverified — the response format for stat=count has not been
+          // seen from this environment. So: take the first integer that is not
+          // part of the timing trailer, and record null rather than guessing if
+          // there isn't one.
+          const cleaned = raw
+            .split("\n")
+            .filter((l) => !l.startsWith("#") && !/totalTimeInSeconds/i.test(l))
+            .join(" ");
+          const m = cleaned.match(/\d+/);
+          reportedCount = m ? Number(m[0]) : null;
+        }
+      } catch {
+        reportedCount = null;
+      }
+
+      const countCheck: RadarHailSignatureValue["countCheck"] =
+        reportedCount === null
+          ? "unavailable"
+          : reportedCount === parsed.rows.length
+            ? "agrees"
+            : "disagrees";
+
+      // Reported in the ingest log on every run, agreeing or not — a check
+      // that only speaks up when it fails cannot be distinguished from a check
+      // that is not running.
+      console.log(
+        `swdi-nx3hail/${location}: count cross-check ${countCheck} — ` +
+          `SWDI stat=count reported ${reportedCount ?? "nothing usable"}, ` +
+          `parser kept ${parsed.rows.length} data row(s) ` +
+          `(${parsed.rejected} non-data row(s) rejected).`,
+      );
+
+      // ── WHY A MISMATCH WARNS AND RECORDS RATHER THAN FAILING.
+      //
+      // Failing is the right END STATE and the wrong first move. `stat=count`'s
+      // exact semantics have not been observed from here: if it counts before
+      // the bbox filter, or includes the trailer, a CORRECT parser would
+      // mismatch on every run and a throw would keep the feed permanently dark
+      // over a difference in definition. Shipping a hard failure on an
+      // unverified assumption is the mistake rounds 19-19e cost five rounds.
+      //
+      // A race is NOT the reason: this product publishes days behind real time,
+      // so nothing is being written into the window between two back-to-back
+      // requests.
+      //
+      // RECOMMENDATION, recorded here so the next round does not have to
+      // re-derive it: once ONE live run reports "agrees", promote this to a
+      // throw. Until then the discrepancy is loud in the log and durable on
+      // every row, which is what the trailer bug lacked.
+      if (countCheck === "disagrees") {
+        console.log(
+          `swdi-nx3hail/${location}: WARNING — SWDI's count and the parsed row ` +
+            "count differ. Either the parser is losing or inventing rows, or " +
+            "stat=count counts something other than the rows it returns. Read " +
+            "the response before trusting either number.",
+        );
+      }
+
       if (parsed.rejected > 0) {
         // Expected: SWDI appends a `totalTimeInSeconds` trailer. Reported rather
         // than hidden, so a rise in this number is visible as a shape change.
@@ -283,6 +395,8 @@ function makeFetcher(location: Metro): FetcherModule<RadarHailSignatureValue> {
             maxSize: maxSize ?? 0,
             maxSizeUnit: null,
             areaBasis: "box-around-metro-reference-point-not-a-county",
+            countCheck,
+            countCheckReported: reportedCount,
           },
         });
       }
