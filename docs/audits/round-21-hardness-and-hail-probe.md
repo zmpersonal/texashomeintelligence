@@ -1,5 +1,21 @@
 # Round 21 — Probing water hardness and point-level hail
 
+> ## ⛔ CORRECTED BY ROUND 21b — "NEITHER SWDI BASE ANSWERED" WAS WRONG
+>
+> **Both bases answered.** Both returned, in a body this probe's own `get()` printed:
+> `ERROR VALIDATING 'dateRange=startDate:endDate'. … maximum date range currently allowed is
+> 744 hours.` 744 hours is 31 days; the probe asked for 365. The service was reachable, parsed
+> the request, and named its constraint.
+>
+> The window was the surface error. **The structural defect is that `get()` returns
+> `(status, None, host)` on an HTTPError** — it prints the body and discards it — so at the call
+> site `if body:` is False for a 500-with-a-validation-message exactly as for a refused
+> connection. A rejected *parameter* was read as an unavailable *source*: the rounds 19–19e
+> failure, one product over.
+>
+> §2's "if neither answers it stops" and the Part 2 findings below are superseded. See
+> `round-21b-swdi-window-and-hardness.md`. §3's four dry-run defects and Part 1's design stand.
+
 **A probe, not a fetcher.** Two hero tools are blocked on one feed each; this round measures
 whether either is reachable and prints what it contains. Nothing was built, nothing entered
 `src/data/generated/`, and the probe's output is **observable only on a dispatch after merge**.
