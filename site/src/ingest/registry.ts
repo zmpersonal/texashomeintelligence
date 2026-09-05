@@ -59,16 +59,16 @@ export const REGISTRY: RegistryEntry[] = [
   entry("deep", sanAntonioPermits),
   entry("deep", eiaElectricityPrice),
 
-  // Round 19: cooling degree days, one series per metro. Unseeded (see
-  // seed.ts NEVER_SEED) and therefore "deep" rather than "stub" — the tier
-  // describes seed richness, and there is no seed to describe. Not in
-  // INDEX_DATASETS: the Home Stress Index does not read it.
+  // Round 19d: cooling degree days, one file per metro carrying BOTH the
+  // 1991-2020 monthly normal (base 65F, documented) and recent GSOM monthly
+  // actuals, distinguished by `kind` and by key prefix and never combined.
+  // Unseeded (see seed.ts NEVER_SEED) and therefore "deep" rather than "stub" —
+  // the tier describes seed richness, and there is no seed to describe.
   //
-  // Round 19b: both entries stay registered, but the fetcher issues NO
-  // REQUEST — the probe measured its endpoint returning HTTP 400 "A station
-  // is required", so firing it daily would burn a runner cycle on a question
-  // already answered. They are here so the two-metro shape survives the
-  // rewrite; `scripts/replays/climateunit.ts` guards the silence.
+  // NOT in INDEX_DATASETS, and this is a deliberate constraint rather than an
+  // oversight: the Home Stress Index answers "what is happening around your
+  // home right now", and a 30-year normal is by construction the opposite of
+  // news. Adding it would make the index move on a number that cannot change.
   entry("deep", noaaClimateAustin),
   entry("deep", noaaClimateSanAntonio),
 

@@ -35,14 +35,18 @@ npx tsx scripts/replays/badgeunit.ts         # unit
 npx tsx scripts/replays/alertcopyunit.ts     # unit — alert-copy honesty, no data dependency
 npx tsx scripts/replays/noticefreshunit.ts   # unit — the dated-claim review gate (Round 10b)
 npx tsx scripts/verify-trade-mapping.ts      # unit
-npx tsx scripts/replays/climateunit.ts        # unit — the cooling-degree-day feed is in an
-                                             #   HONEST UNAVAILABLE state (Round 19b). Round 19's
-                                             #   version tested a bounding-box fetcher the probe
-                                             #   then measured to be a hard 400; this one asserts
-                                             #   the opposite — that no request is issued at all,
-                                             #   that the refusal quotes the measurement, and that
-                                             #   nothing on disk claims a CDD figure. It is the
-                                             #   regression guard against re-shipping the 400.
+npx tsx scripts/replays/climateunit.ts        # unit — the cooling-degree-day fetcher (Round
+                                             #   19d), against REPLAYED NOAA payloads. Every
+                                             #   normals value in it was read from a live response
+                                             #   on 2026-09-05; the GSOM actual magnitudes are
+                                             #   synthetic and no assertion treats them as facts.
+                                             #   Pins the measured normals round-tripping value for
+                                             #   value, normals vs actuals staying distinguishable,
+                                             #   the partial current month being dropped, Kelly AFB
+                                             #   (nearer, 2-year estimated record) being rejected
+                                             #   in favour of Stinson, USC/US1 never queried, and
+                                             #   NO BBOX PARAMETER ON ANY REQUEST — the one that
+                                             #   cost three rounds.
 npx tsx scripts/replays/citationcheckunit.ts # unit — the CITATION CHECKER itself (Round 15b).
                                              #   Runs check-citations.ts both ways and proves a
                                              #   startup crash is told apart from a dead link.

@@ -111,25 +111,37 @@ export const MAX_DATA_AGE_DAYS: Record<string, number> = {
   //   bls         → 400d, OEWS is annual for the San Antonio MSA as for Austin's
   //   usda-soil   → 400d, SSURGO is the same reference dataset either point
 
-  // Round 19. NOAA NCEI Global Summary of the Month, one cooling-degree-day
-  // row per calendar month, dated to the FIRST of the month it summarises.
-  // Three things have to fit inside this window and each is stated separately
-  // because they are separate:
+  // Round 19d. One `noaa-climate` file per metro now holds TWO kinds of row,
+  // and the window has to be reasoned about for each — but only one of them can
+  // ever drive it.
   //
-  //   1. month-start dating — up to 31 days by construction, exactly as
-  //      permit-trade-activity above;
-  //   2. GSOM's own publication lag — a month is not summarised the instant it
-  //      ends. THIS IS NOT MEASURED. `www.ncei.noaa.gov` is unreachable from
-  //      the sandbox that wrote this line, so the allowance is a bound, not an
-  //      observation. Section 3 of `.github/workflows/noaa-climate-probe.yml`
-  //      measures it on the runner; revisit this number against that log.
-  //   3. a missed weekly ingestion run.
+  //   normal-1991-2020 — the fixed 30-year monthly normal. It does not go stale
+  //     on any cadence this site cares about: NCEI republishes normals once a
+  //     decade, so the next edition is the 2001-2030 series and that is years
+  //     away. Its rows are dated to 2020, the last year of their own period, so
+  //     if a file ever contained ONLY normals its newest observedAt would read
+  //     about five years old and any sane window would flag it. That is why the
+  //     fetcher throws rather than returning normals alone — a normals-only file
+  //     is not a successful run, and the badge should never have to paper over
+  //     one.
   //
-  // 75 days covers (1) plus roughly six weeks of (2) and (3). It errs toward
-  // admitting staleness: if the real lag turns out shorter, a healthy feed is
-  // simply never flagged, whereas a window set too tight would badge a
-  // perfectly current series as out of date every month.
-  "noaa-climate": 75 * DAY,
+  //   monthly-actual — GSOM, one row per complete calendar month. This is what
+  //     the window is actually set for, because it is always the newest row.
+  //
+  // 120 days, made of four things that each have to fit:
+  //   1. month-start dating — a row is dated to the 1st of the month it covers,
+  //      so it is up to 31 days old the moment it is complete;
+  //   2. THE CURRENT CALENDAR MONTH IS ALWAYS PARTIAL and the fetcher drops it
+  //      (Round 15's lesson: a part-month total understates and reads as a real
+  //      collapse in demand). That costs up to another 31 days by design;
+  //   3. GSOM's own publication lag. NOT MEASURED — the probe characterised the
+  //      endpoint, not its cadence — so this is a bound, not an observation.
+  //      Revisit it against a few real runs;
+  //   4. a missed weekly ingestion run.
+  // It errs toward admitting staleness: too tight would badge a perfectly
+  // current series as out of date every month, which is the failure mode that
+  // matters here.
+  "noaa-climate": 120 * DAY,
 
   // ── Cadence NOT established. These four are stub fetchers with sample
   // data, so they never reach the age check today (a `sample` file reports no
