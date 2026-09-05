@@ -78,6 +78,22 @@ npx tsx --import ./scripts/register-raw.mjs \
                                              #   Reports 10/10 dead in this sandbox: every host
                                              #   is proxied. That is the environment, not a bug —
                                              #   citationcheckunit.ts is the one to trust locally.
+node scripts/replays/dashmobile.mjs          # render — the dashboard on a phone (Round 26).
+                                             #   scrollWidth and every element's box at 320/360/390
+                                             #   for the public ZIP page (both metros), the ZIP
+                                             #   prompt, all THREE signed-in fixtures (POP, FIRED,
+                                             #   EMPTY) and three control pages that were already
+                                             #   clean — a change to the shared stylesheet can
+                                             #   break a page it was not aimed at.
+                                             #   The assertions that matter are the ones AFTER the
+                                             #   scrollWidth checks: overflow-x:hidden would satisfy
+                                             #   "scrollWidth === clientWidth" while leaving the ZIP
+                                             #   picker unreachable, so it also proves nothing clips,
+                                             #   the grid track equals its container, the select
+                                             #   keeps its natural width with the ZIP readable, and
+                                             #   the type scale and spacing are untouched (BRAND.md
+                                             #   does not permit buying a fit with either).
+                                             #   Needs `npm run fixture` for the sessions.
 node scripts/replays/aclifespanrender.mjs    # render — AC Lifespan (Round 25). Structure and
                                              #   both metros' figures RE-DERIVED from
                                              #   src/data/generated (an assertion cannot pass by
