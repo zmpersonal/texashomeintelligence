@@ -1,5 +1,25 @@
 # Round 19 — Cooling degree days: implementing `noaa-climate`
 
+> ## ⛔ CORRECTED IN PLACE BY ROUND 19b — THE FETCHER THIS DOCUMENT DESCRIBES DOES NOT WORK
+>
+> The 2026-09-05 dispatch of this round's own probe **falsified the mechanism shipped
+> below.** NCEI's Access Data Service does not accept bounding-box station discovery for
+> `global-summary-of-the-month`. Every station-discovery request — both bbox orderings,
+> both metros — returned:
+>
+> ```
+> HTTP 400  errors: [{"field":"stations","message":"A station is required."}]
+> ```
+>
+> The endpoint requires explicit station ids. §2's central design decision — "no station id
+> is written down", the bounding box chosen precisely so none had to be asserted — cannot
+> work against this endpoint. Round 19b reverted the fetcher to an honest unavailable state
+> and shipped a second probe instead of a second fetcher.
+>
+> **Read `round-19b-cdd-mechanism.md` for what replaces it.** Everything below is kept as
+> the record of what was tried and why; the §4 defect findings and the §3 multiplier
+> analysis both still stand. §2 does not.
+
 **Status:** fetcher implemented for both metros; **no cooling-degree-day figure has been
 measured yet, and none is published anywhere on the site.** The probe that would confirm
 the three remaining unknowns runs on the Actions runner and its output is observable only
@@ -49,7 +69,7 @@ The probe discovers rather than asserts. Its five sections:
 
 ---
 
-## 2. What was implemented
+## 2. What was implemented — ⛔ FALSIFIED, see the banner above
 
 `src/ingest/fetchers/noaaClimate.ts` is now a real fetcher, `makeFetcher(location)` in the
 `blsWages.ts` idiom, exporting `noaaClimateAustin` and `noaaClimateSanAntonio`.
@@ -71,6 +91,13 @@ The probe discovers rather than asserts. Its five sections:
   station rides on every observation, so the series itself is the audit trail.
 
 ### The three constructions, flagged as `blsWages.ts` flags the San Antonio CBSA
+
+> **Outcome, recorded 2026-09-05.** Flagging them was right and it is what let this be
+> caught in one dispatch rather than in production. But flagging an assumption is not the
+> same as testing one, and the round shipped a fetcher whose central mechanism rested on
+> item 2. The lesson Round 19b takes from it: when a probe is already being written to
+> settle a question, the code that depends on the answer waits for the answer.
+
 
 **Not one request in this fetcher has ever been round-tripped against a live response.**
 Three things are constructions:
@@ -114,9 +141,17 @@ metro figure, which means agreement on all four of:
    is an area or population aggregate. That asymmetry needs stating wherever the ratio is
    published, not buried.
 
-**Published or derived:** a national figure is *published* — NOAA CPC issues
-population-weighted monthly CDD for the nation and by state, and NCEI's Climate at a Glance
-carries a national CDD time series. **Neither could be confirmed reachable from here** —
+**Published or derived — MEASURED 2026-09-05, superseding the paragraph below.** Climate
+at a Glance answered **HTTP 200** and cleanly:
+`{"title":"Contiguous U.S. August Cooling Degree Days (base 65°F)"}`, monthly values
+2015-2025. **Both CPC population-weighted URLs returned 404.** So the reachable national
+baseline is the area-weighted contiguous-US series, not the population-weighted one — which
+changes the comparability analysis. See `round-19b-cdd-mechanism.md` §3.
+
+*Original text, as written before the dispatch:* a national figure is *published* — NOAA CPC
+issues population-weighted monthly CDD for the nation and by state, and NCEI's Climate at a
+Glance carries a national CDD time series. **Neither could be confirmed reachable from
+here** —
 `ftp.cpc.ncep.noaa.gov` is refused at CONNECT along with every NCEI host. Section 4 of the
 probe requests both and prints the first 700 bytes of whatever answers, which is what will
 settle the format, the weighting and the licensing.
@@ -212,7 +247,10 @@ tight would badge a perfectly current series as out of date every month.
   `/tools/plumbing-triage/`. Verified by building at HEAD, building with the change, and
   diffing a full `sha256sum` manifest. This round changes ingestion only; it publishes
   nothing.
-- **New:** `scripts/replays/climateunit.ts` — 28 assertions against synthetic GSOM payloads:
+- **New:** `scripts/replays/climateunit.ts` — ⛔ **replaced in Round 19b**, because its 28
+  assertions all tested the falsified mechanism. It now guards the opposite invariant: that
+  the fetcher issues no request at all. Original description follows.
+  28 assertions against synthetic GSOM payloads:
   station selection and its tie-break, the ≥3-year selection lookback, the bbox fallback,
   non-overlapping metro boxes, `-9999`/empty never read as zero, a genuine zero-degree-day
   January kept, duplicate-month dedupe, the refusal to report silence as success, and that no

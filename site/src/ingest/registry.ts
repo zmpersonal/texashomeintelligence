@@ -59,10 +59,16 @@ export const REGISTRY: RegistryEntry[] = [
   entry("deep", sanAntonioPermits),
   entry("deep", eiaElectricityPrice),
 
-  // Round 19: cooling degree days, one monthly series per metro. Unseeded
-  // (see seed.ts NEVER_SEED) and therefore "deep" rather than "stub" — the
-  // tier describes seed richness, and there is no seed to describe. Not in
+  // Round 19: cooling degree days, one series per metro. Unseeded (see
+  // seed.ts NEVER_SEED) and therefore "deep" rather than "stub" — the tier
+  // describes seed richness, and there is no seed to describe. Not in
   // INDEX_DATASETS: the Home Stress Index does not read it.
+  //
+  // Round 19b: both entries stay registered, but the fetcher issues NO
+  // REQUEST — the probe measured its endpoint returning HTTP 400 "A station
+  // is required", so firing it daily would burn a runner cycle on a question
+  // already answered. They are here so the two-metro shape survives the
+  // rewrite; `scripts/replays/climateunit.ts` guards the silence.
   entry("deep", noaaClimateAustin),
   entry("deep", noaaClimateSanAntonio),
 

@@ -293,3 +293,321 @@ jobs:
           print(f"\nNOAA_PROBE_STATUS=complete requests={counts['requests']} "
                 f"ok={counts['ok']} failed={counts['failed']}")
           PY
+
+      # ══ ROUND 19b — the Round 19 probe falsified the Round 19 fetcher. ══
+      #
+      # The 2026-09-05 dispatch of the step above measured that the Access Data
+      # Service rejects bounding-box station discovery outright:
+      #
+      #     HTTP 400  errors: [{"field":"stations","message":"A station is required."}]
+      #
+      # — both bbox orderings, both metros. It also measured that
+      # `data/normals-monthly/1991-2020/access/` answers 200 with an index of
+      # 1,162 static station CSVs, which is the replacement path.
+      #
+      # TWO THINGS ARE STILL UNMEASURED and neither may be guessed, which is
+      # why this is a second probe and not a second fetcher:
+      #
+      #   1. WHICH of those 1,162 files covers Austin, and which covers San
+      #      Antonio. The last run showed the index exists. It did not show the
+      #      mapping.
+      #   2. What is INSIDE one of those CSVs — whether it carries a cooling
+      #      degree-day normal at all, under what column name, on what base,
+      #      and in what month layout.
+      #
+      # Round 19 shipped a fetcher on an assumption about a query parameter.
+      # Shipping again on an assumption about a file layout would be the same
+      # mistake wearing a different hat.
+      #
+      # NOTE ON BOUNDING BOXES. They appear again below, and they are doing
+      # something completely different this time: the station list is
+      # DOWNLOADED and filtered LOCALLY, in this script. Nothing asks a server
+      # to interpret a bbox. That is the parameter the last run proved
+      # unsupported.
+      - name: "TEMP (Round 19b): normals station mapping + CSV layout"
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          python3 - <<'PY'
+          import csv, io, json, os, re, sys, datetime
+          import urllib.request, urllib.error, urllib.parse
+
+          UA = ("TexasHomeIntelligence-probe/1.0 (one-off read-only characterisation; "
+                "contact via github.com/zmpersonal/texashomeintelligence)")
+          TIMEOUT = 90
+          SMALL = 8 * 1024 * 1024          # index pages, JSON, one station CSV
+          BIG = 32 * 1024 * 1024           # the GHCN station inventory is ~10 MB
+          MAX_STATION_CSVS = 4             # a probe that pulls 1,162 files is a bug
+
+          POINTS = {"austin": (30.2672, -97.7431), "san-antonio": (29.4241, -98.4936)}
+          PAD = 0.35
+
+          counts = {"requests": 0, "ok": 0, "failed": 0, "csvs": 0}
+
+          # Declared up front, not inside section 1. The offline dry run of this
+          # probe found that a 404 on the directory listing followed by a 200 on
+          # the index — an ordinary mixed outcome — left `inventoryish` unbound
+          # and crashed section 3 with a NameError, taking sections 4 and 5 and
+          # the status line down with it. A probe that dies silently is the one
+          # thing this file must not do.
+          root_links: list = []
+          inventoryish: list = []
+
+          # The crash guard, in its strongest form: whatever happens, the log
+          # ends with a status line, and "crashed" is distinguishable from
+          # "measured nothing".
+          def _crash(exc_type, exc, tb):
+              import traceback
+              traceback.print_exception(exc_type, exc, tb)
+              print(f"\nNOAA_PROBE2_STATUS=error requests={counts['requests']} "
+                    f"ok={counts['ok']} failed={counts['failed']} "
+                    f"station_csvs={counts['csvs']} crash={exc_type.__name__}: {exc}")
+          sys.excepthook = _crash
+
+          def hr(title):
+              print("\n" + "=" * 74)
+              print(title)
+              print("=" * 74)
+
+          def get(url, label="", ceil=SMALL):
+              counts["requests"] += 1
+              req = urllib.request.Request(url, headers={"User-Agent": UA})
+              try:
+                  with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+                      body = r.read(ceil + 1)
+                      trunc = len(body) > ceil
+                      if trunc:
+                          body = body[:ceil]
+                      counts["ok"] += 1
+                      print(f"  [{label or 'GET'}] HTTP {r.status}, {len(body)} bytes"
+                            + (" (TRUNCATED at ceiling)" if trunc else ""))
+                      print(f"    {url}")
+                      return r.status, body
+              except urllib.error.HTTPError as e:
+                  counts["failed"] += 1
+                  detail = b""
+                  try:
+                      detail = e.read(1500)
+                  except Exception:
+                      pass
+                  print(f"  [{label or 'GET'}] HTTP {e.code} {e.reason}\n    {url}")
+                  if detail:
+                      print(f"    body: {detail[:800]!r}")
+                  return e.code, None
+              except Exception as e:
+                  counts["failed"] += 1
+                  print(f"  [{label or 'GET'}] FAILED {type(e).__name__}: {e}\n    {url}")
+                  return None, None
+
+          def in_box(lat, lon):
+              """Local filter. Nothing server-side interprets this."""
+              for metro, (mlat, mlon) in POINTS.items():
+                  if abs(lat - mlat) <= PAD and abs(lon - mlon) <= PAD:
+                      return metro
+              return None
+
+          NORMALS_ROOT = "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/"
+          ACCESS = NORMALS_ROOT + "access/"
+
+          print(f"probe date (runner UTC): {datetime.date.today().isoformat()}")
+          print(f"local filter box: +/-{PAD} deg around austin{POINTS['austin']} "
+                f"and san-antonio{POINTS['san-antonio']}")
+
+          # ── 1. WHAT ELSE THE NORMALS PRODUCT PUBLISHES ────────────────────
+          # The documentation PDF the last run guessed at returned 404. Rather
+          # than guess a second filename, list the directory and print every
+          # link, so the real names are read rather than invented.
+          hr("1. NORMALS PRODUCT DIRECTORY — what actually exists next to access/")
+          _, body = get(NORMALS_ROOT, "normals root listing")
+          if body:
+              text = body.decode("utf-8", "replace")
+              root_links = re.findall(r'href="([^"?][^"]*)"', text)
+              print(f"    {len(root_links)} link(s):")
+              for href in root_links[:40]:
+                  print(f"      {href}")
+              inventoryish = [h for h in root_links
+                              if re.search(r"(invent|station|list|readme|doc|meta)", h, re.I)]
+              print(f"    inventory/doc-looking: {inventoryish or 'NONE'}")
+          else:
+              print("    no listing returned — sections 3 and 4 fall back to other sources")
+
+          # ── 2. THE ACCESS INDEX, IN FULL ──────────────────────────────────
+          # The previous run matched only `USW000\d+\.csv`. That prefix is
+          # airport/first-order stations; USC (co-op) and USR files would have
+          # been silently invisible. This counts every csv and breaks the total
+          # down by prefix, because "1,162" meaning something different from
+          # what was assumed is exactly the kind of thing to find out now.
+          hr("2. access/ INDEX — every station CSV, by prefix")
+          _, body = get(ACCESS, "normals access index")
+          all_csvs = []
+          if body:
+              text = body.decode("utf-8", "replace")
+              all_csvs = sorted(set(re.findall(r'href="([A-Za-z0-9_\-]+\.csv)"', text)))
+              from collections import Counter
+              pref = Counter(c[:3] for c in all_csvs)
+              print(f"    {len(all_csvs)} csv file(s) total")
+              print(f"    by 3-char prefix: {dict(sorted(pref.items(), key=lambda kv: -kv[1]))}")
+              print(f"    first 8: {all_csvs[:8]}")
+              usw = [c for c in all_csvs if c.startswith("USW")]
+              print(f"    USW (first-order/airport) count: {len(usw)}")
+          else:
+              print("    index unavailable this run")
+
+          # ── 3. THE MAPPING — station coordinates, from a downloaded list ───
+          # Three candidate sources, tried in order, each printed whether it
+          # answers or not. Whichever answers gives id -> lat/lon/name, which is
+          # filtered locally to the two metro boxes. THIS is the mapping Round
+          # 19b needs and could not assume.
+          hr("3. METRO -> STATION FILE MAPPING (from a downloaded station list)")
+          index_ids = {c.rsplit(".", 1)[0] for c in all_csvs}
+          matches = {"austin": [], "san-antonio": []}
+          mapping_source = None
+
+          # 3a. Anything inventory-shaped found in section 1.
+          for href in inventoryish:
+              url = urllib.parse.urljoin(NORMALS_ROOT, href)
+              if url.endswith("/"):
+                  continue
+              st, b = get(url, f"candidate inventory {href}", ceil=BIG)
+              if not b:
+                  continue
+              head = b[:1200].decode("utf-8", "replace")
+              print("    first 1200 bytes:")
+              for line in head.splitlines()[:12]:
+                  print(f"      {line}")
+
+          # 3b. The GHCN-Daily station inventory: id, lat, lon, name in fixed
+          # columns. Unverified path — printed either way.
+          st, b = get("https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt",
+                      "ghcnd-stations.txt", ceil=BIG)
+          if b:
+              lines = b.decode("utf-8", "replace").splitlines()
+              print(f"    {len(lines)} station record(s); first record verbatim:")
+              if lines:
+                  print(f"      {lines[0]!r}")
+              hits = 0
+              for line in lines:
+                  # Documented fixed-width layout: id 1-11, lat 13-20, lon 22-30,
+                  # name 42-71. If the slice yields nonsense the print shows it.
+                  try:
+                      sid = line[0:11].strip()
+                      lat = float(line[12:20]); lon = float(line[21:30])
+                      name = line[41:71].strip()
+                  except Exception:
+                      continue
+                  metro = in_box(lat, lon)
+                  if metro:
+                      matches[metro].append((sid, name, lat, lon, sid in index_ids))
+                      hits += 1
+              if hits:
+                  mapping_source = "ghcnd-stations.txt"
+              print(f"    {hits} station(s) fell inside the two metro boxes")
+
+          # 3c. search/v1 — characterise its shape while we are here. This is
+          # what approach (a) would have depended on, and its response shape has
+          # never been seen. Printed whether or not (b) succeeds, so a future
+          # round choosing (a) is not starting blind.
+          for label, url in [
+              ("search/v1 datasets (ids we may ask for)",
+               "https://www.ncei.noaa.gov/access/services/search/v1/datasets?limit=40"),
+              ("search/v1 data — normals, Austin box",
+               "https://www.ncei.noaa.gov/access/services/search/v1/data?"
+               + urllib.parse.urlencode({
+                   "dataset": "normals-monthly-1991-2020",
+                   "boundingBox": "30.6172,-98.0931,29.9172,-97.3931",
+                   "limit": "5"})),
+          ]:
+              st, b = get(url, label)
+              if b:
+                  try:
+                      j = json.loads(b.decode("utf-8", "replace"))
+                      print(f"    top-level keys: {list(j)[:12] if isinstance(j, dict) else type(j).__name__}")
+                      print(f"    first 900 chars: {json.dumps(j)[:900]}")
+                  except Exception:
+                      print(f"    not JSON; first 400 bytes: {b[:400]!r}")
+
+          print(f"\n  MAPPING SOURCE THAT ANSWERED: {mapping_source or 'NONE'}")
+          for metro, rows in matches.items():
+              print(f"  {metro}: {len(rows)} candidate(s)")
+              for sid, name, lat, lon, in_index in sorted(rows, key=lambda r: (not r[4], r[0]))[:10]:
+                  flag = "IN access/ index" if in_index else "not in index"
+                  print(f"    {sid:14s} ({lat:8.4f},{lon:9.4f})  {flag:17s}  {name}")
+
+          # ── 4. THE CSV LAYOUT ─────────────────────────────────────────────
+          # Whether a normals station file carries a cooling-degree-day normal
+          # at all, under what name, on what base. If section 3 found nothing,
+          # the first file in the index is fetched anyway: the LAYOUT is the
+          # same whichever station it is, so "we cannot find the right station"
+          # stays a separate finding from "we do not know the format".
+          hr("4. NORMALS CSV LAYOUT — is there a CDD normal, and what is it called?")
+          picks = []
+          for metro in ("austin", "san-antonio"):
+              for sid, name, lat, lon, in_index in sorted(matches[metro], key=lambda r: (not r[4], r[0])):
+                  if in_index:
+                      picks.append((metro, sid))
+                      break
+          if not picks and all_csvs:
+              print("  no metro station resolved — falling back to the first indexed file")
+              print("  PURELY to characterise the column layout. The station is NOT Austin's.")
+              picks = [("LAYOUT-ONLY", all_csvs[0].rsplit(".", 1)[0])]
+          if not picks:
+              print("  NOTHING TO OPEN: section 3 resolved no station and section 2 returned no")
+              print("  index, so this run establishes neither the mapping nor the layout. Those")
+              print("  are two separate findings and this run has made neither — do not read the")
+              print("  absence of a column list below as 'the normals files carry no CDD'.")
+
+          for metro, sid in picks[:MAX_STATION_CSVS]:
+              st, b = get(f"{ACCESS}{sid}.csv", f"{metro} normals csv {sid}")
+              if not b:
+                  continue
+              counts["csvs"] += 1
+              text = b.decode("utf-8", "replace")
+              rows = list(csv.reader(io.StringIO(text)))
+              if not rows:
+                  print("    empty csv")
+                  continue
+              header = rows[0]
+              print(f"    {len(rows) - 1} data row(s), {len(header)} column(s)")
+              print(f"    header: {header}")
+              dd = [h for h in header if re.search(r"(CLDD|HTDD|CDD|HDD|DEG|COOL|HEAT)", h, re.I)]
+              print(f"    degree-day-looking columns: {dd or 'NONE'}")
+              base = [h for h in header if re.search(r"BASE|B\d{2}", h, re.I)]
+              print(f"    base-temperature-looking columns: {base or 'NONE'}")
+              idmap = {h: i for i, h in enumerate(header)}
+              for h in dd[:8]:
+                  vals = [r[idmap[h]] for r in rows[1:] if len(r) > idmap[h]]
+                  print(f"      {h}: {vals[:14]}")
+              print("    first two data rows verbatim:")
+              for r in rows[1:3]:
+                  print(f"      {r}")
+
+          # ── 5. CLIMATE AT A GLANCE — the national baseline's own basis ─────
+          # Section 3 of the round decides whether a multiplier is a SOURCED
+          # claim or THI analysis, and that turns entirely on whether the
+          # national series states its base, its period and its aggregation.
+          # This prints the metadata block rather than the values.
+          hr("5. CLIMATE AT A GLANCE NATIONAL CDD — base, period, aggregation")
+          for label, url in [
+              ("national CDD, August, 2015-2026",
+               "https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/national/time-series/110/cdd/1/8/2015-2026.json"),
+              ("national CDD, 12-month, 1991-2020 (does it publish a normal?)",
+               "https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/national/time-series/110/cdd/12/12/1991-2020.json"),
+          ]:
+              st, b = get(url, label)
+              if not b:
+                  continue
+              try:
+                  j = json.loads(b.decode("utf-8", "replace"))
+              except Exception:
+                  print(f"    not JSON; first 400 bytes: {b[:400]!r}")
+                  continue
+              meta = {k: v for k, v in j.items() if k != "data"} if isinstance(j, dict) else {}
+              print(f"    metadata block: {json.dumps(meta)[:1200]}")
+              data = j.get("data") if isinstance(j, dict) else None
+              if isinstance(data, dict):
+                  items = list(data.items())
+                  print(f"    {len(items)} period(s); first 3: {items[:3]}; last 3: {items[-3:]}")
+
+          print(f"\nNOAA_PROBE2_STATUS=complete requests={counts['requests']} "
+                f"ok={counts['ok']} failed={counts['failed']} station_csvs={counts['csvs']}")
+          PY
