@@ -353,10 +353,14 @@ run into.
     capability**.
   - 🔴 **Roof Cost Calculator** — premise falsified by Round 6; needs a **different cost source**.
   - 🔴 **AC Lifespan** — needs **cooling degree days**. Round 19 implemented `noaa-climate`
-    as a real monthly CDD fetcher for both metros, but **no run has happened yet**:
-    `noaa-climate/austin.json` is still the one-observation SAMPLE (now tagged `seed: true`
-    so it retires on first success) and there is still no San Antonio file. Unblocks only
-    once the first ingestion run lands and the Round 19 probe log is read. Also address + CAD.
+    against NCEI's data service; the 2026-09-05 probe **falsified that mechanism** (HTTP 400,
+    "A station is required" — it does not accept bounding-box station discovery). Round 19b
+    reverted the fetcher and shipped a second probe. `noaa-climate/austin.json` is still the
+    one-observation SAMPLE (tagged `seed: true` so it retires on first success) and there is
+    still no San Antonio file. **Blocked on the Round 19b probe dispatch**, which must settle
+    the metro-to-station-file mapping and the normals CSV layout before a fetcher is written.
+    Its flagship reading is **THI analysis, not a sourced claim** — see
+    `docs/audits/round-19b-cdd-mechanism.md` §4. Also address + CAD.
   - 🔴 **Pipe Report** — needs **water hardness** ("grains hardness", from Austin Water quality
     reports). **No hardness feed exists**; `austin-water-stage` carries the drought stage only, and
     San Antonio has no equivalent. Also address + CAD year built.
@@ -1399,7 +1403,9 @@ run into.
   wired to a live source its real publication cadence has to replace that 30 and the
   comment beside it says so. Round 19 did exactly that for `noaa-climate`, which now
   carries its own 75-day entry with the month-start dating, the (unmeasured) GSOM
-  publication lag and a missed run each accounted for separately, leaving four.
+  publication lag and a missed run each accounted for separately, leaving four. That window
+  survived Round 19b's revert and should be revisited once the mechanism is settled — a
+  normals-based feed republishes on a decadal cycle, not a monthly one.
   (The brief that first raised this said "four" and listed five; at that point
   there were five.)
 
@@ -1820,9 +1826,13 @@ comes back empty for that feed, rather than guessing blind a second
 time. `ercot.ts`, `tdiLosses.ts` and `txForestService.ts` remain untouched
 TODO stubs (endpoint unconfirmed, or need a key not yet provided).
 `noaaClimate.ts` was implemented in Round 19 against NCEI's token-free
-Access Data Service, but not one of its requests has been round-tripped
-against a live response — its header names the three constructions to
-check first.
+Access Data Service and **the 2026-09-05 probe falsified it**: that endpoint
+returns HTTP 400 `"A station is required"` and does not support the
+bounding-box station discovery the design rested on. Round 19b reverted it
+to a state that issues no request at all, with the measurement recorded in
+its header. **This is the standing example of the failure mode**: the round
+wrote a probe to settle an assumption and shipped the code depending on that
+assumption in the same round, instead of waiting for the answer.
 
 | Feed | Fetcher file | Real fetch | Env var(s) | Notes |
 |---|---|---|---|---|
@@ -2017,12 +2027,12 @@ whether the GitHub secret it needs is actually set, or whether a given
 `DatasetFile` on disk is currently `"live"` — that's the per-file runtime
 status, a separate concept). It's now `"live"` for every feed with a real
 `fetchRaw()` implementation, including the nine wired in Round 2 —
-`tdi-losses`, `ercot`, and `tx-forest-service` are the only ids still
-`"stub"` that match a true TODO stub. `noaa-climate` is also still
-`"stub"` in `data-sources.yaml`, but for a different reason: Round 19
-gave it a real `fetchRaw()`, and the id flips to `"live"` in the round
-that first sees a successful run — not before, because `/methodology/`
-renders that value.
+`tdi-losses`, `ercot`, `tx-forest-service` and `noaa-climate` are the ids
+still `"stub"` in `data-sources.yaml`. That is accurate for all four:
+Round 19 gave `noaa-climate` a real `fetchRaw()` and Round 19b reverted it
+after the probe falsified the mechanism, so it delivers nothing today. The
+id flips to `"live"` in the round that first sees a successful run — not
+before, because `/methodology/` renders that value.
 
 ---
 
