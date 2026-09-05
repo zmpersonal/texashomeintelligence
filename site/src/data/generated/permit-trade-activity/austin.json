@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-05T19:00:50.126Z",
-  "lastSuccessAt": "2026-09-05T19:00:50.126Z",
+  "lastAttemptAt": "2026-09-05T21:43:04.796Z",
+  "lastSuccessAt": "2026-09-05T21:43:04.796Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -1278,7 +1278,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-05T19:00:50.510Z",
+      "ingestedAt": "2026-09-05T21:43:05.007Z",
       "key": "trades-v1/electrical/2026-09",
       "value": {
         "category": "electrical",
@@ -1298,7 +1298,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-05T19:00:50.510Z",
+      "ingestedAt": "2026-09-05T21:43:05.007Z",
       "key": "trades-v1/hvac/2026-09",
       "value": {
         "category": "hvac",
@@ -1318,7 +1318,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-05T19:00:50.510Z",
+      "ingestedAt": "2026-09-05T21:43:05.007Z",
       "key": "trades-v1/plumbing/2026-09",
       "value": {
         "category": "plumbing",
@@ -1338,7 +1338,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-05T19:00:50.510Z",
+      "ingestedAt": "2026-09-05T21:43:05.007Z",
       "key": "trades-v1/roofing/2026-09",
       "value": {
         "category": "roofing",
@@ -1358,7 +1358,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-05T19:00:50.510Z",
+      "ingestedAt": "2026-09-05T21:43:05.007Z",
       "key": "trades-v1/solar/2026-09",
       "value": {
         "category": "solar",

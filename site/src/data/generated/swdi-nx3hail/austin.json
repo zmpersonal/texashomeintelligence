@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-05T19:00:43.364Z",
-  "lastSuccessAt": "2026-09-05T19:00:43.364Z",
+  "lastAttemptAt": "2026-09-05T21:43:01.166Z",
+  "lastSuccessAt": "2026-09-05T21:43:01.166Z",
   "lastError": null,
   "source": {
     "name": "NOAA Severe Weather Data Inventory — nx3hail (NEXRAD radar-derived hail signatures, not confirmed hail reports)",
@@ -3307,7 +3307,7 @@
     },
     {
       "observedAt": "2026-08-29T00:01:48.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:01:48Z-KGRK-S6",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3320,12 +3320,14 @@
         "probabilityOfSevereHail": 20,
         "maxSize": 0.75,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:01:48.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:01:48Z-KGRK-W3",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3338,12 +3340,14 @@
         "probabilityOfSevereHail": 60,
         "maxSize": 1.5,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:01:48.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:01:48Z-KGRK-K0",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3356,12 +3360,14 @@
         "probabilityOfSevereHail": 80,
         "maxSize": 2,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:04:38.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:04:38Z-KDFX-G2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3374,12 +3380,14 @@
         "probabilityOfSevereHail": 60,
         "maxSize": 1.5,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:05:39.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:05:39Z-KEWX-H8",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3392,12 +3400,14 @@
         "probabilityOfSevereHail": 0,
         "maxSize": 0.5,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:05:39.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:05:39Z-KEWX-J9",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3410,12 +3420,14 @@
         "probabilityOfSevereHail": 40,
         "maxSize": 1,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:05:39.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:05:39Z-KEWX-I0",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3428,12 +3440,14 @@
         "probabilityOfSevereHail": 70,
         "maxSize": 1.75,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:06:51.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:06:51Z-KGRK-S6",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3446,12 +3460,14 @@
         "probabilityOfSevereHail": 0,
         "maxSize": 0.5,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:06:51.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:06:51Z-KGRK-W3",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3464,12 +3480,14 @@
         "probabilityOfSevereHail": 20,
         "maxSize": 0.75,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:06:51.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:06:51Z-KGRK-K0",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3482,12 +3500,14 @@
         "probabilityOfSevereHail": 50,
         "maxSize": 1.25,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:09:50.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:09:50Z-KDFX-G2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3500,12 +3520,14 @@
         "probabilityOfSevereHail": 40,
         "maxSize": 1,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:09:50.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:09:50Z-KDFX-O3",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3518,12 +3540,14 @@
         "probabilityOfSevereHail": 40,
         "maxSize": 1,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:11:46.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:11:46Z-KGRK-W3",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3536,12 +3560,14 @@
         "probabilityOfSevereHail": 20,
         "maxSize": 0.75,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:11:46.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:11:46Z-KGRK-K0",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3554,12 +3580,14 @@
         "probabilityOfSevereHail": 50,
         "maxSize": 1.25,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:11:46.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:11:46Z-KGRK-C1",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3572,12 +3600,14 @@
         "probabilityOfSevereHail": 70,
         "maxSize": 1.75,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:12:42.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:12:42Z-KEWX-J9",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3590,12 +3620,14 @@
         "probabilityOfSevereHail": 30,
         "maxSize": 1,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:12:42.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:12:42Z-KEWX-I0",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3608,12 +3640,14 @@
         "probabilityOfSevereHail": 80,
         "maxSize": 2,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:15:23.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:15:23Z-KDFX-O3",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3626,12 +3660,14 @@
         "probabilityOfSevereHail": 60,
         "maxSize": 1.5,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:15:23.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:15:23Z-KDFX-G2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3644,12 +3680,14 @@
         "probabilityOfSevereHail": 60,
         "maxSize": 1.5,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:16:48.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:16:48Z-KGRK-K0",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3662,12 +3700,14 @@
         "probabilityOfSevereHail": 50,
         "maxSize": 1.25,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:16:48.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:16:48Z-KGRK-C1",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3680,12 +3720,14 @@
         "probabilityOfSevereHail": 70,
         "maxSize": 1.75,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:19:44.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:19:44Z-KEWX-J9",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3698,12 +3740,14 @@
         "probabilityOfSevereHail": 30,
         "maxSize": 0.75,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:19:44.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:19:44Z-KEWX-I0",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3716,12 +3760,14 @@
         "probabilityOfSevereHail": 60,
         "maxSize": 1.5,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:21:25.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:21:25Z-KDFX-G2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3734,12 +3780,14 @@
         "probabilityOfSevereHail": 50,
         "maxSize": 1.25,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:21:25.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:21:25Z-KDFX-O3",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3752,12 +3800,14 @@
         "probabilityOfSevereHail": 60,
         "maxSize": 1.5,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:21:50.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:21:50Z-KGRK-C1",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3770,12 +3820,14 @@
         "probabilityOfSevereHail": 50,
         "maxSize": 1.25,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:21:50.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:21:50Z-KGRK-K0",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3788,12 +3840,14 @@
         "probabilityOfSevereHail": 60,
         "maxSize": 1.5,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:26:46.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:26:46Z-KEWX-J9",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3806,12 +3860,14 @@
         "probabilityOfSevereHail": 30,
         "maxSize": 1,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:26:53.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:26:53Z-KGRK-C1",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3824,12 +3880,14 @@
         "probabilityOfSevereHail": 10,
         "maxSize": 0.75,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:26:53.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:26:53Z-KGRK-K0",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3842,12 +3900,14 @@
         "probabilityOfSevereHail": 30,
         "maxSize": 1,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:27:28.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:27:28Z-KDFX-O3",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3860,12 +3920,14 @@
         "probabilityOfSevereHail": 20,
         "maxSize": 0.75,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:27:28.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:27:28Z-KDFX-G2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3878,12 +3940,14 @@
         "probabilityOfSevereHail": 40,
         "maxSize": 1,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:31:57.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:31:57Z-KGRK-W3",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3896,12 +3960,14 @@
         "probabilityOfSevereHail": 10,
         "maxSize": 0.75,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:33:48.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:33:48Z-KEWX-J9",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3914,12 +3980,14 @@
         "probabilityOfSevereHail": 40,
         "maxSize": 1,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:36:59.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:36:59Z-KGRK-W3",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3932,12 +4000,14 @@
         "probabilityOfSevereHail": 20,
         "maxSize": 0.75,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:40:51.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:40:51Z-KEWX-J9",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3950,12 +4020,14 @@
         "probabilityOfSevereHail": 30,
         "maxSize": 1,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:42:02.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:42:02Z-KGRK-K0",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3968,12 +4040,14 @@
         "probabilityOfSevereHail": 20,
         "maxSize": 0.75,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:42:02.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:42:02Z-KGRK-W3",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -3986,12 +4060,14 @@
         "probabilityOfSevereHail": 20,
         "maxSize": 0.75,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     },
     {
       "observedAt": "2026-08-29T00:47:05.000Z",
-      "ingestedAt": "2026-09-05T19:00:44.110Z",
+      "ingestedAt": "2026-09-05T21:43:01.511Z",
       "key": "2026-08-29T00:47:05Z-KGRK-W3",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -4004,7 +4080,9 @@
         "probabilityOfSevereHail": 10,
         "maxSize": 0.5,
         "maxSizeUnit": null,
-        "areaBasis": "box-around-metro-reference-point-not-a-county"
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 39
       }
     }
   ]
