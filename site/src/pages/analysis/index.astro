@@ -1,0 +1,41 @@
+---
+/**
+ * The analysis hub. Lists published articles only — the same `published`
+ * filter the article route uses, so an unpublished draft is absent here for
+ * the same reason it has no URL.
+ */
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+
+const articles = (await getCollection("analysis", ({ data }) => data.published === true)).sort(
+  (a, b) => b.data.publishedAt.localeCompare(a.data.publishedAt),
+);
+---
+
+<Base
+  title="Analysis — Texas Home Intelligence"
+  description="Sourced answers to the questions Texas homeowners are actually asking, from our own data."
+>
+  <Breadcrumbs crumbs={[{ name: "Home", url: "/" }, { name: "Analysis", url: "/analysis/" }]} />
+
+  <h1>Analysis</h1>
+  <p>
+    Sourced answers to questions Texas homeowners are actually asking. Every figure carries the
+    source it came from and the date it was true.
+  </p>
+
+  {articles.length === 0 ? (
+    <p><em>No analysis published yet.</em></p>
+  ) : (
+    <ul class="analysis-index">
+      {articles.map((a) => (
+        <li>
+          <a href={`/analysis/${a.id}/`}>{a.data.title}</a>
+          <p>{a.data.description}</p>
+          <p class="analysis-date">{a.data.publishedAt}</p>
+        </li>
+      ))}
+    </ul>
+  )}
+</Base>

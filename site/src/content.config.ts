@@ -129,7 +129,44 @@ const faq = defineCollection({
   }),
 });
 
+// ---------------------------------------------------------------------
+// analysis — the article stream. One markdown file per article, mirroring
+// this file's existing convention: a glob loader over `./src/data/…`, not
+// `src/content/`. Articles are the citable, question-shaped myth-buster
+// pages the article engine produces (autoposter/specs/ARTICLE-ENGINE.thi.md).
+//
+// `published` is the deploy-on-command gate. The route builds a page ONLY
+// for `published: true`, so an unpublished article produces no URL at all —
+// it cannot be reached, indexed, or linked by accident. Going live is a
+// one-field change plus a merge, which is exactly the explicit step
+// SECURITY.md requires.
+//
+// `sources` is not decoration: every figure in an article traces to a claim
+// with a source and an `as_of`, and carrying them in frontmatter is what
+// lets the page render provenance the same way the data pages do.
+// ---------------------------------------------------------------------
+const analysis = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/data/analysis" }),
+  schema: z.object({
+    title: z.string(), // question-shaped H1: the hook, the search query, the AEO query
+    description: z.string(), // meta description, and the answer an AI engine extracts
+    publishedAt: z.string(), // ISO date
+    updatedAt: z.string().optional(),
+    published: z.boolean().default(false), // deploy-on-command; false builds no route
+    metrics: z.array(z.string()), // feed metrics the claims rest on
+    sources: z.array(z.object({ name: z.string(), asOf: z.string() })).min(1),
+    // `series` is "<datasetId>/<location>" in THIS repo's terms — the two
+    // arguments `findDataset()` takes, e.g. "eia-electricity/texas". Not the
+    // article engine's metric key: the first build rendered an empty embed
+    // because those two namings were assumed to match and do not.
+    embed: z
+      .object({ series: z.string(), caption: z.string() })
+      .optional(),
+  }),
+});
+
 export const collections = {
+  analysis,
   locations,
   services,
   intakeQuestions,
