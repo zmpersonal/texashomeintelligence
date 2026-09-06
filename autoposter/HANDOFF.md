@@ -1,7 +1,7 @@
 # HANDOFF.md — THI Autoposter
 
 Current full context for a fresh session. Overwritten at each stopping point.
-**Last updated: 2026-09-06, end of Phase 0.**
+**Last updated: 2026-09-06, end of Phase 2 (held at the prove-gate).**
 
 ---
 
@@ -46,7 +46,9 @@ Two extra hazards this repo's shape creates:
 | 0 — Orient + reconcile | ✅ done, prove-gate met (RUNLOG 2026-09-06) |
 | Pinned-ID guard | ✅ built + tested (15/15) + verified against the live workspace |
 | 1 — Data history | ✅ answered in Phase 0: history IS retained; grain is the blocker |
-| 2 — Movers engine | ⏸ HELD — needs the re-uploaded `MOVERS-ENGINE.md` |
+| Local generator | ✅ `thi_source.py` reads `site/**` read-only; 17 series, 4 data traps closed |
+| Threshold calibration | 🟡 0.55 PROPOSED (was 0.45, uncalibrated) — awaiting owner sign-off |
+| 2 — Movers engine | ✅ prove-gate MET — real feed, 15 stories, schema-valid; held for review |
 | 3 — Validator | 🟡 gates land + pass 7/7; G5 freshness + media-resolve still TODO |
 | 4 — Article engine | ⏸ HELD — needs `ARTICLE-ENGINE`'s missing siblings + `VOICE-GUIDE.md` |
 | 5 — Reels engine | ⏸ **PARKED** until after 2026-09-22 (see below) |
@@ -60,29 +62,43 @@ plus the pinned-ID guard. Reels parked.
 ## What is in `autoposter/` now
 
 ```
-config.yaml                    central config; every Phase 0 amendment marked `# PHASE 0:`
-schema/social-feed.schema.json the data contract (unmodified from the package)
-src/channel_guard.py           pinned-target allowlist — NEW, the posting-side twin of the
-                               article engine's domain self-id guard
+CLAUDE.md                      project rules incl. the PUBLICATION STANDARD
+config.yaml                    central config; amendments marked `# PHASE 0:` / `# PHASE 2`
+schema/social-feed.schema.json the data contract (amended: areas[].type gained metro, state)
+src/thi_source.py              READ-ONLY reader of site/src/data/generated/**; 17 series
+src/movers_engine.py           metro-grain scoring; cross-area terms REMOVED, guarded
+src/build_feed.py              signals -> figures -> ranked stories -> validated artifact
+src/calibrate.py               walk-forward replay used to set quiet_week_threshold
+src/minischema.py              dependency-free schema validator; unknown keyword -> raise
+src/channel_guard.py           pinned-target allowlist (enabled AND pinned, both required)
 src/validator.py               content-quality gates (unmodified from the package)
-tests/test_channel_guard.py    15 tests, all passing
-tests/test_validator.py        7 tests, all passing
-data/                          artifact output dir (empty; nothing generated yet)
+tests/                         44 tests across 3 suites, all passing
+data/social-feed.json          the real artifact
+private/                       GITIGNORED — owner-only detail (never committed)
 RUNLOG.md LEARNINGS.md HANDOFF.md
 ```
 
-Deliberately **not** landed yet: `movers_engine.py`, `orchestrator.py`, `publisher.py`. They
-are Phase 2+ material and `movers_engine.surprise_score()` needs the metro-grain rewrite
-before it is honest to commit. Held rather than landed-and-immediately-edited.
+Still **not** landed: `orchestrator.py`, `publisher.py` — Phase 6/7 material.
 
-## The two things blocking Phase 2
+## Open for the owner (before or alongside Phase 3)
+1. **`quiet_week_threshold: 0.55`** — proposed from a walk-forward replay (RUNLOG §25).
+   Marked `status: proposed`; confirm or set your own.
+2. **Schema amendment** — `areas[].type` gained `metro` and `state` (RUNLOG §23). 🟡.
+3. **The angle taxonomy** in `build_feed.ANGLE_BY_METRIC` is a placeholder until
+   `VOICE-GUIDE.md` lands. It must be confirmed before any caption is generated.
 
-1. **Re-upload of the spec files.** `VOICE-GUIDE.md`, `ROTATION.md`, `MOVERS-ENGINE.md`,
-   `REELS-ENGINE.md`, `VALIDATOR.md` were not in the upload. The owner has them and is
-   re-uploading. **Do not reconstruct any of them** — `VOICE-GUIDE.md` especially, since it
-   is the sole input to the one model call and a reconstruction would be a guess wearing a
-   spec's clothes.
-2. **The public-repo state question** (owner deciding). See RUNLOG 2026-09-06 §11.
+## The two things blocking Phase 4
+
+1. **The spec files still have not arrived** — `VOICE-GUIDE.md`, `ROTATION.md`,
+   `MOVERS-ENGINE.md`, `REELS-ENGINE.md`, `VALIDATOR.md`. Only a `config.yaml` revision was
+   uploaded on 2026-09-06 (RUNLOG §20). **Do not reconstruct any of them** — `VOICE-GUIDE.md`
+   especially, since it is the sole input to the one model call and a reconstruction would be a
+   guess wearing a spec's clothes. Phase 2 was buildable without them; Phase 4 is not.
+2. ~~The public-repo state question~~ — **decided 2026-09-06.** Stay in the public repo with two
+   carve-outs: drafts/claim ledgers on an unmerged branch, deleted after publish; the runlog
+   de-specified per the publication standard in `CLAUDE.md`. Full detail lives in the gitignored
+   `private/`, **not** on a branch — a branch in a public repo is readable, obscure is not
+   private.
 
 ## Decisions as they now stand
 
@@ -96,20 +112,20 @@ before it is honest to commit. Held rather than landed-and-immediately-edited.
 | F | FB live, YT pending | FB ✅ pinned; YT connected but to an unrelated property |
 | G | 4 posts, ≥2 cycles | **confirmed unchanged** |
 | H | $20/mo Claude usage only | unchanged |
-| 1 | area-grain movers | **metro grain**; two cross-area weights dropped, reels parked |
+| 1 | area-grain movers | **metro grain**; cross-area terms removed from the code, reels parked |
+| — | schema `zip\|county` | amended to add `metro`, `state` (🟡, RUNLOG §23) |
+| — | `quiet_week_threshold` 0.45 | **0.55 proposed** from a 46-cycle walk-forward replay |
 
 ## Owner seams (🔴 — agent stubs, human executes)
 
 - Create Slack `#thi-autoposter`.
-- Set `SLACK_WEBHOOK_URL` (commands in the RUNLOG). `ANTHROPIC_API_KEY` and
-  `BLOTATO_API_KEY` are **probably not needed** — under decision A both the model call and
-  Blotato scheduling happen in-session, not in CI. Set them only if that changes.
+- ~~Set `SLACK_WEBHOOK_URL`~~ — **done 2026-09-06**, in the `autoposter` Environment. The
+  Anthropic and Blotato keys were correctly left unset; nothing headless reads them.
 - Connect a real THI YouTube channel in Blotato, then pin its id in `config.yaml`.
   **Until pinned, YouTube is un-postable by construction** — that is the guard working.
 - Confirm whether the Blotato `starter` plan includes video render + scheduling (before Ph.6).
-- Delete the stale remote branch `claude/thi-autoposter-phase-0-y7rgw6` (this session's
-  token got 403 on delete-ref).
-- Decide the public-repo state question (RUNLOG §11).
+- ~~Delete the stale `claude/…` remote branch~~ — done by the owner.
+- Confirm the threshold, the schema amendment, and (when `VOICE-GUIDE.md` lands) the angles.
 
 ## The invariants, restated
 

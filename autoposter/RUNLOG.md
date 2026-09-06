@@ -53,20 +53,16 @@ Its own comment: *"Never truncates, never drops history to make room for new row
 **The package's stated #1 fear — "deltas are impossible if state is overwritten" — does not
 apply. No THI-repo change is needed to create history retention.**
 
-Measured depth (28 dataset files under `site/src/data/generated/`), today 2026-09-06:
+Measured depth, today 2026-09-06: the archive spans **two dozen-plus dataset files** across
+the two metros, and the ones the article stream needs carry **a year or more of readings**
+(weekly drought back to 2025-08, monthly trade-permit activity back to 2025-09, monthly climate
+back to 2020). A minority of registered feeds are still seeded placeholders rather than live
+fetches — expected at this stage of THI's own build, and tracked in THI's `HANDOFF.md` Seam 1,
+not here.
 
-| dataset | grain | status | obs | span |
-|---|---|---|---|---|
-| usdm-drought | county (inside metro file) | live | 59 | 2025-08-19 → 2026-09-01 |
-| municipal-permits | per-permit, city | live | 1,956 / 5,223 | 2025-08-25 → 2026-09-04 |
-| permit-trade-activity | metro × trade × month | live | 65 / 91 | 2025-09 → 2026-09 |
-| noaa-storm-events | county, episodic | live | 65 / 63 | → **2026-05-26 (3mo stale)** |
-| swdi-nx3hail | lat/lon cells | live | 222 / 135 | 2026-08-10 → 2026-08-29 |
-| eia-electricity | **texas only** | live | 13 | 2025-08 → 2026-08 |
-| noaa-climate | metro, monthly | live | 23 | 2020-01 → 2026-07 |
-| airnow | city, daily | live | 25 / 26 | 2026-07-01 → 2026-09-06 |
-| austin-water-stage | austin only | live | 8 | 2026-08-30 → 2026-09-06 |
-| ercot, fema-nfhl, tdi-losses, tx-forest-service | — | **sample** | 1 | `fetchRaw()` not implemented |
+> **Redacted per the publication standard (§17).** The per-feed status/depth inventory that was
+> here is owner-private. Candor about timing and status stays; a public table of exactly which
+> feeds are thin is an inventory of weaknesses on a repo whose whole KPI is being cited.
 
 ### 4. THE REAL BLOCKER IS **GRANULARITY**, NOT RETENTION
 `config.movers.history_min_weeks: 4` is met in *depth* but not at the *grain the engine and the
@@ -76,19 +72,17 @@ which require several comparable areas with comparable history.
 
 What THI actually resolves below metro level, with ≥4 weeks:
 
-- **Drought, county grain:** Travis (fips 48453) and Bexar (48029) have **55 weekly readings**
-  (2025-08-19 →). Hays, Williamson, Comal, Guadalupe were added **2026-08-25** and have **2**.
-  The other 7 crosswalk counties have none. Backfill will not fix the four: `computeFetchWindow`
-  runs forward from the last `observedAt`, so the missing county-weeks are not re-requested.
-  **They reach 4 weeks on 2026-09-22 by simply continuing to run.**
-- **Everything else is metro-grain or coarser.** `eia-electricity` and `ercot` are `texas`.
-  `municipal-permits` records carry `permitType`/`workDescription`/`status`/`valuationUsd` and
-  **no ZIP or county field**. `swdi-nx3hail` has lat/lon but no committed area rollup.
-  `noaa-storm-events` is county-resolved across 15 counties but is **event-episodic and 3 months
-  stale**, not a weekly series.
-- The crosswalk (`site/src/data/zip-area-crosswalk.csv`) has 231 ZIPs / 13 counties / 2 areas —
-  but it is a *mapping*, not a data grain. `site/src/pages/data/stress-index/[area].json.ts`
-  states it outright: *"the reading is per-metro, so any covered ZIP yields the same one."*
+- **Drought at county grain:** two counties carry **more than a year** of weekly readings. Four
+  more were added to the county breakdown on **2026-08-25** and are therefore below the 4-week
+  minimum until **2026-09-22**; backfill will not accelerate that, because the fetch window runs
+  forward from the last observation rather than re-requesting history.
+- **Everything else is metro-grain or coarser.** Some feeds are statewide; the richest
+  record-level feed carries no ZIP or county field; one county-resolved feed is episodic rather
+  than a weekly series. Specifics are owner-private (§17).
+- The ZIP-to-area crosswalk covers 231 ZIPs / 13 counties / 2 areas — but it is a *mapping*, not
+  a data grain. `site/src/pages/data/stress-index/[area].json.ts` states it outright: *"the
+  reading is per-metro, so any covered ZIP yields the same one."* (That file is public on the
+  live site; quoting it discloses nothing new.)
 
 **Consequence:** with 2 metros and (from 2026-09-22) 6 drought counties, a ranking of ~15 areas
 does not exist. Phase 5's reels batch — "10–15 metric-anchored ranking segments" — has no
@@ -125,16 +119,15 @@ seasonality only.
 - **D (tool boundary):** **Blotato MCP present. Descript MCP is NOT available in this session** —
   not in the tool roster. The documented fallback (Blotato clipping; `vidiq_generate_clips` is
   also present) therefore applies from day one. Recorded as a downgrade, not a blocker, per D.
-- **E (gate the money angles):** **CONFIRMED AND WORSE THAN STATED.** `config.gated_metrics`
-  correctly has `appraisal_change.available: false`, but the "~2 weeks from 2026-08-28" estimate
-  is not on track: `docs/audits/round-16c-parcel-join-probe.md` (2026-09-04) establishes that
-  Travis CAD's `improvement_detail` has **no situs/street/city/ZIP field at all** and is
-  component-grain, not property-grain — so it cannot even be joined to an address yet. Treat
-  appraisal as indefinitely gated, not two weeks out.
-  Separately: `config.gated_metrics.insurance_trend.available: **true**` is **wrong**. There is no
-  insurance feed in `site/src/data/generated/`; `tdi-losses` is `status: sample` with
-  `fetchRaw()` unimplemented. Left as-is it lets an insurance angle generate with no backing
-  data — exactly the failure mode G6 exists to prevent. Must flip to `false` in Phase 2.
+- **E (gate the money angles):** **CONFIRMED, and further out than the package estimated.**
+  `config.gated_metrics` correctly has `appraisal_change.available: false`, but the "~2 weeks
+  from 2026-08-28" timeline does not hold: a THI probe round in early September established that
+  the parcel dataset cannot yet be joined to an address at all. **Treat appraisal as indefinitely
+  gated**, and revisit only when THI's own parcel work reports a join. The blocking detail lives
+  in THI's own audit docs; it is not restated here (§17).
+  Separately: `config.gated_metrics.insurance_trend.available: **true**` is **wrong** — no
+  insurance feed is live. Left as-is it lets an insurance angle generate with no backing data,
+  the exact failure G6 exists to prevent. Must flip to `false` in Phase 2.
 - **F (channels):** Facebook ✅ (THI page present + default). YouTube: an account IS connected,
   but it is **"Support Team (In A Universe Where)"** — a different property, not THI. Package's
   "pending owner setup" is confirmed. Instagram / Pinterest / TikTok are all connected as
@@ -245,9 +238,8 @@ State this project must persist, and its exposure if public:
 
 **The one I want the owner's call on.** THI's #1 KPI is being cited by AI answer engines. A
 public `RUNLOG.md` is a sourced, well-structured, honestly-written account of exactly where
-THI's data is thin — that appraisal data cannot be joined to an address, that four counties
-have two weeks of history, that four feeds are still `sample`. It is *more* extractable than
-most of the site. The harness asks for candid logs and is silent on who reads them.
+THI's data is thin. It is *more* extractable than most of the site, and it is exactly the
+material an answer engine would surface if asked what THI cannot do. The harness asks for candid logs and is silent on who reads them.
 
 **Recommendation: stay in `autoposter/` in the public repo.** The operational state is all
 non-sensitive and derived from already-public data, so a private store would add a credential
@@ -256,9 +248,8 @@ cheaply in the same repo before posting. Two carve-outs instead of a repo move:
 1. **Drafts and claim ledgers stay on an unmerged branch** and are deleted after publish, so
    unverified prose never sits on `main`.
 2. **The runlog stays candid but stops naming exploitable specifics** — "county-grain drought
-   history is below the 4-week minimum until 2026-09-22" is fine; a table of every `sample`
-   feed is an inventory of weaknesses. From the next entry on, that detail moves to a
-   sentence plus a pointer, unless the owner says keep it verbatim.
+   history is below the 4-week minimum until 2026-09-22" is fine; a per-feed status table is
+   an inventory of weaknesses. **Owner approved 2026-09-06; applied retroactively — see §17.**
 
 **Fallback if the owner judges that exposure unacceptable:** keep code, config, schema and
 tests in the public `autoposter/` (none of it is sensitive) and move only the mutable state
@@ -273,8 +264,8 @@ repo; that isolation is gone. Mitigation is a GitHub **Environment** named `auto
 commands in §13.
 
 ### 12. Config amendments applied
-- `gated_metrics.insurance_trend.available: true → **false**` (no feed exists; `tdi-losses`
-  is `status: sample`). Left true it defeats G6.
+- `gated_metrics.insurance_trend.available: true → **false**` (no insurance feed is live).
+  Left true it defeats G6.
 - `gated_metrics.appraisal_change` — `review_after: null`, gated **indefinitely**, citing
   `docs/audits/round-16c-parcel-join-probe.md`.
 - **Movers reweighted for metro grain.** `rank_extremity` and `neighbor_divergence` → `0.0`
@@ -343,3 +334,174 @@ landing, not assumed). Config: additive weights sum to 1.0, asserted. Phase 0 **
 
 **HOLDING** for (1) the re-uploaded spec files and (2) the owner's answer on §11 before any
 Phase 2 work.
+
+### 17. Publication standard — applied retroactively to this entry (owner-approved 2026-09-06)
+**Standing rule, now in `autoposter/CLAUDE.md`:** *candor about state and timing, never a public
+inventory of exploitable weaknesses.*
+
+This runlog is committed to a **public** repo whose project's #1 KPI is being cited by AI answer
+engines. A candid, sourced, well-structured account of where THI's data is weak is more
+extractable than most of the site — and it is precisely the material an engine would surface if
+asked what THI cannot do. That is a KPI problem, not a security one, and the fix is editorial.
+
+What stays: status, timing, direction, and the decisions that follow from them ("county-grain
+drought is below the 4-week minimum until 2026-09-22"). What goes: per-feed status inventories,
+enumerated join failures, named unimplemented fetchers, field-level gaps in third-party datasets.
+
+**Recorded rather than silently applied.** The harness's File Conventions make `RUNLOG.md`
+append-only, and this is a retroactive edit of the 2026-09-06 Phase 0 entry on the owner's
+explicit instruction. Redacted: the §3 per-feed depth/status table, the §4 field-level
+granularity findings, the §5E parcel-join specifics, and two restatements in §11/§12. Nothing
+about a *decision* changed — only the supporting detail's audience. The prior text is in this
+branch's git history; if the owner wants it gone from history too, that is a force-push and a
+separate 🔴 decision.
+
+**A correction to the owner's premise, surfaced not worked around.** The instruction allowed the
+full detail to live in "HANDOFF on an unmerged working branch." In a **public** repo an unmerged
+branch is still publicly readable through the GitHub UI and API — it is obscure, not private. So
+the full detail is NOT parked on a branch. It lives in `autoposter/private/`, which `.gitignore`
+excludes from every commit, and it has already been reported in-session. `HANDOFF.md` is written
+to the same public standard as the runlog.
+
+### 18. Owner decisions applied this round
+Public repo approved with both carve-outs (drafts/claim ledgers on an unmerged branch, deleted
+after publish, never on `main`; runlog de-specified). Private state store declined — correct
+call. Secrets: `autoposter` Environment created with `SLACK_WEBHOOK_URL` only; the Anthropic and
+Blotato keys deliberately not set, since nothing headless reads them under decision A. Stale
+`claude/…` remote branch deleted by the owner.
+
+---
+
+## 2026-09-06 — Phase 2: movers engine at metro grain + the local generator
+
+**Round:** BUILD-PLAN Phase 2 (🟢) · **Objective:** a real `social-feed.json` from THI's actual
+data that validates against the schema, with a sane ranked `stories[]` at metro grain and a
+recalibrated quiet-week threshold. **Out of scope:** anything consuming the undelivered spec
+files; Phase 3 onward; reels (parked). **Model spend:** no generation calls — this whole layer
+is deterministic code by design. **Cost:** ~$0 against the $20 ceiling.
+
+### 19. Still missing, and NOT reconstructed
+`MOVERS-ENGINE.md` was named as re-uploaded but did not arrive; nor did `VOICE-GUIDE.md`,
+`ROTATION.md`, `REELS-ENGINE.md` or `VALIDATOR.md`. The only file uploaded this round was a
+`config.yaml` revision (§20).
+
+The engine was therefore built against the two artifacts that ARE authoritative — the package's
+`movers_engine.py` scoring math and `social-feed.schema.json` — plus the owner's explicit
+decisions. **Nothing was reconstructed from guesswork**, and one place where the missing spec
+actually bites is flagged in code rather than papered over: `build_feed.ANGLE_BY_METRIC` assigns
+the four angles (reveal/verdict/wager/warning) by metric family, and the real taxonomy lives in
+`VOICE-GUIDE.md`. It is marked as a placeholder that **must be confirmed before any caption is
+generated**. It affects no figure and no ranking.
+
+### 20. The re-uploaded `config.yaml` is a DIFFERENT REVISION — surfaced, not merged blindly
+It carries the pinned-ID idea and the folder-in-repo decision independently, but predates the
+Phase 0 amendments: old weights, `insurance_trend.available: true`, `data_source: TODO_CONFIRM`,
+no reels park. Taking it wholesale would have silently reverted three approved decisions.
+
+Resolution: the amended config stays canonical (the owner's message this round re-states the
+reweighting as the thing to build against), and the re-upload's one genuine addition was folded
+in — a per-channel **`enabled`** switch alongside `pinned`. Both are now required:
+`channel_guard` halts unless a channel is **enabled AND pinned**. Either switch alone stops a
+post; neither alone authorises one. Two new tests cover each direction. Channel `status` values
+adopted the re-upload's `not_configured` wording.
+
+### 21. The local generator (`src/thi_source.py`) — READ-ONLY
+Decision B as re-decided: reads THI's committed datasets directly, writes only inside
+`autoposter/`. **Seventeen usable (area, metric) series** now load — two metros plus statewide —
+after four data traps were found and closed. Each was capable of producing a confident,
+wrong, published number:
+
+1. **Partial trailing periods.** Monthly series' latest period was the running month, measured
+   over a few days. Left in, September's part-month reads as an ~80% collapse in every trade.
+   Incomplete trailing months (and the running week, for any weekly-max series) are dropped.
+2. **A composition break.** The drought feed reported one county per metro until 2026-08-25,
+   then several. Aggregating over "counties present this week" makes a metro appear to jump when
+   only *coverage* changed. Each metro is pinned to the one anchor county present for the whole
+   series, which also preserves the full 55-week history.
+3. **Interleaved record types.** The climate file carries twelve 1991-2020 monthly *normals*
+   alongside real monthly *actuals*, in one array, with the normals dated to 2020. Blended, every
+   delta is noise. Only `monthly-actual` enters the series — and because the dataset's own source
+   string names both, the source is overridden to the actuals' source, so a post never credits
+   data that is not in the figure.
+4. **Thin series scored anyway.** Air quality has ~3 weeks of real dailies → 2 complete weekly
+   points. Below four readings there is no baseline to be surprised against. Series under
+   `history_min_weeks` are **dropped, not scored with a shrug** (Meta-Rule 5). Both AQI series
+   are excluded today and will qualify on their own.
+
+### 22. Metro-grain rewrite
+`rank_extremity` and `neighbor_divergence` are **removed from `surprise_score()`**, not zeroed
+and left in place — a term multiplied by a config value is a term someone can silently
+re-enable without the data behind it. `assert_weights()` now raises if the config carries either
+non-zero, and raises again if the additive weights stop summing to 1.0 (that would rescale every
+score and quietly change what the calibrated threshold means). Both are unit-tested.
+
+Named thresholds are only recognised where a **real external standard** exists — the U.S. Drought
+Monitor's own D1–D4 category boundaries. "Crossed into Severe Drought (D2)" is citable; "crossed
+1,000 permits" would be a number we invented to sound important, and `crossed_threshold()`
+returns nothing for metrics without a published standard.
+
+**A ranking defect the first real run exposed, and its fix.** `self_deviation` scores the LEVEL
+while `magnitude` scores the MOVE, so a reading that had sat unchanged for months at an unusual
+level ranked 8th of 17 with the figure "unchanged at D2" beside a `why` claiming it was outside
+the area's range. Both statements were true and together they were incoherent — and this is the
+*movers* engine. A standing level is a state, not a mover: it is now suppressed unless it crossed
+a named threshold, and `_why()` can no longer assert movement beside a figure reading
+"unchanged". 17 stories → 15, and the top of the ranking is cleaner for it.
+
+### 23. Schema amendment (🟡 — please confirm)
+`areas[].type` enum was `["zip","county"]`. THI resolves at metro grain and electricity only
+statewide, so **`metro` and `state` were added**. The alternative — labelling a statewide price
+as county-level — is false precision, which the honesty gate forbids. The grain is now stated
+rather than flattened. This is a contract change to a file both engines depend on; flagged for
+approval rather than assumed.
+
+### 24. Validation without a new dependency
+`jsonschema` is not installed and adding a dependency is 🟡. `src/minischema.py` implements the
+subset the schema actually uses, with the property that makes a subset validator safe: **an
+unrecognised keyword raises.** A validator that silently ignores what it does not implement
+reports PASS for constraints it never checked. If the schema grows a keyword, validation fails
+loudly and someone consciously adopts `jsonschema`. Unit-tested in both directions.
+
+### 25. Quiet-week threshold — RECALIBRATED (proposal, pending approval)
+`src/calibrate.py` replays THI's real history walk-forward: for each calendar week, truncate
+every series to the readings that existed then, score exactly as the live engine would, record
+the week's top score. No lookahead.
+
+**46 weekly cycles (2025-09 → 2026-08). Weekly top score: min 0.340 · median 0.658 · max 0.927.**
+
+Those 46 are not 46 independent observations — most series are monthly, so one reading stays
+"latest" for about four weeks and each story is counted roughly four times. Collapsing
+consecutive runs gives **18 distinct top-story events**: min 0.340 · median 0.669 · max 0.927,
+p20 0.571.
+
+| threshold | evergreen rate (18 distinct events) |
+|---|---|
+| 0.45 (inherited, uncalibrated) | 5.6% |
+| **0.55 (proposed)** | **11.1%** |
+| 0.60 | 22.2% |
+
+**Proposed: 0.55.** It sits just under the p20–p25 band, so it flags the two genuinely weak
+cycles without demoting real ones — 0.60 would send a +20% mover to evergreen, and 0.45 fires so
+rarely that the quiet-week branch would be untested dead code. Set in config as
+`quiet_week_threshold_status: proposed`, **not treated as final**. Today's feed is unaffected
+either way (top story 0.658).
+
+**The honest caveat.** Taking the max of ~15 series makes the weekly top score high almost by
+construction, so this threshold does little work at metro grain. The live editorial risk is not
+"no story" but "a top-ranked *boring* story" — which wants a separate quality floor, not a higher
+threshold here. Recommend leaving that until the article engine shows what actually reads badly.
+
+### 26. Prove-gate — MET
+A real `data/social-feed.json` from THI's actual data: **3 areas, 15 ranked stories,
+`week_mode=live`**, validating clean against the schema, every story carrying `figure` + `source`
++ `as_of`. Gated metrics never reach `stories[]` (asserted). Sweep: **44/44 tests** across three
+suites, byte-identical output on repeat runs, zero files touched outside `autoposter/`.
+
+**Stopping at the gate as instructed.** Phase 3 not begun.
+
+### 27. Friction
+The engine's shape was easy; the data's honesty was not. Four of the traps in §21 would each have
+produced a plausible, confident, wrong number, and none was visible from the schema or the
+package — only from reading the actual arrays. That is the Phase 0 lesson (L1) recurring one
+level down: the spec is right about process and silent about data, and every hour spent staring
+at real rows paid for itself. Candidate for `LEARNINGS.md` if it recurs in Phase 4.

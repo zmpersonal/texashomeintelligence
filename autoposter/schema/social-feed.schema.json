@@ -4,28 +4,66 @@
   "title": "THI social-feed",
   "description": "The single data contract between THI's ingest+movers-engine and the autoposter. The caption/write step consumes stories[] ONLY. Every figure carries source + as_of. See MOVERS-ENGINE.md.",
   "type": "object",
-  "required": ["generated_at", "coverage", "week_mode", "areas", "stories"],
+  "required": [
+    "generated_at",
+    "coverage",
+    "week_mode",
+    "areas",
+    "stories"
+  ],
   "properties": {
-    "generated_at": { "type": "string", "format": "date-time" },
-    "coverage": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "coverage": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
     "week_mode": {
       "type": "string",
-      "enum": ["live", "evergreen"],
+      "enum": [
+        "live",
+        "evergreen"
+      ],
       "description": "evergreen = max surprise_score below quiet_week_threshold; live formats must not generate (VALIDATOR G6b)."
     },
     "areas": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "type", "metrics"],
+        "required": [
+          "id",
+          "type",
+          "metrics"
+        ],
         "properties": {
-          "id": { "type": "string", "description": "ZIP or county id, e.g. '78745' or 'Travis'" },
-          "type": { "type": "string", "enum": ["zip", "county"] },
-          "county": { "type": "string" },
+          "id": {
+            "type": "string",
+            "description": "ZIP or county id, e.g. '78745' or 'Travis'"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "zip",
+              "county",
+              "metro",
+              "state"
+            ],
+            "description": "Grain of this area's readings. PHASE 2 AMENDMENT: `metro` and `state` added. THI resolves almost everything at metro grain and some feeds (electricity price) only statewide; labelling a statewide figure as county-level would be false precision, which the honesty gate forbids. The grain is stated rather than flattened."
+          },
+          "county": {
+            "type": "string"
+          },
           "metrics": {
             "type": "object",
             "description": "Keys are metric names (drought_stage, hail_window, energy_cost_est, grid_stress, permit_signal, appraisal_change, insurance_trend). Gated metrics are ABSENT (not null) until their ingest lands.",
-            "additionalProperties": { "$ref": "#/$defs/metric" }
+            "additionalProperties": {
+              "$ref": "#/$defs/metric"
+            }
           }
         }
       }
@@ -33,45 +71,133 @@
     "stories": {
       "type": "array",
       "description": "PRE-RANKED, surprise-scored candidate headlines. The caption/write step reads THIS, never raw areas[]. rank 1 = hub/article headline; next feed Movers/Wager/reels.",
-      "items": { "$ref": "#/$defs/story" }
+      "items": {
+        "$ref": "#/$defs/story"
+      }
     }
   },
   "$defs": {
     "provenance": {
       "type": "object",
-      "required": ["source", "as_of"],
+      "required": [
+        "source",
+        "as_of"
+      ],
       "properties": {
-        "source": { "type": "string", "minLength": 2, "description": "e.g. 'US Drought Monitor', 'Travis Central Appraisal District', 'NOAA/NWS SPC'" },
-        "as_of": { "type": "string", "description": "ISO date/datetime the figure is valid as of" }
+        "source": {
+          "type": "string",
+          "minLength": 2,
+          "description": "e.g. 'US Drought Monitor', 'Travis Central Appraisal District', 'NOAA/NWS SPC'"
+        },
+        "as_of": {
+          "type": "string",
+          "description": "ISO date/datetime the figure is valid as of"
+        }
       }
     },
     "metric": {
-      "allOf": [{ "$ref": "#/$defs/provenance" }],
+      "allOf": [
+        {
+          "$ref": "#/$defs/provenance"
+        }
+      ],
       "type": "object",
-      "required": ["value", "source", "as_of"],
+      "required": [
+        "value",
+        "source",
+        "as_of"
+      ],
       "properties": {
-        "value": { "type": ["number", "string"] },
-        "wow": { "type": "number", "description": "week-over-week delta" },
-        "mom": { "type": "number", "description": "month-over-month delta" },
-        "vs_baseline": { "type": "number", "description": "vs this area's rolling median (its normal)" },
-        "vs_neighbors": { "type": "number", "description": "this area's move vs median move of adjacent areas" },
-        "crossed": { "type": "array", "items": { "type": "string" }, "description": "named thresholds crossed this period" }
+        "value": {
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "wow": {
+          "type": "number",
+          "description": "week-over-week delta"
+        },
+        "mom": {
+          "type": "number",
+          "description": "month-over-month delta"
+        },
+        "vs_baseline": {
+          "type": "number",
+          "description": "vs this area's rolling median (its normal)"
+        },
+        "vs_neighbors": {
+          "type": "number",
+          "description": "this area's move vs median move of adjacent areas"
+        },
+        "crossed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "named thresholds crossed this period"
+        }
       }
     },
     "story": {
-      "allOf": [{ "$ref": "#/$defs/provenance" }],
+      "allOf": [
+        {
+          "$ref": "#/$defs/provenance"
+        }
+      ],
       "type": "object",
-      "required": ["rank", "area_id", "metric", "angle", "surprise_score", "why", "figure", "source", "as_of"],
+      "required": [
+        "rank",
+        "area_id",
+        "metric",
+        "angle",
+        "surprise_score",
+        "why",
+        "figure",
+        "source",
+        "as_of"
+      ],
       "properties": {
-        "rank": { "type": "integer", "minimum": 1 },
-        "area_id": { "type": "string" },
-        "county": { "type": "string" },
-        "metric": { "type": "string" },
-        "angle": { "type": "string", "enum": ["reveal", "verdict", "wager", "warning"] },
-        "surprise_score": { "type": "number", "minimum": 0, "maximum": 1 },
-        "why": { "type": "string", "description": "plain-language justification; also the headline rationale and validator audit trail" },
-        "figure": { "type": "string", "description": "the EXACT string the caption may use verbatim, e.g. '+2 stages (now Stage 3)'. VALIDATOR G1 checks output numerals against this." },
-        "suppressed": { "type": "boolean", "default": false, "description": "true if flagged as glitch/big-but-boring/repeat; suppressed stories are dropped before the caption step" }
+        "rank": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "area_id": {
+          "type": "string"
+        },
+        "county": {
+          "type": "string"
+        },
+        "metric": {
+          "type": "string"
+        },
+        "angle": {
+          "type": "string",
+          "enum": [
+            "reveal",
+            "verdict",
+            "wager",
+            "warning"
+          ]
+        },
+        "surprise_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "why": {
+          "type": "string",
+          "description": "plain-language justification; also the headline rationale and validator audit trail"
+        },
+        "figure": {
+          "type": "string",
+          "description": "the EXACT string the caption may use verbatim, e.g. '+2 stages (now Stage 3)'. VALIDATOR G1 checks output numerals against this."
+        },
+        "suppressed": {
+          "type": "boolean",
+          "default": false,
+          "description": "true if flagged as glitch/big-but-boring/repeat; suppressed stories are dropped before the caption step"
+        }
       }
     }
   }

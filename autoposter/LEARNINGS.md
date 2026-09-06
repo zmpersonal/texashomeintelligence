@@ -63,15 +63,42 @@ recording because the same choice recurs whenever a signal is gated off.
 `quiet_week_threshold` is now flagged `calibrated: false` rather than silently carried over.
 
 ## L5 — Repo visibility is a content decision, not only a secrets decision
-**Status:** `candidate` · **Affects:** agent-harness Meta-Rule 4, File Conventions ·
-**Evidence:** RUNLOG 2026-09-06 §11.
+**Status:** `validated` (owner-confirmed 2026-09-06, rule adopted) · **Affects:** agent-harness
+Meta-Rule 4 and File Conventions · **Evidence:** RUNLOG 2026-09-06 §11, §17.
 
 Meta-Rule 4 covers secrets in a public repo, and that part is easy. What it does not cover:
-`RUNLOG.md` is an honest, detailed account of what a project's data *cannot* do — and on a
-project whose #1 KPI is being cited by AI answer engines, a public runlog enumerating the
-gaps is itself extractable. The harness asks for candid logs and says nothing about who can
-read them.
+`RUNLOG.md` is a candid, sourced, well-structured account of what a project's data *cannot* do —
+and on a project whose #1 KPI is being cited by AI answer engines, a public runlog is *more*
+extractable than most of the product. The harness asks for candid logs and is silent on who
+reads them. The failure is not a leak; it is publishing your own weaknesses in the most
+citable format you produce.
 
-**Proposed rule:** when a project's governance files live in a public repo, that is an
-explicit owner decision recorded at Phase 0, with a stated split between what goes in the
-runlog and what goes in an owner-private channel.
+**Rule adopted (now in `autoposter/CLAUDE.md`):** *candor about state and timing, never a public
+inventory of exploitable weaknesses.* Status, timing, direction and decisions are published;
+per-feed inventories, enumerated join failures and field-level gaps go to a gitignored
+`private/` directory and an in-session report.
+
+**Sub-finding worth carrying separately:** "put it on an unmerged branch" is not a privacy
+control in a public repo — a branch is readable through the UI and API. Obscure is not private,
+and a rule that relies on the difference will be wrong the first time someone looks.
+
+**Retro candidate:** this is the first learning at `validated`, which by the harness's Learning
+Loop triggers a retro. Proposed promotion — one line in agent-harness File Conventions: *"State
+the repo's visibility at Phase 0. In a public repo, `RUNLOG.md` is a published artifact: log
+status and timing candidly, keep exploitable specifics in an ignored path."* Not applied; a
+skill edit needs an approved retro proposal (🟡).
+
+## L6 — Read the arrays, not the schema: derived series hide category errors
+**Status:** `candidate` · **Affects:** build-loop 3.1, social-autoposter step 8 ·
+**Evidence:** RUNLOG 2026-09-06 §21.
+
+Four separate traps in one afternoon of wiring one feed, none visible from the schema or the
+dataset metadata, each capable of publishing a confident wrong number: a partial trailing
+period read as a collapse; a mid-series composition change read as a jump; two record types
+(30-year normals and monthly actuals) interleaved in one array; and a two-point series scored
+as if it had a baseline. `status: "live"` was true for every one of them.
+
+**Proposed rule:** before a series is scored, assert four properties explicitly — the trailing
+period is complete, the entity set is constant across the window, only one record type is
+present, and the depth clears the configured minimum. A feed that passes "is live and has N
+observations" has not been checked.

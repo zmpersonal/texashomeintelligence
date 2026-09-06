@@ -22,6 +22,7 @@ CFG = {
     "channels": {
         "facebook": {
             "status": "live",
+            "enabled": True,
             "pinned": {
                 "account_id": THI_ACCOUNT,
                 "page_id": THI_PAGE,
@@ -30,8 +31,8 @@ CFG = {
             },
         },
         # Connected on Blotato, but to an unrelated property. Deliberately unpinned.
-        "youtube": {"status": "pending_setup", "pinned": None},
-        "instagram": {"status": "deferred", "pinned": None},
+        "youtube": {"status": "not_configured", "enabled": False, "pinned": None},
+        "instagram": {"status": "not_configured", "enabled": False, "pinned": None},
     }
 }
 
@@ -89,9 +90,11 @@ def test_missing_account_halts():
 
 
 def test_unpinned_channel_halts_even_though_connected():
-    """YouTube IS connected on Blotato — to someone else's channel. No pin = no post."""
+    """YouTube IS connected on Blotato — to someone else's channel. It is both disabled and
+    unpinned, and it halts on the first of those; `test_enabled_but_unpinned_halts` covers the
+    pin check on its own."""
     e = _halts({"platform": "youtube", "account_id": "48654"})
-    assert "DO NOT POST" in str(e)
+    assert "youtube" in str(e) and ("not enabled" in str(e) or "DO NOT POST" in str(e))
 
 
 def test_unknown_platform_halts():
@@ -105,7 +108,7 @@ def test_empty_platform_halts():
 def test_yaml_int_ids_normalize():
     """YAML parses an unquoted page id as an int; Blotato returns a string. A guard that
     rejects a correct target gets disabled, so int/str must compare equal."""
-    cfg = {"channels": {"facebook": {"pinned": {
+    cfg = {"channels": {"facebook": {"enabled": True, "pinned": {
         "account_id": 49743, "page_id": 1335273942995805,
         "name": "Texas Home Intelligence", "requires_page_id": True}}}}
     assert g.assert_post_target(_good(), cfg)["page_id"] == THI_PAGE
@@ -145,6 +148,17 @@ def test_live_listing_absent_account_halts():
     except g.ChannelGuardHalt as e:
         assert "not in the live workspace listing" in str(e); return
     raise AssertionError("expected HALT when the pinned account is gone")
+
+
+def test_pinned_but_disabled_halts():
+    """Either switch alone stops a post; neither alone authorises one."""
+    cfg = {"channels": {"facebook": dict(CFG["channels"]["facebook"], enabled=False)}}
+    assert "not enabled" in str(_halts(_good(), cfg))
+
+
+def test_enabled_but_unpinned_halts():
+    cfg = {"channels": {"facebook": {"enabled": True, "pinned": None}}}
+    assert "DO NOT POST" in str(_halts(_good(), cfg))
 
 
 def test_postable_platforms_is_only_pinned():

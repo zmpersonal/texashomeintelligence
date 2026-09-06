@@ -33,6 +33,8 @@ channels:
   facebook:
     role: reach_and_community
     status: live
+    enabled: true            # second, independent switch (owner's config revision). A channel
+                             # must be BOTH enabled AND pinned to receive a post.
     autonomy: review
     clean_streak: 0
     pinned:
@@ -44,7 +46,8 @@ channels:
       pinned_at: "2026-09-06"
   youtube:
     role: authority_anchor_and_search
-    status: pending_setup
+    status: not_configured
+    enabled: false
     autonomy: review
     clean_streak: 0
     pinned: null   # PHASE 0: an account IS connected, but it is "Support Team (In A Universe
@@ -52,17 +55,20 @@ channels:
                    # THI channel.
   instagram:
     role: amplifier
-    status: deferred
+    status: not_configured
+    enabled: false
     autonomy: review
     clean_streak: 0
     pinned: null   # PHASE 0: connected account is `inhouse.wellness` — a different brand.
   pinterest:
     role: opportunistic_evergreen
-    status: opportunistic
+    status: not_configured
+    enabled: false
     pinned: null   # PHASE 0: connected account is `inhousewellness`.
   x:
     role: opportunistic_realtime
-    status: opportunistic
+    status: not_configured
+    enabled: false
     pinned: null   # no account
 
 autonomy_gate:
@@ -111,13 +117,23 @@ movers:
     neighbor_divergence: 0.0     # DROPPED (metro grain, n=2)
     money_bonus: 0.10            # multiplier, not an additive term
 
-  # PHASE 0: the reweighting changes the score distribution, so this threshold is now
-  # UNCALIBRATED. Do not trust the live/evergreen split until it is retuned against a real
-  # feed in Phase 2 (Meta-Rule 6: withhold beats guess).
-  quiet_week_threshold: 0.45
-  quiet_week_threshold_calibrated: false
+  # PHASE 2 — CALIBRATED against a walk-forward replay of THI's real history (src/calibrate.py:
+  # 46 weekly cycles / 18 distinct top-story events, 2025-09 to 2026-08). Weekly top scores ran
+  # min 0.340 / median 0.669 / max 0.927. The inherited 0.45 fired evergreen on 5.6% of events —
+  # effectively never, leaving the quiet-week branch as untested dead code. 0.60 fired on 22%,
+  # which would send a genuine +20% mover to evergreen. 0.55 sits just under the p20-p25 band
+  # and flags only the two genuinely weak cycles.
+  quiet_week_threshold: 0.55
+  quiet_week_threshold_status: proposed   # PENDING OWNER APPROVAL — proposed 2026-09-06
+  quiet_week_threshold_prior: 0.45        # inherited from the package, never calibrated
+  # Honest caveat: taking the max of ~15 series makes the weekly top score high almost by
+  # construction, so this threshold does little work at metro grain. The live risk is not "no
+  # story" but "a top-ranked boring story" — that wants a separate editorial floor, not a
+  # higher threshold here.
 
-  money_metrics: [appraisal_change, insurance_trend, energy_cost_est, cost_to_own]
+  # PHASE 2: metric names reconciled with what the generator actually emits. The package's
+  # `energy_cost_est` / `cost_to_own` do not exist in THI's data; `energy_price_cents_kwh` does.
+  money_metrics: [appraisal_change, insurance_trend, energy_price_cents_kwh, cost_to_own]
 
 # ---- Article topic scoring (ARTICLE-ENGINE.thi.md tuning) ----
 topic_score_weights:

@@ -71,6 +71,14 @@ def pinned_target(platform: str, config: dict) -> dict:
     if channel is None:
         raise ChannelGuardHalt([f"'{name}' is not a configured channel"])
 
+    # Two independent switches, both required (the owner's config revision added `enabled`
+    # alongside the pin). Either alone can stop a post; neither alone can authorise one.
+    if channel.get("enabled") is not True:
+        raise ChannelGuardHalt([
+            f"'{name}' is not enabled — a channel must be BOTH enabled and pinned to receive "
+            f"a post"
+        ])
+
     pin = channel.get("pinned")
     if not pin:
         raise ChannelGuardHalt([
@@ -152,7 +160,7 @@ def assert_live_accounts_match(live_accounts: list[dict], config: dict) -> list[
     checked: list[dict] = []
 
     for platform, channel in (config.get("channels") or {}).items():
-        if not channel.get("pinned"):
+        if not (channel.get("pinned") and channel.get("enabled") is True):
             continue
         target = pinned_target(platform, config)
 
@@ -202,6 +210,6 @@ def postable_platforms(config: dict) -> list[str]:
     """The channels a post may be addressed to at all. Everything else is un-postable."""
     out = []
     for platform, channel in (config.get("channels") or {}).items():
-        if channel.get("pinned"):
+        if channel.get("pinned") and channel.get("enabled") is True:
             out.append(platform)
     return sorted(out)
