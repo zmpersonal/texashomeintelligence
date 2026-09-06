@@ -840,3 +840,68 @@ line in whatever round covers article styling.
 PR #41 open, awaiting the owner's review and merge. Article `published: false`. Facebook promo
 still HELD and will stay held until the article URL resolves — the linked-piece gate enforces
 that on its own, independently of anyone remembering. Go-live is a separate approval.
+
+---
+
+## 2026-09-06 — Phase 4c: a scope error of mine, the CSS fix, two standing rules
+
+### 54. I reported PR #41's scope wrongly. Correcting it.
+Last round I told the owner PR #41 contained four files. **It diffed 48 against `main`.** The
+branch was cut from `autoposter/phase-0`, and no `autoposter/` work has ever been merged, so the
+entire project folder rode along in the pull request.
+
+The scope gate I ran checked **the staged file list of my commit** — which really was four files
+— and not **the diff the reviewer would see against the base branch**. A commit can be perfectly
+scoped and still sit on a branch that drags forty other files into the same PR. I asked the
+narrower question and reported the answer as if it settled the wider one.
+
+Nothing unsafe was in those 48 files: they are the autoposter project, and every path satisfied
+the owner's stated rule (`autoposter/**` or one of the three named `site/` paths). The failure
+was of accuracy, not of safety — the owner was about to review a diff under a false description
+of it, which is its own kind of harm on a 🔴 crossing.
+
+**Fixed by re-cutting**, not by explaining: `autoposter/analysis-content-type` is now
+`origin/main` + the single site-patch commit, and diffs exactly the four files. Force-pushed
+(my own branch, unmerged, correcting my own error) with a comment on #41 saying what changed and
+why, so nobody reviews the stale description. The autoposter history — the cross-brand fixture
+fix and the Phase 4b log — is preserved on `autoposter/phase-0`, which touches nothing outside
+`autoposter/`. Whether that folder is ever merged to `main` is a separate decision nobody has
+asked for. Logged as `LEARNINGS.md` L11.
+
+### 55. The bullet fix — diagnosed properly, and the diagnosis changed the fix
+PR #42, one file, +17 lines, branched off `main` so the diff is only the CSS.
+
+My earlier account — "the global stylesheet gives it no list styling in this context" — was
+imprecise, and the real cause matters. The markdown **does** render a real `<ul><li>`; the
+computed style is `list-style-type: none; padding-left: 0`, so something is actively resetting
+it. That something is **Tailwind's Preflight** (`@import "tailwindcss"`, line 1 of
+`global.css`).
+
+Which is why every THI list that wants markers already opts back in explicitly —
+`.key-findings`, `.v2-bullet-list`, `.v2-event-list`. The house convention is a per-context
+opt-in, **not** styling bare `ul`. Had I fixed what I first assumed, I would have written a bare
+`ul` rule and changed every list on the site.
+
+Scoped with `>` so the prose lists (direct children of `article.analysis`) get markers while the
+sources list inside `footer.analysis-sources` keeps its deliberately unmarked styling — verified
+in the DOM, not assumed. Computed after: prose `disc`/20px, sources `none`/0px. Screenshotted.
+
+### 56. Two standing rules adopted
+- **Render-side verification is permanent** (`CLAUDE.md`, `LEARNINGS.md` L9, `validated`). No
+  article, embed or rendered surface ships without something reading the actual rendered output.
+  Justified by the empty-receipts embed: typecheck green, build green, evidence silently gone.
+- **The lookalike-namespace watch** (L10, `candidate` at two instances). On a third it becomes a
+  gate. Not built now on purpose — a gate designed against two examples usually fits neither.
+
+### 57. State
+PR #41 re-cut to four files, awaiting the owner's review and merge — **not merged by me.**
+PR #42 (CSS) open, one file. Article `published: false` on both. Facebook promo HELD. Go-live
+remains unauthorized and, when it comes, is one PR: the single field flip plus the release of
+the held post, together.
+
+### 58. Friction
+The scope error and the CSS misdiagnosis share a root: I reported a conclusion from the check
+that was easy to run rather than the one that answered the question. `git diff --cached` was at
+hand; `git diff main...HEAD` was the real test. "No list styling" was the plausible reading;
+`getComputedStyle` was the real test. Both times the cheap check agreed with my expectation,
+which is exactly when it is least worth trusting.

@@ -60,6 +60,20 @@ the model decide what is interesting or produce a number, stop — that belongs 
 what protects both the $20 ceiling and the brand's accuracy. Every numeral in a published piece
 comes from `social-feed.json`; pop lives in the hook and framing, never in the data.
 
+## Render-side verification is permanent, not a phase step
+**No article, embed, or rendered surface ships without a human or a check reading the actual
+rendered output.** Not the build log, not the typecheck — the HTML the reader gets.
+
+This is a standing rule because THI's differentiator lives in **what renders, not what
+compiles**. The proof: the first article's live-data embed resolved nothing and rendered an
+EMPTY receipts table under a claim-verified article. `astro check` passed. `astro build`
+passed. The only thing that caught it was reading the built HTML. An empty receipts table
+under a sourced claim is the precise silent failure this brand cannot survive — it looks like
+the page works and quietly removes the evidence the whole page exists to show.
+
+Applies to: any new article, any new embed, any change to a template that renders one, and any
+CSS change that could alter how sourced figures read. "It built" is never "it works".
+
 ## The gates that must never be relaxed
 - **Validate before produce** — `validator.py` passes before any render, edit or schedule.
 - **Guard before post** — `channel_guard.assert_post_target()` on every outbound piece. A

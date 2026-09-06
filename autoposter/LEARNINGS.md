@@ -146,3 +146,55 @@ explicitly separate from the gate run, with the understanding that this is a jud
 cannot make. Do not attempt to automate it into a rule — that is how "be specific" ends up in a
 prompt, decaying. Where a specific defect recurs (raw derivations in prose, stacked parentheses),
 THAT becomes a gate.
+
+## L9 — Verify what renders, not what compiles: the empty-receipts failure
+**Status:** `validated` (owner-adopted as a standing rule, 2026-09-06) · **Affects:**
+agent-harness Meta-Rule 7, build-loop 5.1 · **Evidence:** RUNLOG 2026-09-06 §51.
+
+The article engine's live-data embed resolved nothing on its first build: `embed.series` was
+written in the article engine's `area/metric` namespace while the site's `findDataset()` takes
+`datasetId/location`. Typecheck passed, build passed, and the page rendered an **empty receipts
+table beneath a claim-verified article**.
+
+That is worse than a broken page. A broken page announces itself; this looked fine and silently
+removed the evidence the article exists to present — on the one property whose whole KPI is
+being citable. Only reading the built HTML caught it.
+
+**Rule adopted (now in `autoposter/CLAUDE.md`):** no article, embed or rendered surface ships
+without a human or a check reading the actual rendered output. The harness already says "verify
+what paints, not what compiles"; this makes it permanent and non-optional for THI rather than a
+step in a phase, and names the specific failure mode that justifies it.
+
+## L10 — Two namespaces that look alike: watching for the third
+**Status:** `candidate` (2 instances) · **Affects:** any boundary between the autoposter and
+THI's own data layer · **Evidence:** RUNLOG 2026-09-06 §51, and the Phase 2 area/location work.
+
+Twice now, two identifiers that look interchangeable have meant different things across the
+autoposter/THI boundary:
+1. THI's dataset `location` (`austin`) vs the feed's `area_id` (`austin_metro`).
+2. The feed's `area/metric` (`texas/energy_price_cents_kwh`) vs THI's `datasetId/location`
+   (`eia-electricity/texas`) — same shape, same slash, opposite order, different vocabulary.
+
+Both were silent: the first produced a mislabelled area, the second an empty table. Neither
+raised.
+
+Two is a coincidence. **On a third instance this becomes a gate** — most likely a typed
+boundary object, or an assertion that any `a/b` string handed across the boundary resolves to a
+real dataset before it is written into an artifact. Not built yet, on purpose: a gate designed
+against two examples usually fits neither.
+
+## L11 — Scope-check the DIFF AGAINST THE BASE, never the commit
+**Status:** `candidate` · **Affects:** agent-harness Meta-Rule 11, build-loop 6.3 ·
+**Evidence:** RUNLOG 2026-09-06 §54.
+
+A scope gate ran over the staged file list before committing the site patch and reported four
+files, correctly. The pull request then diffed **48** files against `main`, because the branch
+was cut from a feature branch whose work had never been merged. The owner was told "four files"
+and would have reviewed under a false premise.
+
+The commit was perfectly scoped. The PR was not. Those are different questions and only one of
+them was asked.
+
+**Proposed rule:** when a round's deliverable is a pull request, the scope assertion is
+`git diff --name-only <base>...<head>` — the diff a reviewer will actually see — and it is run
+*after* pushing, not before committing. A per-commit check is a useful extra, never the answer.
