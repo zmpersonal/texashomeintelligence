@@ -758,3 +758,85 @@ parenthesis. Nothing failed; it was just bad. The gates guarantee the numbers ar
 nothing about whether the sentence is worth reading, and there is no automated check for that —
 it needed a human-grade rewrite pass, which is exactly the "top-ranked but boring" risk already
 logged against the quiet-week threshold, arriving one layer down.
+
+---
+
+## 2026-09-06 — Phase 4b: leak closed, site patch applied, PR up
+
+**Round:** post-Phase-4 approvals (🔴 approved crossing) · **Objective:** close the live
+cross-brand disclosure, then apply `SITE-PATCH-PROPOSAL.md` exactly as scoped, on a branch, as a
+PR. **Model spend:** no generation calls.
+
+### 47. The live disclosure — closed first, own commit (`e088dda`)
+`tests/test_channel_guard.py` named three of the owner's other Facebook Pages with real ids, as
+realistic fixtures. The test only ever needed *a different page under the same account*, so the
+sibling ids and names are now neutral (`sibling-page-a` / "Another Brand"). The THI ids stay real:
+they are the pin the guard enforces, and a Page id is public in the page's own URL. Guard
+behaviour unchanged, 17/17 still pass. Also dropped the brand name from a config comment and two
+runlog lines. No cross-brand reference remains outside `private/`.
+
+### 48. History scrub — a conscious DECISION NOT TO, not an oversight
+Owner-decided, recorded here so it reads as a choice later. The un-redacted Phase 0 runlog remains
+in public history at `193a145` and `3ce1282`. It stays. Rewriting it means a force-push on a repo
+whose `main` auto-deploys, for objects GitHub keeps fetchable by SHA anyway and that any existing
+clone or fork retains — and the same facts are already public on `main` regardless. Risk for
+symbolic gain. **Not scrubbed, on purpose.**
+
+### 49. 🅿️ PARKED for a separate review — THI's own `main` carries more of this
+Surfaced during the B forensics, out of scope for the autoposter, and **not to be acted on in
+this or any future autoposter round without an explicit separate instruction.** Public `main`
+(`518d900`) carries 24 documents under `docs/audits/**` — including the parcel-join probe whose
+"No situs, street, city or ZIP field exists" finding is the exact fact redacted from this
+runlog — plus a `HANDOFF.md` section headed "Stub tier — genuinely still unimplemented", and ten
+commit messages naming blocked rounds, dead citations, a falsified fetcher and regressions.
+
+If a public inventory of THI's data weaknesses is a KPI liability, that is where the exposure
+actually lives. Recorded so it is not lost; **do not touch `main`, THI history, `docs/audits/**`
+or `HANDOFF.md`.**
+
+A method note worth keeping: the first pass of this assessment was nearly wrong. The local
+`origin/main` ref was stale, which made `round-16c` look absent from public main. Re-fetching
+before making the claim reversed the conclusion — and the conclusion was the one that decided
+whether a force-push was worth spending. Verify the ref, not the memory of the ref.
+
+### 50. The site patch — applied, scoped, and both states proven
+Branch `autoposter/analysis-content-type`, PR #41. Four files, all inside the approved set; a
+scope gate ran over the staged list before committing and every path matched
+`autoposter/**` or one of the three named `site/` paths.
+
+THI had **no article collection at all**, so this adds `analysis` as a sixth, following the
+repo's own `./src/data/…` glob convention rather than the spec's `src/content/` example.
+
+`published` is enforced by the route rather than by convention: `getStaticPaths` returns only
+published entries. Verified in both directions —
+- **as committed (`published: false`):** no `/analysis/<slug>/` page in the build, 0 sitemap
+  entries, hub renders "No analysis published yet";
+- **flipped to `true` locally and reverted:** the page renders with its question-shaped `h1`, the
+  direct answer high on the page, Article JSON-LD, canonical, and the 13-row EIA series behind a
+  `DataStatus` badge — newest 13.88¢ (2026-08), oldest 15.46¢ (2025-08), matching the article's
+  own claims. Screenshotted in the real brand.
+
+`astro check`: 0 errors, 0 warnings.
+
+### 51. A bug only render-side verification caught — the round's best evidence for Meta-Rule 7
+The live-data embed resolved nothing on the first build. `embed.series` was written in the
+article engine's `area/metric` namespace (`texas/energy_price_cents_kwh`) while THI's
+`findDataset()` takes `datasetId/location` (`eia-electricity/texas`). **Typecheck passed. The
+build passed. The table rendered empty.** Only reading the built HTML found it, and the article's
+whole differentiator is that the receipts are on the page — an empty receipts table would have
+been a silent, brand-specific failure. The schema now documents which namespace it means.
+
+Two namespaces that look alike and mean different things is a category the movers work hit too
+(THI's `location` vs the feed's `area_id`). Worth watching for a third instance before it becomes
+a `LEARNINGS.md` candidate.
+
+### 52. Left unfixed, deliberately (out of the approved scope)
+The article's two-item list renders without bullet markers — the markdown list parses, but the
+global stylesheet gives it no list styling in this context. Cosmetic, and fixing it means editing
+`site/src/styles/global.css`, which is outside the three approved paths. **Not touched.** Worth a
+line in whatever round covers article styling.
+
+### 53. State
+PR #41 open, awaiting the owner's review and merge. Article `published: false`. Facebook promo
+still HELD and will stay held until the article URL resolves — the linked-piece gate enforces
+that on its own, independently of anyone remembering. Go-live is a separate approval.
