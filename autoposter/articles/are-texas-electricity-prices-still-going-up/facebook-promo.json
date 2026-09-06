@@ -1,0 +1,26 @@
+{
+  "post": {
+    "platform": "facebook",
+    "angle": "reveal",
+    "caption": "Texas homeowners: it feels like every bill is going up. Electricity, for once, isn't. Residential power in Texas is 13.88 cents per kilowatt-hour — down 10.2% year over year (source: U.S. Energy Information Administration, as of 2026-08-01). We checked whether a mild summer explains it. It doesn't — cooling demand ran normal. The full read, with the numbers and where they came from → https://texashomeintelligence.com/analysis/are-texas-electricity-prices-still-going-up/ Send this to someone who's been told their bill only ever goes one way.",
+    "on_screen_text": [
+      "13.88 cents per kilowatt-hour",
+      "U.S. Energy Information Administration · 2026-08-01"
+    ],
+    "media_url": "data:image/png;base64,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "has_media": true,
+    "has_source_card": true,
+    "destination_url": "https://texashomeintelligence.com/analysis/are-texas-electricity-prices-still-going-up/",
+    "destination_theme": "energy_price_cents_kwh",
+    "card_kind": "reveal",
+    "card_rows": [
+      "13.88 cents per kilowatt-hour",
+      "down 10.2% year over year"
+    ],
+    "card_numeric_cells": 2,
+    "requires_link": true,
+    "status": "HELD — not scheduled, not posted; awaits owner approval and a live article URL"
+  },
+  "gates_passed": true,
+  "gate_failures": []
+}

@@ -635,3 +635,126 @@ Every gate here was easy to write strict and would have been shipped strict — 
 brand's own exemplars through it to find that two of them rejected valid copy. A suite that only
 ever tests known-bad input cannot discover it is over-strict, and an over-strict gate does not
 fail loudly: it gets disabled. Candidate for `LEARNINGS.md`.
+
+---
+
+## 2026-09-06 — Phase 4: the article engine (the KPI stream)
+
+**Round:** BUILD-PLAN Phase 4 (🟡) · **Objective:** one real THI article end to end to a branch,
+with the two-lock guard proven halting, the claim ledger shown, one model call, nothing live.
+**Out of scope:** publishing; the AI-anchor/video path; reels (parked); any write under `site/`.
+**Model spend:** exactly **one** call — the write step, asserted in code. **Cost:** ~$0.
+
+### 37. `ROTATION.md` moved to `private/`, standing rule widened
+Owner-approved. The rule in `CLAUDE.md` now names a second class alongside exploitable-weakness
+inventories: **network topology and cross-linking strategy are never public.** The distinction
+that matters is short enough to remember — *methodology is safe to publish; topology and weakness
+are not.* The other four spec files are committed to `specs/`.
+
+### 38. The two-lock guard HALTS — proven on six paths, not asserted
+`src/publish_target.py`, `tests/test_article_engine.py`. Every exit is a resolved, agreeing
+target or an exception; there is no third return value, so no caller can read "unresolved" as
+"probably THI". Demonstrated halting on:
+
+1. a target that self-identifies **another domain** (`austinhomeintelligence.com`) — "the two
+   locks disagree";
+2. an editorial spec naming a target that **is not this site's**;
+3. an **unknown site key** — halts rather than defaulting to THI;
+4. a canonical URL on the **wrong host**;
+5. a **lookalike host** (`texashomeintelligence.com.evil.example`) — the guard compares the URL's
+   host, not a substring, which a naive check would have passed;
+6. a **full engine run** against the mismatched target — halts before a single write.
+
+### 39. The claim ledger — 11 claims, four tiers, one refusal
+The ledger is verified *before any prose exists*, then the finished prose is re-checked against
+it (G1/G2 at article scale). Tiers and what each may do: `data` traces to the feed and may be
+stated; `derived` is arithmetic on feed figures and must **record its working** so a reader can
+redo it; `official` is a dated published source; `external` — a research lead with no underlying
+data — **may never be stated**, and survives only as explicitly hedged text whose wording is
+checked for an uncertainty marker.
+
+That last tier is the one that earns its keep here. The article's most tempting sentence would
+have been a cause for the price drop, and nothing in THI's feeds measures fuel cost, contract mix
+or rate changes. The engine cannot state it: claim C9 is `external`, hedged, and the article says
+so in a section titled *"What we are not going to tell you"*.
+
+Two additions the real data forced, both narrow and both requiring a stated reason:
+- **`timeless`** — a 1991-2020 climate normal is a fixed reference period, not a current reading,
+  so the freshness bound cannot apply. A `timeless` claim with no explanation in `notes` is a
+  ledger failure, so the exemption can never be silent.
+- **derivation numerals join the G1 allowlist.** A year-over-year comparison legitimately prints
+  last year's figure. It is allowed *because the derivation is published beside it* — which is
+  the difference between a sourced comparison and an invented one.
+
+### 40. Topic selection is code, and the gated topic proves it
+`src/topic_scorer.py` + `article_topics.yaml`. Nine candidates; `data_strength` is **measured**
+against the real feed rather than asserted, so a topic whose metrics are gated or absent scores
+zero and is unpickable. Five of nine are unbuildable today for exactly that reason — including
+the property-tax article, which is the highest-interest topic in the file.
+
+The scorer picked `electricity-still-rising` (0.713). `crime-by-area` carries the second-highest
+public-interest prior in the file and is **not buildable**: `surface_tension()` names it
+explicitly, as ARTICLE-ENGINE.md requires, so a virality-vs-brand-safety trade is a decision
+somebody makes rather than a thing that quietly never happens.
+
+### 41. One model call, enforced rather than requested
+`Budget.spend()` raises on the second call in a cycle, with a message that says the fix is to push
+work back into code rather than raise the budget. A real run spends exactly one; both are tested.
+
+### 42. The article, and what the data actually said
+**"Are Texas electricity prices still going up?" — No.** 13.88¢/kWh in August 2026, down 10.2%
+year over year and 18.3% off the April peak, with almost the whole fall in one month.
+
+The myth-buster half is the part worth noting. The obvious explanation — a mild summer — is
+checkable, so the engine checked it: Austin recorded 644 cooling degree-days in July 2026 against
+a 1991-2020 normal of 644.8, i.e. **0.1% off normal**. San Antonio ran 5.6% under its normal, not
+nearly enough to explain a fall of this size. So demand does not account for it, and the article
+says that and then declines to say more. That is the format working: interesting whether the
+answer is yes, no, or "it's complicated".
+
+### 43. Two gate findings during the round — both fixed on the right side
+- **The Facebook promo failed G1 on its first build.** Its story object carried the headline
+  figure but the caption also quoted the year-over-year change. The fix was to widen what the
+  story supplies, never to loosen G1.
+- **G2 rejected a source name wrapped across two lines.** In markdown a soft break renders as a
+  space, so the reader sees the source; the raw-substring check did not. G2 now compares against
+  whitespace-collapsed text — checking the thing the reader actually sees, not a loosening. This
+  is the second instance of LEARNINGS L7 (a gate suite that only tests known-bad input ships
+  over-strict); L7 moves toward `validated`.
+
+### 44. 🔴 RULE 0 BOUNDARY — the engine stopped, and this is bigger than one file
+`PUBLISH-TARGET.thi.md` says to confirm where articles live. Confirmed against the live repo:
+**THI has no article, blog, or analysis collection at all.** `content.config.ts` defines five
+collections — locations, services, intake-questions, data-sources, faq — and none holds long-form
+content. There is no `/analysis/` route.
+
+So publishing this article is not "add a markdown file": it is a new content type on the live
+site, touching `content.config.ts`, a new data directory, and two new route files — all under
+`site/`, all outside the boundary. **Nothing under `site/` was created, edited or staged.**
+`articles/<slug>/SITE-PATCH-PROPOSAL.md` carries the exact changes and the three decisions they
+need (URL shape, file location, nav), with a recommendation on each. Worth flagging that the
+repo's own convention is `site/src/data/<collection>/`, not the spec's example
+`site/src/content/` — mirroring the repo beats mirroring the spec.
+
+### 45. Prove-gate — MET
+| requirement | result |
+|---|---|
+| one real article end to end | `articles/are-texas-electricity-prices-still-going-up/article.md` |
+| question-shaped headline | "Are Texas electricity prices still going up?" |
+| sourced body + live-data embed spec | every stat inline-cited; embed specced against `DataSetPage.astro`'s real table + `DataStatus` pattern |
+| claim ledger shown | `claim-ledger.md`, 11 claims, tiered, with derivations |
+| two-lock guard halting on mismatch | six paths, all halting |
+| one model call | asserted in code; a second raises |
+| nothing live | no write under `site/`; article `published: false` |
+| FB promo validated but HELD | full social suite PASS; `status: HELD`; pinned THI page only |
+
+**99/99 tests green across six suites.** Zero files touched outside `autoposter/`.
+
+### 46. Friction
+Writing to the gates is harder than writing freely, and that is the point — but it showed up as
+prose quality, not as a blocked run. The first draft passed every gate and read like a machine:
+raw derivation strings pasted into sentences, a dataset label parenthesised inside another
+parenthesis. Nothing failed; it was just bad. The gates guarantee the numbers are real and say
+nothing about whether the sentence is worth reading, and there is no automated check for that —
+it needed a human-grade rewrite pass, which is exactly the "top-ranked but boring" risk already
+logged against the quiet-week threshold, arriving one layer down.

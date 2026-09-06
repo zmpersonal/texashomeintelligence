@@ -30,6 +30,13 @@ engine would surface if asked what THI cannot do. That is a KPI problem, not a s
   *"County-grain drought is below the 4-week minimum until 2026-09-22"* — fine.
 - **Do not publish:** per-feed status inventories, enumerated join failures, named unimplemented
   fetchers, field-level gaps in third-party data, the Blotato multi-brand account map.
+- **Do not publish (second class, added 2026-09-06): network topology and cross-linking
+  strategy.** The map of which domains the operator owns, which are parked or carry unreliable
+  data, and how they are internal-linked so search and AI engines read the cluster as one
+  authority. Same class as an exploitable-weakness inventory, and worse in one way: it is a
+  public description of a cross-domain link scheme on the repo of the property whose #1 KPI is
+  being cited by the engines that would read it. This is why `ROTATION.md` lives in `private/`
+  while the other four spec files are committed to `specs/`.
 - **Where the detail goes:** `autoposter/private/` (gitignored, never committed), plus an
   in-session report to the owner. **Not** an unmerged branch — in a public repo a branch is
   still publicly readable through the UI and API; obscure is not private.

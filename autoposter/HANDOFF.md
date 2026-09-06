@@ -1,7 +1,7 @@
 # HANDOFF.md — THI Autoposter
 
 Current full context for a fresh session. Overwritten at each stopping point.
-**Last updated: 2026-09-06, end of Phase 3 (held at the prove-gate).**
+**Last updated: 2026-09-06, end of Phase 4 (held at the prove-gate).**
 
 ---
 
@@ -50,7 +50,8 @@ Two extra hazards this repo's shape creates:
 | Threshold calibration | ✅ 0.55 approved, kept `status: proposed`; revisit after 2026-09-22 |
 | 2 — Movers engine | ✅ prove-gate MET — real feed, 15 stories, schema-valid; held for review |
 | 3 — Validator | ✅ prove-gate MET — G5 + media resolution wired, 4 spec gaps closed, 78/78 |
-| 4 — Article engine | ⏸ HELD — spec files have ARRIVED; awaiting the owner's go-ahead |
+| 4 — Article engine | ✅ prove-gate MET — article + ledger produced, guard halts, 1 model call |
+| Site-side publish | 🔴 BLOCKED at the Rule 0 boundary — THI has no article collection (see below) |
 | 5 — Reels engine | ⏸ **PARKED** until after 2026-09-22 (see below) |
 | 6 — Producers | ⏸ blocked on Blotato plan confirmation + a pinned YouTube channel |
 | 7 — Orchestrate | ⏸ |
@@ -75,7 +76,14 @@ src/validator.py               the full gate suite — G1-G9 + baseline, G5 and 
 src/media.py                   fail-closed media resolution; indeterminate != pass
 src/post_template.py           deterministic code-filled pieces (NOT the caption generator)
 specs/                         VALIDATOR, MOVERS-ENGINE, VOICE-GUIDE, REELS-ENGINE (committed)
-tests/                         78 tests across 5 suites, all passing
+src/publish_target.py          the two-lock guard — proven halting on six paths
+src/claim_ledger.py            claim tiers; `external` can never be stated unhedged
+src/topic_scorer.py            deterministic topic scoring; data_strength is MEASURED
+src/article_engine.py          the shared process + the enforced one-model-call budget
+src/run_article.py             build_claims (code) + write (THE one model call)
+article_topics.yaml            candidate topics + owner-tunable priors
+articles/<slug>/               article.md, claim-ledger.md, facebook-promo.json, site patch
+tests/                         99 tests across 6 suites, all passing
 data/social-feed.json          the real artifact
 private/                       GITIGNORED — owner-only detail + ROTATION.md (see below)
 RUNLOG.md LEARNINGS.md HANDOFF.md
@@ -95,6 +103,12 @@ Still **not** landed: `orchestrator.py`, `publisher.py` — Phase 6/7 material.
    owner's go-ahead — not before.
 3. **Live media resolution is unproven from this surface.** A HEAD from this container is not
    evidence; prove it on the runner's own path in Phase 6 (SOP step 9).
+4. **🔴 The article cannot be published without THI-repo changes.** THI has no article/analysis
+   collection and no `/analysis/` route. Publishing needs `site/src/content.config.ts`, a new
+   `site/src/data/analysis/` directory, and two route files — all outside `autoposter/`. The
+   exact diff and three decisions (URL shape, file location, nav) are in
+   `articles/are-texas-electricity-prices-still-going-up/SITE-PATCH-PROPOSAL.md`. Nothing under
+   `site/` has been touched.
 
 ## Phase 4 readiness
 

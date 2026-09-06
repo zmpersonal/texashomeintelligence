@@ -78,6 +78,13 @@ inventory of exploitable weaknesses.* Status, timing, direction and decisions ar
 per-feed inventories, enumerated join failures and field-level gaps go to a gitignored
 `private/` directory and an in-session report.
 
+**Second class, found 2026-09-06 (owner-approved):** network topology and cross-linking
+strategy belong in the same bucket. `ROTATION.md` maps every domain in the network, names the
+parked and unreliable ones, and describes internal-linking them for cluster authority — a
+competitor's map AND a public description of a link scheme, sitting on the repo of the property
+whose #1 KPI is citation. The other four spec files are methodology and read as an asset. The
+distinction that matters: **methodology is safe to publish; topology and weakness are not.**
+
 **Sub-finding worth carrying separately:** "put it on an unmerged branch" is not a privacy
 control in a public repo — a branch is readable through the UI and API. Obscure is not private,
 and a rule that relies on the difference will be wrong the first time someone looks.
@@ -104,7 +111,7 @@ present, and the depth clears the configured minimum. A feed that passes "is liv
 observations" has not been checked.
 
 ## L7 — A gate suite must test known-GOOD input, or it ships over-strict and gets disabled
-**Status:** `candidate` · **Affects:** social-autoposter step 11b · **Evidence:** RUNLOG
+**Status:** `validated` (seen twice: RUNLOG §32 and §43) · **Affects:** social-autoposter step 11b · **Evidence:** RUNLOG
 2026-09-06 §32.
 
 Step 11b says "known-bad content is rejected, known-good passes", but every worked example in
@@ -120,3 +127,22 @@ legitimate runs until somebody loosens or disables it, and a disabled gate prote
 voice/brand reference, not from fixtures the same author invented alongside the gates — plus a
 paired test that the corrupted version of the same copy is still rejected. Calibrate strictness
 against real copy before shipping, not after a halt.
+
+## L8 — Passing every gate is not the same as being worth reading
+**Status:** `candidate` · **Affects:** social-autoposter step 11b, ARTICLE-ENGINE Stage 4 ·
+**Evidence:** RUNLOG 2026-09-06 §46.
+
+The first article draft passed the ledger, G1, G2, G5 and the two-lock guard, and read like a
+machine: derivation strings pasted verbatim into sentences, a dataset label nested inside another
+parenthesis. Nothing failed. It was simply bad writing that happened to be true.
+
+The validator's whole design is to make wrongness structurally impossible, and it succeeds — but
+correctness and quality are orthogonal, and only one of them has a gate. This is the same shape as
+the deferred story-quality floor (a top-ranked BORING story), arriving one layer down in the
+prose rather than in the ranking.
+
+**Proposed rule:** the write step's done-criteria include one human-grade read for prose quality,
+explicitly separate from the gate run, with the understanding that this is a judgement a gate
+cannot make. Do not attempt to automate it into a rule — that is how "be specific" ends up in a
+prompt, decaying. Where a specific defect recurs (raw derivations in prose, stacked parentheses),
+THAT becomes a gate.
