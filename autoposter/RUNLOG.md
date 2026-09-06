@@ -182,3 +182,164 @@ the package"* — **MET** by this entry. Phase 1 is **HELD** pending the 🔴 an
 3. Branch name (§6).
 4. Decision G fan-out definition.
 5. `SETUP.md` items: Slack channel, GitHub Secrets, YouTube/THI account connection.
+
+---
+
+## 2026-09-06 — Phase 0 (cont.): owner decisions applied + pinned-ID guard built
+
+**Round:** Phase 0 close-out (🟡 decisions applied, 🟢 guard built) · **Objective:** apply the
+owner's five 🔴 answers, build the pinned-ID guard, and hold. **Out of scope:** anything
+consuming the not-yet-re-uploaded spec files; Phase 2 onward.
+**Model spend:** no generation calls. **Cost:** ~$0 against the $20 ceiling.
+
+### 10. Pinned-ID guard — BUILT (`src/channel_guard.py`, 15/15 tests)
+Built now rather than at Phase 6, per owner instruction. It is the posting-side twin of the
+article engine's domain self-identification guard: a target is legitimate only when it matches
+an id a human pinned in `config.yaml`.
+
+Design decisions worth recording:
+- **Every path out of `pinned_target()` is either a fully-specified target or an exception.**
+  There is no third return value, so no caller can accidentally read "unpinned" as "allowed".
+- **A missing pin HALTS.** `pinned: null` means do-not-post, never "use the workspace
+  default". Asserted directly by `test_unpinned_channel_halts_even_though_connected`.
+- **A missing `page_id` HALTS.** Blotato reports a *default* `pageId` in `requiredFields`;
+  taking it is the exact route by which THI content reaches a sauna page. Never consulted.
+- **`assert_live_accounts_match()` re-checks the pinned NAME against the live listing.**
+  Pinning an id prevents choosing the wrong destination; it does not prevent the id itself
+  being reassigned on Blotato's side. An id that now answers to a different name is a HALT.
+- **int/str normalization.** YAML parses an unquoted `1335273942995805` as an int while
+  Blotato returns a string. Un-normalized, the guard would reject a *correct* target — and a
+  guard that cries wolf gets switched off, which is worse than no guard. Covered by
+  `test_yaml_int_ids_normalize`.
+- All failure reasons are collected and reported together, not just the first.
+
+**Verified against the live workspace, not only fixtures** (harness Meta-Rule 7 — prove what
+runs, not what compiles). Against the real `blotato_list_accounts` payload:
+`postable_platforms → ['facebook']`; the THI page passes; a sibling page under the *same
+account* (Sauna News Hub) HALTS; a post with no `page_id` HALTS; unpinned YouTube HALTS.
+
+Pinned so far: **Facebook page "Texas Home Intelligence"** (`1335273942995805`, account
+`49743`), owner-approved. Every other channel is `pinned: null` and therefore un-postable —
+including the connected YouTube and Instagram accounts, which belong to other properties.
+
+**Not committed:** the full Blotato account listing. It maps THI to the owner's other brands
+and is business-disclosing in a public repo; only the THI ids are pinned in config.
+
+### 11. Public repo — what state must persist, and is any of it sensitive
+Answering the owner's hold-and-advise question. Confirmed first: **secrets will live only in
+GitHub Secrets / the environment, never in-repo, on any branch.** `.gitignore` blocks `.env`,
+`.env.*`, `*.env`, `*.env.txt`.
+
+State this project must persist, and its exposure if public:
+
+| State | Contents | Sensitive if public? |
+|---|---|---|
+| seen-ids / story history (dedup, G-suppression) | area + metric + date + rank | **No** — derived wholly from THI's already-public generated data |
+| D5 breadcrumb (pre-post marker) | timestamp + intended piece id | **No** — reveals only that a post is imminent |
+| autonomy streak / channel mode | per-channel counter + review/autonomous | **No** to read; not writable without push access |
+| published-post ledger | post ids, URLs, timestamps | **No** — public by definition once posted |
+| pinned target ids | THI FB account + page id | **No** — the page id is in the page's own public URL; it is an identifier, not a credential |
+| full Blotato account listing | ~9 pages across the owner's brands | **YES — business-disclosing.** Not committed; only THI ids are pinned |
+| article drafts + claim ledgers | pre-publication editorial | **Moderate** — an unverified claim is publicly readable *before* the verification gate passes |
+| `RUNLOG.md` / `HANDOFF.md` | candid account of what the data cannot do | **Moderate, and non-obvious** — see below |
+
+**The one I want the owner's call on.** THI's #1 KPI is being cited by AI answer engines. A
+public `RUNLOG.md` is a sourced, well-structured, honestly-written account of exactly where
+THI's data is thin — that appraisal data cannot be joined to an address, that four counties
+have two weeks of history, that four feeds are still `sample`. It is *more* extractable than
+most of the site. The harness asks for candid logs and is silent on who reads them.
+
+**Recommendation: stay in `autoposter/` in the public repo.** The operational state is all
+non-sensitive and derived from already-public data, so a private store would add a credential
+and a failure mode to protect nothing — and D5's whole value is that the breadcrumb commits
+cheaply in the same repo before posting. Two carve-outs instead of a repo move:
+1. **Drafts and claim ledgers stay on an unmerged branch** and are deleted after publish, so
+   unverified prose never sits on `main`.
+2. **The runlog stays candid but stops naming exploitable specifics** — "county-grain drought
+   history is below the 4-week minimum until 2026-09-22" is fine; a table of every `sample`
+   feed is an inventory of weaknesses. From the next entry on, that detail moves to a
+   sentence plus a pointer, unless the owner says keep it verbatim.
+
+**Fallback if the owner judges that exposure unacceptable:** keep code, config, schema and
+tests in the public `autoposter/` (none of it is sensitive) and move only the mutable state
+and the runlog to a private store — a small private `thi-autoposter-state` repo or
+Cloudflare KV. That is decision C's isolation without its cross-repo cost. I do not
+recommend it unless the runlog exposure is the deciding factor; it buys little and costs a
+credential.
+
+**Also recorded, because Rule 0 created it:** repo-level secrets on this repo are readable by
+the *site's* workflows, including the daily ingestion job. Decision C isolated secrets by
+repo; that isolation is gone. Mitigation is a GitHub **Environment** named `autoposter` —
+commands in §13.
+
+### 12. Config amendments applied
+- `gated_metrics.insurance_trend.available: true → **false**` (no feed exists; `tdi-losses`
+  is `status: sample`). Left true it defeats G6.
+- `gated_metrics.appraisal_change` — `review_after: null`, gated **indefinitely**, citing
+  `docs/audits/round-16c-parcel-join-probe.md`.
+- **Movers reweighted for metro grain.** `rank_extremity` and `neighbor_divergence` → `0.0`
+  (kept as keys so `surprise_score()` runs unchanged today; Phase 2 removes the terms from
+  the function). The freed 0.35 was **not** redistributed proportionally: with cross-area
+  comparison gone, the only surviving way to say "surprising" is comparison to the area's own
+  past, so `self_deviation` (.15→.30) and `magnitude` (.20→.28) absorb most of it,
+  `threshold_crossed` (.15→.25) is the one editorial-grade binary, `audience_coverage` (.10)
+  and `freshness` (.05→.07) keep small shares. Additive weights sum to 1.0 (asserted).
+- **`quiet_week_threshold` flagged `calibrated: false`.** The reweighting changes the score
+  distribution, so 0.45 no longer means what it meant. Not silently carried over; retune on a
+  real feed in Phase 2 before trusting the live/evergreen split.
+- `cadence.reels_enabled: false`, `reels_review_after: "2026-09-22"` — reels **parked, not
+  cancelled**, with option (c) (ranking permit *trades*, counts/timing/seasonality only,
+  never price) named in the config as the likely first format.
+- `data_source.mode: local_generated`; Worker route explicitly `null` and marked not-built.
+- Channel pins added; `project.repo_visibility: public` recorded.
+
+### 13. `gh secret set` commands for the owner
+Surfacing a discrepancy first: `SETUP.md` lists three secrets, but under decision A the one
+model call and Blotato scheduling both happen **in-session**, not in CI. The GitHub Actions
+side only does Slack digest, state commit, and the "run didn't happen" nudge. So **one secret
+is certainly needed; the other two probably are not.** Setting a key that nothing reads adds
+exposure for nothing.
+
+Scoped to an Environment so the site's own workflows cannot read it:
+```
+gh api -X PUT repos/zmpersonal/texashomeintelligence/environments/autoposter
+gh secret set SLACK_WEBHOOK_URL --repo zmpersonal/texashomeintelligence --env autoposter
+```
+Only if a headless job ever needs them (it does not today):
+```
+gh secret set ANTHROPIC_API_KEY --repo zmpersonal/texashomeintelligence --env autoposter
+gh secret set BLOTATO_API_KEY   --repo zmpersonal/texashomeintelligence --env autoposter
+```
+Verify without printing values: `gh secret list --repo zmpersonal/texashomeintelligence --env autoposter`
+
+The webhook is being copied out of Cloudflare. It must not be pasted into chat, a commit, or
+Slack itself; anything ever pasted is burned and must be regenerated (Meta-Rule 4).
+
+### 14. Branch
+Renamed to `autoposter/phase-0` per Rule 0; pushed. Deleting the old remote branch
+`claude/thi-autoposter-phase-0-y7rgw6` returned **HTTP 403** — this session's token lacks
+delete-ref. Local copy deleted; the remote one needs one click from the owner. Flagged rather
+than worked around.
+
+### 15. Deviations / friction
+No deviation. The five spec files remain un-uploaded, so nothing consuming them was written
+and **none was reconstructed** — `VOICE-GUIDE.md` especially, where a reconstruction would be
+a guess wearing a spec's clothes.
+
+**Friction:** `movers_engine.py` could not be landed honestly. Committing it unmodified would
+put a function on `main` whose weights contradict the config beside it; editing it is Phase 2
+work that is held. Landed nothing rather than land-then-immediately-edit — but it means the
+package scaffold is now split across two places until Phase 2 opens, which a fresh session
+would find confusing without `HANDOFF.md` saying so. It does.
+
+**Candidates raised:** L1 (grain/cardinality belongs in a data prove-gate), L2 (preflight must
+verify the destination, not just the credential), L3 (a hand-set availability flag defeats its
+own gate), L4 (dropping a signal is a reweighting decision), L5 (public repo is a content
+decision, not only a secrets one). All `candidate` in `LEARNINGS.md`.
+
+### 16. Prove-gate
+Guard: 15/15 unit tests **plus** a live-workspace assertion run. Validator: 7/7 (re-run after
+landing, not assumed). Config: additive weights sum to 1.0, asserted. Phase 0 **CLOSED**.
+
+**HOLDING** for (1) the re-uploaded spec files and (2) the owner's answer on §11 before any
+Phase 2 work.

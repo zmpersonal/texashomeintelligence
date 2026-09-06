@@ -1,0 +1,8 @@
+# Secrets never live in this repo — it is PUBLIC. See HANDOFF.md "Secrets".
+.env
+.env.*
+*.env
+*.env.txt
+__pycache__/
+*.pyc
+.pytest_cache/

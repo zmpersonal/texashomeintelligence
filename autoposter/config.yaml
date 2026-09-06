@@ -1,0 +1,199 @@
+# config.yaml — THI Autoposter central config
+# The ONE place tunable values live. Code reads this; nothing is hardcoded in scripts.
+#
+# Provenance: seeded from the strategy package (2026-09-06), then amended by the owner's
+# Phase 0 decisions. Every amendment is marked `# PHASE 0:` with its reason, so a later
+# reader can tell a measured decision from an inherited assumption.
+
+project:
+  name: thi-autoposter
+  site_key: thi                      # selects ARTICLE-ENGINE.thi.md + PUBLISH-TARGET.thi.md
+  runner: claude_code_weekly_session # NOT a cron (MCP tools are session-only). README decision A.
+  repo: zmpersonal/texashomeintelligence   # PHASE 0: decision C reversed by Rule 0 — this
+  folder: autoposter/                      # project lives in the THI repo, inside autoposter/.
+  repo_visibility: public                  # PHASE 0: measured. Nothing secret may be committed.
+
+coverage:
+  metros: [austin_metro, san_antonio_metro]
+  # PHASE 0: these map to the site's two areas, `austin` and `san_antonio`
+  # (site/src/data/zip-area-crosswalk.csv: 231 ZIPs, 13 counties, 2 areas).
+  grain: metro                       # PHASE 0 decision 1(a) — see `movers` below.
+
+# ---- Channels: role + cadence + autonomy state + PINNED TARGET ----
+#
+# PHASE 0 — THE PINNED-TARGET ALLOWLIST (src/channel_guard.py).
+# The Blotato workspace is SHARED across several unrelated businesses: one account fans out
+# to nine Facebook Pages (only one is THI), and the Instagram/Pinterest/TikTok accounts plus
+# the connected YouTube channel belong to other properties. Blotato reports a *default*
+# pageId; taking it is how THI content reaches a sauna page.
+#
+# RULE: `pinned: null` means DO NOT POST to that channel. It never means "use the default".
+# Only the owner adds a pin. channel_guard halts on anything unpinned or mismatched.
+channels:
+  facebook:
+    role: reach_and_community
+    status: live
+    autonomy: review
+    clean_streak: 0
+    pinned:
+      account_id: "49743"
+      page_id: "1335273942995805"
+      name: "Texas Home Intelligence"    # asserted against the live listing each preflight
+      requires_page_id: true             # several pages share this account
+      pinned_by: owner
+      pinned_at: "2026-09-06"
+  youtube:
+    role: authority_anchor_and_search
+    status: pending_setup
+    autonomy: review
+    clean_streak: 0
+    pinned: null   # PHASE 0: an account IS connected, but it is "Support Team (In A Universe
+                   # Where)" — an unrelated property. Un-postable until the owner pins a real
+                   # THI channel.
+  instagram:
+    role: amplifier
+    status: deferred
+    autonomy: review
+    clean_streak: 0
+    pinned: null   # PHASE 0: connected account is `inhouse.wellness` — a different brand.
+  pinterest:
+    role: opportunistic_evergreen
+    status: opportunistic
+    pinned: null   # PHASE 0: connected account is `inhousewellness`.
+  x:
+    role: opportunistic_realtime
+    status: opportunistic
+    pinned: null   # no account
+
+autonomy_gate:
+  # PHASE 0 decision 4: package default taken unchanged.
+  clean_posts_required: 4               # per channel, zero human edits
+  min_review_cycles: 2                  # a single fan-out week cannot auto-graduate
+  reset_on: [malformed_post, factual_error, platform_warning]
+
+# ---- Cadence (two streams, own clocks) ----
+cadence:
+  article_days: 10        # deep myth-buster every 1-2 weeks — THE near-term stream
+  reels_days: 14
+  pieces_per_reel_batch: 15
+  # PHASE 0 decision 1(a): the reels stream is PARKED, not cancelled. A ranking format needs
+  # ~10-15 comparable areas; THI resolves at metro grain (n=2). Revisit after 2026-09-22,
+  # when Hays/Williamson/Comal/Guadalupe clear 4 weeks of county-grain drought history —
+  # and evaluate ranking permit TRADES rather than places (counts/timing/seasonality only,
+  # never price: CLAUDE.md forbids any cost reading of permit data in either metro).
+  reels_enabled: false
+  reels_review_after: "2026-09-22"
+
+# ---- Movers engine ----
+movers:
+  history_min_weeks: 4          # HARD requirement; deltas impossible below this
+  history_ideal_weeks: 12
+
+  # PHASE 0 decision 1(a) — REWEIGHTED FOR METRO GRAIN.
+  # `rank_extremity` and `neighbor_divergence` are cross-area comparisons. With two metros
+  # there is nothing to compare against, so both are dropped to 0.0. They are kept as keys
+  # (rather than deleted) so movers_engine.surprise_score() runs unchanged today; Phase 2
+  # removes the terms from the function itself and then these keys go.
+  #
+  # The remaining 0.65 is NOT redistributed proportionally. With cross-area comparison gone,
+  # the only surviving way to say "this is surprising" is comparison to the area's own past —
+  # so self_deviation and magnitude carry the load, and threshold_crossed is the one
+  # editorial-grade binary. audience_coverage barely discriminates across two large metros
+  # but still separates a statewide metric from an Austin-only one, so it keeps a small share.
+  # These are starting points: tune on real output in Phase 2 before trusting a ranking.
+  surprise_weights:
+    magnitude: 0.28
+    self_deviation: 0.30
+    threshold_crossed: 0.25
+    audience_coverage: 0.10
+    freshness: 0.07
+    rank_extremity: 0.0          # DROPPED (metro grain, n=2)
+    neighbor_divergence: 0.0     # DROPPED (metro grain, n=2)
+    money_bonus: 0.10            # multiplier, not an additive term
+
+  # PHASE 0: the reweighting changes the score distribution, so this threshold is now
+  # UNCALIBRATED. Do not trust the live/evergreen split until it is retuned against a real
+  # feed in Phase 2 (Meta-Rule 6: withhold beats guess).
+  quiet_week_threshold: 0.45
+  quiet_week_threshold_calibrated: false
+
+  money_metrics: [appraisal_change, insurance_trend, energy_cost_est, cost_to_own]
+
+# ---- Article topic scoring (ARTICLE-ENGINE.thi.md tuning) ----
+topic_score_weights:
+  public_interest: 0.25
+  data_strength: 0.25
+  citability: 0.20
+  brand_safety_penalty: 0.20   # SUBTRACTS; crime/steering scores low
+  money_bonus: 0.10
+
+# ---- Freshness bounds per metric (VALIDATOR G5); reject if as_of older ----
+# PHASE 0: these metric names do NOT yet map to any THI dataset id. Building that mapping
+# (THI dataset -> feed metric name) is a Phase 2 deliverable; G5 cannot be wired without it.
+staleness_hours:
+  hail_window: 48
+  drought_stage: 336           # ~2 weeks (updates weekly)
+  energy_cost_est: 168
+  grid_stress: 72
+  permit_signal: 720
+  appraisal_change: 2160
+  insurance_trend: 2160
+
+# ---- Gated metrics: absent from the feed until their ingest lands; angles needing them
+#      do not generate (VALIDATOR G6) ----
+gated_metrics:
+  appraisal_change:
+    available: false
+    # PHASE 0: gated INDEFINITELY, not "~2 weeks". docs/audits/round-16c-parcel-join-probe.md
+    # (2026-09-04) establishes Travis CAD's improvement_detail carries no situs/street/city/ZIP
+    # field and is component-grain, not property-grain — it cannot yet be joined to an address.
+    review_after: null
+  insurance_trend:
+    available: false
+    # PHASE 0 CORRECTION: was `true`. There is no insurance feed in
+    # site/src/data/generated/; tdi-losses is status `sample` with fetchRaw() unimplemented.
+    # Left true, an insurance angle would generate with no backing data — the exact failure
+    # G6 exists to prevent.
+
+# ---- Cost (README decision H: Claude usage only; subscriptions separate) ----
+cost:
+  monthly_claude_ceiling_usd: 20
+  flag_at_pct: 80
+  stop_at_pct: 100
+  model_calls_per_cycle_expected: 1   # caption/write step only; alert if exceeded
+
+# ---- Data source (PHASE 0 decision 2: autoposter-local generator) ----
+data_source:
+  mode: local_generated
+  # A generator inside autoposter/ reads the THI site's committed datasets READ-ONLY and
+  # writes the artifact below. Zero THI-code change; stays inside the Rule 0 boundary. The
+  # Cloudflare Worker JSON route (README decision B's stated preference) is NOT built — it
+  # would be a file under site/src/pages/ and there is no staging surface to test it on
+  # (SECURITY.md: workers.dev and the live domain are the same deployment).
+  reads_from: site/src/data/generated/   # read-only; never written by this project
+  artifact_path: autoposter/data/social-feed.json
+  schema: autoposter/schema/social-feed.schema.json
+  worker_route_url: null                 # deliberately not built
+  committed_json_url: null
+
+# ---- Tooling ----
+tools:
+  blotato:
+    enabled: true
+    subscription_status: active          # PHASE 0: verified by a live read-only call
+    plan: starter                        # PHASE 0: OPEN — does `starter` include video
+                                         # render + scheduling? Owner confirming before Ph.6.
+  descript:
+    enabled: false
+    mode: mcp
+    fallback: blotato_clipping
+    # PHASE 0: the Descript MCP is NOT present in this session's tool roster. Decision D's
+    # documented fallback applies from day one. Recorded as a downgrade, not a blocker.
+  anthropic:
+    model: TODO_CONFIRM
+    # PHASE 0: under decision A the one model call happens IN-SESSION, so no API key is
+    # needed for it. A key is only required if a headless job ever generates copy.
+
+slack:
+  channel: "#thi-autoposter"             # PHASE 0: does not exist yet (searched). 🔴 owner.
+  webhook_secret_name: SLACK_WEBHOOK_URL
