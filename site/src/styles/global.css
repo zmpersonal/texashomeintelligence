@@ -936,3 +936,20 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
 @media (min-width: 700px) {
   #data table.data-table, #method table.data-table, #sources table.data-table { display: table; }
 }
+
+/* ── Analysis article body copy ──────────────────────────────────────────
+ * Markdown prose cannot carry a class, and Tailwind's Preflight (@import
+ * "tailwindcss", line 1) resets `ul`/`ol` to `list-style: none; padding: 0`.
+ * That is why every THI list that wants markers opts back in explicitly —
+ * `.key-findings`, `.v2-bullet-list`, `.v2-event-list`. This is the same
+ * opt-in for article body copy, with the same disc + 1.25em the rest of the
+ * site uses, so a list in an article reads like a list anywhere else.
+ *
+ * Scoped with `>` on purpose: the markdown lists are direct children of
+ * `article.analysis`, while the sources list sits inside
+ * `footer.analysis-sources` and keeps its deliberately unmarked styling.
+ */
+.analysis > ul,
+.analysis > ol { margin: 0 0 1em; padding-left: 1.25em; }
+.analysis > ul { list-style: disc; }
+.analysis > ol { list-style: decimal; }
