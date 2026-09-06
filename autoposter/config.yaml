@@ -64,7 +64,7 @@ channels:
     role: opportunistic_evergreen
     status: not_configured
     enabled: false
-    pinned: null   # PHASE 0: connected account is `inhousewellness`.
+    pinned: null   # PHASE 0: the connected account belongs to a different brand.
   x:
     role: opportunistic_realtime
     status: not_configured

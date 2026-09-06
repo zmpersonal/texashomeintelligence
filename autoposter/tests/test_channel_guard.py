@@ -12,11 +12,13 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import channel_guard as g  # noqa: E402
 
-# The real ids, as measured. 1335273942995805 is THI; 472026422664772 is InHouse Wellness —
-# a sibling page under the SAME account, which is what makes this guard load-bearing.
+# The THI ids are real: they are the pin the guard enforces, and a Facebook Page id is public
+# in the page's own URL. The SIBLING ids and names are NEUTRAL FIXTURES on purpose — the test
+# only needs *a different page under the same account*, and naming the owner's other brands
+# here would publish a map of the network on a public repo (CLAUDE.md, publication standard).
 THI_ACCOUNT = "49743"
 THI_PAGE = "1335273942995805"
-SIBLING_PAGE = "472026422664772"
+SIBLING_PAGE = "sibling-page-a"
 
 CFG = {
     "channels": {
@@ -42,8 +44,8 @@ LIVE = [
         "platform": "facebook",
         "subaccounts": [
             {"id": "1335273942995805", "name": "Texas Home Intelligence"},
-            {"id": "472026422664772", "name": "InHouse Wellness"},
-            {"id": "1283217111543170", "name": "Austin Beefs"},
+            {"id": "sibling-page-a", "name": "Another Brand"},
+            {"id": "sibling-page-b", "name": "A Third Brand"},
         ],
         "requiredFields": {"pageId": "1335273942995805"},
     },
@@ -125,7 +127,7 @@ def test_live_listing_matches():
 
 def test_live_listing_renamed_page_halts():
     """An id reassigned on Blotato's side: same slot, different brand."""
-    live = [dict(LIVE[0], subaccounts=[{"id": THI_PAGE, "name": "Sauna News Hub"}]), LIVE[1]]
+    live = [dict(LIVE[0], subaccounts=[{"id": THI_PAGE, "name": "Another Brand"}]), LIVE[1]]
     try:
         g.assert_live_accounts_match(live, CFG)
     except g.ChannelGuardHalt as e:
@@ -134,7 +136,7 @@ def test_live_listing_renamed_page_halts():
 
 
 def test_live_listing_disconnected_page_halts():
-    live = [dict(LIVE[0], subaccounts=[{"id": SIBLING_PAGE, "name": "InHouse Wellness"}])]
+    live = [dict(LIVE[0], subaccounts=[{"id": SIBLING_PAGE, "name": "Another Brand"}])]
     try:
         g.assert_live_accounts_match(live, CFG)
     except g.ChannelGuardHalt as e:

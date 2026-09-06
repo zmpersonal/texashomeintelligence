@@ -131,7 +131,7 @@ seasonality only.
 - **F (channels):** Facebook ✅ (THI page present + default). YouTube: an account IS connected,
   but it is **"Support Team (In A Universe Where)"** — a different property, not THI. Package's
   "pending owner setup" is confirmed. Instagram / Pinterest / TikTok are all connected as
-  **`inhousewellness`** — a different brand entirely.
+  **a different brand entirely** (name withheld — publication standard, §17).
   **New risk not anticipated by the package:** the Blotato workspace is shared across ~9 Facebook
   pages and several non-THI accounts. A wrong `accountId`/`pageId` publishes THI content to a
   sauna or wellness page. This needs the same treatment as the article engine's domain self-id
@@ -209,7 +209,7 @@ Design decisions worth recording:
 **Verified against the live workspace, not only fixtures** (harness Meta-Rule 7 — prove what
 runs, not what compiles). Against the real `blotato_list_accounts` payload:
 `postable_platforms → ['facebook']`; the THI page passes; a sibling page under the *same
-account* (Sauna News Hub) HALTS; a post with no `page_id` HALTS; unpinned YouTube HALTS.
+account* HALTS; a post with no `page_id` HALTS; unpinned YouTube HALTS.
 
 Pinned so far: **Facebook page "Texas Home Intelligence"** (`1335273942995805`, account
 `49743`), owner-approved. Every other channel is `pinned: null` and therefore un-postable —
