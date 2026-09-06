@@ -505,3 +505,133 @@ produced a plausible, confident, wrong number, and none was visible from the sch
 package — only from reading the actual arrays. That is the Phase 0 lesson (L1) recurring one
 level down: the spec is right about process and silent about data, and every hour spent staring
 at real rows paid for itself. Candidate for `LEARNINGS.md` if it recurs in Phase 4.
+
+---
+
+## 2026-09-06 — Phase 3: validator integration (G5, media resolution, spec reconciliation)
+
+**Round:** BUILD-PLAN Phase 3 (🟢) · **Objective:** wire the two integration TODOs and prove the
+full gate suite against the real `social-feed.json`. **Out of scope:** Phase 4 (held). **Model
+spend:** no generation calls. **Cost:** ~$0.
+
+### 28. The five spec files arrived — Phase 4 boundary flagged
+`VALIDATOR.md`, `MOVERS-ENGINE.md`, `VOICE-GUIDE.md`, `REELS-ENGINE.md` and `ROTATION.md` all
+landed this round. Phase 3 was built against the real `VALIDATOR.md` rather than inferred from
+code, which is why §29 lists gaps rather than confirmations.
+
+**Phase 4 is NOT started.** The owner asked to confirm the files are in before anything consuming
+them is built, and the angle taxonomy in `build_feed.ANGLE_BY_METRIC` stays a marked placeholder
+until that confirmation. `VOICE-GUIDE.md` is now used in exactly one read-only way — its exemplars
+are test fixtures (§31) — which validates the gates rather than generating anything.
+
+**🟡 `ROTATION.md` is in `private/`, not `specs/`.** It is the only one of the five that fails the
+publication standard: it maps the owner's whole network of domains, names which are parked and
+which carry unreliable data, and describes internal-linking them so search and AI engines read the
+cluster as one authority. Published, that is a competitor's map of the network *and* a public
+description of a cross-domain link scheme, on the repo of the property whose #1 KPI is being cited.
+The other four are methodology and read as an asset if anyone finds them. **Owner's call** — say
+the word and it moves to `specs/`; until then the build reads it from `private/`.
+
+### 29. Four gaps between the shipped gates and `VALIDATOR.md`, now closed
+The inherited `validator.py` implemented most of the spec. Reading the real file found four
+places where it did not, each of which would have passed something the spec rejects:
+
+- **G2 checked one surface, the spec requires two.** "Source + timestamp present ON THE PIECE —
+  the caption AND the on-screen card." The code searched the concatenation of both, so a source
+  in the caption alone passed while the card — the thing that survives atomization — carried
+  nothing. Now checked separately, for `source` and `as_of` independently.
+- **G9 rejected bad asks but did not require a good one.** The spec says a post with *no*
+  participation ask is a reject; the code only caught generic bait, and its own comment deferred
+  the rest to "template + spot-check". Now a real local ask (guess / defend / tag / save /
+  "which street") is required.
+- **G7 had no calm-action half.** The spec rejects "any risk claim without a paired calm action".
+  Now a piece naming hail/storm/drought/outage/premium must also say what to calmly do.
+- **The baseline card check was missing entirely** — "rendered card has zero body rows / a
+  comparison or ranking card with no numeric cells". This is the gate that catches the failure
+  mode the SOP's changelog was written about (81 blank posts published by the inherited account).
+  Now wired.
+
+Also added: a minimum caption length, and a reject for an **unknown platform** — previously an
+unrecognised platform simply had no character limit to check and sailed through the gate.
+
+### 30. G5 freshness — wired, and it rejects rather than shrugs
+`as_of` is parsed and compared against `config.staleness_hours`, with a longest-prefix rule so
+one `permit_activity_` entry covers every trade. Three decisions worth recording:
+
+- **A metric with no configured bound is REJECTED, not passed.** No bound means nobody decided
+  how stale is too stale; publishing on an unanswered question is exactly the guess the honesty
+  gate forbids. Bounds for the metrics the generator actually emits were added to config, each
+  set to its source's own publication rhythm plus lag — a monthly series cannot be fresher than
+  monthly.
+- **A future `as_of` is rejected too** (clock or feed error), which the spec does not mention but
+  is the same class of fault.
+- Every one of the 15 real stories passes G5 at today's clock; that is asserted, not assumed.
+
+### 31. Media resolution — wired, fail-closed, with an honest indeterminate case
+`src/media.py`. Absent, unsupported-scheme, zero-length, and placeholder-sized media all reject;
+`data:` URIs and local files are checked for a real payload (a 512-byte floor — a real 1080×1080
+card is tens of kilobytes, so anything smaller is a truncated write or a placeholder pixel).
+
+The subtle part is the network case. THI's own probe workflow records that **this container's
+egress allowlist is narrower than the Actions runner's**, so a failed HEAD from here is not
+evidence the media is missing. A definite server answer (404, 403, zero-length) is therefore a
+hard reject, while a failure to *reach* the host is reported as **UNVERIFIED** with the reason
+attached — never silently passed, and never silently blamed on the media. Resolution is
+injectable so the gate is testable without a network. **Live HTTP resolution still has to be
+proven on the runner's own path in Phase 6** (SOP step 9); that is recorded in the module.
+
+### 32. The brand's own copy is now a test fixture
+`tests/test_voice_guide_exemplars.py` runs `VOICE-GUIDE.md`'s Reveal, Warning and Verdict
+exemplars through the full suite. This exists because tightening G7 and G9 immediately produced
+**two false positives against real brand copy** — "get looked at" and "Send to a neighbor" were
+rejected by regexes that demanded "get *it* looked at" and "send *this* to". A gate that rejects
+the brand's own reference copy gets switched off by whoever it blocks, and a switched-off gate
+protects nothing. Both patterns were broadened, and a companion test asserts the scam-voice
+version of the same exemplar is still rejected — loose enough for the real voice, not loose
+enough for the fake one.
+
+The Warning exemplar also failed G5 at first, because its illustrative `as_of` is a week before
+the test clock and the hail bound is 48h. That one was the gate working correctly: the test's
+clock moved, the bound did not.
+
+### 33. Two package fixtures updated — the gates bit them, correctly
+`tests/test_validator.py`'s "good" post used `media_url: "x"` (unresolvable) and an `as_of` four
+months before the clock. Both now reject. The **fixture** was updated, not the gates, and the file
+says so at the top so nobody later reads it as the gates having been relaxed.
+
+### 34. Reconciled Phase 2 against the now-available `MOVERS-ENGINE.md`
+Two contract fields the spec requires were being computed and then dropped: `crossed[]` on each
+metric, and the optional `county` on a story. Both are now emitted — `county` matters because a
+metro's drought reading is literally its anchor county's, and naming it is more honest than
+letting a metro id imply metro-wide.
+
+Three deliberate divergences, all downstream of the approved metro-grain decision, recorded so
+they are not later read as drift:
+- The spec's `why` example (`"#1 in Austin metro · neighbors flat"`) uses rank and neighbour
+  comparison, which do not exist at n=2. Ours describes move, level and money instead.
+- `vs_neighbors` is not emitted, for the same reason.
+- Glitch suppression by *reversal on the next run* is not built: it needs run-to-run story
+  history, which is the D5 breadcrumb in Phase 7. The other two suppressions (big-but-boring,
+  repeat-without-acceleration) are live.
+
+### 35. Prove-gate — MET
+**78/78 tests green across five suites**, up from 44:
+
+| suite | tests | what it proves |
+|---|---|---|
+| `test_gates_against_feed.py` | 30 | every one of the 15 REAL stories produces a passing piece; then each gate proved to bite via one mutation at a time |
+| `test_movers.py` | 20 | engine, reader and artifact |
+| `test_channel_guard.py` | 17 | pinned-target allowlist |
+| `test_validator.py` | 7 | the package's brand-critical fixtures |
+| `test_voice_guide_exemplars.py` | 4 | the brand's own copy passes its own gates |
+
+G5 verified against every real `as_of` in the feed. Zero files touched outside `autoposter/`.
+
+**Stopping at the gate as instructed.** Phase 4 not begun.
+
+### 36. Friction
+The gate suite is only as good as its false-positive rate, and nothing in the SOP measures that.
+Every gate here was easy to write strict and would have been shipped strict — it took running the
+brand's own exemplars through it to find that two of them rejected valid copy. A suite that only
+ever tests known-bad input cannot discover it is over-strict, and an over-strict gate does not
+fail loudly: it gets disabled. Candidate for `LEARNINGS.md`.

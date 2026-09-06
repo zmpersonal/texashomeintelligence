@@ -114,6 +114,7 @@ def build_rows(history: list[thi_source.Series], cfg: dict, coverage: dict,
         signals = compute_signals(series, cfg, coverage, today, upto)
         rows.append({
             "area_id": series.area_id,
+            "county": series.county,
             "metric": series.metric,
             "angle": ANGLE_BY_METRIC.get(series.metric, DEFAULT_ANGLE),
             "figure": _figure(series, signals["_delta"], signals["_crossed"]),
@@ -160,6 +161,9 @@ def build_feed(cfg: dict, today: date | None = None) -> tuple[dict, list[dict]]:
         if len(values) > 1:
             delta = round(values[-1] - values[-2], 4)
             metric["mom" if series.cadence == "monthly" else "wow"] = delta
+            crossed = movers.crossed_threshold(series.metric, values[-2], values[-1])
+            if crossed:
+                metric["crossed"] = [crossed]
         area["metrics"][series.metric] = metric
 
     feed = {
@@ -170,6 +174,7 @@ def build_feed(cfg: dict, today: date | None = None) -> tuple[dict, list[dict]]:
         "stories": [{
             "rank": s["rank"],
             "area_id": s["area_id"],
+            **({"county": s["county"]} if s.get("county") else {}),
             "metric": s["metric"],
             "angle": s["angle"],
             "surprise_score": s["surprise_score"],

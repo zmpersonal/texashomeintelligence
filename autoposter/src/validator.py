@@ -1,29 +1,34 @@
 """
-validator.py — the content-quality floor as CODE GATES (VALIDATOR.md, social-autoposter step 11b).
+validator.py — the content-quality floor as CODE GATES (specs/VALIDATOR.md; SOP step 11b).
 
-Build/verify this BEFORE any generation logic. Proving posting works says nothing about whether
-content is fit to publish. This module is THI's moat in code: poppy wrapper, sober receipts.
+Built BEFORE generation logic. Proving posting *works* says nothing about whether content is
+*fit to publish*; without this gate a machine publishes its own failure states.
 
-Governing rule: every content-quality problem is a gate here, never a model instruction.
-On failure: reject -> caller retries once at most -> halt. NEVER publish a degraded version.
+GOVERNING RULE (specs/VALIDATOR.md): every content-quality problem is a gate here, never a model
+instruction. "Be accurate" in a prompt decays; "any numeral not in social-feed.json does not
+publish" does not. When the model wants a value a rule forbids, **supply the figure in code —
+never relax the rule.** On failure: halt, retry once at most, then halt. Never publish a degraded
+version, never skip to keep a run alive.
 
-This file is intentionally repo-independent and unit-testable now. The only external inputs are:
-  - a `post` dict (the generated piece)
-  - the `story` dict it was generated from (from social-feed stories[])
-  - `config` (from config.yaml)
-Wire the platform limits / media-resolve checks to real values on integration (marked TODO).
+PHASE 3 wired the two integration TODOs — G5 freshness and real media resolution — and closed
+four gaps between the code and the spec (see RUNLOG §29).
 """
 
 from __future__ import annotations
+
 import re
 from dataclasses import dataclass, field
+from datetime import date, datetime, timezone
 
-# ---- platform character limits (confirm exact values on integration) ----
+import media as media_mod
+
+# ---- platform character limits (confirm exact values against each API on integration) ----
 PLATFORM_LIMITS = {
     "youtube": 5000, "facebook": 63206, "instagram": 2200,
     "pinterest": 500, "x": 280,
 }
 PINTEREST_REQUIRED = ("title", "description", "alt_text", "destination_url")
+MIN_CAPTION_CHARS = 40
 
 ERROR_PATTERNS = re.compile(
     r"(Error:|Failed to load|undefined|null|No response|NaN|\{\{.*?\}\})", re.IGNORECASE
@@ -36,146 +41,239 @@ ALARM_PATTERNS = re.compile(
 STEERING_PATTERNS = re.compile(
     r"(best (zip|zips|area|areas|neighborhood|place)s? to live|good neighborhood|bad neighborhood|"
     r"safe(st)? (area|neighborhood|zip)|unsafe (area|neighborhood)|nice(r)? area|"
-    r"(who|what kind of people) live)",
+    r"worst place to live|(who|what kind of people) live)",
     re.IGNORECASE,
 )
-GENERIC_BAIT = re.compile(r"(do you agree\??\s*(👇)?$|like and follow|comment below\s*👇?$)", re.IGNORECASE)
+GENERIC_BAIT = re.compile(r"(do you agree\??\s*(👇)?$|like and follow|comment below\s*👇?$)",
+                          re.IGNORECASE)
+# G9: the real local asks the voice guide names — guess / defend / tag / save / "which street".
+REAL_ASK = re.compile(
+    r"(send (this|it|these)?\s*to\b|share (this |it )?with|comment your|drop your|guess\b|"
+    r"name the\b|tag (a|someone|him|her|them)\b|save this|which (street|zip|county|one)\b|"
+    r"check yours|who else|reply with|defend it)", re.IGNORECASE
+)
+# G7: a risk claim has to arrive with something calm to DO about it.
+RISK_WORDS = re.compile(
+    r"(hail|storm|drought|outage|brownout|blackout|grid stress|premium|non-renewal|wildfire|"
+    r"freeze|flood|heat advisory)", re.IGNORECASE)
+# Deliberately generous. A gate that rejects the brand's own reference copy gets switched off,
+# and a switched-off gate protects nothing — `tests/test_voice_guide_exemplars.py` holds this
+# honest by running VOICE-GUIDE.md's own exemplars through the suite.
+CALM_ACTION = re.compile(
+    r"((get|have|getting)\s+(it|them|that|yours|this)?\s*(looked at|checked|inspected|seen)|"
+    r"check your|checking your|inspect|schedule|book |plan |review your|before the\b|"
+    r"this is the week to|worth (a look|checking)|set a reminder|worth checking)",
+    re.IGNORECASE)
+
+_DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}(?:T[\d:]+Z?)?")
+LIVE_ANGLES = ("reveal", "verdict", "wager", "warning")
 
 
 @dataclass
 class GateResult:
     ok: bool
     failures: list[str] = field(default_factory=list)
+    notes: list[str] = field(default_factory=list)
 
     def fail(self, gate: str, detail: str) -> None:
         self.ok = False
         self.failures.append(f"{gate}: {detail}")
 
+    def __repr__(self) -> str:
+        return ("GateResult(ok=True)" if self.ok
+                else f"GateResult(ok=False, failures={self.failures})")
 
-_DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}(?:T[\d:]+Z?)?")
 
 def _extract_numerals(text: str, drop_dates: bool = True) -> set[str]:
-    # numbers incl. %, decimals, ranges; normalize by stripping commas.
-    # Dates (ISO) are provenance, not claims — strip them before extracting.
+    """Numbers a reader would take as a claim. ISO dates are provenance, not claims."""
     if drop_dates:
         text = _DATE_RE.sub(" ", text or "")
     return {n.replace(",", "") for n in re.findall(r"\d[\d,]*\.?\d*%?", text or "")}
 
 
-def validate_post(post: dict, story: dict | None, config: dict) -> GateResult:
-    """Run every gate. `post` keys expected:
-       platform, caption, on_screen_text (list[str] for video frames), media_url,
-       destination_url, angle, has_source_card (bool per piece), as_of, source,
-       (pinterest also: title, description, alt_text)
+def _is_benign(numeral: str) -> bool:
+    """Template-fixed counts, not data claims (e.g. "roofs 15+ years old"). Tune with the real
+    templates; anything not listed here must trace to the story's own figure."""
+    return numeral in {"15", "15+", "10", "7"}
+
+
+# ---------------------------------------------------------------- G5
+
+def staleness_bound_hours(metric: str, config: dict) -> float | None:
+    """Exact match, then longest matching prefix key (so `permit_activity_` covers every trade).
+
+    Returns None when nobody has decided how stale is too stale for this metric — which G5
+    treats as a rejection, not a pass. An unbounded metric is an unanswered question, and
+    withhold beats guess (harness Meta-Rule 6).
     """
-    r = GateResult(ok=True)
+    bounds = config.get("staleness_hours") or {}
+    if metric in bounds:
+        return float(bounds[metric])
+    prefixes = [k for k in bounds if k.endswith("_") and metric.startswith(k)]
+    if prefixes:
+        return float(bounds[max(prefixes, key=len)])
+    return None
+
+
+def _check_freshness(post: dict, story: dict, config: dict, result: GateResult,
+                     now: date | None = None) -> None:
+    now = now or datetime.now(timezone.utc).date()
+    as_of_raw = str(story.get("as_of") or post.get("as_of") or "")
+    if not as_of_raw:
+        result.fail("G5", "no as_of on the story or the piece")
+        return
+    try:
+        as_of = datetime.fromisoformat(as_of_raw.replace("Z", "+00:00")).date()
+    except ValueError:
+        result.fail("G5", f"as_of {as_of_raw!r} is not a parseable date")
+        return
+    if as_of > now:
+        result.fail("G5", f"as_of {as_of} is in the future (clock or feed error)")
+        return
+
+    metric = story.get("metric", "")
+    bound = staleness_bound_hours(metric, config)
+    if bound is None:
+        result.fail("G5", f"no staleness bound configured for metric {metric!r} — add one to "
+                          f"config.staleness_hours rather than publishing on an unbounded age")
+        return
+    age_hours = (now - as_of).days * 24
+    if age_hours > bound:
+        result.fail("G5", f"{metric} is {age_hours}h old, bound is {bound:.0f}h "
+                          f"(as_of {as_of}) — stale data read as current is the scam-tell")
+
+
+# ---------------------------------------------------------------- the suite
+
+def validate_post(post: dict, story: dict | None, config: dict, feed: dict | None = None,
+                  now: date | None = None, media_opener=None) -> GateResult:
+    """Run every gate. `post` keys: platform, caption, on_screen_text (list[str]), media_url,
+    destination_url, angle, has_source_card, has_media, requires_link, title,
+    destination_theme, card_rows, card_numeric_cells; pinterest also title/description/alt_text.
+    `feed` is the social-feed document, used by G6b for week_mode.
+    """
+    result = GateResult(ok=True)
     platform = post.get("platform", "")
     caption = post.get("caption", "") or ""
+    on_screen = [t or "" for t in post.get("on_screen_text", [])]
 
-    # ---- Baseline gates ----
+    # ---- Baseline ----
     if not caption.strip():
-        r.fail("BASE", "empty/whitespace caption")
-    if ERROR_PATTERNS.search(caption):
-        r.fail("BASE", "error pattern / unfilled slot reached output")
+        result.fail("BASE", "empty/whitespace caption")
+    elif len(caption.strip()) < MIN_CAPTION_CHARS:
+        result.fail("BASE", f"caption under {MIN_CAPTION_CHARS} chars ({len(caption.strip())})")
+    if ERROR_PATTERNS.search(caption) or any(ERROR_PATTERNS.search(t) for t in on_screen):
+        result.fail("BASE", "error pattern / unfilled {{slot}} reached output")
     limit = PLATFORM_LIMITS.get(platform)
     if limit and len(caption) > limit:
-        r.fail("BASE", f"exceeds {platform} limit ({len(caption)}>{limit})")
+        result.fail("BASE", f"exceeds {platform} limit ({len(caption)}>{limit})")
+    if platform and limit is None:
+        result.fail("BASE", f"unknown platform {platform!r} — no character limit to check against")
     if platform == "pinterest":
-        for fld in PINTEREST_REQUIRED:
-            if not post.get(fld):
-                r.fail("BASE", f"pinterest missing required field: {fld}")
-    if post.get("destination_url") in (None, "",) and post.get("requires_link", True):
-        r.fail("BASE", "linked piece missing destination_url")
-    # media presence (resolution check is integration-time TODO)
-    if post.get("has_media", True) and not post.get("media_url"):
-        r.fail("BASE", "media absent / url missing")
+        for field_name in PINTEREST_REQUIRED:
+            if not post.get(field_name):
+                result.fail("BASE", f"pinterest missing required field: {field_name}")
+    if post.get("requires_link", True) and not post.get("destination_url"):
+        result.fail("BASE", "linked piece missing destination_url")
 
-    # ---- G7 Alarm / tone ----
-    if ALARM_PATTERNS.search(caption) or any(ALARM_PATTERNS.search(t or "") for t in post.get("on_screen_text", [])):
-        r.fail("G7", "alarm/fear framing (poppy villain-framing ok, panic not)")
+    # media presence AND resolution (VALIDATOR.md baseline; Phase 3 wired the resolution)
+    if post.get("has_media", True):
+        ok, reason = media_mod.resolve(post.get("media_url"), opener=media_opener)
+        if not ok:
+            result.fail("BASE", f"media does not resolve — {reason}")
+        else:
+            result.notes.append(f"media: {reason}")
 
-    # ---- G8 Fair-Housing / steering (applies to caption, on-screen text, AND title) ----
-    steer_surfaces = [caption, post.get("title", "")] + list(post.get("on_screen_text", []))
-    if any(STEERING_PATTERNS.search(s or "") for s in steer_surfaces):
-        r.fail("G8", "desirability/steering framing; anchor to a named measured metric instead")
+    # a rendered card with no body / a ranking card with no numbers is a published failure state
+    if post.get("has_media", True) and "card_rows" in post:
+        if not post.get("card_rows"):
+            result.fail("BASE", "rendered card has zero body rows")
+        elif post.get("card_kind") in ("ranking", "comparison") \
+                and not post.get("card_numeric_cells"):
+            result.fail("BASE", f"{post['card_kind']} card carries no numeric cells")
 
-    # ---- G9 Ask present (real local ask, not generic bait) ----
+    # ---- G7 alarmism + a risk claim needs a calm action ----
+    if ALARM_PATTERNS.search(caption) or any(ALARM_PATTERNS.search(t) for t in on_screen):
+        result.fail("G7", "alarm/fear framing (poppy villain-framing ok, panic not)")
+    if RISK_WORDS.search(caption) and not CALM_ACTION.search(caption):
+        result.fail("G7", "risk claim with no paired calm action")
+
+    # ---- G8 Fair-Housing / steering: caption, on-screen text AND title ----
+    for surface in [caption, post.get("title", ""), post.get("description", "")] + on_screen:
+        if STEERING_PATTERNS.search(surface or ""):
+            result.fail("G8", "desirability/steering framing; anchor to a named measured metric")
+            break
+
+    # ---- G9 a real local ask, not generic bait ----
     if GENERIC_BAIT.search(caption.strip()):
-        r.fail("G9", "generic engagement bait; use a real local ask")
-    # (Presence of *some* ask is content-shaped; enforce via template + spot-check.)
+        result.fail("G9", "generic engagement bait; use a real local ask")
+    elif not REAL_ASK.search(caption):
+        result.fail("G9", "no participation ask (guess / defend / tag / save / which street)")
 
-    # ---- Story-dependent gates (skip only for evergreen pieces with no story) ----
-    if story is not None:
-        _numeral_gates(post, story, r)
-    elif post.get("angle") in ("reveal", "verdict", "wager", "warning"):
-        r.fail("G6b", "live angle generated without a backing story (quiet-week guard)")
+    # ---- G6b quiet-week guard ----
+    week_mode = (feed or {}).get("week_mode")
+    if week_mode == "evergreen" and post.get("angle") in LIVE_ANGLES:
+        result.fail("G6b", f"week_mode=evergreen but a live {post['angle']} format generated — "
+                           f"manufactured urgency on a no-story week")
+    if story is None:
+        if post.get("angle") in LIVE_ANGLES:
+            result.fail("G6b", "live angle generated without a backing story")
+        return result
 
-    return r
+    # ---- G6 gated angle ----
+    if not angle_data_available(story.get("metric", ""), config):
+        result.fail("G6", f"angle needs {story.get('metric')!r}, whose ingest has not landed")
+
+    _numeral_gates(post, story, result)
+    _check_freshness(post, story, config, result, now)
+    return result
 
 
-def _numeral_gates(post: dict, story: dict, r: GateResult) -> None:
+def _numeral_gates(post: dict, story: dict, result: GateResult) -> None:
     caption = post.get("caption", "") or ""
-    surfaces = [caption] + list(post.get("on_screen_text", []))
+    on_screen = [t or "" for t in post.get("on_screen_text", [])]
+    surfaces = [caption] + on_screen
 
-    # ---- G1 No numeral without provenance ----
-    allowed = _extract_numerals(story.get("figure", "")) | _extract_numerals(str(story.get("as_of", "")))
-    # allow the story's own metric value too
-    allowed |= _extract_numerals(str(story.get("value", "")))
-    used = set()
-    for s in surfaces:
-        used |= _extract_numerals(s)
-    unbacked = {n for n in used if n not in allowed and not _is_benign(n)}
+    # ---- G1 no numeral without provenance ----
+    allowed = (_extract_numerals(story.get("figure", ""))
+               | _extract_numerals(str(story.get("as_of", "")))
+               | _extract_numerals(str(story.get("value", ""))))
+    used: set[str] = set()
+    for surface in surfaces:
+        used |= _extract_numerals(surface)
+    unbacked = sorted(n for n in used if n not in allowed and not _is_benign(n))
     if unbacked:
-        r.fail("G1", f"numerals not present in story figure/data: {sorted(unbacked)}")
+        result.fail("G1", f"numerals not present in the story's figure/data: {unbacked}")
 
-    # ---- G2 Source + timestamp present ON THE PIECE ----
-    text_all = " ".join(surfaces)
-    if story.get("source", "") and story["source"].lower() not in text_all.lower():
-        r.fail("G2", "source not visible on the piece")
-    if not post.get("has_source_card") and post.get("has_media", True):
-        r.fail("G3", "media piece lacks on-screen source card (must survive atomization)")
+    # ---- G2 source + timestamp on the piece: the CAPTION and the CARD, not one of them ----
+    source = story.get("source", "")
+    as_of = str(story.get("as_of", ""))
+    if source:
+        if source.lower() not in caption.lower():
+            result.fail("G2", "source not visible in the caption")
+        if post.get("has_media", True) and on_screen \
+                and not any(source.lower() in t.lower() for t in on_screen):
+            result.fail("G2", "source not visible on the card")
+    if as_of:
+        if as_of not in caption:
+            result.fail("G2", "as_of not visible in the caption")
+        if post.get("has_media", True) and on_screen \
+                and not any(as_of in t for t in on_screen):
+            result.fail("G2", "as_of not visible on the card")
 
-    # ---- G4 Claim <-> destination agreement ----
+    # ---- G3 sourcing survives atomization ----
+    if post.get("has_media", True) and not post.get("has_source_card"):
+        result.fail("G3", "media piece lacks its own on-screen source card (must survive the cut)")
+
+    # ---- G4 claim <-> destination agreement ----
     metric = story.get("metric", "")
-    dest = (post.get("destination_url") or "").lower()
-    hint = post.get("destination_theme", "")
-    if hint and metric and hint != metric and metric not in dest:
-        r.fail("G4", f"destination theme '{hint}' mismatches story metric '{metric}'")
-
-    # ---- G5 Freshness (config staleness bound) ----
-    # integration-time: parse as_of, compare to now against config['staleness_hours'][metric].
-    # Left as TODO to avoid a clock dependency in the unit-testable core.
+    theme = post.get("destination_theme", "")
+    destination = (post.get("destination_url") or "").lower()
+    if theme and metric and theme != metric and metric not in destination:
+        result.fail("G4", f"destination theme {theme!r} mismatches story metric {metric!r}")
 
 
-def _is_benign(numeral: str) -> bool:
-    # ages/counts that are template-fixed, not data claims (e.g. "15+ years old roof")
-    return numeral in {"15", "15+", "10", "7"}  # tune with real templates
-
-
-# ---- G6 Gated-angle guard (feed-level; call before generation) ----
-def angle_data_available(angle_metric: str, config: dict) -> bool:
-    gated = config.get("gated_metrics", {})
-    entry = gated.get(angle_metric)
+# ---- G6 gated-angle guard (feed-level; also callable before generation) ----
+def angle_data_available(metric: str, config: dict) -> bool:
+    entry = (config.get("gated_metrics") or {}).get(metric)
     return True if entry is None else bool(entry.get("available", False))
-
-
-if __name__ == "__main__":
-    import json, sys
-    # tiny smoke test with the example story
-    story = {
-        "metric": "drought_stage", "figure": "+2 stages (now Stage 3)",
-        "source": "US Drought Monitor", "as_of": "2026-05-13", "value": 3,
-    }
-    good = {
-        "platform": "facebook", "angle": "warning",
-        "caption": "Travis County: drought jumped +2 stages (now Stage 3) — source: US Drought Monitor, as of 2026-05-13. Roofs 15+ years, get looked at. Send to a neighbor. https://x",
-        "on_screen_text": ["+2 stages (now Stage 3)", "US Drought Monitor · 2026-05-13"],
-        "media_url": "x", "has_source_card": True, "destination_url": "https://x", "destination_theme": "drought_stage",
-    }
-    bad = {
-        "platform": "facebook", "angle": "warning",
-        "caption": "SHOCKING!! Best zips to live in Travis — appraisals up 47%!! do you agree? 👇",
-        "on_screen_text": [], "media_url": "", "has_source_card": False, "requires_link": True,
-    }
-    print("GOOD:", validate_post(good, story, {}))
-    print("BAD :", validate_post(bad, story, {"gated_metrics": {}}))

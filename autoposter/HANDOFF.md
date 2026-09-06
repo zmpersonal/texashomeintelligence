@@ -1,7 +1,7 @@
 # HANDOFF.md — THI Autoposter
 
 Current full context for a fresh session. Overwritten at each stopping point.
-**Last updated: 2026-09-06, end of Phase 2 (held at the prove-gate).**
+**Last updated: 2026-09-06, end of Phase 3 (held at the prove-gate).**
 
 ---
 
@@ -47,10 +47,10 @@ Two extra hazards this repo's shape creates:
 | Pinned-ID guard | ✅ built + tested (15/15) + verified against the live workspace |
 | 1 — Data history | ✅ answered in Phase 0: history IS retained; grain is the blocker |
 | Local generator | ✅ `thi_source.py` reads `site/**` read-only; 17 series, 4 data traps closed |
-| Threshold calibration | 🟡 0.55 PROPOSED (was 0.45, uncalibrated) — awaiting owner sign-off |
+| Threshold calibration | ✅ 0.55 approved, kept `status: proposed`; revisit after 2026-09-22 |
 | 2 — Movers engine | ✅ prove-gate MET — real feed, 15 stories, schema-valid; held for review |
-| 3 — Validator | 🟡 gates land + pass 7/7; G5 freshness + media-resolve still TODO |
-| 4 — Article engine | ⏸ HELD — needs `ARTICLE-ENGINE`'s missing siblings + `VOICE-GUIDE.md` |
+| 3 — Validator | ✅ prove-gate MET — G5 + media resolution wired, 4 spec gaps closed, 78/78 |
+| 4 — Article engine | ⏸ HELD — spec files have ARRIVED; awaiting the owner's go-ahead |
 | 5 — Reels engine | ⏸ **PARKED** until after 2026-09-22 (see below) |
 | 6 — Producers | ⏸ blocked on Blotato plan confirmation + a pinned YouTube channel |
 | 7 — Orchestrate | ⏸ |
@@ -71,29 +71,37 @@ src/build_feed.py              signals -> figures -> ranked stories -> validated
 src/calibrate.py               walk-forward replay used to set quiet_week_threshold
 src/minischema.py              dependency-free schema validator; unknown keyword -> raise
 src/channel_guard.py           pinned-target allowlist (enabled AND pinned, both required)
-src/validator.py               content-quality gates (unmodified from the package)
-tests/                         44 tests across 3 suites, all passing
+src/validator.py               the full gate suite — G1-G9 + baseline, G5 and media wired
+src/media.py                   fail-closed media resolution; indeterminate != pass
+src/post_template.py           deterministic code-filled pieces (NOT the caption generator)
+specs/                         VALIDATOR, MOVERS-ENGINE, VOICE-GUIDE, REELS-ENGINE (committed)
+tests/                         78 tests across 5 suites, all passing
 data/social-feed.json          the real artifact
-private/                       GITIGNORED — owner-only detail (never committed)
+private/                       GITIGNORED — owner-only detail + ROTATION.md (see below)
 RUNLOG.md LEARNINGS.md HANDOFF.md
 ```
 
 Still **not** landed: `orchestrator.py`, `publisher.py` — Phase 6/7 material.
 
-## Open for the owner (before or alongside Phase 3)
-1. **`quiet_week_threshold: 0.55`** — proposed from a walk-forward replay (RUNLOG §25).
-   Marked `status: proposed`; confirm or set your own.
-2. **Schema amendment** — `areas[].type` gained `metro` and `state` (RUNLOG §23). 🟡.
-3. **The angle taxonomy** in `build_feed.ANGLE_BY_METRIC` is a placeholder until
-   `VOICE-GUIDE.md` lands. It must be confirmed before any caption is generated.
+## Open for the owner
+1. **🟡 `ROTATION.md` is in `private/`, not `specs/`.** It is the only spec file that fails the
+   publication standard: it maps the whole network of domains, names which are parked or carry
+   unreliable data, and describes internal-linking them for cluster authority. Published, that
+   is both a competitor's map and a public description of a cross-domain link scheme, on the
+   repo of the property whose #1 KPI is citation. The other four are committed to `specs/`.
+   Owner's call to move it.
+2. **The angle taxonomy** in `build_feed.ANGLE_BY_METRIC` is still a marked placeholder. The
+   real four-angle taxonomy is in `specs/VOICE-GUIDE.md` and gets wired in Phase 4, on the
+   owner's go-ahead — not before.
+3. **Live media resolution is unproven from this surface.** A HEAD from this container is not
+   evidence; prove it on the runner's own path in Phase 6 (SOP step 9).
 
-## The two things blocking Phase 4
+## Phase 4 readiness
 
-1. **The spec files still have not arrived** — `VOICE-GUIDE.md`, `ROTATION.md`,
-   `MOVERS-ENGINE.md`, `REELS-ENGINE.md`, `VALIDATOR.md`. Only a `config.yaml` revision was
-   uploaded on 2026-09-06 (RUNLOG §20). **Do not reconstruct any of them** — `VOICE-GUIDE.md`
-   especially, since it is the sole input to the one model call and a reconstruction would be a
-   guess wearing a spec's clothes. Phase 2 was buildable without them; Phase 4 is not.
+1. **All five spec files ARRIVED 2026-09-06** and are in `specs/` (`ROTATION.md` in `private/`,
+   pending the owner's call). Nothing was reconstructed. Phase 4 is now unblocked on inputs but
+   **still held on the owner's explicit go-ahead**, which they asked to give after confirming
+   the files are in.
 2. ~~The public-repo state question~~ — **decided 2026-09-06.** Stay in the public repo with two
    carve-outs: drafts/claim ledgers on an unmerged branch, deleted after publish; the runlog
    de-specified per the publication standard in `CLAUDE.md`. Full detail lives in the gitignored
@@ -125,7 +133,7 @@ Still **not** landed: `orchestrator.py`, `publisher.py` — Phase 6/7 material.
   **Until pinned, YouTube is un-postable by construction** — that is the guard working.
 - Confirm whether the Blotato `starter` plan includes video render + scheduling (before Ph.6).
 - ~~Delete the stale `claude/…` remote branch~~ — done by the owner.
-- Confirm the threshold, the schema amendment, and (when `VOICE-GUIDE.md` lands) the angles.
+- Decide where `ROTATION.md` lives, and give the Phase 4 go-ahead when ready.
 
 ## The invariants, restated
 

@@ -124,12 +124,19 @@ movers:
   # which would send a genuine +20% mover to evergreen. 0.55 sits just under the p20-p25 band
   # and flags only the two genuinely weak cycles.
   quiet_week_threshold: 0.55
-  quiet_week_threshold_status: proposed   # PENDING OWNER APPROVAL — proposed 2026-09-06
+  quiet_week_threshold_status: proposed   # APPROVED 2026-09-06 but deliberately NOT final:
+  # revisit after 2026-09-22, when county-grain rankings exist and the distribution changes.
   quiet_week_threshold_prior: 0.45        # inherited from the package, never calibrated
-  # Honest caveat: taking the max of ~15 series makes the weekly top score high almost by
-  # construction, so this threshold does little work at metro grain. The live risk is not "no
-  # story" but "a top-ranked boring story" — that wants a separate editorial floor, not a
-  # higher threshold here.
+  # Honest caveat (owner-agreed): taking the max of ~15 series makes the weekly top score high
+  # almost by construction, so this threshold does little work at metro grain. The live risk is
+  # not "no story" but "a top-ranked BORING story".
+  #
+  # NEXT DESIGN TASK, deliberately deferred: a separate story-quality floor — a minimum bar a
+  # top story must clear on its own merits, independent of how it ranks against its siblings.
+  # Do NOT design it speculatively. Wait until the article engine has produced enough output to
+  # show what actually reads badly, then build the floor against those real cases (the same
+  # discipline that produced the no-movement suppression in §22: a defect seen, then gated).
+  # Revisit together with the threshold after 2026-09-22.
 
   # PHASE 2: metric names reconciled with what the generator actually emits. The package's
   # `energy_cost_est` / `cost_to_own` do not exist in THI's data; `energy_price_cents_kwh` does.
@@ -144,9 +151,18 @@ topic_score_weights:
   money_bonus: 0.10
 
 # ---- Freshness bounds per metric (VALIDATOR G5); reject if as_of older ----
-# PHASE 0: these metric names do NOT yet map to any THI dataset id. Building that mapping
-# (THI dataset -> feed metric name) is a Phase 2 deliverable; G5 cannot be wired without it.
+# PHASE 3: G5 is now wired and REJECTS any metric with no bound here — an unbounded metric is
+# an unanswered question about how stale is too stale, and withhold beats guess. A key ending
+# in `_` matches by longest prefix, so one entry covers every permit trade.
+# The bounds below are set to each source's own publication rhythm plus its lag, not to a
+# round number: a monthly series cannot be fresher than monthly.
 staleness_hours:
+  # --- metrics the generator actually emits today (Phase 2) ---
+  energy_price_cents_kwh: 2160   # EIA monthly, published with a 1-2 month lag -> 90 days
+  cooling_degree_days: 2160      # NOAA monthly summaries, similar lag -> 90 days
+  permit_activity_: 1440         # prefix rule: monthly permit counts -> 60 days, all trades
+  air_quality_index: 72          # daily; a 3-day-old AQI is not "today's air"
+  # --- names carried from the package; kept for when those feeds land ---
   hail_window: 48
   drought_stage: 336           # ~2 weeks (updates weekly)
   energy_cost_est: 168

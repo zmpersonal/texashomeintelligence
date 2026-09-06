@@ -102,3 +102,21 @@ as if it had a baseline. `status: "live"` was true for every one of them.
 period is complete, the entity set is constant across the window, only one record type is
 present, and the depth clears the configured minimum. A feed that passes "is live and has N
 observations" has not been checked.
+
+## L7 — A gate suite must test known-GOOD input, or it ships over-strict and gets disabled
+**Status:** `candidate` · **Affects:** social-autoposter step 11b · **Evidence:** RUNLOG
+2026-09-06 §32.
+
+Step 11b says "known-bad content is rejected, known-good passes", but every worked example in
+it is a rejection, and the natural way to write a gate is strict. Tightening G7 and G9 to match
+the spec immediately produced two false positives against the brand's OWN reference copy —
+regexes demanding "get *it* looked at" and "send *this* to" rejected "get looked at" and "Send
+to a neighbor".
+
+That failure mode is quiet and expensive: an over-strict gate does not fail loudly, it halts
+legitimate runs until somebody loosens or disables it, and a disabled gate protects nothing.
+
+**Proposed rule:** every gate suite carries a known-good corpus drawn from the project's own
+voice/brand reference, not from fixtures the same author invented alongside the gates — plus a
+paired test that the corrupted version of the same copy is still rejected. Calibrate strictness
+against real copy before shipping, not after a halt.

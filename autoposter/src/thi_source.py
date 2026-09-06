@@ -68,6 +68,7 @@ class Series:
     unit: str = ""
     cadence: str = "weekly"          # weekly | monthly | daily
     note: str = ""
+    county: str = ""     # set where a metro's reading is actually one county's (drought anchor)
     dropped: list[str] = field(default_factory=list)   # audit trail of what was excluded
 
     @property
@@ -126,7 +127,7 @@ def _drought(location: str, today: date) -> Series | None:
     return Series(
         AREA_OF_LOCATION[location], "drought_stage", pts,
         _source_name(doc, "U.S. Drought Monitor"), pts[-1].period,
-        unit="D-stage", cadence="weekly",
+        unit="D-stage", cadence="weekly", county=county,
         note=f"anchored to {county} County ({fips}) — the one county present for the whole "
              f"series; see trap 2",
         dropped=[f"{len(dropped)} rows from counties added mid-series"] if dropped else [],

@@ -31,7 +31,8 @@ def _truncate(series: thi_source.Series, cutoff: date) -> thi_source.Series | No
     if not points:
         return None
     clone = thi_source.Series(series.area_id, series.metric, points, series.source,
-                              points[-1].period, series.unit, series.cadence, series.note)
+                              points[-1].period, series.unit, series.cadence, series.note,
+                              series.county)
     return clone
 
 
