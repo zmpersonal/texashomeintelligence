@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-06T12:53:08.084Z",
-  "lastSuccessAt": "2026-09-06T12:53:08.084Z",
+  "lastAttemptAt": "2026-09-07T15:03:06.130Z",
+  "lastSuccessAt": "2026-09-07T15:03:06.130Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -20049,7 +20049,7 @@
     },
     {
       "observedAt": "2026-09-04T00:00:00.000Z",
-      "ingestedAt": "2026-09-06T12:53:08.431Z",
+      "ingestedAt": "2026-09-07T15:03:06.699Z",
       "key": "2026-115882 BP",
       "value": {
         "permitType": "Remodel",
@@ -20059,7 +20059,7 @@
     },
     {
       "observedAt": "2026-09-04T00:00:00.000Z",
-      "ingestedAt": "2026-09-06T12:53:08.431Z",
+      "ingestedAt": "2026-09-07T15:03:06.699Z",
       "key": "2026-116568 BP",
       "value": {
         "permitType": "Repair",
@@ -20070,13 +20070,23 @@
     },
     {
       "observedAt": "2026-09-04T00:00:00.000Z",
-      "ingestedAt": "2026-09-06T12:53:08.431Z",
+      "ingestedAt": "2026-09-07T15:03:06.699Z",
       "key": "2026-115548 BP",
       "value": {
         "permitType": "Remodel",
         "workDescription": "Installation of a new TPO Roofing System. Existing retail.",
         "status": "Active",
         "valuationUsd": 19400
+      }
+    },
+    {
+      "observedAt": "2026-09-05T00:00:00.000Z",
+      "ingestedAt": "2026-09-07T15:03:06.699Z",
+      "key": "2026-114599 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Johnson/Schultz - 40-10945 - Install new 5.7 kW rooftop solar system to existing residential only using backfed breaker only.",
+        "status": "Active"
       }
     }
   ]
