@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-07T15:03:58.845Z",
-  "lastSuccessAt": "2026-09-07T15:03:58.845Z",
+  "lastAttemptAt": "2026-09-08T13:37:33.952Z",
+  "lastSuccessAt": "2026-09-08T13:37:33.952Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -1278,12 +1278,12 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-07T15:03:59.508Z",
+      "ingestedAt": "2026-09-08T13:37:34.544Z",
       "key": "trades-v1/electrical/2026-09",
       "value": {
         "category": "electrical",
         "month": "2026-09",
-        "permitCount": 295,
+        "permitCount": 343,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -1291,19 +1291,19 @@
         "sourceValues": [
           {
             "value": "Electrical Permit",
-            "count": 295
+            "count": 343
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-07T15:03:59.508Z",
+      "ingestedAt": "2026-09-08T13:37:34.544Z",
       "key": "trades-v1/hvac/2026-09",
       "value": {
         "category": "hvac",
         "month": "2026-09",
-        "permitCount": 207,
+        "permitCount": 210,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -1311,19 +1311,19 @@
         "sourceValues": [
           {
             "value": "Mechanical Permit",
-            "count": 207
+            "count": 210
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-07T15:03:59.508Z",
+      "ingestedAt": "2026-09-08T13:37:34.544Z",
       "key": "trades-v1/plumbing/2026-09",
       "value": {
         "category": "plumbing",
         "month": "2026-09",
-        "permitCount": 271,
+        "permitCount": 276,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -1331,14 +1331,14 @@
         "sourceValues": [
           {
             "value": "Plumbing Permit",
-            "count": 271
+            "count": 276
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-07T15:03:59.508Z",
+      "ingestedAt": "2026-09-08T13:37:34.544Z",
       "key": "trades-v1/roofing/2026-09",
       "value": {
         "category": "roofing",
@@ -1358,12 +1358,12 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-07T15:03:59.508Z",
+      "ingestedAt": "2026-09-08T13:37:34.544Z",
       "key": "trades-v1/solar/2026-09",
       "value": {
         "category": "solar",
         "month": "2026-09",
-        "permitCount": 50,
+        "permitCount": 86,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "work-class",
@@ -1372,7 +1372,7 @@
         "sourceValues": [
           {
             "value": "Auxiliary Power",
-            "count": 45
+            "count": 81
           },
           {
             "value": "description mentions solar/photovoltaic/PV",

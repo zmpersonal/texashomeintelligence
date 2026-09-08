@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-07T15:03:21.144Z",
-  "lastSuccessAt": "2026-09-07T15:03:21.144Z",
+  "lastAttemptAt": "2026-09-08T13:37:22.118Z",
+  "lastSuccessAt": "2026-09-08T13:37:22.118Z",
   "lastError": null,
   "source": {
     "name": "AirNow",
@@ -251,6 +251,15 @@
       "key": "San Antonio-2026-09-07-8",
       "value": {
         "aqi": 41,
+        "category": "Good"
+      }
+    },
+    {
+      "observedAt": "2026-09-08T07:00:00.000Z",
+      "ingestedAt": "2026-09-08T13:37:22.315Z",
+      "key": "San Antonio-2026-09-08-7",
+      "value": {
+        "aqi": 46,
         "category": "Good"
       }
     }

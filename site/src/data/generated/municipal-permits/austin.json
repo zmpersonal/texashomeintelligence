@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-07T15:03:06.130Z",
-  "lastSuccessAt": "2026-09-07T15:03:06.130Z",
+  "lastAttemptAt": "2026-09-08T13:37:06.757Z",
+  "lastSuccessAt": "2026-09-08T13:37:06.757Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -20081,7 +20081,7 @@
     },
     {
       "observedAt": "2026-09-05T00:00:00.000Z",
-      "ingestedAt": "2026-09-07T15:03:06.699Z",
+      "ingestedAt": "2026-09-08T13:37:07.205Z",
       "key": "2026-114599 EP",
       "value": {
         "permitType": "Auxiliary Power",
