@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-08T13:37:06.757Z",
-  "lastSuccessAt": "2026-09-08T13:37:06.757Z",
+  "lastAttemptAt": "2026-09-09T13:42:37.827Z",
+  "lastSuccessAt": "2026-09-09T13:42:37.827Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -20081,12 +20081,54 @@
     },
     {
       "observedAt": "2026-09-05T00:00:00.000Z",
-      "ingestedAt": "2026-09-08T13:37:07.205Z",
+      "ingestedAt": "2026-09-09T13:42:39.246Z",
       "key": "2026-114599 EP",
       "value": {
         "permitType": "Auxiliary Power",
         "workDescription": "Johnson/Schultz - 40-10945 - Install new 5.7 kW rooftop solar system to existing residential only using backfed breaker only.",
         "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-08T00:00:00.000Z",
+      "ingestedAt": "2026-09-09T13:42:39.246Z",
+      "key": "2026-113220 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "simple re-roof - remove and replace shingles on existing roof. BLDG 18",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-09-08T00:00:00.000Z",
+      "ingestedAt": "2026-09-09T13:42:39.246Z",
+      "key": "2026-034805 MP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition and remodel: full interior remodel with small interior additions on rear and new covered back porch all new interior finishes and fixtures all new exterior windows doors roofing and siding (except brick) new gas fire place decorative structural changes to front side of roof all new plumbing",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-08T00:00:00.000Z",
+      "ingestedAt": "2026-09-09T13:42:39.246Z",
+      "key": "2026-107906 EP",
+      "value": {
+        "permitType": "Upgrade",
+        "workDescription": "Removal of old service wire meter can. Removal of old residential panel 150 amp. Installation of riser through roof Installation of wiring and weather head and meter can. New Panel Installation. Austin Energy is the provider.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-08T00:00:00.000Z",
+      "ingestedAt": "2026-09-09T13:42:39.246Z",
+      "key": "2026-113212 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "simple re-roof - remove and replace shingles on existing roof. BLDG 17",
+        "status": "Active",
+        "valuationUsd": 5000
       }
     }
   ]

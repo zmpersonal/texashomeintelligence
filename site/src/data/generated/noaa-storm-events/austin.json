@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-08T13:37:02.124Z",
-  "lastSuccessAt": "2026-09-08T13:37:02.124Z",
+  "lastAttemptAt": "2026-09-09T13:42:33.699Z",
+  "lastSuccessAt": "2026-09-09T13:42:33.699Z",
   "lastError": null,
   "source": {
     "name": "NOAA Storm Events Database",
@@ -717,7 +717,7 @@
     },
     {
       "observedAt": "2026-05-26T23:00:00.000Z",
-      "ingestedAt": "2026-09-08T13:37:04.926Z",
+      "ingestedAt": "2026-09-09T13:42:37.403Z",
       "key": "1340784",
       "value": {
         "eventType": "Flood",
