@@ -2,10 +2,10 @@
   "datasetId": "noaa-storm-events",
   "location": "san-antonio",
   "methodologyVersion": "v1",
-  "status": "stale",
-  "lastAttemptAt": "2026-09-09T13:42:37.415Z",
-  "lastSuccessAt": "2026-09-08T13:37:04.935Z",
-  "lastError": "fetch failed",
+  "status": "live",
+  "lastAttemptAt": "2026-09-10T13:35:33.254Z",
+  "lastSuccessAt": "2026-09-10T13:35:33.254Z",
+  "lastError": null,
   "source": {
     "name": "NOAA Storm Events Database",
     "url": "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
@@ -695,7 +695,7 @@
     },
     {
       "observedAt": "2026-05-26T23:00:00.000Z",
-      "ingestedAt": "2026-09-08T13:37:06.753Z",
+      "ingestedAt": "2026-09-10T13:35:35.171Z",
       "key": "1340783",
       "value": {
         "eventType": "Flood",
