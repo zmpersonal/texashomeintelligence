@@ -183,8 +183,8 @@ boundary object, or an assertion that any `a/b` string handed across the boundar
 real dataset before it is written into an artifact. Not built yet, on purpose: a gate designed
 against two examples usually fits neither.
 
-## L11 — Scope-check the DIFF AGAINST THE BASE, never the commit
-**Status:** `candidate` · **Affects:** agent-harness Meta-Rule 11, build-loop 6.3 ·
+## L11 — Assert safety properties from the code, not from what you expect it to do
+**Status:** `validated` (seen twice: RUNLOG §54 and §62) · **generalised 2026-09-11** · **Affects:** agent-harness Meta-Rule 11, build-loop 6.3 ·
 **Evidence:** RUNLOG 2026-09-06 §54.
 
 A scope gate ran over the staged file list before committing the site patch and reported four
@@ -224,3 +224,20 @@ against paths that do not exist on the current branch reported all 44 files as D
 read as data loss and was purely an artifact of the missing working-tree files. A check that
 cannot distinguish "absent" from "changed" will invent an emergency. Confirm the file exists
 before comparing it.
+
+## L13 — A fail-closed gate needs a surface that can actually perform the check
+**Status:** `candidate` · **Affects:** social-autoposter step 9 / 11b, decision A ·
+**Evidence:** RUNLOG 2026-09-11 §61, §63.
+
+`media.resolve()` is fail-closed by design: an unresolvable URL never publishes. Correct. But the
+runner is a weekly Claude Code session, and this session's egress policy denies arbitrary hosts —
+including the project's own domain. Posting works (the Blotato MCP rides a permitted proxy);
+*verifying* does not.
+
+So the gate cannot pass on the surface that is supposed to run it. Not a bug in either piece: the
+gate is right, the environment is right, and the pairing is wrong. It went unnoticed because
+every earlier proof ran against `data:` URIs and local files, which resolve without egress.
+
+**Proposed rule:** when a gate performs an external check, prove it on the runner's real surface
+against a real external target **before** the gate is depended upon — not with a local stand-in.
+A gate proven only against fixtures has been proven to compute, not to be performable.

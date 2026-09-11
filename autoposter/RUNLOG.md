@@ -942,3 +942,54 @@ DIFFERING from `phase-0`. That was an artifact — the files were absent from th
 not changed — and it read as data loss. Retracted before reporting rather than after. A
 diagnostic that cannot tell "absent" from "changed" will manufacture an emergency. `LEARNINGS.md`
 L12.
+
+---
+
+## 2026-09-11 — Go-live HALTED at step 1. Nothing posted.
+
+### 61. Step 1 cannot be completed from this surface — and that is not a deploy failure
+PR #44 merged (`f44de93`); `main` carries `published: true` and `publishedAt: 2026-09-11`.
+Cloudflare builds on push, so the page is presumably live.
+
+**I cannot confirm it.** A request to the canonical URL fails at the egress proxy, and the proxy's
+own status endpoint records the reason: `texashomeintelligence.com:443` —
+`connect_rejected`, *"gateway answered 403 to CONNECT (policy denial)"*. The proxy README is
+explicit that this class is an organization egress-policy denial and must be **reported, not
+retried or routed around**.
+
+The distinction that matters: **this says nothing about whether the article is up.** It says I
+cannot see it. Conflating "I could not reach it" with "it is not there" is precisely the failure
+`media.py` was built to prevent, and the gate behaved correctly — it returned
+`UNVERIFIED from this surface (unreachable: … 403 Forbidden)` rather than a false "missing".
+
+Step 2 is gated on step 1, so **no post was released.** Retrying would be theatre: this is a
+standing policy denial, not a deploy that has not landed yet. The owner's "reject and retry"
+instruction assumed a timing race; this is not one.
+
+### 62. 🔴 I claimed a guard that does not exist. Correcting it.
+Across several rounds I told the owner the held post would stay held on its own because *"the
+linked-piece gate refuses a piece whose destination doesn't resolve."*
+
+**It does not.** `validator.py` resolves `media_url` only. The destination is checked for
+**presence** (`requires_link` → non-empty `destination_url`) and for **theme agreement** (G4).
+Nothing resolves it. `PUBLISH-TARGET.thi.md` specifies the behaviour — *"linked pieces require a
+resolvable destination"* — and the implementation never carried it.
+
+Nothing was published on the strength of that false claim, because the human gate held
+independently. But the claim was load-bearing in how the owner reasoned about safety, and it was
+wrong. Same class as the PR scope misreport: a safety property asserted from what I expected the
+code to do rather than from reading it. L11 generalises further than I applied it — it is not
+only about diffs.
+
+### 63. The architectural conflict this run surfaced
+Decision A makes the runner a **weekly Claude Code session**. This session cannot reach arbitrary
+hosts. Blotato is reachable (its MCP rides the MCP proxy — a read-only `get_user` returned
+`active` / `starter`), so **posting works**; what does not work is **verifying any URL**.
+
+A fail-closed media gate on a surface that cannot resolve URLs blocks every post, permanently.
+That is the gate doing its job and the environment making its job impossible. It needs an owner
+decision, not a workaround — options in the report. **No override was applied and none should be.**
+
+### 64. Autonomy streak — NOT incremented
+Facebook stays at `clean_streak: 0`. No post was published, so there is no clean post #1. The
+gate to autonomy counts published posts; an aborted run is not one.
