@@ -1,0 +1,98 @@
+# THI autoposter — the cadence driver.
+#
+# Fires daily; acts rarely. A run that does nothing because it is too soon, or because a gate
+# did not return a clean pass, is a NORMAL outcome and exits 0 — a quiet week that turns the
+# job red teaches you to ignore the red.
+#
+# What it does NOT do: decide anything. Every decision lives in autoposter/src/autopilot.py,
+# which is proven by autoposter/tests/test_autopilot.py without touching the network. This file
+# is a clock, a checkout and a set of credentials.
+#
+# THE KILL SWITCH is read here as a repository VARIABLE, so it can be flipped in the GitHub UI
+# in seconds with no commit. `autopilot.paused` in config.yaml is the durable second switch.
+# Either one pauses; both must be clear to publish.
+name: autoposter cadence
+
+on:
+  schedule:
+    # 14:10 UTC daily — mid-morning Texas, so a bad post is seen by a human within hours rather
+    # than sitting overnight. Deliberately not on the hour: GitHub's scheduler is busiest then
+    # and delays runs.
+    - cron: "10 14 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Run every gate and report, but never merge or post"
+        type: boolean
+        default: true
+
+concurrency:
+  # One cycle at a time, ever. Two overlapping runs could both pass the duplicate gate before
+  # either wrote to the ledger.
+  group: autoposter-cadence
+  cancel-in-progress: false
+
+permissions:
+  contents: write        # the auto-merge writes the article to main
+  pull-requests: write   # ...through a PR, which is the audit record of what it published
+
+jobs:
+  cycle:
+    runs-on: ubuntu-latest
+    # The secrets live here and nowhere else. The site's own workflows cannot read them.
+    environment: autoposter
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the autoposter's dependencies
+        run: pip install pyyaml
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install the site's dependencies
+        working-directory: site
+        run: npm ci
+
+      - name: Install Chromium for the card renderer
+        working-directory: site
+        # The card generator refuses to screenshot until every brand face has loaded, so the
+        # browser has to be real. npm ci installs playwright's driver, not its browser.
+        run: npx playwright install --with-deps chromium
+
+      - name: Run the autoposter's own test suite
+        # A cycle that can publish must not run on code whose tests do not pass. This is the
+        # cheapest possible guard against a bad merge reaching the live domain on a timer.
+        working-directory: autoposter
+        run: |
+          failed=0
+          for t in tests/test_*.py; do
+            python3 "$t" || failed=1
+          done
+          exit $failed
+
+      - name: Identify the committer
+        run: |
+          git config user.name  "thi-autoposter"
+          git config user.email "noreply@texashomeintelligence.com"
+
+      - name: Run the cycle
+        working-directory: autoposter
+        env:
+          # THE KILL SWITCH. Set the repository variable AUTOPOSTER_PAUSED to `true` to halt
+          # publishing immediately; the cycle still builds and still notifies.
+          AUTOPOSTER_PAUSED: ${{ vars.AUTOPOSTER_PAUSED }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          BLOTATO_API_KEY: ${{ secrets.BLOTATO_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 src/run_autopilot.py
