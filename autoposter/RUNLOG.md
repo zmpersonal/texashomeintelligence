@@ -1248,3 +1248,24 @@ with L14-shaped gate work. The two deliberate departures from `THI-Brand-Kit.md`
 in `specs/OG-CARD-PROPOSAL.md` under "Brand-kit deviations on record", each with the reason and
 what would overturn it — a decision on record, not drift. A third entry records the one rule the
 palette explicitly forbids (amber text on navy) because it is the obvious future "improvement".
+
+### 81. OG card minimum — built, rendered, PR #46
+Eight files under `site/`, base-diff confirmed against main, nothing else. `npm run og-cards`
+renders 1200×630 from the article's `card:` frontmatter; the figures are C1 and C2 from the
+claim ledger and the renderer computes none of them. Deterministic: two runs byte-identical.
+
+**Degradation proven, not asserted.** Blanking a required field exits 1 with nothing on disk.
+Corrupting one font payload exits 1 naming the face, so no card set in a fallback reaches disk.
+Removing the sidecar and rebuilding falls the article back to the logo card with the page
+rendering normally — today's behaviour, which is the floor for this whole feature.
+
+**One defect found by running the mutation rather than trusting the code.** The font case first
+exited through a bare `NetworkError` stack: `document.fonts.load()` REJECTS on a face that
+cannot decode, so the promise blew up before the diagnostic branch ran. Fail-closed held, but
+the check I had written as the guard had never executed and would have said nothing useful the
+first time it mattered. Per-face rejections are now caught so the report names the face. Same
+lesson as L14's corollary: a guard observed only in the passing case has not been observed.
+
+Render-side verification read the built HTML (L9): article emits the card URL with the full
+agency name in alt while the face carries `EIA`; homepage unchanged; `astro check` clean.
+Nothing posted, streak 1, autonomy review. No promo change — that is the full version's round.
