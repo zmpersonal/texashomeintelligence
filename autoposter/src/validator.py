@@ -98,7 +98,11 @@ def _extract_numerals(text: str, drop_dates: bool = True) -> set[str]:
     """Numbers a reader would take as a claim. ISO dates are provenance, not claims."""
     if drop_dates:
         text = _DATE_RE.sub(" ", text or "")
-    return {n.replace(",", "") for n in re.findall(r"\d[\d,]*\.?\d*%?", text or "")}
+    # `\.?\d*` used to absorb a SENTENCE-ENDING period: "…in August 2026." extracted as
+    # "2026.", which matches no claim and trips G1 on a year the ledger plainly carries. A
+    # decimal point only counts when digits follow it. Strictly more correct, not looser —
+    # "13.88" and "1,037" are unaffected.
+    return {n.replace(",", "") for n in re.findall(r"\d[\d,]*(?:\.\d+)?%?", text or "")}
 
 
 def _is_benign(numeral: str) -> bool:

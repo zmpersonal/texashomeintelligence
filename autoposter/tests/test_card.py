@@ -527,6 +527,295 @@ def test_builder3_does_not_abbreviate_the_unit_to_jargon():
     assert card_mod._compact("755 cooling degree-days") == "755 cooling degree-days"
 
 
+# ============================================ RECURRENCE — a builder as a subscription
+
+def _cycle(today):
+    """One full cycle's article, built from the history as it stood on that date."""
+    feed = engine.load_feed()
+    claims = run_article.build_summer_claims(feed, CFG, today)
+    article = run_article.write_summer({}, claims, feed)
+    return article, claims
+
+
+JULY_CYCLE, AUG_CYCLE = date(2026, 8, 15), date(2026, 9, 11)
+
+
+def test_the_same_builder_emits_a_DIFFERENT_question_each_period():
+    """THE PROOF. Two consecutive real cycles, same code, different article.
+
+    The period comes from the data, so this is not a date-formatting trick: on 2026-08-15 the
+    series ends in July and on 2026-09-11 it ends in August, and the builder follows.
+    """
+    july, _ = _cycle(JULY_CYCLE)
+    august, _ = _cycle(AUG_CYCLE)
+    assert july["title"] == "Was July 2026 hotter than normal in Texas?"
+    assert august["title"] == "Was August 2026 hotter than normal in Texas?"
+    assert july["slug"] != august["slug"]
+    assert july["canonical_url"] != august["canonical_url"]
+
+
+def test_both_periods_produce_a_VALID_article_not_just_a_different_title():
+    """A distinct title is worthless if the second article does not survive the gates."""
+    import claim_ledger as cl
+    for today in (JULY_CYCLE, AUG_CYCLE):
+        article, claims = _cycle(today)
+        assert cl.verify_ledger(claims, CFG, today).ok, today
+        assert cl.verify_prose(article["body"], claims, CFG).ok, today
+        card = card_mod.build_card(article, claims)
+        assert card_mod.verify_card(card, claims, article=article).ok, today
+
+
+def test_the_two_periods_carry_DIFFERENT_figures():
+    """Proof the second article is about new data, not the same numbers relabelled."""
+    july_article, july_claims = _cycle(JULY_CYCLE)
+    aug_article, aug_claims = _cycle(AUG_CYCLE)
+    july_card = card_mod.build_card(july_article, july_claims)
+    aug_card = card_mod.build_card(aug_article, aug_claims)
+    assert july_card["headline"] == "644 cooling degree-days"
+    assert aug_card["headline"] == "755 cooling degree-days"
+    assert july_card["asOf"] == "Jul 2026" and aug_card["asOf"] == "Aug 2026"
+
+
+def test_the_second_period_PASSES_the_duplicate_gate_against_the_first():
+    """THE PROOF THAT RECURRENCE ACTUALLY WORKS. Publish July, then offer August.
+
+    If the slug did not move, this is where a recurring builder would die — the duplicate gate
+    would refuse every subsequent month, correctly, and the cadence would stop.
+    """
+    import publish_gate
+    july, _ = _cycle(JULY_CYCLE)
+    august, _ = _cycle(AUG_CYCLE)
+    ledger = Path(tempfile.mkdtemp()) / "ledger.json"
+    publish_gate.append_ledger({"platform": "facebook", "published_at": "2026-08-15T00:00:00Z",
+                                "article_url": july["canonical_url"],
+                                "post_url": "https://facebook.com/1_july"}, ledger)
+    # July is now spent...
+    try:
+        publish_gate.assert_not_already_posted(july["canonical_url"], ledger_path=ledger,
+                                               platform="facebook")
+        raise AssertionError("the July article should be refused a second time")
+    except publish_gate.DuplicateDestinationHalt:
+        pass
+    # ...and August is not.
+    publish_gate.assert_not_already_posted(august["canonical_url"], ledger_path=ledger,
+                                           platform="facebook")
+
+
+def test_a_recurring_topic_is_excluded_only_for_the_period_ALREADY_written():
+    """The exclusion moved from the topic to the period. Publishing July must not retire the
+    topic — otherwise one article kills the subscription."""
+    july, _ = _cycle(JULY_CYCLE)
+    august, _ = _cycle(AUG_CYCLE)
+    published = {july["title"]}
+    topic = {"id": "summer-hotter-than-normal", "question": "Was this Texas summer hotter?"}
+    current = engine._current_title(topic, run_article.TOPIC_ARTICLES, AUG_CYCLE)
+    assert current == august["title"]
+    assert current not in published, "August must still be eligible after July is published"
+    assert engine._current_title(topic, run_article.TOPIC_ARTICLES, JULY_CYCLE) in published
+
+
+def test_a_builder_that_cannot_name_its_period_falls_back_to_EXCLUDABLE():
+    """A title_for that raises must not make a topic permanently eligible — that would be a
+    builder that publishes every single cycle forever."""
+    class Broken:
+        def title_for(self, today):
+            raise RuntimeError("no series")
+        def __iter__(self):
+            return iter((None, None))
+    topic = {"id": "x", "question": "The topic name"}
+    assert engine._current_title(topic, {"x": Broken()}, AUG_CYCLE) == "The topic name"
+
+
+def test_a_YEAR_ending_a_sentence_is_not_an_unbacked_numeral():
+    """The regex used to absorb a sentence-ending period, so "…in August 2026." extracted as
+    "2026." and tripped G1 on a year the ledger plainly carries."""
+    import validator
+    assert validator._extract_numerals("in August 2026.", drop_dates=False) == {"2026"}
+    assert validator._extract_numerals("13.88 cents") == {"13.88"}
+    assert validator._extract_numerals("1,037 permits") == {"1037"}
+
+
+# ============================================ builder 4: the AC rush vs the heat
+
+def _acrush(today):
+    feed = engine.load_feed()
+    claims = run_article.build_acrush_claims(feed, CFG, today)
+    return run_article.write_acrush({}, claims, feed), claims
+
+
+def test_builder4_verifies_in_both_periods():
+    import claim_ledger as cl
+    for today in (JULY_CYCLE, AUG_CYCLE):
+        article, claims = _acrush(today)
+        assert cl.verify_ledger(claims, CFG, today).ok, today
+        assert cl.verify_prose(article["body"], claims, CFG).ok, today
+        card = card_mod.build_card(article, claims)
+        assert card_mod.verify_card(card, claims, article=article).ok, today
+
+
+def test_builder4_THE_VERDICT_FOLLOWS_THE_DATA_not_the_prose():
+    """THE REGRESSION TEST FOR RECURRENCE ITSELF.
+
+    The first draft froze its conclusion: "No — they moved in opposite directions." True of
+    August, and flatly contradicted by July's own table, where BOTH series rose. No gate catches
+    that — G1 checks numerals, G2 checks sources, and neither reads an argument. So the verdict
+    is computed from the two directions, and this test fails the moment someone hardcodes it.
+    """
+    july, july_claims = _acrush(JULY_CYCLE)
+    august, aug_claims = _acrush(AUG_CYCLE)
+
+    # July: permits up 10%, cooling demand up too — the honest answer is "they agreed".
+    assert "up" in {c.id: c for c in july_claims}["H2"].figure
+    assert "both moved the same way" in july["body"]
+    assert "opposite directions" not in july["body"]
+
+    # August: permits down 15% while demand rose — the answer flips.
+    assert "down" in {c.id: c for c in aug_claims}["H2"].figure
+    assert "opposite directions" in august["body"]
+    assert "both moved the same way" not in august["body"]
+
+
+def test_builder4_the_CAPTION_does_not_assert_divergence_either():
+    """A caption that says "went the OTHER way" every month is the same defect, shipped to the
+    audience that reads only the caption."""
+    july, july_claims = _acrush(JULY_CYCLE)
+    august, aug_claims = _acrush(AUG_CYCLE)
+    assert "OTHER way" not in run_article.acrush_caption(july, july_claims)
+    assert "OTHER way" in run_article.acrush_caption(august, aug_claims)
+
+
+def test_builder4_claims_NO_cause():
+    """Two series moving together is not a mechanism, and the piece must not imply one."""
+    article, claims = _acrush(AUG_CYCLE)
+    hedged = [c for c in claims if c.tier == "external"]
+    assert hedged and hedged[0].hedged and "We cannot say" in hedged[0].text
+    for word in ("because", "caused", "due to", "drove"):
+        assert word not in article["body"].lower(), word
+
+
+def test_builder4_MUTATION_a_wrong_permit_count_is_caught():
+    article, claims = _acrush(AUG_CYCLE)
+    card = card_mod.build_card(article, claims)
+    bad = dict(card, headline="1,137 HVAC permits")     # San Antonio's figure, not Austin's
+    result = card_mod.verify_card(bad, claims, article=article)
+    assert not result.ok and any(f.startswith("C1a") for f in result.failures)
+
+
+def test_builder4_MUTATION_a_flipped_direction_is_caught():
+    """"down 15%" becomes "up 15%" — same numeral, opposite meaning. The slot-exact check
+    compares the whole figure, so the numeral surviving does not save it."""
+    article, claims = _acrush(AUG_CYCLE)
+    card = card_mod.build_card(article, claims)
+    bad = dict(card, subhead="up 15% month over month")
+    result = card_mod.verify_card(bad, claims, article=article)
+    assert not result.ok and any(f.startswith("C1b") for f in result.failures)
+
+
+def test_builder4_recurs_with_a_distinct_question_and_slug():
+    july, _ = _acrush(JULY_CYCLE)
+    august, _ = _acrush(AUG_CYCLE)
+    assert july["title"] == "Did Austin's AC rush follow the heat in July 2026?"
+    assert august["title"] == "Did Austin's AC rush follow the heat in August 2026?"
+    assert july["slug"] != august["slug"]
+
+
+# ============================================ builder 5: San Antonio's permit mix
+
+def _sa(today):
+    feed = engine.load_feed()
+    claims = run_article.build_sa_claims(feed, CFG, today)
+    return run_article.write_sa({}, claims, feed), claims
+
+
+def test_builder5_verifies_in_both_periods():
+    import claim_ledger as cl
+    for today in (JULY_CYCLE, AUG_CYCLE):
+        article, claims = _sa(today)
+        assert cl.verify_ledger(claims, CFG, today).ok, today
+        assert cl.verify_prose(article["body"], claims, CFG).ok, today
+        card = card_mod.build_card(article, claims)
+        assert card_mod.verify_card(card, claims, article=article).ok, today
+
+
+def test_builder5_the_TALLY_is_a_claim_not_a_sentence():
+    """The article's whole answer is a count, so the count is a derived figure like any other.
+    G1 refused the prose until it had a claim and a derivation naming which trades were counted
+    — which is also what makes the number auditable."""
+    _, claims = _sa(AUG_CYCLE)
+    tally = next(c for c in claims if c.id == "TALLY")
+    assert tally.tier == "derived"
+    assert tally.figure == "4 of 7 trades above their own average"
+    assert "above:" in tally.derivation and "below:" in tally.derivation
+
+
+def test_builder5_the_tally_MOVES_between_periods():
+    """Proof the count is computed rather than written: July had five, August has four."""
+    _, july = _sa(JULY_CYCLE)
+    _, august = _sa(AUG_CYCLE)
+    assert next(c for c in july if c.id == "TALLY").figure.startswith("5 of 7")
+    assert next(c for c in august if c.id == "TALLY").figure.startswith("4 of 7")
+
+
+def test_builder5_NEVER_mentions_the_other_metro():
+    """Permit counts are comparable only inside one city's filing system. A cross-metro permit
+    comparison is forbidden, so the word must not appear at all."""
+    for today in (JULY_CYCLE, AUG_CYCLE):
+        article, claims = _sa(today)
+        assert "Austin" not in article["body"]
+        assert all("Austin" not in c.text and "Austin" not in c.source for c in claims)
+
+
+def test_builder5_states_no_cost_figure():
+    article, claims = _sa(AUG_CYCLE)
+    assert "$" not in article["body"]
+    assert all("$" not in c.figure for c in claims)
+
+
+def test_builder5_the_card_leads_on_the_widest_gap_and_the_DATA_picks_it():
+    """The hero trade is chosen by the largest deviation from its own normal, so a different
+    month can put a different trade on the card."""
+    article, claims = _sa(AUG_CYCLE)
+    card = card_mod.build_card(article, claims)
+    assert card["headline"] == "451 tree permits"
+    assert card["subhead"] == "103% above its 11-month average"
+    assert card["source"] == "City of San Antonio"
+
+
+def test_builder5_MUTATION_a_wrong_count_is_caught():
+    article, claims = _sa(AUG_CYCLE)
+    card = card_mod.build_card(article, claims)
+    bad = dict(card, headline="415 tree permits")     # digits transposed
+    result = card_mod.verify_card(bad, claims, article=article)
+    assert not result.ok and any(f.startswith("C1a") for f in result.failures)
+
+
+def test_builder5_MUTATION_a_wrong_baseline_gap_is_caught():
+    article, claims = _sa(AUG_CYCLE)
+    card = card_mod.build_card(article, claims)
+    bad = dict(card, subhead="103% below its 11-month average")   # direction flipped
+    result = card_mod.verify_card(bad, claims, article=article)
+    assert not result.ok and any(f.startswith("C1b") for f in result.failures)
+
+
+def test_builder5_recurs_with_a_distinct_question_and_slug():
+    july, _ = _sa(JULY_CYCLE)
+    august, _ = _sa(AUG_CYCLE)
+    assert july["title"].endswith("(July 2026)")
+    assert august["title"].endswith("(August 2026)")
+    assert july["slug"] != august["slug"]
+
+
+def test_ALL_THREE_recurring_builders_offer_a_distinct_title_per_period():
+    """The property that makes cadence possible, asserted once for the whole set."""
+    for topic_id in ("summer-hotter-than-normal", "austin-ac-rush-vs-heat",
+                     "san-antonio-improvement-boom"):
+        builder = run_article.TOPIC_ARTICLES[topic_id]
+        july = builder.title_for(JULY_CYCLE)
+        august = builder.title_for(AUG_CYCLE)
+        assert july != august, topic_id
+        assert "July 2026" in july and "August 2026" in august, topic_id
+
+
 if __name__ == "__main__":
     fns = [f for n, f in sorted(globals().items()) if n.startswith("test_")]
     ok = 0

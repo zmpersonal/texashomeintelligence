@@ -141,6 +141,20 @@ def published_questions(config: dict) -> set[str]:
     return titles
 
 
+def _current_title(topic: dict, articles: dict | None, today: date) -> str:
+    """The title this topic would produce today: period-specific if it recurs, else its name."""
+    entry = (articles or {}).get(topic["id"])
+    title_for = getattr(entry, "title_for", None)
+    if title_for:
+        try:
+            return title_for(today)
+        except Exception:                           # noqa: BLE001
+            # A builder that cannot name its own current period is not eligible this cycle.
+            # Returning the topic name keeps it excludable rather than silently always-eligible.
+            return topic["question"]
+    return topic["question"]
+
+
 def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
         specs_dir: Path | None = None, destination: dict | None = None,
         articles: dict | None = None, exclude_published: bool = False) -> dict:
@@ -158,7 +172,12 @@ def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
     buildable = [t for t in ranked if t["buildable"]]
     if exclude_published:
         already = published_questions(config)
-        buildable = [t for t in buildable if t["question"] not in already]
+        # A RECURRING builder is excluded on the title it would emit RIGHT NOW, not on the
+        # topic's name. "Was August 2026 hotter than normal?" being published does not retire
+        # the topic — it retires August. Next month the same builder offers a different title
+        # and becomes eligible again, which is what turns a builder into a subscription.
+        buildable = [t for t in buildable
+                     if _current_title(t, articles, today) not in already]
     if not buildable:
         raise RuntimeError("no topic is defensible from the current feed — rescope, don't reach")
     chosen = buildable[0]
@@ -216,7 +235,7 @@ def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
 
 def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today: date,
                          link_opener=None, media_opener=None,
-                         caption: str | None = None) -> tuple[dict, object]:
+                         caption=None) -> tuple[dict, object]:
     """Stage 6 — the promotion, as a HELD draft. Facebook is the only enabled channel and video
     is parked, so this is text-with-link per the owner's scope note.
 
@@ -266,6 +285,10 @@ def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today
               (ROOT / publish_cfg["published_ledger"]).resolve()) or None
     publish_gate.assert_not_already_posted(url, platform="facebook", ledger_path=ledger)
 
+    # A recurring builder's caption names the period, so it is a function of the article and
+    # its claims rather than a frozen string.
+    if callable(caption):
+        caption = caption(article, claims)
     caption = caption or (
         f"Texas homeowners: it feels like every bill is going up. Electricity, for once, isn't. "
         f"Residential power in Texas is {headline_claim.figure} — {lead.figure} "

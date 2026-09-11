@@ -93,3 +93,43 @@ rather than place grain.
 2. **Order.** Recommended: 1 and 2 first — one is nearly free, the other is the best story in the
    list — then 3 and 4. That is four articles, roughly two weeks of cadence at the 3-day floor,
    which is enough runway to see whether full auto behaves before committing more.
+
+---
+
+# 🔴 OWNER ACTION — two topic entries the builders cannot work without
+
+`article_topics.yaml` is owner-tunable and the model never touches it (the file says so in its
+own header). Two builders are now written, tested and proven, and **neither can ever be
+selected** until their topic exists in that file: `topic_scorer` ranks only what is listed
+there, so an unlisted topic has no score and is never offered to the engine.
+
+Paste these two entries into `article_topics.yaml` under `topics:`. The `question` field is the
+topic's NAME, not the article's headline — recurring builders emit a period-specific title of
+their own ("Did Austin's AC rush follow the heat in August 2026?"), so the wording here only
+has to identify the topic to you.
+
+```yaml
+  - id: austin-ac-rush-vs-heat
+    question: "Does Austin's AC rush follow the heat?"
+    requires_metrics: [permit_activity_hvac, cooling_degree_days]
+    public_interest: 0.65
+    money: false
+    brand_safety_risk: 0.0
+    # Two measured series over the same months, and no causal claim between them. Permit
+    # counts stay an activity instrument: within one city, never a price.
+    single_city_only: true
+
+  - id: san-antonio-improvement-boom
+    question: "Is San Antonio's home-improvement boom cooling off?"
+    requires_metrics: [permit_activity_roofing, permit_activity_hvac, permit_activity_solar]
+    public_interest: 0.55
+    money: false
+    brand_safety_risk: 0.0
+    # The Austin question asked of the other metro, as a SEPARATE article. Permit counts are
+    # comparable only inside one city's own filing system, so the piece never mentions Austin.
+    single_city_only: true
+```
+
+`public_interest` values are yours to set — 0.65 and 0.55 are placed beside the existing
+`austin-improvement-boom-cooling` (0.55) and `summer-hotter-than-normal` (0.50), and they
+decide which of the three the engine reaches for first on any given cycle.

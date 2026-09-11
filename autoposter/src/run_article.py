@@ -12,6 +12,7 @@ Two halves, deliberately separated:
 from __future__ import annotations
 
 import json
+import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -428,7 +429,60 @@ TOPIC_CAPTIONS = {"austin-improvement-boom-cooling": PERMITS_CAPTION}
 
 
 # =====================================================================================
-# Article 3 — was the summer actually hotter than normal?
+# RECURRENCE — how a builder becomes a subscription instead of a single article.
+#
+# A builder that emits one fixed question is spent the moment that question is published: the
+# already-written exclusion sees the title and skips the topic forever. So a recurring builder
+# emits a question PER PERIOD — "Was August 2026 hotter than normal?" rather than "Was this
+# summer hotter than normal?" — and the period comes from THE DATA, not the calendar.
+#
+# That last part is the important one. If the period came from the clock, the machine would
+# publish on schedule whether or not there was anything new to say. Taking it from the latest
+# reading in the series means a monthly builder fires exactly when its metric gains a month, and
+# stays silent otherwise. Recurrence and "never publish filler" end up being the same mechanism.
+# =====================================================================================
+
+MONTHS_LONG = ["January", "February", "March", "April", "May", "June",
+               "July", "August", "September", "October", "November", "December"]
+
+
+def month_label(period: str) -> str:
+    """`2026-08` (or `2026-08-01`) -> `August 2026`."""
+    year, month = period[:4], int(period[5:7])
+    return f"{MONTHS_LONG[month - 1]} {year}"
+
+
+def _slugify(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+def latest_period(today: date, area: str, metric: str) -> str:
+    """The most recent period the series actually holds, as of `today`.
+
+    This is the clock a recurring builder runs on. `thi_source.load_history` already drops the
+    incomplete current month, so this is the last COMPLETE reading — never a partial one.
+    """
+    import thi_source
+    series = {(s.area_id, s.metric): s for s in thi_source.load_history(today)}
+    return series[(area, metric)].points[-1].period[:7]
+
+
+class Builder:
+    """A claim-builder, its writer, and — for a recurring topic — the title it would emit now.
+
+    Iterable as a 2-tuple so `build, write = articles[id]` keeps working; the engine asks for
+    `title_for` separately when deciding whether this topic's CURRENT period is already written.
+    """
+
+    def __init__(self, build, write, title_for=None):
+        self.build, self.write, self.title_for = build, write, title_for
+
+    def __iter__(self):
+        return iter((self.build, self.write))
+
+
+# =====================================================================================
+# Article 3 — was the latest month hotter than normal?
 #
 # The one topic already in `article_topics.yaml` that had no builder. Cheapest to build and
 # highest cadence value: every new month is a new reading against a FIXED reference period, so
@@ -440,47 +494,61 @@ TOPIC_CAPTIONS = {"austin-improvement-boom-cooling": PERMITS_CAPTION}
 # of them and that was a hand-step waiting to rot.
 # =====================================================================================
 
-SUMMER_SLUG = "was-this-texas-summer-hotter-than-normal"
 GSOM_SOURCE = "NOAA NCEI Global Summary of the Month"
-MONTH_NAME = {7: "July", 8: "August"}
+
+
+def summer_title(period: str) -> str:
+    return f"Was {month_label(period)} hotter than normal in Texas?"
+
+
+def summer_slug(period: str) -> str:
+    return _slugify(summer_title(period).rstrip("?"))
+
+
+def summer_title_for(today: date) -> str:
+    return summer_title(latest_period(today, "austin_metro", "cooling_degree_days"))
 
 
 def _summer_facts(today: date) -> dict:
-    """CODE. Each metro's last two summer months against their own 1991-2020 normals."""
+    """CODE. The latest complete month and the one before it, each against its own normal."""
     import thi_source
     series = {(s.area_id, s.metric): s for s in thi_source.load_history(today)}
     facts = {}
     for location, area in (("austin", "austin_metro"), ("san-antonio", "san_antonio_metro")):
         normals, normals_source = thi_source.climate_normals(location)
         cdd = series[(area, "cooling_degree_days")]
-        by_month = {p.period[:7]: p.value for p in cdd.points}
-        rows = {}
-        for period, month in (("2026-08", 8), ("2026-07", 7)):
-            actual, normal = by_month[period], normals[month]
-            rows[month] = {"actual": actual, "normal": normal,
-                           "pct": _pct(actual, normal), "period": period,
-                           "as_of": f"{period}-01"}
+        rows = []
+        for point in cdd.points[-2:][::-1]:          # latest first, then the month before
+            month = int(point.period[5:7])
+            actual, normal = point.value, normals[month]
+            rows.append({"actual": actual, "normal": normal, "pct": _pct(actual, normal),
+                         "period": point.period[:7], "as_of": point.period[:7] + "-01",
+                         "label": month_label(point.period)})
         facts[area] = {"rows": rows, "normals_source": normals_source}
     return facts
 
 
 def build_summer_claims(feed: dict, config: dict, today: date) -> list[Claim]:
-    """CODE. Actuals are `data`; normals are `official` and `timeless`; the gaps are `derived`."""
+    """CODE. Actuals are `data`; normals are `official` and `timeless`; the gaps are `derived`.
+
+    Nothing here names a month. The builder reads whichever two months the series ends on, so
+    the same code produces July's article in August and August's in September.
+    """
     f = _summer_facts(today)
     claims = []
     for tag, area, place in (("A", "austin_metro", "Austin"),
                              ("S", "san_antonio_metro", "San Antonio")):
         normals_source = f[area]["normals_source"]
-        for month, row in f[area]["rows"].items():
-            name = MONTH_NAME[month]
-            actual = f"{row['actual']:.0f} cooling degree-days"
+        for index, row in enumerate(f[area]["rows"]):
+            slot = "1" if index == 0 else "2"        # 1 = the month the article is about
             claims.append(Claim(
-                f"{tag}{month}", f"{place} recorded {actual} in {name} 2026.",
-                tier="data", figure=actual, source=GSOM_SOURCE, as_of=row["as_of"],
-                metric="cooling_degree_days"))
+                f"{tag}{slot}", f"{place} recorded {row['actual']:.0f} cooling degree-days in "
+                                f"{row['label']}.",
+                tier="data", figure=f"{row['actual']:.0f} cooling degree-days",
+                source=GSOM_SOURCE, as_of=row["as_of"], metric="cooling_degree_days"))
             claims.append(Claim(
-                f"{tag}{month}n", f"{place}'s {name} normal is {row['normal']:.1f} "
-                                  f"cooling degree-days.",
+                f"{tag}{slot}n", f"{place}'s {row['label'].split()[0]} normal is "
+                                 f"{row['normal']:.1f} cooling degree-days.",
                 tier="official", figure=f"{row['normal']:.1f} cooling degree-days",
                 source=normals_source, as_of="1991-2020", metric="cooling_degree_days",
                 timeless=True,
@@ -488,15 +556,14 @@ def build_summer_claims(feed: dict, config: dict, today: date) -> list[Claim]:
                       "reading, so the freshness bound does not apply to it."))
             direction = "above" if row["pct"] >= 0 else "below"
             claims.append(Claim(
-                f"{tag}{month}d",
-                f"{place}'s {name} ran {direction} its long-run normal.",
-                tier="derived",
-                figure=f"{abs(row['pct']):.1f}% {direction} normal",
+                f"{tag}{slot}d",
+                f"{place}'s {row['label']} ran {direction} its long-run normal.",
+                tier="derived", figure=f"{abs(row['pct']):.1f}% {direction} normal",
                 source=normals_source, as_of=row["as_of"], metric="cooling_degree_days",
                 derivation=f"{row['actual']:.0f} vs {row['normal']:.1f} = {row['pct']:.1f}%"))
     claims.append(Claim(
         "SX",
-        "We cannot say from a degree-day total how the summer actually felt — the measure "
+        "We cannot say from a degree-day total how the month actually felt — the measure "
         "counts cooling demand, and nothing in it captures humidity, overnight lows, or how "
         "long the heat ran without a break.",
         tier="external", hedged=True))
@@ -504,36 +571,36 @@ def build_summer_claims(feed: dict, config: dict, today: date) -> list[Claim]:
 
 
 def write_summer(topic: dict, claims: list[Claim], feed: dict) -> dict:
-    """THE ONE MODEL CALL for article 3."""
+    """THE ONE MODEL CALL. Language only; the month it names comes from the claims."""
     c = {claim.id: claim for claim in claims}
-    N = c["A8n"].source
+    N = c["A1n"].source
+    this_month = c["A1"].text.rsplit(" in ", 1)[1].rstrip(".")
+    last_month = c["A2"].text.rsplit(" in ", 1)[1].rstrip(".")
+    period = c["A1"].as_of[:7]
+    a_dir = "above" if "above" in c["A1d"].figure else "below"
     body = f"""
 ## The short answer
 
-**One month of it was. The other was not.**
+Austin ran **{c['A1d'].figure}** in {this_month}. San Antonio ran **{c['S1d'].figure}**.
 
-August ran hot in both metros. July did not — in Austin it landed almost exactly on its
-long-run normal. A summer that felt like one long stretch was, in the record, two quite
-different months.
+Those are measured against a fixed 1991-2020 yardstick, not against last year and not against
+how it felt.
 
 ## Austin
 
-August 2026: {c['A8'].figure}, against a normal of {c['A8n'].figure} — {c['A8d'].figure}
-({GSOM_SOURCE} and {N}, as of August 2026).
+{this_month}: {c['A1'].figure}, against a normal of {c['A1n'].figure} — {c['A1d'].figure}
+({GSOM_SOURCE} and {N}, as of {this_month}).
 
-July 2026: {c['A7'].figure}, against a normal of {c['A7n'].figure} — {c['A7d'].figure}. That is
-as close to an ordinary July as the record gets.
-
-So if July felt brutal in Austin, the weather was not the reason. August is where the heat
-actually showed up.
+The month before, {last_month}, came in at {c['A2'].figure} against a normal of
+{c['A2n'].figure} — {c['A2d'].figure}. Two consecutive months, two different answers, which is
+the usual shape of a Texas summer and the reason a single "it was brutal" rarely survives
+contact with the record.
 
 ## San Antonio
 
-August 2026: {c['S8'].figure} against a normal of {c['S8n'].figure} — {c['S8d'].figure}.
-Hotter than normal, but nothing like Austin's gap.
+{this_month}: {c['S1'].figure} against a normal of {c['S1n'].figure} — {c['S1d'].figure}.
 
-July 2026: {c['S7'].figure} against {c['S7n'].figure} — {c['S7d'].figure}, a mild July by its
-own standard.
+{last_month}: {c['S2'].figure} against {c['S2n'].figure} — {c['S2d'].figure}.
 
 ## Why "normal" is doing real work here
 
@@ -544,40 +611,436 @@ than an impression.
 
 Cooling degree-days are the measure underneath it: a count of how far each day sat above the
 comfort baseline, added up across the month. More degree-days means the weather demanded more
-cooling. It is the closest thing to an objective answer to "was it worse this year".
+cooling, which is the closest thing to an objective answer to "was it worse this time".
 
 ## What this does not tell you
 
 {c['SX'].text}
 
-What it does tell you is whether the demand for cooling was unusual. In August, in Austin, it
-clearly was.
+What it does tell you is whether the demand for cooling was unusual — and in {this_month}, in
+Austin, it ran {a_dir} the long-run mark by a margin you can check yourself.
 """
     return {
-        "slug": SUMMER_SLUG,
-        "title": topic["question"],
-        "description": ("Austin's August ran well above its 1991-2020 normal while July landed "
-                        "almost exactly on it. The sourced degree-day record for both metros."),
+        "slug": summer_slug(period),
+        "title": summer_title(period),
+        "description": (f"Austin ran {c['A1d'].figure} in {this_month} and San Antonio "
+                        f"{c['S1d'].figure}, measured against NOAA's 1991-2020 normals."),
         "body": body,
-        "canonical_url": f"https://texashomeintelligence.com/analysis/{SUMMER_SLUG}/",
+        "canonical_url": f"https://texashomeintelligence.com/analysis/{summer_slug(period)}/",
         "embed": {"kind": "table", "series": "austin_metro/cooling_degree_days",
                   "caption": "Austin cooling degree-days by month",
                   "component": "DataStatus + a native data table"},
     }
 
 
-TOPIC_ARTICLES["summer-hotter-than-normal"] = (build_summer_claims, write_summer)
+TOPIC_ARTICLES["summer-hotter-than-normal"] = Builder(
+    build_summer_claims, write_summer, title_for=summer_title_for)
 
-SUMMER_CAPTION = (
-    "\"This summer was brutal.\" Half true, and the record says which half. "
-    "Austin's August demanded 755 cooling degree-days against a 1991-2020 normal of 664.8 — "
-    "13.6% above normal. July? 644 against a normal of 644.8. Dead ordinary. "
-    "San Antonio ran 4.8% above normal in August and 5.6% BELOW it in July "
-    "(source: NOAA NCEI Global Summary of the Month and NOAA NCEI U.S. Climate Normals "
-    "1991-2020, as of 2026-08-01). "
-    "One hot month is not one hot summer, and the difference is measurable. "
-    "Both metros, both months, with the yardstick shown → "
-    "https://texashomeintelligence.com/analysis/was-this-texas-summer-hotter-than-normal/ "
-    "Send this to whoever insisted it was the hottest summer ever."
-)
-TOPIC_CAPTIONS["summer-hotter-than-normal"] = SUMMER_CAPTION
+
+def summer_caption(article: dict, claims: list[Claim]) -> str:
+    c = {claim.id: claim for claim in claims}
+    this_month = c["A1"].text.rsplit(" in ", 1)[1].rstrip(".")
+    return (
+        f"\"It was brutal.\" Maybe — but against what? "
+        f"Austin's {this_month} demanded {c['A1'].figure} against a 1991-2020 normal of "
+        f"{c['A1n'].figure}: {c['A1d'].figure}. San Antonio ran {c['S1d'].figure}. "
+        f"(source: {GSOM_SOURCE} and {c['A1n'].source}, as of {c['A1'].as_of}) "
+        f"A normal is a fixed 30-year yardstick, not last year — which is what turns a feeling "
+        f"into something you can check. "
+        f"Both metros, both months, with the arithmetic shown → {article['canonical_url']} "
+        f"Send this to whoever swears every summer is the hottest one yet."
+    )
+
+
+TOPIC_CAPTIONS["summer-hotter-than-normal"] = summer_caption
+
+# =====================================================================================
+# Article 4 — did the AC rush follow the heat? RECURRING, monthly.
+#
+# Two measured series over the same months: how much cooling the weather demanded, and how many
+# HVAC permits the city issued. The article puts them side by side and refuses to claim a cause.
+# That refusal is the piece: everyone assumes permits track heat, it is checkable, and in the
+# month the heat peaked the permits fell.
+# =====================================================================================
+
+AUSTIN_HVAC_SOURCE = "City of Austin Issued Construction Permits (Socrata)"
+
+
+def acrush_title(period: str) -> str:
+    return f"Did Austin's AC rush follow the heat in {month_label(period)}?"
+
+
+def acrush_slug(period: str) -> str:
+    return _slugify(acrush_title(period).rstrip("?").replace("'", ""))
+
+
+def acrush_title_for(today: date) -> str:
+    return acrush_title(latest_period(today, "austin_metro", "permit_activity_hvac"))
+
+
+def _acrush_facts(today: date) -> dict:
+    """CODE. The latest month and the one before it, for BOTH series, plus where the heat ranks."""
+    import thi_source
+    series = {(s.area_id, s.metric): s for s in thi_source.load_history(today)}
+    cdd = series[("austin_metro", "cooling_degree_days")]
+    hvac = series[("austin_metro", "permit_activity_hvac")]
+    heat = cdd.values
+    rank = sorted(heat, reverse=True).index(heat[-1]) + 1
+    return {
+        "period": hvac.points[-1].period[:7],
+        "as_of": hvac.points[-1].period[:7] + "-01",
+        "cdd_as_of": cdd.points[-1].period[:7] + "-01",
+        "label": month_label(hvac.points[-1].period),
+        "prior_label": month_label(hvac.points[-2].period),
+        "heat_now": heat[-1], "heat_prior": heat[-2],
+        "heat_rank": rank, "heat_months": len(heat),
+        "hvac_now": hvac.values[-1], "hvac_prior": hvac.values[-2],
+        "hvac_pct": _pct(hvac.values[-1], hvac.values[-2]),
+        "heat_pct": _pct(heat[-1], heat[-2]),
+    }
+
+
+def build_acrush_claims(feed: dict, config: dict, today: date) -> list[Claim]:
+    """CODE. Two series, the same two months, and the arithmetic between them."""
+    f = _acrush_facts(today)
+    GSOM = GSOM_SOURCE
+    direction = "rose" if f["hvac_pct"] >= 0 else "fell"
+    return [
+        Claim("H1", f"Austin issued {f['hvac_now']:,.0f} HVAC permits in {f['label']}.",
+              tier="data", figure=f"{f['hvac_now']:,.0f} HVAC permits",
+              source=AUSTIN_HVAC_SOURCE, as_of=f["as_of"], metric="permit_activity_hvac"),
+        Claim("H2", f"HVAC permits {direction} from {f['prior_label']}.",
+              tier="derived",
+              figure=f"{'up' if f['hvac_pct'] >= 0 else 'down'} {abs(f['hvac_pct']):.0f}% "
+                     f"month over month",
+              source=AUSTIN_HVAC_SOURCE, as_of=f["as_of"], metric="permit_activity_hvac",
+              derivation=f"{f['hvac_now']:.0f} ({f['label']}) vs {f['hvac_prior']:.0f} "
+                         f"({f['prior_label']}) = {f['hvac_pct']:.0f}%"),
+        Claim("C1", f"Austin recorded {f['heat_now']:.0f} cooling degree-days in {f['label']}.",
+              tier="data", figure=f"{f['heat_now']:.0f} cooling degree-days",
+              source=GSOM, as_of=f["cdd_as_of"], metric="cooling_degree_days"),
+        Claim("C2", f"That is the most cooling demand in the {f['heat_months']} months we hold.",
+              tier="derived",
+              figure=f"the highest of the last {f['heat_months']} months",
+              source=GSOM, as_of=f["cdd_as_of"], metric="cooling_degree_days",
+              derivation=f"{f['heat_now']:.0f} ranks {f['heat_rank']} of {f['heat_months']} "
+                         f"monthly readings held"),
+        Claim("C3", f"Cooling demand also rose from {f['prior_label']}.",
+              tier="derived", figure=f"up {abs(f['heat_pct']):.0f}% month over month",
+              source=GSOM, as_of=f["cdd_as_of"], metric="cooling_degree_days",
+              derivation=f"{f['heat_now']:.0f} vs {f['heat_prior']:.0f} = {f['heat_pct']:.0f}%"),
+        Claim("H3", f"Austin issued {f['hvac_prior']:,.0f} HVAC permits in {f['prior_label']}.",
+              tier="data", figure=f"{f['hvac_prior']:,.0f} HVAC permits",
+              source=AUSTIN_HVAC_SOURCE, as_of=f["as_of"], metric="permit_activity_hvac"),
+        Claim("HX",
+              "We cannot say from these two series why they moved apart. A permit is filed "
+              "days or weeks after the decision to replace a system, and nothing here measures "
+              "that lag, installer capacity, or how many units simply kept running.",
+              tier="external", hedged=True),
+    ]
+
+
+def write_acrush(topic: dict, claims: list[Claim], feed: dict) -> dict:
+    """THE ONE MODEL CALL — but the ANSWER is not the model's to choose.
+
+    A recurring builder that freezes its conclusion in prose publishes a false claim the first
+    month the data flips. This one asked "did the rush follow the heat?" and answered "no, they
+    moved in opposite directions" — true of August, and flatly contradicted by July's own table,
+    where both series rose. No gate catches that: G1 checks numerals, G2 checks sources, and
+    neither reads an argument. So the verdict is COMPUTED from the two directions and the prose
+    branches on it. The model writes both branches; the data picks.
+    """
+    c = {claim.id: claim for claim in claims}
+    period = c["H1"].as_of[:7]
+    label = month_label(period)
+    prior = c["H3"].text.rsplit(" in ", 1)[1].rstrip(".")
+    permits_up = c["H2"].figure.startswith("up")
+    heat_up = c["C3"].figure.startswith("up")
+    diverged = permits_up != heat_up
+
+    if diverged:
+        verdict = "**No — they moved in opposite directions.**"
+        opener = (f"{label} was the hottest month Austin has had in the record we hold: "
+                  f"{c['C1'].figure}, {c['C2'].figure} ({GSOM_SOURCE}, as of {label}). "
+                  f"HVAC permits went the other way: {c['H1'].figure}, {c['H2'].figure} "
+                  f"({AUSTIN_HVAC_SOURCE}, as of {label}).")
+        reading = ("**cooling demand is not a live indicator of HVAC work being started.** If "
+                   "you are timing a replacement and assuming the rush follows the thermometer, "
+                   "the filing record does not support that.")
+    else:
+        verdict = "**This month, yes — both moved the same way.**"
+        opener = (f"Cooling demand in {label} came to {c['C1'].figure} ({GSOM_SOURCE}, as of "
+                  f"{label}), and HVAC permits moved with it: {c['H1'].figure}, "
+                  f"{c['H2'].figure} ({AUSTIN_HVAC_SOURCE}, as of {label}). One month of "
+                  f"agreement is not a rule, but it is what this month shows.")
+        reading = ("**the two moved together this month.** That is worth recording precisely "
+                   "because it does not always happen — and a single month either way is a "
+                   "reading, not a relationship.")
+
+    body = f"""
+## The short answer
+
+{verdict}
+
+{opener}
+
+## The two series, side by side
+
+The assumption is reasonable — it gets hot, systems fail, people replace them — and it is
+checkable, which is the only reason it is worth writing about.
+
+| {label} | Reading | Against {prior} |
+|---|---|---|
+| Cooling demand | {c['C1'].figure} | {c['C3'].figure} |
+| HVAC permits | {c['H1'].figure} | {c['H2'].figure} |
+
+In {prior}, Austin issued {c['H3'].figure}.
+
+## What we are not going to tell you
+
+{c['HX'].text}
+
+The honest read is narrower and more useful: {reading}
+
+## Why it might matter to you
+
+The month everyone expects installers to be busiest is not the month the filings peak. If you
+are getting quotes, that gap is the part worth knowing — and it is measurable, which is more
+than can be said for most advice about when to call someone.
+"""
+    return {
+        "slug": acrush_slug(period),
+        "title": acrush_title(period),
+        "description": (f"Austin's cooling demand and HVAC permit filings in {label}, two "
+                        f"measured series side by side, with no cause claimed."),
+        "body": body,
+        "canonical_url": f"https://texashomeintelligence.com/analysis/{acrush_slug(period)}/",
+        "embed": {"kind": "table", "series": "austin_metro/permit_activity_hvac",
+                  "caption": "Austin HVAC permits issued, by month",
+                  "component": "DataStatus + a native data table"},
+    }
+
+
+TOPIC_ARTICLES["austin-ac-rush-vs-heat"] = Builder(
+    build_acrush_claims, write_acrush, title_for=acrush_title_for)
+
+
+def acrush_caption(article: dict, claims: list[Claim]) -> str:
+    c = {claim.id: claim for claim in claims}
+    label = month_label(c["H1"].as_of[:7])
+    permits_up = c["H2"].figure.startswith("up")
+    heat_up = c["C3"].figure.startswith("up")
+    hook = ("Hottest month of the year, and Austin's AC filings went the OTHER way."
+            if permits_up != heat_up else
+            "Austin's heat and its AC filings moved together this month — which they do not "
+            "always do.")
+    return (
+        f"{hook} "
+        f"{label} brought {c['C1'].figure} — {c['C2'].figure}. "
+        f"HVAC permits: {c['H1'].figure}, {c['H2'].figure} "
+        f"(source: {AUSTIN_HVAC_SOURCE} and {GSOM_SOURCE}, as of {c['H1'].as_of}). "
+        f"We can't tell you why from a permit count, and we're not going to guess. "
+        f"Both series, same months, with the arithmetic shown → {article['canonical_url']} "
+        f"Send this to whoever's waiting for the rush to die down before calling."
+    )
+
+
+TOPIC_CAPTIONS["austin-ac-rush-vs-heat"] = acrush_caption
+
+
+# =====================================================================================
+# Article 5 — is San Antonio's home-improvement boom cooling off? RECURRING, monthly.
+#
+# The same question as Austin's, asked of a different city, and it gets a different answer —
+# which is the argument for a separate article rather than a comparison. Permit counts are
+# comparable only INSIDE one city's own filing system (THI CLAUDE.md), so nothing here mentions
+# Austin at all.
+#
+# The verdict is COUNTED, not written: how many trades sit above their own baseline versus
+# below. A recurring builder that hardcodes "the boom is holding" publishes a false claim the
+# first month it stops holding (the lesson from article 4).
+# =====================================================================================
+
+SA_PERMITS_SOURCE = "City of San Antonio Permits Open Data"
+SA_TRADES = ("hvac", "roofing", "solar", "plumbing", "electrical", "foundation", "trees")
+TRADE_NAME = {"hvac": "HVAC", "roofing": "roofing", "solar": "solar", "plumbing": "plumbing",
+              "electrical": "electrical", "foundation": "foundation", "trees": "tree"}
+
+
+def sa_title(period: str) -> str:
+    return f"Is San Antonio's home-improvement boom cooling off? ({month_label(period)})"
+
+
+def sa_slug(period: str) -> str:
+    return _slugify(f"san-antonio-home-improvement-boom-{month_label(period)}")
+
+
+def sa_title_for(today: date) -> str:
+    return sa_title(latest_period(today, "san_antonio_metro", "permit_activity_hvac"))
+
+
+def _sa_facts(today: date) -> dict:
+    """CODE. Every San Antonio trade against its OWN preceding months."""
+    import thi_source
+    series = {(s.area_id, s.metric): s for s in thi_source.load_history(today)}
+    rows = {}
+    for trade in SA_TRADES:
+        key = ("san_antonio_metro", f"permit_activity_{trade}")
+        if key not in series:
+            continue
+        values = series[key].values
+        baseline = sum(values[:-1]) / len(values[:-1])
+        rows[trade] = {"latest": values[-1], "prior": values[-2], "baseline": baseline,
+                       "months": len(values) - 1,
+                       "base_pct": _pct(values[-1], baseline),
+                       "mom_pct": _pct(values[-1], values[-2]),
+                       "as_of": series[key].points[-1].period[:7] + "-01",
+                       "period": series[key].points[-1].period[:7]}
+    above = [t for t, r in rows.items() if r["base_pct"] >= 0]
+    # The card leads on whichever trade has moved furthest from its own normal, in either
+    # direction — so the hero is chosen by the data, and next month it may be a different trade.
+    standout = max(rows, key=lambda t: abs(rows[t]["base_pct"]))
+    weakest = min(rows, key=lambda t: rows[t]["base_pct"])
+    return {"rows": rows, "above": above, "standout": standout, "weakest": weakest,
+            "period": rows[standout]["period"], "as_of": rows[standout]["as_of"]}
+
+
+def build_sa_claims(feed: dict, config: dict, today: date) -> list[Claim]:
+    """CODE. One data claim and one derived claim per trade, all San Antonio against itself."""
+    f = _sa_facts(today)
+    claims = []
+    order = [f["standout"]] + [t for t in SA_TRADES if t in f["rows"] and t != f["standout"]]
+    for index, trade in enumerate(order):
+        row = f["rows"][trade]
+        name = TRADE_NAME[trade]
+        tag = f"T{index}"
+        claims.append(Claim(
+            tag, f"San Antonio issued {row['latest']:,.0f} {name} permits in "
+                 f"{month_label(row['period'])}.",
+            tier="data", figure=f"{row['latest']:,.0f} {name} permits",
+            source=SA_PERMITS_SOURCE, as_of=row["as_of"],
+            metric=f"permit_activity_{trade}"))
+        direction = "above" if row["base_pct"] >= 0 else "below"
+        claims.append(Claim(
+            f"{tag}d", f"{name.capitalize()} filings are running {direction} their own "
+                       f"recent pace.",
+            tier="derived",
+            figure=f"{abs(row['base_pct']):.0f}% {direction} its {row['months']}-month average",
+            source=SA_PERMITS_SOURCE, as_of=row["as_of"], metric=f"permit_activity_{trade}",
+            derivation=f"{row['latest']:.0f} vs a {row['months']}-month mean of "
+                       f"{row['baseline']:.0f} = {row['base_pct']:.0f}%"))
+    # THE TALLY IS A CLAIM. The article's whole answer is "how many trades are above their own
+    # pace", which is a derived figure like any other — G1 rightly refused the prose until the
+    # count had a claim behind it and a derivation naming which trades were counted.
+    above_names = [TRADE_NAME[t] for t in SA_TRADES if t in f["rows"]
+                   and f["rows"][t]["base_pct"] >= 0]
+    below_names = [TRADE_NAME[t] for t in SA_TRADES if t in f["rows"]
+                   and f["rows"][t]["base_pct"] < 0]
+    claims.append(Claim(
+        "TALLY",
+        f"{len(above_names)} of San Antonio's {len(f['rows'])} filed trades are running at or "
+        f"above their own recent average.",
+        tier="derived",
+        figure=f"{len(above_names)} of {len(f['rows'])} trades above their own average",
+        source=SA_PERMITS_SOURCE, as_of=f["as_of"],
+        metric=f"permit_activity_{f['standout']}",
+        derivation=f"above: {', '.join(above_names)}; below: {', '.join(below_names)}"))
+    claims.append(Claim(
+        "TX",
+        "We cannot say from a filing count why any trade moved. A permit records that work was "
+        "started, never what it cost, who did it, or why they chose now.",
+        tier="external", hedged=True))
+    return claims
+
+
+def write_sa(topic: dict, claims: list[Claim], feed: dict) -> dict:
+    """THE ONE MODEL CALL. The verdict is counted from the data, never asserted."""
+    import thi_source                                      # noqa: F401 (facts recomputed below)
+    c = {claim.id: claim for claim in claims}
+    period = c["T0"].as_of[:7]
+    label = month_label(period)
+    # The per-trade claim ids are T0, T1, … and their derived partners T0d, T1d, … "TALLY" and
+    # "TX" are not trades, and matching them by prefix is how `TALLYd` got looked up.
+    trades = [k for k in c if re.fullmatch(r"T\d+", k)]
+    trades.sort(key=lambda k: int(k[1:]))
+    above = [k for k in trades if "above" in c[k + "d"].figure]
+    below = [k for k in trades if "below" in c[k + "d"].figure]
+    holding = len(above) >= len(below)
+
+    verdict = ("**Mostly no — more trades are running above their own pace than below it.**"
+               if holding else
+               "**More of it is than is not — most trades are below their own recent pace.**")
+    rows = "\n".join(
+        f"| {c[k].figure.split(' ', 1)[1].replace(' permits', '').capitalize()} "
+        f"| {c[k].figure} | {c[k + 'd'].figure} |" for k in trades)
+
+    body = f"""
+## The short answer
+
+{verdict}
+
+{c['TALLY'].figure} in {label} ({SA_PERMITS_SOURCE}, as of {label}). Each trade is measured
+against its own preceding months, so "above" means busier than that trade has been, not busier
+than some other city.
+
+## Every trade, against its own history
+
+A boom that is ending shows up as filings dropping below where that trade has been running. So
+each trade is measured against its own preceding months — never against another city, and never
+against a dollar figure. Permit counts say how much work is being started; they say nothing
+whatever about what it costs.
+
+| Trade | {label} | Against its own average |
+|---|---|---|
+{rows}
+
+## The standout
+
+{c['T0'].text} That is {c['T0d'].figure} — the widest gap from its own normal of any trade in
+the city this month.
+
+## What we are not going to tell you
+
+{c['TX'].text}
+
+## Why this is San Antonio only
+
+Permit systems differ by city: what needs a permit, how trades are categorised, and how quickly
+filings are recorded all vary. Comparing San Antonio's counts to another city's would be
+comparing two filing systems, not two markets. Against its own record, though, the question has
+a real answer — and this month, that answer is above the line.
+"""
+    return {
+        "slug": sa_slug(period),
+        "title": sa_title(period),
+        "description": (f"Every San Antonio trade measured against its own recent pace for "
+                        f"{label}, from the city's own permit record."),
+        "body": body,
+        "canonical_url": f"https://texashomeintelligence.com/analysis/{sa_slug(period)}/",
+        "embed": {"kind": "table",
+                  "series": f"san_antonio_metro/{c['T0'].metric.replace('permit_activity_', 'permit_activity_')}",
+                  "caption": f"San Antonio permits issued, by month",
+                  "component": "DataStatus + a native data table"},
+    }
+
+
+TOPIC_ARTICLES["san-antonio-improvement-boom"] = Builder(
+    build_sa_claims, write_sa, title_for=sa_title_for)
+
+
+def sa_caption(article: dict, claims: list[Claim]) -> str:
+    c = {claim.id: claim for claim in claims}
+    label = month_label(c["T0"].as_of[:7])
+    return (
+        f"\"Nobody's building in San Antonio right now.\" The city's own permit record, {label}: "
+        f"{c['T0'].figure}, {c['T0d'].figure} — the widest gap from its own normal of any trade. "
+        f"(source: {SA_PERMITS_SOURCE}, as of {c['T0'].as_of}) "
+        f"Every trade is measured against its OWN history, never another city's — different "
+        f"cities, different filing systems. "
+        f"We can't tell you why anything moved, and we're not going to guess. "
+        f"All seven trades, with the arithmetic → {article['canonical_url']} "
+        f"Send this to whoever's been told the work has dried up."
+    )
+
+
+TOPIC_CAPTIONS["san-antonio-improvement-boom"] = sa_caption

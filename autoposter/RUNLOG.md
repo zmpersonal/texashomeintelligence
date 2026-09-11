@@ -1633,3 +1633,60 @@ from main. The fit pass lives in PR #47, so article 3's card cannot render until
 claims carry the reading's date while citing the dataset they were derived from. To a crawler
 that reads as three sources. Now one row per dataset, dated from the record that actually
 carries the date.
+
+## Round 19 — 2026-09-11 — recurrence, and two more builders
+
+### 118. Recurrence: a builder becomes a subscription
+A builder that emits one fixed question is spent the moment it publishes — the already-written
+exclusion sees the title and retires the topic forever. Three changes fix that:
+
+- **The period comes from THE DATA, not the clock.** `latest_period()` reads the last complete
+  reading in the series. A monthly builder fires exactly when its metric gains a month and stays
+  silent otherwise, so recurrence and "never publish filler" turn out to be the same mechanism.
+- **Titles and slugs are period-specific.** "Was August 2026 hotter than normal in Texas?"
+- **Exclusion moved from the topic to the period.** `_current_title()` asks a recurring builder
+  what it would emit right now; publishing July no longer retires the topic.
+
+Proven against two REAL consecutive cycles rather than a date-formatting trick: on 2026-08-15
+the history ends in July and on 2026-09-11 it ends in August, and the builders follow. Both
+periods produce a valid article, different figures, and the second passes the duplicate gate
+against the first.
+
+### 119. 🔴 THE DEFECT THAT MATTERS MOST THIS ROUND — a frozen verdict
+Builder 4's first draft answered its own question in prose: *"No — they moved in opposite
+directions."* True of August. **Flatly contradicted by July's own table**, where both series
+rose. **No gate catches this.** G1 checks numerals, G2 checks sources, C1a/C1b check the card's
+slots — and none of them reads an argument. A recurring builder that freezes its conclusion
+publishes a false claim the first month the data flips, on a timer, with every gate green.
+
+The verdict is now COMPUTED from the two directions and the prose branches on it; the model
+writes both branches and the data picks. The caption too — a caption asserting divergence every
+month is the same defect delivered to the people who only read captions. A test asserts July
+says "both moved the same way" and August says "opposite directions".
+
+This generalises: **anything a recurring builder asserts must be derived, not written.** The
+gates protect figures; they do not protect claims about figures.
+
+### 120. Builders 4 and 5
+- **`austin-ac-rush-vs-heat`** — 7 claims. Cooling demand hit the highest of the 12 months held
+  while HVAC permits fell 15%. Two measured series, no cause claimed, and the article says so.
+- **`san-antonio-improvement-boom`** — 16 claims. 4 of 7 trades above their own average; tree
+  permits 103% above theirs. Never mentions Austin: permit counts are comparable only inside one
+  city's filing system, asserted by a test.
+
+**The tally is a claim.** G1 refused the San Antonio prose until "4 of 7 trades" had a claim and
+a derivation naming which trades were counted — the article's whole answer is a count, so the
+count is a derived figure like any other. Widen what the story supplies, never the gate.
+
+### 121. A regex artifact, fixed
+`_extract_numerals` absorbed a sentence-ending period, so "…in August 2026." extracted as
+"2026." and tripped G1 on a year the ledger plainly carries. A decimal point now only counts
+when digits follow it. Strictly more correct, not looser.
+
+### 122. 🔴 OWNER ACTION — two builders are unreachable
+`topic_scorer` ranks only what is in `article_topics.yaml`, which is owner-tunable and the model
+never touches. `austin-ac-rush-vs-heat` and `san-antonio-improvement-boom` are written, tested
+and proven, and **can never be selected** until their entries exist. The exact YAML is at the
+foot of `specs/TOPIC-BACKLOG.md`.
+
+**209/209 across nine suites, defined == run.**
