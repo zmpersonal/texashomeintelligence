@@ -1,0 +1,101 @@
+---
+/**
+ * One analysis article. The article stream is THI's citable layer: a
+ * question-shaped headline, the direct answer high on the page, and every
+ * figure carrying its source and `as_of`.
+ *
+ * DEPLOY-ON-COMMAND. `getStaticPaths` returns only `published: true` entries,
+ * so an unpublished article produces no route, no URL and no sitemap entry —
+ * it cannot be reached, indexed or linked by accident. Going live is a
+ * one-field change, which is the explicit step SECURITY.md requires rather
+ * than something a merge can do quietly.
+ *
+ * Nothing here is new machinery: the layout, breadcrumbs, provenance badge and
+ * table markup are the ones the data pages already use, so an article renders
+ * with the same instrument-panel grammar as the rest of the site.
+ */
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import DataStatus from "../../components/DataStatus.astro";
+import { findDataset, freshnessOf } from "../../lib/datasets";
+
+// Unannotated on purpose: an explicit `GetStaticPaths` type erases the props
+// inference, and `Astro.props` degrades to `unknown`. The data pages do the
+// same for the same reason.
+export async function getStaticPaths() {
+  const articles = await getCollection("analysis", ({ data }) => data.published === true);
+  return articles.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props as { entry: CollectionEntry<"analysis"> };
+const { Content } = await render(entry);
+const { title, description, publishedAt, updatedAt, sources, embed } = entry.data;
+
+// The live-data embed. Rendered from the committed series at build time — the
+// serving path never fetches (COST.md), and the numbers on the page are the
+// same ones the article's claims were verified against.
+const [datasetId, location] = (embed?.series ?? "/").split("/");
+const dataset = embed ? findDataset<{ pricePerKwhCents?: number }>(datasetId, location) : undefined;
+const rows = dataset
+  ? [...dataset.observations].sort((a, b) => b.observedAt.localeCompare(a.observedAt)).slice(0, 14)
+  : [];
+const freshness = dataset ? freshnessOf(dataset) : undefined;
+---
+
+<Base
+  title={title}
+  description={description}
+  article={{ datePublished: publishedAt, dateModified: updatedAt ?? publishedAt, section: "Analysis" }}
+>
+  <Breadcrumbs
+    crumbs={[
+      { name: "Home", url: "/" },
+      { name: "Analysis", url: "/analysis/" },
+      { name: title, url: `/analysis/${entry.id}/` },
+    ]}
+  />
+
+  <article class="analysis">
+    <h1>{title}</h1>
+    <p class="analysis-standfirst">{description}</p>
+
+    <Content />
+
+    {embed && dataset && rows.length > 0 && (
+      <section class="analysis-embed">
+        <h2>The underlying series</h2>
+        <DataStatus
+          status={dataset.status === "live" ? "current" : "sample"}
+          asOf={freshness?.asOf}
+          source={dataset.source.name}
+        />
+        <div class="table-scroll">
+          <table class="data-table">
+            <caption>{embed.caption}</caption>
+            <thead>
+              <tr><th scope="col">Month</th><th scope="col">Cents per kWh</th></tr>
+            </thead>
+            <tbody>
+              {rows.map((o) => (
+                <tr>
+                  <td>{o.observedAt.slice(0, 7)}</td>
+                  <td>{o.value.pricePerKwhCents ?? "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    )}
+
+    <footer class="analysis-sources">
+      <h2>Sources</h2>
+      <ul>
+        {sources.map((s: { name: string; asOf: string }) => (
+          <li>{s.name} — as of {s.asOf}</li>
+        ))}
+      </ul>
+    </footer>
+  </article>
+</Base>
