@@ -267,3 +267,49 @@ The card has to be right before the post goes out, which is the gate's job in th
 3. **The mark on the card.** Brand kit §8 specifies a stacked lockup for share cards; the repo
    has a horizontal one. Recommendation: horizontal, small, top-left — a card whose job is to
    show a number should not spend its top third on a logo.
+
+---
+
+## Brand-kit deviations on record (approved 2026-09-11)
+
+The kit is the canonical brand system. Where the cards depart from it, the departure is a
+decision with a reason, recorded here so a future round reads it as intent rather than drift.
+Anyone rebuilding the card template should start by reading this list and either keeping each
+call or overturning it deliberately.
+
+### 1. Horizontal lockup, not the stacked lockup §8 specifies for share cards
+**The kit says:** "Provide horizontal lockup (default), stacked lockup (share cards, app),
+and mark-only."
+
+**The cards use:** the horizontal lockup, small, top-left.
+
+**Why:** a stacked lockup is a block of identity roughly three times the height of a
+horizontal one, and it sits in the only part of a 1200×630 card a reader looks at before
+deciding to click. THI's differentiator is the number, not the mark. A card whose job is to
+show a figure should not spend its top third on a logo. The lockup still carries identity at
+small size, and the card's whole visual language — Depth Navy, Newsreader, mono numerals,
+one amber accent — is the brand doing the identifying.
+
+**What would overturn it:** a card format where the mark IS the message (a pure announcement
+card with no figure), or evidence that attribution is being lost when cards are reshared.
+
+### 2. IBM Plex Mono 400 for the hero numeral, where §6 asks for 500
+**The kit says:** "Dashboard number: Plex Mono 500, font-feature-settings: 'tnum' 1, leading 1.0."
+
+**The cards use:** Plex Mono 400, `tnum`, leading 1.0.
+
+**Why:** the repo self-hosts six faces (`site/public/fonts/`) and Plex Mono 500 is not among
+them — only 400 and 700. Adding a seventh face means a new file under `site/public/fonts/`,
+which is outside the eight paths approved for this crossing. Between the two available
+weights, 400 at 140px is the one that reads as an instrument; 700 at that size reads as an
+alarm, which is the exact register the brand essence rules out.
+
+**What would overturn it:** adding Plex Mono 500 to the font set in a round that is allowed to
+touch `public/fonts/` and `sync-fonts.mjs`. At that point this should revert to spec. The
+template holds the weight in one constant so it is a one-line change.
+
+### 3. Amber appears only as a rule, never as text
+Not a deviation — it is §5's accessibility flag applied ("never put Caliche Amber text on
+Meridian Navy for small sizes; use `#E8EDF4` and let amber be a shape or underline"). Recorded
+here because the obvious future "improvement" is to set the hero figure in amber, and that is
+the one thing this palette explicitly forbids on navy.

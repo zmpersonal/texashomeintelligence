@@ -1239,3 +1239,12 @@ nothing else outside `autoposter/`, nothing written. Approach follows the repo's
 for generated images (a script whose output is committed, `generate-icons.mjs`) and reuses the
 Chromium resolver the render replays already ship, so it adds no dependency. Figures come from
 the claim ledger through frontmatter; the renderer never computes one. Not built, not applied.
+
+### 80. OG card — minimum approved, brand-kit deviations recorded
+Owner approved the minimum build and all three calls: short source label on the face with the
+full agency name in alt text, horizontal mark rather than the kit's stacked share-card lockup,
+and the engine/gate/promo work deferred to its own round so a visual judgement is not bundled
+with L14-shaped gate work. The two deliberate departures from `THI-Brand-Kit.md` are written up
+in `specs/OG-CARD-PROPOSAL.md` under "Brand-kit deviations on record", each with the reason and
+what would overturn it — a decision on record, not drift. A third entry records the one rule the
+palette explicitly forbids (amber text on navy) because it is the obvious future "improvement".
