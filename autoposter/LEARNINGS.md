@@ -198,3 +198,29 @@ them was asked.
 **Proposed rule:** when a round's deliverable is a pull request, the scope assertion is
 `git diff --name-only <base>...<head>` — the diff a reviewer will actually see — and it is run
 *after* pushing, not before committing. A per-commit check is a useful extra, never the answer.
+
+## L12 — A main-cut branch strips `autoposter/` from disk, and its own `.gitignore` with it
+**Status:** `candidate` · **Affects:** any round that opens a `site/`-only PR ·
+**Evidence:** RUNLOG 2026-09-11 §60.
+
+Standing on a branch cut from `main` removes every tracked file under `autoposter/`, because
+`main` has never contained that folder. What stays behind is only what git does not track:
+`private/` and `__pycache__`. And because **`autoposter/.gitignore` is itself one of the files
+that got removed**, the rules that would have hidden those leftovers are gone too — so
+`git status` reports `?? autoposter/` and a tidy-the-tree reflex says "commit this".
+
+Committing it is the worst available move, twice over:
+1. It destroys the scope of the very PR the branch exists to keep small — the L11 failure again,
+   one layer down.
+2. It publishes `private/ROTATION.md` — the network-topology file the publication standard exists
+   to keep out of a public repo.
+
+**Rule:** never resolve `?? autoposter/` by committing. Switch back to an `autoposter/*` branch,
+where `.gitignore` exists and the tree reads clean. Delete `__pycache__` freely; never delete
+`private/`.
+
+**Second-order note worth keeping:** the diagnostic itself misfired here. A `cmp` loop run
+against paths that do not exist on the current branch reported all 44 files as DIFFERING, which
+read as data loss and was purely an artifact of the missing working-tree files. A check that
+cannot distinguish "absent" from "changed" will invent an emergency. Confirm the file exists
+before comparing it.

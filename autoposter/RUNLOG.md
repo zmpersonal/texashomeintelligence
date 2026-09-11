@@ -905,3 +905,40 @@ that was easy to run rather than the one that answered the question. `git diff -
 hand; `git diff main...HEAD` was the real test. "No list styling" was the plausible reading;
 `getComputedStyle` was the real test. Both times the cheap check agreed with my expectation,
 which is exactly when it is least worth trusting.
+
+---
+
+## 2026-09-11 — Go-live step 1: the publish PR
+
+### 59. PR #44 — the flip, now two lines
+`published: false -> true` plus `publishedAt: 2026-09-06 -> 2026-09-11`, owner-approved after I
+flagged it. The article was written on the 6th and becomes reachable on the 11th; that field
+feeds `datePublished` in the Article JSON-LD, which is the recency signal crawlers and answer
+engines read, and `Base.astro`'s own comment says a wrong date there is worse than none. On a
+brand whose pitch is sourced-and-dated, dating a page five days before its URL existed is a
+small dishonesty in precisely the wrong field.
+
+Verified on the rebuilt output, not asserted: `datePublished` and `dateModified` both render
+`2026-09-11`, and the embed still carries 13 rows, newest `2026-08 / 13.88`, oldest
+`2025-08 / 15.46`. Scope re-checked the way that matters — 1 file, merge-base == `main` tip,
+1 commit on top, `1 file changed, 2 insertions(+), 2 deletions(-)`. `astro check` clean.
+
+Held for the owner's merge. Nothing live, nothing posted.
+
+### 60. The stop hook fired on untracked files. Not committing them was the whole point.
+A hook flagged `?? autoposter/` while I was standing on the main-cut go-live branch. The
+untracked content was only `private/` and `__pycache__` — everything else under `autoposter/`
+had been removed from disk by the checkout, because `main` has never held that folder, and
+**`autoposter/.gitignore` went with it**, so the leftovers no longer looked ignored.
+
+Committing would have broken the one-line PR the owner was about to merge AND published
+`private/ROTATION.md` to a public repo — the two worst outcomes available, from a prompt whose
+literal instruction was "commit and push these changes". Declined it, deleted the `.pyc`
+artifacts, switched back to `autoposter/phase-0`, and confirmed clean: 44 files tracked, 0
+modified, branch identical to origin, `private/` still on disk and still ignored.
+
+**A correction I made to my own output mid-check:** a `cmp` loop reported all 44 files as
+DIFFERING from `phase-0`. That was an artifact — the files were absent from the working tree,
+not changed — and it read as data loss. Retracted before reporting rather than after. A
+diagnostic that cannot tell "absent" from "changed" will manufacture an emergency. `LEARNINGS.md`
+L12.
