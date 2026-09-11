@@ -85,3 +85,23 @@ topics:
       Crime rankings tied to where people live collide with the calm-not-alarm brand and with
       Fair-Housing steering liability. ARTICLE-ENGINE.thi.md gates this until calm authority is
       established, and only ever as "is the perception true", never "which area is dangerous".
+
+    - id: austin-ac-rush-vs-heat
+    question: "Does Austin's AC rush follow the heat?"
+    requires_metrics: [permit_activity_hvac, cooling_degree_days]
+    public_interest: 0.65
+    money: false
+    brand_safety_risk: 0.0
+    # Two measured series over the same months, and no causal claim between them. Permit
+    # counts stay an activity instrument: within one city, never a price.
+    single_city_only: true
+
+  - id: san-antonio-improvement-boom
+    question: "Is San Antonio's home-improvement boom cooling off?"
+    requires_metrics: [permit_activity_roofing, permit_activity_hvac, permit_activity_solar]
+    public_interest: 0.55
+    money: false
+    brand_safety_risk: 0.0
+    # The Austin question asked of the other metro, as a SEPARATE article. Permit counts are
+    # comparable only inside one city's own filing system, so the piece never mentions Austin.
+    single_city_only: true
