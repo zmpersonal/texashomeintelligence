@@ -175,7 +175,10 @@ def build_card(article: dict, claims: list[claim_ledger.Claim]) -> dict:
 def sidecar_path(slug: str, config: dict) -> Path:
     directory = (config.get("publish") or {}).get(
         "og_sidecar_dir", "../site/src/data/og-cards")
-    return (ROOT / directory / f"{slug}.json").resolve()
+    # An absolute path is used as given, so a test can point at a temp copy instead of editing
+    # the real sidecar under site/ to prove a point.
+    base = Path(directory)
+    return (base if base.is_absolute() else ROOT / directory).resolve() / f"{slug}.json"
 
 
 def verify_card(card: dict, claims: list[claim_ledger.Claim], *, slug: str = "",

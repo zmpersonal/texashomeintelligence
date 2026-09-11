@@ -1429,3 +1429,16 @@ missing is a clock, a way to say yes from a phone, and — the real blocker — 
 article is a write to `site/`, which no approval design can automate away. Three options for that
 crossing, recommendation manual-merge for now. For Slack, recommendation is reply-polling rather
 than an approval endpoint on the brand's own domain. No response always means HOLD.
+
+### 97. A test was writing into `site/`
+The full suite left the repo dirty: `test_media_follows_the_RENDERED_CARD_rather_than_a_constant`
+edited the REAL sidecar under `site/` and restored it afterwards — except the restore was not
+byte-faithful (it re-encoded `¢` as `¢`), so a tracked file outside this project's boundary
+came back changed. Caught by `git status` after the suite, not by the suite.
+
+Two things wrong with one test: it wrote outside `autoposter/` at all, and it trusted a
+round-trip it never verified. It now writes a COPY into a temp directory and points config at
+it; `card.sidecar_path` honours an absolute path so that is possible. A test that edits the repo
+to prove a point is a test that can corrupt it.
+
+**The suite now leaves the tree clean, checked after running all eight.**

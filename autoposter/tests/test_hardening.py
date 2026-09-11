@@ -106,16 +106,24 @@ def test_media_follows_the_RENDERED_CARD_rather_than_a_constant():
     """
     if not _card_rendered():
         return
-    sidecar = card_mod.sidecar_path(SLUG, CFG)
-    original = json.loads(sidecar.read_text())
-    sidecar.write_text(json.dumps(dict(original, path="/images/og/moved/elsewhere.png")))
-    try:
-        post, _ = _promo()
-        assert post["media_url"] == "https://texashomeintelligence.com/images/og/moved/elsewhere.png"
-        origin = "/".join(post["destination_url"].split("/")[:3])
-        assert post["media_url"].startswith(origin + "/")
-    finally:
-        sidecar.write_text(json.dumps(original, indent=2) + "\n")
+    # A COPY, in a temp directory, pointed at by config. The first version of this test wrote
+    # to the real sidecar under site/ and restored it afterwards — which is a test mutating a
+    # tracked file outside this project's boundary, and its restore was not byte-faithful (it
+    # re-encoded "¢" as an escape and left the repo dirty). A test that edits the repo to prove
+    # a point is a test that can corrupt it.
+    original = json.loads(card_mod.sidecar_path(SLUG, CFG).read_text())
+    temp_dir = Path(tempfile.mkdtemp())
+    (temp_dir / f"{SLUG}.json").write_text(
+        json.dumps(dict(original, path="/images/og/moved/elsewhere.png")))
+    cfg = _cfg_unposted()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=str(temp_dir))
+    r = engine.run("thi", write_fn=run_article.write,
+                   build_claims_fn=run_article.build_claims, today=TODAY)
+    post, _ = engine.build_facebook_promo(r["article"], r["claims"], cfg, TODAY,
+                                          link_opener=OK_LINK, media_opener=OK_LINK)
+    assert post["media_url"] == "https://texashomeintelligence.com/images/og/moved/elsewhere.png"
+    origin = "/".join(post["destination_url"].split("/")[:3])
+    assert post["media_url"].startswith(origin + "/")
 
 
 def test_the_derived_media_is_what_the_gate_actually_checks():
