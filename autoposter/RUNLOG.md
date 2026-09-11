@@ -1231,3 +1231,11 @@ put back deliberately, the suite run, the file reverted:
 | `verify_opener` given a default | `test_there_is_no_publish_path_that_skips_verification` |
 
 A test that has only ever been observed passing has not been shown to test anything.
+
+### 79. Per-article OG card — proposal only (2026-09-11)
+The live preview pulled the sitewide logo card: no card of its own, so the default filled in.
+`specs/OG-CARD-PROPOSAL.md` is the assessment and the exact 🔴 diff — eight files under `site/`,
+nothing else outside `autoposter/`, nothing written. Approach follows the repo's own convention
+for generated images (a script whose output is committed, `generate-icons.mjs`) and reuses the
+Chromium resolver the render replays already ship, so it adds no dependency. Figures come from
+the claim ledger through frontmatter; the renderer never computes one. Not built, not applied.
