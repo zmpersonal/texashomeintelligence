@@ -92,6 +92,12 @@ const REQUIRED = ["question", "headline", "subhead", "source", "asOf"];
 const SOURCE_FULL = {
   EIA: "U.S. Energy Information Administration",
   NOAA: "NOAA National Centers for Environmental Information",
+  // The city IS the publisher of its own permit record, so the label names the city. "Socrata"
+  // is the platform the record is served on, not an authority; a vendor in the source slot
+  // would credit the wrong party. autoposter/src/card.py holds the inverse map and a test
+  // fails if the two ever disagree.
+  "City of Austin": "City of Austin Issued Construction Permits (Socrata)",
+  "City of San Antonio": "City of San Antonio Permits Open Data",
 };
 
 function die(message) {
@@ -124,15 +130,16 @@ function html(card, fonts) {
 ${faceRules}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:${WIDTH}px;height:${HEIGHT}px;overflow:hidden}
+:root{--q:52px;--h:150px}
 body{background:${C.bg};color:${C.text};display:flex;flex-direction:column;
   padding:56px 64px;-webkit-font-smoothing:antialiased}
 .lockup{font-family:"IBM Plex Sans";font-weight:600;font-size:24px;letter-spacing:.005em}
 .lockup .accent{color:${C.amber}}
-.question{font-family:"Newsreader";font-weight:500;font-size:52px;line-height:1.08;
+.question{font-family:"Newsreader";font-weight:500;font-size:var(--q);line-height:1.08;
   margin-top:36px;max-width:17ch;letter-spacing:-.005em}
 .figure{margin-top:auto}
-.hero{font-family:"IBM Plex Sans";font-weight:${HERO_WEIGHT};font-size:150px;line-height:1;
-  font-feature-settings:"tnum" 1;letter-spacing:-.03em}
+.hero{font-family:"IBM Plex Sans";font-weight:${HERO_WEIGHT};font-size:var(--h);line-height:1;
+  font-feature-settings:"tnum" 1;letter-spacing:-.03em;white-space:nowrap}
 .rule{width:88px;height:5px;background:${C.amber};margin:26px 0 20px}
 .sub{font-family:"IBM Plex Sans";font-weight:400;font-size:32px;line-height:1.25;
   font-feature-settings:"tnum" 1}
@@ -190,6 +197,35 @@ async function main() {
 
       // The check that makes this worth doing at all. A face that failed to decode leaves the
       // text set in a fallback — a silently wrong card that renders, uploads and posts fine.
+      // FIT TO THE CARD. The first version of this template held exactly one article, and its
+      // two font sizes were tuned to that article's strings. "13.88¢/kWh" fits at 150px;
+      // "224 solar permits" does not, and wraps — which stops it reading as a single figure.
+      // Questions vary in length too. So both scale, in the order that protects the hierarchy:
+      // the hero is the card's reason to exist and gets the room it needs first, then the
+      // question gives way. The overflow check below is UNCHANGED and still fails anything this
+      // pass cannot resolve — it is what caught the second article in the first place.
+      const fitted = await page.evaluate(() => {
+        const root = document.documentElement;
+        const hero = document.querySelector(".hero");
+        const avail = document.body.clientWidth
+          - parseFloat(getComputedStyle(document.body).paddingLeft) * 2;
+        root.style.setProperty("--h", "150px");
+        const natural = hero.scrollWidth;
+        // Floor 84px: below that it is no longer a hero, and the article needs a shorter figure
+        // rather than a card that whispers its own headline.
+        if (natural > avail) {
+          root.style.setProperty("--h", Math.max(84, Math.floor(150 * (avail / natural))) + "px");
+        }
+        for (const size of [52, 48, 44, 40, 36, 32]) {
+          root.style.setProperty("--q", size + "px");
+          if (document.body.scrollHeight <= window.innerHeight
+              && document.body.scrollWidth <= window.innerWidth) {
+            return { hero: root.style.getPropertyValue("--h"), question: size + "px" };
+          }
+        }
+        return null;
+      });
+
       const fontReport = await page.evaluate(async (faces) => {
         // A face that cannot decode makes document.fonts.load() REJECT. Swallowing the
         // rejection here is not leniency — it is what lets the checks below report WHICH face
@@ -243,7 +279,8 @@ async function main() {
       fs.mkdirSync(SIDECAR_DIR, { recursive: true });
       fs.writeFileSync(path.join(PNG_DIR, `${slug}.png`), png);
       fs.writeFileSync(path.join(SIDECAR_DIR, `${slug}.json`), JSON.stringify(sidecar, null, 2) + "\n");
-      console.log(`[ok] ${slug}.png  ${(png.length / 1024).toFixed(1)} KB`);
+      console.log(`[ok] ${slug}.png  ${(png.length / 1024).toFixed(1)} KB  `
+                  + `hero ${fitted?.hero ?? "150px"} / question ${fitted?.question ?? "52px"}`);
     }
   } finally {
     await browser.close();
