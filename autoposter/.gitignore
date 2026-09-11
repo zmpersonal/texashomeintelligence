@@ -1,0 +1,15 @@
+# Secrets never live in this repo — it is PUBLIC. See HANDOFF.md "Secrets".
+.env
+.env.*
+*.env
+*.env.txt
+
+# Owner-private working notes. This repo is public and an unmerged branch in a public
+# repo is still publicly readable — obscure, not private. Anything that would be an
+# inventory of THI's exploitable weaknesses lives here and is never committed.
+# See RUNLOG.md §17 and CLAUDE.md "Publication standard".
+private/
+
+__pycache__/
+*.pyc
+.pytest_cache/

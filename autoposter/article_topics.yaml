@@ -1,0 +1,87 @@
+# article_topics.yaml — the candidate topic universe for the article engine.
+#
+# ARTICLE-ENGINE.md Stage 1: "sub-agents gather candidates; CODE scores them so the human
+# approves a ranked shortlist rather than the machine picking." This file is the candidate
+# side of that. It is owner-tunable and the model never touches it.
+#
+# `public_interest` is a PRIOR, not a measurement. The values are seeded from
+# ARTICLE-ENGINE.thi.md's own stated ordering — property tax is called "the highest-arousal
+# money lane", then cost of ownership, then water/energy, grid, weather — rather than from
+# anyone's guess. Replace them with real demand data when the content-demand system lands.
+#
+# `requires_metrics` is what makes data_strength measurable instead of asserted: a topic scores
+# on the history actually present in social-feed.json for those metrics, and a topic whose
+# metrics are gated or absent scores zero and cannot be picked.
+
+topics:
+  - id: property-tax-worst-in-texas
+    question: "Is Austin's property tax really the worst in Texas?"
+    requires_metrics: [appraisal_change]
+    public_interest: 1.00
+    money: true
+    brand_safety_risk: 0.0
+
+  - id: cheaper-to-own-round-rock
+    question: "Is it actually cheaper to own in Round Rock than in Austin now?"
+    requires_metrics: [cost_to_own]
+    public_interest: 0.85
+    money: true
+    brand_safety_risk: 0.0
+
+  - id: electricity-still-rising
+    question: "Are Texas electricity prices still going up?"
+    requires_metrics: [energy_price_cents_kwh]
+    public_interest: 0.80
+    money: true
+    brand_safety_risk: 0.0
+
+  - id: austin-water-bills-fastest
+    question: "Are Austin water bills actually rising faster than anywhere in Texas?"
+    requires_metrics: [water_bill_index]
+    public_interest: 0.75
+    money: true
+    brand_safety_risk: 0.0
+
+  - id: sa-grid-less-reliable
+    question: "Is San Antonio's grid really less reliable than Austin's?"
+    requires_metrics: [grid_stress]
+    public_interest: 0.70
+    money: false
+    brand_safety_risk: 0.0
+
+  - id: insurance-follows-hail
+    question: "Are Texas home insurance premiums rising fastest where the hail is?"
+    requires_metrics: [insurance_trend, hail_window]
+    public_interest: 0.70
+    money: true
+    brand_safety_risk: 0.0
+
+  - id: austin-improvement-boom-cooling
+    question: "Is Austin's home-improvement boom actually cooling off?"
+    requires_metrics: [permit_activity_roofing, permit_activity_hvac, permit_activity_solar]
+    public_interest: 0.55
+    money: false
+    brand_safety_risk: 0.0
+    # Permit counts are an ACTIVITY instrument, never a price instrument, and are comparable
+    # only WITHIN one city (THI CLAUDE.md). A cross-metro permit comparison is forbidden.
+    single_city_only: true
+
+  - id: summer-hotter-than-normal
+    question: "Was this Texas summer actually hotter than normal?"
+    requires_metrics: [cooling_degree_days]
+    public_interest: 0.50
+    money: false
+    brand_safety_risk: 0.0
+
+  # Present so the brand-safety penalty is exercised by something real rather than being
+  # theoretical. ARTICLE-ENGINE.thi.md gates crime hard until calm authority is established.
+  - id: crime-by-area
+    question: "Which Austin areas have the most crime?"
+    requires_metrics: [crime_rate]
+    public_interest: 0.95
+    money: false
+    brand_safety_risk: 1.00
+    gated_reason: >
+      Crime rankings tied to where people live collide with the calm-not-alarm brand and with
+      Fair-Housing steering liability. ARTICLE-ENGINE.thi.md gates this until calm authority is
+      established, and only ever as "is the perception true", never "which area is dangerous".
