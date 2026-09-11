@@ -213,9 +213,21 @@ def test_a_draft_does_NOT_require_a_rendered_card():
 
 # ============================================ the promo points at the real card
 
+_UNPOSTED = tempfile.mkdtemp() + "/empty-ledger.json"
+
+
+def _cfg_unposted():
+    """Article 1 HAS been posted, so the duplicate gate rightly refuses to stage its promo
+    again. These tests are about the card, not about duplicates, so they say so."""
+    import copy
+    cfg = copy.deepcopy(CFG)
+    cfg["publish"] = dict(cfg["publish"], published_ledger=_UNPOSTED)
+    return cfg
+
+
 def _promo():
     r = _run()
-    return engine.build_facebook_promo(r["article"], r["claims"], CFG, TODAY,
+    return engine.build_facebook_promo(r["article"], r["claims"], _cfg_unposted(), TODAY,
                                        link_opener=OK, media_opener=OK)
 
 
@@ -321,6 +333,115 @@ def test_the_source_labels_agree_with_the_SITE_renderer():
     for short, full in site_map.items():
         assert card_mod.SOURCE_SHORT.get(full) == short, (
             f"the site renderer maps {short} -> {full!r}; the autoposter does not agree")
+
+
+# ============================================ the duplicate-destination gate
+
+def test_a_destination_already_in_the_ledger_is_REFUSED():
+    """THE MUTATION. Try to stage the link that went out as post #1.
+
+    A human notices they are about to re-share yesterday's post. A driver running every few
+    days does not, and the failure is public and permanent: the same URL twice on one page
+    reads as a broken bot.
+    """
+    import publish_gate
+    posted = json.loads(publish_gate.LEDGER.read_text())[0]["article_url"]
+    try:
+        publish_gate.assert_not_already_posted(posted, platform="facebook")
+    except publish_gate.DuplicateDestinationHalt as e:
+        assert "already posted" in str(e)
+        return
+    raise AssertionError("a destination already in the ledger must halt")
+
+
+def test_a_COSMETIC_variant_of_a_posted_url_is_also_refused():
+    """Trailing slash and case are not a different page and must not read as one."""
+    import publish_gate
+    posted = json.loads(publish_gate.LEDGER.read_text())[0]["article_url"]
+    variant = posted.rstrip("/").upper().replace("HTTPS://", "https://")
+    try:
+        publish_gate.assert_not_already_posted(variant, platform="facebook")
+    except publish_gate.DuplicateDestinationHalt:
+        return
+    raise AssertionError("a cosmetic variant of a posted URL slipped through")
+
+
+def test_a_url_never_posted_is_allowed():
+    """The other half: the gate is not simply refusing everything."""
+    import publish_gate
+    publish_gate.assert_not_already_posted(
+        "https://texashomeintelligence.com/analysis/something-never-posted/", platform="facebook")
+
+
+def test_the_same_article_on_a_DIFFERENT_platform_is_not_a_duplicate():
+    """Syndication is not repetition. The ledger is checked per platform."""
+    import publish_gate
+    posted = json.loads(publish_gate.LEDGER.read_text())[0]["article_url"]
+    publish_gate.assert_not_already_posted(posted, platform="instagram")
+
+
+def test_publishing_cannot_skip_the_duplicate_check():
+    """It runs inside publish_with_verification, BEFORE the publish — a duplicate caught
+    afterwards is a duplicate. `publish_fn` is never reached."""
+    import publish_gate
+    posted = json.loads(publish_gate.LEDGER.read_text())[0]["article_url"]
+    reached = []
+    try:
+        publish_gate.publish_with_verification(
+            {"platform": "facebook", "destination_url": posted},
+            publish_fn=lambda p: reached.append(1) or {"post_url": "x", "submission_id": "y"},
+            verify_opener=OK, streak_after=2)
+    except publish_gate.DuplicateDestinationHalt:
+        assert not reached, "the post was published before the duplicate check ran"
+        return
+    raise AssertionError("publish_with_verification must refuse a duplicate destination")
+
+
+# ============================================ the engine picks a NEW topic
+
+def test_the_engine_skips_a_topic_it_has_already_written():
+    """Without this the top-ranked topic wins every cycle forever — the article equivalent of
+    re-posting the same link, and the reason a cadence driver needs it before running
+    unattended."""
+    published = engine.published_questions(CFG)
+    if not published:
+        return                                   # nothing published in this checkout
+    r = engine.run("thi", write_fn=run_article.write,
+                   build_claims_fn=run_article.build_claims, today=date(2026, 9, 11),
+                   articles=run_article.TOPIC_ARTICLES, exclude_published=True)
+    assert r["article"]["title"] not in published
+    assert r["topic"]["id"] == "austin-improvement-boom-cooling"
+
+
+def test_a_topic_with_no_claim_builder_HALTS_rather_than_falling_through():
+    """Silently publishing the runner-up is how a machine drifts off its own ranking."""
+    try:
+        engine.run("thi", write_fn=run_article.write,
+                   build_claims_fn=run_article.build_claims, today=date(2026, 9, 11),
+                   articles={"nothing-matches": (None, None)}, exclude_published=True)
+    except RuntimeError as e:
+        assert "no claim-builder" in str(e)
+        return
+    raise AssertionError("a topic with no builder must halt")
+
+
+def test_article_2s_claims_are_austin_against_ITSELF_only():
+    """CLAUDE.md: permit counts are comparable only WITHIN one city. A cross-metro permit
+    comparison is forbidden, so no claim may carry San Antonio."""
+    claims = run_article.build_permit_claims(engine.load_feed(), CFG, date(2026, 9, 11))
+    for c in claims:
+        assert "San Antonio" not in c.text and "San Antonio" not in c.derivation
+        assert "City of San Antonio" not in c.source
+
+
+def test_article_2_states_no_cost_figure():
+    """Permits are an activity instrument, never a price instrument. No dollar figure may
+    appear anywhere in the piece."""
+    claims = run_article.build_permit_claims(engine.load_feed(), CFG, date(2026, 9, 11))
+    art = run_article.write_permits({"question": "q"}, claims, engine.load_feed())
+    assert "$" not in art["body"]
+    for c in claims:
+        assert "$" not in c.figure and "$" not in c.text
 
 
 if __name__ == "__main__":

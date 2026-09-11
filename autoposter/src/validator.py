@@ -267,6 +267,13 @@ def _numeral_gates(post: dict, story: dict, result: GateResult) -> None:
                | _extract_numerals(str(story.get("as_of", "")), drop_dates=False)
                | _extract_numerals(str(story.get("as_of_display", "")), drop_dates=False)
                | _extract_numerals(str(story.get("value", ""))))
+    # A caption promoting an ARTICLE may quote any figure that article verified, not only the
+    # two on its card. The story has to SUPPLY those figures — this is the same move as the
+    # first article's fix: widen what the story carries, never widen what the gate accepts.
+    # A numeral in neither the card nor the ledger still fails, which is the whole point.
+    for supporting in story.get("supporting_figures", []) or []:
+        allowed |= _extract_numerals(str(supporting))
+        allowed |= _extract_numerals(str(supporting), drop_dates=False)
     used: set[str] = set()
     for surface in surfaces:
         used |= _extract_numerals(surface)

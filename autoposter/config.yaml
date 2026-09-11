@@ -243,6 +243,9 @@ publish:
   # source of the media path for a link post: reading the file the renderer wrote is what makes
   # "this card was actually rendered" checkable instead of assumed.
   og_sidecar_dir: ../site/src/data/og-cards
+  # The published article collection. Read-only from here; the engine uses it to skip a
+  # topic it has already written, so an unattended cadence cannot re-write one story.
+  analysis_dir: ../site/src/data/analysis
 
 # ---- Egress the runner needs for its own gates to be performable (LEARNINGS L13) ----
 # A fail-closed gate on a surface that cannot reach the host it checks blocks every post.

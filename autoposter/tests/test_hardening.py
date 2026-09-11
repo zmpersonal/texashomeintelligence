@@ -34,10 +34,10 @@ NOW = datetime(2026, 9, 11, 19, 0, 0, tzinfo=timezone.utc)
 OK_LINK = lambda url: (True, "resolved 200")     # noqa: E731
 
 
-def _promo(config=CFG):
+def _promo(config=None):
     r = engine.run("thi", write_fn=run_article.write,
                    build_claims_fn=run_article.build_claims, today=TODAY)
-    return engine.build_facebook_promo(r["article"], r["claims"], config, TODAY,
+    return engine.build_facebook_promo(r["article"], r["claims"], _cfg_unposted(config), TODAY,
                                        link_opener=OK_LINK, media_opener=OK_LINK)
 
 
@@ -61,6 +61,24 @@ def test_link_post_media_is_derived_from_the_destination():
 
 
 SLUG = "are-texas-electricity-prices-still-going-up"
+
+
+_UNPOSTED = tempfile.mkdtemp() + "/empty-ledger.json"
+
+
+def _cfg_unposted(base=None):
+    """A config whose published-posts ledger is EMPTY.
+
+    These suites stage article 1's promo to exercise media derivation and the gate suite. That
+    article HAS been posted, so the duplicate-destination gate rightly refuses it — which is a
+    different thing from what these tests measure. Pointing at an empty ledger states the
+    premise out loud rather than leaving the suite dependent on what the real ledger happens to
+    contain. The duplicate gate has its own tests, against the real ledger.
+    """
+    import copy
+    cfg = copy.deepcopy(base or CFG)
+    cfg["publish"] = dict(cfg["publish"], published_ledger=_UNPOSTED)
+    return cfg
 
 
 def _card_rendered() -> bool:
@@ -113,7 +131,7 @@ def test_the_derived_media_is_what_the_gate_actually_checks():
         seen.append(url)
         return True, "resolved 200"
 
-    post, gate = engine.build_facebook_promo(r["article"], r["claims"], CFG, TODAY,
+    post, gate = engine.build_facebook_promo(r["article"], r["claims"], _cfg_unposted(), TODAY,
                                              link_opener=OK_LINK, media_opener=watching)
     assert gate.ok, gate.failures
     assert post["media_url"] in seen
@@ -240,7 +258,7 @@ def test_the_resolver_plugs_into_the_real_gate_as_an_opener():
         get_run=lambda rid: {"status": "completed", "conclusion": "success"},
         get_logs=lambda rid: _log(url, checked_at=NOW - timedelta(hours=1)),
         max_age_seconds=CFG["verification"]["max_age_seconds"], now=lambda: NOW)
-    _, gate = engine.build_facebook_promo(r["article"], r["claims"], CFG, TODAY,
+    _, gate = engine.build_facebook_promo(r["article"], r["claims"], _cfg_unposted(), TODAY,
                                           link_opener=opener, media_opener=OK_LINK)
     assert not gate.ok
     assert any("does not resolve" in f or "UNVERIFIED" in f for f in gate.failures)
@@ -356,9 +374,12 @@ def test_a_corrupt_ledger_HALTS_rather_than_being_rewritten():
 
 def test_the_ledger_appends_rather_than_overwrites():
     path = _tmp_ledger()
+    # Three DIFFERENT destinations. Three posts of the same link is not a cadence, and the
+    # duplicate gate now says so — which is the correct reading of what this test always meant.
     for i in range(3):
         publish_gate.publish_with_verification(
-            POST, publish_fn=_published, verify_opener=OK_LINK, streak_after=i,
+            dict(POST, destination_url=f"{URL}post-{i}/"),
+            publish_fn=_published, verify_opener=OK_LINK, streak_after=i,
             ledger_path=path, now=lambda: NOW)
     assert [e["streak_after"] for e in json.loads(path.read_text())] == [0, 1, 2]
 

@@ -1,0 +1,37 @@
+{
+  "_note": "STAGED post #2. HELD: not scheduled, not sent. media_url is pending the site crossing that renders the card.",
+  "_gate": {
+    "suite": "PASS",
+    "failures": []
+  },
+  "_card_face": [
+    "224 solar permits",
+    "up 138% month over month",
+    "City of Austin · Aug 2026"
+  ],
+  "post": {
+    "platform": "facebook",
+    "angle": "reveal",
+    "caption": "\"The market's gone quiet.\" Austin's own permit record says: in one trade, yes. Roofing is running 8% below its 11-month average. HVAC dipped from July but is still 19% above its own average — a down month inside a strong year. And solar just did 224 permits, up 138% month over month, its biggest month in the twelve we hold (source: City of Austin Issued Construction Permits (Socrata), as of 2026-08-01). We can't tell you why from a permit count, and we're not going to guess. The three trades, side by side, with the arithmetic shown → https://texashomeintelligence.com/analysis/is-austins-home-improvement-boom-cooling-off/ Send this to whoever told you nobody's building right now.",
+    "on_screen_text": [
+      "224 solar permits",
+      "up 138% month over month",
+      "City of Austin · Aug 2026"
+    ],
+    "media_url": "https://texashomeintelligence.com/images/og/is-austins-home-improvement-boom-cooling-off.png",
+    "has_media": true,
+    "piece_kind": "text_with_link",
+    "has_source_card": true,
+    "destination_url": "https://texashomeintelligence.com/analysis/is-austins-home-improvement-boom-cooling-off/",
+    "destination_theme": "permit_activity_solar",
+    "card_kind": "reveal",
+    "card_rows": [
+      "224 solar permits",
+      "up 138% month over month"
+    ],
+    "card_numeric_cells": 2,
+    "card_sidecar": "/images/og/is-austins-home-improvement-boom-cooling-off.png",
+    "requires_link": true,
+    "status": "HELD — not scheduled, not posted; awaits owner approval and a live article URL"
+  }
+}

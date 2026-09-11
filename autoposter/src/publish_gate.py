@@ -24,6 +24,10 @@ from pathlib import Path
 LEDGER = Path(__file__).resolve().parents[1] / "data" / "published-posts.json"
 
 
+class DuplicateDestinationHalt(Exception):
+    """This link has already been posted. An unattended machine must never re-post one."""
+
+
 class PostPublishHalt(Exception):
     """Published, but the destination no longer resolves. Loud, recorded, and not swallowed."""
 
@@ -51,6 +55,39 @@ def append_ledger(record: dict, path: Path | None = None) -> Path:
     return path
 
 
+def assert_not_already_posted(destination_url: str, *, ledger_path: Path | None = None,
+                              platform: str | None = None) -> None:
+    """Refuse a destination this account has already posted. Raises; never warns.
+
+    A human notices they are about to re-share yesterday's link. A cadence driver running every
+    few days does not, and the failure is public and permanent: the same URL twice on the same
+    page reads as a broken bot, which is the one impression this brand cannot afford.
+
+    Checked against `published-posts.json` — the record of what actually went out — rather than
+    against a run log or a memory of the last cycle, because only the ledger survives a restart.
+
+    The check is per-platform when a platform is given: the same article promoted once on
+    Facebook and once elsewhere is normal syndication, not a duplicate.
+    """
+    if not destination_url:
+        raise DuplicateDestinationHalt(
+            "cannot check for a duplicate: the post has no destination URL")
+    target = _normalise(destination_url)
+    for entry in _load(ledger_path or LEDGER):
+        if platform and entry.get("platform") and entry["platform"] != platform:
+            continue
+        if _normalise(entry.get("article_url", "")) == target:
+            raise DuplicateDestinationHalt(
+                f"{destination_url} was already posted on {entry.get('published_at', '?')[:10]} "
+                f"({entry.get('post_url')}). Re-posting the same link is not a cadence, it is a "
+                f"loop. Write a new piece, or post this one somewhere it has not run.")
+
+
+def _normalise(url: str) -> str:
+    """Trailing slash and case are not a different page, and must not read as a different one."""
+    return (url or "").strip().rstrip("/").lower()
+
+
 def publish_with_verification(post: dict, *, publish_fn, verify_opener, streak_after: int,
                               article_slug: str = "", ledger_path: Path | None = None,
                               now=None) -> dict:
@@ -61,8 +98,11 @@ def publish_with_verification(post: dict, *, publish_fn, verify_opener, streak_a
     post-publish check is the same check, not a weaker cousin.
     """
     clock = now or (lambda: datetime.now(timezone.utc))
-    published = publish_fn(post)
     destination = post.get("destination_url", "")
+    # BEFORE the publish, not after: a duplicate caught afterwards is a duplicate.
+    assert_not_already_posted(destination, ledger_path=ledger_path,
+                              platform=post.get("platform"))
+    published = publish_fn(post)
 
     ok, reason = verify_opener(destination)
     record = {

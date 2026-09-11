@@ -48,6 +48,11 @@ SOURCE_SHORT = {
     "U.S. Energy Information Administration": "EIA",
     "NOAA NCEI Global Summary of the Month": "NOAA",
     "NOAA NCEI U.S. Climate Normals 1991-2020": "NOAA",
+    # The city IS the publisher of its own permit record, so the label names the city rather
+    # than the dataset. "Socrata" is the platform it is served on, not an authority, and putting
+    # a vendor's name in the source slot would credit the wrong party.
+    "City of Austin Issued Construction Permits (Socrata)": "City of Austin",
+    "City of San Antonio Permits Open Data": "City of San Antonio",
 }
 
 CARD_FIELDS = ("question", "headline", "subhead", "source", "asOf")

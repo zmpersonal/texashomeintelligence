@@ -1361,3 +1361,71 @@ directly by the card suite, so nothing goes unchecked either way.
 
 **152/152 in BOTH states** — with the card system present and without it. Verified in both,
 because "it passes here" is the claim that started this.
+
+## Round 14 — 2026-09-11 — post #2 is a new article, and the machine stops repeating itself
+
+### 90. PR #46 merged — confirmed from the API, then from the files
+`merged: true`, merged by the owner at 20:49Z; `origin/main` now at `652ad36` and carrying
+`generate-og-cards.mjs`, the card PNG and the sidecar. Merged into `autoposter/phase-0`.
+
+### 91. The duplicate-destination gate
+`publish_gate.assert_not_already_posted()` refuses a destination already in
+`published-posts.json`, normalising trailing slash and case, per platform (the same article on a
+different channel is syndication, not repetition). It runs at STAGING inside
+`build_facebook_promo` and again inside `publish_with_verification` **before** the publish call —
+a duplicate caught afterwards is a duplicate. Mutation: staging post #1's URL halts; a cosmetic
+variant halts; an unposted URL passes; `publish_fn` is never reached.
+
+The previously staged post #2 — post #1's article and caption again — is now unstageable by the
+machine, which is the right way for that idea to die.
+
+### 92. Post #2 is a NEW article, picked by the pipeline
+`topic_scorer` ranks what is worth writing and had no idea what had been written, so the
+top-ranked topic would have won every cycle forever. `published_questions()` reads the live
+analysis collection and excludes it. The engine then chose
+**`austin-improvement-boom-cooling`**, whose metric family is also the surprise-ranked #1 story
+(Austin solar, 0.658).
+
+Claim-builders and writers now live in a per-topic registry, and a topic that ranks top with no
+builder **halts** rather than falling through to the runner-up: silently publishing second place
+is how a machine drifts off its own ranking.
+
+Article 2: *"Is Austin's home-improvement boom actually cooling off?"* Answer: mostly no —
+roofing is 8% below its own 11-month average, HVAC dipped 15% from July but runs 19% ABOVE its
+average, and solar did 224 permits, up 138%, its biggest month in the twelve held. Nine claims,
+ledger verified, prose gate passed first try, one model call.
+
+### 93. Three things the second article found that the first could not
+- **The card template only ever held one article.** The generator REFUSED to render, correctly:
+  `"224 solar permits"` does not fit at 150px and wraps, and the longer question overflows. Fixed
+  with a fit pass (hero scaled to one line, floor 84px; question stepped down) — a template fix,
+  not a patch, since every future hero is a different length. The overflow guard is untouched:
+  it is what caught this.
+- **The permits embed would have rendered empty.** The site's dataset is
+  `municipal-permits/austin` and its observations are individual permit records, not monthly
+  counts. Article 2 ships with NO embed and the reason written into its frontmatter. L10's third
+  lookalike-namespace collision, caught this time by looking before writing rather than after.
+- **G1 refused the caption**, because the caption quotes figures from claims outside the card's
+  two slots. Fixed the way the first one was: the story now SUPPLIES every figure and derivation
+  the article verified (`supporting_figures`). A numeral in neither the card nor the ledger still
+  fails. Widen what the story carries, never what the gate accepts.
+
+### 94. A test file that was only running two thirds of itself
+`test_card.py` defined 31 tests and ran 22: the appended block landed AFTER the file's
+`__main__` runner, so the later definitions did not exist when it executed. Every new duplicate
+and topic-exclusion test was silently uncollected while reporting green. Now checked for every
+suite as defined-vs-run, which is the check that should have existed the first time a suite grew.
+
+**161/161 across eight suites, defined == run in all eight.**
+
+### 95. Post #2 staged, HELD, and correctly blocked
+Full gate suite PASS. It cannot complete staging against the real tree: the card gate halts on
+`C5 — no rendered card`, because the article is not live and its card is not generated. That is
+the gate working. `articles/…/SITE-PATCH-PROPOSAL.md` holds the exact 🔴 diff (five paths).
+
+### 96. Cadence + Slack approval — proposal only
+`specs/CADENCE-AND-APPROVAL-PROPOSAL.md`. The honest finding: most of the machine exists; what is
+missing is a clock, a way to say yes from a phone, and — the real blocker — the fact that every
+article is a write to `site/`, which no approval design can automate away. Three options for that
+crossing, recommendation manual-merge for now. For Slack, recommendation is reply-polling rather
+than an approval endpoint on the brand's own domain. No response always means HOLD.

@@ -220,3 +220,208 @@ if __name__ == "__main__":
           f"{result['target']['canonical_url']}")
     print(f"facebook promo gates   : {'PASS' if gate.ok else 'FAIL ' + str(gate.failures)}")
     print(f"written to             : autoposter/articles/{SLUG}/  (NOTHING PUBLISHED)")
+
+
+# =====================================================================================
+# Article 2 — Austin permit activity. A DIFFERENT topic, built by the same rules.
+#
+# The first article proved the pipeline could produce one piece. A second one is what proves
+# it is a pipeline: same claim tiers, same gates, same card path, a different story and a
+# different metric family. Nothing below is shared with the electricity article except the
+# machinery.
+#
+# PERMITS ARE AN ACTIVITY INSTRUMENT (THI CLAUDE.md). Counts, timing, month-over-month and
+# trade mix WITHIN one city. No price, no cost, no "typical spend", and no cross-metro
+# comparison — Austin is compared only against its own history, which is why every derived
+# claim below is Austin-versus-Austin.
+# =====================================================================================
+
+PERMITS_SLUG = "is-austins-home-improvement-boom-cooling-off"
+AUSTIN_PERMITS_SOURCE = "City of Austin Issued Construction Permits (Socrata)"
+TRADES = ("solar", "hvac", "roofing")
+
+
+def _permit_facts(today: date) -> dict:
+    """CODE. The arithmetic, once, from the series — so the prose can only quote it."""
+    import thi_source
+    series = {(s.area_id, s.metric): s for s in thi_source.load_history(today)}
+    facts = {}
+    for trade in TRADES:
+        s = series[("austin_metro", f"permit_activity_{trade}")]
+        values = s.values
+        latest, prior = values[-1], values[-2]
+        baseline = sum(values[:-1]) / len(values[:-1])   # the mean of every earlier month
+        facts[trade] = {
+            "latest": latest, "prior": prior, "baseline": baseline,
+            "months": len(values) - 1,
+            "mom_pct": _pct(latest, prior),
+            "base_pct": _pct(latest, baseline),
+            "as_of": s.points[-1].period,
+            "peak": max(values),
+        }
+    return facts
+
+
+def build_permit_claims(feed: dict, config: dict, today: date) -> list[Claim]:
+    """CODE. Austin permit counts against Austin's own 11 preceding months."""
+    f = _permit_facts(today)
+    as_of = f["solar"]["as_of"]
+
+    def count(trade, value):
+        return f"{value:,.0f} {trade} permits"
+
+    claims = [
+        Claim("P1", f"Austin issued {count('solar', f['solar']['latest'])} in August 2026.",
+              tier="data", figure=count("solar", f["solar"]["latest"]),
+              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_solar",
+              notes="City of Austin issued-permits dataset, residential solar trade."),
+        Claim("P2", "Solar permits more than doubled in a single month.",
+              tier="derived",
+              figure=f"up {f['solar']['mom_pct']:.0f}% month over month",
+              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_solar",
+              derivation=f"{f['solar']['latest']:.0f} (Aug 2026) vs {f['solar']['prior']:.0f} "
+                         f"(Jul 2026) = {f['solar']['mom_pct']:.0f}%"),
+        Claim("P3", "That is far above Austin's own recent run-rate for solar.",
+              tier="derived",
+              figure=f"{f['solar']['base_pct']:.0f}% above its {f['solar']['months']}-month average",
+              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_solar",
+              derivation=f"{f['solar']['latest']:.0f} vs an {f['solar']['months']}-month mean of "
+                         f"{f['solar']['baseline']:.0f} = {f['solar']['base_pct']:.0f}%"),
+
+        Claim("P4", f"Austin issued {count('HVAC', f['hvac']['latest'])} in August 2026.",
+              tier="data", figure=count("HVAC", f["hvac"]["latest"]),
+              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_hvac"),
+        Claim("P5", "HVAC permits fell from July.",
+              tier="derived", figure=f"down {abs(f['hvac']['mom_pct']):.0f}% month over month",
+              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_hvac",
+              derivation=f"{f['hvac']['latest']:.0f} (Aug 2026) vs {f['hvac']['prior']:.0f} "
+                         f"(Jul 2026) = {f['hvac']['mom_pct']:.0f}%"),
+        Claim("P6", "But HVAC is still running above its own recent average, not below it.",
+              tier="derived",
+              figure=f"{f['hvac']['base_pct']:.0f}% above its {f['hvac']['months']}-month average",
+              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_hvac",
+              derivation=f"{f['hvac']['latest']:.0f} vs an {f['hvac']['months']}-month mean of "
+                         f"{f['hvac']['baseline']:.0f} = {f['hvac']['base_pct']:.0f}%"),
+
+        Claim("P7", f"Austin issued {count('roofing', f['roofing']['latest'])} in August 2026.",
+              tier="data", figure=count("roofing", f["roofing"]["latest"]),
+              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_roofing"),
+        Claim("P8", "Roofing is the one trade genuinely below its own run-rate.",
+              tier="derived",
+              figure=f"{abs(f['roofing']['base_pct']):.0f}% below its "
+                     f"{f['roofing']['months']}-month average",
+              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_roofing",
+              derivation=f"{f['roofing']['latest']:.0f} vs an {f['roofing']['months']}-month mean "
+                         f"of {f['roofing']['baseline']:.0f} = {f['roofing']['base_pct']:.0f}%"),
+
+        Claim("P9",
+              "We cannot say from the permits alone what drove the solar jump — a filing "
+              "deadline, an incentive change and genuine demand all look identical in a count.",
+              tier="external", hedged=True),
+    ]
+    return claims
+
+
+def write_permits(topic: dict, claims: list[Claim], feed: dict) -> dict:
+    """THE ONE MODEL CALL for article 2. Language only; every figure came from the claims."""
+    c = {claim.id: claim for claim in claims}
+    S = AUSTIN_PERMITS_SOURCE
+    body = f"""
+## The short answer
+
+**Mostly no.** One Austin trade really is running below its own recent pace. The rest are
+running above it, and one of them just had its biggest month in a year.
+
+Austin issued {c['P1'].figure} in August 2026 — {c['P2'].figure}, and
+{c['P3'].figure} ({S}, as of August 2026). That is not a market cooling off.
+
+## What "cooling off" would actually look like
+
+A boom that is ending shows up as permit counts falling below where that trade has been
+running. So that is the comparison: each Austin trade against its own preceding eleven months,
+and against nothing else. Permit counts are an activity signal — they say how much work is
+being started, never what it costs — and they are only comparable inside one city's own
+filing system.
+
+By that test, here is where Austin's three most visible trades stand.
+
+| Trade | August 2026 | Against its own average |
+|---|---|---|
+| Solar | {c['P1'].figure} | {c['P3'].figure} |
+| HVAC | {c['P4'].figure} | {c['P6'].figure} |
+| Roofing | {c['P7'].figure} | {c['P8'].figure} |
+
+## The one that is genuinely slower
+
+Roofing. Austin issued {c['P7'].figure} in August, {c['P8'].figure} ({S}, as of
+August 2026). It is the only one of the three sitting below its own run-rate, and it has been
+drifting for months rather than dropping suddenly.
+
+If your sense that things have gone quiet comes from roofing, the data agrees with you.
+
+## The one that looks like cooling and is not
+
+HVAC is the trade most people would point at, because it did fall: {c['P5'].figure}
+({S}, as of August 2026). July to August, that reads like the end of a busy summer.
+
+Against its own eleven-month average, though, HVAC is {c['P6'].figure}. A month can be down
+from the one before it and still be a strong month. Both things are true, and only one of them
+is a trend.
+
+## The one nobody expected
+
+Solar. {c['P1'].figure} in a single month, {c['P2'].figure} — the largest month in the
+twelve we hold ({S}, as of August 2026).
+
+{c['P9'].text}
+
+So we are not going to tell you why. We are telling you that it happened, in Austin, in August,
+by that much, from the city's own issued-permit record — and that anyone claiming to know the
+cause is working from something other than this data.
+
+## What this is useful for
+
+If you are getting quotes right now, the useful read is that installer demand is not uniform.
+Roofing is the slower lane. Solar is the busy one, and a trade running at {c['P3'].figure}
+is a trade where scheduling slips and quotes get thinner on detail.
+
+That is worth knowing before you assume a slow quote means a slow market.
+"""
+    return {
+        "slug": PERMITS_SLUG,
+        "title": topic["question"],
+        "description": ("Austin's permit record says the boom is not cooling evenly: roofing is "
+                        "below its own pace, HVAC is above it, and solar just had its biggest "
+                        "month in a year."),
+        "body": body,
+        "canonical_url": f"https://texashomeintelligence.com/analysis/{PERMITS_SLUG}/",
+        "embed": {
+            "kind": "table",
+            "series": "austin_metro/permit_activity_solar",
+            "caption": "Austin solar permits issued, by month",
+            "component": "DataStatus for provenance + a native <table class=\"data-table\">",
+        },
+    }
+
+
+# The registry. `engine.run()` asks for the builder and writer belonging to the topic CODE
+# picked — so adding an article is adding a pair here, never editing the engine.
+TOPIC_ARTICLES = {
+    "electricity-still-rising": (build_claims, write),
+    "austin-improvement-boom-cooling": (build_permit_claims, write_permits),
+}
+
+
+PERMITS_CAPTION = (
+    "\"The market's gone quiet.\" Austin's own permit record says: in one trade, yes. "
+    "Roofing is running 8% below its 11-month average. HVAC dipped from July but is still "
+    "19% above its own average — a down month inside a strong year. And solar just did "
+    "224 permits, up 138% month over month, its biggest month in the twelve we hold "
+    "(source: City of Austin Issued Construction Permits (Socrata), as of 2026-08-01). "
+    "We can't tell you why from a permit count, and we're not going to guess. "
+    "The three trades, side by side, with the arithmetic shown → "
+    "https://texashomeintelligence.com/analysis/is-austins-home-improvement-boom-cooling-off/ "
+    "Send this to whoever told you nobody's building right now."
+)
+
+TOPIC_CAPTIONS = {"austin-improvement-boom-cooling": PERMITS_CAPTION}

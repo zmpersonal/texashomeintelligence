@@ -5,6 +5,7 @@ tested — the whole value of the two-lock design is what it refuses to do.
 """
 import os
 import sys
+import tempfile
 from datetime import date
 from pathlib import Path
 
@@ -168,6 +169,24 @@ OK_LINK = lambda url: (True, "resolved 200")
 SLUG = "are-texas-electricity-prices-still-going-up"
 
 
+_UNPOSTED = tempfile.mkdtemp() + "/empty-ledger.json"
+
+
+def _cfg_unposted(base=None):
+    """A config whose published-posts ledger is EMPTY.
+
+    These suites stage article 1's promo to exercise media derivation and the gate suite. That
+    article HAS been posted, so the duplicate-destination gate rightly refuses it — which is a
+    different thing from what these tests measure. Pointing at an empty ledger states the
+    premise out loud rather than leaving the suite dependent on what the real ledger happens to
+    contain. The duplicate gate has its own tests, against the real ledger.
+    """
+    import copy
+    cfg = copy.deepcopy(base or CFG)
+    cfg["publish"] = dict(cfg["publish"], published_ledger=_UNPOSTED)
+    return cfg
+
+
 def _card_rendered() -> bool:
     """Every promo test needs the article's RENDERED card, because the promo gate now refuses
     to build a post without one. The card lives on the site side and is absent in a checkout
@@ -193,7 +212,7 @@ def test_facebook_promo_passes_the_full_social_suite():
         return
     r = engine.run("thi", write_fn=run_article.write,
                    build_claims_fn=run_article.build_claims, today=TODAY)
-    post, gate = engine.build_facebook_promo(r["article"], r["claims"], CFG, TODAY,
+    post, gate = engine.build_facebook_promo(r["article"], r["claims"], _cfg_unposted(), TODAY,
                                              link_opener=OK_LINK, media_opener=OK_LINK)
     assert gate.ok, gate.failures
     assert "HELD" in post["status"]
@@ -206,7 +225,7 @@ def test_promo_is_REJECTED_when_the_OG_card_does_not_resolve():
         return
     r = engine.run("thi", write_fn=run_article.write,
                    build_claims_fn=run_article.build_claims, today=TODAY)
-    _, gate = engine.build_facebook_promo(r["article"], r["claims"], CFG, TODAY,
+    _, gate = engine.build_facebook_promo(r["article"], r["claims"], _cfg_unposted(), TODAY,
                                           link_opener=OK_LINK,
                                           media_opener=lambda url: (False, "HTTP 404"))
     assert not gate.ok
@@ -221,7 +240,7 @@ def test_promo_is_REJECTED_when_its_destination_does_not_resolve():
         return
     r = engine.run("thi", write_fn=run_article.write,
                    build_claims_fn=run_article.build_claims, today=TODAY)
-    _, gate = engine.build_facebook_promo(r["article"], r["claims"], CFG, TODAY,
+    _, gate = engine.build_facebook_promo(r["article"], r["claims"], _cfg_unposted(), TODAY,
                                           link_opener=lambda url: (False, "HTTP 404"))
     assert not gate.ok
     assert any("destination does not resolve" in f for f in gate.failures)
@@ -235,7 +254,7 @@ def test_promo_is_REJECTED_when_the_destination_is_merely_UNREACHABLE():
     r = engine.run("thi", write_fn=run_article.write,
                    build_claims_fn=run_article.build_claims, today=TODAY)
     _, gate = engine.build_facebook_promo(
-        r["article"], r["claims"], CFG, TODAY,
+        r["article"], r["claims"], _cfg_unposted(), TODAY,
         link_opener=lambda url: (False, "unreachable: URLError: refused"))
     assert not gate.ok
     assert any("UNVERIFIED" in f for f in gate.failures)

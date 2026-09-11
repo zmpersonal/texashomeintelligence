@@ -22,6 +22,7 @@ apply. The engine refuses to write there itself.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -30,6 +31,7 @@ import yaml
 
 import card as card_mod
 import claim_ledger as ledger_mod
+import publish_gate
 import publish_target
 import topic_scorer
 import validator as social_validator
@@ -71,8 +73,33 @@ def _metric(feed: dict, area: str, metric: str) -> dict:
     raise KeyError(f"{area}/{metric} absent from the feed — the engine will not invent it")
 
 
+def published_questions(config: dict) -> set[str]:
+    """The H1 of every article already live on the site.
+
+    The topic scorer ranks what is WORTH writing; it has no idea what has been written. Without
+    this the engine picks the same top-ranked topic every cycle, forever — the article equivalent
+    of re-posting the same link, and the reason a cadence driver needs it before it runs
+    unattended. Titles, because an article's H1 is its topic's question verbatim (gate C4).
+
+    Read-only, across the Rule 0 boundary. An absent collection means nothing is published yet,
+    which is the correct answer for a fresh checkout rather than a reason to halt.
+    """
+    directory = (config.get("publish") or {}).get(
+        "analysis_dir", "../site/src/data/analysis")
+    folder = (ROOT / directory).resolve()
+    if not folder.is_dir():
+        return set()
+    titles = set()
+    for path in folder.glob("*.md"):
+        match = re.search(r'^title:\s*"([^"]+)"', path.read_text(), re.M)
+        if match:
+            titles.add(match.group(1))
+    return titles
+
+
 def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
-        specs_dir: Path | None = None, destination: dict | None = None) -> dict:
+        specs_dir: Path | None = None, destination: dict | None = None,
+        articles: dict | None = None, exclude_published: bool = False) -> dict:
     """One article, end to end. Returns everything the human reviews; writes nothing to site/."""
     today = today or datetime.now(timezone.utc).date()
     config, feed = load_config(), load_feed()
@@ -85,9 +112,22 @@ def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
     ranked = topic_scorer.score_topics(feed, config)
     tension = topic_scorer.surface_tension(ranked)
     buildable = [t for t in ranked if t["buildable"]]
+    if exclude_published:
+        already = published_questions(config)
+        buildable = [t for t in buildable if t["question"] not in already]
     if not buildable:
         raise RuntimeError("no topic is defensible from the current feed — rescope, don't reach")
     chosen = buildable[0]
+
+    # An article's claim-builder and writer belong to its TOPIC. Adding an article is adding a
+    # pair to that registry; the engine never grows a branch per story.
+    if articles:
+        if chosen["id"] not in articles:
+            raise RuntimeError(
+                f"topic {chosen['id']!r} ranks highest and buildable but has no claim-builder. "
+                f"Write one rather than letting the engine fall through to another story — "
+                f"silently publishing the runner-up is how a machine drifts off its own ranking.")
+        build_claims_fn, write_fn = articles[chosen["id"]]
 
     # ---- Stages 2-3: build the ledger IN CODE from the feed, then verify it before any prose.
     claims = build_claims_fn(feed, config, today)
@@ -131,15 +171,17 @@ def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
 
 
 def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today: date,
-                         link_opener=None, media_opener=None) -> tuple[dict, object]:
+                         link_opener=None, media_opener=None,
+                         caption: str | None = None) -> tuple[dict, object]:
     """Stage 6 — the promotion, as a HELD draft. Facebook is the only enabled channel and video
     is parked, so this is text-with-link per the owner's scope note.
 
     Built from the article's own lead claim, so its numerals are the article's numerals. Runs
     the full social gate suite; a draft that fails is not a draft, it is a defect.
     """
-    lead = next(c for c in claims if c.id == "C2")
-    headline_claim = next(c for c in claims if c.id == "C1")
+    # The same two claims the card speaks for — selected by rule, not by claim id. Hardcoding
+    # "C1"/"C2" worked for exactly one article and would have picked nothing on the second.
+    headline_claim, lead = card_mod.select_claims(article, claims)
     url = article["canonical_url"]
 
     # A link post's media is the DESTINATION's own OG image — that is what Facebook renders in
@@ -171,7 +213,16 @@ def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today
 
     media_url = origin + sidecar["path"]
 
-    caption = (
+    # Refuse at STAGING, not just at send. A duplicate that only fails on the way out has
+    # already consumed a cycle and an approval; one that fails here is caught while the answer
+    # is still "write something else".
+    # The ledger path is config so a test can state its premise ("this article has not been
+    # posted") instead of the suite silently depending on the real ledger's contents.
+    ledger = (publish_cfg.get("published_ledger") and
+              (ROOT / publish_cfg["published_ledger"]).resolve()) or None
+    publish_gate.assert_not_already_posted(url, platform="facebook", ledger_path=ledger)
+
+    caption = caption or (
         f"Texas homeowners: it feels like every bill is going up. Electricity, for once, isn't. "
         f"Residential power in Texas is {headline_claim.figure} — {lead.figure} "
         f"(source: {headline_claim.source}, as of {headline_claim.as_of}). "
@@ -196,7 +247,7 @@ def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today
         "piece_kind": "text_with_link",
         "has_source_card": True,
         "destination_url": url,
-        "destination_theme": "energy_price_cents_kwh",
+        "destination_theme": card_mod.primary_metric(article),
         "card_kind": "reveal",
         "card_rows": [card["headline"], card["subhead"]],
         "card_numeric_cells": 2,
@@ -209,12 +260,16 @@ def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today
     # every figure the caption uses — not just the headline one. The first run failed here
     # because the caption quoted the year-over-year change while the story carried only the
     # price. The fix is to widen what the story supplies, never to loosen G1.
-    story = {"metric": "energy_price_cents_kwh",
+    story = {"metric": card_mod.primary_metric(article),
              "figure": f"{headline_claim.figure} — {lead.figure}",
              "source": headline_claim.source, "as_of": headline_claim.as_of,
              # The forms the CARD is allowed to use, supplied by code from the approved map
              # rather than inferred by the gate. The caption still carries the full name.
-             "source_short": card["source"], "as_of_display": card["asOf"]}
+             "source_short": card["source"], "as_of_display": card["asOf"],
+             # Every figure and derivation this article verified. The caption may quote any of
+             # them; it may not quote anything else.
+             "supporting_figures": [c.figure for c in claims if c.figure]
+                                   + [c.derivation for c in claims if c.derivation]}
     result = social_validator.validate_post(post, story, config, feed=load_feed(), now=today,
                                             link_opener=link_opener, media_opener=media_opener)
     return post, result
