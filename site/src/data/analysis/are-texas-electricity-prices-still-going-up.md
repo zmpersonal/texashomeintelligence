@@ -16,6 +16,15 @@ sources:
 embed:
   series: "eia-electricity/texas"   # THI dataset id / location, as findDataset() takes them
   caption: "Texas residential electricity price, cents per kilowatt-hour, by month"
+# The social card's face. Every value traces to a ledger claim: the headline is C1, the
+# subhead is C2, the source and date are C1's. `source` is the short label the card can
+# carry legibly at thumbnail size; the full agency name goes in the generated alt text.
+card:
+  question: "Are Texas electricity prices still going up?"
+  headline: "13.88¢/kWh"
+  subhead: "down 10.2% year over year"
+  source: "EIA"
+  asOf: "Aug 2026"
 ---
 
 ## The short answer
