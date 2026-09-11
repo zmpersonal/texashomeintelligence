@@ -194,6 +194,7 @@ staleness_hours:
   permit_signal: 720
   appraisal_change: 2160
   insurance_trend: 2160
+  noaa_storm_events: 2160
 
 # ---- Gated metrics: absent from the feed until their ingest lands; angles needing them
 #      do not generate (VALIDATOR G6) ----
