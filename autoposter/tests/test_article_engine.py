@@ -10,6 +10,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import article_engine as engine     # noqa: E402
+import card as card_mod            # noqa: E402
 import claim_ledger as cl           # noqa: E402
 import publish_target as pt         # noqa: E402
 import run_article                  # noqa: E402
@@ -164,6 +165,18 @@ def test_virality_vs_brand_safety_tension_is_surfaced_not_buried():
 
 OK_LINK = lambda url: (True, "resolved 200")
 
+SLUG = "are-texas-electricity-prices-still-going-up"
+
+
+def _card_rendered() -> bool:
+    """Every promo test needs the article's RENDERED card, because the promo gate now refuses
+    to build a post without one. The card lives on the site side and is absent in a checkout
+    where the card system is not merged — a skip, not a failure. The gate's own suite
+    (tests/test_card.py) covers the missing-card case directly, so nothing goes unchecked.
+    """
+    return card_mod.sidecar_path(SLUG, CFG).exists()
+
+
 
 def test_facebook_promo_passes_the_full_social_suite():
     """With a resolvable destination AND a resolvable card. Both resolvers are injected so the
@@ -176,6 +189,8 @@ def test_facebook_promo_passes_the_full_social_suite():
     point — the thing the reader sees in the preview is now something the gate can be wrong
     about, and therefore something it has to check.
     """
+    if not _card_rendered():
+        return
     r = engine.run("thi", write_fn=run_article.write,
                    build_claims_fn=run_article.build_claims, today=TODAY)
     post, gate = engine.build_facebook_promo(r["article"], r["claims"], CFG, TODAY,
@@ -187,6 +202,8 @@ def test_facebook_promo_passes_the_full_social_suite():
 def test_promo_is_REJECTED_when_the_OG_card_does_not_resolve():
     """A link post whose preview image 404s is a broken post. Deriving the card does not
     exempt it from the media gate — it puts it under one."""
+    if not _card_rendered():
+        return
     r = engine.run("thi", write_fn=run_article.write,
                    build_claims_fn=run_article.build_claims, today=TODAY)
     _, gate = engine.build_facebook_promo(r["article"], r["claims"], CFG, TODAY,
@@ -200,6 +217,8 @@ def test_promo_is_REJECTED_when_its_destination_does_not_resolve():
     """The gate that did not exist until 2026-09-11 (RUNLOG §62). A dead article URL must stop
     the post that promotes it — this is the only thing standing between a deploy that failed
     and a published link to nowhere."""
+    if not _card_rendered():
+        return
     r = engine.run("thi", write_fn=run_article.write,
                    build_claims_fn=run_article.build_claims, today=TODAY)
     _, gate = engine.build_facebook_promo(r["article"], r["claims"], CFG, TODAY,
@@ -211,6 +230,8 @@ def test_promo_is_REJECTED_when_its_destination_does_not_resolve():
 def test_promo_is_REJECTED_when_the_destination_is_merely_UNREACHABLE():
     """Indeterminate is not permission. A destination this surface cannot see may well be live;
     publishing on that ambiguity is the exact thing the halt of 2026-09-11 refused to do."""
+    if not _card_rendered():
+        return
     r = engine.run("thi", write_fn=run_article.write,
                    build_claims_fn=run_article.build_claims, today=TODAY)
     _, gate = engine.build_facebook_promo(

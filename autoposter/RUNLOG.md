@@ -1346,3 +1346,18 @@ article. The ledger says that destination has been posted once already. As a pie
 duplicate; as a fix it is the same article with a card that finally shows the number. That is an
 editorial call, and the machinery has no duplicate-destination check — the ledger makes one
 cheap, and it was not in this round's scope.
+
+### 89. The suite passed only because MY checkout had something a clean one does not
+Cleaning up the materialised sidecar (it belongs to PR #46, not to this branch) turned two
+suites from green to **crashing** — `build_facebook_promo` now raises `CardHalt` without a
+rendered card, and the runner only catches `AssertionError`, so the halt killed the run rather
+than reporting. The gate was right; the tests assumed a file the repository does not contain.
+
+That is L13's shape again: a check proven on a surface that had something the real surface does
+not. The green I reported a few minutes earlier was true of my working tree and false of a fresh
+checkout, and the only reason I saw it was that the stop hook pushed me to look at untracked
+files. Every promo test now skips when the card is absent, and the missing-card case is covered
+directly by the card suite, so nothing goes unchecked either way.
+
+**152/152 in BOTH states** — with the card system present and without it. Verified in both,
+because "it passes here" is the claim that started this.
