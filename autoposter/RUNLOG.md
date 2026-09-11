@@ -1167,3 +1167,67 @@ changed: no other channel touched, autonomy still `review`.
 - **No post-publish gate exists.** Step 7 was me choosing to re-verify. Nothing in code requires
   it, and "the link died between check and publish" is precisely the failure the whole chain
   exists to prevent. It should be a step the orchestrator runs and records.
+
+---
+
+## Round 12 — 2026-09-11 — the three hand-steps become code (maintenance, nothing posted)
+
+§73 listed three things that made post #1 clean *because I did them*, not because anything
+required them. All three are now rules with tests that fail if the habit comes back. **Nothing
+was posted; streak stays 1; autonomy stays `review`.**
+
+### 74. Derived media for a text-with-link post
+`build_facebook_promo` computes the card from the destination: origin + `publish.og_image_path`
+→ `https://texashomeintelligence.com/images/og-card.jpg`. The placeholder `data:` URI default is
+gone. Hard-coding today's OG URL would satisfy the obvious assertions, so the regression test
+changes the configured path and requires the media to move with it — a constant cannot pass that.
+
+Two consequences worth naming:
+- **G3 was narrowed, not waived.** The gate exists so a *cut* cannot sever a claim from its
+  source. A link post is never cut, and its card is the site's generic OG image, which carries no
+  story source — so the old blanket rule would have forced the piece to claim a source card it
+  does not have. `piece_kind: text_with_link` is now the exemption, and an unknown kind still
+  takes the strict path. Provenance for this piece lives in the caption, where G2 enforces it.
+- **The media gate now does real work here.** The card used to be inert bytes in hand; it is now
+  a URL that can 404. `test_promo_is_REJECTED_when_the_OG_card_does_not_resolve` covers that, and
+  a second test reads the site's own layout and fails if its declared OG path and this config's
+  ever drift — the one constant that is now written down twice.
+
+### 75. The Actions resolver is a real opener
+`media.actions_resolver()` — dispatch, poll, read the conclusion by run id, parse the payload out
+of the timestamp-prefixed job log. Three rejections, all rules rather than judgement: a run that
+did not conclude `success`; a payload whose `requested_url` is not the URL asked about (a check of
+one URL cannot vouch for another); and a verification older than `verification.max_age_seconds`
+(600). A future-dated `checked_at` is rejected too, so clock skew cannot buy freshness. A dispatch
+failure or a run that never completes is reported as indeterminate, never as a pass.
+
+The freshness bound lives in config because it is policy. The test proves that: the same code
+passes inside the configured window and fails outside it, with only the config changed.
+
+### 76. Post-publish verification is a gate, not a decision
+`publish_gate.publish_with_verification()` publishes and then re-checks the destination, in that
+order, and records both outcomes to `data/published-posts.json` either way. If the link stopped
+resolving, it raises `PostPublishHalt` — the post is already live, so nothing can be prevented,
+but a human must be told and the ledger must say so. Silence there is indistinguishable from
+success, which is the failure mode.
+
+`verify_opener` is a required keyword with no default. The test asserts that by inspecting the
+signature: adding a default — the natural way to make the check optional again — fails it.
+
+### 77. The published-posts ledger
+`autoposter/data/published-posts.json`, append-only, seeded with post #1 (2026-09-11, the FB post
+URL, the article, the three verification run ids, `streak_after: 1`). A corrupt ledger raises
+rather than being reinitialised: losing the record of what went public is worse than failing to
+add to it. Run-log prose is not a ledger.
+
+### 78. Proof
+**130/130 across seven suites.** Each regression test was then proven by mutation — the hand-step
+put back deliberately, the suite run, the file reverted:
+
+| Mutation | Caught by |
+|---|---|
+| `media_url` re-hardcoded to today's OG URL | `test_media_follows_the_destination_rather_than_a_constant` |
+| freshness check disabled | `test_a_STALE_verification_is_REJECTED` (+2 more) |
+| `verify_opener` given a default | `test_there_is_no_publish_path_that_skips_verification` |
+
+A test that has only ever been observed passing has not been shown to test anything.

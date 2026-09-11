@@ -285,7 +285,14 @@ def _numeral_gates(post: dict, story: dict, result: GateResult) -> None:
             result.fail("G2", "as_of not visible on the card")
 
     # ---- G3 sourcing survives atomization ----
-    if post.get("has_media", True) and not post.get("has_source_card"):
+    # Scoped to pieces that CAN be cut. VALIDATOR.md frames G3 as "for every atomized short,
+    # assert the clip's own frames carry the source": the failure it prevents is a cut severing
+    # a claim from its source. A text-with-link post is never cut, and its media is the site's
+    # generic OG image, which carries no story source — so demanding one would force a piece to
+    # claim a source card it does not have. Its provenance lives in the caption (G2).
+    # Unknown kinds are treated as atomizable, so the default is the strict one.
+    ATOMIZABLE = post.get("piece_kind", "media") not in ("text_with_link",)
+    if post.get("has_media", True) and ATOMIZABLE and not post.get("has_source_card"):
         result.fail("G3", "media piece lacks its own on-screen source card (must survive the cut)")
 
     # ---- G4 claim <-> destination agreement ----

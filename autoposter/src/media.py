@@ -130,3 +130,115 @@ def resolve(url: str | None, opener=None, require_network: bool = False) -> tupl
                        f"the runner's own path before trusting it (social-autoposter step 9)")
 
     return False, f"unsupported media url scheme: {url[:32]!r}"
+
+
+# ---------------------------------------------------------------------------
+# The GitHub Actions resolver.
+#
+# This session cannot reach arbitrary hosts; Actions runners can. So a "does this URL resolve"
+# check is dispatched to `.github/workflows/autoposter-verify-url.yml` and the session reads the
+# conclusion of the run IT dispatched, by id.
+#
+# Until 2026-09-11 this was a throwaway script with a hardcoded url->run-id map, and the
+# freshness rule was my own discipline at post time. A hand-step that works once and rots is
+# exactly what this module now replaces: freshness is a RULE here, and a stale verification is a
+# rejection, not a judgement call.
+#
+# Results are read from JOB LOGS, not artifacts. Artifact downloads redirect to
+# productionresultssa9.blob.core.windows.net, which this session's egress denies (measured:
+# CONNECT 403). The run conclusion and the job logs both come through api.github.com.
+# ---------------------------------------------------------------------------
+
+import json as _json
+from datetime import datetime, timezone
+
+
+class VerificationUnavailable(Exception):
+    """The check could not be completed. Never silently treated as a pass."""
+
+
+def _parse_result(log_text: str) -> dict | None:
+    """Pull the workflow's JSON payload out of the job log.
+
+    The log is timestamp-prefixed per line, so the JSON is reassembled rather than parsed
+    whole. Returns None when no payload is present — which the caller treats as a rejection,
+    never as a pass.
+    """
+    lines = []
+    collecting = False
+    for raw in log_text.splitlines():
+        body = raw.split(" ", 1)[1] if " " in raw and raw[:4].isdigit() else raw
+        stripped = body.strip()
+        if stripped == "{":
+            collecting, lines = True, ["{"]
+            continue
+        if collecting:
+            lines.append(stripped)
+            if stripped == "}":
+                try:
+                    return _json.loads("".join(lines))
+                except ValueError:
+                    collecting, lines = False, []
+    return None
+
+
+def actions_resolver(*, dispatch, get_run, get_logs, max_age_seconds: int,
+                     expect_host: str | None = None, poll_limit: int = 20, now=None):
+    """Build a link/media opener backed by a real GitHub Actions run.
+
+    `dispatch(url, expect_host) -> run_id`, `get_run(run_id) -> {status, conclusion}`,
+    `get_logs(run_id) -> str`. Injected so this is testable without a network, and so the
+    session supplies MCP-backed implementations.
+
+    Three assertions, all rejections rather than warnings:
+      * the run must CONCLUDE success;
+      * `requested_url` in the payload must equal the URL asked about — otherwise a check of one
+        URL could vouch for another, and it would look green;
+      * `checked_at` must be within `max_age_seconds` — the rule that replaces remembering to
+        re-verify at post time.
+    """
+    clock = now or (lambda: datetime.now(timezone.utc))
+
+    def opener(url: str):
+        try:
+            run_id = dispatch(url, expect_host)
+        except Exception as exc:                      # noqa: BLE001
+            return False, f"{UNREACHABLE} could not dispatch verification: {exc}"
+        if not run_id:
+            return False, f"{UNREACHABLE} verification dispatch returned no run id"
+
+        for _ in range(poll_limit):
+            run = get_run(run_id) or {}
+            if run.get("status") == "completed":
+                break
+        else:
+            return False, f"{UNREACHABLE} verification run {run_id} did not complete in time"
+
+        if run.get("conclusion") != "success":
+            return False, f"verification run {run_id} concluded {run.get('conclusion')!r}"
+
+        payload = _parse_result(get_logs(run_id) or "")
+        if not payload:
+            return False, f"verification run {run_id} produced no readable result"
+
+        if payload.get("requested_url") != url:
+            return False, (f"verification run {run_id} checked "
+                           f"{payload.get('requested_url')!r}, not {url!r} — a check of one URL "
+                           f"cannot vouch for another")
+
+        checked_at = payload.get("checked_at", "")
+        try:
+            checked = datetime.fromisoformat(checked_at.replace("Z", "+00:00"))
+        except ValueError:
+            return False, f"verification run {run_id} has an unparseable checked_at {checked_at!r}"
+        age = (clock() - checked).total_seconds()
+        if age > max_age_seconds:
+            return False, (f"verification run {run_id} is {age:.0f}s old, limit "
+                           f"{max_age_seconds}s — re-verify at post time rather than trusting "
+                           f"an earlier run")
+        if age < -60:
+            return False, f"verification run {run_id} is dated in the future ({checked_at})"
+
+        return True, f"resolved {payload.get('http_code')} (GitHub Actions run {run_id})"
+
+    return opener

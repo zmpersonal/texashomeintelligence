@@ -130,6 +130,14 @@ def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today
     headline_claim = next(c for c in claims if c.id == "C1")
     url = article["canonical_url"]
 
+    # A link post's media is the DESTINATION's own OG image — that is what Facebook renders in
+    # the preview. Derived here from the destination, never hand-set at post time. Post #1
+    # needed exactly that hand-edit, and a hand-step that works once is a hand-step that rots
+    # (RUNLOG §73).
+    publish_cfg = config.get("publish") or {}
+    origin = "/".join(url.split("/")[:3])
+    media_url = origin + publish_cfg.get("og_image_path", "/images/og-card.jpg")
+
     caption = (
         f"Texas homeowners: it feels like every bill is going up. Electricity, for once, isn't. "
         f"Residential power in Texas is {headline_claim.figure} — {lead.figure} "
@@ -144,9 +152,14 @@ def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today
         "caption": caption,
         "on_screen_text": [headline_claim.figure,
                            f"{headline_claim.source} · {headline_claim.as_of}"],
-        "media_url": "data:image/png;base64," + "A" * 800,   # card render is Phase 6
+        "media_url": media_url,
         "has_media": True,
-        "has_source_card": True,
+        # A link post is not an atomized short, so G3 (the clip must carry its own source card)
+        # does not apply: there is no cut that could sever a claim from its source. Its
+        # provenance lives in the caption, which G2 still enforces. Stating the kind rather than
+        # claiming a source card the site's generic OG image does not have.
+        "piece_kind": "text_with_link",
+        "has_source_card": False,
         "destination_url": url,
         "destination_theme": "energy_price_cents_kwh",
         "card_kind": "reveal",

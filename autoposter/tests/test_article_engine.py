@@ -166,14 +166,34 @@ OK_LINK = lambda url: (True, "resolved 200")
 
 
 def test_facebook_promo_passes_the_full_social_suite():
-    """With a resolvable destination. The resolver is injected so the suite states its
-    assumption rather than silently depending on this surface's egress (LEARNINGS L13)."""
+    """With a resolvable destination AND a resolvable card. Both resolvers are injected so the
+    suite states its assumptions rather than silently depending on this surface's egress
+    (LEARNINGS L13).
+
+    The media opener became necessary on 2026-09-11: the promo's card is now DERIVED as the
+    destination's OG image (a real https URL) instead of an inert placeholder, so the media
+    gate now performs a network check where it used to inspect bytes in hand. That is the
+    point — the thing the reader sees in the preview is now something the gate can be wrong
+    about, and therefore something it has to check.
+    """
     r = engine.run("thi", write_fn=run_article.write,
                    build_claims_fn=run_article.build_claims, today=TODAY)
     post, gate = engine.build_facebook_promo(r["article"], r["claims"], CFG, TODAY,
-                                             link_opener=OK_LINK)
+                                             link_opener=OK_LINK, media_opener=OK_LINK)
     assert gate.ok, gate.failures
     assert "HELD" in post["status"]
+
+
+def test_promo_is_REJECTED_when_the_OG_card_does_not_resolve():
+    """A link post whose preview image 404s is a broken post. Deriving the card does not
+    exempt it from the media gate — it puts it under one."""
+    r = engine.run("thi", write_fn=run_article.write,
+                   build_claims_fn=run_article.build_claims, today=TODAY)
+    _, gate = engine.build_facebook_promo(r["article"], r["claims"], CFG, TODAY,
+                                          link_opener=OK_LINK,
+                                          media_opener=lambda url: (False, "HTTP 404"))
+    assert not gate.ok
+    assert any("media does not resolve" in f for f in gate.failures)
 
 
 def test_promo_is_REJECTED_when_its_destination_does_not_resolve():

@@ -235,6 +235,10 @@ publish:
   # off-domain rejects rather than being quietly promoted. Matches PUBLISH-TARGET.thi.md's
   # self-identified domain; the two-lock guard checks that file independently.
   site_domain: texashomeintelligence.com
+  # A text-with-link post carries no uploaded card: Facebook renders the DESTINATION's own OG
+  # image in the preview, so that image is the post's media and is what the media gate must
+  # resolve. Derived from the destination in build_facebook_promo — never hand-set at post time.
+  og_image_path: /images/og-card.jpg
 
 # ---- Egress the runner needs for its own gates to be performable (LEARNINGS L13) ----
 # A fail-closed gate on a surface that cannot reach the host it checks blocks every post.
@@ -255,6 +259,10 @@ verification:
   # session's egress denies (measured: CONNECT 403). The run CONCLUSION and the JOB LOGS both
   # come through api.github.com, which is reachable, so the echoed URL is read from the logs.
   # The artifact upload stays for a human reading the run in a browser.
+  # A verification older than this is REJECTED. Until 2026-09-11 this was discipline at post
+  # time; it is now a rule in media.actions_resolver. Ten minutes is long enough to dispatch,
+  # queue and run, short enough that a deploy cannot die inside the window unnoticed.
+  max_age_seconds: 600
   proven_runs:
     positive: 34638465141
     negative: 34638472822

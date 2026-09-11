@@ -241,3 +241,28 @@ every earlier proof ran against `data:` URIs and local files, which resolve with
 **Proposed rule:** when a gate performs an external check, prove it on the runner's real surface
 against a real external target **before** the gate is depended upon — not with a local stand-in.
 A gate proven only against fixtures has been proven to compute, not to be performable.
+
+## L14 — A discipline that worked once is an untested code path
+**Status:** `candidate` · **Affects:** every gate, the build loop's definition of "done" ·
+**Evidence:** RUNLOG §73, §74–78.
+
+Post #1 was clean. Three of the things that made it clean were things I did, not things the code
+did: I pointed the media at the OG card, I knew the verification run was minutes old, and I
+re-checked the link after publishing because it seemed prudent. Each looked like a step in a
+working system. None of them was in the system.
+
+The tell is that all three were invisible in a green run. A hand-step produces exactly the same
+output as the rule it stands in for, right up until the run where the person is tired, or absent,
+or reasonably assumes the previous run's verification still holds. That is why "it worked" is not
+evidence about the next run — the successful run is the one that hides the gap.
+
+**Proposed rule:** after any successful run, list what you did by hand between the gates. Each
+item is either promoted to code before the next run or written down as a known manual dependency.
+And the test for a promoted step must fail when the hand-step is put back: change the config the
+code should follow, or assert the signature that makes the check unskippable — not merely assert
+today's correct output, which a re-hardcoded constant would also produce.
+
+**Corollary observed here:** promoting a hand-step usually widens a gate's real surface. Deriving
+the card turned inert bytes into a URL that can 404, so the media gate now performs a network
+check where it used to inspect bytes in hand. Promotion is not free; it moves the risk from a
+person's memory into a check, which is the trade worth making, but the new check has to be real.
