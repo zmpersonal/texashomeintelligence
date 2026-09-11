@@ -1,0 +1,21 @@
+[
+  {
+    "published_at": "2026-09-11T19:28:09+00:00",
+    "platform": "facebook",
+    "page_id": "1335273942995805",
+    "post_url": "https://facebook.com/1335273942995805_122106384285466373",
+    "submission_id": "bdffc4bc-93a7-41c4-865a-4711645cc28f",
+    "article_url": "https://texashomeintelligence.com/analysis/are-texas-electricity-prices-still-going-up/",
+    "article_slug": "are-texas-electricity-prices-still-going-up",
+    "article_title": "Are Texas electricity prices still going up?",
+    "post_publish_verified": true,
+    "post_publish_detail": "resolved 200 (GitHub Actions run 34639017775)",
+    "verification_runs": {
+      "destination_pre": 34638877779,
+      "media_pre": 34638941968,
+      "destination_post": 34639017775
+    },
+    "streak_after": 1,
+    "note": "Clean post #1 of 4 toward Facebook autonomy. Zero human edits. Published before publish_gate existed; recorded here retrospectively from the real run ids."
+  }
+]
