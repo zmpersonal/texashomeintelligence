@@ -341,6 +341,37 @@ def test_the_published_notice_carries_both_live_urls():
     assert "streak 2" in notice
 
 
+def test_a_DRY_RUN_does_everything_except_merge_and_post():
+    """The mode to run before putting a cycle on a timer. It must reach the same verdict a real
+    run would, and then touch nothing."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    acted, notices = [], []
+    state = Path(tempfile.mkdtemp()) / "s.json"
+    autopilot.save_state(_ready_state(), state)
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=notices.append, dry_run=True,
+        merge_fn=lambda s: acted.append("merge"), deploy_wait_fn=lambda u: acted.append("wait"),
+        verify_opener=OK, publish_fn=lambda p: acted.append("post"),
+        state_path=state, ledger_path=Path(tempfile.mkdtemp()) / "l.json", **_kwargs(cfg))
+    assert d.action == "would_publish" and d.clean
+    assert not acted, "a dry run must not merge, deploy-wait or post"
+    assert json.loads(state.read_text())["last_article_at"] == "2026-09-01", \
+        "a dry run must not advance the clock"
+    assert "DRY RUN" in d.notice() and "nothing merged and nothing posted" in d.notice()
+
+
+def test_a_DRY_RUN_still_SKIPS_what_a_real_run_would_skip():
+    """A dry run that reported PUBLISH on a cycle a real run would refuse would be worse than
+    no dry run at all."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=tempfile.mkdtemp())
+    d = autopilot.run_cycle(cfg, today=TODAY, notify_fn=lambda m: None, dry_run=True,
+                            verify_opener=OK,
+                            state_path=Path(tempfile.mkdtemp()) / "s.json", **_kwargs(cfg))
+    assert d.action == "skip"
+
+
 if __name__ == "__main__":
     fns = [f for n, f in sorted(globals().items()) if n.startswith("test_")]
     ok = 0

@@ -73,6 +73,36 @@ def _metric(feed: dict, area: str, metric: str) -> dict:
     raise KeyError(f"{area}/{metric} absent from the feed — the engine will not invent it")
 
 
+def frontmatter(article: dict, claims: list[Claim], card_block: str, published_at: date,
+                published: bool = True) -> str:
+    """The article's site frontmatter, derived from the claims that verified it.
+
+    `metrics` and `sources` are not decoration: the collection schema requires them, and they
+    are what lets the page render provenance the way the data pages do. Deriving them from the
+    ledger rather than typing them means they cannot drift from the claims — the same argument
+    that moved the card block out of a human's hands.
+    """
+    metrics, sources = [], []
+    for claim in claims:
+        if claim.metric and claim.metric not in metrics:
+            metrics.append(claim.metric)
+        if claim.source and (claim.source, claim.as_of) not in sources:
+            sources.append((claim.source, claim.as_of))
+    lines = ["---",
+             f'title: "{article["title"]}"',
+             f'description: "{article["description"]}"',
+             f'publishedAt: "{published_at.isoformat()}"',
+             f"published: {'true' if published else 'false'}",
+             "metrics:"]
+    lines += [f"  - {m}" for m in metrics]
+    lines.append("sources:")
+    for name, as_of in sources:
+        lines += [f'  - name: "{name}"', f'    asOf: "{as_of}"']
+    lines.append(card_block)
+    lines.append("---")
+    return "\n".join(lines)
+
+
 def published_questions(config: dict) -> set[str]:
     """The H1 of every article already live on the site.
 

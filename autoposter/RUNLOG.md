@@ -1539,3 +1539,53 @@ check caught both: `git status` after the full suite.
 The scheduler and the Slack notifier need a workflow file in `.github/workflows/` and a Slack
 token in the `autoposter` Environment. Nothing has been wired to a schedule; `autopilot.py` runs
 only when called. The driver is proven in-process, not in production.
+
+## Round 17 — 2026-09-11 — the scheduler, and the fuel gap
+
+### 109. 🔴 The machine can write ZERO more articles once PR #47 merges
+Sharper than last round's "after post #3". Three topics are buildable; two have builders and
+both are used (post #1 published, post #2 in PR #47). `summer-hotter-than-normal` is buildable
+and has no builder. Every other topic scores `data_strength: 0.00`.
+
+**Dry run B proves it:** the first cycle after #47 merges halts on the no-builder rule and
+skips, and every cycle after that skips identically. `specs/TOPIC-BACKLOG.md` lists the next
+eight, each checked against the real series, with the figures the article would argue. Seven
+need an entry in `article_topics.yaml`, which is owner-tunable and the model never touches.
+
+### 110. 🟡 DECISION A vs a cron — the posting path
+`config.yaml` has recorded since Phase 0 that the runner is a Claude Code session *because MCP
+tools are session-only*. A GitHub Actions cron cannot call the Blotato MCP tool. So the workflow
+does the whole cycle — pick, write, card, gates, site merge, deploy wait, verify — and posts over
+Blotato's HTTP API with `BLOTATO_API_KEY`. **Without that secret it raises, the gate fails, the
+cycle skips and Slack says why.** Fail-closed, because the alternative is a scheduled run that
+believes it posted. Flagged rather than quietly assumed to work.
+
+### 111. Dry-run mode
+`run_cycle(dry_run=True)` does everything except the merge and the post: picks, writes, builds
+the card, runs every gate, reports what it would do, touches no state and writes no ledger row.
+Two tests: a dry run must reach `would_publish` on a clean cycle and touch nothing, and must
+still SKIP what a real run would skip — a dry run that reported PUBLISH on a cycle a real run
+would refuse is worse than no dry run.
+
+**Dry run A** (the cycle as it stands today): 9/9 gates clean, WOULD merge article 2, WOULD
+deploy, WOULD post to the pinned page, card face `224 solar permits · up 138% month over month ·
+City of Austin · Aug 2026`. One complete real cycle, nothing touched.
+
+### 112. The scheduler
+`.github/workflows/autoposter-cadence.yml` — the only file outside `autoposter/`. Daily at
+14:10 UTC (mid-morning Texas, so a bad post is seen within hours, and off the hour because
+GitHub's scheduler is busiest then). `workflow_dispatch` defaults to **dry run true**.
+`concurrency` allows one cycle ever — two overlapping runs could both pass the duplicate gate
+before either wrote the ledger. The job runs **the autoposter's own test suite before the
+cycle**: a run that can publish must not do so on code whose tests fail.
+
+The kill switch is read as a repository VARIABLE, so it is a GitHub-UI toggle with no commit.
+A skipped or paused cycle exits 0 — a quiet week that turns the job red teaches you to ignore
+the red.
+
+### 113. Two real defects in the entrypoint, caught before the PR
+`merge_fn` was left wired to dead scaffolding (`... if False else None`), and the merger needed
+frontmatter the article dict does not carry. Fixed: `article_engine.frontmatter()` derives
+metrics and sources from the claims that verified the article, so they cannot drift from the
+ledger — the same argument that moved the card block out of a human's hands — and `merge_fn`
+now receives the whole decision rather than a slug.

@@ -69,6 +69,7 @@ class CycleDecision:
     article: dict | None = None
     card: dict | None = None
     post: dict | None = None
+    claims: list = field(default_factory=list)
 
     @property
     def clean(self) -> bool:
@@ -83,6 +84,12 @@ class CycleDecision:
                     f"{self.reason}\n"
                     f"A cycle was prepared and held: {(self.article or {}).get('title', '—')}\n"
                     f"Resume by clearing AUTOPOSTER_PAUSED (or autopilot.paused in config).")
+        if self.action == "would_publish":
+            card = self.card or {}
+            return (f"🧪 DRY RUN — every gate clean, nothing merged and nothing posted.\n"
+                    f"WOULD publish: {card.get('question', '')}\n"
+                    f"WOULD card   : {card.get('headline', '')} · {card.get('subhead', '')} · "
+                    f"{card.get('source', '')}, {card.get('asOf', '')}")
         if self.action == "skip":
             failed = [v for v in self.verdicts if not v.ok]
             body = "\n".join(f"  • {v.name} — {v.detail}" for v in failed)
@@ -195,7 +202,9 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
         return decision
 
     article, claims, card = result["article"], result["claims"], result["card"]
-    decision.article, decision.card = article, card
+    article = dict(article, frontmatter=engine.frontmatter(
+        article, claims, result["card_frontmatter"], today))
+    decision.article, decision.card, decision.claims = article, card, claims
     decision.reason = f"topic: {result['topic']['id']}"
 
     verdicts = [
@@ -254,12 +263,20 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
 
 def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wait_fn=None,
               publish_fn=None, verify_opener=None, state_path: Path | None = None,
-              ledger_path: Path | None = None, **evaluate_kwargs) -> CycleDecision:
+              ledger_path: Path | None = None, dry_run: bool = False,
+              **evaluate_kwargs) -> CycleDecision:
     """Evaluate, then act. The ONLY path that publishes.
 
     `merge_fn` merges the already-green site PR, `deploy_wait_fn` blocks until the deploy is
     live, `publish_fn` posts. Injected so the whole sequence is testable without touching
     GitHub, Cloudflare or Facebook.
+
+    `dry_run=True` does EVERYTHING except the two irreversible acts: it picks, writes, builds the
+    card, runs every gate, and reports what it would have done — then stops before the merge and
+    the post, touches no state and writes no ledger row. It is the mode to run before putting a
+    cycle on a timer, and the mode to run when you want to see what the machine currently thinks
+    without letting it act on the answer. A dry run that reports PUBLISH is the strongest
+    statement available short of publishing.
     """
     state = load_state(state_path)
     decision = evaluate(config, today=today, state=state, **evaluate_kwargs)
@@ -270,9 +287,16 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
         notify_fn(decision.notice())
         return decision
 
+    if dry_run:
+        decision.action = "would_publish"
+        return decision
+
     # ---- publish. Merge the reviewed-and-green PR, wait for the deploy, THEN post.
     if merge_fn:
-        merge_fn(decision.article["slug"])
+        # The decision, not just a slug: the merger needs the article body, its
+        # frontmatter and its card, and passing the whole thing means the signature
+        # does not change again the first time it needs one more field.
+        merge_fn(decision)
     if deploy_wait_fn:
         deploy_wait_fn(decision.article["canonical_url"])
 
