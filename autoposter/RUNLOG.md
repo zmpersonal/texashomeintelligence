@@ -1021,3 +1021,36 @@ something someone has to remember.
 The owner opened it from outside the egress wall. That is the human standing in for a check the
 runner could not perform — appropriate once, and exactly what the destination gate is meant to
 stop needing.
+
+### 67. Where the egress allowlist actually lives — answered from the docs, not inferred
+The owner asked where the control is, suspecting it was not their Cloudflare. Correct: it is a
+**Claude Code cloud-environment setting**, and nothing in this container or in THI's Cloudflare
+touches it.
+
+- `/root/.ccr/` holds only CA material and a README — **no allowlist file**. The local proxy is a
+  forwarder; policy is enforced upstream.
+- This session runs in environment `env_01JB7CDLdYK8xHkV2nfP8xWb`, name **"Default"**,
+  description **"Default - trusted network access"**, kind `anthropic_cloud`.
+- Per `code.claude.com/docs/en/cloud-environments`, the environment dialog's **Network access**
+  field takes four levels — None / **Trusted** / Full / Custom. Trusted is "allowlisted domains
+  only: package registries, GitHub, cloud SDKs", which is exactly what was measured.
+- To add hosts: select **Custom**, list one domain per line in **Allowed domains**, and tick
+  **"Also include default list of common package managers"** — without that tick only the listed
+  hosts are reachable, which would break `npm ci`.
+
+**Why the runner can post but not verify is by design, not misconfiguration.** The docs state that
+MCP connector traffic travels through Anthropic's servers and **does not go through the session's
+network allowlist**; GitHub has its own proxy. So Blotato-over-MCP works while direct HTTPS to
+`database.blotato.io` is denied. That asymmetry is the documented architecture — which makes L13
+sharper than first written: it is not an accident to be fixed once, it is a property of this
+runner that any external-check gate has to be designed against.
+
+Measured policy shape (one probe per host, no retries):
+- reachable: `github.com`, `raw.githubusercontent.com`
+- denied (`connect_rejected`): `texashomeintelligence.com`, `database.blotato.io`,
+  `api.blotato.com`, `example.com`, `workers.cloudflare.com`, `telemetry.astro.build`
+- bypass the proxy entirely (`NO_PROXY`): the Anthropic API and MCP proxy, plus npm / PyPI /
+  crates / Go / jsr registries
+
+Two environments share the name "Default"; the one to edit is `env_01JB7CDLdYK8xHkV2nfP8xWb`.
+No workaround attempted. `egress_verified` stays `false`, no post, Facebook streak 0.
