@@ -1122,3 +1122,48 @@ had I assumed, the gate would have failed on its first real use, mid-post.
 
 `egress_verified: true`. Still no post: the go-live run is deferred to a fresh session with
 budget, per the owner.
+
+---
+
+## 2026-09-11 — GO-LIVE: clean post #1 published to Facebook
+
+**Round:** the first real end-to-end run (🔴 owner-authorized). Ordered sequence, every gate
+passed on real targets, nothing overridden.
+
+### 71. The sequence, in order
+1. **Freshness first.** Tightest margin 432h (18 days) on the cooling-degree-day claims; ledger
+   PASS at today's date. Not stale — proceeded.
+2. **Fresh destination verification at post time**, not a reused result: run **`34638877779`**,
+   conclusion **success**, `http_code` 200, `requested_url` == `final_url` == the URL the post
+   carries. **Echoed == posted, asserted from the job logs.**
+3. **Media on the real path — the thing never testable until now.** For a text-with-link piece the
+   media is the destination's own OG card, `/images/og-card.jpg`, which is what Facebook renders
+   in the preview. Verified by run **`34638941968`**, conclusion **success**. **PASS, not
+   UNVERIFIED** — the first time this gate has produced a real answer.
+4. **Full gate suite PASS** with both resolvers backed by those two runs. Notes recorded the run
+   ids, so the evidence behind the pass is traceable rather than assumed.
+5. **Channel guard** resolved to `Texas Home Intelligence`, page `1335273942995805`, account
+   `49743`; `postable_platforms == ['facebook']`.
+6. **Published.** `postSubmissionId bdffc4bc-93a7-41c4-865a-4711645cc28f`, status `published`.
+   **Live URL: https://facebook.com/1335273942995805_122106384285466373**
+7. **Post-publish confirmation.** Blotato's own listing shows the post on the THI page with the
+   exact caption. The linked article re-verified AFTER publication: run **`34639017775`**,
+   success — the post does not point at a dead link.
+
+### 72. Streak
+`facebook.clean_streak: 0 -> 1`. Zero human edits. Three more to go, each human-approved, and the
+gate also requires ≥2 distinct weekly cycles — so this cannot graduate on volume. Nothing else
+changed: no other channel touched, autonomy still `review`.
+
+### 73. What I would change before post #2
+- **The promo builder still assumes a rendered card.** It defaults `has_media: True` with a
+  placeholder `data:` URI, and I overrode `media_url` by hand at post time to point at the OG
+  card. That hand-edit is exactly the kind of step that works once and rots. `build_facebook_promo`
+  should know that a text-with-link piece's media IS the destination's OG image, and derive it.
+- **The Actions-backed resolver is glue, not code.** It lives in a throwaway script with a
+  hardcoded URL→run-id map. It belongs in `media.py` as a real opener that dispatches, polls, and
+  reads the conclusion — including the freshness assertion (reject a verification older than N
+  minutes), which is currently my discipline rather than a rule.
+- **No post-publish gate exists.** Step 7 was me choosing to re-verify. Nothing in code requires
+  it, and "the link died between check and publish" is precisely the failure the whole chain
+  exists to prevent. It should be a step the orchestrator runs and records.
