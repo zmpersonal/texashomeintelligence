@@ -270,46 +270,64 @@ The card has to be right before the post goes out, which is the gate's job in th
 
 ---
 
-## Brand-kit deviations on record (approved 2026-09-11)
+## Brand-kit deviations on record (approved 2026-09-11, revised after seeing the render)
 
 The kit is the canonical brand system. Where the cards depart from it, the departure is a
 decision with a reason, recorded here so a future round reads it as intent rather than drift.
 Anyone rebuilding the card template should start by reading this list and either keeping each
 call or overturning it deliberately.
 
-### 1. Horizontal lockup, not the stacked lockup §8 specifies for share cards
-**The kit says:** "Provide horizontal lockup (default), stacked lockup (share cards, app),
-and mark-only."
+**Revised 2026-09-11 after the first render.** The list below describes the template as built.
+An earlier version of this section described the first draft (a horizontal lockup, a mono hero
+at weight 400); both were changed once the card existed to look at, and the record was rewritten
+to match the code rather than left to describe a card that no longer exists.
 
-**The cards use:** the horizontal lockup, small, top-left.
+### 1. The hero numeral is set in IBM Plex Sans, not IBM Plex Mono
+**The kit says:** §6, "Data / Numerals — IBM Plex Mono. Tabular figures for scores, readings,
+ranges... Monospace makes columns align and makes data feel measured." Dashboard number: Mono 500.
 
-**Why:** a stacked lockup is a block of identity roughly three times the height of a
-horizontal one, and it sits in the only part of a 1200×630 card a reader looks at before
-deciding to click. THI's differentiator is the number, not the mark. A card whose job is to
-show a figure should not spend its top third on a logo. The lockup still carries identity at
-small size, and the card's whole visual language — Depth Navy, Newsreader, mono numerals,
-one amber accent — is the brand doing the identifying.
+**The cards use:** Plex Sans 600 at 150px, `tnum` retained, tight tracking.
 
-**What would overturn it:** a card format where the mark IS the message (a pure announcement
-card with no figure), or evidence that attribution is being lost when cards are reshared.
+**Why:** the kit's reasoning is about columns, and a card has no column. It has one number, seen
+once, usually at thumbnail size, and mono's fixed advance gives the decimal point a full
+character cell — `13.88` rendered visibly gapped at display size. The gap landed on the one
+element the entire card exists to deliver. Instrument grammar is worth a great deal on a
+dashboard and worth less than legibility here. `tnum` stays, so figures remain tabular.
 
-### 2. IBM Plex Mono 400 for the hero numeral, where §6 asks for 500
-**The kit says:** "Dashboard number: Plex Mono 500, font-feature-settings: 'tnum' 1, leading 1.0."
+Sans rather than Newsreader for the figure: the question directly above it is already
+Newsreader 500, and setting both in the serif flattens the hierarchy the card depends on. Plex
+Sans 600 is the kit's own weight for engineered headings.
 
-**The cards use:** Plex Mono 400, `tnum`, leading 1.0.
+**What would overturn it:** a card format that shows several figures in a row or column, where
+alignment starts to matter again. The weight and family are two constants at the top of the
+template.
 
-**Why:** the repo self-hosts six faces (`site/public/fonts/`) and Plex Mono 500 is not among
-them — only 400 and 700. Adding a seventh face means a new file under `site/public/fonts/`,
-which is outside the eight paths approved for this crossing. Between the two available
-weights, 400 at 140px is the one that reads as an instrument; 700 at that size reads as an
-alarm, which is the exact register the brand essence rules out.
+### 2. The subhead is Plex Sans, not Plex Mono
+The first draft set every line except the question in mono. Read together they looked like
+terminal output, which undercuts the publication the article is trying to be. Mono survives for
+the source stamp, which is precisely the small dated label §6 describes.
 
-**What would overturn it:** adding Plex Mono 500 to the font set in a round that is allowed to
-touch `public/fonts/` and `sync-fonts.mjs`. At that point this should revert to spec. The
-template holds the weight in one constant so it is a one-line change.
+### 3. No mark on the card — the wordmark alone carries identity
+**The kit says:** §8 provides a horizontal lockup (default), a stacked lockup (share cards,
+app), and mark-only.
 
-### 3. Amber appears only as a rule, never as text
+**The cards use:** no mark. The wordmark, "Texas Home" in `#E8EDF4` with "Intelligence" in
+Caliche Amber, Plex Sans 600 at 24px, top-left.
+
+**Why:** two steps, both taken after looking at a render. The kit's stacked lockup is roughly
+three times the height of a horizontal one and would occupy the part of a 1200×630 card a
+reader sees before deciding to click; a card whose job is the number should not spend its top
+third on identity. Then the horizontal lockup's mark, at the ~34px it could occupy there,
+resolved to a dark smudge at feed scale — an identity element that does not identify is worse
+than none, since it costs space and attention for nothing. The wordmark stays legible small,
+and the source line carries attribution independently.
+
+**What would overturn it:** a simplified monochrome mark drawn for small sizes, which is a
+brand-asset task rather than a template one. The template has one lockup block to change.
+
+### 4. Amber appears only as a rule, never as text
 Not a deviation — it is §5's accessibility flag applied ("never put Caliche Amber text on
 Meridian Navy for small sizes; use `#E8EDF4` and let amber be a shape or underline"). Recorded
 here because the obvious future "improvement" is to set the hero figure in amber, and that is
-the one thing this palette explicitly forbids on navy.
+the one thing this palette explicitly forbids on navy. The wordmark's amber "Intelligence" is
+the established lockup, not new amber text.

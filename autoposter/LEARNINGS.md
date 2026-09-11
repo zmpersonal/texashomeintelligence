@@ -266,3 +266,29 @@ today's correct output, which a re-hardcoded constant would also produce.
 the card turned inert bytes into a URL that can 404, so the media gate now performs a network
 check where it used to inspect bytes in hand. Promotion is not free; it moves the risk from a
 person's memory into a check, which is the trade worth making, but the new check has to be real.
+
+## L15 — A guard observed only in the passing case has not been observed
+**Status:** `validated` · **Affects:** every fail-closed check in this project ·
+**Evidence:** RUNLOG §81 (the OG card's font guard), §78 (the hardening mutations).
+
+The card renderer asserts that every brand face loaded before it screenshots, because a card
+set in a fallback typeface renders, uploads and posts without complaint. The assertion was
+written, reviewed, and looked correct. Breaking a font on purpose showed it had never run:
+`document.fonts.load()` REJECTS on a face that cannot decode, so the promise blew up two lines
+earlier and the process died on a bare `NetworkError` stack.
+
+It still failed closed, which is why this could have gone unnoticed indefinitely. The exit code
+was right and no bad card reached disk. But that came from the ordering of an unhandled
+rejection, not from the check, and the first time a font failed in a real run the operator would
+have received a stack trace naming nothing. A guard that has only been watched succeeding has
+been shown to *not fire*, which is the cheap half of the claim.
+
+**Proposed rule:** a fail-closed check is not done when it is written. Break the thing it
+guards, confirm the check is what catches it, and confirm it says which thing broke. If the
+failure arrives through a different path than the check — an exception upstream, a truthiness
+accident, an early return — the check is decorative and the protection is luck.
+
+**Family:** L11 ("assert safety properties from the code, not from expectation") and L14 ("a
+discipline that worked once is an untested code path"). All three are the same shape: the
+successful run is the one that hides the gap. L11 is about what you claim, L14 about what you
+did by hand, L15 about what the code would do if it ever had to.

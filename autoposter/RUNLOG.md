@@ -1269,3 +1269,20 @@ lesson as L14's corollary: a guard observed only in the passing case has not bee
 Render-side verification read the built HTML (L9): article emits the card URL with the full
 agency name in alt while the face carries `EIA`; homepage unchanged; `astro check` clean.
 Nothing posted, streak 1, autonomy review. No promo change — that is the full version's round.
+
+### 82. Card typography revised — sans hero, no mark
+Owner reviewed the render and took all three flags. Hero numeral off mono to Plex Sans 600 at
+150px (mono's fixed advance gapped the decimal at display size, on the one element the card
+exists to deliver); subhead to Plex Sans 400 (all-mono read as terminal output); the mark
+dropped entirely, wordmark alone. **No new font file** — Plex Sans 400 was already self-hosted,
+so the approved eight paths are unchanged and only two of them moved.
+
+Where the owner's instruction left a choice open (sans vs the display serif for the figure), the
+call was Plex Sans: the question above it is already Newsreader, and both in serif flattens the
+hierarchy. Stated rather than asked, because the reasoning is checkable from the render.
+
+Guards re-proven against the new face list rather than assumed to still hold: corrupting the
+newly-added Plex Sans 400 aborts naming that face, an over-long question aborts rather than
+cropping, both write nothing, two runs byte-identical. The deviation record in
+`specs/OG-CARD-PROPOSAL.md` was rewritten to describe the template as built — a record still
+describing the first draft is the same drift it exists to prevent. L15 added.
