@@ -36,7 +36,10 @@ channels:
     enabled: true            # second, independent switch (owner's config revision). A channel
                              # must be BOTH enabled AND pinned to receive a post.
     autonomy: review
-    clean_streak: 0
+    # Post #1 of 4, published 2026-09-11, zero human edits (RUNLOG §71). Three to go, each
+    # human-approved. The gate also needs >=2 distinct weekly cycles, so this cannot graduate on
+    # volume alone — only the owner advances this, never a run.
+    clean_streak: 1
     pinned:
       account_id: "49743"
       page_id: "1335273942995805"
