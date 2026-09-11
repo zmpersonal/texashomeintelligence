@@ -226,6 +226,21 @@ tools:
     # PHASE 0: under decision A the one model call happens IN-SESSION, so no API key is
     # needed for it. A key is only required if a headless job ever generates copy.
 
+# ---- Publish target (used by the destination-resolution gate) ----
+publish:
+  # Asserted against the host a destination URL finally resolves to, so a link that redirects
+  # off-domain rejects rather than being quietly promoted. Matches PUBLISH-TARGET.thi.md's
+  # self-identified domain; the two-lock guard checks that file independently.
+  site_domain: texashomeintelligence.com
+
+# ---- Egress the runner needs for its own gates to be performable (LEARNINGS L13) ----
+# A fail-closed gate on a surface that cannot reach the host it checks blocks every post.
+# These are the hosts resolution actually hits. Until they are reachable, DO NOT POST.
+required_egress:
+  - texashomeintelligence.com      # destination + canonical (destination-resolution gate)
+  - database.blotato.io            # Blotato media storage, measured from real post payloads
+egress_verified: false             # flip only after a real target resolves from the runner
+
 slack:
   channel: "#thi-autoposter"             # PHASE 0: does not exist yet (searched). 🔴 owner.
   webhook_secret_name: SLACK_WEBHOOK_URL

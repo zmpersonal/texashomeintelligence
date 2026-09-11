@@ -12,6 +12,16 @@ version, never skip to keep a run alive.
 
 PHASE 3 wired the two integration TODOs — G5 freshness and real media resolution — and closed
 four gaps between the code and the spec (see RUNLOG §29).
+
+2026-09-11: the DESTINATION-resolution gate was added (RUNLOG §65). Until that date this file
+checked a destination for presence and theme agreement only, while being described as a
+resolution gate. It is now real.
+
+⚠️ NOT YET PROVEN AGAINST A REAL TARGET. Every test injects a resolver, which proves the gate
+COMPUTES, not that it is PERFORMABLE on the runner's surface — the distinction LEARNINGS L13
+was written about. This session's egress denies the project's own domain, so the real-target
+proof waits on `config.required_egress` being reachable. Do not treat green tests here as
+evidence that the gate works in production.
 """
 
 from __future__ import annotations
@@ -146,7 +156,7 @@ def _check_freshness(post: dict, story: dict, config: dict, result: GateResult,
 # ---------------------------------------------------------------- the suite
 
 def validate_post(post: dict, story: dict | None, config: dict, feed: dict | None = None,
-                  now: date | None = None, media_opener=None) -> GateResult:
+                  now: date | None = None, media_opener=None, link_opener=None) -> GateResult:
     """Run every gate. `post` keys: platform, caption, on_screen_text (list[str]), media_url,
     destination_url, angle, has_source_card, has_media, requires_link, title,
     destination_theme, card_rows, card_numeric_cells; pinterest also title/description/alt_text.
@@ -173,8 +183,21 @@ def validate_post(post: dict, story: dict | None, config: dict, feed: dict | Non
         for field_name in PINTEREST_REQUIRED:
             if not post.get(field_name):
                 result.fail("BASE", f"pinterest missing required field: {field_name}")
-    if post.get("requires_link", True) and not post.get("destination_url"):
-        result.fail("BASE", "linked piece missing destination_url")
+    # A linked piece must carry a destination AND that destination must RESOLVE.
+    # Presence alone was all this checked until 2026-09-11, while being described as a
+    # resolution gate (RUNLOG §62). Promoting a dead link is the failure it exists to stop.
+    if post.get("requires_link", True):
+        destination = post.get("destination_url")
+        if not destination:
+            result.fail("BASE", "linked piece missing destination_url")
+        else:
+            ok, reason = media_mod.resolve_link(
+                destination, opener=link_opener,
+                expect_host=(config.get("publish") or {}).get("site_domain"))
+            if not ok:
+                result.fail("BASE", f"destination does not resolve — {reason}")
+            else:
+                result.notes.append(f"destination: {reason}")
 
     # media presence AND resolution (VALIDATOR.md baseline; Phase 3 wired the resolution)
     if post.get("has_media", True):

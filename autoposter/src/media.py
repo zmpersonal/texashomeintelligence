@@ -21,6 +21,7 @@ and surfaces on the gate result.
 from __future__ import annotations
 
 import base64
+import re
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -47,6 +48,47 @@ def _head(url: str) -> tuple[bool, str]:
         return False, f"HTTP {exc.code}"
     except Exception as exc:                      # noqa: BLE001 - any failure is a reject
         return False, f"{UNREACHABLE} {type(exc).__name__}: {exc}"
+
+
+def resolve_link(url: str | None, opener=None, require_network: bool = False,
+                 expect_host: str | None = None) -> tuple[bool, str]:
+    """Resolve a DESTINATION link. (ok, reason). `ok=False` means the piece must not publish.
+
+    PUBLISH-TARGET.thi.md: "Until the URL is live, social scheduling for that article is HELD
+    (don't promote a dead link — reuses VALIDATOR: linked pieces require a resolvable
+    destination)." VALIDATOR.md's baseline says the same. **This function is that rule.**
+
+    It did not exist until 2026-09-11, and its absence was described to the owner across several
+    rounds as though it did — see RUNLOG §62. Nothing shipped on the false assurance because the
+    human gate held independently, which is the whole argument for that gate.
+
+    Different semantics from `resolve()` on purpose. A destination is a web page, so:
+      * only http(s) is acceptable — a `data:` URI or a local path is not somewhere a reader
+        can go, and silently accepting one would promote a link that goes nowhere;
+      * there is no byte floor — a small page is still a page;
+      * redirects are followed, and `expect_host` asserts where they landed, so a destination
+        that ends up on a different domain rejects rather than quietly promoting it.
+    """
+    if not url or not str(url).strip():
+        return False, "destination url absent"
+    url = str(url).strip()
+    if not (url.startswith("http://") or url.startswith("https://")):
+        return False, (f"destination {url[:40]!r} is not an http(s) URL — a reader cannot follow "
+                       f"a data: URI or a local path")
+
+    ok, reason = (opener or _head)(url)
+    if not ok:
+        if require_network or not reason.startswith(UNREACHABLE):
+            return False, reason
+        return False, (f"UNVERIFIED from this surface ({reason}) — the destination may well be "
+                       f"live; this surface cannot see it. Do not publish on that ambiguity")
+
+    if expect_host:
+        final = reason.split("->", 1)[1].strip() if "->" in reason else url
+        host = re.sub(r"^https?://", "", final).split("/")[0].lower().split(":")[0]
+        if host != expect_host.lower() and not host.endswith("." + expect_host.lower()):
+            return False, f"destination resolved to host {host!r}, expected {expect_host!r}"
+    return True, reason
 
 
 def resolve(url: str | None, opener=None, require_network: bool = False) -> tuple[bool, str]:

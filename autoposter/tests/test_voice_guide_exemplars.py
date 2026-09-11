@@ -23,6 +23,7 @@ CFG = yaml.safe_load(open(os.path.join(os.path.dirname(__file__), "..", "config.
 # bound. That is the gate working, so the clock moves, not the bound.
 TODAY = date(2026, 5, 14)
 MEDIA = "data:image/png;base64," + "A" * 800
+OK_LINK = lambda url: (True, "resolved 200")
 
 STORY_APPRAISAL = {"metric": "appraisal_change", "figure": "up 18% year-over-year",
                    "source": "Travis Central Appraisal District", "as_of": "2026-05-13"}
@@ -72,19 +73,19 @@ VERDICT = (
 
 def test_reveal_exemplar_passes():
     r = v.validate_post(_piece(REVEAL, STORY_APPRAISAL), STORY_APPRAISAL, CFG_UNGATED,
-                        now=TODAY)
+                        now=TODAY, link_opener=OK_LINK)
     assert r.ok, r.failures
 
 
 def test_warning_exemplar_passes():
     piece = _piece(WARNING, STORY_HAIL, angle="warning")
-    r = v.validate_post(piece, STORY_HAIL, CFG_UNGATED, now=TODAY)
+    r = v.validate_post(piece, STORY_HAIL, CFG_UNGATED, now=TODAY, link_opener=OK_LINK)
     assert r.ok, r.failures
 
 
 def test_verdict_exemplar_passes():
     piece = _piece(VERDICT, STORY_APPRAISAL, angle="verdict")
-    r = v.validate_post(piece, STORY_APPRAISAL, CFG_UNGATED, now=TODAY)
+    r = v.validate_post(piece, STORY_APPRAISAL, CFG_UNGATED, now=TODAY, link_opener=OK_LINK)
     assert r.ok, r.failures
 
 
@@ -94,7 +95,7 @@ def test_the_voice_guides_own_never_list_still_gets_caught():
     scam = REVEAL.replace("read this before your next tax bill",
                           "you won't BELIEVE what just happened!!")
     assert not v.validate_post(_piece(scam, STORY_APPRAISAL), STORY_APPRAISAL,
-                               CFG_UNGATED, now=TODAY).ok
+                               CFG_UNGATED, now=TODAY, link_opener=OK_LINK).ok
 
 
 if __name__ == "__main__":

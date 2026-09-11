@@ -993,3 +993,31 @@ decision, not a workaround — options in the report. **No override was applied 
 ### 64. Autonomy streak — NOT incremented
 Facebook stays at `clean_streak: 0`. No post was published, so there is no clean post #1. The
 gate to autonomy counts published posts; an aborted run is not one.
+
+### 65. The destination-resolution gate is now real — and explicitly not yet proven
+`media.resolve_link()` + a BASE gate in `validate_post`. Deliberately different semantics from
+media resolution, because a destination is a page a reader must be able to reach:
+- **http(s) only.** A `data:` URI or a local path is rejected outright — accepting one would
+  promote a link that goes nowhere.
+- **No byte floor.** A small page is still a page.
+- **Redirects followed, landing host asserted** against `config.publish.site_domain`, so a
+  destination that ends up off-domain rejects instead of being quietly promoted.
+- **The same honest split as media:** a definite `HTTP 404` is a hard reject; unreachable is
+  `UNVERIFIED`, and **indeterminate is not permission**.
+
+Six new tests, all of them rejections — 404, unreachable, `data:` URI, relative path, off-domain
+redirect, missing destination — plus two on the promo itself. **106/106 across six suites.**
+
+**The caveat is in the module docstring, not only here:** every test injects a resolver. That
+proves the gate COMPUTES; it does not prove it is PERFORMABLE on the runner's surface, which is
+precisely the distinction L13 was written about. Proving it against a real target waits on
+egress. Green tests here are not evidence the gate works in production, and the file says so.
+
+Also added `config.required_egress` (the two hosts) and `egress_verified: false` — a flag to flip
+only after a real target resolves from the runner, so the unproven state is data rather than
+something someone has to remember.
+
+### 66. Owner confirmed the article is live
+The owner opened it from outside the egress wall. That is the human standing in for a check the
+runner could not perform — appropriate once, and exactly what the destination gate is meant to
+stop needing.

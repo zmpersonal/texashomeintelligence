@@ -162,12 +162,42 @@ def test_virality_vs_brand_safety_tension_is_surfaced_not_buried():
 
 # ---------------------------------------------------------------- the promo
 
+OK_LINK = lambda url: (True, "resolved 200")
+
+
 def test_facebook_promo_passes_the_full_social_suite():
+    """With a resolvable destination. The resolver is injected so the suite states its
+    assumption rather than silently depending on this surface's egress (LEARNINGS L13)."""
     r = engine.run("thi", write_fn=run_article.write,
                    build_claims_fn=run_article.build_claims, today=TODAY)
-    post, gate = engine.build_facebook_promo(r["article"], r["claims"], CFG, TODAY)
+    post, gate = engine.build_facebook_promo(r["article"], r["claims"], CFG, TODAY,
+                                             link_opener=OK_LINK)
     assert gate.ok, gate.failures
     assert "HELD" in post["status"]
+
+
+def test_promo_is_REJECTED_when_its_destination_does_not_resolve():
+    """The gate that did not exist until 2026-09-11 (RUNLOG §62). A dead article URL must stop
+    the post that promotes it — this is the only thing standing between a deploy that failed
+    and a published link to nowhere."""
+    r = engine.run("thi", write_fn=run_article.write,
+                   build_claims_fn=run_article.build_claims, today=TODAY)
+    _, gate = engine.build_facebook_promo(r["article"], r["claims"], CFG, TODAY,
+                                          link_opener=lambda url: (False, "HTTP 404"))
+    assert not gate.ok
+    assert any("destination does not resolve" in f for f in gate.failures)
+
+
+def test_promo_is_REJECTED_when_the_destination_is_merely_UNREACHABLE():
+    """Indeterminate is not permission. A destination this surface cannot see may well be live;
+    publishing on that ambiguity is the exact thing the halt of 2026-09-11 refused to do."""
+    r = engine.run("thi", write_fn=run_article.write,
+                   build_claims_fn=run_article.build_claims, today=TODAY)
+    _, gate = engine.build_facebook_promo(
+        r["article"], r["claims"], CFG, TODAY,
+        link_opener=lambda url: (False, "unreachable: URLError: refused"))
+    assert not gate.ok
+    assert any("UNVERIFIED" in f for f in gate.failures)
 
 
 def test_promo_targets_only_the_pinned_thi_page():

@@ -1,7 +1,20 @@
 # HANDOFF.md — THI Autoposter
 
 Current full context for a fresh session. Overwritten at each stopping point.
-**Last updated: 2026-09-06, end of Phase 4 (held at the prove-gate).**
+**Last updated: 2026-09-11 — article LIVE; the Facebook post is BLOCKED on egress.**
+
+## Where this stands right now
+The article is **published and live** at
+`https://texashomeintelligence.com/analysis/are-texas-electricity-prices-still-going-up/`
+(owner-confirmed from outside the egress wall; the runner cannot see it).
+
+**The Facebook post has NOT gone out, and must not until two things are true:**
+1. `config.required_egress` hosts are reachable from the runner —
+   `texashomeintelligence.com` and `database.blotato.io`. Then flip `egress_verified: true`.
+2. The destination-resolution gate has been proven against a **real** target, not an injected
+   resolver. Green tests prove it computes, not that it is performable (LEARNINGS L13).
+
+Facebook `clean_streak` is **0**. No post has been published, so there is no clean post #1.
 
 ---
 

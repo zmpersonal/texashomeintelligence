@@ -23,7 +23,14 @@ TODAY = date(2026, 9, 6)
 STORIES = FEED["stories"]
 
 
+# Resolution is an EXTERNAL check; these suites must not depend on this surface's egress.
+# Injecting a stub states the assumption out loud. Real-target proof is a separate, explicit
+# step and has NOT been done yet (LEARNINGS L13).
+OK_LINK = lambda url: (True, "resolved 200")
+
+
 def _check(post, story=None, feed=None, **kw):
+    kw.setdefault("link_opener", OK_LINK)
     return v.validate_post(post, story if story is not None else STORIES[0],
                            CFG, feed=feed or FEED, now=TODAY, **kw)
 
@@ -213,6 +220,40 @@ def test_pinterest_missing_required_fields_rejected():
     p = _good(); p["platform"] = "pinterest"
     fails = _check(p).failures
     assert sum("pinterest missing" in f for f in fails) >= 2
+
+
+# ---------------------------------------------------------------- destination resolution
+
+def test_destination_404_rejected():
+    """Promoting a dead link is the failure this gate exists to stop."""
+    p = _good()
+    fails = _check(p, link_opener=lambda url: (False, "HTTP 404")).failures
+    assert any("destination does not resolve" in f for f in fails)
+
+
+def test_destination_unreachable_is_rejected_as_unverified():
+    p = _good()
+    fails = _check(p, link_opener=lambda url: (False, "unreachable: refused")).failures
+    assert any("UNVERIFIED" in f and "destination" in f for f in fails)
+
+
+def test_destination_must_be_http_not_a_data_uri_or_local_path():
+    for bad in ("data:text/html,hi", "/analysis/x/", "./x"):
+        p = _good(); p["destination_url"] = bad
+        assert any("not an http(s) URL" in f for f in _check(p).failures), bad
+
+
+def test_destination_redirecting_off_domain_is_rejected():
+    cfg = dict(CFG, publish={"site_domain": "texashomeintelligence.com"})
+    p = _good()
+    r = v.validate_post(p, STORIES[0], cfg, feed=FEED, now=TODAY,
+                        link_opener=lambda url: (True, "resolved 200 -> https://evil.example/x"))
+    assert any("expected 'texashomeintelligence.com'" in f for f in r.failures)
+
+
+def test_missing_destination_still_rejected():
+    p = _good(); del p["destination_url"]
+    assert any("missing destination_url" in f for f in _check(p).failures)
 
 
 if __name__ == "__main__":

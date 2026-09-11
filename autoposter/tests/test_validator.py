@@ -15,6 +15,7 @@ import yaml
 CFG = yaml.safe_load(open(os.path.join(os.path.dirname(__file__), "..", "config.yaml")))
 TODAY = date(2026, 5, 14)
 MEDIA = "data:image/png;base64," + "A" * 800
+OK_LINK = lambda url: (True, "resolved 200")
 
 STORY = {"metric":"drought_stage","figure":"+2 stages (now Stage 3)",
          "source":"US Drought Monitor","as_of":"2026-05-13","value":3}
@@ -28,7 +29,7 @@ def _good():
             "destination_theme":"drought_stage"}
 
 def test_good_passes():
-    assert v.validate_post(_good(), STORY, CFG, now=TODAY).ok
+    assert v.validate_post(_good(), STORY, CFG, now=TODAY, link_opener=OK_LINK).ok
 
 def test_fabricated_numeral_rejected():          # G1
     p=_good(); p["caption"]=p["caption"].replace("+2 stages","+9 stages")
