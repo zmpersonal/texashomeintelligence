@@ -1,0 +1,14 @@
+{
+  "path": "/images/og/are-texas-electricity-prices-still-going-up.png",
+  "width": 1200,
+  "height": 630,
+  "alt": "Are Texas electricity prices still going up? 13.88¢/kWh, down 10.2% year over year. Source: U.S. Energy Information Administration, Aug 2026.",
+  "rendered": {
+    "question": "Are Texas electricity prices still going up?",
+    "headline": "13.88¢/kWh",
+    "subhead": "down 10.2% year over year",
+    "source": "EIA",
+    "asOf": "Aug 2026"
+  },
+  "generator": "scripts/generate-og-cards.mjs"
+}

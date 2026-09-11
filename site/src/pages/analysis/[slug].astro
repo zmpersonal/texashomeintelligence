@@ -29,6 +29,15 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props as { entry: CollectionEntry<"analysis"> };
+
+// The article's own social card, if one has been generated. A missing sidecar is
+// normal and silent — Base falls back to the sitewide card, which is what every
+// page did before these existed. `import.meta.glob` rather than node:fs so the
+// route carries no build-only API and behaves the same if it ever goes SSR.
+const OG_CARDS = import.meta.glob<{
+  default: { path: string; width: number; height: number; alt: string };
+}>("../../data/og-cards/*.json", { eager: true });
+const ogImage = OG_CARDS[`../../data/og-cards/${entry.id}.json`]?.default;
 const { Content } = await render(entry);
 const { title, description, publishedAt, updatedAt, sources, embed } = entry.data;
 
@@ -46,6 +55,7 @@ const freshness = dataset ? freshnessOf(dataset) : undefined;
 <Base
   title={title}
   description={description}
+  ogImage={ogImage}
   article={{ datePublished: publishedAt, dateModified: updatedAt ?? publishedAt, section: "Analysis" }}
 >
   <Breadcrumbs
