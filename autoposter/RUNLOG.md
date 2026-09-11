@@ -1054,3 +1054,37 @@ Measured policy shape (one probe per host, no retries):
 
 Two environments share the name "Default"; the one to edit is `env_01JB7CDLdYK8xHkV2nfP8xWb`.
 No workaround attempted. `egress_verified` stays `false`, no post, Facebook streak 0.
+
+### 68. Assessment round — verification via GitHub Actions (no code written)
+Owner cannot reach the environment's network setting. Assessed whether the URL-verification
+requirement can be met without changing egress at all.
+
+**Verdict: yes, and it is arguably the better architecture.** GitHub traffic bypasses the session
+allowlist by design, and Actions runners demonstrably reach arbitrary external hosts daily (the
+ingestion job). `mcp__github__actions_run_trigger` (`run_workflow`, with `inputs` and `ref`) and
+`actions_get` (`get_workflow_run`, `download_workflow_run_artifact`) both exist in this session,
+so the session can dispatch a check and read its conclusion by run id.
+
+Three properties the design must preserve, and how:
+- **Freshness** — dispatch on demand immediately before posting, not a daily cron, and require
+  the run's completion timestamp to be within a few minutes. Collapses the window from a day to
+  the length of one job.
+- **Aboutness** — the URL under test is a dispatch INPUT and must be echoed in the result; the
+  gate asserts echoed == posted. Without that you can verify one URL and post another.
+- **Trust** — **do not commit the result.** A committed file is forgeable by any push, including
+  mine. Read the conclusion from the run the session itself dispatched, addressed by run id via
+  the GitHub API. Residual trust is "GitHub reports its own run honestly", which this project
+  already extends to GitHub for hosting the code.
+
+**Design note that makes this cheap:** `validate_post` already takes an injectable `link_opener`.
+An Actions-backed resolver is just another opener, so if egress is ever opened the swap is a
+config change, not a rewrite. The gate's meaning does not move — only where the evidence comes
+from.
+
+**🔴 Rule 0 crossing:** the workflow file must live in `.github/workflows/`, outside
+`autoposter/`. Same class as the site patch; needs explicit approval before anything is written.
+
+**Unverified, and not assumed:** the tools exist, but whether this session's GitHub token carries
+`actions: write` has not been tested. One dispatch proves it; that test belongs with the build.
+
+No code written. No post. `egress_verified` false, Facebook streak 0.
