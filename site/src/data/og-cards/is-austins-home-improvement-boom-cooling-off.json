@@ -1,0 +1,14 @@
+{
+  "path": "/images/og/is-austins-home-improvement-boom-cooling-off.png",
+  "width": 1200,
+  "height": 630,
+  "alt": "Is Austin's home-improvement boom actually cooling off? 224 solar permits, up 138% month over month. Source: City of Austin Issued Construction Permits (Socrata), Aug 2026.",
+  "rendered": {
+    "question": "Is Austin's home-improvement boom actually cooling off?",
+    "headline": "224 solar permits",
+    "subhead": "up 138% month over month",
+    "source": "City of Austin",
+    "asOf": "Aug 2026"
+  },
+  "generator": "scripts/generate-og-cards.mjs"
+}
