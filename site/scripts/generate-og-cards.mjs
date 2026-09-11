@@ -42,7 +42,6 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const SITE = path.join(here, "..");
 const ARTICLES = path.join(SITE, "src", "data", "analysis");
 const FONTS = path.join(SITE, "public", "fonts");
-const MARK = path.join(SITE, "public", "images", "logo.png");
 const PNG_DIR = path.join(SITE, "public", "images", "og");
 const SIDECAR_DIR = path.join(SITE, "src", "data", "og-cards");
 
@@ -63,17 +62,27 @@ const C = {
 };
 
 /**
- * Plex Mono 500 is what the kit asks for; the repo self-hosts 400 and 700 only, and adding a
- * face is out of scope for this change. 400 at 140px reads as an instrument, 700 reads as an
- * alarm — and "instrument panel, not weather-radar alarm" is the brand essence. Recorded as a
- * deliberate deviation in autoposter/specs/OG-CARD-PROPOSAL.md; one constant to revert.
+ * THE HERO NUMERAL IS SET IN PLEX SANS, NOT PLEX MONO.
+ *
+ * The kit puts numerals in mono, and on a dashboard that is right: fixed advances make columns
+ * align and readings comparable. A card has no column. It has one number, seen once, often at
+ * thumbnail size, and mono's fixed advance gives the decimal point a full character cell — so
+ * "13.88" renders visibly gapped at display size. Instrument grammar loses to legibility on
+ * the one element the card exists to deliver. Owner's call, 2026-09-11; recorded with the
+ * reasoning in autoposter/specs/OG-CARD-PROPOSAL.md.
+ *
+ * Sans over the display serif for the figure: the question above it is already Newsreader, and
+ * setting both in the serif flattens the hierarchy the card depends on. Plex Sans 600 is the
+ * kit's own weight for engineered headings, and `tnum` keeps the figures tabular.
  */
-const HERO_WEIGHT = 400;
+const HERO_WEIGHT = 600;
 
 /** Every face the template uses, and the exact string used to verify it loaded. */
 const FACES = [
   { family: "Newsreader", weight: 500, file: "newsreader-500.woff2" },
   { family: "IBM Plex Sans", weight: 600, file: "ibm-plex-sans-600.woff2" },
+  { family: "IBM Plex Sans", weight: 400, file: "ibm-plex-sans-400.woff2" },
+  // Mono survives for the source stamp only — a small dated label is exactly what it is for.
   { family: "IBM Plex Mono", weight: 400, file: "ibm-plex-mono-400.woff2" },
 ];
 
@@ -101,37 +110,37 @@ function frontmatter(markdown) {
   return match ? parseYaml(match[1]) : null;
 }
 
-function html(card, fonts, mark) {
+function html(card, fonts) {
   const faceRules = FACES.map(
     (f, i) => `@font-face{font-family:"${f.family}";font-weight:${f.weight};font-display:block;
       src:url("${fonts[i]}") format("woff2");}`,
   ).join("\n");
 
-  // The layout: identity small and top-left, the figure given the room. A card whose job is to
-  // show a number does not spend its top third on a logo (deviation §1, on record).
+  // The layout: a wordmark, then the question, then the figure given all the room that is
+  // left. The mark itself is deliberately absent — at the size it would occupy here it reads
+  // as a dark smudge in a feed, and the source line already carries attribution (on record in
+  // autoposter/specs/OG-CARD-PROPOSAL.md).
   return `<!doctype html><html><head><meta charset="utf-8"><style>
 ${faceRules}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:${WIDTH}px;height:${HEIGHT}px;overflow:hidden}
 body{background:${C.bg};color:${C.text};display:flex;flex-direction:column;
   padding:56px 64px;-webkit-font-smoothing:antialiased}
-.lockup{display:flex;align-items:center;gap:12px;font-family:"IBM Plex Sans";font-weight:600;
-  font-size:23px;letter-spacing:.005em}
-.lockup img{width:34px;height:34px;object-fit:contain}
+.lockup{font-family:"IBM Plex Sans";font-weight:600;font-size:24px;letter-spacing:.005em}
 .lockup .accent{color:${C.amber}}
 .question{font-family:"Newsreader";font-weight:500;font-size:52px;line-height:1.08;
   margin-top:36px;max-width:17ch;letter-spacing:-.005em}
 .figure{margin-top:auto}
-.hero{font-family:"IBM Plex Mono";font-weight:${HERO_WEIGHT};font-size:138px;line-height:1;
-  font-feature-settings:"tnum" 1;letter-spacing:-.02em}
+.hero{font-family:"IBM Plex Sans";font-weight:${HERO_WEIGHT};font-size:150px;line-height:1;
+  font-feature-settings:"tnum" 1;letter-spacing:-.03em}
 .rule{width:88px;height:5px;background:${C.amber};margin:26px 0 20px}
-.sub{font-family:"IBM Plex Mono";font-weight:400;font-size:30px;line-height:1.2;
+.sub{font-family:"IBM Plex Sans";font-weight:400;font-size:32px;line-height:1.25;
   font-feature-settings:"tnum" 1}
 .source{margin-top:30px;padding-top:20px;border-top:1px solid ${C.hairline};
   font-family:"IBM Plex Mono";font-weight:400;font-size:22px;color:${C.muted};
   letter-spacing:.01em}
 </style></head><body>
-  <div class="lockup"><img src="${mark}" alt=""><span>Texas Home<span class="accent">Intelligence</span></span></div>
+  <div class="lockup">Texas Home<span class="accent">Intelligence</span></div>
   <h1 class="question">${escapeHtml(card.question)}</h1>
   <div class="figure">
     <div class="hero">${escapeHtml(card.headline)}</div>
@@ -171,14 +180,13 @@ async function main() {
   }
 
   const fonts = FACES.map((f) => dataUri(path.join(FONTS, f.file), "font/woff2"));
-  const mark = dataUri(MARK, "image/png");
 
   const browser = await launchChromium();
   try {
     for (const { slug, data } of articles) {
       const card = data.card;
       const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 });
-      await page.setContent(html(card, fonts, mark), { waitUntil: "load" });
+      await page.setContent(html(card, fonts), { waitUntil: "load" });
 
       // The check that makes this worth doing at all. A face that failed to decode leaves the
       // text set in a fallback — a silently wrong card that renders, uploads and posts fine.
