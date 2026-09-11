@@ -1442,3 +1442,41 @@ it; `card.sidecar_path` honours an absolute path so that is possible. A test tha
 to prove a point is a test that can corrupt it.
 
 **The suite now leaves the tree clean, checked after running all eight.**
+
+## Round 15 — 2026-09-11 — the site patch for post #2, and the approval design
+
+### 98. PR #47 — four paths, not the five proposed
+The proposal assumed article 1's card would re-render. It does not, so it never enters the diff.
+Base-diff against main: the generator, article 2, its card and its sidecar. Nothing else.
+
+### 99. The template fix is general, and one version of it was drift
+Widening the question's `max-width` from 17ch to 20ch re-broke article 1's headline from
+"Are Texas electricity / prices still going up?" to "Are Texas electricity prices / still going
+up?" — a visible change to an already-approved, already-live card, arriving inside a change
+described as a fix for a different article. Reverted to 17ch, and article 1's card verified
+byte-identical to `origin/main` with `cmp` rather than assumed. Article 2 fits because it
+SCALES: hero 139px / question 40px, where article 1 stays at 150/52. The generator now logs the
+sizes it chose, so the fit is observable instead of silent. The overflow guard is untouched.
+
+### 100. 🟡 The receipts table renders unstyled — flagged, not fixed
+The three-trade table in article 2's body has no styling: Preflight resets `table`, and the
+site's table CSS is scoped to `table.data-table`, which markdown cannot emit. Found by
+screenshotting the built page, not by reading the stylesheet — the figures sit with no rules, no
+padding and no header treatment, so the article's receipts do not read as the site's data table.
+
+The fix is a fifth path (`global.css`) outside what was approved, so it is NOT in the PR. Three
+options put to the owner: approve it as a fifth path, take it as its own PR, or drop the table
+from the body and write the three trades as prose. Recommended approving — every future article
+will want a table, and it is the same class as the bullet-marker fix.
+
+### 101. Cadence + approval design
+`specs/CADENCE-AND-APPROVAL-PROPOSAL.md`, rewritten to the owner's shape: everything automatic
+up to one Slack message, one ✅ doing merge → deploy-wait → verify → post, and the **site merge
+staying human indefinitely** — what graduates at 4 clean is the Facebook send, not the deploy.
+
+Slack by reply-polling, no endpoint anywhere. An approval counts only as a threaded reply from an
+allowlisted user id whose trimmed text is exactly ✅ or `go`, before the deadline, matching the
+held post's id. Reactions are deliberately excluded — they are the easiest thing to press by
+accident on a phone. No reply drops the post rather than queueing it: a stale post about last
+month's reading is worse than no post. And a ✅ is permission to proceed through the gates, never
+permission to skip them — if a gate fails after approval, nothing posts and the thread says which.
