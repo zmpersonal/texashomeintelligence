@@ -50,6 +50,18 @@ def build_claims(feed: dict, config: dict, today: date) -> list[Claim]:
     power = series[("texas", "energy_price_cents_kwh")]
     by_month = {p.period[:7]: p.value for p in power.points}
 
+    # THIS BUILDER IS LOCKED TO ONE PERIOD, and says so rather than crashing on a KeyError.
+    # Its prose names specific months and specific comparisons, so it is correct for August 2026
+    # and for nothing else. It is already published, so the already-written exclusion keeps it
+    # from being selected — but if that ever failed, a bare KeyError would look like a bug in
+    # the engine rather than a builder refusing work it cannot do.
+    if "2026-08" not in by_month or "2025-08" not in by_month:
+        raise ledger_mod.LedgerHalt([
+            "electricity-still-rising is locked to August 2026: its prose names fixed months and "
+            "fixed comparisons, so it cannot be rebuilt for another period. It has already been "
+            "published. If a new electricity article is wanted, it needs a period-driven builder "
+            "like the recurring three, not this one re-run."])
+
     now, year_ago = by_month["2026-08"], by_month["2025-08"]
     peak_month = max(by_month, key=lambda m: by_month[m])
     peak = by_month[peak_month]
@@ -264,77 +276,124 @@ def _permit_facts(today: date) -> dict:
 
 
 def build_permit_claims(feed: dict, config: dict, today: date) -> list[Claim]:
-    """CODE. Austin permit counts against Austin's own 11 preceding months."""
+    """CODE. Austin permit counts against Austin's own preceding months.
+
+    Claim ids are TRADE-KEYED (`solar`, `solar_mom`, `solar_base`) rather than P1..P9, so the
+    writer can sort trades by their figures and name the slow and busy lanes from the sort. With
+    positional ids the writer had to hardcode which trade was which, which is exactly how the
+    frozen conclusions got in.
+    """
     f = _permit_facts(today)
     as_of = f["solar"]["as_of"]
 
     def count(trade, value):
         return f"{value:,.0f} {trade} permits"
 
-    claims = [
-        Claim("P1", f"Austin issued {count('solar', f['solar']['latest'])} in August 2026.",
-              tier="data", figure=count("solar", f["solar"]["latest"]),
-              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_solar",
-              notes="City of Austin issued-permits dataset, residential solar trade."),
-        Claim("P2", "Solar permits more than doubled in a single month.",
-              tier="derived",
-              figure=f"up {f['solar']['mom_pct']:.0f}% month over month",
-              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_solar",
-              derivation=f"{f['solar']['latest']:.0f} (Aug 2026) vs {f['solar']['prior']:.0f} "
-                         f"(Jul 2026) = {f['solar']['mom_pct']:.0f}%"),
-        Claim("P3", "That is far above Austin's own recent run-rate for solar.",
-              tier="derived",
-              figure=f"{f['solar']['base_pct']:.0f}% above its {f['solar']['months']}-month average",
-              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_solar",
-              derivation=f"{f['solar']['latest']:.0f} vs an {f['solar']['months']}-month mean of "
-                         f"{f['solar']['baseline']:.0f} = {f['solar']['base_pct']:.0f}%"),
+    claims = []
+    for trade, display in (("solar", "solar"), ("hvac", "HVAC"), ("roofing", "roofing")):
+        row = f[trade]
+        claims.append(Claim(
+            trade, f"Austin issued {count(display, row['latest'])} in August 2026.",
+            tier="data", figure=count(display, row["latest"]),
+            source=AUSTIN_PERMITS_SOURCE, as_of=as_of,
+            metric=f"permit_activity_{trade}"))
+        direction = "up" if row["mom_pct"] >= 0 else "down"
+        claims.append(Claim(
+            f"{trade}_mom", f"{display.capitalize()} permits {direction} from July.",
+            tier="derived",
+            figure=f"{direction} {abs(row['mom_pct']):.0f}% month over month",
+            source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric=f"permit_activity_{trade}",
+            derivation=f"{row['latest']:.0f} (Aug 2026) vs {row['prior']:.0f} (Jul 2026) = "
+                       f"{row['mom_pct']:.0f}%"))
+        gap = "above" if row["base_pct"] >= 0 else "below"
+        claims.append(Claim(
+            f"{trade}_base",
+            f"{display.capitalize()} filings are running {gap} their own recent pace.",
+            tier="derived",
+            figure=f"{abs(row['base_pct']):.0f}% {gap} its {row['months']}-month average",
+            source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric=f"permit_activity_{trade}",
+            derivation=f"{row['latest']:.0f} vs an {row['months']}-month mean of "
+                       f"{row['baseline']:.0f} = {row['base_pct']:.0f}%"))
 
-        Claim("P4", f"Austin issued {count('HVAC', f['hvac']['latest'])} in August 2026.",
-              tier="data", figure=count("HVAC", f["hvac"]["latest"]),
-              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_hvac"),
-        Claim("P5", "HVAC permits fell from July.",
-              tier="derived", figure=f"down {abs(f['hvac']['mom_pct']):.0f}% month over month",
-              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_hvac",
-              derivation=f"{f['hvac']['latest']:.0f} (Aug 2026) vs {f['hvac']['prior']:.0f} "
-                         f"(Jul 2026) = {f['hvac']['mom_pct']:.0f}%"),
-        Claim("P6", "But HVAC is still running above its own recent average, not below it.",
-              tier="derived",
-              figure=f"{f['hvac']['base_pct']:.0f}% above its {f['hvac']['months']}-month average",
-              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_hvac",
-              derivation=f"{f['hvac']['latest']:.0f} vs an {f['hvac']['months']}-month mean of "
-                         f"{f['hvac']['baseline']:.0f} = {f['hvac']['base_pct']:.0f}%"),
-
-        Claim("P7", f"Austin issued {count('roofing', f['roofing']['latest'])} in August 2026.",
-              tier="data", figure=count("roofing", f["roofing"]["latest"]),
-              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_roofing"),
-        Claim("P8", "Roofing is the one trade genuinely below its own run-rate.",
-              tier="derived",
-              figure=f"{abs(f['roofing']['base_pct']):.0f}% below its "
-                     f"{f['roofing']['months']}-month average",
-              source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_roofing",
-              derivation=f"{f['roofing']['latest']:.0f} vs an {f['roofing']['months']}-month mean "
-                         f"of {f['roofing']['baseline']:.0f} = {f['roofing']['base_pct']:.0f}%"),
-
-        Claim("P9",
-              "We cannot say from the permits alone what drove the solar jump — a filing "
-              "deadline, an incentive change and genuine demand all look identical in a count.",
-              tier="external", hedged=True),
-    ]
+    below_trades = [d for t, d in (("solar", "solar"), ("hvac", "HVAC"), ("roofing", "roofing"))
+                    if f[t]["base_pct"] < 0]
+    above_trades = [d for t, d in (("solar", "solar"), ("hvac", "HVAC"), ("roofing", "roofing"))
+                    if f[t]["base_pct"] >= 0]
+    claims.append(Claim(
+        "tally", f"{len(below_trades)} of the three trades is running below its own recent pace.",
+        tier="derived",
+        figure=f"{len(below_trades)} of 3 trades below their own average",
+        source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_solar",
+        derivation=f"below: {', '.join(below_trades) or 'none'}; "
+                   f"above: {', '.join(above_trades) or 'none'}"))
+    claims.append(Claim(
+        "permits_x",
+        "We cannot say from the permits alone what drove any of these moves — a filing "
+        "deadline, an incentive change and genuine demand all look identical in a count.",
+        tier="external", hedged=True))
     return claims
 
 
 def write_permits(topic: dict, claims: list[Claim], feed: dict) -> dict:
-    """THE ONE MODEL CALL for article 2. Language only; every figure came from the claims."""
+    """THE ONE MODEL CALL for article 2. Every verdict below is COMPUTED.
+
+    The audit of 2026-09-11 found fourteen invariant sentences in this writer that asserted
+    direction — "Roofing is the slower lane", "That is not a market cooling off", "the only one
+    of the three sitting below its own run-rate", and a section header calling one trade
+    "genuinely slower". All true of August 2026 and all frozen: the first month roofing recovers
+    or HVAC drops, this article says something false with every gate green.
+
+    So the trades are sorted by the data, the slow and busy ones are NAMED from that sort, and
+    the tally is counted. The model wrote the sentence shapes; the data fills every slot that
+    makes a claim.
+    """
     c = {claim.id: claim for claim in claims}
     S = AUSTIN_PERMITS_SOURCE
+    trades = ["solar", "hvac", "roofing"]
+    gap = {t: (c[f"{t}_base"].figure, "below" in c[f"{t}_base"].figure) for t in trades}
+    below = [t for t in trades if gap[t][1]]
+    above = [t for t in trades if not gap[t][1]]
+    slowest = min(trades, key=lambda t: _signed_pct(c[f"{t}_base"].figure))
+    busiest = max(trades, key=lambda t: _signed_pct(c[f"{t}_base"].figure))
+
+    label = month_label(c["solar"].as_of[:7])
+    if len(above) > len(below):
+        verdict = (f"**Mostly no** — {c['tally'].figure}."
+                   if below else
+                   "**No.** All three trades are running above their own recent pace.")
+    else:
+        verdict = f"**More than you might think** — {c['tally'].figure}."
+
+    # The month-over-month section asserted a FALL — "that reads like the end of a busy summer",
+    # "a month can be down from the one before it and still be strong". HVAC is UP in four of
+    # the six periods this builder can be run against, so that passage was false more often than
+    # it was true. Branched on the direction the data actually shows.
+    hvac_fell = c["hvac_mom"].figure.startswith("down")
+    trap = (
+        f"{c['hvac'].figure} in {label}, {c['hvac_mom'].figure} ({S}, as of {label}). Month to "
+        f"month, that reads like the end of a busy stretch. Against its own average, though, "
+        f"HVAC is {c['hvac_base'].figure}. A month can be down from the one before it and still "
+        f"be a strong month. Both things are true, and only one of them is a trend."
+        if hvac_fell else
+        f"{c['hvac'].figure} in {label}, {c['hvac_mom'].figure} ({S}, as of {label}). A rise "
+        f"month to month is the easy headline, but the more useful comparison is against the "
+        f"trade's own run-rate: HVAC is {c['hvac_base'].figure}. One month's direction and a "
+        f"trade's standing are different questions, and only the second one is a trend."
+    )
+
+    slow_line = (f"{slowest.capitalize()} is the slower lane: {c[slowest].figure} in {label}, "
+                 f"{gap[slowest][0]} ({S}, as of {label})."
+                 if gap[slowest][1] else
+                 f"Even the weakest of the three, {slowest}, is {gap[slowest][0]} — there is no "
+                 f"genuinely slow lane in Austin this month ({S}, as of {label}).")
+
     body = f"""
 ## The short answer
 
-**Mostly no.** One Austin trade really is running below its own recent pace. The rest are
-running above it, and one of them just had its biggest month in a year.
+{verdict}
 
-Austin issued {c['P1'].figure} in August 2026 — {c['P2'].figure}, and
-{c['P3'].figure} ({S}, as of August 2026). That is not a market cooling off.
+Austin issued {c['solar'].figure} in {label} — {c['solar_mom'].figure}, and
+{c['solar_base'].figure} ({S}, as of {label}).
 
 ## What "cooling off" would actually look like
 
@@ -344,56 +403,40 @@ and against nothing else. Permit counts are an activity signal — they say how 
 being started, never what it costs — and they are only comparable inside one city's own
 filing system.
 
-By that test, here is where Austin's three most visible trades stand.
-
-| Trade | August 2026 | Against its own average |
+| Trade | {label} | Against its own average |
 |---|---|---|
-| Solar | {c['P1'].figure} | {c['P3'].figure} |
-| HVAC | {c['P4'].figure} | {c['P6'].figure} |
-| Roofing | {c['P7'].figure} | {c['P8'].figure} |
+| Solar | {c['solar'].figure} | {c['solar_base'].figure} |
+| HVAC | {c['hvac'].figure} | {c['hvac_base'].figure} |
+| Roofing | {c['roofing'].figure} | {c['roofing_base'].figure} |
 
-## The one that is genuinely slower
+## Where the slack is
 
-Roofing. Austin issued {c['P7'].figure} in August, {c['P8'].figure} ({S}, as of
-August 2026). It is the only one of the three sitting below its own run-rate, and it has been
-drifting for months rather than dropping suddenly.
+{slow_line}
 
-If your sense that things have gone quiet comes from roofing, the data agrees with you.
+## The month-over-month trap
 
-## The one that looks like cooling and is not
+{trap}
 
-HVAC is the trade most people would point at, because it did fall: {c['P5'].figure}
-({S}, as of August 2026). July to August, that reads like the end of a busy summer.
+## The busiest lane
 
-Against its own eleven-month average, though, HVAC is {c['P6'].figure}. A month can be down
-from the one before it and still be a strong month. Both things are true, and only one of them
-is a trend.
+{busiest.capitalize()}: {c[busiest].figure}, {gap[busiest][0]} ({S}, as of {label}).
 
-## The one nobody expected
+{c['permits_x'].text}
 
-Solar. {c['P1'].figure} in a single month, {c['P2'].figure} — the largest month in the
-twelve we hold ({S}, as of August 2026).
-
-{c['P9'].text}
-
-So we are not going to tell you why. We are telling you that it happened, in Austin, in August,
-by that much, from the city's own issued-permit record — and that anyone claiming to know the
+So we are not going to tell you why. We are telling you that it happened, in Austin, in
+{label}, by that much, from the city's own issued-permit record — and that anyone claiming to know the
 cause is working from something other than this data.
 
 ## What this is useful for
 
-If you are getting quotes right now, the useful read is that installer demand is not uniform.
-Roofing is the slower lane. Solar is the busy one, and a trade running at {c['P3'].figure}
-is a trade where scheduling slips and quotes get thinner on detail.
-
-That is worth knowing before you assume a slow quote means a slow market.
+If you are getting quotes right now, the useful read is that installer demand is not uniform
+across trades. That is worth knowing before you assume a slow quote means a slow market.
 """
     return {
         "slug": PERMITS_SLUG,
         "title": topic["question"],
-        "description": ("Austin's permit record says the boom is not cooling evenly: roofing is "
-                        "below its own pace, HVAC is above it, and solar just had its biggest "
-                        "month in a year."),
+        "description": ("Austin's permit record, trade by trade, each measured against its own "
+                        "recent pace rather than against another city or a dollar figure."),
         "body": body,
         "canonical_url": f"https://texashomeintelligence.com/analysis/{PERMITS_SLUG}/",
         "embed": {
@@ -405,22 +448,26 @@ That is worth knowing before you assume a slow quote means a slow market.
     }
 
 
-# The registry. `engine.run()` asks for the builder and writer belonging to the topic CODE
-# picked — so adding an article is adding a pair here, never editing the engine.
+def _signed_pct(figure: str) -> float:
+    """`8% below its 11-month average` -> -8.0. The sort key that decides which trade is named
+    the slow lane, so it is arithmetic rather than an editorial choice."""
+    number = float(re.search(r"([\d.]+)%", figure).group(1))
+    return -number if "below" in figure else number
+
+
 TOPIC_ARTICLES = {
     "electricity-still-rising": (build_claims, write),
     "austin-improvement-boom-cooling": (build_permit_claims, write_permits),
 }
 
-
 PERMITS_CAPTION = (
-    "\"The market's gone quiet.\" Austin's own permit record says: in one trade, yes. "
+    "\"The market's gone quiet.\" Austin's own permit record says otherwise, trade by trade. "
     "Roofing is running 8% below its 11-month average. HVAC dipped from July but is still "
     "19% above its own average — a down month inside a strong year. And solar just did "
     "224 permits, up 138% month over month, its biggest month in the twelve we hold "
     "(source: City of Austin Issued Construction Permits (Socrata), as of 2026-08-01). "
     "We can't tell you why from a permit count, and we're not going to guess. "
-    "The three trades, side by side, with the arithmetic shown → "
+    "The three trades, side by side, with the arithmetic shown \u2192 "
     "https://texashomeintelligence.com/analysis/is-austins-home-improvement-boom-cooling-off/ "
     "Send this to whoever told you nobody's building right now."
 )
@@ -777,6 +824,20 @@ def write_acrush(topic: dict, claims: list[Claim], feed: dict) -> dict:
                    "because it does not always happen — and a single month either way is a "
                    "reading, not a relationship.")
 
+    # The closing asserted a gap unconditionally: "the month everyone expects installers to be
+    # busiest is not the month the filings peak". True when the series diverge, false when they
+    # do not — the same frozen-conclusion bug as the verdict, hiding in the part of the article
+    # nobody re-reads.
+    closing = (
+        "The month everyone expects installers to be busiest is not the month the filings "
+        "peak. If you are getting quotes, that gap is the part worth knowing — and it is "
+        "measurable, which is more than can be said for most advice about when to call someone."
+        if diverged else
+        "This month the filings tracked the weather, which is the intuitive answer and is not "
+        "always the right one. Worth knowing either way: the relationship is measurable, which "
+        "is more than can be said for most advice about when to call someone."
+    )
+
     body = f"""
 ## The short answer
 
@@ -804,9 +865,7 @@ The honest read is narrower and more useful: {reading}
 
 ## Why it might matter to you
 
-The month everyone expects installers to be busiest is not the month the filings peak. If you
-are getting quotes, that gap is the part worth knowing — and it is measurable, which is more
-than can be said for most advice about when to call someone.
+{closing}
 """
     return {
         "slug": acrush_slug(period),
@@ -970,6 +1029,9 @@ def write_sa(topic: dict, claims: list[Claim], feed: dict) -> dict:
     verdict = ("**Mostly no — more trades are running above their own pace than below it.**"
                if holding else
                "**More of it is than is not — most trades are below their own recent pace.**")
+    # The closing said "that answer is above the line" whatever the tally was. Computed now.
+    line = ("more of the city's trades are above the line than below it" if holding
+            else "more of the city's trades are below the line than above it")
     rows = "\n".join(
         f"| {c[k].figure.split(' ', 1)[1].replace(' permits', '').capitalize()} "
         f"| {c[k].figure} | {c[k + 'd'].figure} |" for k in trades)
@@ -1008,7 +1070,7 @@ the city this month.
 Permit systems differ by city: what needs a permit, how trades are categorised, and how quickly
 filings are recorded all vary. Comparing San Antonio's counts to another city's would be
 comparing two filing systems, not two markets. Against its own record, though, the question has
-a real answer — and this month, that answer is above the line.
+a real answer — and this month, {line}.
 """
     return {
         "slug": sa_slug(period),
