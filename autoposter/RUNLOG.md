@@ -1589,3 +1589,47 @@ frontmatter the article dict does not carry. Fixed: `article_engine.frontmatter(
 metrics and sources from the claims that verified the article, so they cannot drift from the
 ledger — the same argument that moved the card block out of a human's hands — and `merge_fn`
 now receives the whole decision rather than a slug.
+
+## Round 18 — 2026-09-11 — the data survey, and builder 3
+
+### 114. Discovery first: `specs/DATA-SURVEY.md`
+Every generated dataset surveyed for whether a builder could stand on it, with the ones that
+DON'T work named and explained. Four BUILDABLE families (permit trades, degree-days + normals,
+electricity, metro-grain drought), three THIN (AQI, census reference values, BLS wages), and the
+rest NOT-YET. Nothing was moved up a row by adjusting a gate.
+
+Two findings worth keeping:
+- **County-grain drought is still short.** Only 9 of 62 observations per metro carry county
+  fields, and only for 3 weeks. Below the 4-week floor — the parked-reels condition clears
+  around 2026-09-29, not 09-22.
+- **`noaa-storm-events` is the best NOT-YET.** 19 hail events in Austin, 32 wind, 13 flood, and
+  directly relevant to roofing. Blocked on two specific things: the last event is 3.5 months old
+  and publication lag cannot be distinguished from absence without checking NOAA's schedule, and
+  no staleness bound exists for it, which G5 default-denies. Both answerable; neither guessed at.
+
+### 115. Builder 3 — `summer-hotter-than-normal`
+13 claims, ledger PASS, prose PASS first run, card gate PASS. The answer is genuinely split:
+Austin's August ran **755 CDD against a 664.8 normal (+13.6%)** while July was **644 against
+644.8 (−0.1%)**. San Antonio: **+4.8%** in August, **−5.6%** in July.
+
+**Normals now come from the feed.** `thi_source.climate_normals()` reads all twelve monthly
+normals from the NOAA file; the first article hardcoded two of them in a dict, which was a
+hand-step waiting to rot (L14). A corrected normal now reaches the article without editing code.
+
+Four mutations, each caught: a wrong actual on the card (C1a), a wrong derived gap (C1b), prose
+quoting an unbacked figure (the prose gate), and the hedge check refusing an external claim
+whose text asserted without an uncertainty marker — that last one fired on my first draft and
+the fix was to rewrite the claim, not the checker.
+
+### 116. The card stopped speaking jargon
+`_compact` was turning "755 cooling degree-days" into "755 CDD". It fits more easily and tells a
+reader nothing. Degree-days are no longer abbreviated: the template's fit pass scales the long
+hero to 100px, which is what that pass is for. **Confirmed by rendering it**, not by reasoning
+about width — and the first attempt failed because the preview was using the pre-fit template
+from main. The fit pass lives in PR #47, so article 3's card cannot render until that merges.
+
+### 117. A defect in the generated frontmatter
+`sources` listed the same NOAA normals three times with three different dates, because derived
+claims carry the reading's date while citing the dataset they were derived from. To a crawler
+that reads as three sources. Now one row per dataset, dated from the record that actually
+carries the date.

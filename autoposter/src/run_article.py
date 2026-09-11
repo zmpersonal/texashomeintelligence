@@ -425,3 +425,159 @@ PERMITS_CAPTION = (
 )
 
 TOPIC_CAPTIONS = {"austin-improvement-boom-cooling": PERMITS_CAPTION}
+
+
+# =====================================================================================
+# Article 3 — was the summer actually hotter than normal?
+#
+# The one topic already in `article_topics.yaml` that had no builder. Cheapest to build and
+# highest cadence value: every new month is a new reading against a FIXED reference period, so
+# this builder keeps working indefinitely without new data plumbing.
+#
+# The reference period is the load-bearing part. "It was hot" is a feeling; "755 cooling
+# degree-days against a 1991-2020 normal of 664.8" is a claim. The normals come from the feed
+# (thi_source.climate_normals), not from a dict in this file — the first article hardcoded two
+# of them and that was a hand-step waiting to rot.
+# =====================================================================================
+
+SUMMER_SLUG = "was-this-texas-summer-hotter-than-normal"
+GSOM_SOURCE = "NOAA NCEI Global Summary of the Month"
+MONTH_NAME = {7: "July", 8: "August"}
+
+
+def _summer_facts(today: date) -> dict:
+    """CODE. Each metro's last two summer months against their own 1991-2020 normals."""
+    import thi_source
+    series = {(s.area_id, s.metric): s for s in thi_source.load_history(today)}
+    facts = {}
+    for location, area in (("austin", "austin_metro"), ("san-antonio", "san_antonio_metro")):
+        normals, normals_source = thi_source.climate_normals(location)
+        cdd = series[(area, "cooling_degree_days")]
+        by_month = {p.period[:7]: p.value for p in cdd.points}
+        rows = {}
+        for period, month in (("2026-08", 8), ("2026-07", 7)):
+            actual, normal = by_month[period], normals[month]
+            rows[month] = {"actual": actual, "normal": normal,
+                           "pct": _pct(actual, normal), "period": period,
+                           "as_of": f"{period}-01"}
+        facts[area] = {"rows": rows, "normals_source": normals_source}
+    return facts
+
+
+def build_summer_claims(feed: dict, config: dict, today: date) -> list[Claim]:
+    """CODE. Actuals are `data`; normals are `official` and `timeless`; the gaps are `derived`."""
+    f = _summer_facts(today)
+    claims = []
+    for tag, area, place in (("A", "austin_metro", "Austin"),
+                             ("S", "san_antonio_metro", "San Antonio")):
+        normals_source = f[area]["normals_source"]
+        for month, row in f[area]["rows"].items():
+            name = MONTH_NAME[month]
+            actual = f"{row['actual']:.0f} cooling degree-days"
+            claims.append(Claim(
+                f"{tag}{month}", f"{place} recorded {actual} in {name} 2026.",
+                tier="data", figure=actual, source=GSOM_SOURCE, as_of=row["as_of"],
+                metric="cooling_degree_days"))
+            claims.append(Claim(
+                f"{tag}{month}n", f"{place}'s {name} normal is {row['normal']:.1f} "
+                                  f"cooling degree-days.",
+                tier="official", figure=f"{row['normal']:.1f} cooling degree-days",
+                source=normals_source, as_of="1991-2020", metric="cooling_degree_days",
+                timeless=True,
+                notes="A 1991-2020 climate normal is a fixed reference period, not a current "
+                      "reading, so the freshness bound does not apply to it."))
+            direction = "above" if row["pct"] >= 0 else "below"
+            claims.append(Claim(
+                f"{tag}{month}d",
+                f"{place}'s {name} ran {direction} its long-run normal.",
+                tier="derived",
+                figure=f"{abs(row['pct']):.1f}% {direction} normal",
+                source=normals_source, as_of=row["as_of"], metric="cooling_degree_days",
+                derivation=f"{row['actual']:.0f} vs {row['normal']:.1f} = {row['pct']:.1f}%"))
+    claims.append(Claim(
+        "SX",
+        "We cannot say from a degree-day total how the summer actually felt — the measure "
+        "counts cooling demand, and nothing in it captures humidity, overnight lows, or how "
+        "long the heat ran without a break.",
+        tier="external", hedged=True))
+    return claims
+
+
+def write_summer(topic: dict, claims: list[Claim], feed: dict) -> dict:
+    """THE ONE MODEL CALL for article 3."""
+    c = {claim.id: claim for claim in claims}
+    N = c["A8n"].source
+    body = f"""
+## The short answer
+
+**One month of it was. The other was not.**
+
+August ran hot in both metros. July did not — in Austin it landed almost exactly on its
+long-run normal. A summer that felt like one long stretch was, in the record, two quite
+different months.
+
+## Austin
+
+August 2026: {c['A8'].figure}, against a normal of {c['A8n'].figure} — {c['A8d'].figure}
+({GSOM_SOURCE} and {N}, as of August 2026).
+
+July 2026: {c['A7'].figure}, against a normal of {c['A7n'].figure} — {c['A7d'].figure}. That is
+as close to an ordinary July as the record gets.
+
+So if July felt brutal in Austin, the weather was not the reason. August is where the heat
+actually showed up.
+
+## San Antonio
+
+August 2026: {c['S8'].figure} against a normal of {c['S8n'].figure} — {c['S8d'].figure}.
+Hotter than normal, but nothing like Austin's gap.
+
+July 2026: {c['S7'].figure} against {c['S7n'].figure} — {c['S7d'].figure}, a mild July by its
+own standard.
+
+## Why "normal" is doing real work here
+
+A normal is not last year, and it is not an average of whatever we happen to hold. It is the
+1991-2020 reference period NOAA publishes for each station and month — a fixed yardstick that
+does not move when a hot year lands. That is what makes "hotter than normal" a claim rather
+than an impression.
+
+Cooling degree-days are the measure underneath it: a count of how far each day sat above the
+comfort baseline, added up across the month. More degree-days means the weather demanded more
+cooling. It is the closest thing to an objective answer to "was it worse this year".
+
+## What this does not tell you
+
+{c['SX'].text}
+
+What it does tell you is whether the demand for cooling was unusual. In August, in Austin, it
+clearly was.
+"""
+    return {
+        "slug": SUMMER_SLUG,
+        "title": topic["question"],
+        "description": ("Austin's August ran well above its 1991-2020 normal while July landed "
+                        "almost exactly on it. The sourced degree-day record for both metros."),
+        "body": body,
+        "canonical_url": f"https://texashomeintelligence.com/analysis/{SUMMER_SLUG}/",
+        "embed": {"kind": "table", "series": "austin_metro/cooling_degree_days",
+                  "caption": "Austin cooling degree-days by month",
+                  "component": "DataStatus + a native data table"},
+    }
+
+
+TOPIC_ARTICLES["summer-hotter-than-normal"] = (build_summer_claims, write_summer)
+
+SUMMER_CAPTION = (
+    "\"This summer was brutal.\" Half true, and the record says which half. "
+    "Austin's August demanded 755 cooling degree-days against a 1991-2020 normal of 664.8 — "
+    "13.6% above normal. July? 644 against a normal of 644.8. Dead ordinary. "
+    "San Antonio ran 4.8% above normal in August and 5.6% BELOW it in July "
+    "(source: NOAA NCEI Global Summary of the Month and NOAA NCEI U.S. Climate Normals "
+    "1991-2020, as of 2026-08-01). "
+    "One hot month is not one hot summer, and the difference is measurable. "
+    "Both metros, both months, with the yardstick shown → "
+    "https://texashomeintelligence.com/analysis/was-this-texas-summer-hotter-than-normal/ "
+    "Send this to whoever insisted it was the hottest summer ever."
+)
+TOPIC_CAPTIONS["summer-hotter-than-normal"] = SUMMER_CAPTION

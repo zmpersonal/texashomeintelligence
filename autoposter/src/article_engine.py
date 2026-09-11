@@ -82,12 +82,26 @@ def frontmatter(article: dict, claims: list[Claim], card_block: str, published_a
     ledger rather than typing them means they cannot drift from the claims — the same argument
     that moved the card block out of a human's hands.
     """
-    metrics, sources = [], []
+    # `sources` is one row per DATASET, not one per claim. A derived claim carries the reading's
+    # date while citing the dataset it was derived from, so keying on (source, as_of) listed the
+    # same NOAA normals three times with three different dates — which reads to a crawler as
+    # three sources and to a person as sloppiness. The date shown is the one the underlying
+    # record actually carries: a `data` or `official` claim's as_of, which for a reference
+    # period is the period itself.
+    metrics: list[str] = []
+    primary: dict[str, str] = {}
+    fallback: dict[str, str] = {}
     for claim in claims:
         if claim.metric and claim.metric not in metrics:
             metrics.append(claim.metric)
-        if claim.source and (claim.source, claim.as_of) not in sources:
-            sources.append((claim.source, claim.as_of))
+        if not claim.source:
+            continue
+        if claim.tier in ("data", "official"):
+            primary.setdefault(claim.source, claim.as_of)
+        else:
+            fallback.setdefault(claim.source, claim.as_of)
+    sources = [(name, primary.get(name, fallback.get(name, "")))
+               for name in dict.fromkeys(list(primary) + list(fallback))]
     lines = ["---",
              f'title: "{article["title"]}"',
              f'description: "{article["description"]}"',

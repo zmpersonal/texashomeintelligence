@@ -105,6 +105,28 @@ def _current_month(today: date) -> str:
     return f"{today.year:04d}-{today.month:02d}"
 
 
+def climate_normals(location: str) -> tuple[dict[int, float], str]:
+    """The 1991-2020 monthly cooling-degree-day normals, by month number, and their source.
+
+    `_climate()` filters these OUT of the movers series on purpose — a 30-year normal is a
+    different record type from a monthly actual, and blending them would produce a series that
+    is neither. But as a REFERENCE VALUE a normal is exactly what turns "it was hot" into a
+    checkable claim, so it is exposed separately rather than hardcoded into a builder. The first
+    article carried a two-entry JULY_NORMAL dict; this replaces that with the file it came from.
+    """
+    doc = _load("noaa-climate", location)
+    if not _live(doc):
+        return {}, ""
+    normals = {}
+    for obs in doc["observations"]:
+        value = obs.get("value") or {}
+        month, cdd = value.get("month"), value.get("coolingDegreeDaysF")
+        # Normals are dated to 2020 in this feed; actuals carry their real period.
+        if month and cdd is not None and obs["observedAt"].startswith("2020-"):
+            normals[int(month)] = float(cdd)
+    return normals, "NOAA NCEI U.S. Climate Normals 1991-2020"
+
+
 # ---------------------------------------------------------------- metric extractors
 
 def _drought(location: str, today: date) -> Series | None:

@@ -38,7 +38,10 @@ MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", 
 # an abbreviation the machine invents is an abbreviation nobody checked.
 CARD_UNIT = {
     "cents per kilowatt-hour": "¢/kWh",
-    "cooling degree-days": " CDD",
+    # NOT abbreviated to "CDD". A card is read by someone who has never heard the term, and
+    # "755 CDD" tells them nothing while "755 cooling degree-days" at least names the thing.
+    # The template's fit pass scales a long hero down to one line, which is what it is for —
+    # so the constraint that forced abbreviations no longer applies.
 }
 
 # Full source name -> the short label the card face carries. The FULL name goes in the alt

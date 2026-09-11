@@ -94,7 +94,9 @@ def test_compaction_may_never_change_a_digit():
     """The one transform this module performs is a UNIT rewrite. If it ever touched a numeral
     it would be deriving, which is the architecture line."""
     assert card_mod._compact("13.88 cents per kilowatt-hour") == "13.88¢/kWh"
-    assert card_mod._compact("644 cooling degree-days") == "644 CDD"
+    # Degree-days are deliberately NOT abbreviated any more — "644 CDD" fits more easily and
+    # tells a reader nothing. The template's fit pass scales a long hero instead.
+    assert card_mod._compact("644 cooling degree-days") == "644 cooling degree-days"
     assert card_mod._compact("no known unit here") == "no known unit here"
 
 
@@ -442,6 +444,87 @@ def test_article_2_states_no_cost_figure():
     assert "$" not in art["body"]
     for c in claims:
         assert "$" not in c.figure and "$" not in c.text
+
+
+# ============================================ builder 3: summer vs normal
+
+def _summer():
+    claims = run_article.build_summer_claims(engine.load_feed(), CFG, date(2026, 9, 11))
+    article = run_article.write_summer(
+        {"question": "Was this Texas summer actually hotter than normal?"},
+        claims, engine.load_feed())
+    return article, claims
+
+
+def test_builder3_ledger_and_prose_verify():
+    import claim_ledger as cl
+    article, claims = _summer()
+    assert cl.verify_ledger(claims, CFG, date(2026, 9, 11)).ok
+    assert cl.verify_prose(article["body"], claims, CFG).ok
+    assert len(claims) == 13
+
+
+def test_builder3_normals_are_TIMELESS_and_say_why():
+    """A 1991-2020 reference period is not a stale reading. It must be marked timeless with the
+    reason stated, or G5 rightly refuses a 30-year-old date."""
+    _, claims = _summer()
+    normals = [c for c in claims if c.tier == "official"]
+    assert normals and all(c.timeless and "fixed reference period" in c.notes for c in normals)
+    assert all(c.as_of == "1991-2020" for c in normals)
+
+
+def test_builder3_normals_come_from_the_FEED_not_a_hardcoded_dict():
+    """The first article hardcoded two July normals. This builder reads all twelve from the
+    file, so a corrected normal reaches the article without anyone editing Python."""
+    import thi_source
+    normals, source = thi_source.climate_normals("austin")
+    assert sorted(normals) == list(range(1, 13))
+    assert "1991-2020" in source
+
+
+def test_builder3_MUTATION_a_wrong_actual_is_caught():
+    """THE MUTATION. 755 becomes 855 on the card — a plausible transcription slip. The ledger
+    cannot back it, and the slot-exact check refuses it."""
+    article, claims = _summer()
+    card = card_mod.build_card(article, claims)
+    bad = dict(card, headline="855 cooling degree-days")
+    result = card_mod.verify_card(bad, claims, article=article)
+    assert not result.ok
+    assert any(f.startswith("C1a") for f in result.failures), result.failures
+
+
+def test_builder3_MUTATION_a_wrong_derived_gap_is_caught():
+    """The percentage is arithmetic on two published figures. Change it and the subhead slot
+    check refuses, because it no longer equals the claim it quotes."""
+    article, claims = _summer()
+    card = card_mod.build_card(article, claims)
+    bad = dict(card, subhead="31.6% above normal")
+    result = card_mod.verify_card(bad, claims, article=article)
+    assert not result.ok and any(f.startswith("C1b") for f in result.failures)
+
+
+def test_builder3_MUTATION_prose_quoting_an_unbacked_number_is_caught():
+    """The model writes the language. If it invented a figure, the prose gate stops the
+    article before it is ever a card."""
+    import claim_ledger as cl
+    article, claims = _summer()
+    tampered = article["body"] + "\n\nAustin's September is already running 900 degree-days."
+    assert not cl.verify_prose(tampered, claims, CFG).ok
+
+
+def test_builder3_card_leads_on_the_MEASUREMENT():
+    article, claims = _summer()
+    card = card_mod.build_card(article, claims)
+    assert card["headline"] == "755 cooling degree-days"
+    assert card["subhead"] == "13.6% above normal"
+    assert card["source"] == "NOAA" and card["asOf"] == "Aug 2026"
+
+
+def test_builder3_does_not_abbreviate_the_unit_to_jargon():
+    """"755 CDD" fits more easily and tells a reader nothing. The template's fit pass exists so
+    the card can carry the real unit instead."""
+    assert "cooling degree-days" not in card_mod.CARD_UNIT
+    assert card_mod._compact("755 cooling degree-days") == "755 cooling degree-days"
 
 
 if __name__ == "__main__":
