@@ -1088,3 +1088,37 @@ from.
 `actions: write` has not been tested. One dispatch proves it; that test belongs with the build.
 
 No code written. No post. `egress_verified` false, Facebook streak 0.
+
+### 69. Actions verification PROVEN on main — egress_verified flipped
+PR #45 merged. `actions: write` was already proven (dispatch 204 / cancel 202). Three checks, all
+clean, read by run id through `api.github.com`:
+
+| # | run id | input | conclusion |
+|---|---|---|---|
+| 1 | `34638465141` | the live article URL | **success** |
+| 2 | `34638472822` | `/analysis/this-article-does-not-exist-deliberate-negative-control/` | **failure** |
+
+Run 1's payload, from the job logs:
+`requested_url` and `final_url` both the live article URL, `final_host` `texashomeintelligence.com`,
+`http_code` 200, `expect_host` matched, `ok: true`, `run_id` self-identified.
+**`requested_url` == the URL the Facebook post links to — echoed == posted, asserted, not assumed.**
+
+The negative control matters as much: a dead URL on the right host produces a **failed run**, not a
+green run with sad JSON. The conclusion alone is a sufficient signal.
+
+### 70. One design change the proof forced: read LOGS, not artifacts
+`download_workflow_run_artifact` returns a URL on
+`productionresultssa9.blob.core.windows.net`, and this session's egress **denies it** (measured:
+CONNECT 403). So the artifact — the obvious place to put a machine-readable result — is
+unreadable from the runner.
+
+The run **conclusion** and the **job logs** both come through `api.github.com`, which is
+reachable, so the echoed URL is read from the logs instead. Recorded in `config.verification`.
+The artifact upload stays, for a human reading the run in a browser.
+
+This is L13 again, one level down: the natural design put the evidence somewhere the surface that
+needs it cannot reach. Caught by attempting the download rather than assuming it would work —
+had I assumed, the gate would have failed on its first real use, mid-post.
+
+`egress_verified: true`. Still no post: the go-live run is deferred to a fresh session with
+budget, per the owner.

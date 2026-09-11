@@ -239,7 +239,22 @@ publish:
 required_egress:
   - texashomeintelligence.com      # destination + canonical (destination-resolution gate)
   - database.blotato.io            # Blotato media storage, measured from real post payloads
-egress_verified: false             # flip only after a real target resolves from the runner
+# VERIFIED 2026-09-11 — but NOT by direct egress, which is still denied. Verification runs in
+# GitHub Actions (.github/workflows/autoposter-verify-url.yml) and the session reads the run's
+# conclusion by id. Proven on main: run 34638465141 SUCCESS on the live article URL (http 200,
+# echoed url == posted url), run 34638472822 FAILURE on a deliberately bad URL.
+egress_verified: true
+verification:
+  mode: github_actions            # the session cannot resolve URLs itself; this is not a stopgap
+  workflow: autoposter-verify-url.yml
+  read_result_from: job_logs      # NOT artifacts — see below
+  # Artifact download redirects to productionresultssa9.blob.core.windows.net, which this
+  # session's egress denies (measured: CONNECT 403). The run CONCLUSION and the JOB LOGS both
+  # come through api.github.com, which is reachable, so the echoed URL is read from the logs.
+  # The artifact upload stays for a human reading the run in a browser.
+  proven_runs:
+    positive: 34638465141
+    negative: 34638472822
 
 slack:
   channel: "#thi-autoposter"             # PHASE 0: does not exist yet (searched). 🔴 owner.
