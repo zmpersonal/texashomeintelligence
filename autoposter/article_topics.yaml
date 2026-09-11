@@ -86,7 +86,7 @@ topics:
       Fair-Housing steering liability. ARTICLE-ENGINE.thi.md gates this until calm authority is
       established, and only ever as "is the perception true", never "which area is dangerous".
 
-    - id: austin-ac-rush-vs-heat
+  - id: austin-ac-rush-vs-heat
     question: "Does Austin's AC rush follow the heat?"
     requires_metrics: [permit_activity_hvac, cooling_degree_days]
     public_interest: 0.65

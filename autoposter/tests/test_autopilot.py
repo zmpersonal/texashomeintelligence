@@ -24,6 +24,19 @@ import run_article                  # noqa: E402
 HERE = Path(__file__).resolve().parent
 TODAY = date(2026, 9, 11)
 OK = lambda url: (True, "resolved 200")           # noqa: E731
+def _picked(cfg=None):
+    """Whatever the engine actually chooses right now — never a hardcoded slug.
+
+    The winning topic changes when the owner retunes `public_interest`, and it did: adding
+    `austin-ac-rush-vs-heat` at 0.65 moved it above the permits piece. Tests pinned to a slug
+    then fail for a reason that has nothing to do with what they measure.
+    """
+    r = engine.run("thi", write_fn=run_article.write,
+                   build_claims_fn=run_article.build_claims, today=TODAY,
+                   articles=run_article.TOPIC_ARTICLES, exclude_published=True)
+    return r["article"], r["card"]
+
+
 SLUG = "is-austins-home-improvement-boom-cooling-off"
 
 
@@ -38,17 +51,20 @@ def _cfg(**overrides):
 
 
 def _sidecar_dir(card=None):
-    """A rendered card for article 2, as the site's generator would have written it."""
+    """A rendered card for whatever article the engine picks, as the generator would write it."""
+    article, real_card = _picked()
+    slug = article["slug"]
     directory = Path(tempfile.mkdtemp())
-    rendered = card or {
-        "question": "Is Austin's home-improvement boom actually cooling off?",
-        "headline": "224 solar permits", "subhead": "up 138% month over month",
-        "source": "City of Austin", "asOf": "Aug 2026",
-    }
-    (directory / f"{SLUG}.json").write_text(json.dumps(
-        {"path": f"/images/og/{SLUG}.png", "width": 1200, "height": 630,
-         "alt": "…", "rendered": rendered}))
+    (directory / f"{slug}.json").write_text(json.dumps(
+        {"path": f"/images/og/{slug}.png", "width": 1200, "height": 630,
+         "alt": "…", "rendered": card or real_card}))
     return str(directory)
+
+
+def _stale_card():
+    """The engine's real card with its hero figure moved — a card the ledger cannot back."""
+    _, card = _picked()
+    return dict(card, headline="94 " + card["headline"].split(" ", 1)[1])
 
 
 def _kwargs(cfg, **over):
@@ -117,10 +133,7 @@ def test_a_STALE_claim_SKIPS():
 def test_a_STALE_rendered_card_SKIPS():
     """The card on disk shows a figure the ledger no longer carries."""
     cfg = _cfg()
-    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir(
-        card={"question": "Is Austin's home-improvement boom actually cooling off?",
-              "headline": "94 solar permits", "subhead": "up 138% month over month",
-              "source": "City of Austin", "asOf": "Aug 2026"}))
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir(card=_stale_card()))
     _fails(_evaluate(cfg), "card")
 
 
@@ -335,7 +348,8 @@ def test_the_published_notice_carries_both_live_urls():
     d = _evaluate(cfg)
     notice = autopilot.published_notice(d, "https://texashomeintelligence.com/analysis/x/",
                                         "https://facebook.com/1_9", 2)
-    assert "224 solar permits" in notice
+    assert d.card["headline"] in notice          # whichever article the engine picked
+    assert d.card["subhead"] in notice
     assert "https://texashomeintelligence.com/analysis/x/" in notice
     assert "https://facebook.com/1_9" in notice
     assert "streak 2" in notice

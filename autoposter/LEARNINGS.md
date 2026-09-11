@@ -292,3 +292,42 @@ accident, an early return — the check is decorative and the protection is luck
 discipline that worked once is an untested code path"). All three are the same shape: the
 successful run is the one that hides the gap. L11 is about what you claim, L14 about what you
 did by hand, L15 about what the code would do if it ever had to.
+
+## L16 — The gates protect figures. They do not protect claims about figures.
+**Status:** `validated` · **Affects:** every writer, and full auto above all ·
+**Evidence:** RUNLOG §119, §123; `tools/audit-frozen-conclusions.py`.
+
+Builder 4's first draft answered its own question in prose: *"No — they moved in opposite
+directions."* True of August 2026. Flatly contradicted by July's own table, printed three
+paragraphs below it, where both series rose.
+
+**Every gate passed.** G1 checks that each numeral traces to a claim — every numeral did. G2
+checks that sources and dates are visible — they were. C1a and C1b check the card's two slots
+against the two claims they quote — they matched. The claim ledger verified. The prose gate
+verified. Nothing in the stack reads an *argument*, so a sentence asserting a relationship
+between two correct figures is invisible to all of it.
+
+Under review this is survivable: a human reads the piece and says "but the table says they both
+went up". Unattended there is no such reader, and the machine publishes a confident falsehood on
+a schedule with a green board.
+
+**The rule:** anything a recurring builder ASSERTS must be derived from the data, not written
+into the template. Verdicts, the identification of a "slowest" or "busiest" item, counts and
+tallies, the direction words in a closing, the month name — all of it. The model writes the
+sentence SHAPES, including both branches; the data picks which one renders.
+
+**How to check it:** the audit tool runs every builder across six real periods and lists
+sentences that never vary but assert direction. It cannot distinguish "computed and happened to
+be constant" from "frozen" — so each candidate gets a flip test that inverts the controlling
+figure and asserts the conclusion moves. A verdict that survives its own condition being
+inverted is a verdict nobody computed.
+
+**What the first audit found:** one builder clean, one with two frozen sentences, one with a
+frozen closing, and one with fourteen — including which trade was "the slower lane", a flat
+"that is not a market cooling off", and a month-over-month section asserting a fall in a trade
+that rose in four of the six periods it can be built for.
+
+**Family:** L11 (assert safety properties from the code, not from expectation), L14 (a
+discipline that worked once is an untested code path), L15 (a guard observed only in the passing
+case has not been observed). This is the fourth and the most dangerous, because the other three
+fail loudly once noticed and this one reads as a well-written article.
