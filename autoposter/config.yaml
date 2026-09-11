@@ -80,8 +80,29 @@ autonomy_gate:
   min_review_cycles: 2                  # a single fan-out week cannot auto-graduate
   reset_on: [malformed_post, factual_error, platform_warning]
 
+# ---- AUTOPILOT (owner decision, 2026-09-11: full auto from post #3) ----
+#
+# The owner priced the risk explicitly: traffic is low, so the cost of a bad post is at its
+# minimum, and trusting the gates while the stakes are low is cheaper than waiting. Recorded
+# here as a decision, not an assumption.
+#
+# What full auto does NOT mean: it never means proceeding on an unclear gate. Publishing
+# requires a clean sweep; anything else skips the cycle and notifies. A quiet week is fine.
+autopilot:
+  enabled: true
+  # THE KILL SWITCH. Either source pauses; both must be clear to publish. The env var is the
+  # fast one (a GitHub Actions repository variable, flipped in the UI, no commit); this flag is
+  # the durable one. Paused still builds and still notifies — it just never publishes.
+  paused: false
+  notify_channel: "#thi-autoposter"
+
 # ---- Cadence (two streams, own clocks) ----
 cadence:
+  # Full-auto window. The MINIMUM is a floor the driver will not cross. The MAXIMUM is a prompt
+  # to look, never a licence to publish filler: if nothing clears the bar, the driver says so
+  # and waits. The quiet-week machinery already knows how to say "nothing this week".
+  article_days_min: 3
+  article_days_max: 7
   article_days: 10        # deep myth-buster every 1-2 weeks — THE near-term stream
   reels_days: 14
   pieces_per_reel_batch: 15

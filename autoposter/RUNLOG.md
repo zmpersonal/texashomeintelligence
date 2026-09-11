@@ -1480,3 +1480,62 @@ held post's id. Reactions are deliberately excluded — they are the easiest thi
 accident on a phone. No reply drops the post rather than queueing it: a stale post about last
 month's reading is worse than no post. And a ✅ is permission to proceed through the gates, never
 permission to skip them — if a gate fails after approval, nothing posts and the thread says which.
+
+## Round 16 — 2026-09-11 — full auto, built to refuse
+
+Owner decision, with the reasoning recorded: traffic is low, so the cost of a bad post is at its
+minimum, and trusting the gates while the stakes are low is cheaper than waiting. Full auto from
+post #3. Post #2 stays a manual merge; it pre-dates the decision.
+
+### 102. Two facts surfaced before building, not after
+- **The machine runs out of writers after post #3.** Three topics are buildable; two have a
+  registered claim-builder. `summer-hotter-than-normal` has none, so cycle #3 onward hits the
+  no-builder halt. Under full auto that is a loud skip-and-notify, which is correct — but it
+  means the cadence stops until a writer exists, and that is an operational fact, not a bug.
+- **The gates verify FIGURES, not editorial judgement.** Every numeral traces to a claim and
+  every claim to a source. Nothing checks whether the piece is worth publishing. Under review a
+  human read it; unattended nobody does. That is the residual risk the owner priced.
+
+### 103. `autopilot.py` — the clean-sweep rule
+Publish only when EVERY gate returns an explicit clean pass. `_verdict()` turns any exception
+into a FAIL rather than an absence of an opinion — under review a raising gate produced a
+traceback a human read; unattended, the difference between "raised" and "no objection" is a
+post. Nine verdicts per cycle: topic, ledger, prose, two-lock, model budget, claim freshness,
+card, channel guard, and the combined social/destination/media/duplicate suite.
+
+Order is load-bearing: merge → wait for deploy → RE-VERIFY the live URL → post → post-publish
+re-verify → ledger. Everything checked before the merge was checked against a site that did not
+yet carry the article, so the live check after the deploy is not redundant.
+
+### 104. Skip-and-notify, proven on real failures
+Four skip paths demonstrated end to end, each with its Slack notice: a card that was never
+rendered, a rendered card that drifted from the ledger, data past its staleness bound, and a
+gate that raises. In every case: nothing merged, nothing posted, and a notice naming the gate.
+An UNVERIFIED destination skips identically to a dead one — indeterminate is not permission.
+
+### 105. The kill switch
+`AUTOPOSTER_PAUSED` (a repository variable, flipped in the GitHub UI, no commit) or
+`autopilot.paused` in config. Either pauses; both must be clear to publish — the asymmetry is
+deliberate, so a confusing switch fails to STOPPED. Proven: the same clean cycle that publishes
+goes to PAUSED with one variable, merges nothing, posts nothing, does not advance the clock, and
+resumes with nothing to clean up. The pause is checked AFTER the gates so a paused notice never
+misreports a cycle that was not publishable anyway.
+
+### 106. Observable
+Published sends an FYI with the headline, hero figure, live article URL and Facebook URL.
+Skipped and paused each send their own notice. `too_soon` is the one silent path, deliberately:
+a driver that reports "nothing to do" six days a week trains you to ignore the seventh message.
+
+### 107. A test wrote to the real published-posts ledger
+`run_cycle` published through the default ledger path, so the suite appended a fake post #3 to
+`data/published-posts.json` and a later test then failed on a duplicate — the gate catching the
+pollution its own suite created. Restored, and `run_cycle` now takes a `ledger_path`. Second
+time a test has written a real file this session (the first wrote into `site/`), and the same
+check caught both: `git status` after the full suite.
+
+**185/185 across nine suites, defined == run in all nine, tree clean afterwards.**
+
+### 108. 🔴 Still outside the boundary, still unbuilt
+The scheduler and the Slack notifier need a workflow file in `.github/workflows/` and a Slack
+token in the `autoposter` Environment. Nothing has been wired to a schedule; `autopilot.py` runs
+only when called. The driver is proven in-process, not in production.
