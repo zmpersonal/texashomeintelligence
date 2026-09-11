@@ -1286,3 +1286,63 @@ newly-added Plex Sans 400 aborts naming that face, an over-long question aborts 
 cropping, both write nothing, two runs byte-identical. The deviation record in
 `specs/OG-CARD-PROPOSAL.md` was rewritten to describe the template as built — a record still
 describing the first draft is the same drift it exists to prevent. L15 added.
+
+## Round 13 — 2026-09-11 — the card becomes engine output, and a gate
+
+### 83. 🟡 PR #46 IS NOT MERGED
+Checked before building on the assumption. `pull_request_read` reports `state: open`,
+`merged: false`, `mergeable_state: clean`; `git ls-remote` still has main at `04d0394`. So the
+site-side card system is not live, and **post #2 cannot go out until it is** — the article page
+does not yet declare a per-article card, so the URL this round's promo points at would 404 in
+production. The media gate would catch that, which is the system working, but the fix is the
+merge. The proof below used the sidecar from the PR branch, materialised into the working tree
+and never staged.
+
+### 84. The card block is emitted, not typed
+`card.build_card()` selects two claims by a deterministic rule — the first `data` claim on the
+article's primary metric (the reading) and the first `derived` one (what it did) — compacts the
+unit, abbreviates the source from a code-held map, and formats the date. **No model call.**
+`_compact` asserts it changed no digit: a unit rewrite that touched a numeral would be this
+module deriving, which is the architecture line.
+
+Proof that the automation replaces the hand-step rather than diverging from it: the emitted
+block is **character-identical** to the block written by hand and approved on sight, and a test
+reads the approved one out of the PR branch to keep it that way.
+
+### 85. The card gate
+`verify_card()` — C1a/C1b the two slots quote their two claims exactly, C1 the numerals
+backstop, C2 the source label must abbreviate a source the article declares, C3 the date must be
+a claim's date, C4 the question must be the H1 verbatim, C5 the rendered card must exist and
+match. `require_sidecar` is False for a draft (the PNG does not exist yet) and True at publish.
+
+### 86. Two things found by running it, not by reading it
+- **A reference period is not a date.** `1991-2020` matches the shape of an ISO date and parses
+  as month 20 — `IndexError` against the real ledger. A climate normal's `as_of` is a period.
+- **A numerals-anywhere check cannot see a frozen card.** First mutation of the round: freeze
+  the block, move the reading. The stale figure survives inside the movement claim's own
+  derivation string (`13.88 vs 15.46 = -10.2%`), so it still reads as backed. That is why the
+  gate checks the card's two slots *exactly* rather than pooling the article's numerals.
+  **Correction to my own first read of this:** the first run reported NOT CAUGHT, and I drew a
+  conclusion from it before noticing the mutation's anchor had not matched — the ledger was
+  never modified, so nothing was being tested. Re-run properly, the finding held, but I did not
+  know that when I first said it.
+
+### 87. 🟡 A GATE CHANGED — G2 accepts a declared short form on the card
+The rendered card carries `EIA · Aug 2026`; G2 demanded the full source string on the artifact.
+Rather than loosen the gate, the **story now supplies** the forms the card may use
+(`source_short`, `as_of_display`), both derived from the approved map. The gate never guesses an
+abbreviation and never pattern-matches initials: strip the declaration and the same card fails,
+and a card reading `EPA` fails with it. The caption still carries the full name and the exact
+ISO date, because there it costs nothing. Both halves are tested.
+
+`has_source_card` is now **true and earned** — the card's face carries source and date, checked
+against the sidecar, rather than asserted in a JSON field.
+
+### 88. Post #2 staged, HELD, not sent
+Full gate suite PASS with media pointing at the real card. **152/152 across eight suites.**
+
+**🟡 Flagged, not fixed:** the staged caption is post #1's caption, pointing at post #1's
+article. The ledger says that destination has been posted once already. As a piece it is a
+duplicate; as a fix it is the same article with a card that finally shows the number. That is an
+editorial call, and the machinery has no duplicate-destination check — the ledger makes one
+cheap, and it was not in this round's scope.

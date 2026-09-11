@@ -1,26 +1,37 @@
 {
+  "_note": "STAGED post #2. HELD: not scheduled, not sent. Its media is the article's OWN rendered card, verified against the sidecar the site renderer wrote, and every numeral on that card is checked against the claim ledger before this file is written. Awaiting owner approval as its own reviewed go-live.",
+  "_gate": {
+    "suite": "PASS",
+    "failures": []
+  },
+  "_card_face": [
+    "13.88¢/kWh",
+    "down 10.2% year over year",
+    "EIA · Aug 2026"
+  ],
   "post": {
     "platform": "facebook",
     "angle": "reveal",
     "caption": "Texas homeowners: it feels like every bill is going up. Electricity, for once, isn't. Residential power in Texas is 13.88 cents per kilowatt-hour — down 10.2% year over year (source: U.S. Energy Information Administration, as of 2026-08-01). We checked whether a mild summer explains it. It doesn't — cooling demand ran normal. The full read, with the numbers and where they came from → https://texashomeintelligence.com/analysis/are-texas-electricity-prices-still-going-up/ Send this to someone who's been told their bill only ever goes one way.",
     "on_screen_text": [
-      "13.88 cents per kilowatt-hour",
-      "U.S. Energy Information Administration · 2026-08-01"
+      "13.88¢/kWh",
+      "down 10.2% year over year",
+      "EIA · Aug 2026"
     ],
-    "media_url": "data:image/png;base64,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "media_url": "https://texashomeintelligence.com/images/og/are-texas-electricity-prices-still-going-up.png",
     "has_media": true,
+    "piece_kind": "text_with_link",
     "has_source_card": true,
     "destination_url": "https://texashomeintelligence.com/analysis/are-texas-electricity-prices-still-going-up/",
     "destination_theme": "energy_price_cents_kwh",
     "card_kind": "reveal",
     "card_rows": [
-      "13.88 cents per kilowatt-hour",
+      "13.88¢/kWh",
       "down 10.2% year over year"
     ],
     "card_numeric_cells": 2,
+    "card_sidecar": "/images/og/are-texas-electricity-prices-still-going-up.png",
     "requires_link": true,
     "status": "HELD — not scheduled, not posted; awaits owner approval and a live article URL"
-  },
-  "gates_passed": true,
-  "gate_failures": []
+  }
 }

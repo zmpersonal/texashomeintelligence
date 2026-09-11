@@ -28,6 +28,7 @@ from pathlib import Path
 
 import yaml
 
+import card as card_mod
 import claim_ledger as ledger_mod
 import publish_target
 import topic_scorer
@@ -103,6 +104,16 @@ def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
     if not prose_result.ok:
         raise ledger_mod.LedgerHalt(prose_result.failures)
 
+    # ---- The social card, BUILT from the same claims the prose was verified against. It used
+    # to be frontmatter typed by hand from the ledger: correct once, and nothing would have
+    # caught the second article's card drifting from its claims (L14). The sidecar is not
+    # required here — the PNG is generated on the site side and does not exist for a draft —
+    # but every numeral on the face is held to G1's standard right now.
+    card = card_mod.build_card(article, claims)
+    card_result = card_mod.verify_card(card, claims, slug=article["slug"], article=article)
+    if not card_result.ok:
+        raise card_mod.CardHalt(card_result.failures)
+
     # ---- Stage 5: assert the resolved destination against the self-identified domain.
     destination = destination or {
         "repo": "zmpersonal/texashomeintelligence",
@@ -115,6 +126,7 @@ def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
         "target": resolved, "topic": chosen, "shortlist": ranked, "tension": tension,
         "claims": claims, "article": article, "model_calls": budget.calls,
         "ledger_checked": ledger_result.checked,
+        "card": card, "card_frontmatter": card_mod.frontmatter_block(card),
     }
 
 
@@ -134,9 +146,30 @@ def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today
     # the preview. Derived here from the destination, never hand-set at post time. Post #1
     # needed exactly that hand-edit, and a hand-step that works once is a hand-step that rots
     # (RUNLOG §73).
+    #
+    # Since the card system shipped, "the destination's OG image" is the ARTICLE'S OWN CARD,
+    # not the sitewide logo: the page declares it, so the reader sees it, so that is what the
+    # media gate has to resolve. The sidecar the renderer wrote is the source of that path —
+    # reading it rather than reconstructing the filename means a card that was never rendered
+    # cannot be silently promoted.
     publish_cfg = config.get("publish") or {}
     origin = "/".join(url.split("/")[:3])
-    media_url = origin + publish_cfg.get("og_image_path", "/images/og-card.jpg")
+    slug = article["slug"]
+    sidecar = None
+    sidecar_file = card_mod.sidecar_path(slug, config)
+    if sidecar_file.exists():
+        sidecar = json.loads(sidecar_file.read_text())
+
+    card = card_mod.build_card(article, claims)
+    card_gate = card_mod.verify_card(card, claims, slug=slug, article=article,
+                                     sidecar=sidecar, require_sidecar=True)
+    if not card_gate.ok:
+        # Falling back to the sitewide card here would be the worst available option: the post
+        # would go out looking fine while promoting a page whose card is missing or stale. The
+        # gate exists to stop the post, not to quietly pick a different picture.
+        raise card_mod.CardHalt(card_gate.failures)
+
+    media_url = origin + sidecar["path"]
 
     caption = (
         f"Texas homeowners: it feels like every bill is going up. Electricity, for once, isn't. "
@@ -150,21 +183,24 @@ def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today
         "platform": "facebook",
         "angle": "reveal",
         "caption": caption,
-        "on_screen_text": [headline_claim.figure,
-                           f"{headline_claim.source} · {headline_claim.as_of}"],
+        # What the rendered card actually says, read off the sidecar rather than asserted:
+        # G2 checks provenance is visible on the artifact, and this is the artifact.
+        "on_screen_text": [card["headline"], card["subhead"], f"{card['source']} · {card['asOf']}"],
         "media_url": media_url,
         "has_media": True,
         # A link post is not an atomized short, so G3 (the clip must carry its own source card)
-        # does not apply: there is no cut that could sever a claim from its source. Its
-        # provenance lives in the caption, which G2 still enforces. Stating the kind rather than
-        # claiming a source card the site's generic OG image does not have.
+        # does not apply: there is no cut that could sever a claim from its source. The kind is
+        # stated rather than assumed. `has_source_card` is now TRUE and earned — the rendered
+        # card carries the source and date on its face, verified against the sidecar above,
+        # not asserted in a JSON field.
         "piece_kind": "text_with_link",
-        "has_source_card": False,
+        "has_source_card": True,
         "destination_url": url,
         "destination_theme": "energy_price_cents_kwh",
         "card_kind": "reveal",
-        "card_rows": [headline_claim.figure, lead.figure],
+        "card_rows": [card["headline"], card["subhead"]],
         "card_numeric_cells": 2,
+        "card_sidecar": sidecar["path"],
         "requires_link": True,
         # Held, and held in the artifact rather than in a person's memory.
         "status": "HELD — not scheduled, not posted; awaits owner approval and a live article URL",
@@ -175,7 +211,10 @@ def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today
     # price. The fix is to widen what the story supplies, never to loosen G1.
     story = {"metric": "energy_price_cents_kwh",
              "figure": f"{headline_claim.figure} — {lead.figure}",
-             "source": headline_claim.source, "as_of": headline_claim.as_of}
+             "source": headline_claim.source, "as_of": headline_claim.as_of,
+             # The forms the CARD is allowed to use, supplied by code from the approved map
+             # rather than inferred by the gate. The caption still carries the full name.
+             "source_short": card["source"], "as_of_display": card["asOf"]}
     result = social_validator.validate_post(post, story, config, feed=load_feed(), now=today,
                                             link_opener=link_opener, media_opener=media_opener)
     return post, result

@@ -258,8 +258,14 @@ def _numeral_gates(post: dict, story: dict, result: GateResult) -> None:
     surfaces = [caption] + on_screen
 
     # ---- G1 no numeral without provenance ----
+    # `as_of` keeps its digits here (drop_dates=False), as it does in the article-scale check
+    # for the same reason: an ISO date is stripped as provenance when scanning a SURFACE, but a
+    # card legitimately renders that same date as "Aug 2026" and the year is then a numeral on
+    # the artifact. Allowing the story's own date is not a loosening — a year the story does not
+    # carry still fails.
     allowed = (_extract_numerals(story.get("figure", ""))
-               | _extract_numerals(str(story.get("as_of", "")))
+               | _extract_numerals(str(story.get("as_of", "")), drop_dates=False)
+               | _extract_numerals(str(story.get("as_of_display", "")), drop_dates=False)
                | _extract_numerals(str(story.get("value", ""))))
     used: set[str] = set()
     for surface in surfaces:
@@ -269,27 +275,39 @@ def _numeral_gates(post: dict, story: dict, result: GateResult) -> None:
         result.fail("G1", f"numerals not present in the story's figure/data: {unbacked}")
 
     # ---- G2 source + timestamp on the piece: the CAPTION and the CARD, not one of them ----
+    #
+    # THE CARD MAY USE A DECLARED SHORT FORM; THE CAPTION MAY NOT.
+    # A 1200x630 card cannot legibly carry "U.S. Energy Information Administration" and stay a
+    # card, so it carries "EIA · Aug 2026". G2's purpose is that provenance is visible on the
+    # artifact, and an abbreviation the story itself declares satisfies that. The story must
+    # SUPPLY the alternative (`source_short`, `as_of_display`), which means code states what
+    # counts before the gate runs — the gate never guesses an abbreviation, never pattern-matches
+    # initials, and never accepts a label the piece did not declare. A card reading "EPA", or a
+    # date the story does not carry, still fails. The caption keeps the full name and the exact
+    # date, because there it costs nothing.
     source = story.get("source", "")
     as_of = str(story.get("as_of", ""))
+    card_source_forms = [f for f in (source, story.get("source_short", "")) if f]
+    card_date_forms = [f for f in (as_of, str(story.get("as_of_display", ""))) if f]
     if source:
         if source.lower() not in caption.lower():
             result.fail("G2", "source not visible in the caption")
-        if post.get("has_media", True) and on_screen \
-                and not any(source.lower() in t.lower() for t in on_screen):
-            result.fail("G2", "source not visible on the card")
+        if post.get("has_media", True) and on_screen and not any(
+                form.lower() in t.lower() for t in on_screen for form in card_source_forms):
+            result.fail("G2", "source not visible on the card (nor any form the story declares)")
     if as_of:
         if as_of not in caption:
             result.fail("G2", "as_of not visible in the caption")
-        if post.get("has_media", True) and on_screen \
-                and not any(as_of in t for t in on_screen):
-            result.fail("G2", "as_of not visible on the card")
+        if post.get("has_media", True) and on_screen and not any(
+                form in t for t in on_screen for form in card_date_forms):
+            result.fail("G2", "as_of not visible on the card (nor any form the story declares)")
 
     # ---- G3 sourcing survives atomization ----
     # Scoped to pieces that CAN be cut. VALIDATOR.md frames G3 as "for every atomized short,
     # assert the clip's own frames carry the source": the failure it prevents is a cut severing
     # a claim from its source. A text-with-link post is never cut, and its media is the site's
-    # generic OG image, which carries no story source — so demanding one would force a piece to
-    # claim a source card it does not have. Its provenance lives in the caption (G2).
+    # own OG card, whose provenance G2 checks directly above. Its source line is real, so the
+    # exemption costs nothing: G2 is doing the work G3 would have done.
     # Unknown kinds are treated as atomizable, so the default is the strict one.
     ATOMIZABLE = post.get("piece_kind", "media") not in ("text_with_link",)
     if post.get("has_media", True) and ATOMIZABLE and not post.get("has_source_card"):

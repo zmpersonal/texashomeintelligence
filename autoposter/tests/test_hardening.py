@@ -21,6 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import article_engine as engine     # noqa: E402
+import card as card_mod         # noqa: E402
 import media                        # noqa: E402
 import publish_gate                 # noqa: E402
 import run_article                  # noqa: E402
@@ -43,10 +44,29 @@ def _promo(config=CFG):
 # =========================================================== (1) derived media
 
 def test_link_post_media_is_derived_from_the_destination():
-    """The hand-step: at post time I edited media_url to the OG card. Now it is computed."""
+    """The hand-step: at post time I edited media_url to the OG card. Now it is computed.
+
+    UPDATED 2026-09-11 when per-article cards shipped. The rule did not change — a link post's
+    media is whatever the destination actually declares as its OG image — but the answer did:
+    an analysis article now declares its own card, so that is what the reader sees and what the
+    media gate must resolve. Pointing at the sitewide logo would now be the WRONG derivation.
+    """
+    if not _card_rendered():
+        return                            # the card system is not in this checkout yet
     post, _ = _promo()
-    assert post["media_url"] == "https://texashomeintelligence.com/images/og-card.jpg"
+    assert post["media_url"].startswith("https://texashomeintelligence.com/images/og/")
+    assert post["media_url"].endswith(".png")
+    assert "og-card.jpg" not in post["media_url"]
     assert post["destination_url"].startswith("https://texashomeintelligence.com/")
+
+
+SLUG = "are-texas-electricity-prices-still-going-up"
+
+
+def _card_rendered() -> bool:
+    """The rendered card lives on the site side. Absent in a checkout where the card system is
+    not merged, which is a skip, not a failure — the gate's own test covers the missing case."""
+    return card_mod.sidecar_path(SLUG, CFG).exists()
 
 
 def test_media_url_is_never_a_placeholder_data_uri():
@@ -56,18 +76,26 @@ def test_media_url_is_never_a_placeholder_data_uri():
     assert not post["media_url"].startswith("data:")
 
 
-def test_media_follows_the_destination_rather_than_a_constant():
-    """THE REGRESSION TEST. Hard-coding the current OG URL would pass every test above.
+def test_media_follows_the_RENDERED_CARD_rather_than_a_constant():
+    """THE REGRESSION TEST, repointed at what the media is now derived from.
 
-    Move the site and the media must move with it. A constant cannot do this; only derivation
-    can, so this fails the moment someone re-hardcodes the value.
+    Hard-coding today's card URL would pass every assertion above. So: change the path the
+    RENDERER recorded, and the post's media must move with it. A constant cannot do that, and
+    neither can a filename reconstructed from the slug — which is the tempting shortcut, and
+    the one that would let a card nobody rendered be promoted anyway.
     """
-    cfg = json.loads(json.dumps(CFG))
-    cfg["publish"] = dict(cfg["publish"], og_image_path="/images/social/link-card.png")
-    post, _ = _promo(cfg)
-    assert post["media_url"] == "https://texashomeintelligence.com/images/social/link-card.png"
-    origin = "/".join(post["destination_url"].split("/")[:3])
-    assert post["media_url"].startswith(origin + "/")
+    if not _card_rendered():
+        return
+    sidecar = card_mod.sidecar_path(SLUG, CFG)
+    original = json.loads(sidecar.read_text())
+    sidecar.write_text(json.dumps(dict(original, path="/images/og/moved/elsewhere.png")))
+    try:
+        post, _ = _promo()
+        assert post["media_url"] == "https://texashomeintelligence.com/images/og/moved/elsewhere.png"
+        origin = "/".join(post["destination_url"].split("/")[:3])
+        assert post["media_url"].startswith(origin + "/")
+    finally:
+        sidecar.write_text(json.dumps(original, indent=2) + "\n")
 
 
 def test_the_derived_media_is_what_the_gate_actually_checks():
