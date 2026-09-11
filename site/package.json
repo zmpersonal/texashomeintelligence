@@ -14,6 +14,7 @@
     "fetch-drought-map": "tsx scripts/fetch-drought-map.ts",
     "fonts:sync": "node scripts/sync-fonts.mjs",
     "icons": "node scripts/generate-icons.mjs",
+    "og-cards": "node scripts/generate-og-cards.mjs",
     "fixture": "tsx scripts/local-fixture.ts",
     "fixture:check": "tsx scripts/local-fixture.ts --check",
     "worker": "scripts/local-worker.sh"

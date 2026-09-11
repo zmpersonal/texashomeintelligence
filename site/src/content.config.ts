@@ -162,6 +162,23 @@ const analysis = defineCollection({
     embed: z
       .object({ series: z.string(), caption: z.string() })
       .optional(),
+    // The social card's face, rendered by `npm run og-cards` into a committed PNG plus a
+    // sidecar in src/data/og-cards/. Optional: an article without one falls back to the
+    // sitewide card, which is what every page did before per-article cards existed.
+    //
+    // Every figure here states one of the article's own claims. The renderer computes
+    // nothing — a percentage re-derived at render time would be a second implementation of
+    // the article's arithmetic, and the first disagreement would put a card on the internet
+    // contradicting the page it links to.
+    card: z
+      .object({
+        question: z.string(), // the H1, verbatim
+        headline: z.string(), // the hero figure, e.g. "13.88¢/kWh"
+        subhead: z.string(), // the movement, e.g. "down 10.2% year over year"
+        source: z.string(), // short label for the card face, e.g. "EIA"
+        asOf: z.string(), // e.g. "Aug 2026"
+      })
+      .optional(),
   }),
 });
 
