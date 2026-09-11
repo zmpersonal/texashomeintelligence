@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-06T12:53:08.084Z",
-  "lastSuccessAt": "2026-09-06T12:53:08.084Z",
+  "lastAttemptAt": "2026-09-11T13:33:47.294Z",
+  "lastSuccessAt": "2026-09-11T13:33:47.294Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -20049,7 +20049,7 @@
     },
     {
       "observedAt": "2026-09-04T00:00:00.000Z",
-      "ingestedAt": "2026-09-06T12:53:08.431Z",
+      "ingestedAt": "2026-09-07T15:03:06.699Z",
       "key": "2026-115882 BP",
       "value": {
         "permitType": "Remodel",
@@ -20059,7 +20059,7 @@
     },
     {
       "observedAt": "2026-09-04T00:00:00.000Z",
-      "ingestedAt": "2026-09-06T12:53:08.431Z",
+      "ingestedAt": "2026-09-07T15:03:06.699Z",
       "key": "2026-116568 BP",
       "value": {
         "permitType": "Repair",
@@ -20070,13 +20070,156 @@
     },
     {
       "observedAt": "2026-09-04T00:00:00.000Z",
-      "ingestedAt": "2026-09-06T12:53:08.431Z",
+      "ingestedAt": "2026-09-07T15:03:06.699Z",
       "key": "2026-115548 BP",
       "value": {
         "permitType": "Remodel",
         "workDescription": "Installation of a new TPO Roofing System. Existing retail.",
         "status": "Active",
         "valuationUsd": 19400
+      }
+    },
+    {
+      "observedAt": "2026-09-05T00:00:00.000Z",
+      "ingestedAt": "2026-09-09T13:42:39.246Z",
+      "key": "2026-114599 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Johnson/Schultz - 40-10945 - Install new 5.7 kW rooftop solar system to existing residential only using backfed breaker only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-08T00:00:00.000Z",
+      "ingestedAt": "2026-09-10T13:35:35.679Z",
+      "key": "2026-113220 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "simple re-roof - remove and replace shingles on existing roof. BLDG 18",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-09-08T00:00:00.000Z",
+      "ingestedAt": "2026-09-10T13:35:35.679Z",
+      "key": "2026-034805 MP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition and remodel: full interior remodel with small interior additions on rear and new covered back porch all new interior finishes and fixtures all new exterior windows doors roofing and siding (except brick) new gas fire place decorative structural changes to front side of roof all new plumbing",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-08T00:00:00.000Z",
+      "ingestedAt": "2026-09-10T13:35:35.679Z",
+      "key": "2026-107906 EP",
+      "value": {
+        "permitType": "Upgrade",
+        "workDescription": "Removal of old service wire meter can. Removal of old residential panel 150 amp. Installation of riser through roof Installation of wiring and weather head and meter can. New Panel Installation. Austin Energy is the provider.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-08T00:00:00.000Z",
+      "ingestedAt": "2026-09-10T13:35:35.679Z",
+      "key": "2026-113212 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "simple re-roof - remove and replace shingles on existing roof. BLDG 17",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-09-09T00:00:00.000Z",
+      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "key": "2026-102216 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Remodel Unit all new mechanicals such as electrical plumbing hvac insulation drywall exterior siding roofing portion chimney exterior brick door- due to Fire Damage to Unit 104",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-09T00:00:00.000Z",
+      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "key": "2026-109414 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "adding a solar pv rooftop system to an existing residence",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-09T00:00:00.000Z",
+      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "key": "2026-107762 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Fast casual Asian restaurant with mechanical electrical plumbing and finishes work to accommodate restaurant functions. This includes the addition of a grease interceptor and replacement of rooftop equipment but no other exterior work",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-09T00:00:00.000Z",
+      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "key": "2026-098893 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Install new 14.96 kW DC rooftop solar system and 15.0 kWh energy storage system to existing residential",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-09T00:00:00.000Z",
+      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "key": "2026-064799 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition of exterior awning at rear Interior remodel with replacement doors and windows. Structural work is proposed at living room to accommodate a wider unit remove and replace backer board waterproofing tile and fixtures in 3 existing bathrooms. Update interior doors baseboards new flooring new s",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-09T00:00:00.000Z",
+      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "key": "2026-061157 MP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Interior remodel of kitchen: Widening an existing opening into dining room turning existing pantry into storage and reconfiguring existing bathroom. An existing bedroom closet will removed and replaced by a built-in cabinet. No changes to building footprint and no changes to roofline.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-09T00:00:00.000Z",
+      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "key": "2026-116158 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Remove/replace existing roof system as required and install new TPO roofing system. No structural work. No insulation work no changes to the pitch",
+        "status": "Active",
+        "valuationUsd": 124120
+      }
+    },
+    {
+      "observedAt": "2026-09-09T00:00:00.000Z",
+      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "key": "2026-102137 PP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition/remodel to existing 2-story single family residence reconfigure 1st/2nd floors replacement/reconfiguration of existing back porch expand conditioned living area revised exterior elevations roofline new and modified walls doors windows stairs framing finishes related electrical plumbing and ",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-09T00:00:00.000Z",
+      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "key": "2026-090510 PP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Bathroom addition to existing 1-story single family residence. New bath includes 2 sinks 1 wc 1 shower new windows new framing new siding new foundation and roof.  3 bed/2 bath",
+        "status": "Active"
       }
     }
   ]
