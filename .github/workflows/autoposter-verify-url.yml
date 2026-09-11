@@ -1,0 +1,123 @@
+# Autoposter: resolve a URL from a surface that can actually reach it.
+#
+# WHY THIS EXISTS
+# The autoposter's runner is a Claude Code cloud session whose egress policy denies arbitrary
+# hosts — including texashomeintelligence.com and Blotato's media host. That session CAN post
+# (MCP connector traffic bypasses the session allowlist) but CANNOT verify what it posted.
+# A fail-closed "does this link resolve" gate on a surface that cannot resolve anything blocks
+# every post forever. See autoposter/LEARNINGS.md L13.
+#
+# Actions runners have no such restriction — this repo's ingestion job reaches government data
+# hosts daily. So the check moves here, and the session reads the CONCLUSION of a run it
+# dispatched itself.
+#
+# THE TRUST MODEL, which is the whole point:
+#   * The session dispatches this workflow and remembers the run id.
+#   * It reads that run's conclusion through the GitHub API. Success means resolved.
+#   * The result is NEVER a committed file. A committed file is forgeable by any push; a run
+#     conclusion addressed by id is not.
+#   * The URL under test is an INPUT and is ECHOED into the result, so the caller can assert
+#     that the URL verified is the URL about to be published. Verifying one link and posting
+#     another would otherwise look green.
+#
+# This workflow needs no secrets: it HEADs public URLs. `permissions: contents: read` is set
+# explicitly rather than inherited, so it cannot commit, tag, or deploy even if edited.
+
+name: "Autoposter: verify URL resolves"
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Absolute https:// URL to resolve"
+        required: true
+        type: string
+      expect_host:
+        description: "Optional host the URL must finally resolve to (redirects followed)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: autoposter-verify-url-${{ github.run_id }}
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Resolve the URL
+        env:
+          # Inputs go through the environment, never interpolated into the shell. A `${{ }}`
+          # expansion inside a run block is a script-injection vector; this is not.
+          URL: ${{ inputs.url }}
+          EXPECT_HOST: ${{ inputs.expect_host }}
+        run: |
+          set -euo pipefail
+
+          case "$URL" in
+            https://*) ;;
+            *) echo "REJECT: not an https URL: $URL"; exit 1 ;;
+          esac
+
+          echo "Resolving: $URL"
+          # -L follows redirects so the final landing URL is what gets asserted.
+          # Separate timeouts so a hung host fails fast rather than sitting for the job timeout.
+          http_code="$(curl -sS -L -o /dev/null \
+            --connect-timeout 10 --max-time 30 \
+            -w '%{http_code}' "$URL")" || { echo "REJECT: request failed"; exit 1; }
+          final_url="$(curl -sS -L -o /dev/null \
+            --connect-timeout 10 --max-time 30 \
+            -w '%{url_effective}' "$URL")"
+
+          final_host="$(printf '%s' "$final_url" | sed -E 's#^https?://##; s#/.*$##; s#:.*$##')"
+
+          echo "http_code=$http_code"
+          echo "final_url=$final_url"
+          echo "final_host=$final_host"
+
+          ok=true
+          if [ "$http_code" -lt 200 ] || [ "$http_code" -ge 400 ]; then
+            echo "REJECT: HTTP $http_code"
+            ok=false
+          fi
+          if [ -n "${EXPECT_HOST:-}" ] && [ "$final_host" != "$EXPECT_HOST" ]; then
+            case "$final_host" in
+              *".$EXPECT_HOST") ;;
+              *) echo "REJECT: resolved to host '$final_host', expected '$EXPECT_HOST'"; ok=false ;;
+            esac
+          fi
+
+          # The echoed `requested_url` is what lets the caller prove the verified URL is the
+          # one it is about to publish.
+          mkdir -p result
+          cat > result/verification.json <<JSON
+          {
+            "requested_url": "$URL",
+            "final_url": "$final_url",
+            "final_host": "$final_host",
+            "http_code": $http_code,
+            "expect_host": "${EXPECT_HOST:-}",
+            "ok": $ok,
+            "checked_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "run_id": "${{ github.run_id }}"
+          }
+          JSON
+          cat result/verification.json >> "$GITHUB_STEP_SUMMARY"
+          cat result/verification.json
+
+          # The run's own conclusion is the primary signal the session reads. Failing the step
+          # is what makes a dead link a failed run rather than a green run with sad JSON.
+          [ "$ok" = true ] || exit 1
+
+      - name: Upload the result
+        # Runs on failure too: the caller wants the reason, not just the verdict.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification
+          path: result/verification.json
+          retention-days: 7
+          if-no-files-found: warn
