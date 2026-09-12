@@ -386,6 +386,74 @@ def test_a_DRY_RUN_still_SKIPS_what_a_real_run_would_skip():
     assert d.action == "skip"
 
 
+
+# ===================================================== the render must precede the card gate
+#
+# THE BUG THESE EXIST TO PREVENT. The cycle used to render the card inside the merge step,
+# which runs AFTER the sweep — so the card gate always judged a file that did not exist yet and
+# every first-time article skipped with C5. Fail-closed and completely inert: the machine ran
+# daily and could never publish anything.
+#
+# The suite did not catch it because every test above hands `evaluate` a sidecar directory that
+# is already populated (`_sidecar_dir()`), which is a rendered card by fiat. That made the gate
+# testable and the ORDERING invisible. These four tests exercise the ordering itself.
+
+def test_WITHOUT_a_render_the_card_gate_fails_which_is_the_bug_as_it_was():
+    """The regression, pinned. No renderer and an empty directory is exactly main's old state."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=tempfile.mkdtemp())
+    d = _fails(_evaluate(cfg, render_fn=None), "card")
+    assert "npm run og-cards" in d.notice()
+
+
+def test_a_render_that_runs_FIRST_lets_the_sweep_come_back_clean():
+    """The fix. The same empty directory, plus a renderer that fills it before the gate looks."""
+    cfg = _cfg()
+    directory = Path(tempfile.mkdtemp())
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=str(directory))
+    calls = []
+
+    def render(article):
+        calls.append(article["slug"])
+        _, real_card = _picked()
+        (directory / f"{article['slug']}.json").write_text(json.dumps(
+            {"path": f"/images/og/{article['slug']}.png", "width": 1200, "height": 630,
+             "alt": "…", "rendered": real_card}))
+
+    d = _evaluate(cfg, render_fn=render)
+    assert d.action == "publish", [v.line() for v in d.verdicts]
+    assert len(calls) == 1, f"the renderer ran {len(calls)} times, not once"
+    assert calls[0] == d.article["slug"]
+
+
+def test_a_RENDERER_THAT_REFUSES_is_a_card_failure_not_a_crash():
+    """Overflow, a font that will not decode: the generator raises. That is a skip, not a stack
+    trace, and it must not be mistaken for a card that merely drifted."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=tempfile.mkdtemp())
+
+    def refuses(article):
+        raise RuntimeError("og-cards: headline overflows its box at the 84px floor")
+
+    d = _fails(_evaluate(cfg, render_fn=refuses), "card")
+    assert "overflows" in "".join(v.detail for v in d.verdicts)
+
+
+def test_a_render_CANNOT_launder_a_card_the_ledger_does_not_back():
+    """The render is not a licence. A renderer that writes the wrong card still fails C5 —
+    otherwise 'render first' would have quietly turned the card gate into a rubber stamp."""
+    cfg = _cfg()
+    directory = Path(tempfile.mkdtemp())
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=str(directory))
+
+    def render_a_lie(article):
+        (directory / f"{article['slug']}.json").write_text(json.dumps(
+            {"path": f"/images/og/{article['slug']}.png", "width": 1200, "height": 630,
+             "alt": "…", "rendered": _stale_card()}))
+
+    _fails(_evaluate(cfg, render_fn=render_a_lie), "card")
+
+
 if __name__ == "__main__":
     fns = [f for n, f in sorted(globals().items()) if n.startswith("test_")]
     ok = 0

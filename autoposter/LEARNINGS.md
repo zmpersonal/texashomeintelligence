@@ -331,3 +331,47 @@ that rose in four of the six periods it can be built for.
 discipline that worked once is an untested code path), L15 (a guard observed only in the passing
 case has not been observed). This is the fourth and the most dangerous, because the other three
 fail loudly once noticed and this one reads as a well-written article.
+
+---
+
+## L17 — A test that hands a gate its artifact proves the gate and hides the ordering
+
+*Status: validated (found on main, the day before go-live, by running the cycle instead of the
+suite).*
+
+The card gate asks: does the rendered card exist, and does it match the ledger? It is a good
+gate. It is verified nine ways in `test_autopilot.py` — a missing card skips, a stale card
+skips, a drifted card skips.
+
+Every one of those tests begins by building a temp directory and writing the rendered card into
+it, then pointing config at it. That is the right way to test the *gate*. It is also a
+guarantee that the test can never observe **when** the card gets rendered, because the test
+renders it before `evaluate` is ever called.
+
+In the real cycle the card was rendered inside the merge step, which runs after the sweep. So
+the gate always judged a file that did not exist yet. Every first-time article failed C5 and
+skipped. On the timer the machine would have woken daily, built the article, failed its own
+card gate, notified, and published nothing — forever.
+
+**It was invisible from every angle we had been looking from.** 231 tests green. The audit tool
+green. The YAML parsed, the topics ranked, five builders reachable. The defect lives in the
+seam between two things that are each correct, and the suite had a fixture sitting exactly in
+that seam.
+
+**What found it:** running the actual cycle end to end against a clean checkout of main and
+reading the nine verdicts, rather than running the suite. Same move as L15 (run the guard in
+the failing case, not just the passing one) and the same move as the render-side verification
+rule — *look at the output, not the log*.
+
+**The rule:** when a test supplies the artifact that the code under test is supposed to
+produce, it has tested the consumer and skipped the producer. Either inject the producer too
+(so ordering is observable), or keep a test that runs the real sequence with nothing
+pre-staged. `render_fn` is now injected into `evaluate` for exactly that reason, and four tests
+exercise the ordering: no render fails, render-then-gate passes, a renderer that refuses is a
+card failure rather than a crash, and a renderer that writes the wrong card still fails C5 — so
+"render first" did not quietly turn the card gate into a rubber stamp.
+
+**Family:** L14 (a discipline that worked once is an untested code path) and L15 (a guard
+observed only in the passing case has not been observed). L16's bug published something false;
+this one published nothing at all. Fail-closed made it harmless and made it quiet, and quiet is
+how it survived to the last checkpoint before the switch.
