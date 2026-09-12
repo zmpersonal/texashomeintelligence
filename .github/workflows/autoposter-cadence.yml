@@ -25,6 +25,10 @@ on:
         description: "Run every gate and report, but never merge or post"
         type: boolean
         default: true
+      prove_secret_scope:
+        description: "Prove the secrets are Environment-scoped, not repo-scoped. Runs NO cycle."
+        type: boolean
+        default: false
 
 concurrency:
   # One cycle at a time, ever. Two overlapping runs could both pass the duplicate gate before
@@ -37,7 +41,92 @@ permissions:
   pull-requests: write   # ...through a PR, which is the audit record of what it published
 
 jobs:
+  # ------------------------------------------------------------------ the scope proof
+  #
+  # A wrongly-scoped secret resolves SILENTLY. `secrets.BLOTATO_API_KEY` reads the same in a
+  # job whether the value came from the repository, the organization or the `autoposter`
+  # Environment, so a UI list is the only ordinary way to tell — and a UI list is a thing you
+  # trust rather than a thing you test. These two jobs test it.
+  #
+  # The mechanism is GitHub's own resolution rule, not a heuristic:
+  #   * a job WITHOUT `environment:` can see repository and organization secrets, and CANNOT
+  #     see environment secrets;
+  #   * a job WITH `environment: autoposter` can see both, environment winning.
+  # So: EMPTY in the first job and PRESENT in the second is only possible if the value lives in
+  # the Environment. Either half failing localises the fault.
+  #
+  # Neither job prints, echoes, lengths or hashes any value. Presence is the entire observation.
+  #
+  # ONE HONEST LIMIT, stated because it changes how you read a failure: an ORGANIZATION secret
+  # of the same name is also visible to the no-environment job. So a failure there means "repo
+  # OR org scope", not "repo scope" — check both lists. It cannot produce a false PASS.
+  #
+  # Runs only on a `prove_secret_scope` dispatch. It never runs on the daily clock and it never
+  # runs alongside a cycle.
+
+  scope-must-be-absent-without-environment:
+    if: inputs.prove_secret_scope
+    runs-on: ubuntu-latest
+    # DELIBERATELY no `environment:`. That absence is the instrument.
+    steps:
+      - name: Assert the secrets are NOT readable outside the autoposter environment
+        env:
+          BLOTATO_API_KEY: ${{ secrets.BLOTATO_API_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          fail=0
+          for name in BLOTATO_API_KEY SLACK_WEBHOOK_URL; do
+            if [ -n "${!name}" ]; then
+              echo "::error::${name} resolved in a job with NO environment, so it is scoped to the repository or the organization and every workflow in this repo can read it. Delete it from that scope and keep it only in the autoposter Environment."
+              fail=1
+            else
+              echo "PASS  ${name} - absent without the environment, as required."
+            fi
+          done
+          exit $fail
+
+  scope-must-be-present-with-environment:
+    if: inputs.prove_secret_scope
+    runs-on: ubuntu-latest
+    environment: autoposter
+    steps:
+      - name: Assert the secrets ARE readable inside the autoposter environment
+        env:
+          BLOTATO_API_KEY: ${{ secrets.BLOTATO_API_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          fail=0
+          for name in BLOTATO_API_KEY SLACK_WEBHOOK_URL; do
+            if [ -z "${!name}" ]; then
+              echo "::error::${name} is empty inside environment autoposter, so the cycle would reach the posting step with no credential and halt there instead of publishing. Add it to the autoposter Environment."
+              fail=1
+            else
+              echo "PASS  ${name} - present inside the environment, as required."
+            fi
+          done
+          exit $fail
+
+  scope-verdict:
+    if: inputs.prove_secret_scope
+    needs: [scope-must-be-absent-without-environment, scope-must-be-present-with-environment]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record the verdict
+        # Only reachable when BOTH halves passed, because `needs` will not run it otherwise.
+        run: |
+          {
+            echo "## Secret scope: PROVEN environment-only"
+            echo
+            echo "\`BLOTATO_API_KEY\` and \`SLACK_WEBHOOK_URL\` were **unreadable** in a job with"
+            echo "no environment and **readable** in a job with \`environment: autoposter\`."
+            echo "No value was printed, measured or hashed."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ------------------------------------------------------------------ the cycle
   cycle:
+    # A scope-proof dispatch proves scope and does nothing else. The proof jobs are cheap and
+    # side-effect free; the cycle is neither.
+    if: ${{ !inputs.prove_secret_scope }}
     runs-on: ubuntu-latest
     # The secrets live here and nowhere else. The site's own workflows cannot read them.
     environment: autoposter
