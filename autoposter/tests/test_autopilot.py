@@ -608,6 +608,66 @@ def test_the_dry_run_simulates_the_SAME_urls_the_real_run_verifies():
     assert targets == [d.article["canonical_url"], d.post["media_url"]]
 
 
+
+# ===================================================== a halt is loud, never silent
+#
+# `merge_fn` and `deploy_wait_fn` are the two side effects no gate can pre-check. An unhandled
+# raise from either used to exit the process: red job, NO Slack message, and an article in a
+# state nobody was told about. "Observable, not silent" is the property that makes full auto
+# safe to leave alone, so these hold that line at the two places it was missing.
+
+def _halting(stage, cfg, exc=RuntimeError("the remote hung up")):
+    def boom(_arg):
+        raise exc
+    kwargs = dict(
+        merge_fn=lambda dec: None, deploy_wait_fn=lambda url: None,
+        verify_opener=lambda url: (True, "resolved 200"),
+        publish_fn=lambda post: {"post_url": "https://facebook.com/x"})
+    kwargs[{"merge": "merge_fn", "deploy": "deploy_wait_fn"}[stage]] = boom
+    notices, posted = [], []
+    inner = kwargs["publish_fn"]
+    kwargs["publish_fn"] = lambda post: (posted.append(post) or inner(post))
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=notices.append,
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        defer_resolution=True, **kwargs, **_kwargs(cfg))
+    return d, notices, posted
+
+
+def test_a_MERGE_that_raises_notifies_and_posts_nothing():
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    d, notices, posted = _halting("merge", cfg)
+    assert d.action == "halted" and d.failed_stage == "merge" and not posted
+    assert len(notices) == 1, "a halt must notify exactly once, not zero times"
+    assert "HALTED at the merge step" in notices[0]
+    assert "was NOT published" in notices[0]
+
+
+def test_a_DEPLOY_wait_that_raises_notifies_and_says_the_article_is_merged():
+    """The state matters more than the error. A failed deploy-wait means the article IS on main
+    and will appear; a human reading the notice must not go looking for a lost article."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    d, notices, posted = _halting("deploy", cfg)
+    assert d.action == "halted" and d.failed_stage == "deploy" and not posted
+    assert "WAS merged" in notices[0]
+    assert "Nothing went to Facebook" in notices[0]
+
+
+def test_a_halt_is_the_one_outcome_that_turns_the_JOB_red():
+    """Skips and pauses are normal Tuesdays and exit 0. A halt is a broken pipeline and must
+    not look like a quiet week — the badge and the Slack message have to agree."""
+    import run_autopilot
+    for action, expected in (("halted", 1), ("skip", 0), ("paused", 0),
+                             ("publish", 0), ("posted_nothing", 0), ("too_soon", 0)):
+        d = autopilot.CycleDecision(action=action)
+        assert (1 if d.action == "halted" else 0) == expected, action
+    assert "halted" in Path(run_autopilot.__file__).read_text(), \
+        "run_autopilot must still be the thing that maps a halt to a non-zero exit"
+
+
 if __name__ == "__main__":
     fns = [f for n, f in sorted(globals().items()) if n.startswith("test_")]
     ok = 0

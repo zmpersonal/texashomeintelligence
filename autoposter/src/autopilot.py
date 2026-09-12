@@ -73,6 +73,9 @@ class CycleDecision:
     # TRUE when the destination/media resolution checks were deferred to after the deploy.
     # While this is true the post is NOT cleared to go out, no matter how clean `verdicts` is.
     resolution_pending: bool = False
+    # Which side-effect stage raised, when `action` is "halted". Names the state the article is
+    # in, which is the thing a human needs at 2am and cannot infer from a stack trace.
+    failed_stage: str = ""
     # The post-deploy verdicts. Empty until the deploy has happened and they have actually run.
     live_verdicts: list[GateVerdict] = field(default_factory=list)
 
@@ -123,6 +126,17 @@ class CycleDecision:
                     f"WOULD publish: {card.get('question', '')}\n"
                     f"WOULD card   : {card.get('headline', '')} · {card.get('subhead', '')} · "
                     f"{card.get('source', '')}, {card.get('asOf', '')}{live}")
+        if self.action == "halted":
+            where = {
+                "merge": ("The article was NOT published. It may have left a branch or an open "
+                          "PR behind — check the repo before the next cycle."),
+                "deploy": ("The article WAS merged and will appear once the build lands. "
+                           "Nothing went to Facebook."),
+            }.get(self.failed_stage, "State unknown; check the run log.")
+            return (f"🛑 THI autoposter HALTED at the {self.failed_stage} step — nothing posted.\n"
+                    f"{self.reason}\n"
+                    f"{where}\n"
+                    f"This is a broken pipeline, not a quiet week. The run is red on purpose.")
         if self.action == "posted_nothing":
             failed = [v for v in self.live_verdicts if not v.ok]
             body = "\n".join(f"  • {v.name} — {v.detail}" for v in failed)
@@ -398,13 +412,30 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
     # so. The alternative — checking a URL before it exists — cannot pass, and the failure it
     # would prevent (a post pointing at a dead link) is exactly what the post-deploy check
     # prevents anyway.
-    if merge_fn:
-        # The decision, not just a slug: the merger needs the article body, its
-        # frontmatter and its card, and passing the whole thing means the signature
-        # does not change again the first time it needs one more field.
-        merge_fn(decision)
-    if deploy_wait_fn:
-        deploy_wait_fn(decision.article["canonical_url"])
+    #
+    # The merge and the deploy are the two side effects that can fail in ways no gate can
+    # anticipate: a push race, a PR API error, a build that never lands inside the wait. An
+    # unhandled raise here would exit the process — red job, NO Slack message — and a full-auto
+    # machine that dies silently breaks the one promise that makes it safe to leave alone.
+    # So both are caught, both notify, and both name which stage failed and what state that
+    # leaves the article in. The job still goes red; it just stops going red in silence.
+    #
+    # The decision, not just a slug, goes to the merger: it needs the article body, its
+    # frontmatter and its card, and passing the whole thing means the signature does not change
+    # again the first time it needs one more field.
+    for stage, fn, arg in (("merge", merge_fn, decision),
+                           ("deploy", deploy_wait_fn,
+                            decision.article["canonical_url"] if decision.article else "")):
+        if not fn:
+            continue
+        try:
+            fn(arg)
+        except Exception as exc:                   # noqa: BLE001 — deliberate: see above
+            decision.action = "halted"
+            decision.failed_stage = stage
+            decision.reason = f"the {stage} step failed: {type(exc).__name__}: {exc}"
+            notify_fn(decision.notice())
+            return decision
 
     # ---- the post-deploy gates. These could not run before the deploy; they run now, against
     # the real live URLs, and nothing posts unless both come back clean.
