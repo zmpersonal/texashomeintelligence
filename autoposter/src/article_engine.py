@@ -235,7 +235,7 @@ def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
 
 def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today: date,
                          link_opener=None, media_opener=None,
-                         caption=None) -> tuple[dict, object]:
+                         caption=None, defer_resolution: bool = False) -> tuple[dict, object]:
     """Stage 6 — the promotion, as a HELD draft. Facebook is the only enabled channel and video
     is parked, so this is text-with-link per the owner's scope note.
 
@@ -338,5 +338,6 @@ def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today
              "supporting_figures": [c.figure for c in claims if c.figure]
                                    + [c.derivation for c in claims if c.derivation]}
     result = social_validator.validate_post(post, story, config, feed=load_feed(), now=today,
-                                            link_opener=link_opener, media_opener=media_opener)
+                                            link_opener=link_opener, media_opener=media_opener,
+                                            defer_resolution=defer_resolution)
     return post, result

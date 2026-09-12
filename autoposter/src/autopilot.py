@@ -70,10 +70,41 @@ class CycleDecision:
     card: dict | None = None
     post: dict | None = None
     claims: list = field(default_factory=list)
+    # TRUE when the destination/media resolution checks were deferred to after the deploy.
+    # While this is true the post is NOT cleared to go out, no matter how clean `verdicts` is.
+    resolution_pending: bool = False
+    # The post-deploy verdicts. Empty until the deploy has happened and they have actually run.
+    live_verdicts: list[GateVerdict] = field(default_factory=list)
 
     @property
     def clean(self) -> bool:
+        """The CONTENT sweep. Everything that judges the article itself.
+
+        Deliberately NOT the whole story: a clean content sweep authorises a DEPLOY, not a post.
+        `cleared_to_post` is the one that authorises a post.
+        """
         return bool(self.verdicts) and all(v.ok for v in self.verdicts)
+
+    @property
+    def cleared_to_post(self) -> bool:
+        """The only property the publish path may consult. Content clean AND, if resolution was
+        deferred, the post-deploy checks have RUN and passed.
+
+        An empty `live_verdicts` is NOT a pass — `all([])` is True, and relying on that would
+        mean a cycle whose live checks never ran sails straight through. So this asks for the
+        verdicts to EXIST as well as to pass.
+
+        The requirement is unconditional, not "only when resolution was deferred". There is no
+        case where posting without verifying the live destination is correct, and an earlier
+        draft that made it conditional left the non-deferred path with nothing stopping a
+        publish if the verification block were ever removed. Found by deleting that block and
+        watching a post go out.
+        """
+        if not self.clean:
+            return False
+        if not self.live_verdicts:
+            return False
+        return all(v.ok for v in self.live_verdicts)
 
     def notice(self) -> str:
         """The Slack message for this outcome. Every path produces one except `too_soon`."""
@@ -86,10 +117,23 @@ class CycleDecision:
                     f"Resume by clearing AUTOPOSTER_PAUSED (or autopilot.paused in config).")
         if self.action == "would_publish":
             card = self.card or {}
-            return (f"🧪 DRY RUN — every gate clean, nothing merged and nothing posted.\n"
+            live = (f"\nLive checks : SIMULATED ({len(self.live_verdicts)}) — no deploy "
+                    f"happened, so no URL was actually verified." if self.live_verdicts else "")
+            return (f"🧪 DRY RUN — every content gate clean, nothing merged and nothing posted.\n"
                     f"WOULD publish: {card.get('question', '')}\n"
                     f"WOULD card   : {card.get('headline', '')} · {card.get('subhead', '')} · "
-                    f"{card.get('source', '')}, {card.get('asOf', '')}")
+                    f"{card.get('source', '')}, {card.get('asOf', '')}{live}")
+        if self.action == "posted_nothing":
+            failed = [v for v in self.live_verdicts if not v.ok]
+            body = "\n".join(f"  • {v.name} — {v.detail}" for v in failed)
+            card = self.card or {}
+            return (f"⚠️ THI autoposter: ARTICLE LIVE, POST WITHHELD — link/media unverified.\n"
+                    f"{card.get('question', '')}\n"
+                    f"Article: {(self.article or {}).get('canonical_url', '')}\n"
+                    f"{body}\n"
+                    f"The article passed every content gate and is published. Nothing went to "
+                    f"Facebook, because the post would have pointed at a URL this run could not "
+                    f"verify. No post goes out on an unclear gate.")
         if self.action == "skip":
             failed = [v for v in self.verdicts if not v.ok]
             body = "\n".join(f"  • {v.name} — {v.detail}" for v in failed)
@@ -109,7 +153,9 @@ def published_notice(decision: CycleDecision, article_url: str, post_url: str,
             f"{card.get('source', '')}, {card.get('asOf', '')}\n"
             f"Article: {article_url}\n"
             f"Facebook: {post_url}\n"
-            f"Gates: {len(decision.verdicts)}/{len(decision.verdicts)} clean · streak {streak}")
+            f"Gates: {len(decision.verdicts)}/{len(decision.verdicts)} content · "
+            f"{len(decision.live_verdicts)}/{len(decision.live_verdicts)} live · "
+            f"streak {streak}")
 
 
 # --------------------------------------------------------------------------- kill switch
@@ -160,6 +206,20 @@ def due(state: dict, config: dict, today: date) -> tuple[bool, str]:
 
 # --------------------------------------------------------------------------- the sweep
 
+def _live_targets(decision: "CycleDecision", config: dict) -> list[tuple[str, str]]:
+    """The URLs that only exist after the deploy: the article, and the card the post points at.
+
+    Named in ONE place so the dry run's simulation and the real run's verification cannot drift
+    into checking different things — a simulation of a different check proves nothing.
+    """
+    article_url = (decision.article or {}).get("canonical_url", "")
+    media_url = (decision.post or {}).get("media_url", "")
+    targets = [("destination", article_url)]
+    if media_url:
+        targets.append(("media", media_url))
+    return targets
+
+
 def _verdict(name: str, fn) -> GateVerdict:
     """Run one gate. An EXCEPTION IS A FAILURE, never an absence of an opinion.
 
@@ -177,6 +237,7 @@ def _verdict(name: str, fn) -> GateVerdict:
 
 def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: dict,
              link_opener, media_opener, captions: dict, render_fn=None,
+             defer_resolution: bool = False,
              state: dict | None = None, env: dict | None = None) -> CycleDecision:
     """Build the whole cycle and collect every gate's verdict. PUBLISHES NOTHING.
 
@@ -257,10 +318,14 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
     def _post_gate():
         post, gate = engine.build_facebook_promo(
             article, claims, config, today, link_opener=link_opener,
-            media_opener=media_opener, caption=captions.get(result["topic"]["id"]))
+            media_opener=media_opener, caption=captions.get(result["topic"]["id"]),
+            defer_resolution=defer_resolution)
         decision.post = post
         return gate.ok, "; ".join(gate.failures) if gate.failures else "9/9 social gates"
-    verdicts.append(_verdict("social-suite+destination+media+duplicate", _post_gate))
+    gate_name = ("social-suite+duplicate" if defer_resolution
+                 else "social-suite+destination+media+duplicate")
+    verdicts.append(_verdict(gate_name, _post_gate))
+    decision.resolution_pending = defer_resolution
 
     decision.verdicts = verdicts
     if not decision.clean:
@@ -270,7 +335,8 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
     paused, why = is_paused(config, env)
     if paused:
         return CycleDecision(action="paused", reason=why, verdicts=verdicts,
-                             article=article, card=card, post=decision.post)
+                             article=article, card=card, post=decision.post,
+                             resolution_pending=defer_resolution)
 
     decision.action = "publish"
     return decision
@@ -310,10 +376,28 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
         return decision
 
     if dry_run:
+        # The post-deploy stage is SIMULATED and labelled as such. There is no deploy in a dry
+        # run, so there is no live URL to check; claiming otherwise would be the exact kind of
+        # unearned pass the rest of this module exists to prevent.
         decision.action = "would_publish"
+        decision.live_verdicts = [
+            GateVerdict(f"post-deploy-{name}", True,
+                        f"SIMULATED (dry run) — would verify {url}")
+            for name, url in _live_targets(decision, config)]
         return decision
 
-    # ---- publish. Merge the reviewed-and-green PR, wait for the deploy, THEN post.
+    # ---- publish. Merge, deploy, VERIFY LIVE, then post. The order is the safety argument.
+    #
+    # The article is deployed before the destination and media checks run, because those two
+    # check URLs that the deploy is what creates. Everything that judges the ARTICLE — its
+    # numerals, sources, computed conclusions, rendered card — already passed above, before
+    # anything was merged. Nothing about the article's correctness moved.
+    #
+    # The cost, stated plainly: a cycle can deploy an article and then withhold its post. That
+    # leaves a correct, fully-gated article live with no Facebook promotion and a notice saying
+    # so. The alternative — checking a URL before it exists — cannot pass, and the failure it
+    # would prevent (a post pointing at a dead link) is exactly what the post-deploy check
+    # prevents anyway.
     if merge_fn:
         # The decision, not just a slug: the merger needs the article body, its
         # frontmatter and its card, and passing the whole thing means the signature
@@ -322,15 +406,22 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
     if deploy_wait_fn:
         deploy_wait_fn(decision.article["canonical_url"])
 
-    # The destination is re-verified AFTER the deploy, because everything checked above was
-    # checked against a site that did not yet carry this article.
-    live_ok, live_detail = verify_opener(decision.article["canonical_url"])
-    if not live_ok:
-        decision.action = "skip"
-        decision.verdicts.append(GateVerdict("post-deploy-destination", False, live_detail))
-        decision.reason = "the article did not come up live after the deploy"
+    # ---- the post-deploy gates. These could not run before the deploy; they run now, against
+    # the real live URLs, and nothing posts unless both come back clean.
+    decision.live_verdicts = [
+        _verdict(f"post-deploy-{name}", (lambda u=url: verify_opener(u)))
+        for name, url in _live_targets(decision, config)]
+
+    if not decision.cleared_to_post:
+        decision.action = "posted_nothing"
+        decision.reason = "the article is live; the post was withheld"
         notify_fn(decision.notice())
         return decision
+
+    # The structural guard. `cleared_to_post` is checked immediately above, but a future
+    # refactor could reorder these blocks; this makes that a crash rather than a post.
+    if not decision.cleared_to_post:                                  # pragma: no cover
+        raise RuntimeError("reached the publish step without being cleared to post — refusing")
 
     streak = ((config.get("channels") or {}).get("facebook") or {}).get("clean_streak", 0) + 1
     record = publish_gate.publish_with_verification(

@@ -290,8 +290,14 @@ def test_a_deploy_that_does_not_come_up_live_STOPS_before_posting():
         publish_fn=lambda post: posted.append(post),
         state_path=Path(tempfile.mkdtemp()) / "s.json",
         ledger_path=Path(tempfile.mkdtemp()) / "ledger.json", **_kwargs(cfg))
-    assert d.action == "skip" and not posted
-    assert "did not come up live" in d.reason
+    assert d.action == "posted_nothing" and not posted
+    assert "the post was withheld" in d.reason
+    # The article is live and stays live. The notice must say that plainly, because the
+    # difference between "nothing happened" and "an article shipped without its promo" is the
+    # whole reason this outcome has its own name.
+    notice = d.notice()
+    assert "ARTICLE LIVE, POST WITHHELD" in notice
+    assert not d.cleared_to_post
 
 
 def test_a_PAUSED_run_cycle_notifies_and_never_calls_publish():
@@ -452,6 +458,154 @@ def test_a_render_CANNOT_launder_a_card_the_ledger_does_not_back():
              "alt": "…", "rendered": _stale_card()}))
 
     _fails(_evaluate(cfg, render_fn=render_a_lie), "card")
+
+
+
+# ===================================================== deploy, THEN verify, THEN post
+#
+# The second ordering defect, and the mirror of L17. The destination and media gates HEAD-check
+# URLs that the DEPLOY is what creates, so running them in the pre-deploy sweep guaranteed a 404
+# and the cycle could never publish. They now run after the deploy.
+#
+# The safety property that replaces "everything passed before we touched anything": the CONTENT
+# gates still all pass before any merge, and the post is gated on `cleared_to_post`, which is
+# false while resolution is merely deferred. These tests hold that line.
+
+def _deferred(cfg, **over):
+    return autopilot.evaluate(cfg, today=TODAY, state=_ready_state(),
+                              defer_resolution=True, **_kwargs(cfg, **over))
+
+
+def test_deferring_resolution_does_NOT_clear_the_post():
+    """The one that matters. A deferred check is not a passed check: the content sweep can be
+    completely clean and the post still is not cleared, because the live checks have not run."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    d = _deferred(cfg)
+    assert d.clean, [v.line() for v in d.verdicts]      # every content gate passed
+    assert d.resolution_pending
+    assert not d.live_verdicts
+    assert not d.cleared_to_post                        # ...and it still may not post
+
+
+def test_an_EMPTY_live_verdict_list_is_not_a_pass():
+    """`all([])` is True. If `cleared_to_post` were written the obvious way, a cycle whose live
+    checks never ran would sail straight through. It must not — and the requirement holds
+    whether or not resolution was deferred, because there is no case where posting without
+    verifying the live destination is right."""
+    for pending in (True, False):
+        d = autopilot.CycleDecision(action="publish", resolution_pending=pending,
+                                    verdicts=[autopilot.GateVerdict("x", True)])
+        assert d.clean and not d.cleared_to_post, f"pending={pending} cleared with no live check"
+        d.live_verdicts = [autopilot.GateVerdict("post-deploy-destination", True)]
+        assert d.cleared_to_post
+
+
+def test_the_CONTENT_gates_all_run_before_anything_is_merged():
+    """Nothing about the article's correctness moved after the deploy. Proven by asserting the
+    full content sweep is already complete and clean at the moment merge_fn is called."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    seen = {}
+
+    def merge(decision):
+        seen["names"] = [v.name for v in decision.verdicts]
+        seen["clean"] = decision.clean
+        seen["live_ran"] = bool(decision.live_verdicts)
+
+    autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=lambda m: None, merge_fn=merge,
+        deploy_wait_fn=lambda url: None, verify_opener=lambda url: (True, "resolved 200"),
+        publish_fn=lambda post: {"post_url": "https://facebook.com/x"},
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        defer_resolution=True, **_kwargs(cfg))
+
+    for gate in ("topic-selection", "claim-ledger", "prose-gates", "two-lock-publish",
+                 "model-budget", "claim-freshness", "card", "channel-guard",
+                 "social-suite+duplicate"):
+        assert gate in seen["names"], f"{gate} did not run before the merge: {seen['names']}"
+    assert seen["clean"], "the merge happened on an unclean content sweep"
+    assert not seen["live_ran"], "a live check ran before the deploy, which cannot be real"
+
+
+def test_post_deploy_verification_runs_against_BOTH_urls_and_then_posts():
+    """The happy path end to end: content clean, deploy, both live checks pass, post goes."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    checked, posted = [], []
+
+    def opener(url):
+        checked.append(url)
+        return True, "resolved 200"
+
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=lambda m: None, merge_fn=lambda dec: None,
+        deploy_wait_fn=lambda url: None, verify_opener=opener,
+        publish_fn=lambda post: (posted.append(post) or {"post_url": "https://facebook.com/x"}),
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        defer_resolution=True, **_kwargs(cfg))
+
+    assert d.action == "publish" and len(posted) == 1
+    assert [v.name for v in d.live_verdicts] == ["post-deploy-destination", "post-deploy-media"]
+    assert d.cleared_to_post
+    assert d.article["canonical_url"] in checked
+    assert d.post["media_url"] in checked
+
+
+def test_a_dead_MEDIA_url_after_deploy_withholds_the_post_and_leaves_the_article():
+    """The negative case the owner asked for, on the media leg specifically: the article page is
+    fine, the card PNG is not. No post, and the article stays exactly where it is."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    merged, posted = [], []
+
+    def opener(url):
+        return (False, "HTTP 404") if url.endswith(".png") else (True, "resolved 200")
+
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=lambda m: None,
+        merge_fn=lambda dec: merged.append(dec.article["slug"]),
+        deploy_wait_fn=lambda url: None, verify_opener=opener,
+        publish_fn=lambda post: posted.append(post),
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        defer_resolution=True, **_kwargs(cfg))
+
+    assert d.action == "posted_nothing"
+    assert len(merged) == 1, "the article should have been merged — only the POST is withheld"
+    assert not posted
+    assert "ARTICLE LIVE, POST WITHHELD" in d.notice()
+    assert "post-deploy-media" in d.notice()
+
+
+def test_a_dry_run_LABELS_its_live_checks_as_simulated():
+    """A dry run has no deploy, so it has no live URL to check. It must say so rather than
+    reporting a pass it did not earn."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=lambda m: None, dry_run=True,
+        merge_fn=lambda dec: (_ for _ in ()).throw(AssertionError("dry run merged")),
+        deploy_wait_fn=lambda url: None, verify_opener=lambda url: (True, "resolved 200"),
+        publish_fn=lambda post: (_ for _ in ()).throw(AssertionError("dry run posted")),
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        defer_resolution=True, **_kwargs(cfg))
+    assert d.action == "would_publish"
+    assert all("SIMULATED" in v.detail for v in d.live_verdicts)
+    assert "SIMULATED" in d.notice()
+
+
+def test_the_dry_run_simulates_the_SAME_urls_the_real_run_verifies():
+    """A simulation of a different check proves nothing. Both paths read `_live_targets`, and
+    this asserts they therefore name the same URLs."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    d = _deferred(cfg)
+    targets = [u for _, u in autopilot._live_targets(d, cfg)]
+    assert targets == [d.article["canonical_url"], d.post["media_url"]]
 
 
 if __name__ == "__main__":

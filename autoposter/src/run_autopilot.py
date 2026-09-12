@@ -233,6 +233,9 @@ def main() -> int:
         deploy_wait_fn=wait_for_deploy,
         publish_fn=blotato_publisher(env.get("BLOTATO_API_KEY"), config),
         render_fn=site_renderer(),
+        # The article's URL and its card are created BY the deploy, so their resolution checks
+        # cannot run in the pre-deploy sweep. They move to `run_cycle`'s post-deploy stage.
+        defer_resolution=True,
         verify_opener=http_opener,
         write_fn=run_article.write,
         build_claims_fn=run_article.build_claims,

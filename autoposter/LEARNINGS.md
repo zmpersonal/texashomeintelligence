@@ -375,3 +375,39 @@ card failure rather than a crash, and a renderer that writes the wrong card stil
 observed only in the passing case has not been observed). L16's bug published something false;
 this one published nothing at all. Fail-closed made it harmless and made it quiet, and quiet is
 how it survived to the last checkpoint before the switch.
+
+---
+
+## L18 — A safety property conditional on a flag is only as strong as the flag
+
+*Status: validated (found by mutation, during the fix for the ordering defect in L17's family).*
+
+The post-deploy verification gate was written to be required **when resolution had been
+deferred**: `if self.resolution_pending and not self.live_verdicts: return False`. That reads as
+careful. It was tested. It passed.
+
+Then the mutation test — delete the block that actually runs the verification — and a post went
+out. Not a failure, not a refusal: a real call to the publisher. The path that did it was the
+one where `resolution_pending` is False, where the condition simply did not apply and `all([])`
+returned True.
+
+**The bug was in the shape of the guard, not in its logic.** Every clause was correct. It
+protected the case I was thinking about and left the neighbouring case open, and the neighbouring
+case is the one a future refactor is most likely to walk into, because nothing about it looks
+dangerous.
+
+**The rule:** when a safety check answers "may this irreversible thing happen", state it
+unconditionally. `if not self.live_verdicts: return False` — always, every path, no flag. If
+some path genuinely does not need the check, that path should have to say so out loud rather
+than inherit permission from a default. Ask of every guard: *which path does this NOT cover, and
+what happens on that path?* If the answer is "the thing we were guarding against", the guard is
+the wrong shape.
+
+**Why mutation found it and tests did not:** the tests asserted the guard works in the situation
+it was written for. Only deleting the code the guard depends on revealed that another situation
+existed at all. Same move as L15 (run the guard in its failing case) and L17 (run the real
+sequence, not the fixture) — the tests describe the author's model of the system, and mutation
+is how you find where that model is smaller than the system.
+
+**Family:** L11, L14, L15, L16, L17. The recurring shape across all six is that a check can be
+present, correct, and tested, and still never actually run on the path that matters.
