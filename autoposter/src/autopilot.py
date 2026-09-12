@@ -176,9 +176,21 @@ def _verdict(name: str, fn) -> GateVerdict:
 
 
 def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: dict,
-             link_opener, media_opener, captions: dict,
+             link_opener, media_opener, captions: dict, render_fn=None,
              state: dict | None = None, env: dict | None = None) -> CycleDecision:
     """Build the whole cycle and collect every gate's verdict. PUBLISHES NOTHING.
+
+    `render_fn(article)` writes the article into `site/` and runs the site's own card
+    generator, producing the PNG and sidecar in the WORKING TREE — no commit, no push, nothing
+    the world can see. It must run here, before the card gate, because C5 and the media gate
+    both read the rendered sidecar: a card that has not been rendered cannot be verified, and a
+    cycle that renders only at merge time can never get a first-time article past its own gates
+    (it skips daily with "no rendered card", fail-closed but inert). Rendering first also makes
+    C5 mean what it says — it now compares the ledger against a file that exists rather than
+    against an assumption.
+
+    It is injected and defaults to None so `evaluate` stays a pure decision for every caller
+    that has no site checkout, which is every test.
 
     Ordered so the cheap, local checks fail before the network ones, and so a failure names the
     earliest thing that was actually wrong rather than a downstream symptom.
@@ -224,6 +236,11 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
 
     # ---- the card the reader will actually see must exist and match the ledger.
     def _card_gate():
+        if render_fn is not None:
+            # A renderer that refuses — overflow, a font that will not decode — RAISES, and
+            # `_verdict` turns that into a card failure. Refusing to draw the card and drawing
+            # a wrong card land in the same place, which is the only safe arrangement.
+            render_fn(article)
         path = card_mod.sidecar_path(article["slug"], config)
         sidecar = json.loads(path.read_text()) if path.exists() else None
         r = card_mod.verify_card(card, claims, slug=article["slug"], article=article,
@@ -271,12 +288,17 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
     live, `publish_fn` posts. Injected so the whole sequence is testable without touching
     GitHub, Cloudflare or Facebook.
 
-    `dry_run=True` does EVERYTHING except the two irreversible acts: it picks, writes, builds the
-    card, runs every gate, and reports what it would have done — then stops before the merge and
-    the post, touches no state and writes no ledger row. It is the mode to run before putting a
-    cycle on a timer, and the mode to run when you want to see what the machine currently thinks
-    without letting it act on the answer. A dry run that reports PUBLISH is the strongest
+    `dry_run=True` does EVERYTHING except the two irreversible acts: it picks, writes, renders
+    the card, runs every gate, and reports what it would have done — then stops before the merge
+    and the post, touches no state and writes no ledger row. It is the mode to run before putting
+    a cycle on a timer, and the mode to run when you want to see what the machine currently
+    thinks without letting it act on the answer. A dry run that reports PUBLISH is the strongest
     statement available short of publishing.
+
+    One thing a dry run does leave behind: the rendered article and card in the `site/` WORKING
+    TREE, because the card gate cannot judge a card that was never drawn. Nothing is committed,
+    pushed or served. The caller restores the tree afterwards — `run_autopilot.main` does, and
+    it restores only the three card directories, never the whole checkout.
     """
     state = load_state(state_path)
     decision = evaluate(config, today=today, state=state, **evaluate_kwargs)
