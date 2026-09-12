@@ -412,7 +412,11 @@ def test_the_engine_skips_a_topic_it_has_already_written():
                    build_claims_fn=run_article.build_claims, today=date(2026, 9, 11),
                    articles=run_article.TOPIC_ARTICLES, exclude_published=True)
     assert r["article"]["title"] not in published
-    assert r["topic"]["id"] == "austin-improvement-boom-cooling"
+    # Not pinned to a topic id: the winner changes when `public_interest` is retuned, and it
+    # did. What must hold is that the engine picked an ELIGIBLE topic — buildable, with a
+    # builder, and not already written.
+    assert r["topic"]["buildable"]
+    assert r["topic"]["id"] in run_article.TOPIC_ARTICLES
 
 
 def test_a_topic_with_no_claim_builder_HALTS_rather_than_falling_through():
@@ -814,6 +818,129 @@ def test_ALL_THREE_recurring_builders_offer_a_distinct_title_per_period():
         august = builder.title_for(AUG_CYCLE)
         assert july != august, topic_id
         assert "July 2026" in july and "August 2026" in august, topic_id
+
+
+# ============================================ THE FROZEN-CONCLUSION AUDIT
+
+"""The bug class that survives every gate.
+
+G1 checks numerals. G2 checks sources. C1a/C1b check the card's slots. None of them reads an
+argument, so a builder that writes "they moved in opposite directions" into its prose publishes
+a false claim the first month the data flips — on a timer, with every gate green.
+
+These tests flip the controlling condition and assert the CONCLUSION moves with it. A verdict
+that survives its own condition being inverted is a verdict nobody computed.
+"""
+import copy as _copy
+
+
+def _flip(claims, claim_id, new_figure):
+    out = _copy.deepcopy(claims)
+    for c in out:
+        if c.id == claim_id:
+            c.figure = new_figure
+    return out
+
+
+def test_FROZEN_acrush_verdict_follows_the_permit_direction():
+    feed = engine.load_feed()
+    claims = run_article.build_acrush_claims(feed, CFG, AUG_CYCLE)
+    real = run_article.write_acrush({}, claims, feed)["body"]
+    flipped = run_article.write_acrush({}, _flip(claims, "H2", "up 15% month over month"),
+                                       feed)["body"]
+    assert "opposite directions" in real
+    assert "opposite directions" not in flipped
+    assert "both moved the same way" in flipped
+
+
+def test_FROZEN_acrush_CLOSING_follows_it_too():
+    """The closing asserted a gap unconditionally. A verdict can be computed while the rest of
+    the article quietly keeps the old conclusion."""
+    feed = engine.load_feed()
+    claims = run_article.build_acrush_claims(feed, CFG, AUG_CYCLE)
+    real = run_article.write_acrush({}, claims, feed)["body"]
+    flipped = run_article.write_acrush({}, _flip(claims, "H2", "up 15% month over month"),
+                                       feed)["body"]
+    assert "is not the month the filings peak" in real
+    assert "is not the month the filings peak" not in flipped
+    assert "tracked the weather" in flipped
+
+
+def test_FROZEN_sa_verdict_follows_the_tally():
+    """San Antonio's tally has never flipped in the six periods that can be built, so the
+    verdict LOOKS frozen in an audit. Forcing the flip proves it is not."""
+    feed = engine.load_feed()
+    claims = run_article.build_sa_claims(feed, CFG, AUG_CYCLE)
+    real = run_article.write_sa({}, claims, feed)["body"]
+    mostly_below = _copy.deepcopy(claims)
+    for c in mostly_below:
+        if c.id.startswith("T") and c.id.endswith("d") and "above" in c.figure:
+            c.figure = c.figure.replace("above", "below")
+    flipped = run_article.write_sa({}, mostly_below, feed)["body"]
+    assert "Mostly no" in real and "above the line than below it" in real
+    assert "Mostly no" not in flipped
+    assert "below the line than above it" in flipped
+
+
+def test_FROZEN_permits_verdict_and_slow_lane_follow_the_data():
+    """Article 2's writer had FOURTEEN invariant sentences asserting direction, including which
+    trade was "the slower lane" and a flat "that is not a market cooling off"."""
+    feed = engine.load_feed()
+    claims = run_article.build_permit_claims(feed, CFG, AUG_CYCLE)
+    real = run_article.write_permits({"question": "q"}, claims, feed)["body"]
+    assert "Roofing is the slower lane" in real
+
+    # Make solar the weakest trade instead, and the named slow lane must follow.
+    moved = _flip(claims, "solar_base", "40% below its 11-month average")
+    moved = _flip(moved, "roofing_base", "5% above its 11-month average")
+    flipped = run_article.write_permits({"question": "q"}, moved, feed)["body"]
+    assert "Solar is the slower lane" in flipped
+    assert "Roofing is the slower lane" not in flipped
+
+
+def test_FROZEN_permits_month_over_month_section_follows_the_direction():
+    feed = engine.load_feed()
+    claims = run_article.build_permit_claims(feed, CFG, AUG_CYCLE)
+    real = run_article.write_permits({"question": "q"}, claims, feed)["body"]
+    flipped = run_article.write_permits(
+        {"question": "q"}, _flip(claims, "hvac_mom", "up 10% month over month"), feed)["body"]
+    assert "end of a busy stretch" in real
+    assert "end of a busy stretch" not in flipped
+    assert "A rise month to month is the easy headline" in flipped
+
+
+def test_FROZEN_no_builder_hardcodes_a_MONTH_NAME_in_its_prose():
+    """A month typed into prose is the same defect wearing a different hat: the article claims
+    to be about August while its figures are September's."""
+    feed = engine.load_feed()
+    for build, write, kwargs in (
+            (run_article.build_summer_claims, run_article.write_summer, {}),
+            (run_article.build_acrush_claims, run_article.write_acrush, {}),
+            (run_article.build_sa_claims, run_article.write_sa, {}),
+            (run_article.build_permit_claims, run_article.write_permits, {"question": "q"})):
+        # A builder may legitimately name the PRIOR month — several compare two periods. So the
+        # forbidden month is one NO claim covers: if it appears, it was typed, not derived.
+        for today, expected, forbidden in ((JULY_CYCLE, "July 2026", "September 2026"),
+                                           (AUG_CYCLE, "August 2026", "June 2026")):
+            claims = build(feed, CFG, today)
+            covered = {c.as_of[:7] for c in claims if c.as_of and c.as_of[0].isdigit()}
+            body = write(kwargs, claims, feed)["body"]
+            assert expected in body, (build.__name__, today, "own period not named")
+            assert forbidden not in body, (build.__name__, today, forbidden)
+            assert covered, build.__name__
+
+
+def test_FROZEN_the_locked_builder_REFUSES_another_period_instead_of_crashing():
+    """The electricity builder names fixed months and fixed comparisons. It cannot be rebuilt
+    for another period, and it says so rather than raising a bare KeyError that would read as
+    an engine bug."""
+    import claim_ledger as cl
+    try:
+        run_article.build_claims(engine.load_feed(), CFG, date(2026, 6, 15))
+    except cl.LedgerHalt as e:
+        assert "locked to August 2026" in str(e)
+        return
+    raise AssertionError("a period-locked builder must refuse another period explicitly")
 
 
 if __name__ == "__main__":

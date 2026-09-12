@@ -1690,3 +1690,72 @@ and proven, and **can never be selected** until their entries exist. The exact Y
 foot of `specs/TOPIC-BACKLOG.md`.
 
 **209/209 across nine suites, defined == run.**
+
+## Round 20 — 2026-09-11 — the frozen-conclusion audit
+
+### 123. Every builder audited; three of four had the bug
+`tools/audit-frozen-conclusions.py` runs each builder across six as-of dates — six different
+"latest months" of real history — and lists sentences that never vary but assert direction.
+
+| Builder | Verdict |
+|---|---|
+| `summer-hotter-than-normal` | **clean** — its 9 invariant sentences are definitions ("a normal is not last year"), none asserts anything about the current period |
+| `austin-ac-rush-vs-heat` | **2 frozen** — the closing asserted a gap unconditionally |
+| `san-antonio-improvement-boom` | **1 frozen** — the closing said "that answer is above the line" whatever the tally |
+| `austin-improvement-boom-cooling` | **14 frozen** — "Roofing is the slower lane", "That is not a market cooling off", "the only one of the three sitting below its own run-rate", a section header calling one trade "genuinely slower", and a month-over-month section asserting a FALL in a trade that ROSE in four of the six periods |
+| `electricity-still-rising` | **period-locked** — hardcoded month keys crashed with a bare `KeyError` in five of six periods |
+
+### 124. What changed
+- Article 2's writer rebuilt: trades sorted by their own figures, the slow and busy lanes NAMED
+  from that sort, the tally counted into a claim, the month label derived. Its verdict flips to
+  "More than you might think" when built as of June, which is the proof.
+- The AC-rush closing and the San Antonio closing both branch on their computed condition.
+- The electricity builder now refuses another period with a sentence explaining why, instead of
+  a `KeyError` that would read as an engine bug.
+- Claim ids in article 2 moved from positional (`P1`..`P9`) to trade-keyed (`solar_base`), which
+  is what lets the writer sort rather than hardcode. Positional ids were how the freeze got in.
+
+### 125. The audit became a gate
+Seven flip tests, one per frozen sentence fixed: invert the controlling figure, assert the
+conclusion moves. The audit tool finds candidates; the flip tests prove each one. The tool
+cannot tell "computed and happened to be constant" from "frozen" — San Antonio's tally never
+flipped across the six sampled periods, so its verdict LOOKS frozen and is not, and only a flip
+test can say so.
+
+Also asserted: no builder names a month that none of its claims covers. A month typed into prose
+is the same defect wearing a different hat.
+
+### 126. L16
+*The gates protect figures. They do not protect claims about figures.* The fourth in the family
+with L11, L14 and L15, and the most dangerous of them — the other three fail loudly once
+noticed, and this one reads as a well-written article.
+
+**231/231 across nine suites, defined == run.**
+
+### 127. 🔴 `article_topics.yaml` on main did not parse
+The two topic entries landed with the first one indented four spaces instead of two, so
+`yaml.safe_load` raised a `ParserError` and **the autoposter could not load topics at all**.
+Every cycle would have died at topic selection — fail-closed into a skip-and-notify, so nothing
+unsafe, but the machine would have been completely inert with a daily Slack notice.
+
+Caught by parsing the file rather than by reading the diff. One-line fix; both entries verified
+to parse and all five builders now reachable.
+
+### 128. The topic ranking changed, and the tests were pinned to the old one
+`austin-ac-rush-vs-heat` at `public_interest: 0.65` outranks the permits piece at 0.588, so the
+engine now picks it first. Eleven tests failed — all of them pinned to a slug or a topic id that
+the owner's own tuning had legitimately changed.
+
+Fixed by making the tests follow the engine: the autopilot fixtures build a sidecar for whatever
+article the engine actually picks, and the exclusion test asserts the topic is *eligible*
+(buildable, has a builder, not already written) rather than naming one. A test that breaks when
+an owner retunes a weighting is measuring the weighting, not the behaviour.
+
+### 129. Dry run on the main-based branch — CLEAN
+9/9 gates. `Did Austin's AC rush follow the heat in August 2026?` · card
+`1,037 HVAC permits · down 15% month over month · City of Austin · Aug 2026` · WOULD_PUBLISH,
+nothing merged, nothing posted, clock not advanced.
+
+`noaa_storm_events: 2160` is in place. `autopilot.paused: false`.
+
+**231/231 across nine suites, defined == run.**
