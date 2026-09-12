@@ -160,7 +160,8 @@ def _check_freshness(post: dict, story: dict, config: dict, result: GateResult,
 # ---------------------------------------------------------------- the suite
 
 def validate_post(post: dict, story: dict | None, config: dict, feed: dict | None = None,
-                  now: date | None = None, media_opener=None, link_opener=None) -> GateResult:
+                  now: date | None = None, media_opener=None, link_opener=None,
+                  defer_resolution: bool = False) -> GateResult:
     """Run every gate. `post` keys: platform, caption, on_screen_text (list[str]), media_url,
     destination_url, angle, has_source_card, has_media, requires_link, title,
     destination_theme, card_rows, card_numeric_cells; pinterest also title/description/alt_text.
@@ -194,6 +195,12 @@ def validate_post(post: dict, story: dict | None, config: dict, feed: dict | Non
         destination = post.get("destination_url")
         if not destination:
             result.fail("BASE", "linked piece missing destination_url")
+        elif defer_resolution:
+            # DEFERRED, NOT PASSED. A brand-new article's URL cannot resolve until the deploy
+            # that creates it, and the deploy happens after this sweep. So the check moves to
+            # after the deploy rather than being softened here. This branch records that it has
+            # NOT run; `autopilot.run_cycle` is what guarantees it runs before anything posts.
+            result.notes.append("destination: resolution DEFERRED to post-deploy")
         else:
             ok, reason = media_mod.resolve_link(
                 destination, opener=link_opener,
@@ -205,11 +212,18 @@ def validate_post(post: dict, story: dict | None, config: dict, feed: dict | Non
 
     # media presence AND resolution (VALIDATOR.md baseline; Phase 3 wired the resolution)
     if post.get("has_media", True):
-        ok, reason = media_mod.resolve(post.get("media_url"), opener=media_opener)
-        if not ok:
-            result.fail("BASE", f"media does not resolve — {reason}")
+        media_url = str(post.get("media_url") or "")
+        if defer_resolution and media_url.startswith(("http://", "https://")):
+            # Same reason as the destination: the card PNG is served by the same deploy. A
+            # data: URI or a local path is still checked here, because neither needs a network
+            # and neither is created by the deploy.
+            result.notes.append("media: resolution DEFERRED to post-deploy")
         else:
-            result.notes.append(f"media: {reason}")
+            ok, reason = media_mod.resolve(post.get("media_url"), opener=media_opener)
+            if not ok:
+                result.fail("BASE", f"media does not resolve — {reason}")
+            else:
+                result.notes.append(f"media: {reason}")
 
     # a rendered card with no body / a ranking card with no numbers is a published failure state
     if post.get("has_media", True) and "card_rows" in post:
