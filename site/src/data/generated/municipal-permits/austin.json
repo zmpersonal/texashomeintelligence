@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-11T13:33:47.294Z",
-  "lastSuccessAt": "2026-09-11T13:33:47.294Z",
+  "lastAttemptAt": "2026-09-12T12:50:57.227Z",
+  "lastSuccessAt": "2026-09-12T12:50:57.227Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -20133,7 +20133,7 @@
     },
     {
       "observedAt": "2026-09-09T00:00:00.000Z",
-      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
       "key": "2026-102216 EP",
       "value": {
         "permitType": "Remodel",
@@ -20143,7 +20143,7 @@
     },
     {
       "observedAt": "2026-09-09T00:00:00.000Z",
-      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
       "key": "2026-109414 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -20153,7 +20153,7 @@
     },
     {
       "observedAt": "2026-09-09T00:00:00.000Z",
-      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
       "key": "2026-107762 EP",
       "value": {
         "permitType": "Remodel",
@@ -20163,7 +20163,7 @@
     },
     {
       "observedAt": "2026-09-09T00:00:00.000Z",
-      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
       "key": "2026-098893 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -20173,7 +20173,7 @@
     },
     {
       "observedAt": "2026-09-09T00:00:00.000Z",
-      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
       "key": "2026-064799 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -20183,7 +20183,7 @@
     },
     {
       "observedAt": "2026-09-09T00:00:00.000Z",
-      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
       "key": "2026-061157 MP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -20193,7 +20193,7 @@
     },
     {
       "observedAt": "2026-09-09T00:00:00.000Z",
-      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
       "key": "2026-116158 BP",
       "value": {
         "permitType": "Remodel",
@@ -20204,7 +20204,7 @@
     },
     {
       "observedAt": "2026-09-09T00:00:00.000Z",
-      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
       "key": "2026-102137 PP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -20214,12 +20214,103 @@
     },
     {
       "observedAt": "2026-09-09T00:00:00.000Z",
-      "ingestedAt": "2026-09-11T13:33:47.809Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
       "key": "2026-090510 PP",
       "value": {
         "permitType": "Addition and Remodel",
         "workDescription": "Bathroom addition to existing 1-story single family residence. New bath includes 2 sinks 1 wc 1 shower new windows new framing new siding new foundation and roof.  3 bed/2 bath",
         "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-10T00:00:00.000Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
+      "key": "2026-073444 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "interior remodel and major addition to existing two-story single-family residence. Scope includes first-floor addition partial second-floor addition reconfigured kitchen/living areas window and door modifications roof framing work and related electrical plumbing and mechanical updates",
+        "status": "Inactive Pending Revision"
+      }
+    },
+    {
+      "observedAt": "2026-09-10T00:00:00.000Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
+      "key": "2026-119030 EP",
+      "value": {
+        "permitType": "Wall",
+        "workDescription": "Shola Roof Sign",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-10T00:00:00.000Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
+      "key": "2026-115432 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "ETJ - Armstrong - 40-12388 - Install new 5.7 kW rooftop solar system to existing residential only using backfed breaker only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-10T00:00:00.000Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
+      "key": "2026-115120 EP",
+      "value": {
+        "permitType": "Upgrade",
+        "workDescription": "Completely remove old main service including rag wire. Installing new 200 amp through the roof mast to current code.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-10T00:00:00.000Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
+      "key": "2025-063927 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "ePlan: Commercial Expedited Review - Remodel to Existing PARD Recreation - including roof replacement abatement restoration of windows door chimneys electrical/plumbing upgrades new HVAC system and reconfiguration of restroom and support spaces (3169 SF)",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-10T00:00:00.000Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
+      "key": "2026-107762 MP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Fast casual Asian restaurant with mechanical electrical plumbing and finishes work to accommodate restaurant functions. This includes the addition of a grease interceptor and replacement of rooftop equipment but no other exterior work",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-10T00:00:00.000Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
+      "key": "2026-116506 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Install new 5.81kw rooftop solar system for existing residential only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-11T00:00:00.000Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
+      "key": "2026-100985 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "ePlan: Residential Expedited Review - Addition and Remodel to Existing 2-Story Single Family Res. [4bed 2.5bath] Work to include: Enclosing existing breezeway to create a new office and new bath [4bed 3.5bath] with a new roofed outdoor living area. Redesign & replacement of decks & structure with ne",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-11T00:00:00.000Z",
+      "ingestedAt": "2026-09-12T12:50:57.852Z",
+      "key": "2026-118285 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "EXPRESS: Re-Roofing with new decking",
+        "status": "Active",
+        "valuationUsd": 1
       }
     }
   ]
