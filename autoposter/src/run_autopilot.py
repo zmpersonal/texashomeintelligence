@@ -248,16 +248,23 @@ def main() -> int:
     print(f"[autopilot] {decision.action}: {decision.reason}")
     for verdict in decision.verdicts:
         print("  " + verdict.line())
+    # The live verdicts are a separate stage and print as one, so the log shows the same two
+    # halves the FYI reports rather than making a reader infer the post-deploy result.
+    for verdict in decision.live_verdicts:
+        print("  " + verdict.line())
     if dry_run:
         # The sweep rendered into `site/`. Nothing was committed; put the tree back anyway, so
         # a dry run is exactly as side-effect-free as it claims to be.
         restore_card_dirs()
         if decision.action == "would_publish":
             notify(decision.notice())
-    # A skipped or paused cycle is a NORMAL outcome, not a failed job. Only an unhandled error
-    # should turn the run red — otherwise a quiet week looks like a broken pipeline and the
-    # alert stops meaning anything.
-    return 0
+    # A skipped or paused cycle is a NORMAL outcome, not a failed job — otherwise a quiet week
+    # looks like a broken pipeline and the alert stops meaning anything.
+    #
+    # A HALT is the exception: the merge or the deploy actually failed, which is broken. It goes
+    # red AND it notified on its way out, so the two signals agree instead of the badge being
+    # the only one that knows.
+    return 1 if decision.action == "halted" else 0
 
 
 if __name__ == "__main__":
