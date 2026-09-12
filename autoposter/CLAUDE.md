@@ -84,6 +84,32 @@ CSS change that could alter how sourced figures read. "It built" is never "it wo
   skip to keep a run alive. When the model wants a value a rule forbids, supply the figure in
   code — never loosen the rule.
 
+## Pre-merge requirements for any new builder (owner-set, 2026-09-12)
+
+These are requirements, not aspirations. A builder that has not cleared both is not reachable.
+
+1. **The frozen-conclusion flip test (L16).** Every verdict, superlative, direction word,
+   tally and month name the builder ASSERTS must be derived from the data. Prove it by
+   inverting the controlling figure and showing the conclusion moves. A verdict that survives
+   its own condition being inverted is a verdict nobody computed.
+2. **A real cycle against a clean checkout of main (L17).** Unit-green is not runs-clean. The
+   suite pre-stages the artifacts the gates consume, which proves the gates and hides the
+   ORDERING between them. Run the actual cycle end to end on a fresh checkout and read the
+   verdicts. Two ordering defects — the card rendered after the gate that checks for it, and
+   the destination checked before the deploy that creates it — were both invisible to a green
+   suite and both found this way.
+
+## The residual risk the owner has accepted (2026-09-12)
+
+The gates verify **figures** (G1, the claim ledger, C1a/C1b) and, since L16, **computed
+conclusions**. Nothing in the stack reads a piece for *editorial* honesty: whether something
+technically true is framed in a way that misleads. No gate can, and none is claimed to.
+
+The accepted mitigation is human, not mechanical: **the owner reads the first several live
+posts themselves, not only the Slack FYIs.** The FYI proves the machine did what it said. It
+cannot prove the piece was fair. Do not describe this risk as closed, and do not propose a gate
+that would claim to close it.
+
 ## Harness config
 - **Slack:** `#thi-autoposter` (webhook in the `autoposter` GitHub Environment).
 - **Cost ceiling:** $20/mo of Claude usage only — Blotato and Descript subscriptions are
