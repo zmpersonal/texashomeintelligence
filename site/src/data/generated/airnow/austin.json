@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-12T12:51:06.552Z",
-  "lastSuccessAt": "2026-09-12T12:51:06.552Z",
+  "lastAttemptAt": "2026-09-13T13:48:22.621Z",
+  "lastSuccessAt": "2026-09-13T13:48:22.621Z",
   "lastError": null,
   "source": {
     "name": "AirNow",
@@ -288,6 +288,15 @@
       "value": {
         "aqi": 51,
         "category": "Moderate"
+      }
+    },
+    {
+      "observedAt": "2026-09-13T07:00:00.000Z",
+      "ingestedAt": "2026-09-13T13:48:22.992Z",
+      "key": "Austin-2026-09-13-7",
+      "value": {
+        "aqi": 38,
+        "category": "Good"
       }
     }
   ]

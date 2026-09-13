@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-12T12:51:10.357Z",
-  "lastSuccessAt": "2026-09-12T12:51:10.357Z",
+  "lastAttemptAt": "2026-09-13T13:48:24.882Z",
+  "lastSuccessAt": "2026-09-13T13:48:24.882Z",
   "lastError": null,
   "source": {
     "name": "City of San Antonio Permits Open Data",
@@ -2425,12 +2425,12 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-12T12:51:12.727Z",
+      "ingestedAt": "2026-09-13T13:48:27.324Z",
       "key": "trades-v1/electrical/2026-09",
       "value": {
         "category": "electrical",
         "month": "2026-09",
-        "permitCount": 160,
+        "permitCount": 336,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -2438,19 +2438,19 @@
         "sourceValues": [
           {
             "value": "Electrical General Permit",
-            "count": 132
+            "count": 291
           },
           {
             "value": "Electrical TOPS Permit",
-            "count": 14
+            "count": 24
           },
           {
             "value": "Electrical TML Permit",
-            "count": 7
+            "count": 12
           },
           {
             "value": "Electrical Reconnect Permit",
-            "count": 4
+            "count": 6
           },
           {
             "value": "Electrical Completion Permit",
@@ -2461,12 +2461,12 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-12T12:51:12.727Z",
+      "ingestedAt": "2026-09-13T13:48:27.324Z",
       "key": "trades-v1/foundation/2026-09",
       "value": {
         "category": "foundation",
         "month": "2026-09",
-        "permitCount": 47,
+        "permitCount": 107,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -2474,19 +2474,19 @@
         "sourceValues": [
           {
             "value": "Foundation Repair Permit",
-            "count": 47
+            "count": 107
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-12T12:51:12.727Z",
+      "ingestedAt": "2026-09-13T13:48:27.324Z",
       "key": "trades-v1/hvac/2026-09",
       "value": {
         "category": "hvac",
         "month": "2026-09",
-        "permitCount": 204,
+        "permitCount": 424,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -2494,23 +2494,23 @@
         "sourceValues": [
           {
             "value": "Mechanical Permit",
-            "count": 187
+            "count": 390
           },
           {
             "value": "LSR Mechanical Permit",
-            "count": 17
+            "count": 34
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-12T12:51:12.727Z",
+      "ingestedAt": "2026-09-13T13:48:27.324Z",
       "key": "trades-v1/plumbing/2026-09",
       "value": {
         "category": "plumbing",
         "month": "2026-09",
-        "permitCount": 328,
+        "permitCount": 684,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -2518,47 +2518,47 @@
         "sourceValues": [
           {
             "value": "Plumbing General Permit",
-            "count": 132
+            "count": 274
           },
           {
             "value": "Plumbing Irrigation Permit",
-            "count": 96
+            "count": 172
           },
           {
             "value": "Plumbing Gas Permit",
-            "count": 37
+            "count": 86
           },
           {
             "value": "Plumbing Sewer Permit",
-            "count": 31
+            "count": 66
           },
           {
             "value": "LSR Plumbing Permit",
-            "count": 23
+            "count": 64
           },
           {
             "value": "Plumbing Backflow Permit",
-            "count": 4
+            "count": 14
+          },
+          {
+            "value": "Plumbing Medical Gas Permit",
+            "count": 5
           },
           {
             "value": "Plumbing Completion Permit",
             "count": 3
-          },
-          {
-            "value": "Plumbing Medical Gas Permit",
-            "count": 2
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-12T12:51:12.727Z",
+      "ingestedAt": "2026-09-13T13:48:27.324Z",
       "key": "trades-v1/roofing/2026-09",
       "value": {
         "category": "roofing",
         "month": "2026-09",
-        "permitCount": 49,
+        "permitCount": 128,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -2566,19 +2566,19 @@
         "sourceValues": [
           {
             "value": "Re-Roof Permit",
-            "count": 49
+            "count": 128
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-12T12:51:12.727Z",
+      "ingestedAt": "2026-09-13T13:48:27.324Z",
       "key": "trades-v1/solar/2026-09",
       "value": {
         "category": "solar",
         "month": "2026-09",
-        "permitCount": 14,
+        "permitCount": 21,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -2586,19 +2586,19 @@
         "sourceValues": [
           {
             "value": "Solar - Photovoltaic Permit",
-            "count": 14
+            "count": 21
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-12T12:51:12.727Z",
+      "ingestedAt": "2026-09-13T13:48:27.324Z",
       "key": "trades-v1/trees/2026-09",
       "value": {
         "category": "trees",
         "month": "2026-09",
-        "permitCount": 102,
+        "permitCount": 199,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -2606,11 +2606,11 @@
         "sourceValues": [
           {
             "value": "Tree Affidavit Permit",
-            "count": 90
+            "count": 173
           },
           {
             "value": "Tree Permit",
-            "count": 12
+            "count": 26
           }
         ]
       }
