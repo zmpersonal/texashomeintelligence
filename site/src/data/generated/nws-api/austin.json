@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-13T13:48:18.657Z",
-  "lastSuccessAt": "2026-09-13T13:48:18.657Z",
+  "lastAttemptAt": "2026-09-14T15:53:10.421Z",
+  "lastSuccessAt": "2026-09-14T15:53:10.421Z",
   "lastError": null,
   "source": {
     "name": "National Weather Service API",
@@ -335,6 +335,16 @@
         "forecastHighF": 101,
         "forecastLowF": 79,
         "activeAlert": "Heat Advisory issued September 13 at 6:09AM CDT until September 13 at 7:00PM CDT by NWS Austin/San Antonio TX"
+      }
+    },
+    {
+      "observedAt": "2026-09-14T14:00:00.000Z",
+      "ingestedAt": "2026-09-14T15:53:10.586Z",
+      "key": "2026-09-14T09:00:00-05:00",
+      "value": {
+        "forecastHighF": 101,
+        "forecastLowF": 79,
+        "activeAlert": "Heat Advisory issued September 13 at 7:56PM CDT until September 14 at 7:00PM CDT by NWS Austin/San Antonio TX"
       }
     }
   ]
