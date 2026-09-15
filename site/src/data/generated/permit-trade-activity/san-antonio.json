@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-14T15:53:22.063Z",
-  "lastSuccessAt": "2026-09-14T15:53:22.063Z",
+  "lastAttemptAt": "2026-09-15T14:20:03.163Z",
+  "lastSuccessAt": "2026-09-15T14:20:03.163Z",
   "lastError": null,
   "source": {
     "name": "City of San Antonio Permits Open Data",
@@ -2425,7 +2425,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-14T15:53:24.330Z",
+      "ingestedAt": "2026-09-15T14:20:05.753Z",
       "key": "trades-v1/electrical/2026-09",
       "value": {
         "category": "electrical",
@@ -2461,7 +2461,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-14T15:53:24.330Z",
+      "ingestedAt": "2026-09-15T14:20:05.753Z",
       "key": "trades-v1/foundation/2026-09",
       "value": {
         "category": "foundation",
@@ -2481,7 +2481,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-14T15:53:24.330Z",
+      "ingestedAt": "2026-09-15T14:20:05.753Z",
       "key": "trades-v1/hvac/2026-09",
       "value": {
         "category": "hvac",
@@ -2505,7 +2505,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-14T15:53:24.330Z",
+      "ingestedAt": "2026-09-15T14:20:05.753Z",
       "key": "trades-v1/plumbing/2026-09",
       "value": {
         "category": "plumbing",
@@ -2553,7 +2553,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-14T15:53:24.330Z",
+      "ingestedAt": "2026-09-15T14:20:05.753Z",
       "key": "trades-v1/roofing/2026-09",
       "value": {
         "category": "roofing",
@@ -2573,7 +2573,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-14T15:53:24.330Z",
+      "ingestedAt": "2026-09-15T14:20:05.753Z",
       "key": "trades-v1/solar/2026-09",
       "value": {
         "category": "solar",
@@ -2593,7 +2593,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-14T15:53:24.330Z",
+      "ingestedAt": "2026-09-15T14:20:05.753Z",
       "key": "trades-v1/trees/2026-09",
       "value": {
         "category": "trees",
