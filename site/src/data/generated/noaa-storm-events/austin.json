@@ -2,10 +2,10 @@
   "datasetId": "noaa-storm-events",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-09-15T14:19:46.995Z",
+  "status": "stale",
+  "lastAttemptAt": "2026-09-16T14:11:48.745Z",
   "lastSuccessAt": "2026-09-15T14:19:46.995Z",
-  "lastError": null,
+  "lastError": "NOAA Storm Events directory listing failed: HTTP 503 from https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/",
   "source": {
     "name": "NOAA Storm Events Database",
     "url": "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"

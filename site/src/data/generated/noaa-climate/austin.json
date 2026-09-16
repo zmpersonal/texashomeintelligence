@@ -2,10 +2,10 @@
   "datasetId": "noaa-climate",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-09-15T14:19:55.630Z",
+  "status": "stale",
+  "lastAttemptAt": "2026-09-16T14:12:15.873Z",
   "lastSuccessAt": "2026-09-15T14:19:55.630Z",
-  "lastError": null,
+  "lastError": "ghcnd-stations.txt fetch failed: HTTP 503 from https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt",
   "source": {
     "name": "NOAA NCEI U.S. Climate Normals 1991-2020 (station CSV) and Global Summary of the Month",
     "url": "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/access/"
