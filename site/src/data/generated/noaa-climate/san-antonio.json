@@ -2,10 +2,10 @@
   "datasetId": "noaa-climate",
   "location": "san-antonio",
   "methodologyVersion": "v1",
-  "status": "stale",
-  "lastAttemptAt": "2026-09-16T14:12:26.061Z",
-  "lastSuccessAt": "2026-09-15T14:19:56.374Z",
-  "lastError": "ghcnd-stations.txt fetch failed: HTTP 503 from https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt",
+  "status": "live",
+  "lastAttemptAt": "2026-09-17T14:17:41.169Z",
+  "lastSuccessAt": "2026-09-17T14:17:41.169Z",
+  "lastError": null,
   "source": {
     "name": "NOAA NCEI U.S. Climate Normals 1991-2020 (station CSV) and Global Summary of the Month",
     "url": "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/access/"
@@ -13,7 +13,7 @@
   "observations": [
     {
       "observedAt": "2020-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-15T14:19:56.431Z",
+      "ingestedAt": "2026-09-17T14:17:41.233Z",
       "key": "normal-1991-2020-01",
       "value": {
         "kind": "normal-1991-2020",
@@ -30,7 +30,7 @@
     },
     {
       "observedAt": "2020-02-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-15T14:19:56.431Z",
+      "ingestedAt": "2026-09-17T14:17:41.233Z",
       "key": "normal-1991-2020-02",
       "value": {
         "kind": "normal-1991-2020",
@@ -47,7 +47,7 @@
     },
     {
       "observedAt": "2020-03-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-15T14:19:56.431Z",
+      "ingestedAt": "2026-09-17T14:17:41.233Z",
       "key": "normal-1991-2020-03",
       "value": {
         "kind": "normal-1991-2020",
@@ -64,7 +64,7 @@
     },
     {
       "observedAt": "2020-04-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-15T14:19:56.431Z",
+      "ingestedAt": "2026-09-17T14:17:41.233Z",
       "key": "normal-1991-2020-04",
       "value": {
         "kind": "normal-1991-2020",
@@ -81,7 +81,7 @@
     },
     {
       "observedAt": "2020-05-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-15T14:19:56.431Z",
+      "ingestedAt": "2026-09-17T14:17:41.233Z",
       "key": "normal-1991-2020-05",
       "value": {
         "kind": "normal-1991-2020",
@@ -98,7 +98,7 @@
     },
     {
       "observedAt": "2020-06-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-15T14:19:56.431Z",
+      "ingestedAt": "2026-09-17T14:17:41.233Z",
       "key": "normal-1991-2020-06",
       "value": {
         "kind": "normal-1991-2020",
@@ -115,7 +115,7 @@
     },
     {
       "observedAt": "2020-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-15T14:19:56.431Z",
+      "ingestedAt": "2026-09-17T14:17:41.233Z",
       "key": "normal-1991-2020-07",
       "value": {
         "kind": "normal-1991-2020",
@@ -132,7 +132,7 @@
     },
     {
       "observedAt": "2020-08-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-15T14:19:56.431Z",
+      "ingestedAt": "2026-09-17T14:17:41.233Z",
       "key": "normal-1991-2020-08",
       "value": {
         "kind": "normal-1991-2020",
@@ -149,7 +149,7 @@
     },
     {
       "observedAt": "2020-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-15T14:19:56.431Z",
+      "ingestedAt": "2026-09-17T14:17:41.233Z",
       "key": "normal-1991-2020-09",
       "value": {
         "kind": "normal-1991-2020",
@@ -166,7 +166,7 @@
     },
     {
       "observedAt": "2020-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-15T14:19:56.431Z",
+      "ingestedAt": "2026-09-17T14:17:41.233Z",
       "key": "normal-1991-2020-10",
       "value": {
         "kind": "normal-1991-2020",
@@ -183,7 +183,7 @@
     },
     {
       "observedAt": "2020-11-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-15T14:19:56.431Z",
+      "ingestedAt": "2026-09-17T14:17:41.233Z",
       "key": "normal-1991-2020-11",
       "value": {
         "kind": "normal-1991-2020",
@@ -200,7 +200,7 @@
     },
     {
       "observedAt": "2020-12-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-15T14:19:56.431Z",
+      "ingestedAt": "2026-09-17T14:17:41.233Z",
       "key": "normal-1991-2020-12",
       "value": {
         "kind": "normal-1991-2020",
@@ -382,7 +382,7 @@
     },
     {
       "observedAt": "2026-08-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-15T14:19:56.431Z",
+      "ingestedAt": "2026-09-17T14:17:41.233Z",
       "key": "actual-2026-08",
       "value": {
         "kind": "monthly-actual",

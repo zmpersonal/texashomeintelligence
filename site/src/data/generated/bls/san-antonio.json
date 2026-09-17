@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-16T14:12:41.885Z",
-  "lastSuccessAt": "2026-09-16T14:12:41.885Z",
+  "lastAttemptAt": "2026-09-17T14:17:45.945Z",
+  "lastSuccessAt": "2026-09-17T14:17:45.945Z",
   "lastError": null,
   "source": {
     "name": "BLS Occupational Employment and Wage Statistics",
@@ -13,7 +13,7 @@
   "observations": [
     {
       "observedAt": "2025-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-16T14:12:42.035Z",
+      "ingestedAt": "2026-09-17T14:17:46.094Z",
       "key": "OEUM004170000000047215208-2025",
       "value": {
         "trade": "Plumbers, Pipefitters, and Steamfitters (San Antonio-New Braunfels MSA)",

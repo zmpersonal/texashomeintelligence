@@ -2,10 +2,10 @@
   "datasetId": "noaa-storm-events",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "stale",
-  "lastAttemptAt": "2026-09-16T14:11:48.745Z",
-  "lastSuccessAt": "2026-09-15T14:19:46.995Z",
-  "lastError": "NOAA Storm Events directory listing failed: HTTP 503 from https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/",
+  "status": "live",
+  "lastAttemptAt": "2026-09-17T14:17:23.241Z",
+  "lastSuccessAt": "2026-09-17T14:17:23.241Z",
+  "lastError": null,
   "source": {
     "name": "NOAA Storm Events Database",
     "url": "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"
@@ -717,7 +717,7 @@
     },
     {
       "observedAt": "2026-05-26T23:00:00.000Z",
-      "ingestedAt": "2026-09-15T14:19:49.857Z",
+      "ingestedAt": "2026-09-17T14:17:25.783Z",
       "key": "1340784",
       "value": {
         "eventType": "Flood",
