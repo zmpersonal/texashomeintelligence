@@ -30,7 +30,7 @@ rebuild it byte for byte.
 | 6 | `site/src/data/analysis/<slug>.md` — the article | `site_renderer` → runner; `site_merger` → main | the live site | **main** | ✅ learned, durable |
 | 7 | `site/src/data/og-cards/<slug>.json` + `site/public/images/og/<slug>.png` | `site_renderer` / `npm run og-cards`; `site_merger` → main | the card gate, the post's media | **main** | ✅ learned, durable |
 | 8 | `autoposter/articles/<slug>/` — draft, claim ledger, promo JSON | `run_article.write` → runner | nothing, after the cycle that wrote it | **nowhere** | ✅ safe ephemeral, deliberately. These are authoring artifacts; the published copies are #6/#7. Per `CLAUDE.md` → *Drafts*, they must NOT reach `main`. **Hazard:** the path is tracked, so writing it makes the tree dirty — which is the exact condition that broke the ledger commit. Neutralized by reading every committed file from the ref, never the tree. |
-| 9 | `data/social-feed.json` — the observations feed | `build_feed.py` — **which no workflow runs** | every builder, every claim | main, but **frozen** | ⚠️ see below |
+| 9 | `data/social-feed.json` — the observations feed | `tools/refresh-feed.py` → main, on ingestion completing | topic scoring, G1's legal numerals | **main**, confirmed read-back | ✅ fixed — refreshed only when the data MOVED, so `generated_at` means "the data changed", not "a job ran" |
 | 10 | `config.yaml`, `article_topics.yaml`, `specs/`, `schema/` | humans | everything | main | ✅ read-only inputs |
 | 11 | Blotato submission → post URL | Blotato | recorded into #1 | Blotato + main | ✅ the row carries `submission_id`, so a post can be re-verified from its status endpoint afterwards |
 | 12 | The kill switch — `AUTOPOSTER_PAUSED` var + `autopilot.paused` | a human | `run_cycle` | GitHub / main | ✅ either pauses; both must be clear to publish |
@@ -78,6 +78,32 @@ The cycle handles this correctly — `evaluate` catches the engine's refusal and
 which notifies and stays green. Nothing crashes and nothing false is published. The machine
 simply has nothing to say, and will keep having nothing to say until row 9 is addressed.
 
+## The refresh, and the three things it does not do
+
+`tools/refresh-feed.py` rebuilds the feed and lands it on main through the same
+`commit_to_main` discipline as the ledger row. It commits only when the **substance** moved —
+`generated_at` changes on every run, and committing on that would put a daily commit on main
+(which auto-deploys the live site) and make the timestamp mean "a job ran" instead of "the data
+changed". A no-change day writes nothing, advances nothing, and cannot make any downstream
+stage believe there is something new.
+
+It is ordered by the ingestion workflow **completing**, not by a clock, because a scheduled
+run's real fire time drifts by hours — the cadence's own 14:10 cron has fired between 17:00 and
+19:00. Ordering by timestamp is a hope; ordering by completion is a guarantee.
+
+What it does **not** do, recorded so nobody assumes otherwise:
+
+1. **It cannot unstick a builder on its own.** A recurring builder's title names the period its
+   data covers. Rebuilding from the same month yields the same title, so the builder stays
+   retired and the cycle skips — correctly. What unsticks a permit builder is the calendar
+   completing a month; what unsticks the climate builder is the upstream publishing one.
+2. **It cannot make a quiet upstream current.** A reading older than its own staleness bound
+   still appears in the feed and is refused by G5 at validation. That is the gate having
+   something to do, not a defect.
+3. **It does not touch the one builder whose title carries no period.** That builder is retired
+   permanently once published, because "already written" is judged on the title. Whether it
+   should carry a period is an editorial call — see "Open question".
+
 ## The same class, in the test harness
 
 Three suites went red on `main` on 2026-09-18 with no code change behind them, because
@@ -88,6 +114,13 @@ one emptied it.
 This matters more than a flaky suite: **CI runs the test suite before the cycle**, so a red
 suite stops the machine running at all. A test that depends on production data is a scheduled
 outage with an unknown date.
+
+It happened a third time in the same session, from the other direction: one suite pinned
+`TODAY` to a hard-coded date that happened to be the moment the feed was generated, and stayed
+correct only because nothing refreshed the feed. The first real refresh brought in readings
+newer than that date, which the suite then called "in the future". Its clock now comes from the
+feed. **A test pinned to a moment in production history is a test with an expiry date nobody
+wrote down.**
 
 Fixed by having each suite state its own premise — `engine.run` now accepts the caller's config
 (it used to re-read from disk and ignore the one the driver already held, so an override never
