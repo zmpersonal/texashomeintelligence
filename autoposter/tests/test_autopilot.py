@@ -24,6 +24,10 @@ import run_article                  # noqa: E402
 HERE = Path(__file__).resolve().parent
 TODAY = date(2026, 9, 11)
 OK = lambda url: (True, "resolved 200")           # noqa: E731
+# Injected into every run_cycle call below. The post-deploy checks retry with a real
+# backoff; a suite that actually waits it out would add minutes to the pre-cycle test
+# step on every scheduled run.
+_NO_SLEEP = lambda _seconds: None                 # noqa: E731
 def _picked(cfg=None):
     """Whatever the engine actually chooses right now — never a hardcoded slug.
 
@@ -124,7 +128,8 @@ def test_a_STALE_claim_SKIPS():
     publishable. Nothing about the article changed; only how old its data is."""
     cfg = _cfg()
     cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
-    d = autopilot.evaluate(cfg, today=date(2027, 6, 1), state=_ready_state(), **_kwargs(cfg))
+    d = autopilot.evaluate(cfg, today=date(2027, 6, 1), state=_ready_state(),
+                           **_kwargs(cfg))
     assert d.action == "skip"
     assert any(not v.ok for v in d.verdicts), [v.line() for v in d.verdicts]
     assert "nothing published" in d.notice()
@@ -289,7 +294,7 @@ def test_a_deploy_that_does_not_come_up_live_STOPS_before_posting():
         verify_opener=lambda url: (False, "HTTP 404"),
         publish_fn=lambda post: posted.append(post),
         state_path=Path(tempfile.mkdtemp()) / "s.json",
-        ledger_path=Path(tempfile.mkdtemp()) / "ledger.json", **_kwargs(cfg))
+        ledger_path=Path(tempfile.mkdtemp()) / "ledger.json", sleep_fn=_NO_SLEEP, **_kwargs(cfg))
     assert d.action == "posted_nothing" and not posted
     assert "the post was withheld" in d.reason
     # The article is live and stays live. The notice must say that plainly, because the
@@ -326,7 +331,7 @@ def test_a_SKIPPED_run_cycle_notifies_and_never_merges():
         cfg, today=TODAY, notify_fn=notices.append,
         merge_fn=lambda slug: merged.append(slug), deploy_wait_fn=lambda url: None,
         verify_opener=OK, publish_fn=lambda post: posted.append(post),
-        state_path=Path(tempfile.mkdtemp()) / "s.json", **_kwargs(cfg))
+        state_path=Path(tempfile.mkdtemp()) / "s.json", sleep_fn=_NO_SLEEP, **_kwargs(cfg))
     assert d.action == "skip" and not posted and not merged
     assert len(notices) == 1 and "SKIPPED" in notices[0]
 
@@ -337,7 +342,7 @@ def test_a_too_soon_run_cycle_sends_NO_notice_at_all():
     state = Path(tempfile.mkdtemp()) / "s.json"
     autopilot.save_state({"last_article_at": "2026-09-10", "cycles": 1}, state)
     d = autopilot.run_cycle(cfg, today=TODAY, notify_fn=notices.append,
-                            state_path=state, **_kwargs(cfg))
+                            state_path=state, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
     assert d.action == "too_soon"
     assert notices == []
 
@@ -373,7 +378,7 @@ def test_a_DRY_RUN_does_everything_except_merge_and_post():
         cfg, today=TODAY, notify_fn=notices.append, dry_run=True,
         merge_fn=lambda s: acted.append("merge"), deploy_wait_fn=lambda u: acted.append("wait"),
         verify_opener=OK, publish_fn=lambda p: acted.append("post"),
-        state_path=state, ledger_path=Path(tempfile.mkdtemp()) / "l.json", **_kwargs(cfg))
+        state_path=state, ledger_path=Path(tempfile.mkdtemp()) / "l.json", sleep_fn=_NO_SLEEP, **_kwargs(cfg))
     assert d.action == "would_publish" and d.clean
     assert not acted, "a dry run must not merge, deploy-wait or post"
     assert json.loads(state.read_text())["last_article_at"] == "2026-09-01", \
@@ -388,7 +393,7 @@ def test_a_DRY_RUN_still_SKIPS_what_a_real_run_would_skip():
     cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=tempfile.mkdtemp())
     d = autopilot.run_cycle(cfg, today=TODAY, notify_fn=lambda m: None, dry_run=True,
                             verify_opener=OK,
-                            state_path=Path(tempfile.mkdtemp()) / "s.json", **_kwargs(cfg))
+                            state_path=Path(tempfile.mkdtemp()) / "s.json", sleep_fn=_NO_SLEEP, **_kwargs(cfg))
     assert d.action == "skip"
 
 
@@ -519,7 +524,7 @@ def test_the_CONTENT_gates_all_run_before_anything_is_merged():
         publish_fn=lambda post: {"post_url": "https://facebook.com/x"},
         state_path=Path(tempfile.mkdtemp()) / "s.json",
         ledger_path=Path(tempfile.mkdtemp()) / "l.json",
-        defer_resolution=True, **_kwargs(cfg))
+        defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
 
     for gate in ("topic-selection", "claim-ledger", "prose-gates", "two-lock-publish",
                  "model-budget", "claim-freshness", "card", "channel-guard",
@@ -545,7 +550,7 @@ def test_post_deploy_verification_runs_against_BOTH_urls_and_then_posts():
         publish_fn=lambda post: (posted.append(post) or {"post_url": "https://facebook.com/x"}),
         state_path=Path(tempfile.mkdtemp()) / "s.json",
         ledger_path=Path(tempfile.mkdtemp()) / "l.json",
-        defer_resolution=True, **_kwargs(cfg))
+        defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
 
     assert d.action == "publish" and len(posted) == 1
     assert [v.name for v in d.live_verdicts] == ["post-deploy-destination", "post-deploy-media"]
@@ -571,7 +576,7 @@ def test_a_dead_MEDIA_url_after_deploy_withholds_the_post_and_leaves_the_article
         publish_fn=lambda post: posted.append(post),
         state_path=Path(tempfile.mkdtemp()) / "s.json",
         ledger_path=Path(tempfile.mkdtemp()) / "l.json",
-        defer_resolution=True, **_kwargs(cfg))
+        defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
 
     assert d.action == "posted_nothing"
     assert len(merged) == 1, "the article should have been merged — only the POST is withheld"
@@ -592,7 +597,7 @@ def test_a_dry_run_LABELS_its_live_checks_as_simulated():
         publish_fn=lambda post: (_ for _ in ()).throw(AssertionError("dry run posted")),
         state_path=Path(tempfile.mkdtemp()) / "s.json",
         ledger_path=Path(tempfile.mkdtemp()) / "l.json",
-        defer_resolution=True, **_kwargs(cfg))
+        defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
     assert d.action == "would_publish"
     assert all("SIMULATED" in v.detail for v in d.live_verdicts)
     assert "SIMULATED" in d.notice()
@@ -631,7 +636,7 @@ def _halting(stage, cfg, exc=RuntimeError("the remote hung up")):
         cfg, today=TODAY, notify_fn=notices.append,
         state_path=Path(tempfile.mkdtemp()) / "s.json",
         ledger_path=Path(tempfile.mkdtemp()) / "l.json",
-        defer_resolution=True, **kwargs, **_kwargs(cfg))
+        defer_resolution=True, **kwargs, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
     return d, notices, posted
 
 
@@ -697,7 +702,7 @@ def _full_cycle(cfg, *, publish_fn=None, state_path=None, notify_fn=None, verify
                                                 "submission_id": "s1"}),
         state_path=state_path or (Path(tempfile.mkdtemp()) / "s.json"),
         ledger_path=Path(tempfile.mkdtemp()) / "l.json",
-        defer_resolution=True, **_kwargs(cfg)), notices
+        defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg)), notices
 
 
 def test_a_PUBLISHER_that_raises_notifies_and_does_not_crash():
@@ -815,7 +820,7 @@ def test_a_dead_notifier_does_not_turn_a_SKIP_into_a_crash():
         publish_fn=lambda post: {"post_url": "x"},
         state_path=Path(tempfile.mkdtemp()) / "s.json",
         ledger_path=Path(tempfile.mkdtemp()) / "l.json",
-        defer_resolution=True, **_kwargs(cfg))
+        defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
     assert d.action == "skip", d.action
     assert not d.is_broken, "a quiet skip must not go red just because Slack is down"
 
@@ -835,7 +840,7 @@ def test_a_dead_notifier_does_not_lose_a_HALT():
         publish_fn=lambda post: {"post_url": "x"},
         state_path=Path(tempfile.mkdtemp()) / "s.json",
         ledger_path=Path(tempfile.mkdtemp()) / "l.json",
-        defer_resolution=True, **_kwargs(cfg))
+        defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
     assert d.action == "halted" and d.failed_stage == "merge"
     assert "non-fast-forward" in d.reason, d.reason
     assert d.is_broken, "the job must still go red"
@@ -853,7 +858,7 @@ def test_a_dead_notifier_does_not_lose_a_WITHHELD_post():
         publish_fn=lambda post: {"post_url": "x"},
         state_path=Path(tempfile.mkdtemp()) / "s.json",
         ledger_path=Path(tempfile.mkdtemp()) / "l.json",
-        defer_resolution=True, **_kwargs(cfg))
+        defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
     assert d.action == "posted_nothing"
     assert not d.cleared_to_post
 
@@ -951,7 +956,7 @@ def test_the_cycle_RETRIES_the_post_deploy_checks_and_then_posts():
                                                          "submission_id": "s9"}),
         state_path=Path(tempfile.mkdtemp()) / "s.json",
         ledger_path=Path(tempfile.mkdtemp()) / "l.json",
-        defer_resolution=True, sleep_fn=lambda _s: None, **_kwargs(cfg))
+        defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
     assert d.action == "publish", [v.line() for v in d.live_verdicts]
     assert len(posted) == 1
     assert all(v.ok for v in d.live_verdicts)
@@ -968,7 +973,7 @@ def test_a_permanently_dead_destination_still_withholds_the_post():
         publish_fn=lambda post: posted.append(post),
         state_path=Path(tempfile.mkdtemp()) / "s.json",
         ledger_path=Path(tempfile.mkdtemp()) / "l.json",
-        defer_resolution=True, sleep_fn=lambda _s: None, **_kwargs(cfg))
+        defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
     assert d.action == "posted_nothing" and not posted
 
 
