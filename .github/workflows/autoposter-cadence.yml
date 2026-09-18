@@ -29,6 +29,10 @@ on:
         description: "Prove the secrets are Environment-scoped, not repo-scoped. Runs NO cycle."
         type: boolean
         default: false
+      preflight_merge_path:
+        description: "Prove push + PR create + merge + branch delete really work. Runs NO cycle."
+        type: boolean
+        default: false
 
 concurrency:
   # One cycle at a time, ever. Two overlapping runs could both pass the duplicate gate before
@@ -122,11 +126,42 @@ jobs:
             echo "No value was printed, measured or hashed."
           } >> "$GITHUB_STEP_SUMMARY"
 
+  # ------------------------------------------------------------------ the merge-path preflight
+  #
+  # Seven scheduled runs failed in production while every dry run and all 240 tests were green.
+  # The cause was structural: `run_cycle` returns at the dry-run branch BEFORE `merge_fn` is
+  # called, and every test stubs `merge_fn`, so the code that pushes and calls `gh` had never
+  # run anywhere but the live cadence. It turned out the token could push but was refused at
+  # `gh pr create` by a repo policy that is separate from `pull-requests: write`.
+  #
+  # A capability nobody exercised is a capability nobody has. This job exercises it for real —
+  # push, PR create, merge to main, branch delete — then removes what it made. Run it before
+  # trusting the cadence and after any change to permissions.
+
+  preflight-merge-path:
+    if: inputs.preflight_merge_path
+    runs-on: ubuntu-latest
+    environment: autoposter
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Prove the whole merge path, then clean up after itself
+        working-directory: autoposter
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 tools/preflight-merge-path.py
+
   # ------------------------------------------------------------------ the cycle
   cycle:
     # A scope-proof dispatch proves scope and does nothing else. The proof jobs are cheap and
     # side-effect free; the cycle is neither.
-    if: ${{ !inputs.prove_secret_scope }}
+    if: ${{ !inputs.prove_secret_scope && !inputs.preflight_merge_path }}
     runs-on: ubuntu-latest
     # The secrets live here and nowhere else. The site's own workflows cannot read them.
     environment: autoposter
