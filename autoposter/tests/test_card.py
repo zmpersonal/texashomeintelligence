@@ -804,20 +804,56 @@ def test_builder5_MUTATION_a_wrong_baseline_gap_is_caught():
 def test_builder5_recurs_with_a_distinct_question_and_slug():
     july, _ = _sa(JULY_CYCLE)
     august, _ = _sa(AUG_CYCLE)
-    assert july["title"].endswith("(July 2026)")
-    assert august["title"].endswith("(August 2026)")
+    assert july["title"] != august["title"]
+    assert "Jul" in july["title"] and "Aug" in august["title"]
     assert july["slug"] != august["slug"]
 
 
 def test_ALL_THREE_recurring_builders_offer_a_distinct_title_per_period():
-    """The property that makes cadence possible, asserted once for the whole set."""
+    """The property that makes cadence possible, asserted once for the whole set.
+
+    Deliberately checks that each title NAMES its own period, not that it spells the month a
+    particular way. This test previously pinned "August 2026" verbatim and failed when a title
+    had to be shortened to fit the card — a test that breaks on wording it was never measuring
+    sends you to the wrong place.
+    """
     for topic_id in ("summer-hotter-than-normal", "austin-ac-rush-vs-heat",
                      "san-antonio-improvement-boom"):
         builder = run_article.TOPIC_ARTICLES[topic_id]
         july = builder.title_for(JULY_CYCLE)
         august = builder.title_for(AUG_CYCLE)
         assert july != august, topic_id
-        assert "July 2026" in july and "August 2026" in august, topic_id
+        assert "Jul" in july and "Aug" in august, topic_id
+        assert "2026" in july and "2026" in august, topic_id
+
+
+# The ceiling measured against the real generator: 53 chars renders, 56 overflows. Held a couple
+# of characters below the last known-good value rather than at it, because the limit is a
+# LAYOUT outcome — it also moves with the headline and subhead — and a test sitting exactly on
+# a cliff edge is one wording change away from being wrong in the permissive direction.
+CARD_TITLE_CEILING = 55
+
+
+def test_every_recurring_title_stays_inside_the_CARD_ceiling_for_a_full_year():
+    """The card generator refuses to crop: an over-long title means no card, so no post, so a
+    cycle that skips until a human rewrites the title by hand. That is a crack in hands-off, and
+    it is invisible until the month that breaks it.
+
+    Checks twelve consecutive periods, because a title that fits in August can overflow in
+    September — "Sep" and "August" are not the same width and neither are their long forms.
+    """
+    offenders = []
+    # The PURE formatters, not `title_for` — `title_for` takes a cycle date and resolves the
+    # period from the feed, so it can only ever produce the months the data happens to hold.
+    # The formatters are functions of the period alone, which is what lets this sweep a year.
+    for name, formatter in (("summer", run_article.summer_title),
+                            ("ac-rush", run_article.acrush_title),
+                            ("san-antonio", run_article.sa_title)):
+        for month in range(1, 13):
+            title = formatter(f"2026-{month:02d}")
+            if len(title) > CARD_TITLE_CEILING:
+                offenders.append(f"{name} {month:02d}: {len(title)} chars — {title}")
+    assert not offenders, "titles that will not fit on the card:\n  " + "\n  ".join(offenders)
 
 
 # ============================================ THE FROZEN-CONCLUSION AUDIT

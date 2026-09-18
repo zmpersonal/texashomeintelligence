@@ -499,6 +499,19 @@ def month_label(period: str) -> str:
     return f"{MONTHS_LONG[month - 1]} {year}"
 
 
+def month_label_short(period: str) -> str:
+    """`2026-08` -> `Aug 2026`. Nine characters shorter than the long form, which is the whole
+    reason it exists.
+
+    The card is 1200x630 and its generator REFUSES to crop — it errors rather than clipping a
+    question, which is the correct behaviour and is what caught this. A card question is the
+    article title verbatim (gate C4), so a long title is a card that cannot be drawn and a cycle
+    that skips. Measured against the real generator, the ceiling is about 53 characters.
+    """
+    year, month = period[:4], int(period[5:7])
+    return f"{MONTHS_LONG[month - 1][:3]} {year}"
+
+
 def _slugify(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
@@ -927,7 +940,18 @@ TRADE_NAME = {"hvac": "HVAC", "roofing": "roofing", "solar": "solar", "plumbing"
 
 
 def sa_title(period: str) -> str:
-    return f"Is San Antonio's home-improvement boom cooling off? ({month_label(period)})"
+    """53 characters, verified against the real card generator.
+
+    The long form — "Is San Antonio's home-improvement boom cooling off? (August 2026)" — is 65
+    and overflows the card, so the cycle rendered nothing and skipped. "remodel" and the short
+    month are what bring it under the ceiling; shortening the copy is the right lever because
+    the alternative is widening shared template logic for one title, and doing that once before
+    silently re-broke article 1's approved headline.
+
+    The month stays in the title because this builder is RECURRING: the period is what keeps
+    each month's article distinct from the last one.
+    """
+    return f"Is San Antonio's remodel boom cooling off? ({month_label_short(period)})"
 
 
 def sa_slug(period: str) -> str:
