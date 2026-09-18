@@ -1,0 +1,14 @@
+{
+  "path": "/images/og/was-august-2026-hotter-than-normal-in-texas.png",
+  "width": 1200,
+  "height": 630,
+  "alt": "Was August 2026 hotter than normal in Texas? 755 cooling degree-days, 13.6% above normal. Source: NOAA National Centers for Environmental Information, Aug 2026.",
+  "rendered": {
+    "question": "Was August 2026 hotter than normal in Texas?",
+    "headline": "755 cooling degree-days",
+    "subhead": "13.6% above normal",
+    "source": "NOAA",
+    "asOf": "Aug 2026"
+  },
+  "generator": "scripts/generate-og-cards.mjs"
+}
