@@ -352,7 +352,19 @@ def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today
              # Every figure and derivation this article verified. The caption may quote any of
              # them; it may not quote anything else.
              "supporting_figures": [c.figure for c in claims if c.figure]
-                                   + [c.derivation for c in claims if c.derivation]}
+                                   + [c.derivation for c in claims if c.derivation],
+             # PROVENANCE, not claims. A source's NAME can contain digits — "NOAA NCEI U.S.
+             # Climate Normals 1991-2020" is one string, an identifier, and the 1991 in it is
+             # not an assertion about anything. Same for the as_of of every claim the article
+             # rests on: this piece cites a 1991-2020 reference period alongside a 2026-08
+             # reading, and only the headline claim's date was being supplied.
+             #
+             # This widens what the STORY SUPPLIES, which is the move this file already makes
+             # for `supporting_figures`, `source_short` and `as_of_display`. It does not widen
+             # what the gate accepts: a numeral in neither the ledger, nor a source name, nor a
+             # claim's date still fails, which is the whole point of G1.
+             "source_names": sorted({c.source for c in claims if c.source}),
+             "claim_as_ofs": sorted({c.as_of for c in claims if c.as_of})}
     result = social_validator.validate_post(post, story, config, feed=load_feed(), now=today,
                                             link_opener=link_opener, media_opener=media_opener,
                                             defer_resolution=defer_resolution)
