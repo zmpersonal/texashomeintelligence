@@ -105,6 +105,38 @@ def posted_destinations(ledger_path: Path | None = None, platform: str | None = 
             if not platform or entry.get("platform") == platform}
 
 
+def clean_streak(ledger_path: Path | None = None, *, platform: str = "facebook",
+                 page_id: str | None = None) -> int:
+    """How many clean posts in a row this destination has, COUNTED FROM THE LEDGER.
+
+    It used to come from `clean_streak` in config.yaml, a hand-maintained number that no code
+    ever advanced — so post #4 recorded `streak_after: 2` while four posts sat on the page. A
+    counter nothing increments is not a counter, and a record that disagrees with the record it
+    lives in is worse than no record.
+
+    The ledger is the right source now that it durably persists on main: it IS the list of
+    posts, so the streak is a property of it rather than a second copy of the same fact kept
+    somewhere else and allowed to drift.
+
+    Counted backwards from the newest and stopped by the first unverified post, because that is
+    what "in a row" means — a post that went out without its destination verifying breaks the
+    run even if later ones are clean.
+
+    NOTE: `channels.facebook.clean_streak` in config.yaml is a DIFFERENT thing wearing the same
+    name — the owner-advanced marker that gates autonomy graduation, which only a human moves.
+    This does not read it and must not write it.
+    """
+    rows = [e for e in _load(ledger_path or LEDGER)
+            if e.get("platform") == platform
+            and (page_id is None or e.get("page_id") == page_id)]
+    streak = 0
+    for entry in reversed(rows):
+        if not entry.get("post_publish_verified"):
+            break
+        streak += 1
+    return streak
+
+
 def publish_with_verification(post: dict, *, publish_fn, verify_opener, streak_after: int,
                               article_slug: str = "", ledger_path: Path | None = None,
                               now=None) -> dict:

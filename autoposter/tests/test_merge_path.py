@@ -72,29 +72,46 @@ class FakeRepo:
     state a real cycle is in when the committer starts.
     """
 
-    LEDGER_REF = "git show origin/main:autoposter/data/published-posts.json"
+    LEDGER = "autoposter/data/published-posts.json"
+    STATE = "autoposter/data/autopilot-state.json"
+    LEDGER_REF = f"git show origin/main:{LEDGER}"
+    STATE_REF = f"git show origin/main:{STATE}"
 
-    def __init__(self, entries=None, main=None):
+    def __init__(self, entries=None, main=None, state=None):
         self.root = Path(tempfile.mkdtemp())
-        self.ledger = self.root / "autoposter" / "data" / "published-posts.json"
+        self.ledger = self.root / self.LEDGER
         self.ledger.parent.mkdir(parents=True)
         self.ledger.write_text(json.dumps(entries or []))
         # Default: main agrees with the tree. Pass `main=` to make them differ.
-        self.main_rows = list(entries or []) if main is None else list(main)
+        self.main_files = {self.LEDGER: list(entries or []) if main is None else list(main),
+                           self.STATE: dict(state or {})}
         self.merged = 0
+
+    @property
+    def main_rows(self):
+        return self.main_files[self.LEDGER]
+
+    @main_rows.setter
+    def main_rows(self, value):
+        self.main_files[self.LEDGER] = value
 
     def script(self, extra=None):
         """The git/gh answers that make this fake behave like a repo with a real main."""
         def show(cmd):
-            return (0, json.dumps(self.main_rows), "")
+            return (0, json.dumps(self.main_files[cmd[2].split(":", 1)[1]]), "")
 
         def merge(cmd):
-            # A merge is what makes the branch's content main's content.
+            # A merge is what makes the branch's content main's content — for every file the
+            # branch actually touched, and only those.
             self.merged += 1
-            self.main_rows = self.rows()
+            for relative in self.main_files:
+                path = self.root / relative
+                if path.exists():
+                    self.main_files[relative] = json.loads(path.read_text())
             return (0, "", "")
 
         base = {self.LEDGER_REF: show,
+                self.STATE_REF: show,
                 "gh pr view": (0, "MERGEABLE", ""),
                 "gh pr create": (0, "https://github.com/o/r/pull/1", ""),
                 "gh pr merge": merge}
@@ -314,6 +331,10 @@ def test_a_refused_pr_create_never_reaches_the_merge():
 
 NO_SLEEP = lambda *_: None
 
+# The committer now lands the ledger row AND the cadence clock. These tests are about the
+# ledger, so they pass an empty state — the shape a PROMOTION produces, which moves no clock.
+NO_STATE = {}
+
 
 def test_the_ledger_commit_branches_from_FRESH_main_not_the_stale_checkout():
     """The runner's checkout can be minutes old by the time a post lands. Committing the whole
@@ -322,7 +343,7 @@ def test_the_ledger_commit_branches_from_FRESH_main_not_the_stale_checkout():
       with FakeRepo() as repo:
         fake = FakeRun(repo.script()); _patch(fake)
         ra.ledger_committer(NO_SLEEP)({"article_slug": "x", "article_url": "https://s/a/",
-                                       "platform": "facebook"})
+                                       "platform": "facebook"}, NO_STATE)
         order = [" ".join(c[:4]) for c in fake.calls]
         assert "git fetch origin main" in order, order
         checkout = fake.argv("git checkout")[0]
@@ -340,7 +361,7 @@ def test_the_ledger_commit_uses_the_same_push_and_merge_path_as_the_article():
         fake = FakeRun(repo.script({"gh pr create": (0, "https://github.com/o/r/pull/4", "")}))
         _patch(fake)
         url = ra.ledger_committer(NO_SLEEP)({"article_slug": "x", "article_url": "https://s/b/",
-                                             "platform": "facebook"})
+                                             "platform": "facebook"}, NO_STATE)
         assert url == "https://github.com/o/r/pull/4"
         merge = fake.argv("gh pr merge")[0]
         assert "--merge" in merge and "--delete-branch" in merge
@@ -357,7 +378,7 @@ def test_a_PUSH_FAILURE_on_the_ledger_commit_RAISES_rather_than_being_swallowed(
       with FakeRepo() as repo:
         _patch(FakeRun(repo.script({"git push": (1, "", "! [remote rejected] main (protected branch)")})))
         ra.ledger_committer(NO_SLEEP)({"article_slug": "x", "article_url": "https://s/c/",
-                                       "platform": "facebook"})
+                                       "platform": "facebook"}, NO_STATE)
         assert False, "a failed ledger push was swallowed"
     except ra.CommandFailed as exc:
         assert "remote rejected" in str(exc)
@@ -372,7 +393,7 @@ def test_an_ALREADY_RECORDED_row_is_not_committed_twice():
     try:
         with FakeRepo([existing]) as repo:
             fake = FakeRun(repo.script()); _patch(fake)
-            url = ra.ledger_committer(NO_SLEEP)(dict(existing, article_slug="retry"))
+            url = ra.ledger_committer(NO_SLEEP)(dict(existing, article_slug="retry"), NO_STATE)
             assert url == "", "it opened a PR for a row the ledger already carries"
             assert not fake.argv("git commit"), "it committed a duplicate row"
             assert len(repo.main_rows) == 1, "main grew a second row for the same link"
@@ -387,7 +408,7 @@ def test_a_NEW_row_is_appended_without_disturbing_the_existing_ones():
         with FakeRepo([existing]) as repo:
             _patch(FakeRun(repo.script()))
             ra.ledger_committer(NO_SLEEP)({"article_slug": "second", "platform": "facebook",
-                                           "article_url": "https://texashomeintelligence.com/analysis/second/"})
+                                           "article_url": "https://texashomeintelligence.com/analysis/second/"}, NO_STATE)
             rows = repo.main_rows
             assert len(rows) == 2 and rows[0] == existing
             assert rows[1]["article_slug"] == "second"
@@ -409,7 +430,7 @@ def test_the_dedupe_IGNORES_the_row_this_cycle_wrote_into_the_working_tree():
         # The tree carries the row (publish wrote it). Main does not. Only main may decide.
         with FakeRepo([record], main=[]) as repo:
             fake = FakeRun(repo.script()); _patch(fake)
-            url = ra.ledger_committer(NO_SLEEP)(dict(record))
+            url = ra.ledger_committer(NO_SLEEP)(dict(record), NO_STATE)
             assert fake.argv("git commit"), "it read the working tree and committed NOTHING"
             assert url, "no PR was opened for a row that is not on main"
             assert len(repo.main_rows) == 1, f"the row never reached main: {repo.main_rows}"
@@ -430,7 +451,7 @@ def test_the_commit_is_written_from_MAINS_content_not_the_dirty_trees():
         # working from a stale checkout produces.
         with FakeRepo([record], main=[on_main]) as repo:
             _patch(FakeRun(repo.script()))
-            ra.ledger_committer(NO_SLEEP)(dict(record))
+            ra.ledger_committer(NO_SLEEP)(dict(record), NO_STATE)
             slugs = [r["article_slug"] for r in repo.main_rows]
             assert slugs == ["kept", "new"], f"main's own row was dropped: {slugs}"
     finally:
@@ -444,7 +465,7 @@ def test_an_UNREADABLE_main_ledger_RAISES_rather_than_reading_as_empty():
     try:
         with FakeRepo() as repo:
             _patch(FakeRun(repo.script({FakeRepo.LEDGER_REF: (128, "", "fatal: bad object")})))
-            ra.ledger_committer(NO_SLEEP)(record)
+            ra.ledger_committer(NO_SLEEP)(record, NO_STATE)
             assert False, "an unreadable ledger was treated as an empty one"
     except ra.CommandFailed as exc:
         assert "bad object" in str(exc)
@@ -467,7 +488,7 @@ def test_a_MISSING_ledger_on_main_is_a_legitimately_empty_one():
                 return missing if not repo.merged else (0, json.dumps(repo.main_rows), "")
 
             _patch(FakeRun(repo.script({FakeRepo.LEDGER_REF: show})))
-            ra.ledger_committer(NO_SLEEP)(record)
+            ra.ledger_committer(NO_SLEEP)(record, NO_STATE)
             assert repo.main_rows and repo.main_rows[0]["article_slug"] == "first-ever"
     finally:
         _restore()
@@ -484,10 +505,11 @@ def test_a_COMMIT_THAT_NEVER_LANDS_raises_instead_of_returning_green():
         with FakeRepo() as repo:
             # Every command succeeds; the merge simply never changes main. Silent loss.
             _patch(FakeRun(repo.script({"gh pr merge": (0, "", "")})))
-            ra.ledger_committer(NO_SLEEP)(record)
+            ra.ledger_committer(NO_SLEEP)(record, NO_STATE)
             assert False, "a row that never reached main was reported as recorded"
     except ra.CommandFailed as exc:
-        assert "IS LIVE" in str(exc) and "post it AGAIN" in str(exc), str(exc)
+        assert "IS LIVE" in str(exc) and "AGAIN" in str(exc), str(exc)
+        assert "published-posts.json" in str(exc), "the raise does not name the file"
     finally:
         _restore()
 
@@ -506,10 +528,10 @@ def test_NOTHING_TO_COMMIT_is_confirmed_against_main_before_it_counts_as_success
                 return (0, json.dumps([record] if seen["n"] == 1 else []), "")
 
             _patch(FakeRun(repo.script({FakeRepo.LEDGER_REF: show})))
-            ra.ledger_committer(NO_SLEEP)(record)
+            ra.ledger_committer(NO_SLEEP)(record, NO_STATE)
             assert False, "'nothing to commit' passed as success with main carrying no row"
     except ra.CommandFailed as exc:
-        assert "not on main" in str(exc), str(exc)
+        assert "did not reach main" in str(exc), str(exc)
     finally:
         _restore()
 
@@ -521,7 +543,7 @@ def test_the_confirmation_RE_FETCHES_rather_than_trusting_the_ref_it_already_had
     try:
         with FakeRepo() as repo:
             fake = FakeRun(repo.script()); _patch(fake)
-            ra.ledger_committer(NO_SLEEP)(record)
+            ra.ledger_committer(NO_SLEEP)(record, NO_STATE)
             order = [" ".join(c[:4]) for c in fake.calls]
             merge = next(i for i, c in enumerate(fake.calls) if c[:3] == ["gh", "pr", "merge"])
             after = [i for i, c in enumerate(fake.calls) if " ".join(c[:4]) == "git fetch origin main"]
@@ -545,9 +567,83 @@ def test_the_confirmation_RETRIES_replication_lag_without_tolerating_a_missing_r
                 return (0, json.dumps(repo.main_rows if look["n"] > 3 else []), "")
 
             _patch(FakeRun(repo.script({FakeRepo.LEDGER_REF: show})))
-            ra.ledger_committer(slept.append)(record)
+            ra.ledger_committer(slept.append)(record, NO_STATE)
             assert slept, "it did not wait out the lag at all"
-            assert len(slept) < ra.LEDGER_CONFIRM_ATTEMPTS, "it waited more times than it may"
+            assert len(slept) < ra.CONFIRM_ATTEMPTS, "it waited more times than it may"
+    finally:
+        _restore()
+
+
+# ======================================= the CADENCE CLOCK lands on main, like the row does
+
+def test_the_CLOCK_lands_on_main_in_the_SAME_commit_as_the_row():
+    """`autopilot-state.json` has never existed on main. Every run loaded "no article recorded
+    yet", so the 3-day floor never engaged once in production — observed live, a cycle offered
+    a new article hours after one had been published. Both facts describe the same event, so
+    landing one without the other is a state nothing else expects: one commit, both files."""
+    record = {"article_slug": "x", "platform": "facebook", "article_url": "https://s/x/"}
+    state = {"last_article_at": "2026-09-18", "cycles": 7}
+    try:
+        with FakeRepo() as repo:
+            fake = FakeRun(repo.script()); _patch(fake)
+            ra.bookkeeping_committer(NO_SLEEP)(record, state)
+            added = " ".join(fake.argv("git add")[0])
+            assert "autoposter/data/published-posts.json" in added, added
+            assert "autoposter/data/autopilot-state.json" in added, added
+            assert len(fake.argv("git commit")) == 1, "it made more than one commit"
+    finally:
+        _restore()
+
+
+def test_a_CLOCK_THAT_NEVER_LANDS_is_as_red_as_a_row_that_never_lands():
+    """A lost clock is not a lost statistic either: the floor stops holding and the machine
+    publishes again tomorrow. Same discipline, same raise, same posted_unconfirmed."""
+    record = {"article_slug": "x", "platform": "facebook", "article_url": "https://s/x/"}
+    state = {"last_article_at": "2026-09-18"}
+    try:
+        with FakeRepo() as repo:
+            def merge(cmd):
+                # The row lands; the clock is silently dropped. Half a success is a failure.
+                repo.merged += 1
+                repo.main_rows = repo.rows()
+                return (0, "", "")
+            _patch(FakeRun(repo.script({"gh pr merge": merge})))
+            ra.bookkeeping_committer(NO_SLEEP)(record, state)
+            assert False, "a dropped clock was reported as recorded"
+    except ra.CommandFailed as exc:
+        assert "autopilot-state.json" in str(exc), str(exc)
+        assert "published-posts.json" not in str(exc), "it blamed the file that DID land"
+    finally:
+        _restore()
+
+
+def test_the_clock_NEVER_MOVES_BACKWARDS_when_another_run_got_there_first():
+    """A floor that goes backwards lets the next article out early — the exact thing the file
+    exists to prevent. If main already holds a later date, main's stands and the row still
+    lands: the clock is a high-water mark, not a last-writer-wins field."""
+    record = {"article_slug": "x", "platform": "facebook", "article_url": "https://s/x/"}
+    try:
+        with FakeRepo(state={"last_article_at": "2026-09-20"}) as repo:
+            _patch(FakeRun(repo.script()))
+            ra.bookkeeping_committer(NO_SLEEP)(record, {"last_article_at": "2026-09-18"})
+            clock = repo.main_files[FakeRepo.STATE]["last_article_at"]
+            assert clock == "2026-09-20", f"the floor was dragged backwards to {clock}"
+            assert len(repo.main_rows) == 1, "the row was dropped along with the clock"
+    finally:
+        _restore()
+
+
+def test_a_PROMOTION_lands_its_row_and_is_not_held_to_a_clock_it_never_moved():
+    """Promoting an already-published article does not move the cadence floor, so it has no
+    clock change to land — and must not be failed for the absence of one."""
+    record = {"article_slug": "promo", "platform": "facebook", "article_url": "https://s/p/"}
+    try:
+        with FakeRepo() as repo:
+            fake = FakeRun(repo.script()); _patch(fake)
+            ra.bookkeeping_committer(NO_SLEEP)(record, {"cycles": 3})
+            added = " ".join(fake.argv("git add")[0])
+            assert "published-posts.json" in added
+            assert "autopilot-state.json" not in added, "a promotion moved the clock"
     finally:
         _restore()
 
@@ -605,7 +701,7 @@ def test_the_commit_lands_on_main_from_a_DIRTY_working_tree_against_REAL_git():
         assert subprocess.run(["git", "-C", str(work), "status", "--porcelain"],
                               capture_output=True, text=True).stdout.strip(), "tree is not dirty"
 
-        ra.ledger_committer(NO_SLEEP)(dict(record))
+        ra.ledger_committer(NO_SLEEP)(dict(record), NO_STATE)
 
         on_main_now = json.loads(subprocess.run(
             ["git", "-C", str(work), "show", "origin/main:autoposter/data/published-posts.json"],
@@ -628,7 +724,7 @@ def test_a_DIRTY_tree_does_not_make_the_dedupe_think_the_row_is_already_recorded
         ra.REPO, ra.open_and_merge_pr = work, _merge_on_origin(work, origin)
         ledger.write_text(json.dumps([record], indent=2) + "\n")   # dirty: the row, uncommitted
 
-        ra.ledger_committer(NO_SLEEP)(dict(record))
+        ra.ledger_committer(NO_SLEEP)(dict(record), NO_STATE)
 
         on_main_now = json.loads(subprocess.run(
             ["git", "-C", str(work), "show", "origin/main:autoposter/data/published-posts.json"],
@@ -648,10 +744,11 @@ def test_REAL_git_confirmation_raises_when_the_merge_silently_does_nothing():
         ra.REPO = work
         ra.open_and_merge_pr = lambda branch, *, title, body=None: "https://github.com/o/r/pull/9"
         ledger.write_text(json.dumps([record], indent=2) + "\n")
-        ra.ledger_committer(NO_SLEEP)(dict(record))
+        ra.ledger_committer(NO_SLEEP)(dict(record), NO_STATE)
         assert False, "a merge that did nothing was reported as a recorded row"
     except ra.CommandFailed as exc:
-        assert "IS LIVE" in str(exc) and "post it AGAIN" in str(exc), str(exc)
+        assert "IS LIVE" in str(exc) and "AGAIN" in str(exc), str(exc)
+        assert "published-posts.json" in str(exc), "the raise does not name the file"
     finally:
         ra.REPO, ra.open_and_merge_pr = real_repo, real_pr
 

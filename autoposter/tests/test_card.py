@@ -9,6 +9,7 @@ source nobody cited, a card that was never rendered.
 Run: python3 tests/test_card.py   (or python3 -m pytest tests/)
 """
 import json
+import copy
 import os
 import re
 import subprocess
@@ -18,10 +19,25 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-import article_engine as engine     # noqa: E402
+import article_engine as engine
+import topic_scorer                 # noqa: E402     # noqa: E402
 import card as card_mod            # noqa: E402
 import run_article                 # noqa: E402
 from claim_ledger import Claim     # noqa: E402
+
+def _isolated_cfg():
+    """Config whose published-article folder and ledger are EMPTY temp dirs.
+
+    The suite must state its own premise. Reading the live site's articles made the pool of
+    selectable topics shrink every time the machine published for real, and going red the day
+    the fifth builder's current-period title went live — with no code change behind it.
+    """
+    cfg = copy.deepcopy(engine.load_config())
+    cfg["publish"] = dict(cfg["publish"],
+                          published_ledger=tempfile.mkdtemp() + "/empty.json",
+                          analysis_dir=tempfile.mkdtemp())
+    return cfg
+
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
@@ -43,7 +59,7 @@ SIDECAR = {
 
 
 def _run():
-    return engine.run("thi", write_fn=run_article.write,
+    return engine.run("thi", config=_isolated_cfg(), write_fn=run_article.write,
                       build_claims_fn=run_article.build_claims, today=TODAY)
 
 
@@ -77,7 +93,7 @@ def test_the_built_block_matches_the_card_the_owner_APPROVED():
         return
     approved = re.search(r"^card:\n(?:  .*\n)+", live, re.M)
     assert approved, "could not find the approved card block — check this by hand"
-    assert engine.run("thi", write_fn=run_article.write,
+    assert engine.run("thi", config=_isolated_cfg(), write_fn=run_article.write,
                       build_claims_fn=run_article.build_claims,
                       today=TODAY)["card_frontmatter"] == approved.group(0).rstrip()
 
@@ -405,12 +421,21 @@ def test_the_engine_skips_a_topic_it_has_already_written():
     """Without this the top-ranked topic wins every cycle forever — the article equivalent of
     re-posting the same link, and the reason a cadence driver needs it before running
     unattended."""
-    published = engine.published_questions(CFG)
-    if not published:
-        return                                   # nothing published in this checkout
-    r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=date(2026, 9, 11),
+    # STATES ITS OWN PREMISE rather than borrowing the live site's. The old version read the
+    # real analysis folder and returned early when it was empty — so on a fresh checkout it
+    # asserted nothing, and on a full one it went red because production had advanced.
+    today = date(2026, 9, 11)
+    cfg = _isolated_cfg()
+    ranked = [t for t in topic_scorer.score_topics(engine.load_feed(), cfg) if t["buildable"]]
+    taken = engine._current_title(ranked[0], run_article.TOPIC_ARTICLES, today)
+    Path(cfg["publish"]["analysis_dir"], "taken.md").write_text(f'title: "{taken}"\n')
+
+    published = engine.published_questions(cfg)
+    assert taken in published, "the premise did not take"
+    r = engine.run("thi", config=cfg, write_fn=run_article.write,
+                   build_claims_fn=run_article.build_claims, today=today,
                    articles=run_article.TOPIC_ARTICLES, exclude_published=True)
+    assert r["article"]["title"] != taken, "it wrote the topic it had already written"
     assert r["article"]["title"] not in published
     # Not pinned to a topic id: the winner changes when `public_interest` is retuned, and it
     # did. What must hold is that the engine picked an ELIGIBLE topic — buildable, with a
@@ -422,7 +447,7 @@ def test_the_engine_skips_a_topic_it_has_already_written():
 def test_a_topic_with_no_claim_builder_HALTS_rather_than_falling_through():
     """Silently publishing the runner-up is how a machine drifts off its own ranking."""
     try:
-        engine.run("thi", write_fn=run_article.write,
+        engine.run("thi", config=_isolated_cfg(), write_fn=run_article.write,
                    build_claims_fn=run_article.build_claims, today=date(2026, 9, 11),
                    articles={"nothing-matches": (None, None)}, exclude_published=True)
     except RuntimeError as e:

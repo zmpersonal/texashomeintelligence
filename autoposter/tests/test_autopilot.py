@@ -10,6 +10,7 @@ Run: python3 tests/test_autopilot.py   (or python3 -m pytest tests/)
 import copy
 import json
 import os
+import re
 import sys
 import tempfile
 from datetime import date
@@ -18,6 +19,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import article_engine as engine     # noqa: E402
 import autopilot                    # noqa: E402
+import publish_gate                # noqa: E402
 import card as card_mod             # noqa: E402
 import run_article                  # noqa: E402
 
@@ -35,7 +37,7 @@ def _picked(cfg=None):
     `austin-ac-rush-vs-heat` at 0.65 moved it above the permits piece. Tests pinned to a slug
     then fail for a reason that has nothing to do with what they measure.
     """
-    r = engine.run("thi", write_fn=run_article.write,
+    r = engine.run("thi", config=cfg or _cfg(), write_fn=run_article.write,
                    build_claims_fn=run_article.build_claims, today=TODAY,
                    articles=run_article.TOPIC_ARTICLES, exclude_published=True)
     return r["article"], r["card"]
@@ -45,10 +47,21 @@ SLUG = "is-austins-home-improvement-boom-cooling-off"
 
 
 def _cfg(**overrides):
-    """A config whose ledger is empty, so the duplicate gate is not the thing under test."""
+    """A config whose ledger AND published-article folder are empty, so neither the duplicate
+    gate nor the already-published filter is the thing under test.
+
+    `analysis_dir` matters as much as `published_ledger` and was missed when that lesson was
+    learned. `published_questions` reads the LIVE SITE's articles out of the checkout, so the
+    pool of selectable topics shrank every time the machine published for real — and when the
+    fifth builder's current-period title went live, three suites went red on main with no code
+    change behind it. A suite whose greenness depends on production data will eventually go
+    red because production advanced, and here that is not cosmetic: CI runs the suite BEFORE
+    the cycle, so a red suite stops the machine running at all.
+    """
     cfg = copy.deepcopy(engine.load_config())
     cfg["publish"] = dict(cfg["publish"],
-                          published_ledger=tempfile.mkdtemp() + "/empty.json")
+                          published_ledger=tempfile.mkdtemp() + "/empty.json",
+                          analysis_dir=tempfile.mkdtemp())
     for key, value in overrides.items():
         cfg[key] = value
     return cfg
@@ -66,9 +79,17 @@ def _sidecar_dir(card=None):
 
 
 def _stale_card():
-    """The engine's real card with its hero figure moved — a card the ledger cannot back."""
+    """The engine's real card with its hero figure moved — a card the ledger cannot back.
+
+    The number is replaced wherever it sits. Splitting on the first space assumed a headline
+    shaped like "451 tree permits" and broke on "13.88¢/kWh", which is one token — the moment
+    the suite stopped borrowing the live site's leftovers and started exercising the
+    top-ranked topic, that assumption stopped holding.
+    """
     _, card = _picked()
-    return dict(card, headline="94 " + card["headline"].split(" ", 1)[1])
+    moved = re.sub(r"[\d][\d,.]*", "94", card["headline"], count=1)
+    assert moved != card["headline"], f"no figure to move in {card['headline']!r}"
+    return dict(card, headline=moved)
 
 
 def _kwargs(cfg, **over):
@@ -158,15 +179,19 @@ def test_an_UNVERIFIABLE_destination_SKIPS_exactly_like_a_dead_one():
 
 
 def test_a_DUPLICATE_destination_SKIPS():
-    """With the REAL ledger, article 1's URL is already posted. A driver must not re-post it."""
-    cfg = copy.deepcopy(engine.load_config())
+    """The duplicate gate RAN. That it HALTS is proven directly against the gate in
+    test_card.py; what is asserted here is that a clean cycle does not somehow skip it.
+
+    It used to borrow the real config to get "a ledger with something in it". That made the
+    test depend on which articles happened to be live: once every builder's current title was
+    published, the engine could produce nothing at all, no gate ran, and this went red for a
+    reason unrelated to duplicates. It states its own premise now.
+    """
+    cfg = _cfg()
     cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
-    d = autopilot.evaluate(cfg, today=TODAY, state=_ready_state(),
-                           **_kwargs(cfg, exclude_published=False)
-                           if False else _kwargs(cfg))
-    # article 2 is not in the ledger, so this cycle is clean — the duplicate case is proven
-    # directly against the gate in test_card.py. Here we assert the gate RAN.
-    assert any("duplicate" in v.name for v in d.verdicts)
+    d = autopilot.evaluate(cfg, today=TODAY, state=_ready_state(), **_kwargs(cfg))
+    assert any("duplicate" in v.name for v in d.verdicts), [v.name for v in d.verdicts]
+    assert all(v.ok for v in d.verdicts), [v.line() for v in d.verdicts if not v.ok]
 
 
 def test_a_GATE_THAT_RAISES_is_a_failure_not_an_absence_of_an_opinion():
@@ -1178,10 +1203,13 @@ def test_a_successful_post_COMMITS_its_ledger_row():
     cfg = _cfg()
     cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
     committed = []
-    d, _ = _cycle_with_ledger(cfg, lambda record: committed.append(record))
+    d, _ = _cycle_with_ledger(cfg, lambda record, state: committed.append((record, state)))
     assert d.action == "publish"
     assert len(committed) == 1, "the post was not recorded anywhere durable"
-    row = committed[0]
+    row, landed_state = committed[0]
+    # The CLOCK must be part of the same call. It was written only to the runner before this,
+    # so the 3-day floor never engaged across runs.
+    assert landed_state.get("last_article_at") == TODAY.isoformat(), landed_state
     assert row["page_id"], "the row carries no page_id — the two-lock proof would be lost"
     assert row["post_url"] and row["article_url"] and row["streak_after"]
 
@@ -1192,7 +1220,7 @@ def test_a_LEDGER_COMMIT_FAILURE_after_a_live_post_is_posted_unconfirmed():
     cfg = _cfg()
     cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
 
-    def refuse(_record):
+    def refuse(_record, _state):
         raise RuntimeError("`git push` exited 1: ! [remote rejected] main (protected branch)")
 
     d, notices = _cycle_with_ledger(cfg, refuse)
@@ -1204,6 +1232,128 @@ def test_a_LEDGER_COMMIT_FAILURE_after_a_live_post_is_posted_unconfirmed():
     # The notice must say WHY it matters, not merely that it happened.
     assert "posted AGAIN" in notices[0], "the duplicate risk is not spelled out"
     assert "withheld" not in notices[0].lower()
+
+
+def _real_origin():
+    """A genuine git repo with a bare `origin`, seeded with an EMPTY ledger and no state file.
+
+    Real git, because the defect this discipline exists for is a real-git behaviour: `git
+    checkout -B <branch> origin/main` carries an uncommitted file over into the new branch.
+    FakeRepo cannot produce that, which is why every earlier test passed while the first live
+    run failed. Returns the work tree and a merge function that really merges.
+    """
+    import subprocess
+    root = Path(tempfile.mkdtemp())
+    origin, work = root / "origin.git", root / "work"
+    subprocess.run(["git", "init", "--bare", "-b", "main", str(origin)], check=True,
+                   capture_output=True)
+    subprocess.run(["git", "clone", str(origin), str(work)], check=True, capture_output=True)
+    for k, v in (("user.email", "t@t"), ("user.name", "t"), ("commit.gpgsign", "false")):
+        subprocess.run(["git", "-C", str(work), "config", k, v], check=True, capture_output=True)
+    led = work / "autoposter" / "data" / "published-posts.json"
+    led.parent.mkdir(parents=True, exist_ok=True)
+    led.write_text("[]\n")
+    for cmd in (["add", "-A"], ["commit", "-m", "seed"], ["push", "-u", "origin", "main"]):
+        subprocess.run(["git", "-C", str(work), *cmd], check=True, capture_output=True)
+
+    def merge(branch, *, title, body=None):
+        subprocess.run(["git", "-C", str(work), "push", "origin", f"{branch}:main"],
+                       check=True, capture_output=True)
+        return "https://github.com/o/r/pull/1"
+
+    def on_main(relative):
+        out = subprocess.run(["git", "-C", str(work), "show", f"origin/main:{relative}"],
+                             capture_output=True, text=True)
+        return json.loads(out.stdout) if out.returncode == 0 else None
+
+    return work, merge, on_main
+
+
+def test_THE_FLOOR_ACTUALLY_HOLDS_a_second_cycle_right_after_a_publish_is_too_soon():
+    """THE PROOF THE OWNER ASKED FOR, and the reason the clock has to live on main.
+
+    `autopilot-state.json` has never existed on main, so every run loaded "no article recorded
+    yet" and `due()` returned True every time — the 3-day floor never engaged once in
+    production. It was observed live: a cycle offered a NEW article hours after one had been
+    published.
+
+    So: run a real cycle with the real committer against a real repo, then run `due()` against
+    the state READ BACK FROM MAIN — not from the runner, whose copy is exactly what used to
+    vanish. The second cycle must stop before selection.
+    """
+    import subprocess
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+    import run_autopilot as ra
+
+    work, merge, on_main = _real_origin()
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    real_repo, real_pr = ra.REPO, ra.open_and_merge_pr
+    try:
+        ra.REPO, ra.open_and_merge_pr = work, merge
+        d, _ = _cycle_with_ledger(cfg, ra.bookkeeping_committer(lambda *_: None))
+    finally:
+        ra.REPO, ra.open_and_merge_pr = real_repo, real_pr
+    assert d.action == "publish", d.action
+
+    landed = on_main("autoposter/data/autopilot-state.json")
+    assert landed is not None, "the clock is still not on main — the floor cannot hold"
+    assert landed["last_article_at"] == TODAY.isoformat(), landed
+
+    # THE SECOND CYCLE. Nothing from the first runner survives except what reached main.
+    ok, why = autopilot.due(landed, cfg, TODAY)
+    assert not ok, f"the floor did not hold: {why}"
+    assert "floor is" in why, why
+
+    # And it is a FLOOR, not a freeze: once the minimum has passed, it opens again.
+    later = date.fromordinal(TODAY.toordinal() + (cfg.get("cadence", {}).get("article_days_min", 3)))
+    assert autopilot.due(landed, cfg, later)[0], "the floor never reopens"
+
+
+def test_the_STREAK_is_counted_from_the_ledger_not_a_number_nobody_increments():
+    """Post #4 recorded `streak_after: 2` with four posts on the page, because the streak came
+    from `clean_streak` in config.yaml — a hand-maintained number no code ever advanced. The
+    ledger IS the list of posts, so the streak is a property of it rather than a second copy of
+    the same fact kept somewhere else and allowed to drift."""
+    led = Path(tempfile.mkdtemp()) / "l.json"
+    rows = [{"platform": "facebook", "page_id": "PIN", "post_publish_verified": True}] * 3
+    led.write_text(json.dumps(rows))
+    assert publish_gate.clean_streak(led, page_id="PIN") == 3
+
+    # A post on a DIFFERENT page is not this page's streak.
+    led.write_text(json.dumps(rows + [{"platform": "facebook", "page_id": "OTHER",
+                                       "post_publish_verified": True}]))
+    assert publish_gate.clean_streak(led, page_id="PIN") == 3, "another page's post was counted"
+
+    # An UNVERIFIED post breaks the run — that is what "in a row" means.
+    led.write_text(json.dumps(rows + [{"platform": "facebook", "page_id": "PIN",
+                                       "post_publish_verified": False},
+                                      {"platform": "facebook", "page_id": "PIN",
+                                       "post_publish_verified": True}]))
+    assert publish_gate.clean_streak(led, page_id="PIN") == 1, "an unverified post did not break it"
+
+    # And config.yaml's own `clean_streak` is a DIFFERENT thing wearing the same name — the
+    # owner-advanced autonomy marker. Nothing here may read or write it.
+    import inspect
+    # The config read has a shape of its own: `.get("clean_streak"` off the channels dict.
+    # Asserting on the bare word would also match the call to publish_gate's function.
+    assert 'get("clean_streak"' not in inspect.getsource(autopilot.run_cycle), \
+        "run_cycle is reading config's owner-advanced counter again"
+
+
+def test_the_ledger_row_records_the_streak_the_LEDGER_implies():
+    """End to end: the number written into the row is the one the ledger supports."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    led = Path(tempfile.mkdtemp()) / "l.json"
+    led.write_text(json.dumps([{"platform": "facebook", "page_id": "1335273942995805",
+                                "post_publish_verified": True,
+                                "article_url": f"https://x/{i}/"} for i in range(3)]))
+    committed = []
+    d, _ = _cycle_with_ledger(cfg, lambda r, s: committed.append(r), ledger_path=led)
+    assert d.action == "publish", d.action
+    assert committed[0]["streak_after"] == 4, \
+        f"three posts on the page, so this is the fourth: got {committed[0]['streak_after']}"
 
 
 def test_THE_REAL_COMMITTER_going_green_without_the_row_on_main_is_posted_unconfirmed():
@@ -1252,7 +1402,7 @@ def test_THE_REAL_COMMITTER_going_green_without_the_row_on_main_is_posted_unconf
     assert d.is_broken, "the job stayed green with a live post and no row on main"
     assert "THE POST IS LIVE BUT UNRECORDED" in notices[0], notices[0]
     assert "posted AGAIN" in notices[0], "the duplicate risk is not spelled out"
-    assert "not on main" in d.reason, d.reason
+    assert "did not reach main" in d.reason, d.reason
     on_main = subprocess.run(
         ["git", "-C", str(work), "show", "origin/main:autoposter/data/published-posts.json"],
         capture_output=True, text=True, check=True).stdout
@@ -1308,7 +1458,7 @@ def test_the_ledger_commit_happens_BEFORE_the_state_write():
     state = Path(tempfile.mkdtemp()) / "s.json"
     autopilot.save_state({"last_article_at": "2026-09-01", "cycles": 1}, state)
 
-    def refuse(_record):
+    def refuse(_record, _state):
         raise RuntimeError("push failed")
 
     autopilot.run_cycle(
