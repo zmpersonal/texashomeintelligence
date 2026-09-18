@@ -160,6 +160,20 @@ def _current_title(topic: dict, articles: dict | None, today: date) -> str:
     return topic["question"]
 
 
+class NothingDefensible(RuntimeError):
+    """The engine has nothing worth writing RIGHT NOW. A refusal, not a fault.
+
+    It has its own type because the caller has to tell it apart from a broken gate, and the
+    only other way to do that is to match on the message text — which is the kind of coupling
+    that survives until someone improves the wording.
+
+    This is the NORMAL state between periods. A recurring builder is retired for the period its
+    data names, so once every builder has published its current period the machine has nothing
+    to say until the data gains a month. That is the withhold-over-filler discipline working at
+    the calendar's timescale, and it must not page anybody.
+    """
+
+
 def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
         specs_dir: Path | None = None, destination: dict | None = None,
         articles: dict | None = None, exclude_published: bool = False,
@@ -193,7 +207,8 @@ def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
         buildable = [t for t in buildable
                      if _current_title(t, articles, today) not in already]
     if not buildable:
-        raise RuntimeError("no topic is defensible from the current feed — rescope, don't reach")
+        raise NothingDefensible(
+            "no topic is defensible from the current feed — rescope, don't reach")
     chosen = buildable[0]
 
     # An article's claim-builder and writer belong to its TOPIC. Adding an article is adding a

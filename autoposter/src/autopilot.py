@@ -133,8 +133,9 @@ class CycleDecision:
         return all(v.ok for v in self.live_verdicts)
 
     def notice(self) -> str:
-        """The Slack message for this outcome. Every path produces one except `too_soon`."""
-        if self.action == "too_soon":
+        """The Slack message for this outcome. Every path produces one except the two quiet
+        ones — `too_soon` and `nothing_to_say`, which are the machine waiting, not acting."""
+        if self.action in ("too_soon", "nothing_to_say"):
             return ""
         if self.action == "paused":
             return (f"⏸ THI autoposter is PAUSED — nothing published.\n"
@@ -518,6 +519,11 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
         result = engine.run("thi", write_fn=write_fn, build_claims_fn=build_claims_fn,
                             today=today, articles=articles, exclude_published=True,
                             config=config)
+    except engine.NothingDefensible as exc:
+        # NOT a fault, and not a skip either. Nothing cleared the bar, which between periods is
+        # the expected state for days at a time. Reported as its own outcome so the driver can
+        # stay quiet about it without also staying quiet about a gate that broke.
+        return CycleDecision(action="nothing_to_say", reason=str(exc))
     except Exception as exc:                       # noqa: BLE001
         decision.reason = "the article could not be produced cleanly"
         decision.verdicts = [GateVerdict("article-engine", False,
@@ -636,7 +642,11 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
     if decision is None:
         decision = evaluate(config, today=today, state=state, **evaluate_kwargs)
 
-    if decision.action == "too_soon":
+    if decision.action in ("too_soon", "nothing_to_say"):
+        # SILENT, deliberately. A daily "nothing to publish" for the ten days between one
+        # period and the next trains the reader to ignore the channel, and the one message
+        # that matters is the one that says something WAS published. The run still exits 0 and
+        # the reason is in the job log for anyone who goes looking.
         return decision
     if decision.action in ("skip", "paused"):
         _safe_notify(notify_fn, decision.notice(), decision)
