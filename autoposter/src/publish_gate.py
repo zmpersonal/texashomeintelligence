@@ -88,6 +88,23 @@ def _normalise(url: str) -> str:
     return (url or "").strip().rstrip("/").lower()
 
 
+# Public alias. The orphan finder has to ask the same question the duplicate gate asks — "has
+# this destination been posted?" — and it must ask it the SAME way, or the two could disagree
+# about what counts as the same URL and an orphan would be promoted into a duplicate.
+normalise = _normalise
+
+
+def posted_destinations(ledger_path: Path | None = None, platform: str | None = None) -> set[str]:
+    """Every destination the ledger records a post for, normalised.
+
+    This is the record of PROMOTION, distinct from the site, which is the record of publication.
+    An article present on the site and absent here was published and never promoted.
+    """
+    return {_normalise(entry.get("article_url", ""))
+            for entry in _load(ledger_path or LEDGER)
+            if not platform or entry.get("platform") == platform}
+
+
 def publish_with_verification(post: dict, *, publish_fn, verify_opener, streak_after: int,
                               article_slug: str = "", ledger_path: Path | None = None,
                               now=None) -> dict:
