@@ -45,5 +45,17 @@
     "post_publish_detail": "resolved 200 (GitHub Actions run 35390744679)",
     "streak_after": 3,
     "note": "Clean post #3, published by the promote-only path in run 35390744679. Reconstructed here because the committer read the row from the dirty working tree, matched it against itself and committed nothing - the defect this commit fixes (L21). Blotato status confirmed published with this publicUrl on the pinned page."
+  },
+  {
+    "published_at": "2026-09-18T20:50:58+00:00",
+    "platform": "facebook",
+    "page_id": "1335273942995805",
+    "post_url": "blotato:adc96968-16b5-4181-aeb1-e535b282853c",
+    "submission_id": "adc96968-16b5-4181-aeb1-e535b282853c",
+    "article_url": "https://texashomeintelligence.com/analysis/was-august-2026-hotter-than-normal-in-texas/",
+    "article_slug": "was-august-2026-hotter-than-normal-in-texas",
+    "post_publish_verified": true,
+    "post_publish_detail": "resolved 200",
+    "streak_after": 2
   }
 ]
