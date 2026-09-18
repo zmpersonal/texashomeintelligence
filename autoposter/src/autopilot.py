@@ -167,8 +167,10 @@ class CycleDecision:
                     f"Facebook: {self.post_url or '(url unknown — check the page)'}\n"
                     f"Article: {(self.article or {}).get('canonical_url', '')}\n"
                     f"The post went out. The cycle could not finish recording or announcing it, "
-                    f"so the ledger and the cadence clock may not reflect it. Check the page "
-                    f"before the next cycle runs.")
+                    f"so the ledger on main may not carry this row.\n"
+                    f"THAT MATTERS: the duplicate gate and the orphan finder both read that "
+                    f"ledger, so an unrecorded post can be posted AGAIN by the next cycle. "
+                    f"Pause the machine and reconcile before it next runs.")
         if self.action == "posted_nothing":
             card = self.card or {}
             head = (f"{card.get('question', '')}\n"
@@ -594,7 +596,7 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
 def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wait_fn=None,
               publish_fn=None, verify_opener=None, state_path: Path | None = None,
               ledger_path: Path | None = None, dry_run: bool = False, sleep_fn=None,
-              **evaluate_kwargs) -> CycleDecision:
+              ledger_commit_fn=None, **evaluate_kwargs) -> CycleDecision:
     """Evaluate, then act. The ONLY path that publishes.
 
     `merge_fn` merges the already-green site PR, `deploy_wait_fn` blocks until the deploy is
@@ -742,6 +744,18 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
     decision.post_url = record["post_url"]
 
     try:
+        # ---- PERSIST THE LEDGER. `publish_with_verification` appended the row to the RUNNER's
+        # checkout, which is destroyed when the job ends. Until this ran, every post the machine
+        # made vanished from the record the moment the container did — and the duplicate gate
+        # and the orphan finder both read that record. The result was not a lost statistic: the
+        # next cycle would have seen the article as never-promoted and posted it AGAIN.
+        #
+        # This is the same operation class that took a week to get working, so it uses the same
+        # proven path: fetch, branch, commit, push, PR, auto-merge. A failure here raises into
+        # the handler below, which reports `posted_unconfirmed` — LOUD and red — because the
+        # post is live and the record of it is not.
+        if ledger_commit_fn:
+            ledger_commit_fn(record)
         # A promotion does not move `last_article_at`. The cadence floor governs how often a NEW
         # article goes out; recovering one that is already published is not that.
         advanced = ({} if decision.promotion else {"last_article_at": today.isoformat()})

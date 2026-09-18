@@ -17,5 +17,19 @@
     },
     "streak_after": 1,
     "note": "Clean post #1 of 4 toward Facebook autonomy. Zero human edits. Published before publish_gate existed; recorded here retrospectively from the real run ids."
+  },
+  {
+    "published_at": "2026-09-18T20:01:13+00:00",
+    "platform": "facebook",
+    "page_id": "1335273942995805",
+    "post_url": "https://facebook.com/1335273942995805_122111619099466373",
+    "submission_id": "f369a3aa-e30e-49aa-80e0-57a414ba951d",
+    "article_url": "https://texashomeintelligence.com/analysis/did-austins-ac-rush-follow-the-heat-in-august-2026/",
+    "article_slug": "did-austins-ac-rush-follow-the-heat-in-august-2026",
+    "article_title": "Did Austin's AC rush follow the heat in August 2026?",
+    "post_publish_verified": true,
+    "post_publish_detail": "resolved 200 (GitHub Actions run 35389068587)",
+    "streak_after": 2,
+    "note": "Clean post #2, published by the promote-only path in run 35389068587. Reconstructed here because the row the cycle wrote lived only in the runner's checkout - the defect this commit fixes. Blotato status confirmed published with this publicUrl."
   }
 ]

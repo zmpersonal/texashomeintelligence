@@ -428,18 +428,25 @@ def test_an_ALREADY_PROMOTED_article_is_not_an_orphan():
     """The duplicate gate is untouched and unneeded here: an article with a ledger row simply is
     not in the orphan set. Selection and the gate stay separate mechanisms."""
     cfg = _cfg()
+    # Both lookups use the SAME ledger, starting empty. Seeding from orphans found under the
+    # REAL ledger and then checking against a temp one compares two different worlds: an
+    # article recorded in the real ledger is not an orphan there but is one here, so the second
+    # call legitimately returns it and the test fails for a reason it never meant to measure.
+    empty = Path(tempfile.mkdtemp()) / "l.json"
+    empty.write_text("[]")
     found = autopilot.promotable_orphans(
         cfg, today=TODAY, write_fn=run_article.write,
-        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES)
+        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES,
+        ledger_path=empty)
     if not found:
         return
-    ledger = Path(tempfile.mkdtemp()) / "l.json"
-    ledger.write_text(json.dumps([{"platform": "facebook", "post_url": "https://facebook.com/x",
-                                   "article_url": o["article"]["canonical_url"]} for o in found]))
+    recorded = Path(tempfile.mkdtemp()) / "l.json"
+    recorded.write_text(json.dumps([{"platform": "facebook", "post_url": "https://facebook.com/x",
+                                     "article_url": o["article"]["canonical_url"]} for o in found]))
     assert autopilot.promotable_orphans(
         cfg, today=TODAY, write_fn=run_article.write,
         build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES,
-        ledger_path=ledger) == []
+        ledger_path=recorded) == []
 
 
 def test_a_STALE_orphan_is_REFUSED_not_promoted():
@@ -1143,6 +1150,109 @@ def test_the_withheld_notice_names_the_RIGHT_cause():
     notice = link_failed.notice()
     assert "link/media unverified" in notice and "HTTP 404" in notice
     assert "POST FAILED" not in notice
+
+
+
+# ===================================================== the ledger must outlive the runner
+#
+# Post #2 went out cleanly and its row died with the container. `publish_with_verification`
+# appends to the RUNNER's checkout; nothing committed it back. The duplicate gate and the orphan
+# finder both read that ledger, so the next cycle would have seen a never-promoted article and
+# posted it a SECOND time. A lost row here is a duplicate post, not a lost statistic.
+
+def _cycle_with_ledger(cfg, commit_fn, publish_fn=None, ledger_path=None):
+    notices = []
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=notices.append, merge_fn=lambda dec: None,
+        deploy_wait_fn=lambda url: None, verify_opener=lambda url: (True, "resolved 200"),
+        publish_fn=publish_fn or (lambda post: {"post_url": "https://facebook.com/p/2",
+                                                "submission_id": "s2"}),
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=ledger_path or (Path(tempfile.mkdtemp()) / "l.json"),
+        ledger_commit_fn=commit_fn, defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
+    return d, notices
+
+
+def test_a_successful_post_COMMITS_its_ledger_row():
+    """The fix. Without it the record exists only in a container that is about to be deleted."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    committed = []
+    d, _ = _cycle_with_ledger(cfg, lambda record: committed.append(record))
+    assert d.action == "publish"
+    assert len(committed) == 1, "the post was not recorded anywhere durable"
+    row = committed[0]
+    assert row["page_id"], "the row carries no page_id — the two-lock proof would be lost"
+    assert row["post_url"] and row["article_url"] and row["streak_after"]
+
+
+def test_a_LEDGER_COMMIT_FAILURE_after_a_live_post_is_posted_unconfirmed():
+    """The case the owner named. The post is LIVE and the record is not. It must go red and
+    loud, and it must never read as 'nothing was posted'."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+
+    def refuse(_record):
+        raise RuntimeError("`git push` exited 1: ! [remote rejected] main (protected branch)")
+
+    d, notices = _cycle_with_ledger(cfg, refuse)
+    assert d.action == "posted_unconfirmed", d.action
+    assert d.is_broken, "an unrecorded live post must turn the job red"
+    assert d.post_url == "https://facebook.com/p/2"
+    assert "THE POST IS LIVE BUT UNRECORDED" in notices[0]
+    assert "remote rejected" in d.reason, d.reason
+    # The notice must say WHY it matters, not merely that it happened.
+    assert "posted AGAIN" in notices[0], "the duplicate risk is not spelled out"
+    assert "withheld" not in notices[0].lower()
+
+
+def test_the_ledger_commit_happens_BEFORE_the_state_write():
+    """Ordering. If the commit fails, the cadence clock must not already have moved — otherwise
+    a reconciling human sees a cycle that looks complete."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    state = Path(tempfile.mkdtemp()) / "s.json"
+    autopilot.save_state({"last_article_at": "2026-09-01", "cycles": 1}, state)
+
+    def refuse(_record):
+        raise RuntimeError("push failed")
+
+    autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=lambda m: None, merge_fn=lambda dec: None,
+        deploy_wait_fn=lambda url: None, verify_opener=lambda url: (True, "resolved 200"),
+        publish_fn=lambda post: {"post_url": "https://facebook.com/p/2", "submission_id": "s"},
+        state_path=state, ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        ledger_commit_fn=refuse, defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
+    assert autopilot.load_state(state)["last_article_at"] == "2026-09-01", \
+        "the clock moved even though the post was never recorded"
+
+
+def test_THE_LOOP_IS_CLOSED_a_recorded_post_is_no_longer_an_orphan():
+    """The whole point. Once the row is on main, the orphan finder must not offer that article
+    again — which is what stops the machine posting the same link every day."""
+    cfg = _cfg()
+    found = autopilot.promotable_orphans(
+        cfg, today=TODAY, write_fn=run_article.write,
+        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES,
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json")
+    if not found:
+        return
+    first = found[0]
+
+    # Exactly the row the committer would write for it.
+    ledger = Path(tempfile.mkdtemp()) / "l.json"
+    ledger.write_text(json.dumps([{
+        "platform": "facebook", "page_id": "1335273942995805",
+        "post_url": "https://facebook.com/1335273942995805_1",
+        "article_url": first["article"]["canonical_url"],
+        "article_slug": first["article"]["slug"], "streak_after": 2}]))
+
+    again = autopilot.promotable_orphans(
+        cfg, today=TODAY, write_fn=run_article.write,
+        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES,
+        ledger_path=ledger)
+    assert first["topic_id"] not in [o["topic_id"] for o in again], \
+        "a recorded post is still being offered for promotion — the duplicate loop is open"
 
 
 if __name__ == "__main__":

@@ -269,6 +269,59 @@ def open_and_merge_pr(branch: str, *, title: str, body: str | None = None) -> st
     return url
 
 
+def ledger_committer():
+    """Commit the published-post row to main, so the record outlives the runner.
+
+    WHY THIS EXISTS. `publish_with_verification` appends the row to the runner's checkout, and
+    the runner is destroyed when the job ends. Post #2 went out cleanly and its row died with
+    the container. The duplicate gate and the orphan finder both read that ledger, so the next
+    cycle would have seen a never-promoted article and posted it a SECOND time. A lost row is
+    not a lost statistic here; it is a duplicate post.
+
+    It branches from a FRESH origin/main rather than from the runner's checkout, and re-reads
+    the ledger there before appending. The checkout can be minutes old by the time a post lands,
+    and committing a stale whole-file would silently drop any row added in between.
+
+    Same path the article merge uses — branch, commit, push, PR, auto-merge, delete — because
+    that path is the one that has been proven, and this is the same operation class that took a
+    week to get working. A failure raises, and `run_cycle` reports `posted_unconfirmed`.
+    """
+    def commit(record: dict) -> str:
+        slug = record.get("article_slug", "post")
+        branch = f"autoposter/ledger-{slug}-{os.environ.get('GITHUB_RUN_ID', 'local')}"
+        relative = "autoposter/data/published-posts.json"
+
+        _git("fetch", "origin", "main")
+        _git("checkout", "-B", branch, "origin/main")
+
+        path = REPO / relative
+        entries = json.loads(path.read_text()) if path.exists() else []
+        if any(_same_destination(e, record) for e in entries):
+            # Already recorded — a retry, or a row that landed from another run. Committing a
+            # duplicate row would make the ledger lie about how many times this was posted.
+            print(f"[ledger] {record.get('article_url')} is already recorded; nothing to commit")
+            return ""
+        entries.append(record)
+        path.write_text(json.dumps(entries, indent=2, ensure_ascii=False) + "\n")
+
+        _git("add", relative)
+        _git("commit", "-m", f"autoposter: record the post of {slug}\n\n"
+                             f"Written by the cycle that published it, so the duplicate gate "
+                             f"and the orphan finder can see it on the next run.")
+        _git("push", "-u", "origin", branch)
+        return open_and_merge_pr(branch, title=f"autoposter: record the post of {slug}")
+    return commit
+
+
+def _same_destination(entry: dict, record: dict) -> bool:
+    """Two rows for the same link on the same platform. Uses the duplicate gate's own
+    normaliser, so the ledger and the gate can never disagree about what counts as the same."""
+    import publish_gate
+    return (publish_gate.normalise(entry.get("article_url", ""))
+            == publish_gate.normalise(record.get("article_url", ""))
+            and entry.get("platform") == record.get("platform"))
+
+
 # --------------------------------------------------------------------------- posting
 
 def blotato_publisher(api_key: str | None, config: dict):
@@ -334,6 +387,7 @@ def main() -> int:
         deploy_wait_fn=wait_for_deploy,
         publish_fn=blotato_publisher(env.get("BLOTATO_API_KEY"), config),
         render_fn=site_renderer(),
+        ledger_commit_fn=ledger_committer(),
         # The article's URL and its card are created BY the deploy, so their resolution checks
         # cannot run in the pre-deploy sweep. They move to `run_cycle`'s post-deploy stage.
         defer_resolution=True,
