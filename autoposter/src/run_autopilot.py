@@ -269,7 +269,67 @@ def open_and_merge_pr(branch: str, *, title: str, body: str | None = None) -> st
     return url
 
 
-def ledger_committer():
+LEDGER_RELATIVE = "autoposter/data/published-posts.json"
+LEDGER_CONFIRM_ATTEMPTS = 5
+LEDGER_CONFIRM_DELAY = 3
+
+
+def _ledger_on_main(relative: str = LEDGER_RELATIVE) -> list:
+    """The ledger AS IT IS ON MAIN — read from the ref, never from the working tree.
+
+    THE REGRESSION. `publish_with_verification` appends the new row to the CHECKOUT's copy of
+    this file before the commit step runs. `git checkout -B <branch> origin/main` does not
+    discard an uncommitted change, so that row rode along into the new branch. The dedupe then
+    read the file, found the row it had just written ITSELF, and reported "already recorded;
+    nothing to commit" — green, with nothing on main. Post #3 went out and stayed unrecorded,
+    which left it looking like a never-promoted orphan: primed to be posted a second time.
+
+    Reading from the ref removes the possibility rather than working around it. A git failure
+    that is not "the file is not on main yet" is re-raised: an unknown ledger must never read as
+    an empty one, because empty means "nothing is recorded" and that is permission to post.
+    """
+    try:
+        raw = _git("show", f"origin/main:{relative}")
+    except CommandFailed as exc:
+        if "does not exist" in str(exc) or "exists on disk" in str(exc):
+            return []                              # genuinely not on main yet
+        raise
+    return json.loads(raw) if raw.strip() else []
+
+
+def _confirm_on_main(record: dict, relative: str = LEDGER_RELATIVE, sleep_fn=time.sleep) -> None:
+    """The row is on main, or this RAISES. Success is the row being there — nothing else.
+
+    THE CLASS FIX, and the one that matters more than the bug above. Every earlier version
+    defined success as "the code path completed without an exception". That is what let the
+    committer return green while the post it was recording stayed unrecorded and re-postable —
+    the single failure mode that defeats the hands-off safety model, because every other failure
+    this machine has had was loud and this one was silent.
+
+    So the check is on the OUTCOME, and both paths run it: the one that commits, and the one
+    that decides there is nothing to commit. "Nothing to commit" is only true if the row is
+    already on main, and that is now verified rather than assumed. A persistence step that
+    cannot confirm its own success must not report success.
+
+    The retries are for GitHub's replication lag between `pr merge` returning and the ref being
+    fetchable — not tolerance for a missing row. When they are spent, this raises into
+    `run_cycle`, which reports `posted_unconfirmed`: red, clock unmoved, and a Slack notice
+    saying the post is live, unrecorded, and will be re-posted unless a human reconciles.
+    """
+    for attempt in range(LEDGER_CONFIRM_ATTEMPTS):
+        if attempt:
+            sleep_fn(LEDGER_CONFIRM_DELAY)
+        _git("fetch", "origin", "main")
+        if any(_same_destination(e, record) for e in _ledger_on_main(relative)):
+            print(f"[ledger] confirmed on main: {record.get('article_url')}")
+            return
+    raise CommandFailed(
+        f"the post of {record.get('article_slug') or record.get('article_url')} IS LIVE but its "
+        f"row is not on main after {LEDGER_CONFIRM_ATTEMPTS} checks. The orphan finder reads "
+        f"main, so it will see this article as never-promoted and post it AGAIN.")
+
+
+def ledger_committer(sleep_fn=time.sleep):
     """Commit the published-post row to main, so the record outlives the runner.
 
     WHY THIS EXISTS. `publish_with_verification` appends the row to the runner's checkout, and
@@ -278,38 +338,49 @@ def ledger_committer():
     cycle would have seen a never-promoted article and posted it a SECOND time. A lost row is
     not a lost statistic here; it is a duplicate post.
 
-    It branches from a FRESH origin/main rather than from the runner's checkout, and re-reads
-    the ledger there before appending. The checkout can be minutes old by the time a post lands,
-    and committing a stale whole-file would silently drop any row added in between.
+    Three things make it trustworthy, and the third is the only one that is load-bearing:
+
+    1. It reads main through `_ledger_on_main`, so the dedupe compares against what is actually
+       recorded, not against the row this same cycle just wrote into the working tree.
+    2. It writes the file from MAIN's content plus the row, so a dirty working tree — this one
+       always is, by the time a post lands — cannot leak into the commit.
+    3. Whatever it decided to do, it then CONFIRMS the row is on main and raises if it is not.
 
     Same path the article merge uses — branch, commit, push, PR, auto-merge, delete — because
     that path is the one that has been proven, and this is the same operation class that took a
-    week to get working. A failure raises, and `run_cycle` reports `posted_unconfirmed`.
+    week to get working.
     """
     def commit(record: dict) -> str:
         slug = record.get("article_slug", "post")
         branch = f"autoposter/ledger-{slug}-{os.environ.get('GITHUB_RUN_ID', 'local')}"
-        relative = "autoposter/data/published-posts.json"
+        relative = LEDGER_RELATIVE
 
         _git("fetch", "origin", "main")
-        _git("checkout", "-B", branch, "origin/main")
+        entries = _ledger_on_main(relative)
 
-        path = REPO / relative
-        entries = json.loads(path.read_text()) if path.exists() else []
+        url = ""
         if any(_same_destination(e, record) for e in entries):
-            # Already recorded — a retry, or a row that landed from another run. Committing a
-            # duplicate row would make the ledger lie about how many times this was posted.
-            print(f"[ledger] {record.get('article_url')} is already recorded; nothing to commit")
-            return ""
-        entries.append(record)
-        path.write_text(json.dumps(entries, indent=2, ensure_ascii=False) + "\n")
+            # Already on main — a retry, or a row that landed from another run. Committing it
+            # twice would make the ledger lie about how many times this was posted. This is a
+            # legitimate no-op, but it is NOT the end of the story: the confirmation below still
+            # runs, so "nothing to commit" can never again stand in for "it is recorded".
+            print(f"[ledger] {record.get('article_url')} is already on main; nothing to commit")
+        else:
+            _git("checkout", "-B", branch, "origin/main")
+            path = REPO / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            # From main's content, not the working tree's. The checkout above carries the dirty
+            # copy of this file over; overwriting it means the commit's diff is exactly one row.
+            path.write_text(json.dumps(entries + [record], indent=2, ensure_ascii=False) + "\n")
+            _git("add", relative)
+            _git("commit", "-m", f"autoposter: record the post of {slug}\n\n"
+                                 f"Written by the cycle that published it, so the duplicate gate "
+                                 f"and the orphan finder can see it on the next run.")
+            _git("push", "-u", "origin", branch)
+            url = open_and_merge_pr(branch, title=f"autoposter: record the post of {slug}")
 
-        _git("add", relative)
-        _git("commit", "-m", f"autoposter: record the post of {slug}\n\n"
-                             f"Written by the cycle that published it, so the duplicate gate "
-                             f"and the orphan finder can see it on the next run.")
-        _git("push", "-u", "origin", branch)
-        return open_and_merge_pr(branch, title=f"autoposter: record the post of {slug}")
+        _confirm_on_main(record, relative, sleep_fn)
+        return url
     return commit
 
 
