@@ -224,7 +224,16 @@ def load_state(path: Path | None = None) -> dict:
     path = path or STATE
     if not path.exists():
         return {"last_article_at": None, "cycles": 0}
-    return json.loads(path.read_text())
+    try:
+        return json.loads(path.read_text())
+    except Exception as exc:                       # noqa: BLE001
+        # A corrupt state file must not crash the run before anything has happened. Treating it
+        # as "no history" is the SAFE direction only because `due()` then returns True and the
+        # gates still decide — and a cycle that publishes is far less bad than a daily crash
+        # nobody can diagnose. Loud in the log, because a lost clock is worth knowing about.
+        print(f"[warn] state file at {path} is unreadable ({type(exc).__name__}: {exc}); "
+              f"treating this as no recorded history")
+        return {"last_article_at": None, "cycles": 0}
 
 
 def save_state(state: dict, path: Path | None = None) -> None:
@@ -247,6 +256,26 @@ def due(state: dict, config: dict, today: date) -> tuple[bool, str]:
 
 
 # --------------------------------------------------------------------------- the sweep
+
+def _safe_notify(notify_fn, message: str, decision: "CycleDecision") -> None:
+    """Deliver a notice, and never let the DELIVERY failure replace the OUTCOME.
+
+    Every notice in this module reports something that already happened. If Slack is down, the
+    thing still happened — and raising here would turn a clean skip into a red traceback, or
+    swallow a halt behind an unrelated HTTP 503. That is the exact regression shape this project
+    has hit three times: the report of a failure failing, and taking the report with it.
+
+    So the outcome is preserved and the delivery failure is written where it will still be read.
+    The run's exit code already comes from `is_broken`, so a broken cycle stays red regardless
+    of whether anyone could be told about it.
+    """
+    try:
+        notify_fn(message)
+    except Exception as exc:                       # noqa: BLE001 — deliberate: see docstring
+        print(f"[CRITICAL] could not deliver the notice for {decision.action!r}: "
+              f"{type(exc).__name__}: {exc}")
+        print(f"[CRITICAL] the outcome stands regardless:\n{message}")
+
 
 def _live_targets(decision: "CycleDecision", config: dict) -> list[tuple[str, str]]:
     """The URLs that only exist after the deploy: the article, and the card the post points at.
@@ -414,7 +443,7 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
     if decision.action == "too_soon":
         return decision
     if decision.action in ("skip", "paused"):
-        notify_fn(decision.notice())
+        _safe_notify(notify_fn, decision.notice(), decision)
         return decision
 
     if dry_run:
@@ -462,7 +491,7 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
             decision.action = "halted"
             decision.failed_stage = stage
             decision.reason = f"the {stage} step failed: {type(exc).__name__}: {exc}"
-            notify_fn(decision.notice())
+            _safe_notify(notify_fn, decision.notice(), decision)
             return decision
 
     # ---- the post-deploy gates. These could not run before the deploy; they run now, against
@@ -474,7 +503,7 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
     if not decision.cleared_to_post:
         decision.action = "posted_nothing"
         decision.reason = "the article is live; the post was withheld"
-        notify_fn(decision.notice())
+        _safe_notify(notify_fn, decision.notice(), decision)
         return decision
 
     # The structural guard. `cleared_to_post` is checked immediately above, but a future
@@ -545,11 +574,5 @@ def _post_stage_failure(decision: CycleDecision, exc: Exception, posted: dict,
         decision.action = "posted_nothing"
         decision.failed_stage = "publish"
         decision.reason = f"the article is live; the post failed: {detail}"
-    try:
-        notify_fn(decision.notice())
-    except Exception as notify_exc:                # noqa: BLE001
-        # The notifier itself is down. Nothing can be sent, so say it where it will still be
-        # read — the job log — rather than raising over the outcome we were trying to report.
-        print(f"[CRITICAL] {decision.action}: {decision.reason}")
-        print(f"[CRITICAL] and the notice could not be delivered: {notify_exc}")
+    _safe_notify(notify_fn, decision.notice(), decision)
     return decision

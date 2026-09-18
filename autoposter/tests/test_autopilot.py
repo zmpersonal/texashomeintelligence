@@ -789,6 +789,111 @@ def test_no_side_effect_in_the_publish_tail_is_left_unwrapped():
     assert "save_state(" in guarded[2] and "notify_fn(published" in guarded[2]
 
 
+
+# ===================================================== a dead notifier never eats the outcome
+#
+# Found by auditing the shape of the code rather than by a failure: three notifier calls were
+# still outside any handler — the skip/paused notice, the notice inside the merge/deploy halt
+# handler, and the posted_nothing notice. `slack_notifier` raises deliberately when Slack is
+# unreachable, so each of those would turn its outcome into an unrelated traceback.
+#
+# The halt one is the worst: it loses a HALT behind an HTTP 503, which is precisely the
+# regression #56 was written to close. The report of a failure must not fail and take the report
+# with it.
+
+def _dead_notifier(message):
+    raise RuntimeError("Slack returned HTTP 503")
+
+
+def test_a_dead_notifier_does_not_turn_a_SKIP_into_a_crash():
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=tempfile.mkdtemp())   # card missing
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=_dead_notifier,
+        merge_fn=lambda dec: None, deploy_wait_fn=lambda url: None,
+        verify_opener=lambda url: (True, "resolved 200"),
+        publish_fn=lambda post: {"post_url": "x"},
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        defer_resolution=True, **_kwargs(cfg))
+    assert d.action == "skip", d.action
+    assert not d.is_broken, "a quiet skip must not go red just because Slack is down"
+
+
+def test_a_dead_notifier_does_not_lose_a_HALT():
+    """The regression that matters. A halt reported through a dead notifier must still BE a
+    halt — not an HTTP 503 traceback with the real cause thrown away."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+
+    def boom(_dec):
+        raise RuntimeError("! [rejected] non-fast-forward")
+
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=_dead_notifier, merge_fn=boom,
+        deploy_wait_fn=lambda url: None, verify_opener=lambda url: (True, "resolved 200"),
+        publish_fn=lambda post: {"post_url": "x"},
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        defer_resolution=True, **_kwargs(cfg))
+    assert d.action == "halted" and d.failed_stage == "merge"
+    assert "non-fast-forward" in d.reason, d.reason
+    assert d.is_broken, "the job must still go red"
+
+
+def test_a_dead_notifier_does_not_lose_a_WITHHELD_post():
+    """The article is live. Losing this notice to a Slack outage would leave a published piece
+    nobody was told about."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=_dead_notifier, merge_fn=lambda dec: None,
+        deploy_wait_fn=lambda url: None,
+        verify_opener=lambda url: (False, "HTTP 404"),
+        publish_fn=lambda post: {"post_url": "x"},
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        defer_resolution=True, **_kwargs(cfg))
+    assert d.action == "posted_nothing"
+    assert not d.cleared_to_post
+
+
+def test_a_CORRUPT_state_file_does_not_crash_the_run():
+    """A cycle must not die before it has done anything because a JSON file got truncated."""
+    path = Path(tempfile.mkdtemp()) / "state.json"
+    path.write_text("{not json at all")
+    state = autopilot.load_state(path)
+    assert state == {"last_article_at": None, "cycles": 0}
+
+
+def test_NO_notifier_call_in_run_cycle_can_escape_as_an_exception():
+    """The audit, pinned. A future edit that adds a bare `notify_fn(` reintroduces exactly the
+    class this closes, and would otherwise pass every test above.
+
+    Two acceptable shapes, and the difference is deliberate:
+
+    * `_safe_notify` — for a notice that REPORTS an outcome which already happened. Losing the
+      delivery must not lose the outcome, so it is swallowed and logged.
+    * inside the bookkeeping try — for the final published FYI only. There, a delivery failure
+      is genuinely `posted_unconfirmed`: the post is live and nobody has been told, which is a
+      state a human has to reconcile. Swallowing that one would be the wrong call.
+    """
+    source = Path(autopilot.__file__).read_text()
+    body = source.split("def run_cycle(")[1].split("\ndef _post_stage_failure")[0]
+    guarded_tail = body.split("try:")[-1]
+    offenders = []
+    for line in body.split("\n"):
+        st = line.strip()
+        if "notify_fn(" not in st or st.startswith("#"):
+            continue
+        if "_safe_notify" in st or "notify_fn=" in st or "notify_fn," in st:
+            continue
+        if st in guarded_tail:                     # the final FYI, inside the bookkeeping try
+            continue
+        offenders.append(st)
+    assert not offenders, f"these notifier calls can escape as exceptions: {offenders}"
+
+
 if __name__ == "__main__":
     fns = [f for n, f in sorted(globals().items()) if n.startswith("test_")]
     ok = 0
