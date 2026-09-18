@@ -656,16 +656,137 @@ def test_a_DEPLOY_wait_that_raises_notifies_and_says_the_article_is_merged():
     assert "Nothing went to Facebook" in notices[0]
 
 
-def test_a_halt_is_the_one_outcome_that_turns_the_JOB_red():
-    """Skips and pauses are normal Tuesdays and exit 0. A halt is a broken pipeline and must
-    not look like a quiet week — the badge and the Slack message have to agree."""
+def test_only_a_BROKEN_outcome_turns_the_job_red():
+    """Skips, pauses and a withheld post are normal Tuesdays and exit 0. A broken pipeline must
+    not look like a quiet week, and a quiet week must not look broken — the badge and the Slack
+    message have to agree, in both directions.
+
+    The rule now lives on `is_broken` so there is exactly one list, and run_autopilot must defer
+    to it rather than keeping a second copy that can drift."""
     import run_autopilot
-    for action, expected in (("halted", 1), ("skip", 0), ("paused", 0),
-                             ("publish", 0), ("posted_nothing", 0), ("too_soon", 0)):
-        d = autopilot.CycleDecision(action=action)
-        assert (1 if d.action == "halted" else 0) == expected, action
-    assert "halted" in Path(run_autopilot.__file__).read_text(), \
-        "run_autopilot must still be the thing that maps a halt to a non-zero exit"
+    cases = (("halted", "merge", 1), ("halted", "deploy", 1),
+             ("posted_unconfirmed", "post-bookkeeping", 1),
+             ("posted_nothing", "publish", 1),      # a crash in our own publisher is a defect
+             ("posted_nothing", "", 0),             # a live URL that did not resolve is not
+             ("skip", "", 0), ("paused", "", 0), ("publish", "", 0),
+             ("too_soon", "", 0), ("would_publish", "", 0))
+    for action, stage, expected in cases:
+        d = autopilot.CycleDecision(action=action, failed_stage=stage)
+        assert (1 if d.is_broken else 0) == expected, f"{action}/{stage}"
+    assert "decision.is_broken" in Path(run_autopilot.__file__).read_text(), \
+        "run_autopilot must map its exit code through is_broken, not a second copy of the list"
+
+
+
+# ===================================================== EVERY stage notifies, none crashes
+#
+# The first real cycle merged, deployed and verified, then crashed inside the publisher with a
+# traceback and NO Slack message. The halt wrapper covered merge and deploy only. An audit found
+# three more unwrapped side effects, not one: the publish, the state write, and the final FYI.
+#
+# For a machine nobody watches, a stage that can fail without notifying is a stage that can fail
+# invisibly. These tests hold the line at every remaining stage.
+
+def _full_cycle(cfg, *, publish_fn=None, state_path=None, notify_fn=None, verify=None):
+    notices = []
+    return autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=notify_fn or notices.append,
+        merge_fn=lambda dec: None, deploy_wait_fn=lambda url: None,
+        verify_opener=verify or (lambda url: (True, "resolved 200")),
+        publish_fn=publish_fn or (lambda post: {"post_url": "https://facebook.com/p/1",
+                                                "submission_id": "s1"}),
+        state_path=state_path or (Path(tempfile.mkdtemp()) / "s.json"),
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        defer_resolution=True, **_kwargs(cfg)), notices
+
+
+def test_a_PUBLISHER_that_raises_notifies_and_does_not_crash():
+    """The exact production failure, as a test. It must produce a notice, not a traceback."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+
+    def boom(post):
+        raise AttributeError("'str' object has no attribute 'get'")
+
+    d, notices = _full_cycle(cfg, publish_fn=boom)
+    assert d.action == "posted_nothing" and d.failed_stage == "publish"
+    assert len(notices) == 1, "a publisher crash must notify exactly once"
+    assert "ARTICLE LIVE, POST WITHHELD" in notices[0]
+    assert "no attribute" in d.reason, d.reason
+    assert d.is_broken, "a crash in the publisher is a fault and must go red"
+
+
+def test_a_publisher_crash_is_RED_but_a_withheld_post_is_GREEN():
+    """The two must not be conflated. A live URL that did not resolve is the accepted safe
+    outcome; a crash in our own code is a defect."""
+    withheld = autopilot.CycleDecision(action="posted_nothing")
+    crashed = autopilot.CycleDecision(action="posted_nothing", failed_stage="publish")
+    assert not withheld.is_broken and crashed.is_broken
+
+
+def test_a_failure_AFTER_the_post_went_out_is_never_called_withheld():
+    """The dangerous case. The post is on a real page; saying 'withheld' would be a straight
+    falsehood to whoever reads the notice at 2am."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    unwritable = Path(tempfile.mkdtemp()) / "nope" / "deeper" / "s.json"
+    real_save = autopilot.save_state
+
+    def boom(state, path=None):
+        raise OSError("read-only file system")
+
+    autopilot.save_state = boom
+    try:
+        d, notices = _full_cycle(cfg, state_path=unwritable)
+    finally:
+        autopilot.save_state = real_save
+    assert d.action == "posted_unconfirmed", d.action
+    assert d.post_url == "https://facebook.com/p/1"
+    assert "THE POST IS LIVE BUT UNRECORDED" in notices[0]
+    assert "withheld" not in notices[0].lower()
+    assert d.is_broken
+
+
+def test_a_DEAD_notifier_cannot_stop_the_outcome_being_recorded():
+    """If Slack is down we cannot announce anything — but the run must still resolve to a named
+    outcome rather than raising over the failure it was trying to report."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+
+    def dead(message):
+        raise RuntimeError("Slack returned HTTP 503")
+
+    def boom(post):
+        raise RuntimeError("publisher exploded")
+
+    d, _ = _full_cycle(cfg, publish_fn=boom, notify_fn=dead)
+    assert d.action == "posted_nothing" and d.is_broken
+
+
+def test_the_happy_path_still_reaches_publish_and_notifies():
+    """The positive case, so the refusals above mean something."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    d, notices = _full_cycle(cfg)
+    assert d.action == "publish", d.action
+    assert d.post_url == "https://facebook.com/p/1"
+    assert any("THI posted (auto)" in n for n in notices)
+    assert not d.is_broken
+
+
+def test_no_side_effect_in_the_publish_tail_is_left_unwrapped():
+    """The audit, as a standing check. Every call after the deploy that can raise must be inside
+    a try. Reads the source because that is the only way to assert the SHAPE of the code rather
+    than one path through it."""
+    source = Path(autopilot.__file__).read_text()
+    tail = source.split("# ---- the post-deploy gates")[1].split("def _post_stage_failure")[0]
+    for call in ("publish_gate.publish_with_verification", "save_state(", "notify_fn(published"):
+        assert call in tail, f"{call} moved; this audit needs updating"
+    # every one of them must appear after a `try:` and before the matching except
+    guarded = tail.split("try:")
+    assert len(guarded) >= 3, "expected the publish and the bookkeeping to be separately guarded"
+    assert "publish_gate.publish_with_verification" in guarded[1]
+    assert "save_state(" in guarded[2] and "notify_fn(published" in guarded[2]
 
 
 if __name__ == "__main__":
