@@ -151,6 +151,12 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install the autoposter's dependencies
+        # The preflight imports run_autopilot to exercise THE SAME merge code the cycle uses,
+        # rather than a copy of it — so it inherits that module's imports, pyyaml included.
+        # Reusing the real code is the point; paying for its dependencies is the price.
+        run: pip install pyyaml
+
       - name: Prove the whole merge path, then clean up after itself
         working-directory: autoposter
         env:
