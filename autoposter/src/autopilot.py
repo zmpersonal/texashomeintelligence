@@ -76,6 +76,9 @@ class CycleDecision:
     # Which side-effect stage raised, when `action` is "halted". Names the state the article is
     # in, which is the thing a human needs at 2am and cannot infer from a stack trace.
     failed_stage: str = ""
+    # The audit-record PR the cycle opened and merged for itself. Carried so the FYI can show
+    # the trail — the PR is never something a human has to act on, only something they can read.
+    pr_url: str = ""
     # The post-deploy verdicts. Empty until the deploy has happened and they have actually run.
     live_verdicts: list[GateVerdict] = field(default_factory=list)
 
@@ -167,6 +170,7 @@ def published_notice(decision: CycleDecision, article_url: str, post_url: str,
             f"{card.get('source', '')}, {card.get('asOf', '')}\n"
             f"Article: {article_url}\n"
             f"Facebook: {post_url}\n"
+            + (f"PR: {decision.pr_url}\n" if decision.pr_url else "") +
             f"Gates: {len(decision.verdicts)}/{len(decision.verdicts)} content · "
             f"{len(decision.live_verdicts)}/{len(decision.live_verdicts)} live · "
             f"streak {streak}")

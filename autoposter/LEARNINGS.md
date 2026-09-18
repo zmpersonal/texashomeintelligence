@@ -411,3 +411,55 @@ is how you find where that model is smaller than the system.
 
 **Family:** L11, L14, L15, L16, L17. The recurring shape across all six is that a check can be
 present, correct, and tested, and still never actually run on the path that matters.
+
+---
+
+## L19 — The dry run stops exactly where the untested code starts
+
+*Status: validated in production. Seven consecutive red scheduled runs, zero posts, six days.*
+
+`run_cycle` returns at the `dry_run` branch **before `merge_fn` is ever called**. Every test
+passes a stub lambda for `merge_fn`. So `site_merger` — the only code that pushes a branch or
+invokes `gh` — had never executed anywhere except the live cadence. 240 green tests and a
+green dry run on main covered every line up to the merge and not one line of it.
+
+The first time it ran, GitHub said:
+
+    pull request create failed: GraphQL: GitHub Actions is not permitted to
+    create or approve pull requests (createPullRequest)
+
+A repo policy switch, entirely separate from the `pull-requests: write` the workflow declares
+and the job's token log confirms. Nothing in the repo, the workflow, or the test suite could
+have revealed it, because the only way to learn it is to attempt the operation.
+
+**Then it got worse in a way worth studying.** That first run pushed its branch successfully
+before failing at the PR. The branch name was `autoposter/auto-<slug>`, stable across runs
+because a recurring builder deliberately picks the same period until its data gains a month. So
+every later run rebuilt the same article from a main that had moved on, and pushed a history
+whose parent was no longer the remote tip: a non-fast-forward, rejected, daily. **The machine
+became its own obstacle.** A first failure that leaves state turns one broken run into a
+permanently broken pipeline.
+
+And it was unreadable, because `_git` used `capture_output=True` and raised the bare
+`CalledProcessError`, whose entire message is `returned non-zero exit status 1`. Git's
+explanation was captured and thrown away. Six days of identical, contentless failures.
+
+**Three rules:**
+
+1. **A capability nobody exercised is a capability nobody has.** Permission to push, permission
+   to open a PR, and permission to merge are three different permissions with three different
+   ways of being denied. Simulating them proves nothing. `tools/preflight-merge-path.py` now
+   performs all three for real against a scratch branch and cleans up after itself.
+2. **A failed attempt must not leave a trap for the next attempt.** Names that repeat across
+   runs turn one failure into every failure. The branch name now carries the run id, so a retry
+   has nothing to collide with — fixed by uniqueness, never by `--force`, because a bot that
+   rewrites history is one bad slug away from destroying something a human cared about.
+3. **Never discard a tool's own words.** `capture_output=True` plus a bare re-raise is how a
+   diagnosis becomes a guess. Capture stderr so it can go *into* the exception, and therefore
+   into the halt notice and Slack — not so it can vanish.
+
+**Family:** L13 (a fail-closed gate needs a surface that can actually perform the check), L15
+(a guard observed only in the passing case has not been observed), L17 (a test that hands a gate
+its artifact hides the ordering). This is the fourth and the most expensive, because the other
+three were caught before go-live and this one ran red in production for six days while every
+green signal we had said the machine was fine.
