@@ -210,6 +210,20 @@ jobs:
           done
           exit $failed
 
+      - name: Sweep every builder against every gate, AHEAD of its rotation
+        # Only one builder runs per cycle: the one that ranks highest and is not yet published.
+        # Every other builder's current-period output is unexamined until its turn comes — and
+        # its turn comes in production. Two blocks in one day were exactly that: a 65-character
+        # title the card generator would not draw, then a caption G1 refused. Both were found by
+        # a red cron rather than before one.
+        #
+        # This sweeps all of them each run, so a builder that will fail on its NEXT period is
+        # caught a day early. It publishes nothing and makes no network call, and it costs
+        # seconds — there is no reason to save a preventive check until after the thing it
+        # prevents.
+        working-directory: autoposter
+        run: python3 tools/sweep-builder-gates.py
+
       - name: Identify the committer
         run: |
           git config user.name  "thi-autoposter"
