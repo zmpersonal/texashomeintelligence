@@ -19,7 +19,13 @@ import yaml  # noqa: E402
 HERE = os.path.dirname(__file__)
 CFG = yaml.safe_load(open(os.path.join(HERE, "..", "config.yaml")))
 FEED = json.load(open(os.path.join(HERE, "..", "data", "social-feed.json")))
-TODAY = date(2026, 9, 6)
+# The clock comes FROM THE FEED, not from a date typed on the day this was written. It was
+# pinned to 2026-09-06, which happened to be the moment the feed was generated — and stayed
+# correct only because nothing refreshed the feed for twelve days. The first real refresh
+# brought in air-quality readings as_of 2026-09-07, which this suite then called "in the
+# future" and went red on. A test pinned to a moment in production history is a test with an
+# expiry date nobody wrote down.
+TODAY = date.fromisoformat(FEED["generated_at"][:10])
 STORIES = FEED["stories"]
 
 
@@ -45,22 +51,51 @@ def test_the_feed_has_stories_to_validate():
     assert len(STORIES) >= 5, "expected a populated feed"
 
 
-def test_every_real_story_produces_a_passing_piece():
-    """The prove-gate proper: all 15 real stories, all gates, no exceptions."""
+def _within_bound(story):
+    """Is this story's reading young enough that the pipeline would use it at all?
+
+    A live feed can carry a reading older than its own staleness bound — an upstream that went
+    quiet is exactly the case G5 exists for. Such a story is not a defect in the feed and not a
+    defect in the gate; it is the gate having something to do. Asserting that EVERY story
+    passes every gate quietly assumed every upstream is always current, and went red the first
+    time one was not.
+    """
+    bound = v.staleness_bound_hours(story.get("metric", ""), CFG)
+    if bound is None:
+        return False
+    as_of = date.fromisoformat(story["as_of"][:10])
+    return (TODAY - as_of).days * 24 <= bound
+
+
+def test_every_FRESH_story_produces_a_passing_piece():
+    """The prove-gate proper: every story the pipeline would actually use, all gates."""
+    usable = [s for s in STORIES if _within_bound(s)]
+    assert len(usable) >= 5, f"only {len(usable)} stories are inside their bounds — the feed " \
+                             f"is not carrying enough current data to publish from"
     failures = []
-    for i, story in enumerate(STORIES):
+    for story in usable:
         result = _check(post_template.build(story), story)
         if not result.ok:
             failures.append(f"rank {story['rank']} {story['metric']}: {result.failures}")
     assert not failures, "\n".join(failures)
 
 
-def test_g5_passes_on_every_real_as_of():
-    """G5 is newly wired; prove it accepts the real feed's ages, not just a fixture's."""
+def test_g5_AGREES_WITH_THE_ARITHMETIC_on_every_real_as_of():
+    """G5's verdict must match the age against the bound, in BOTH directions — it has to accept
+    current data and it has to refuse data past its bound. A test that only checked the first
+    would pass a gate that never refuses anything."""
+    checked = {"fresh": 0, "stale": 0}
     for story in STORIES:
         r = v.GateResult(ok=True)
         v._check_freshness({}, story, CFG, r, now=TODAY)
-        assert r.ok, f"{story['metric']} as_of {story['as_of']}: {r.failures}"
+        if _within_bound(story):
+            checked["fresh"] += 1
+            assert r.ok, f"{story['metric']} as_of {story['as_of']} is current: {r.failures}"
+        else:
+            checked["stale"] += 1
+            assert not r.ok, (f"{story['metric']} as_of {story['as_of']} is past its bound and "
+                              f"G5 let it through — stale data read as current is the scam-tell")
+    assert checked["fresh"], "no current story in the feed; this proved nothing"
 
 
 # ---------------------------------------------------------------- each gate bites
