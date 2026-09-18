@@ -79,6 +79,8 @@ class CycleDecision:
     # The audit-record PR the cycle opened and merged for itself. Carried so the FYI can show
     # the trail — the PR is never something a human has to act on, only something they can read.
     pr_url: str = ""
+    # Set the moment a post actually goes out. Present means something is live on a real page.
+    post_url: str = ""
     # The post-deploy verdicts. Empty until the deploy has happened and they have actually run.
     live_verdicts: list[GateVerdict] = field(default_factory=list)
 
@@ -90,6 +92,19 @@ class CycleDecision:
         `cleared_to_post` is the one that authorises a post.
         """
         return bool(self.verdicts) and all(v.ok for v in self.verdicts)
+
+    @property
+    def is_broken(self) -> bool:
+        """Is this outcome a BROKEN PIPELINE rather than a normal quiet one?
+
+        A skip, a pause, a too-soon and a post withheld because a live URL did not resolve are
+        all normal and stay green — a quiet week must not look like a fault or the red stops
+        meaning anything. A crash in the publisher, or a post that went out without being
+        recorded, are faults and must be red.
+        """
+        if self.action in ("halted", "posted_unconfirmed"):
+            return True
+        return self.action == "posted_nothing" and self.failed_stage == "publish"
 
     @property
     def cleared_to_post(self) -> bool:
@@ -140,6 +155,15 @@ class CycleDecision:
                     f"{self.reason}\n"
                     f"{where}\n"
                     f"This is a broken pipeline, not a quiet week. The run is red on purpose.")
+        if self.action == "posted_unconfirmed":
+            return (f"🚨 THI autoposter: THE POST IS LIVE BUT UNRECORDED — a human must "
+                    f"reconcile.\n"
+                    f"{self.reason}\n"
+                    f"Facebook: {self.post_url or '(url unknown — check the page)'}\n"
+                    f"Article: {(self.article or {}).get('canonical_url', '')}\n"
+                    f"The post went out. The cycle could not finish recording or announcing it, "
+                    f"so the ledger and the cadence clock may not reflect it. Check the page "
+                    f"before the next cycle runs.")
         if self.action == "posted_nothing":
             failed = [v for v in self.live_verdicts if not v.ok]
             body = "\n".join(f"  • {v.name} — {v.detail}" for v in failed)
@@ -459,14 +483,73 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
         raise RuntimeError("reached the publish step without being cleared to post — refusing")
 
     streak = ((config.get("channels") or {}).get("facebook") or {}).get("clean_streak", 0) + 1
-    record = publish_gate.publish_with_verification(
-        decision.post, publish_fn=publish_fn, verify_opener=verify_opener,
-        streak_after=streak, article_slug=decision.article["slug"],
-        ledger_path=ledger_path)
 
-    save_state({**state,
-                "last_article_at": today.isoformat(),
-                "cycles": state.get("cycles", 0) + 1}, state_path)
-    notify_fn(published_notice(decision, decision.article["canonical_url"],
-                               record["post_url"], streak))
+    # Everything below is a SIDE EFFECT that can fail, and every one of them was outside a
+    # handler until the first real cycle crashed in the publisher with a traceback and no Slack
+    # message. An audit then found three more unwrapped calls, not one: the publish, the state
+    # write, and the final FYI. For a machine nobody watches, a stage that can fail without
+    # notifying is a stage that can fail invisibly.
+    #
+    # The distinction this code exists to protect: "nothing was posted" and "something WAS
+    # posted and a later step failed" must never be reported as each other. `posted` is set only
+    # when `publish_fn` RETURNS, so it is evidence a post actually went out rather than an
+    # assumption about how far execution got.
+    posted: dict = {}
+
+    def _recording_publish(post):
+        result = publish_fn(post)
+        posted.update(result or {"post_url": ""})
+        return result
+
+    try:
+        record = publish_gate.publish_with_verification(
+            decision.post, publish_fn=_recording_publish, verify_opener=verify_opener,
+            streak_after=streak, article_slug=decision.article["slug"],
+            ledger_path=ledger_path)
+    except Exception as exc:                       # noqa: BLE001 — deliberate: see above
+        return _post_stage_failure(decision, exc, posted, notify_fn)
+
+    decision.post_url = record["post_url"]
+
+    try:
+        save_state({**state,
+                    "last_article_at": today.isoformat(),
+                    "cycles": state.get("cycles", 0) + 1}, state_path)
+        notify_fn(published_notice(decision, decision.article["canonical_url"],
+                                   record["post_url"], streak))
+    except Exception as exc:                       # noqa: BLE001
+        # The post is already live. A failure here is bookkeeping, not publishing, and calling
+        # it "withheld" would be a straight falsehood to whoever reads the notice.
+        return _post_stage_failure(decision, exc, posted, notify_fn)
+    return decision
+
+
+def _post_stage_failure(decision: CycleDecision, exc: Exception, posted: dict,
+                        notify_fn) -> CycleDecision:
+    """Turn a failure in the posting tail into a NAMED outcome that notifies.
+
+    Two outcomes, chosen by evidence rather than by where the traceback came from:
+
+    * nothing went out  -> `posted_nothing`. The article is live and un-promoted, which is the
+      accepted safe worst case.
+    * something went out -> `posted_unconfirmed`. LOUD. The post exists on a real page and the
+      cycle could not finish recording or announcing it, so a human has to reconcile.
+    """
+    detail = f"{type(exc).__name__}: {exc}"
+    if posted:
+        decision.action = "posted_unconfirmed"
+        decision.failed_stage = "post-bookkeeping"
+        decision.post_url = posted.get("post_url") or decision.post_url
+        decision.reason = f"the post went out, but the cycle could not finish: {detail}"
+    else:
+        decision.action = "posted_nothing"
+        decision.failed_stage = "publish"
+        decision.reason = f"the article is live; the post failed: {detail}"
+    try:
+        notify_fn(decision.notice())
+    except Exception as notify_exc:                # noqa: BLE001
+        # The notifier itself is down. Nothing can be sent, so say it where it will still be
+        # read — the job log — rather than raising over the outcome we were trying to report.
+        print(f"[CRITICAL] {decision.action}: {decision.reason}")
+        print(f"[CRITICAL] and the notice could not be delivered: {notify_exc}")
     return decision

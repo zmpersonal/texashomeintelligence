@@ -30,6 +30,7 @@ from pathlib import Path
 import yaml
 
 import card as card_mod
+import channel_guard
 import claim_ledger as ledger_mod
 import publish_gate
 import publish_target
@@ -258,6 +259,7 @@ def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today
     # reading it rather than reconstructing the filename means a card that was never rendered
     # cannot be silently promoted.
     publish_cfg = config.get("publish") or {}
+    _target = channel_guard.pinned_target("facebook", config)
     origin = "/".join(url.split("/")[:3])
     slug = article["slug"]
     sidecar = None
@@ -319,6 +321,16 @@ def build_facebook_promo(article: dict, claims: list[Claim], config: dict, today
         "card_rows": [card["headline"], card["subhead"]],
         "card_numeric_cells": 2,
         "card_sidecar": sidecar["path"],
+        # THE FIRST LOCK. The pinned target is stamped in here, at BUILD time, from
+        # `channel_guard.pinned_target` — never from a default and never from anything in the
+        # post. The publisher then ASSERTS the post still addresses this pin at send time, which
+        # is the second lock. Both must agree or the post does not go out.
+        #
+        # Without this the post reached the publisher carrying no account_id and no page_id, so
+        # the guard could not check it at all — and the ledger recorded page_id: null for the one
+        # post that ever went out. A guard with nothing to check is not a guard.
+        "account_id": _target["account_id"],
+        "page_id": _target["page_id"],
         "requires_link": True,
         # Held, and held in the artifact rather than in a person's memory.
         "status": "HELD — not scheduled, not posted; awaits owner approval and a live article URL",

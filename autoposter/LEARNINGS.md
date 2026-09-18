@@ -463,3 +463,57 @@ explanation was captured and thrown away. Six days of identical, contentless fai
 its artifact hides the ordering). This is the fourth and the most expensive, because the other
 three were caught before go-live and this one ran red in production for six days while every
 green signal we had said the machine was fine.
+
+---
+
+## L20 — Audit for the whole class, not the instance you just found
+
+*Status: validated. The third production break of the L13/L17/L19 family, in the third stubbed
+function, found within hours of fixing the second.*
+
+L19 was written about the merge path: `merge_fn` was stubbed in every test and dry runs return
+before it, so it first ran in production. The fix worked — the very next real cycle pushed,
+opened a PR, auto-merged, deleted its branch, deployed and verified, all unattended.
+
+Then it crashed one line further on, in `publish_fn`. Stubbed in every test. Never executed.
+Same class, same session, one stage downstream.
+
+    target = channel_guard.assert_post_target("facebook", config)
+    AttributeError: 'str' object has no attribute 'get'
+
+The call passed the platform NAME where the guard takes the POST. Worse than the crash: had it
+type-checked, it would have checked nothing. The guard compares what a post says it is addressed
+to against the pinned target, and the post carried neither `account_id` nor `page_id` — so the
+one post that ever went out recorded `page_id: null` in the ledger. **A guard with nothing to
+compare is not a guard, and it had been passing for weeks.**
+
+**Writing L19 and fixing only the merge path was the mistake.** The lesson had already been
+stated three times; what it needed was not a fourth statement but a sweep for every other place
+the same shape existed. One was one line away.
+
+**What the sweep found**, once actually done: the publish, the state write, and the final FYI
+were all outside the halt wrapper — three unwrapped side effects, not the one that crashed. A
+state write that fails after a successful post would leave the cadence clock unset and the next
+cycle free to post again the same day.
+
+**The rules:**
+
+1. **When a bug class bites, enumerate every instance before fixing the one in front of you.**
+   Ask what else has this shape and check all of it. A fix that closes one instance of a
+   repeating class is a fix that schedules the next incident.
+2. **Distinguish "nothing happened" from "something happened and then we lost track".** Once a
+   post is live, no failure downstream may report it as withheld — that is not a degraded
+   message, it is a false one. `posted_unconfirmed` exists for exactly that, and it is set from
+   evidence that `publish_fn` returned, never from how far execution got.
+3. **Test the real object through the real function.** The posting tests now build the actual
+   post the pipeline produces and run the actual publisher against a fake socket. A hand-written
+   post fixture is how this survived: it would have carried whatever keys the author thought
+   were needed, including the two that were missing.
+
+Both new suites run in the workflow's test step, which executes before every cycle — so the
+merge path and the posting path are now exercised on every scheduled run, not only when they
+break.
+
+**Family:** L13, L15, L17, L19. The distinguishing feature of this one is that it happened
+*after* the family had been named, which is the evidence that naming a class is not the same as
+closing it.

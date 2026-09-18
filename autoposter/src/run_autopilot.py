@@ -265,7 +265,11 @@ def blotato_publisher(api_key: str | None, config: dict):
     import channel_guard
 
     def publish(post: dict) -> dict:
-        target = channel_guard.assert_post_target("facebook", config)
+        # THE SECOND LOCK, and it takes the POST — not the platform name. Passing the string
+        # "facebook" here type-crashed the first real cycle (`'str' object has no attribute
+        # 'get'`) and, worse, would have skipped the check entirely if it had not: the guard's
+        # whole job is to compare what the POST says it is addressed to against the pin.
+        target = channel_guard.assert_post_target(post, config)
         if not api_key:
             raise RuntimeError(
                 "BLOTATO_API_KEY is not set, so this runner cannot post. config.yaml decision A "
@@ -338,10 +342,12 @@ def main() -> int:
     # A skipped or paused cycle is a NORMAL outcome, not a failed job — otherwise a quiet week
     # looks like a broken pipeline and the alert stops meaning anything.
     #
-    # A HALT is the exception: the merge or the deploy actually failed, which is broken. It goes
-    # red AND it notified on its way out, so the two signals agree instead of the badge being
-    # the only one that knows.
-    return 1 if decision.action == "halted" else 0
+    # `is_broken` is the exception, and it owns the whole list so the rule lives in one place:
+    # a halt at merge or deploy, a crash in the publisher, or a post that went out without
+    # being recorded. Each goes red AND notified on its way out, so the badge and the Slack
+    # message always agree. A post withheld because a live URL did not resolve stays green — it
+    # is the accepted safe outcome, not a fault.
+    return 1 if decision.is_broken else 0
 
 
 if __name__ == "__main__":
