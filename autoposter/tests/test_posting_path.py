@@ -31,6 +31,20 @@ import channel_guard                  # noqa: E402
 import run_article                    # noqa: E402
 import run_autopilot as ra            # noqa: E402
 
+def _isolated_cfg():
+    """Config whose published-article folder and ledger are EMPTY temp dirs.
+
+    The suite must state its own premise. Reading the live site's articles made the pool of
+    selectable topics shrink every time the machine published for real, and going red the day
+    the fifth builder's current-period title went live — with no code change behind it.
+    """
+    cfg = copy.deepcopy(engine.load_config())
+    cfg["publish"] = dict(cfg["publish"],
+                          published_ledger=tempfile.mkdtemp() + "/empty.json",
+                          analysis_dir=tempfile.mkdtemp())
+    return cfg
+
+
 TODAY = date(2026, 9, 18)
 
 
@@ -38,8 +52,10 @@ def _real_post():
     """The actual post the pipeline produces — not a fixture approximating one. A hand-written
     post dict is exactly how this bug survived: it would have carried whatever keys the test
     author thought were needed."""
-    cfg = copy.deepcopy(engine.load_config())
-    result = engine.run("thi", write_fn=run_article.write,
+    cfg = _isolated_cfg()                        # the SAME premise the engine ran under: the
+    #                                              duplicate gate must judge the article the
+    #                                              engine was allowed to pick, not the live one.
+    result = engine.run("thi", config=cfg, write_fn=run_article.write,
                         build_claims_fn=run_article.build_claims, today=TODAY,
                         articles=run_article.TOPIC_ARTICLES, exclude_published=True)
     article, claims, card = result["article"], result["claims"], result["card"]

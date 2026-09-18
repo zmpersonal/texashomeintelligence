@@ -162,10 +162,19 @@ def _current_title(topic: dict, articles: dict | None, today: date) -> str:
 
 def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
         specs_dir: Path | None = None, destination: dict | None = None,
-        articles: dict | None = None, exclude_published: bool = False) -> dict:
-    """One article, end to end. Returns everything the human reviews; writes nothing to site/."""
+        articles: dict | None = None, exclude_published: bool = False,
+        config: dict | None = None) -> dict:
+    """One article, end to end. Returns everything the human reviews; writes nothing to site/.
+
+    `config` is accepted rather than always re-read from disk. The driver already holds one and
+    used to pass it to everything EXCEPT this, so an override set by the caller silently did not
+    reach the engine — and a test could not state "nothing is published yet" as a premise. It
+    had to borrow the live site's article folder instead, which meant the suite's greenness
+    depended on production data: when the fifth builder's current-period title went live, three
+    suites went red on main with no code change behind them.
+    """
     today = today or datetime.now(timezone.utc).date()
-    config, feed = load_config(), load_feed()
+    config, feed = config or load_config(), load_feed()
     budget = Budget(limit=config["cost"]["model_calls_per_cycle_expected"])
 
     # ---- Stage 5's guard, run FIRST. Nothing is worth building for a target that will halt.

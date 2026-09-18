@@ -516,7 +516,8 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
     # It RAISES on any of them, which is exactly right here: a halt is a skip with a reason.
     try:
         result = engine.run("thi", write_fn=write_fn, build_claims_fn=build_claims_fn,
-                            today=today, articles=articles, exclude_published=True)
+                            today=today, articles=articles, exclude_published=True,
+                            config=config)
     except Exception as exc:                       # noqa: BLE001
         decision.reason = "the article could not be produced cleanly"
         decision.verdicts = [GateVerdict("article-engine", False,
@@ -714,7 +715,12 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
     if not decision.cleared_to_post:                                  # pragma: no cover
         raise RuntimeError("reached the publish step without being cleared to post — refusing")
 
-    streak = ((config.get("channels") or {}).get("facebook") or {}).get("clean_streak", 0) + 1
+    # Counted from the LEDGER, which now persists on main, rather than from config.yaml's
+    # hand-maintained `clean_streak` — a number no code ever advanced, which is why post #4
+    # recorded a streak of 2 with four posts on the page. See `publish_gate.clean_streak`.
+    streak = publish_gate.clean_streak(
+        ledger_path, platform="facebook",
+        page_id=(decision.post or {}).get("page_id")) + 1
 
     # Everything below is a SIDE EFFECT that can fail, and every one of them was outside a
     # handler until the first real cycle crashed in the publisher with a traceback and no Slack
@@ -754,12 +760,17 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
         # proven path: fetch, branch, commit, push, PR, auto-merge. A failure here raises into
         # the handler below, which reports `posted_unconfirmed` — LOUD and red — because the
         # post is live and the record of it is not.
-        if ledger_commit_fn:
-            ledger_commit_fn(record)
         # A promotion does not move `last_article_at`. The cadence floor governs how often a NEW
         # article goes out; recovering one that is already published is not that.
         advanced = ({} if decision.promotion else {"last_article_at": today.isoformat()})
-        save_state({**state, **advanced, "cycles": state.get("cycles", 0) + 1}, state_path)
+        new_state = {**state, **advanced, "cycles": state.get("cycles", 0) + 1}
+        # ONE call lands BOTH the row and the clock, in one commit, and confirms both are on
+        # main. The clock used to be written only here, to a file on a container about to be
+        # destroyed: `autopilot-state.json` has never existed on main, so every run started
+        # from "no article recorded yet" and the 3-day floor never engaged in production.
+        if ledger_commit_fn:
+            ledger_commit_fn(record, new_state)
+        save_state(new_state, state_path)
         notify_fn(published_notice(decision, decision.article["canonical_url"],
                                    record["post_url"], streak))
     except Exception as exc:                       # noqa: BLE001

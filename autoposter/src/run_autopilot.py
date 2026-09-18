@@ -19,6 +19,7 @@ post" and is much better than a run that silently believes it posted.
 
 from __future__ import annotations
 
+import copy
 import json
 import os
 import subprocess
@@ -26,6 +27,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -270,118 +272,177 @@ def open_and_merge_pr(branch: str, *, title: str, body: str | None = None) -> st
 
 
 LEDGER_RELATIVE = "autoposter/data/published-posts.json"
-LEDGER_CONFIRM_ATTEMPTS = 5
-LEDGER_CONFIRM_DELAY = 3
+STATE_RELATIVE = "autoposter/data/autopilot-state.json"
+CONFIRM_ATTEMPTS = 5
+CONFIRM_DELAY = 3
 
 
-def _ledger_on_main(relative: str = LEDGER_RELATIVE) -> list:
-    """The ledger AS IT IS ON MAIN — read from the ref, never from the working tree.
+@dataclass
+class MainFile:
+    """One file this cycle needs to leave behind ON MAIN, and how to tell that it got there.
 
-    THE REGRESSION. `publish_with_verification` appends the new row to the CHECKOUT's copy of
-    this file before the commit step runs. `git checkout -B <branch> origin/main` does not
-    discard an uncommitted change, so that row rode along into the new branch. The dedupe then
-    read the file, found the row it had just written ITSELF, and reported "already recorded;
-    nothing to commit" — green, with nothing on main. Post #3 went out and stayed unrecorded,
-    which left it looking like a never-promoted orphan: primed to be posted a second time.
+    `build` receives the value currently on main and returns the value that should replace it.
+    `present` receives a value read back from main and answers the only question that matters:
+    is the change there? Success is defined by `present`, never by the commit having run.
+    """
+    relative: str
+    default: object
+    build: object
+    present: object
 
-    Reading from the ref removes the possibility rather than working around it. A git failure
-    that is not "the file is not on main yet" is re-raised: an unknown ledger must never read as
-    an empty one, because empty means "nothing is recorded" and that is permission to post.
+
+def _json_on_main(relative: str, default: object) -> object:
+    """A file AS IT IS ON MAIN — read from the ref, never from the working tree.
+
+    THE REGRESSION THIS EXISTS FOR. `publish_with_verification` appends the new row to the
+    CHECKOUT's copy of the ledger before the commit step runs, and `git checkout -B <branch>
+    origin/main` does not discard an uncommitted change — so the row rode along into the new
+    branch. The dedupe read the file, found the row it had just written ITSELF, and reported
+    "already recorded; nothing to commit": green, with nothing on main. The post stayed
+    unrecorded and looked like a never-promoted orphan, primed to go out a second time.
+
+    The working tree is dirty by construction on every cycle: the renderer writes into `site/`
+    and the article writer into `autoposter/articles/`, both tracked paths. So this is not an
+    edge case to guard, it is the normal state. Reading from the ref removes it entirely.
+
+    A git failure that is not "the file is not on main yet" is re-raised. An unknown file must
+    never read as an empty one, because empty means "nothing is recorded" and that is
+    permission to post.
     """
     try:
         raw = _git("show", f"origin/main:{relative}")
     except CommandFailed as exc:
         if "does not exist" in str(exc) or "exists on disk" in str(exc):
-            return []                              # genuinely not on main yet
+            return copy.deepcopy(default)          # genuinely not on main yet
         raise
-    return json.loads(raw) if raw.strip() else []
+    return json.loads(raw) if raw.strip() else copy.deepcopy(default)
 
 
-def _confirm_on_main(record: dict, relative: str = LEDGER_RELATIVE, sleep_fn=time.sleep) -> None:
-    """The row is on main, or this RAISES. Success is the row being there — nothing else.
+def _confirm_on_main(files: list, sleep_fn=time.sleep) -> None:
+    """Every file's change is ON MAIN, or this RAISES. Nothing else counts as success.
 
-    THE CLASS FIX, and the one that matters more than the bug above. Every earlier version
-    defined success as "the code path completed without an exception". That is what let the
-    committer return green while the post it was recording stayed unrecorded and re-postable —
-    the single failure mode that defeats the hands-off safety model, because every other failure
-    this machine has had was loud and this one was silent.
+    THE CLASS FIX, and the one that matters more than any single bug it catches. Every earlier
+    version defined success as "the code path completed without an exception". That is what let
+    the committer return green while the post it was recording stayed unrecorded and
+    re-postable — the one failure mode that defeats a hands-off machine, because every other
+    failure this thing has had was loud and that one was silent.
 
-    So the check is on the OUTCOME, and both paths run it: the one that commits, and the one
-    that decides there is nothing to commit. "Nothing to commit" is only true if the row is
-    already on main, and that is now verified rather than assumed. A persistence step that
-    cannot confirm its own success must not report success.
+    So the check is on the OUTCOME, and it runs on every path: the one that commits, and the
+    one that decides there is nothing to commit. "Nothing to commit" is a claim about main, so
+    it is checked against main.
 
-    The retries are for GitHub's replication lag between `pr merge` returning and the ref being
-    fetchable — not tolerance for a missing row. When they are spent, this raises into
-    `run_cycle`, which reports `posted_unconfirmed`: red, clock unmoved, and a Slack notice
-    saying the post is live, unrecorded, and will be re-posted unless a human reconciles.
+    The retries absorb GitHub's replication lag between `pr merge` returning and the ref being
+    fetchable — not a missing change. When they are spent this raises into `run_cycle`, which
+    reports `posted_unconfirmed`: red, clock unmoved, and a notice saying the post is live,
+    unrecorded, and will be re-posted unless a human reconciles.
     """
-    for attempt in range(LEDGER_CONFIRM_ATTEMPTS):
+    missing: list = []
+    for attempt in range(CONFIRM_ATTEMPTS):
         if attempt:
-            sleep_fn(LEDGER_CONFIRM_DELAY)
+            sleep_fn(CONFIRM_DELAY)
         _git("fetch", "origin", "main")
-        if any(_same_destination(e, record) for e in _ledger_on_main(relative)):
-            print(f"[ledger] confirmed on main: {record.get('article_url')}")
+        missing = [f for f in files if not f.present(_json_on_main(f.relative, f.default))]
+        if not missing:
+            print(f"[main] confirmed on main: {', '.join(f.relative for f in files)}")
             return
     raise CommandFailed(
-        f"the post of {record.get('article_slug') or record.get('article_url')} IS LIVE but its "
-        f"row is not on main after {LEDGER_CONFIRM_ATTEMPTS} checks. The orphan finder reads "
-        f"main, so it will see this article as never-promoted and post it AGAIN.")
+        f"the post IS LIVE but {', '.join(f.relative for f in missing)} did not reach main "
+        f"after {CONFIRM_ATTEMPTS} checks. The orphan finder and the cadence floor both read "
+        f"main, so this article can be published or posted AGAIN.")
 
 
-def ledger_committer(sleep_fn=time.sleep):
-    """Commit the published-post row to main, so the record outlives the runner.
+def commit_to_main(files: list, *, slug: str, kind: str, sleep_fn=time.sleep) -> str:
+    """Put every file's change on main in ONE commit, then prove all of them landed.
 
-    WHY THIS EXISTS. `publish_with_verification` appends the row to the runner's checkout, and
-    the runner is destroyed when the job ends. Post #2 went out cleanly and its row died with
-    the container. The duplicate gate and the orphan finder both read that ledger, so the next
-    cycle would have seen a never-promoted article and posted it a SECOND time. A lost row is
-    not a lost statistic here; it is a duplicate post.
+    ONE implementation, deliberately. The ledger row and the cadence clock are the same
+    operation — "a fact this cycle learned, which has to outlive the container" — and giving
+    them separate implementations is how the second one ends up missing the lesson the first
+    one paid for. The next piece of durable state adds a `MainFile`, not a code path.
 
-    Three things make it trustworthy, and the third is the only one that is load-bearing:
-
-    1. It reads main through `_ledger_on_main`, so the dedupe compares against what is actually
-       recorded, not against the row this same cycle just wrote into the working tree.
-    2. It writes the file from MAIN's content plus the row, so a dirty working tree — this one
-       always is, by the time a post lands — cannot leak into the commit.
-    3. Whatever it decided to do, it then CONFIRMS the row is on main and raises if it is not.
-
-    Same path the article merge uses — branch, commit, push, PR, auto-merge, delete — because
-    that path is the one that has been proven, and this is the same operation class that took a
-    week to get working.
+    One commit rather than one per file: the row and the clock describe the same event, so
+    landing one without the other is a state nothing else in the system expects.
     """
-    def commit(record: dict) -> str:
-        slug = record.get("article_slug", "post")
-        branch = f"autoposter/ledger-{slug}-{os.environ.get('GITHUB_RUN_ID', 'local')}"
-        relative = LEDGER_RELATIVE
+    _git("fetch", "origin", "main")
+    current = {f.relative: _json_on_main(f.relative, f.default) for f in files}
+    pending = [f for f in files if not f.present(current[f.relative])]
 
-        _git("fetch", "origin", "main")
-        entries = _ledger_on_main(relative)
-
-        url = ""
-        if any(_same_destination(e, record) for e in entries):
-            # Already on main — a retry, or a row that landed from another run. Committing it
-            # twice would make the ledger lie about how many times this was posted. This is a
-            # legitimate no-op, but it is NOT the end of the story: the confirmation below still
-            # runs, so "nothing to commit" can never again stand in for "it is recorded".
-            print(f"[ledger] {record.get('article_url')} is already on main; nothing to commit")
-        else:
-            _git("checkout", "-B", branch, "origin/main")
-            path = REPO / relative
+    url = ""
+    if not pending:
+        # Already on main — a retry, or a row that landed from another run. Re-committing would
+        # make the ledger lie about how many times this was posted. A legitimate no-op, and NOT
+        # the end of the story: the confirmation below still runs on every file.
+        print(f"[main] already on main; nothing to commit for {slug}")
+    else:
+        branch = f"autoposter/{kind}-{slug}-{os.environ.get('GITHUB_RUN_ID', 'local')}"
+        _git("checkout", "-B", branch, "origin/main")
+        for f in pending:
+            path = REPO / f.relative
             path.parent.mkdir(parents=True, exist_ok=True)
-            # From main's content, not the working tree's. The checkout above carries the dirty
-            # copy of this file over; overwriting it means the commit's diff is exactly one row.
-            path.write_text(json.dumps(entries + [record], indent=2, ensure_ascii=False) + "\n")
-            _git("add", relative)
-            _git("commit", "-m", f"autoposter: record the post of {slug}\n\n"
-                                 f"Written by the cycle that published it, so the duplicate gate "
-                                 f"and the orphan finder can see it on the next run.")
-            _git("push", "-u", "origin", branch)
-            url = open_and_merge_pr(branch, title=f"autoposter: record the post of {slug}")
+            # Built from MAIN's value, never the working tree's — see `_json_on_main`. The
+            # checkout above carries the dirty copy over; this overwrites it, so the commit's
+            # diff is exactly the change this cycle intends.
+            path.write_text(json.dumps(f.build(current[f.relative]), indent=2,
+                                       ensure_ascii=False) + "\n")
+        _git("add", *[f.relative for f in pending])
+        _git("commit", "-m", f"autoposter: record {kind} for {slug}\n\n"
+                             f"Written by the cycle that published it, so the duplicate gate, "
+                             f"the orphan finder and the cadence floor can see it next run.")
+        _git("push", "-u", "origin", branch)
+        url = open_and_merge_pr(branch, title=f"autoposter: record {kind} for {slug}")
 
-        _confirm_on_main(record, relative, sleep_fn)
-        return url
+    _confirm_on_main(files, sleep_fn)
+    return url
+
+
+def bookkeeping_committer(sleep_fn=time.sleep):
+    """Commit the ledger row AND the cadence clock to main, so both outlive the runner.
+
+    WHY THIS EXISTS. The runner is destroyed when the job ends, and three separate facts were
+    being written only to it:
+
+    * the LEDGER ROW. Post #2 went out cleanly and its row died with the container. The
+      duplicate gate and the orphan finder both read that ledger, so the next cycle saw a
+      never-promoted article and would have posted it a SECOND time.
+    * the CADENCE CLOCK. `autopilot-state.json` has never existed on main, so every run loaded
+      `{"last_article_at": None}` and `due()` returned "no article recorded yet" — the 3-day
+      floor never engaged once in production. Observed live: a cycle offered a new article
+      hours after one had been published.
+
+    Both are now one commit on main, and neither is believed until it is read back from main.
+    """
+    def commit(record: dict, state: dict) -> str:
+        files = [
+            MainFile(
+                relative=LEDGER_RELATIVE, default=[],
+                build=lambda rows: rows + [record],
+                present=lambda rows: any(_same_destination(e, record) for e in rows),
+            ),
+            MainFile(
+                relative=STATE_RELATIVE, default={},
+                # The clock only ever moves forward. If another run advanced it further while
+                # this cycle was posting, keep theirs: a floor that goes BACKWARDS would let a
+                # third article out early, which is the failure this file exists to prevent.
+                build=lambda on_main: {**on_main, **state,
+                                       "last_article_at": max(
+                                           [d for d in (state.get("last_article_at"),
+                                                        (on_main or {}).get("last_article_at"))
+                                            if d] or [None])},
+                present=lambda on_main: bool(state.get("last_article_at")) and
+                (on_main or {}).get("last_article_at", "") >= state["last_article_at"],
+            ),
+        ]
+        # A promotion does not move the clock, so it has no state change to land and must not
+        # be held to one. Its ledger row is still mandatory.
+        if not state.get("last_article_at"):
+            files = files[:1]
+        return commit_to_main(files, slug=record.get("article_slug", "post"),
+                              kind="bookkeeping", sleep_fn=sleep_fn)
     return commit
+
+
+# Kept under its old name because the cadence workflow and every caller say "ledger". It now
+# lands the clock too; the name would be a lie if it landed less, not if it lands more.
+ledger_committer = bookkeeping_committer
 
 
 def _same_destination(entry: dict, record: dict) -> bool:

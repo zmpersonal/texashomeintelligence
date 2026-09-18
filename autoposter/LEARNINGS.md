@@ -575,3 +575,56 @@ one since the file was written. It was invisible while no test needed real subpr
 **Family:** L13, L15, L17, L19, L20 — the "it was only ever simulated" family. The new twist:
 here the step didn't just go untested, it *reported success*. A test that only asks "did it
 raise?" cannot tell a working persistence step from one that persists nothing.
+
+---
+
+## L22 — enumerate the class by inventory, not by incident
+
+**What happened.** After L21 fixed the ledger row, the owner asked for the whole class rather
+than the instance: *every* piece of state the cycle reads or writes, and where each one
+persists. Writing that list down took under an hour and found more than the three previous
+incidents had, between them, cost days.
+
+What the list found:
+
+1. **The cadence clock never persisted.** `autopilot-state.json` had never existed on `main`,
+   nothing committed it, and no cache carried it. Every run loaded `{"last_article_at": None}`,
+   so `due()` returned "no article recorded yet" every single time and the 3-day floor had
+   never engaged in production. Confirmed live: a cycle offered a new article hours after one
+   had been published.
+2. **The streak was not state at all.** It came from `clean_streak` in `config.yaml` — a
+   hand-maintained number that no code ever advanced, which is why post #4 recorded a streak of
+   2 with four posts on the page. Same symptom as the other two, entirely different cause. It
+   is now counted from the ledger, which *is* the list of posts and therefore cannot drift from
+   it. Config's field keeps its own meaning — the owner-advanced autonomy marker — and nothing
+   reads it.
+3. **The feed has not refreshed since the project landed.** `social-feed.json` carries
+   `generated_at: 2026-09-06`; `build_feed.py` writes it and no workflow runs it. Not a
+   persistence defect — the opposite. It persists and never moves.
+4. **Every builder had exhausted its current period**, so the machine now skips every cycle
+   until the feed moves. Correct behaviour, made permanent by (3).
+5. **Three test suites depended on production data** and went red on `main` with no code change
+   behind them, because `published_questions` reads the live site's articles and the suites
+   borrowed them. CI runs the suite before the cycle, so that is not a flaky test — it is a
+   scheduled outage that stops the machine running at all.
+
+Findings 3, 4 and 5 were nowhere near the bug that prompted the sweep, and none of them would
+have been found by fixing the clock.
+
+**The lesson.** Fixing an instance teaches you the shape of one bug. Enumerating the class
+teaches you where the rest of them are. The cheapest version is a written inventory with one
+row per piece of state and a column that must say **main**, **cache**, or **nowhere** — because
+"nowhere" is a claim someone has to defend in writing, and most of the time they cannot.
+
+The inventory lives at `specs/STATE-INVENTORY.md` and is part of the change that adds durable
+state: **a new file the cycle writes adds a row, or the change is not finished.**
+
+**The structural half.** One committer now lands every durable fact —
+`run_autopilot.commit_to_main` takes a list of `MainFile`s, writes each from main's own content,
+commits them together, and confirms every one of them landed. The next piece of durable state
+adds a `MainFile`, not a code path. Two implementations of "write a file to main" is how the
+second one ends up missing the lesson the first one paid for.
+
+**Family:** L13, L15, L17, L19, L20, L21. L20 said fix the class. This is what actually doing
+that looks like, and the honest note is that L20 was written *before* the clock and the streak
+were found — naming the class did not find them. The inventory did.
