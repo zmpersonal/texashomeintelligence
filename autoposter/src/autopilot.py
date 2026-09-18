@@ -32,6 +32,7 @@ variable — flip it in the UI in seconds, no commit), and `autopilot.paused` in
 from __future__ import annotations
 
 import json
+import re
 import time
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, timezone
@@ -80,6 +81,9 @@ class CycleDecision:
     # The audit-record PR the cycle opened and merged for itself. Carried so the FYI can show
     # the trail — the PR is never something a human has to act on, only something they can read.
     pr_url: str = ""
+    # TRUE when this cycle is recovering an already-published article rather than publishing a
+    # new one. It changes three things and nothing else: no merge, no deploy, no cadence floor.
+    promotion: bool = False
     # Set the moment a post actually goes out. Present means something is live on a real page.
     post_url: str = ""
     # The post-deploy verdicts. Empty until the deploy has happened and they have actually run.
@@ -278,6 +282,74 @@ def _safe_notify(notify_fn, message: str, decision: "CycleDecision") -> None:
         print(f"[CRITICAL] the outcome stands regardless:\n{message}")
 
 
+def promotable_orphans(config: dict, *, today: date, write_fn, build_claims_fn,
+                       articles: dict, ledger_path: Path | None = None) -> list[dict]:
+    """Articles that are LIVE on the site but carry no ledger row — published, never promoted.
+
+    THE FLAW THIS CLOSES. The cycle merges the article before it posts, so any failure after the
+    merge left a correct, deployed article with no promotion — and article selection, which
+    excludes anything already on the site, then wrote it off forever. Two articles were lost
+    that way in one day: one to a publisher crash, one to a CDN deploy race.
+
+    "Published" and "promoted" are now separate states. The LEDGER is the record of promotion;
+    the site is the record of publication. An article in the second and not the first is
+    recoverable rather than spent.
+
+    NO HOLE IS PUT IN THE DUPLICATE GATE, and none is needed. That gate keys the ledger, and an
+    orphan has no ledger row — it was never blocked by the gate, only by selection. These are
+    two different mechanisms and only selection changes. Once a promo lands, the row exists and
+    the gate refuses a second one forever, exactly as before.
+
+    One honest limit: a builder's ledger is rebuilt for the period its DATA currently holds, so
+    an orphan is recoverable only while that period is still current. Once the data gains a
+    month the builder offers a different article and the old one can no longer be rebuilt — it
+    stays published and un-promoted. Refusing is the right answer there: promoting a piece whose
+    figures cannot be re-derived would be promoting something unverified.
+    """
+    published = engine.published_questions(config)
+    posted = publish_gate.posted_destinations(ledger_path=ledger_path)
+    feed = engine.load_feed()
+    found = []
+    for topic_id, builder in sorted(articles.items()):
+        try:
+            claims_fn, article_fn = builder
+            claims = claims_fn(feed, config, today)
+            topic = {"id": topic_id, "question": topic_id}
+            article = article_fn(topic, claims, feed)
+            url = (f"https://{(config.get('publish') or {}).get('site_domain')}"
+                   f"/analysis/{article['slug']}/")
+            article = dict(article, canonical_url=url)
+        except Exception:                          # noqa: BLE001
+            # A builder that cannot rebuild its current period has nothing to offer here. It is
+            # not an error: `electricity-still-rising` is period-locked by design and raises.
+            continue
+        if article["title"] not in published:
+            continue                               # not published — the normal path handles it
+        if publish_gate.normalise(url) in posted:
+            continue                               # already promoted
+        found.append({"topic_id": topic_id, "article": article, "claims": claims,
+                      "published_at": _published_at(article["slug"], config)})
+    # Oldest first: the article that has waited longest for its promo gets it first. Ties break
+    # on topic id so the order is deterministic rather than filesystem-dependent.
+    found.sort(key=lambda o: (o["published_at"], o["topic_id"]))
+    return found
+
+
+def _published_at(slug: str, config: dict) -> str:
+    """The `publishedAt` the site file carries, or '' when it cannot be read.
+
+    Read-only across the Rule 0 boundary, like `published_questions`. An unreadable date sorts
+    first, which is harmless — it only affects WHICH orphan is recovered first, never whether
+    one is recovered at all, and every one of them still has to pass every gate.
+    """
+    directory = (config.get("publish") or {}).get("analysis_dir", "../site/src/data/analysis")
+    path = (ROOT / directory).resolve() / f"{slug}.md"
+    if not path.is_file():
+        return ""
+    match = re.search(r'^publishedAt:\s*"([^"]+)"', path.read_text(), re.M)
+    return match.group(1) if match else ""
+
+
 # The post-deploy checks probe a CDN moments after a deploy, which is eventually consistent by
 # design. A single immediate HEAD is the wrong instrument for that: on 2026-09-18 it returned 404
 # for a URL that resolved 90 seconds later, and the cycle correctly withheld a post for an
@@ -300,6 +372,74 @@ def _verify_until_stable(verify_opener, url: str, *, attempts: int, delay: int,
         if attempt < attempts:
             sleep_fn(delay)
     return False, f"{reason} — still failing after {attempts} attempts over {attempts * delay}s"
+
+
+def _find_promotion(config: dict, *, today: date, write_fn, build_claims_fn, articles: dict,
+                    captions: dict, link_opener, media_opener, render_fn=None,
+                    defer_resolution: bool = False, ledger_path: Path | None = None,
+                    state: dict | None = None, env: dict | None = None) -> "CycleDecision | None":
+    """The oldest orphan that still passes every gate, or None.
+
+    Returns None — not a skip — when there is nothing to promote, so the cycle falls through to
+    publishing a new article. An orphan that fails a gate is skipped over and the next one tried,
+    because one stale article must not block the recovery of a fresh one.
+
+    `render_fn` is accepted and ignored on purpose: the card was rendered when the article was
+    published and is already committed and served. Re-rendering would be writing over a file the
+    live page is using to prove a point it already proved.
+    """
+    orphans = promotable_orphans(config, today=today, write_fn=write_fn,
+                                 build_claims_fn=build_claims_fn, articles=articles,
+                                 ledger_path=ledger_path)
+    for orphan in orphans:
+        article, claims = orphan["article"], orphan["claims"]
+        decision = CycleDecision(action="publish", promotion=True, article=article,
+                                 claims=claims, reason=f"promoting: {orphan['topic_id']}")
+        verdicts = [GateVerdict("orphan-selection", True,
+                                f"{orphan['topic_id']} — published {orphan['published_at']}, "
+                                f"never promoted")]
+        verdicts.append(_verdict("claim-freshness", lambda c=claims: (
+            ledger_mod.verify_ledger(c, config, today).ok,
+            "all claims inside their staleness bounds")))
+
+        def _card_gate(a=article, c=claims):
+            card = card_mod.build_card(a, c)
+            path = card_mod.sidecar_path(a["slug"], config)
+            sidecar = json.loads(path.read_text()) if path.exists() else None
+            r = card_mod.verify_card(card, c, slug=a["slug"], article=a, sidecar=sidecar,
+                                     require_sidecar=True)
+            decision.card = card
+            return r.ok, "; ".join(r.failures) if r.failures else "the live card matches the ledger"
+        verdicts.append(_verdict("card", _card_gate))
+
+        verdicts.append(_verdict("channel-guard", lambda: (
+            channel_guard.postable_platforms(config) == ["facebook"],
+            "facebook pinned and enabled")))
+
+        def _post_gate(a=article, c=claims, t=orphan["topic_id"]):
+            post, gate = engine.build_facebook_promo(
+                a, c, config, today, link_opener=link_opener, media_opener=media_opener,
+                caption=captions.get(t), defer_resolution=defer_resolution)
+            decision.post = post
+            return gate.ok, "; ".join(gate.failures) if gate.failures else "9/9 social gates"
+        verdicts.append(_verdict("social-suite+duplicate", _post_gate))
+
+        decision.verdicts = verdicts
+        decision.resolution_pending = defer_resolution
+        if not decision.clean:
+            # This orphan cannot be promoted right now — a stale ledger, a card that no longer
+            # matches, a duplicate. Try the next one rather than stalling the whole cycle on it.
+            print(f"[promote] {orphan['topic_id']} not promotable: "
+                  + "; ".join(v.line() for v in verdicts if not v.ok))
+            continue
+
+        paused, why = is_paused(config, env)
+        if paused:
+            return CycleDecision(action="paused", reason=why, verdicts=verdicts, promotion=True,
+                                 article=article, card=decision.card, post=decision.post,
+                                 resolution_pending=defer_resolution)
+        return decision                            # ONE per cycle: the first that clears.
+    return None
 
 
 def _live_targets(decision: "CycleDecision", config: dict) -> list[tuple[str, str]]:
@@ -463,7 +603,24 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
     it restores only the three card directories, never the whole checkout.
     """
     state = load_state(state_path)
-    decision = evaluate(config, today=today, state=state, **evaluate_kwargs)
+
+    # ---- PROMOTE BEFORE PUBLISH.
+    #
+    # An orphan is an article already live on the site with no ledger row. Promoting one has no
+    # merge and no deploy — the page has been served for hours — so it exercises only the post
+    # and the post-publish check, with the least possible in front of them. It is also the
+    # cheaper thing to do: recovering a piece the site already carries beats adding another.
+    #
+    # Guards, all deliberate:
+    #   * ONE per cycle. A backlog clears over days, never as a burst.
+    #   * Claim-freshness must pass. An article whose data went stale while it waited is refused,
+    #     not promoted — a stale promo is worse than no promo.
+    #   * It does NOT touch the cadence floor, here or in the state write below. Recovering an
+    #     already-published article is not adding to the publishing cadence.
+    decision = _find_promotion(config, today=today, ledger_path=ledger_path, **evaluate_kwargs)
+
+    if decision is None:
+        decision = evaluate(config, today=today, state=state, **evaluate_kwargs)
 
     if decision.action == "too_soon":
         return decision
@@ -505,9 +662,14 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
     # The decision, not just a slug, goes to the merger: it needs the article body, its
     # frontmatter and its card, and passing the whole thing means the signature does not change
     # again the first time it needs one more field.
-    for stage, fn, arg in (("merge", merge_fn, decision),
-                           ("deploy", deploy_wait_fn,
-                            decision.article["canonical_url"] if decision.article else "")):
+    # A PROMOTION skips both: the article was merged and deployed on an earlier cycle. Running
+    # them again would re-commit a file that has not changed and wait for a deploy that already
+    # happened.
+    stages = () if decision.promotion else (
+        ("merge", merge_fn, decision),
+        ("deploy", deploy_wait_fn,
+         decision.article["canonical_url"] if decision.article else ""))
+    for stage, fn, arg in stages:
         if not fn:
             continue
         try:
@@ -569,9 +731,10 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
     decision.post_url = record["post_url"]
 
     try:
-        save_state({**state,
-                    "last_article_at": today.isoformat(),
-                    "cycles": state.get("cycles", 0) + 1}, state_path)
+        # A promotion does not move `last_article_at`. The cadence floor governs how often a NEW
+        # article goes out; recovering one that is already published is not that.
+        advanced = ({} if decision.promotion else {"last_article_at": today.isoformat()})
+        save_state({**state, **advanced, "cycles": state.get("cycles", 0) + 1}, state_path)
         notify_fn(published_notice(decision, decision.article["canonical_url"],
                                    record["post_url"], streak))
     except Exception as exc:                       # noqa: BLE001

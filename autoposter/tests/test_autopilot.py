@@ -337,7 +337,14 @@ def test_a_SKIPPED_run_cycle_notifies_and_never_merges():
 
 
 def test_a_too_soon_run_cycle_sends_NO_notice_at_all():
+    """The premise is stated rather than inherited: NOTHING IS PUBLISHED, so nothing can be an
+    orphan, so the cadence floor is the only thing left to decide the cycle.
+
+    Without that, promote-before-publish makes this test pass or fail depending on whether the
+    real site currently holds an un-promoted article — which is a fact about the world, not
+    about the floor this test measures."""
     cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], analysis_dir=tempfile.mkdtemp())   # nothing published
     notices = []
     state = Path(tempfile.mkdtemp()) / "s.json"
     autopilot.save_state({"last_article_at": "2026-09-10", "cycles": 1}, state)
@@ -346,6 +353,143 @@ def test_a_too_soon_run_cycle_sends_NO_notice_at_all():
     assert d.action == "too_soon"
     assert notices == []
 
+
+def test_an_ORPHAN_is_promoted_even_when_the_cadence_floor_says_too_soon():
+    """The owner's call, asserted: recovering an already-published article is not adding to the
+    publishing cadence, so the three-day floor does not govern it."""
+    cfg = _cfg()
+    # NOT a temp sidecar dir: an orphan's card is the one already rendered and committed
+    # beside the live article, so the real directory is the only one that has it. A temp
+    # copy holds whatever the engine picks NOW, which is a different article entirely.
+    state = Path(tempfile.mkdtemp()) / "s.json"
+    autopilot.save_state({"last_article_at": TODAY.isoformat(), "cycles": 1}, state)   # too soon
+    found = autopilot.promotable_orphans(
+        cfg, today=TODAY, write_fn=run_article.write,
+        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES)
+    if not found:
+        return                                     # nothing orphaned in this checkout
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=lambda m: None, merge_fn=lambda dec: None,
+        deploy_wait_fn=lambda url: None, verify_opener=lambda url: (True, "resolved 200"),
+        publish_fn=lambda post: {"post_url": "https://facebook.com/p/1", "submission_id": "s"},
+        state_path=state, ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
+    assert d.action != "too_soon", "the floor blocked a promotion"
+    assert d.promotion, d.action
+
+
+def test_a_promotion_NEVER_merges_or_waits_for_a_deploy():
+    """The article is already live. Re-committing it and re-waiting would be doing work whose
+    result already exists, and the merge would touch main for no change."""
+    cfg = _cfg()
+    # NOT a temp sidecar dir: an orphan's card is the one already rendered and committed
+    # beside the live article, so the real directory is the only one that has it. A temp
+    # copy holds whatever the engine picks NOW, which is a different article entirely.
+    merged, waited = [], []
+    found = autopilot.promotable_orphans(
+        cfg, today=TODAY, write_fn=run_article.write,
+        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES)
+    if not found:
+        return
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=lambda m: None,
+        merge_fn=lambda dec: merged.append(1), deploy_wait_fn=lambda url: waited.append(1),
+        verify_opener=lambda url: (True, "resolved 200"),
+        publish_fn=lambda post: {"post_url": "https://facebook.com/p/1", "submission_id": "s"},
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
+    assert d.promotion and not merged and not waited
+
+
+def test_a_promotion_does_NOT_advance_the_cadence_clock():
+    cfg = _cfg()
+    # NOT a temp sidecar dir: an orphan's card is the one already rendered and committed
+    # beside the live article, so the real directory is the only one that has it. A temp
+    # copy holds whatever the engine picks NOW, which is a different article entirely.
+    state = Path(tempfile.mkdtemp()) / "s.json"
+    autopilot.save_state({"last_article_at": "2026-09-01", "cycles": 1}, state)
+    found = autopilot.promotable_orphans(
+        cfg, today=TODAY, write_fn=run_article.write,
+        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES)
+    if not found:
+        return
+    autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=lambda m: None, merge_fn=lambda dec: None,
+        deploy_wait_fn=lambda url: None, verify_opener=lambda url: (True, "resolved 200"),
+        publish_fn=lambda post: {"post_url": "https://facebook.com/p/1", "submission_id": "s"},
+        state_path=state, ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
+    assert autopilot.load_state(state)["last_article_at"] == "2026-09-01", \
+        "a promotion moved the cadence clock"
+
+
+def test_an_ALREADY_PROMOTED_article_is_not_an_orphan():
+    """The duplicate gate is untouched and unneeded here: an article with a ledger row simply is
+    not in the orphan set. Selection and the gate stay separate mechanisms."""
+    cfg = _cfg()
+    found = autopilot.promotable_orphans(
+        cfg, today=TODAY, write_fn=run_article.write,
+        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES)
+    if not found:
+        return
+    ledger = Path(tempfile.mkdtemp()) / "l.json"
+    ledger.write_text(json.dumps([{"platform": "facebook", "post_url": "https://facebook.com/x",
+                                   "article_url": o["article"]["canonical_url"]} for o in found]))
+    assert autopilot.promotable_orphans(
+        cfg, today=TODAY, write_fn=run_article.write,
+        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES,
+        ledger_path=ledger) == []
+
+
+def test_a_STALE_orphan_is_REFUSED_not_promoted():
+    """The owner's second call: a stale promo is worse than no promo.
+
+    Two separate assertions, because two separate gates refuse it and conflating them would
+    make this test pass for a reason it does not name:
+
+      1. `verify_ledger` itself refuses the stale claims — that is the claim-freshness gate.
+      2. `_find_promotion` returns None — that is the cycle declining to promote.
+
+    Staleness is caught TWICE on purpose: claim-freshness reads the ledger, and G5 inside the
+    social suite reads the same bounds. Found by mutation: stubbing claim-freshness to always
+    pass still leaves the orphan refused, because G5 catches it independently. That is defence
+    in depth and worth having, but it means a single end-to-end assertion cannot tell you which
+    gate did the work — so this asserts the freshness gate directly.
+
+    The clock is NOT moved to make the claims stale. A year on, the builders offer a different
+    period, the titles match nothing published, and the orphan is never found — so the gate
+    never runs and the test would pass having proven nothing. The bounds are tightened instead.
+    """
+    cfg = _cfg()
+    found = autopilot.promotable_orphans(
+        cfg, today=TODAY, write_fn=run_article.write,
+        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES,
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json")
+    if not found:
+        return                                     # nothing orphaned in this checkout
+
+    import claim_ledger as ledger_mod
+    strict = copy.deepcopy(cfg)
+    strict["staleness_hours"] = {k: 1 for k in (cfg.get("staleness_hours") or {})}
+
+    # 1. the freshness gate itself
+    for orphan in found:
+        assert ledger_mod.verify_ledger(orphan["claims"], cfg, TODAY).ok, \
+            f"{orphan['topic_id']} should be fresh under the real bounds"
+        assert not ledger_mod.verify_ledger(orphan["claims"], strict, TODAY).ok, \
+            f"{orphan['topic_id']} should be stale under one-hour bounds"
+
+    # 2. the cycle declining to promote
+    def promotion(config):
+        return autopilot._find_promotion(
+            config, today=TODAY, ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+            write_fn=run_article.write, build_claims_fn=run_article.build_claims,
+            articles=run_article.TOPIC_ARTICLES, captions=run_article.TOPIC_CAPTIONS,
+            link_opener=OK, media_opener=OK, defer_resolution=True, env={})
+
+    assert promotion(cfg) is not None, "the control case must find a promotable orphan"
+    assert promotion(strict) is None, "a stale orphan was promoted"
 
 def test_a_FRESH_install_with_no_state_is_due_rather_than_stuck():
     """No recorded article means nothing has run yet, which is a reason to run, not to wait."""
