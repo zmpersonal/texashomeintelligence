@@ -1,0 +1,73 @@
+# THI autoposter — the feed refresh.
+#
+# WHY IT EXISTS. `autoposter/data/social-feed.json` carried `generated_at: 2026-09-06` for
+# twelve days. `build_feed.py` writes it and NOTHING RAN IT, so every article the machine wrote
+# was built from a frozen snapshot of the world. Not a persistence defect — the opposite. It
+# persisted and never moved, and a recurring builder is retired for the PERIOD its data names,
+# so a frozen period retires every builder permanently and the machine goes quiet forever.
+#
+# ORDERED BY COMPLETION, NOT BY CLOCK. This reads `site/src/data/generated/`, which the "Data
+# ingestion" workflow produces. A scheduled run's real fire time drifts by hours on busy
+# runners — the autoposter's own 14:10 cron has been observed firing between 17:00 and 19:00 —
+# so ordering two jobs by their cron times is a hope, not a guarantee. `workflow_run` fires
+# when ingestion COMPLETES, whatever time that turns out to be. That is the guarantee.
+#
+# The daily cron is a FALLBACK for the day ingestion does not run at all, or this job fails on
+# the workflow_run trigger. It is safe to fire early: with no new data the refresh finds no
+# substantive change and commits nothing.
+name: autoposter feed refresh
+
+on:
+  workflow_run:
+    workflows: ["Data ingestion"]
+    types: [completed]
+  schedule:
+    # 11:47 UTC — after ingestion's 09:17 nominal, well before the cadence's 14:10, and off the
+    # hour because GitHub's scheduler is busiest then and delays runs.
+    - cron: "47 11 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Rebuild and report whether the data moved, but commit nothing"
+        type: boolean
+        default: true
+
+concurrency:
+  # One refresh at a time. Two overlapping runs would race on the same file on main, and the
+  # loser would land a feed built from the same data with a different timestamp.
+  group: autoposter-feed-refresh
+
+permissions:
+  contents: write        # the refresh writes the feed to main
+  pull-requests: write   # ...through a PR, which is the audit record of what changed and when
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    # On the workflow_run trigger, only follow a SUCCESSFUL ingestion. A failed ingestion leaves
+    # the datasets as they were, so there is nothing to read and a "refresh" would only confirm
+    # yesterday's data — which the substance check would do correctly, but doing it at all
+    # invites reading a green run as evidence the data is current.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the autoposter's dependencies
+        run: pip install pyyaml
+
+      - name: Identify the committer
+        run: |
+          git config user.name  "thi-autoposter"
+          git config user.email "noreply@texashomeintelligence.com"
+
+      - name: Refresh the feed
+        working-directory: autoposter
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 tools/refresh-feed.py ${{ inputs.dry_run && '--dry-run' || '' }}

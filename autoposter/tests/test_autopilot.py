@@ -194,6 +194,96 @@ def test_a_DUPLICATE_destination_SKIPS():
     assert all(v.ok for v in d.verdicts), [v.line() for v in d.verdicts if not v.ok]
 
 
+def _everything_published(cfg):
+    """The REAL two-week condition: every buildable builder's current-period title is already
+    live, so nothing clears the bar until the data gains a month. Stated as a premise rather
+    than faked with an empty registry, because an empty registry takes a different branch."""
+    import topic_scorer
+    today = TODAY
+    folder = Path(cfg["publish"]["analysis_dir"])
+    folder.mkdir(parents=True, exist_ok=True)
+    ranked = [t for t in topic_scorer.score_topics(engine.load_feed(), cfg) if t["buildable"]]
+    assert ranked, "no buildable topic; this premise would be vacuous"
+    for i, topic in enumerate(ranked):
+        title = engine._current_title(topic, run_article.TOPIC_ARTICLES, today)
+        (folder / f"{i}.md").write_text(f'title: "{title}"\n')
+    return cfg
+
+
+def _nothing_left_to_do(cfg, ledger_path):
+    """The full October-waiting state: every current title published AND every one of them
+    recorded, so there is no orphan to promote either.
+
+    Seeding only the titles is not the real condition — an empty ledger makes every published
+    article look never-promoted, and promote-before-publish correctly picks one up. That is the
+    machine working, not the quiet state, and asserting silence against it would have been
+    asserting silence against a cycle that publishes.
+    """
+    _everything_published(cfg)
+    orphans = autopilot.promotable_orphans(
+        cfg, today=TODAY, write_fn=run_article.write,
+        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES,
+        ledger_path=ledger_path)
+    rows = [{"platform": "facebook", "page_id": "PIN", "post_publish_verified": True,
+             "article_url": o["article"]["canonical_url"]}
+            for o in orphans]
+    ledger_path.parent.mkdir(parents=True, exist_ok=True)
+    ledger_path.write_text(json.dumps(rows))
+    return cfg
+
+
+def test_NOTHING_TO_SAY_is_SILENT_and_green():
+    """THE TWO-WEEK QUESTION. Between periods every builder is retired and the machine has
+    nothing to write — for ten days at a stretch. A daily "nothing to publish" over that stretch
+    trains the reader to ignore the channel, and the one message that matters is the one saying
+    something WAS published. So it stays quiet, and it stays green."""
+    cfg, notices = _cfg(), []
+    led = Path(tempfile.mkdtemp()) / "l.json"
+    d = autopilot.run_cycle(
+        _nothing_left_to_do(cfg, led), today=TODAY, notify_fn=notices.append,
+        merge_fn=lambda dec: None,
+        deploy_wait_fn=lambda url: None, verify_opener=lambda url: (True, "ok"),
+        publish_fn=lambda post: {"post_url": "x", "submission_id": "y"},
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=led, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
+    assert d.action == "nothing_to_say", f"{d.action} (promotion={d.promotion}) {d.reason}"
+    assert notices == [], f"a quiet day sent Slack traffic: {notices}"
+    assert d.notice() == "", "it built a notice for a day nothing happened"
+    assert not d.is_broken, "having nothing to say turned the job red"
+
+
+def test_a_BROKEN_gate_is_STILL_LOUD_even_though_a_quiet_day_is_not():
+    """The other half, and the reason this is not just `notify_fn = None`. Silence is for the
+    designed refusal only; a gate that BROKE must still say so, or the quiet and the fault
+    become the same signal."""
+    def exploding_opener(url):
+        raise RuntimeError("the resolver itself broke")
+
+    cfg = _cfg()
+    notices = []
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=notices.append, merge_fn=lambda dec: None,
+        deploy_wait_fn=lambda url: None, verify_opener=lambda url: (True, "ok"),
+        publish_fn=lambda post: {"post_url": "x", "submission_id": "y"},
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json", sleep_fn=_NO_SLEEP,
+        **_kwargs(cfg, link_opener=exploding_opener))
+    assert d.action == "skip", d.action
+    assert notices, "a broken writer went out silently"
+    assert "SKIPPED" in notices[0], notices[0]
+    assert "the resolver itself broke" in notices[0], "the notice does not say what broke"
+
+
+def test_the_designed_refusal_has_its_OWN_TYPE_not_a_message_to_match():
+    """Telling "nothing cleared the bar" from "a gate broke" by matching the exception's text
+    would survive exactly until someone improved the wording."""
+    assert issubclass(engine.NothingDefensible, RuntimeError)
+    cfg = _everything_published(_cfg())
+    d = autopilot.evaluate(cfg, today=TODAY, state=_ready_state(), **_kwargs(cfg))
+    assert d.action == "nothing_to_say", d.action
+    assert "defensible" in d.reason
+
+
 def test_a_GATE_THAT_RAISES_is_a_failure_not_an_absence_of_an_opinion():
     """The safety argument in one test. An exception inside a gate must read as FAIL, never as
     'no objection' — unattended, the difference is a post."""
