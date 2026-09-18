@@ -232,6 +232,55 @@ def _nothing_left_to_do(cfg, ledger_path):
     return cfg
 
 
+# ===================================================== the floor is a MINIMUM, never a quota
+
+def test_THE_FLOOR_IS_SEVEN_DAYS_and_a_second_cycle_inside_it_is_too_soon():
+    """Raised from 3 on 2026-09-18. A second cycle inside the week must stop before selection."""
+    cfg = engine.load_config()
+    assert cfg["cadence"]["article_days_min"] == 7, cfg["cadence"]["article_days_min"]
+    published = {"last_article_at": "2026-09-18", "cycles": 1}
+    for day, due_expected in ((19, False), (20, False), (24, False), (25, True), (30, True)):
+        ok, why = autopilot.due(published, cfg, date(2026, 9, day))
+        assert ok is due_expected, f"2026-09-{day}: due={ok} ({why})"
+    assert "floor is 7d" in autopilot.due(published, cfg, date(2026, 9, 19))[1]
+
+
+def test_being_DUE_never_causes_a_publish_the_floor_cannot_manufacture_an_article():
+    """THE NON-NEGOTIABLE. The floor gates publishing; it never triggers it. However long the
+    machine has been quiet, a cycle with nothing genuinely new still publishes nothing — a
+    quota would be the one change that turns this from a cadence into filler."""
+    cfg, notices = _cfg(), []
+    led = Path(tempfile.mkdtemp()) / "l.json"
+    _nothing_left_to_do(cfg, led)
+    for years_quiet in (1, 5):
+        long_ago = date(TODAY.year - years_quiet, TODAY.month, TODAY.day).isoformat()
+        assert autopilot.due({"last_article_at": long_ago}, cfg, TODAY)[0], "not due; test is moot"
+        d = autopilot.run_cycle(
+            cfg, today=TODAY, notify_fn=notices.append, merge_fn=lambda dec: None,
+            deploy_wait_fn=lambda url: None, verify_opener=lambda url: (True, "ok"),
+            publish_fn=lambda post: {"post_url": "x", "submission_id": "y"},
+            state_path=_state_at(long_ago), ledger_path=led, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
+        assert d.action == "nothing_to_say", f"{years_quiet}y quiet produced {d.action}"
+    assert notices == [], f"a long silence generated Slack traffic: {notices}"
+
+
+def test_NO_MAXIMUM_is_wired_to_anything_that_publishes():
+    """`article_days_max` is documentation. If anyone ever makes the driver read it, this fails
+    — because a maximum that publishes is a quota, and a quota publishes filler."""
+    import inspect
+    for fn in (autopilot.due, autopilot.evaluate, autopilot.run_cycle):
+        src = inspect.getsource(fn)
+        assert "article_days_max" not in src, f"{fn.__name__} reads a cadence MAXIMUM"
+        assert "article_days" not in src.replace("article_days_min", ""), \
+            f"{fn.__name__} reads a cadence key other than the floor"
+
+
+def _state_at(last_article_at):
+    path = Path(tempfile.mkdtemp()) / "s.json"
+    autopilot.save_state({"last_article_at": last_article_at, "cycles": 1}, path)
+    return path
+
+
 def test_NOTHING_TO_SAY_is_SILENT_and_green():
     """THE TWO-WEEK QUESTION. Between periods every builder is retired and the machine has
     nothing to write — for ten days at a stretch. A daily "nothing to publish" over that stretch
@@ -327,10 +376,17 @@ def test_too_soon_does_nothing_and_stays_QUIET():
 
 
 def test_the_floor_is_respected_and_the_maximum_is_not_a_trigger():
+    """Dates derived from the configured floor, not written out. They were hardcoded to a
+    3-day floor and broke the moment the floor moved to 7 — a test that has to be edited every
+    time the setting it guards changes is measuring the setting, not the behaviour."""
     cfg = _cfg()
-    assert not autopilot.due({"last_article_at": "2026-09-10"}, cfg, TODAY)[0]
-    assert autopilot.due({"last_article_at": "2026-09-08"}, cfg, TODAY)[0]
-    assert autopilot.due({"last_article_at": "2026-08-01"}, cfg, TODAY)[0]
+    floor = cfg["cadence"]["article_days_min"]
+    inside = date.fromordinal(TODAY.toordinal() - (floor - 1)).isoformat()
+    exactly = date.fromordinal(TODAY.toordinal() - floor).isoformat()
+    ancient = date.fromordinal(TODAY.toordinal() - floor * 10).isoformat()
+    assert not autopilot.due({"last_article_at": inside}, cfg, TODAY)[0], "published inside the floor"
+    assert autopilot.due({"last_article_at": exactly}, cfg, TODAY)[0], "the floor never reopens"
+    assert autopilot.due({"last_article_at": ancient}, cfg, TODAY)[0]
 
 
 # ===================================================== the kill switch
