@@ -860,7 +860,8 @@ def test_a_PUBLISHER_that_raises_notifies_and_does_not_crash():
     d, notices = _full_cycle(cfg, publish_fn=boom)
     assert d.action == "posted_nothing" and d.failed_stage == "publish"
     assert len(notices) == 1, "a publisher crash must notify exactly once"
-    assert "ARTICLE LIVE, POST WITHHELD" in notices[0]
+    # "POST FAILED", not "POST WITHHELD": the links were fine, the publisher was not.
+    assert "ARTICLE LIVE, POST FAILED" in notices[0]
     assert "no attribute" in d.reason, d.reason
     assert d.is_broken, "a crash in the publisher is a fault and must go red"
 
@@ -1119,6 +1120,29 @@ def test_a_permanently_dead_destination_still_withholds_the_post():
         ledger_path=Path(tempfile.mkdtemp()) / "l.json",
         defer_resolution=True, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
     assert d.action == "posted_nothing" and not posted
+
+
+
+def test_the_withheld_notice_names_the_RIGHT_cause():
+    """Two different causes wear `posted_nothing`, and the notice must not describe one as the
+    other. A real 401 from the publisher was reported as "the URL could not be verified" while
+    both URLs had just returned 200 — which sends whoever reads it to the wrong system."""
+    article = {"canonical_url": "https://x/y/"}
+    card = {"question": "Q?"}
+
+    publish_failed = autopilot.CycleDecision(
+        action="posted_nothing", failed_stage="publish", article=article, card=card,
+        reason="the article is live; the post failed: HTTPError: HTTP Error 401: Unauthorized")
+    notice = publish_failed.notice()
+    assert "POST FAILED" in notice and "401" in notice
+    assert "could not verify" not in notice, "a publish failure reported as a link problem"
+
+    link_failed = autopilot.CycleDecision(
+        action="posted_nothing", article=article, card=card,
+        live_verdicts=[autopilot.GateVerdict("post-deploy-media", False, "HTTP 404")])
+    notice = link_failed.notice()
+    assert "link/media unverified" in notice and "HTTP 404" in notice
+    assert "POST FAILED" not in notice
 
 
 if __name__ == "__main__":

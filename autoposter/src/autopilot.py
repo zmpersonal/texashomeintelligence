@@ -170,13 +170,24 @@ class CycleDecision:
                     f"so the ledger and the cadence clock may not reflect it. Check the page "
                     f"before the next cycle runs.")
         if self.action == "posted_nothing":
+            card = self.card or {}
+            head = (f"{card.get('question', '')}\n"
+                    f"Article: {(self.article or {}).get('canonical_url', '')}\n")
+            # TWO different causes wear this outcome, and the notice must not describe one as
+            # the other. A 401 from the publisher was being reported as "the URL could not be
+            # verified" while both URLs had just returned 200 — which sends whoever reads it at
+            # 2am to investigate the wrong system entirely.
+            if self.failed_stage == "publish":
+                return (f"⚠️ THI autoposter: ARTICLE LIVE, POST FAILED — nothing went out.\n"
+                        f"{head}"
+                        f"  • {self.reason}\n"
+                        f"The links verified; the POST itself failed. The article is published "
+                        f"and stays eligible for a promo on a later cycle, so nothing is lost — "
+                        f"but no post goes out until the cause above is fixed.")
             failed = [v for v in self.live_verdicts if not v.ok]
             body = "\n".join(f"  • {v.name} — {v.detail}" for v in failed)
-            card = self.card or {}
             return (f"⚠️ THI autoposter: ARTICLE LIVE, POST WITHHELD — link/media unverified.\n"
-                    f"{card.get('question', '')}\n"
-                    f"Article: {(self.article or {}).get('canonical_url', '')}\n"
-                    f"{body}\n"
+                    f"{head}{body}\n"
                     f"The article passed every content gate and is published. Nothing went to "
                     f"Facebook, because the post would have pointed at a URL this run could not "
                     f"verify. No post goes out on an unclear gate.")
