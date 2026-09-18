@@ -292,6 +292,13 @@ def _numeral_gates(post: dict, story: dict, result: GateResult) -> None:
     for supporting in story.get("supporting_figures", []) or []:
         allowed |= _extract_numerals(str(supporting))
         allowed |= _extract_numerals(str(supporting), drop_dates=False)
+    # A source NAME and a claim's DATE are provenance, like `as_of` two lines up — an identifier
+    # and a period, not assertions. "NOAA NCEI U.S. Climate Normals 1991-2020" is the name of a
+    # dataset; the 1991 in it claims nothing. The story has to SUPPLY these, so a numeral from a
+    # source this article does not cite still fails.
+    for provenance in ((story.get("source_names") or []) + (story.get("claim_as_ofs") or [])
+                       + [story.get("source", ""), story.get("source_short", "")]):
+        allowed |= _extract_numerals(str(provenance), drop_dates=False)
     used: set[str] = set()
     for surface in surfaces:
         used |= _extract_numerals(surface)
