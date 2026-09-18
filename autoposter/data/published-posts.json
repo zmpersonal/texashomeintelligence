@@ -31,5 +31,19 @@
     "post_publish_detail": "resolved 200 (GitHub Actions run 35389068587)",
     "streak_after": 2,
     "note": "Clean post #2, published by the promote-only path in run 35389068587. Reconstructed here because the row the cycle wrote lived only in the runner's checkout - the defect this commit fixes. Blotato status confirmed published with this publicUrl."
+  },
+  {
+    "published_at": "2026-09-18T20:19:36+00:00",
+    "platform": "facebook",
+    "page_id": "1335273942995805",
+    "post_url": "https://facebook.com/1335273942995805_122111624109466373",
+    "submission_id": "68c6da63-419b-4c20-90ed-458ccf8d2bd8",
+    "article_url": "https://texashomeintelligence.com/analysis/san-antonio-home-improvement-boom-august-2026/",
+    "article_slug": "san-antonio-home-improvement-boom-august-2026",
+    "article_title": "Is San Antonio's remodel boom cooling off? (Aug 2026)",
+    "post_publish_verified": true,
+    "post_publish_detail": "resolved 200 (GitHub Actions run 35390744679)",
+    "streak_after": 3,
+    "note": "Clean post #3, published by the promote-only path in run 35390744679. Reconstructed here because the committer read the row from the dirty working tree, matched it against itself and committed nothing - the defect this commit fixes (L21). Blotato status confirmed published with this publicUrl on the pinned page."
   }
 ]

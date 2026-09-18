@@ -1206,6 +1206,100 @@ def test_a_LEDGER_COMMIT_FAILURE_after_a_live_post_is_posted_unconfirmed():
     assert "withheld" not in notices[0].lower()
 
 
+def test_THE_REAL_COMMITTER_going_green_without_the_row_on_main_is_posted_unconfirmed():
+    """THE FAILURE THAT ACTUALLY HAPPENED, end to end, with nothing stubbed between.
+
+    Post #3 went out. The committer read the row it had itself just written into the working
+    tree, said "already recorded; nothing to commit", returned normally, and the cycle reported
+    a green publish while main carried no such row — leaving the article looking like a
+    never-promoted orphan, primed to be posted a second time by the next cycle.
+
+    Every other test on this path hands `run_cycle` a commit function that either works or
+    raises. That is precisely the shape the bug did not have: it SUCCEEDED and recorded nothing.
+    So this wires the real `ledger_committer` to a real git repo whose merge quietly does not
+    move main, and asserts the cycle goes red. A persistence step that cannot confirm its own
+    success must not report success, and the cycle must not report one for it.
+    """
+    import subprocess
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+    import run_autopilot as ra
+
+    root = Path(tempfile.mkdtemp())
+    origin, work = root / "origin.git", root / "work"
+    subprocess.run(["git", "init", "--bare", "-b", "main", str(origin)], check=True,
+                   capture_output=True)
+    subprocess.run(["git", "clone", str(origin), str(work)], check=True, capture_output=True)
+    for k, v in (("user.email", "t@t"), ("user.name", "t"), ("commit.gpgsign", "false")):
+        subprocess.run(["git", "-C", str(work), "config", k, v], check=True, capture_output=True)
+    led = work / "autoposter" / "data" / "published-posts.json"
+    led.parent.mkdir(parents=True, exist_ok=True)
+    led.write_text("[]\n")
+    for cmd in (["add", "-A"], ["commit", "-m", "seed"], ["push", "-u", "origin", "main"]):
+        subprocess.run(["git", "-C", str(work), *cmd], check=True, capture_output=True)
+
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    real_repo, real_pr = ra.REPO, ra.open_and_merge_pr
+    try:
+        ra.REPO = work
+        # The PR "merges" and reports a URL. Main never moves. Exactly the silent loss.
+        ra.open_and_merge_pr = lambda branch, *, title, body=None: "https://github.com/o/r/pull/1"
+        d, notices = _cycle_with_ledger(cfg, ra.ledger_committer(lambda *_: None))
+    finally:
+        ra.REPO, ra.open_and_merge_pr = real_repo, real_pr
+
+    assert d.action == "posted_unconfirmed", f"a silently unrecorded post read as {d.action}"
+    assert d.is_broken, "the job stayed green with a live post and no row on main"
+    assert "THE POST IS LIVE BUT UNRECORDED" in notices[0], notices[0]
+    assert "posted AGAIN" in notices[0], "the duplicate risk is not spelled out"
+    assert "not on main" in d.reason, d.reason
+    on_main = subprocess.run(
+        ["git", "-C", str(work), "show", "origin/main:autoposter/data/published-posts.json"],
+        capture_output=True, text=True, check=True).stdout
+    assert json.loads(on_main) == [], "main changed; this test proved nothing"
+
+
+def test_THE_REAL_COMMITTER_lands_the_row_and_the_cycle_goes_green():
+    """The same wiring with a merge that actually merges — so the red above is the committer
+    detecting a real absence, not the harness being unable to succeed at all."""
+    import subprocess
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+    import run_autopilot as ra
+
+    root = Path(tempfile.mkdtemp())
+    origin, work = root / "origin.git", root / "work"
+    subprocess.run(["git", "init", "--bare", "-b", "main", str(origin)], check=True,
+                   capture_output=True)
+    subprocess.run(["git", "clone", str(origin), str(work)], check=True, capture_output=True)
+    for k, v in (("user.email", "t@t"), ("user.name", "t"), ("commit.gpgsign", "false")):
+        subprocess.run(["git", "-C", str(work), "config", k, v], check=True, capture_output=True)
+    led = work / "autoposter" / "data" / "published-posts.json"
+    led.parent.mkdir(parents=True, exist_ok=True)
+    led.write_text("[]\n")
+    for cmd in (["add", "-A"], ["commit", "-m", "seed"], ["push", "-u", "origin", "main"]):
+        subprocess.run(["git", "-C", str(work), *cmd], check=True, capture_output=True)
+
+    def merge(branch, *, title, body=None):
+        subprocess.run(["git", "-C", str(work), "push", "origin", f"{branch}:main"],
+                       check=True, capture_output=True)
+        return "https://github.com/o/r/pull/2"
+
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    real_repo, real_pr = ra.REPO, ra.open_and_merge_pr
+    try:
+        ra.REPO, ra.open_and_merge_pr = work, merge
+        d, notices = _cycle_with_ledger(cfg, ra.ledger_committer(lambda *_: None))
+    finally:
+        ra.REPO, ra.open_and_merge_pr = real_repo, real_pr
+
+    assert d.action == "publish", d.action
+    rows = json.loads(subprocess.run(
+        ["git", "-C", str(work), "show", "origin/main:autoposter/data/published-posts.json"],
+        capture_output=True, text=True, check=True).stdout)
+    assert len(rows) == 1 and rows[0]["post_url"], f"the row did not land on main: {rows}"
+
+
 def test_the_ledger_commit_happens_BEFORE_the_state_write():
     """Ordering. If the commit fails, the cadence clock must not already have moved — otherwise
     a reconciling human sees a cycle that looks complete."""

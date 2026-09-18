@@ -517,3 +517,61 @@ break.
 **Family:** L13, L15, L17, L19. The distinguishing feature of this one is that it happened
 *after* the family had been named, which is the evidence that naming a class is not the same as
 closing it.
+
+---
+
+## L21 — a persistence step that cannot confirm its own success must not report success
+
+**What happened.** Post #3 went out cleanly, all seven live gates passed, and the run went
+**green** — while the ledger row for it never reached `main`. Two defects, one on top of the
+other:
+
+1. `publish_with_verification` appends the new row to the **working tree's** copy of the
+   ledger before the commit step runs. `git checkout -B <branch> origin/main` does *not*
+   discard an uncommitted change, so that row rode along into the new branch. The dedupe then
+   read the file, found the row it had just written **itself**, matched it against itself, and
+   printed `already recorded; nothing to commit`.
+2. Having decided there was nothing to do, it **returned normally**. `run_cycle` saw no
+   exception, moved on, saved state and sent the cheerful "📣 THI posted" notice.
+
+The result was the single worst shape this machine can produce: a live post with no record of
+it, which the orphan finder reads as *never promoted* — so the next cycle would have posted the
+same link a second time. And nothing was red.
+
+**Why it matters more than the bug.** Every other failure in this build was loud. A halt, a
+refused push, a 404 on the destination, a gate that could not resolve — all of them stop the
+cycle and say so. This one was silent, and it was silent in the one place where silence removes
+the safety: the record that prevents duplicates. A machine that runs unattended is only as safe
+as its *worst* silent failure, not its average one.
+
+**The two fixes, and which is load-bearing.**
+
+* *The bug:* read the ledger from the ref — `git show origin/main:<path>` — never from the
+  working tree, and write the commit from **main's content plus the row** so a dirty tree
+  cannot leak in. (`_ledger_on_main`.)
+* *The class:* after acting, **confirm the row is on main** and raise if it is not — on every
+  path, including the one that decided there was nothing to commit. "Nothing to commit" is a
+  claim *about main*, so it is checked against main. (`_confirm_on_main`.) The raise becomes
+  `posted_unconfirmed`: red, clock unmoved, and a notice that says the post is live, unrecorded,
+  and will be re-posted unless a human reconciles.
+
+Only the second is load-bearing. The first closes the instance; the second means the *next*
+way this step can fail silently is caught too, whatever it turns out to be. **Define success as
+the observable outcome, not as "the code path completed."**
+
+**Proving it needed the condition, not the code path.** Every existing test used a harness with
+a **clean** working tree, which is the one state a real cycle is never in when a post lands —
+so `checkout -B` had nothing to carry over and the defect could not occur. The new tests build
+a **real git repo with a dirty tree** and reproduce it exactly. And the end-to-end test wires
+the *real* committer into `run_cycle` against a merge that silently does not move main: the
+existing cycle tests all passed a commit function that either worked or raised, which is
+precisely the shape the bug did not have — it **succeeded and recorded nothing**.
+
+Fixing that harness turned up an older defect of the same kind: `_restore()` read
+`subprocess.run` at restore time, but by then the name already held the fake, so it restored
+the fake onto itself. Every patching test in that file had been leaking its fake into the next
+one since the file was written. It was invisible while no test needed real subprocesses.
+
+**Family:** L13, L15, L17, L19, L20 — the "it was only ever simulated" family. The new twist:
+here the step didn't just go untested, it *reported success*. A test that only asks "did it
+raise?" cannot tell a working persistence step from one that persists nothing.
