@@ -98,10 +98,24 @@ autopilot:
 
 # ---- Cadence (two streams, own clocks) ----
 cadence:
-  # Full-auto window. The MINIMUM is a floor the driver will not cross. The MAXIMUM is a prompt
-  # to look, never a licence to publish filler: if nothing clears the bar, the driver says so
-  # and waits. The quiet-week machinery already knows how to say "nothing this week".
-  article_days_min: 3
+  # THE ONLY KEY ANY CODE READS IS `article_days_min`, and it reads it as a FLOOR: the minimum
+  # gap between posts. There is no quota anywhere in this system — nothing says "it has been N
+  # days, publish something". A week with nothing genuinely new is a correct skip, silently.
+  #
+  # 7, raised from 3 on 2026-09-18. The owner wants roughly weekly. The DATA does not support
+  # weekly: all three recurring builders read MONTHLY series (permits, NOAA cooling degree-days),
+  # so the honest ceiling is 3 new articles per month, and they all become eligible within days
+  # of each other when the previous month completes.
+  #
+  # A 7-day floor is still the right setting, for a reason that is not the owner's preference:
+  # it SPREADS that burst. At 3 days the month's three articles go out over nine days and then
+  # nothing for three weeks. At 7 they go out over fifteen, which reads far more like a cadence
+  # while publishing exactly the same true articles. The floor cannot create an article and is
+  # not being asked to.
+  article_days_min: 7
+  # NOTHING READS THESE TWO. They are notes, and they were misleading: with monthly sources the
+  # normal gap between bursts is about three weeks, so a 7-day "maximum" described a state the
+  # machine is correctly in most of the time. Kept as documentation of intent only.
   article_days_max: 7
   article_days: 10        # deep myth-buster every 1-2 weeks — THE near-term stream
   reels_days: 14

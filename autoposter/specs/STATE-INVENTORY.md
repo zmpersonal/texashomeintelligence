@@ -133,3 +133,61 @@ Row 5. With the streak now counted from the ledger, `channels.facebook.clean_str
 reader. Its comment says only the owner advances it and that it gates autonomy graduation. Keep
 it as the human graduation marker (and document that nothing reads it), or retire it? Left in
 place, untouched, pending that call.
+
+---
+
+# Sustainable cadence — what the data can actually carry
+
+Measured 2026-09-18, from the series themselves rather than from intent.
+
+## The builders
+
+| builder | recurring? | its series | new articles/month |
+|---|---|---|---|
+| `summer-hotter-than-normal` | **yes** | cooling degree-days — **monthly** | 1 |
+| `austin-ac-rush-vs-heat` | **yes** | Austin HVAC permits + CDD — **monthly** | 1 |
+| `san-antonio-improvement-boom` | **yes** | San Antonio permits — **monthly** | 1 |
+| `electricity-still-rising` | no — timeless title | electricity price — monthly | 0 (one-shot, spent) |
+| `austin-improvement-boom-cooling` | no — timeless title | Austin permits — monthly | 0 (one-shot, spent) |
+
+**The honest ceiling is 3 new articles per month**, and it is *bursty*, not spread: all three
+depend on monthly series, so all three become eligible within days of each other once the
+previous month completes, then nothing until the next month closes.
+
+Weekly is **not** supported by the data as it stands. A 7-day floor does not change that — what
+it changes is the shape: at a 3-day floor the month's three articles go out over nine days and
+then nothing for three weeks; at 7 they go out over fifteen. Same true articles, better spread.
+
+## What is already weekly but unused
+
+| series | cadence | history | currency |
+|---|---|---|---|
+| `drought_stage` | **weekly** | 57 points, both metros | current |
+| `air_quality_index` | weekly | 4 points, both metros | quiet, past its bound |
+
+`drought_stage` is the one genuinely weekly series with enough history to carry a recurring
+builder, and **no builder reads it**. That, not the floor, is the gap between 3/month and
+weekly.
+
+## What a true weekly cadence would need
+
+Roughly 4–5 articles a month, so ~2 more recurring builders on non-monthly data:
+
+1. **A drought builder** — weekly, already ingested, deepest history of any weekly series.
+   The single highest-value addition, and the only one needing no new data source.
+2. **Give the two one-shot builders a period.** Both retire permanently because their titles
+   name no month. Adding one converts each into a monthly subscription: +2/month for an
+   editorial change, no new data. This is the cheapest yield in the list.
+3. **A second weekly source** — the air-quality series, once its upstream is current again, or
+   a new weekly ingestion.
+
+Items 1 and 2 together would take the ceiling from 3/month to about 6 and make a 7-day floor
+the binding constraint rather than the data. Neither is built; both are the owner's call.
+
+## The property none of this may break
+
+The floor is a **minimum gap**, never a quota. `article_days_min` is the only cadence key any
+code reads, and `due()` uses it to *withhold*, never to trigger. Nothing anywhere says "it has
+been N days, publish something." A week with nothing genuinely new is a correct, silent skip,
+and `test_NO_MAXIMUM_is_wired_to_anything_that_publishes` fails if a maximum is ever wired to
+publishing — because a maximum that publishes is a quota, and a quota publishes filler.
