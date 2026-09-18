@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-17T14:17:27.734Z",
-  "lastSuccessAt": "2026-09-17T14:17:27.734Z",
+  "lastAttemptAt": "2026-09-18T13:35:34.531Z",
+  "lastSuccessAt": "2026-09-18T13:35:34.531Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -17372,16 +17372,6 @@
     {
       "observedAt": "2026-07-15T00:00:00.000Z",
       "ingestedAt": "2026-08-24T15:57:40.361Z",
-      "key": "2026-008710 BP",
-      "value": {
-        "permitType": "New",
-        "workDescription": "New 1-story detached stand-alone bathroom 8x10 single slope roof containing plumbing/electrical.",
-        "status": "Active"
-      }
-    },
-    {
-      "observedAt": "2026-07-15T00:00:00.000Z",
-      "ingestedAt": "2026-08-24T15:57:40.361Z",
       "key": "2026-091124 BP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -20294,7 +20284,7 @@
     },
     {
       "observedAt": "2026-09-11T00:00:00.000Z",
-      "ingestedAt": "2026-09-17T14:17:28.281Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
       "key": "2026-100985 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -20304,13 +20294,501 @@
     },
     {
       "observedAt": "2026-09-11T00:00:00.000Z",
-      "ingestedAt": "2026-09-17T14:17:28.281Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
       "key": "2026-118285 BP",
       "value": {
         "permitType": "Repair",
         "workDescription": "EXPRESS: Re-Roofing with new decking",
+        "status": "Final",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-11T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
+      "key": "2026-055411 PP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "REV 3 ePlan: Residential Expedited Review - New Accessory to Primary [0bed 1bath] - Tennis Pavilion Restroom\n\nDetached Covered Patio at Tennis Pavilion.\n\nREVISION #1 INCLUDES:\n1.\tThe overall footprint first and 2nd floor of the Guest House increased by 404 SF.\n2.\tCanopy length located east of the Gu",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-14T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
+      "key": "2026-008710 BP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "New 1-story detached stand-alone bathroom 8x10 single slope roof containing plumbing/electrical.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-14T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
+      "key": "2026-037737 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Includes reorganization of existing kitchen equipment and addition of new fryers units. The existing Type 1 hood and wrapped ducts will be replaced with Type 1 new equipment. Rooftop equipment will remain existing.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-14T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
+      "key": "2026-119303 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "New solar installation on existing residence roof",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-14T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
+      "key": "2026-119308 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "(ETJ) Install new _14.4__kW rooftop solar system to existing residential only using line side tap ONLY.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-14T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
+      "key": "2026-104629 BP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "Bldg 2: New three story single family residence with 1 bedroom 1.5 bath with open deck at 1st floor and rooftop deck",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-14T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
+      "key": "2026-037737 MP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Includes reorganization of existing kitchen equipment and addition of new fryers units. The existing Type 1 hood and wrapped ducts will be replaced with Type 1 new equipment. Rooftop equipment will remain existing.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-14T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
+      "key": "2026-119200 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Simple Reroof",
+        "status": "Active",
+        "valuationUsd": 267955
+      }
+    },
+    {
+      "observedAt": "2026-09-14T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
+      "key": "2024-125183 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Installation of a 22.77 kw rooftop solar system on a residential new construction.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-14T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
+      "key": "2026-118923 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Simple reroof",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-14T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
+      "key": "2026-082387 PP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "New 1-story detached accessory structure (pool side cabana) 1 bath with stone veneer flat TPO roof wood frame on drilled concrete caissons. Cabana includes bathroom (shower + WC). Reconnect to existing underground electrical conduit previously servicing pergola. Install new 60 amp subpanel in cabana",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-14T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
+      "key": "2026-105808 PP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express- Foundation repair (lift 3 ft per code) replace roof with asphalt shingles siding replace 6 windows (same size) replace exterior doors (same size) skim coat interior walls interior/exterior paint replace interior doors (same size) flooring replace some floor decking upgrade plumbing fixtures",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-15T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.959Z",
+      "key": "2026-120579 MP",
+      "value": {
+        "permitType": "Change Out",
+        "workDescription": "Replacing (3) Heat pump Roof Top Units with electric heat. (2) 6-ton and (1) 3-ton with electric heat.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-15T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-089033 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition/remodel- Garage conversion interior remodel with addition and full roof replacement.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-15T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-005772 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Interior Remodel \n\n4/23/26 SM - REVISED ** Replace multiple windows and doors (primary suite windows to remain).  Bath 1 window to be reframed replace brick gable with 3/4 cement board siding Hall fur down to be deleted (sheetrock to be replaced ceiling and walls) replace roof.  Everything else is c",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-15T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-094307 BP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "*PARTIAL DEMO* ePlan: Residential Expedited Review - Addition and Remodel to Existing 2-Story Single Family Res. [3bed 3bath] Work to include: New Uncovered Front Porch  Partial Demo of existing roof to make space for New attached Gym room.",
         "status": "Active",
         "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-16T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-095244 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Remove existing 10x12 wood deck and construct a 12x12 sunroom addition with a gable roof matching the pitch of the existing room incorporating a\ncathedral ceiling. Room features include LED lighting in ceiling ceiling fan and mini-split heat pump",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-16T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-109944 EP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "LS 8/3/26- Work without permit. Check Attic for structural changes and new electrical cable.\n\nExpress- remodel entire interior of home including paint new roof new bathrooms (plumbing fixtures and vanities) flooring throughout new windows like for like new kitchen cabinets and counters repair partia",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-16T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-122061 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express: Reroof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-16T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121485 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express: Fire Damage Drywall insulation cabinetry trim flooring roof repair HVAC plumbing electrical windows.",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-16T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121712 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express - Re-roof (Shingle to Shingle)",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-16T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-117994 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express: rooftop solar electric panels tilted up",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121160 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121332 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121305 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121407 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof for Mailbox",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-113200 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "simple re-roof - remove and replace shingles on existing roof. BLDG 16",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-113243 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "simple re-roof - remove and replace shingles on existing roof.  BLDG 21",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121078 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121366 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121450 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof for office",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121272 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-106572 MP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Interior Remodel \n\n4/23/26 SM - REVISED ** Replace multiple windows and doors (primary suite windows to remain).  Bath 1 window to be reframed replace brick gable with 3/4 cement board siding Hall sheetrock to be replaced (ceiling and walls) replace roof.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121634 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-113226 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "simple re-roof - remove and replace shingles on existing roof. BLDG 19",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-122340 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Commercial reroof. Remove existing roofing system and install new GAF TPO roofing system.",
+        "status": "Active",
+        "valuationUsd": 89600
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121094 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-120248 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express: Wui Zone A/B - Reroofing with Class A Fire Roofing Material- Owens Coming Duration shingles and OC underlayment mesh in ventilation.",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121110 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121122 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-119190 EP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Bailey - 40-15314 - Install new/additional 5.76 kW rooftop solar system to existing residential only using backfed breaker. Utility company - Pedernales Electric Cooperative.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121002 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-121183 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-roof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-113183 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "simple re-roof - remove and replace shingles on existing roof. BLDG 14",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-113191 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "simple re-roof - remove and replace shingles on existing roof. BLDG 15",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-09-17T00:00:00.000Z",
+      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "key": "2026-113235 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "simple re-roof - remove and replace shingles on existing roof.",
+        "status": "Active",
+        "valuationUsd": 5000
       }
     }
   ]
