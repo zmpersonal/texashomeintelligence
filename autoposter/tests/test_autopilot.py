@@ -894,6 +894,84 @@ def test_NO_notifier_call_in_run_cycle_can_escape_as_an_exception():
     assert not offenders, f"these notifier calls can escape as exceptions: {offenders}"
 
 
+
+# ===================================================== a CDN is eventually consistent
+#
+# On 2026-09-18 the post-deploy check returned 404 for a URL that resolved 90 seconds later, and
+# the cycle correctly withheld a post for an article that was fine. An earlier run took the same
+# path in 75 seconds and passed. Same code, same shape, opposite result: a race with deploy
+# propagation, not a defect in any one step.
+#
+# These tests hold the line that retrying fixes the race WITHOUT blunting the gate.
+
+def test_a_slow_deploy_SETTLES_instead_of_failing():
+    """404, 404, then 200 — the exact shape observed live. It must pass, and say it waited."""
+    answers = iter([(False, "HTTP 404"), (False, "HTTP 404"), (True, "resolved 200")])
+    slept = []
+    ok, reason = autopilot._verify_until_stable(
+        lambda url: next(answers), "https://x/y", attempts=6, delay=15, sleep_fn=slept.append)
+    assert ok
+    assert "settled on attempt 3" in reason, reason
+    assert slept == [15, 15], slept
+
+
+def test_a_URL_that_NEVER_resolves_still_fails():
+    """The gate keeps its teeth. Retrying must not turn 'never' into 'eventually'."""
+    slept = []
+    ok, reason = autopilot._verify_until_stable(
+        lambda url: (False, "HTTP 404"), "https://x/y", attempts=6, delay=15,
+        sleep_fn=slept.append)
+    assert not ok
+    assert "still failing after 6 attempts" in reason
+    assert len(slept) == 5, "it should not sleep after the final attempt"
+
+
+def test_a_first_time_success_does_not_wait_at_all():
+    slept = []
+    ok, reason = autopilot._verify_until_stable(
+        lambda url: (True, "resolved 200"), "https://x/y", attempts=6, delay=15,
+        sleep_fn=slept.append)
+    assert ok and reason == "resolved 200" and not slept
+
+
+def test_the_cycle_RETRIES_the_post_deploy_checks_and_then_posts():
+    """End to end: a destination that is slow to appear no longer costs the post."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    seen, posted = {}, []
+
+    def opener(url):
+        seen[url] = seen.get(url, 0) + 1
+        return (seen[url] >= 3), ("resolved 200" if seen[url] >= 3 else "HTTP 404")
+
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=lambda m: None, merge_fn=lambda dec: None,
+        deploy_wait_fn=lambda url: None, verify_opener=opener,
+        publish_fn=lambda post: (posted.append(post) or {"post_url": "https://facebook.com/p/9",
+                                                         "submission_id": "s9"}),
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        defer_resolution=True, sleep_fn=lambda _s: None, **_kwargs(cfg))
+    assert d.action == "publish", [v.line() for v in d.live_verdicts]
+    assert len(posted) == 1
+    assert all(v.ok for v in d.live_verdicts)
+
+
+def test_a_permanently_dead_destination_still_withholds_the_post():
+    """The same retry, the other direction. Nothing about this may become permissive."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    posted = []
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=lambda m: None, merge_fn=lambda dec: None,
+        deploy_wait_fn=lambda url: None, verify_opener=lambda url: (False, "HTTP 404"),
+        publish_fn=lambda post: posted.append(post),
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json",
+        defer_resolution=True, sleep_fn=lambda _s: None, **_kwargs(cfg))
+    assert d.action == "posted_nothing" and not posted
+
+
 if __name__ == "__main__":
     fns = [f for n, f in sorted(globals().items()) if n.startswith("test_")]
     ok = 0

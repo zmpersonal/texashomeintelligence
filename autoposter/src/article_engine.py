@@ -149,9 +149,13 @@ def _current_title(topic: dict, articles: dict | None, today: date) -> str:
     if title_for:
         try:
             return title_for(today)
-        except Exception:                           # noqa: BLE001
+        except Exception as exc:                    # noqa: BLE001
             # A builder that cannot name its own current period is not eligible this cycle.
             # Returning the topic name keeps it excludable rather than silently always-eligible.
+            # Logged because a topic quietly dropping out of rotation looks identical to a topic
+            # that simply did not rank — and the two need completely different fixes.
+            print(f"[warn] {topic.get('id', '?')} could not name its current period "
+                  f"({type(exc).__name__}: {exc}); excluded from this cycle")
             return topic["question"]
     return topic["question"]
 

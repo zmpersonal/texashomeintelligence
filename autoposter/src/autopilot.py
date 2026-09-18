@@ -32,6 +32,7 @@ variable — flip it in the UI in seconds, no commit), and `autopilot.paused` in
 from __future__ import annotations
 
 import json
+import time
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -277,6 +278,30 @@ def _safe_notify(notify_fn, message: str, decision: "CycleDecision") -> None:
         print(f"[CRITICAL] the outcome stands regardless:\n{message}")
 
 
+# The post-deploy checks probe a CDN moments after a deploy, which is eventually consistent by
+# design. A single immediate HEAD is the wrong instrument for that: on 2026-09-18 it returned 404
+# for a URL that resolved 90 seconds later, and the cycle correctly withheld a post for an
+# article that was, in fact, fine.
+#
+# Retrying does NOT soften the gate. It still refuses when the URL never resolves — it just
+# stops confusing "not yet" with "never".
+POST_DEPLOY_ATTEMPTS = 6
+POST_DEPLOY_DELAY = 15
+
+
+def _verify_until_stable(verify_opener, url: str, *, attempts: int, delay: int,
+                         sleep_fn) -> tuple[bool, str]:
+    """(ok, reason). Succeeds on the first clean answer; fails only after every attempt has."""
+    reason = "never attempted"
+    for attempt in range(1, attempts + 1):
+        ok, reason = verify_opener(url)
+        if ok:
+            return True, (reason if attempt == 1 else f"{reason} (settled on attempt {attempt})")
+        if attempt < attempts:
+            sleep_fn(delay)
+    return False, f"{reason} — still failing after {attempts} attempts over {attempts * delay}s"
+
+
 def _live_targets(decision: "CycleDecision", config: dict) -> list[tuple[str, str]]:
     """The URLs that only exist after the deploy: the article, and the card the post points at.
 
@@ -417,7 +442,7 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
 
 def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wait_fn=None,
               publish_fn=None, verify_opener=None, state_path: Path | None = None,
-              ledger_path: Path | None = None, dry_run: bool = False,
+              ledger_path: Path | None = None, dry_run: bool = False, sleep_fn=None,
               **evaluate_kwargs) -> CycleDecision:
     """Evaluate, then act. The ONLY path that publishes.
 
@@ -497,7 +522,10 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
     # ---- the post-deploy gates. These could not run before the deploy; they run now, against
     # the real live URLs, and nothing posts unless both come back clean.
     decision.live_verdicts = [
-        _verdict(f"post-deploy-{name}", (lambda u=url: verify_opener(u)))
+        _verdict(f"post-deploy-{name}",
+                 (lambda u=url: _verify_until_stable(
+                     verify_opener, u, attempts=POST_DEPLOY_ATTEMPTS,
+                     delay=POST_DEPLOY_DELAY, sleep_fn=sleep_fn or time.sleep)))
         for name, url in _live_targets(decision, config)]
 
     if not decision.cleared_to_post:

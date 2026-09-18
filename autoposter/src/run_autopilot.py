@@ -89,19 +89,39 @@ def http_opener(url: str) -> tuple[bool, str]:
         return False, f"unreachable: {type(exc).__name__}: {exc}"
 
 
-def wait_for_deploy(url: str, *, attempts: int = 30, delay: int = 20) -> None:
-    """Block until the article is actually served. Raises if it never appears.
+# One success is not a deploy. Cloudflare serves from many edges and they do not flip together,
+# so the first 200 can be followed seconds later by a 404 from a node that has not caught up.
+# That is not a hypothesis: on 2026-09-18 this returned after ~60s, the post-deploy check 404'd
+# four seconds later, and the URL resolved 90 seconds after that. An earlier run took the same
+# path in 75s and passed. Same code, same timing, opposite result — a race, not a defect.
+DEPLOY_STABLE_HITS = 2
 
-    A deploy that has not landed is indistinguishable from a deploy that failed, and the driver
-    re-verifies the URL after this returns anyway — so this is about waiting long enough to give
-    the Worker build a fair chance, not about deciding.
+
+def wait_for_deploy(url: str, *, attempts: int = 30, delay: int = 20,
+                    stable: int = DEPLOY_STABLE_HITS) -> None:
+    """Block until the article is actually served, CONSISTENTLY. Raises if it never appears.
+
+    Requires `stable` consecutive successes, because a single one only proves that one edge has
+    the new build. The streak resets on any failure, so a flapping URL is treated as not ready
+    rather than as ready-with-a-blip.
+
+    Every poll is logged with what it SAW. The previous version discarded the reason
+    (`ok, _reason = ...`), so when it returned too early there was no way to tell what it had
+    been looking at — the third swallowed-diagnostics gap in this project, after git's stderr
+    and the notifier's.
     """
-    for _ in range(attempts):
-        ok, _reason = http_opener(url)
-        if ok:
+    streak = 0
+    for attempt in range(1, attempts + 1):
+        ok, reason = http_opener(url)
+        streak = streak + 1 if ok else 0
+        print(f"[deploy] {attempt}/{attempts} {url} — {reason}"
+              f"{f' (streak {streak}/{stable})' if ok else ''}", flush=True)
+        if streak >= stable:
             return
-        time.sleep(delay)
-    raise RuntimeError(f"{url} did not come up within {attempts * delay}s of the merge")
+        if attempt < attempts:
+            time.sleep(delay)
+    raise RuntimeError(f"{url} never resolved {stable}x consecutively within "
+                       f"{attempts * delay}s of the merge")
 
 
 # --------------------------------------------------------------------------- the site write
