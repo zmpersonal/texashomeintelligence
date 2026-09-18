@@ -1,0 +1,14 @@
+{
+  "path": "/images/og/did-austins-ac-rush-follow-the-heat-in-august-2026.png",
+  "width": 1200,
+  "height": 630,
+  "alt": "Did Austin's AC rush follow the heat in August 2026? 1,037 HVAC permits, down 15% month over month. Source: City of Austin Issued Construction Permits (Socrata), Aug 2026.",
+  "rendered": {
+    "question": "Did Austin's AC rush follow the heat in August 2026?",
+    "headline": "1,037 HVAC permits",
+    "subhead": "down 15% month over month",
+    "source": "City of Austin",
+    "asOf": "Aug 2026"
+  },
+  "generator": "scripts/generate-og-cards.mjs"
+}
