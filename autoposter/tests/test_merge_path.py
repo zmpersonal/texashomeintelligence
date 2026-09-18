@@ -8,9 +8,11 @@ operations is what `tools/preflight-merge-path.py` proves, because only a real c
 
 Run: python3 tests/test_merge_path.py
 """
+import json
 import os
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -38,6 +40,34 @@ class FakeRun:
 
 def _patch(fake):
     ra.subprocess.run = fake
+
+
+class FakeRepo:
+    """Point `ra.REPO` at a throwaway tree holding a ledger.
+
+    `ledger_committer` writes the ledger file for real — only the git calls are faked — so
+    without this the tests append junk rows to the REPOSITORY'S OWN ledger. They did, on the
+    first run: three rows for `https://s/a/`, `/b/` and `/c/` landed in the file the duplicate
+    gate reads. Same mistake as the test that once edited `site/`, and worse here, because junk
+    in the ledger can block a real post.
+    """
+
+    def __init__(self, entries=None):
+        self.root = Path(tempfile.mkdtemp())
+        self.ledger = self.root / "autoposter" / "data" / "published-posts.json"
+        self.ledger.parent.mkdir(parents=True)
+        self.ledger.write_text(json.dumps(entries or []))
+
+    def __enter__(self):
+        self._real, ra.REPO = ra.REPO, self.root
+        return self
+
+    def __exit__(self, *exc):
+        ra.REPO = self._real
+        return False
+
+    def rows(self):
+        return json.loads(self.ledger.read_text())
 
 
 def _restore():
@@ -232,6 +262,95 @@ def test_a_refused_pr_create_never_reaches_the_merge():
         assert False
     except ra.CommandFailed:
         assert not fake.argv("gh pr merge")
+    finally:
+        _restore()
+
+
+
+# ===================================================== the ledger commit uses the proven path
+
+def test_the_ledger_commit_branches_from_FRESH_main_not_the_stale_checkout():
+    """The runner's checkout can be minutes old by the time a post lands. Committing the whole
+    file from it would silently drop any row added in between."""
+    fake = FakeRun({"gh pr view": (0, "MERGEABLE", ""),
+                    "gh pr create": (0, "https://github.com/o/r/pull/3", "")})
+    _patch(fake)
+    try:
+      with FakeRepo():
+        ra.ledger_committer()({"article_slug": "x", "article_url": "https://s/a/", "platform": "facebook"})
+        order = [" ".join(c[:4]) for c in fake.calls]
+        assert "git fetch origin main" in order, order
+        checkout = fake.argv("git checkout")[0]
+        assert "origin/main" in checkout, checkout
+        assert order.index("git fetch origin main") < order.index(" ".join(checkout[:4]))
+    finally:
+        _restore()
+
+
+def test_the_ledger_commit_uses_the_same_push_and_merge_path_as_the_article():
+    """Same operation class that took a week to get working, so it must not grow a second
+    implementation with its own bugs."""
+    fake = FakeRun({"gh pr view": (0, "MERGEABLE", ""),
+                    "gh pr create": (0, "https://github.com/o/r/pull/4", "")})
+    _patch(fake)
+    try:
+      with FakeRepo():
+        url = ra.ledger_committer()({"article_slug": "x", "article_url": "https://s/b/",
+                                     "platform": "facebook"})
+        assert url == "https://github.com/o/r/pull/4"
+        merge = fake.argv("gh pr merge")[0]
+        assert "--merge" in merge and "--delete-branch" in merge
+        flat = " ".join(" ".join(c) for c in fake.calls)
+        assert "--force" not in flat and "reset --hard" not in flat
+    finally:
+        _restore()
+
+
+def test_a_PUSH_FAILURE_on_the_ledger_commit_RAISES_rather_than_being_swallowed():
+    """It must reach run_cycle so the cycle can report posted_unconfirmed. A swallowed push
+    failure here recreates the exact duplicate risk this commit exists to remove."""
+    fake = FakeRun({"git push": (1, "", "! [remote rejected] main (protected branch)")})
+    _patch(fake)
+    try:
+      with FakeRepo():
+        ra.ledger_committer()({"article_slug": "x", "article_url": "https://s/c/", "platform": "facebook"})
+        assert False, "a failed ledger push was swallowed"
+    except ra.CommandFailed as exc:
+        assert "remote rejected" in str(exc)
+    finally:
+        _restore()
+
+
+def test_an_ALREADY_RECORDED_row_is_not_committed_twice():
+    """A retry must not make the ledger claim the link was posted twice."""
+    fake = FakeRun({"gh pr view": (0, "MERGEABLE", ""),
+                    "gh pr create": (0, "https://github.com/o/r/pull/5", "")})
+    _patch(fake)
+    existing = {"article_slug": "already", "platform": "facebook",
+                "article_url": "https://texashomeintelligence.com/analysis/already/"}
+    try:
+        with FakeRepo([existing]) as repo:
+            url = ra.ledger_committer()(dict(existing, article_slug="retry"))
+            assert url == "", "it opened a PR for a row the ledger already carries"
+            assert not fake.argv("git commit"), "it committed a duplicate row"
+            assert len(repo.rows()) == 1, "the ledger grew a second row for the same link"
+    finally:
+        _restore()
+
+
+def test_a_NEW_row_is_appended_without_disturbing_the_existing_ones():
+    fake = FakeRun({"gh pr view": (0, "MERGEABLE", ""),
+                    "gh pr create": (0, "https://github.com/o/r/pull/6", "")})
+    _patch(fake)
+    existing = {"article_slug": "first", "platform": "facebook",
+                "article_url": "https://texashomeintelligence.com/analysis/first/"}
+    try:
+        with FakeRepo([existing]) as repo:
+            ra.ledger_committer()({"article_slug": "second", "platform": "facebook",
+                                   "article_url": "https://texashomeintelligence.com/analysis/second/"})
+            rows = repo.rows()
+            assert len(rows) == 2 and rows[0] == existing
+            assert rows[1]["article_slug"] == "second"
     finally:
         _restore()
 
