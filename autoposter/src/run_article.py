@@ -705,8 +705,11 @@ def summer_caption(article: dict, claims: list[Claim]) -> str:
         f"Austin's {this_month} demanded {c['A1'].figure} against a 1991-2020 normal of "
         f"{c['A1n'].figure}: {c['A1d'].figure}. San Antonio ran {c['S1d'].figure}. "
         f"(source: {GSOM_SOURCE} and {c['A1n'].source}, as of {c['A1'].as_of}) "
-        f"A normal is a fixed 30-year yardstick, not last year — which is what turns a feeling "
-        f"into something you can check. "
+        # Was "a fixed 30-year yardstick". That 30 traced to no claim — it is arithmetic on the
+        # reference period, not a figure the ledger carries, and G1 was right to refuse it.
+        # Naming the period says the same thing with a numeral the article actually cites.
+        f"A normal is a fixed {c['A1n'].as_of} yardstick, not last year — which is what turns a "
+        f"feeling into something you can check. "
         f"Both metros, both months, with the arithmetic shown → {article['canonical_url']} "
         f"Send this to whoever swears every summer is the hottest one yet."
     )
