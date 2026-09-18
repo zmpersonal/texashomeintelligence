@@ -39,6 +39,14 @@ ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parent
 TIMEOUT = 15
 
+# How long to wait for GitHub to compute a fresh PR's mergeability. Seconds, not minutes: this
+# is a server-side race, and anything longer than this is a real problem, not a slow answer.
+MERGE_ATTEMPTS = 10
+MERGE_POLL_SECONDS = 3
+PR_BODY = ("Opened and merged automatically by the THI autoposter after a clean gate sweep.\n\n"
+           "This PR is the audit record of what the machine published and when. It is not "
+           "waiting on a review — it is merged by the same cycle that opened it.")
+
 
 # --------------------------------------------------------------------------- Slack
 
@@ -98,9 +106,57 @@ def wait_for_deploy(url: str, *, attempts: int = 30, delay: int = 20) -> None:
 
 # --------------------------------------------------------------------------- the site write
 
+class CommandFailed(RuntimeError):
+    """A subprocess that failed, carrying WHAT IT SAID. Not just its exit status.
+
+    This class exists because of a week of red runs. `_git` used to raise the bare
+    `CalledProcessError`, whose message is only "returned non-zero exit status 1" — git's actual
+    words were captured and thrown away. The halt notice, the job log and the Slack message all
+    said exit status 1, and the real reason (a non-fast-forward rejection) was unreadable from
+    any of them. An error that cannot say why is an error you debug by guessing.
+    """
+
+
+def _run(cmd: list[str], *, cwd: Path | None = None) -> str:
+    """Run a command, return stdout, and on failure raise with the tool's OWN message.
+
+    stderr is captured rather than inherited so it can be put INTO the exception — which means
+    it reaches the halt notice and Slack, not just the job log. Both matter: the log is where a
+    human looks, the notice is what wakes them up.
+    """
+    result = subprocess.run(cmd, cwd=cwd or REPO, capture_output=True, text=True)
+    if result.returncode != 0:
+        detail = (result.stderr or result.stdout or "").strip().replace("\n", " ⏎ ")
+        raise CommandFailed(f"`{' '.join(cmd)}` exited {result.returncode}: "
+                            f"{detail[:600] or '(no output)'}")
+    return result.stdout.strip()
+
+
 def _git(*args: str) -> str:
-    return subprocess.run(["git", *args], cwd=REPO, check=True,
-                          capture_output=True, text=True).stdout.strip()
+    return _run(["git", *args])
+
+
+def _gh(*args: str) -> str:
+    return _run(["gh", *args])
+
+
+def branch_name(slug: str, env: dict | None = None) -> str:
+    """A branch name unique to THIS RUN, so a retry can never meet its own leftover.
+
+    The old name was `autoposter/auto-<slug>` — stable across runs. When a cycle pushed that
+    branch and then failed at the next step, every later cycle rebuilt the same article from a
+    main that had moved on, and pushed a history whose parent was no longer the remote tip: a
+    non-fast-forward, rejected, daily, forever. The slug is stable by design (a recurring builder
+    picks the same period until the data gains a month), so the collision was with ITSELF.
+
+    Fixed structurally rather than with `--force`: a unique suffix means there is nothing to
+    collide with, no history is ever rewritten, and a failed attempt leaves a branch that is
+    obviously one attempt rather than a booby trap for the next one.
+    """
+    env = os.environ if env is None else env
+    stamp = (env.get("GITHUB_RUN_ID")
+             or datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S"))
+    return f"autoposter/auto-{slug}-{stamp}"
 
 
 # The three directories the renderer writes into, and the only three a dry run restores.
@@ -158,18 +214,39 @@ def site_merger():
     def merge(decision) -> None:
         article = decision.article
         slug = article["slug"]
-        branch = f"autoposter/auto-{slug}"
+        branch = branch_name(slug)
         _git("checkout", "-B", branch)
         _git("add", f"site/src/data/analysis/{slug}.md",
              f"site/src/data/og-cards/{slug}.json", f"site/public/images/og/{slug}.png")
         _git("commit", "-m", f"site: {article['title']}\n\nPublished by the THI autoposter "
                              f"after a clean gate sweep.")
         _git("push", "-u", "origin", branch)
-        subprocess.run(["gh", "pr", "create", "--fill", "--base", "main", "--head", branch],
-                       cwd=REPO, check=True)
-        subprocess.run(["gh", "pr", "merge", branch, "--merge", "--delete-branch"],
-                       cwd=REPO, check=True)
+        decision.pr_url = open_and_merge_pr(branch, title=f"site: {article['title']}")
     return merge
+
+
+def open_and_merge_pr(branch: str, *, title: str, body: str | None = None) -> str:
+    """Open the PR, then merge it. NO HUMAN STEP, by construction.
+
+    The PR is the audit record — it exists so there is a reviewable trail of what the machine
+    published and when. It is never waiting on anybody: `gh pr merge` runs in the same function,
+    seconds later, in the same cycle.
+
+    The one wait is GitHub's own. Straight after creation a PR's mergeability is UNKNOWN while
+    the server computes it, and `gh pr merge` refuses an unknown state. That is a race, not an
+    approval, so it is polled briefly rather than escalated to a person.
+    """
+    url = _gh("pr", "create", "--base", "main", "--head", branch,
+              "--title", title, "--body", body or PR_BODY)
+    for attempt in range(MERGE_ATTEMPTS):
+        state = _gh("pr", "view", branch, "--json", "mergeable", "--jq", ".mergeable")
+        if state == "MERGEABLE":
+            break
+        if state == "CONFLICTING":
+            raise CommandFailed(f"{url} conflicts with main and cannot be auto-merged")
+        time.sleep(MERGE_POLL_SECONDS)             # UNKNOWN: still being computed
+    _gh("pr", "merge", branch, "--merge", "--delete-branch")
+    return url
 
 
 # --------------------------------------------------------------------------- posting
