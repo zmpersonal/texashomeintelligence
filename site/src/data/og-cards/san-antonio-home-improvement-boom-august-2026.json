@@ -1,0 +1,14 @@
+{
+  "path": "/images/og/san-antonio-home-improvement-boom-august-2026.png",
+  "width": 1200,
+  "height": 630,
+  "alt": "Is San Antonio's remodel boom cooling off? (Aug 2026) 451 tree permits, 103% above its 11-month average. Source: City of San Antonio Permits Open Data, Aug 2026.",
+  "rendered": {
+    "question": "Is San Antonio's remodel boom cooling off? (Aug 2026)",
+    "headline": "451 tree permits",
+    "subhead": "103% above its 11-month average",
+    "source": "City of San Antonio",
+    "asOf": "Aug 2026"
+  },
+  "generator": "scripts/generate-og-cards.mjs"
+}
