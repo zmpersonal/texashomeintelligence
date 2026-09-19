@@ -359,7 +359,11 @@ def build_permit_claims(feed: dict, config: dict, today: date) -> list[Claim]:
             tier="derived",
             figure=f"{abs(row['base_pct']):.0f}% {gap} its {row['months']}-month average",
             source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric=f"permit_activity_{trade}",
-            derivation=f"{row['latest']:.0f} vs an {row['months']}-month mean of "
+            # "an 11-month" but "a 12-month": the article follows the SOUND of the number, and
+            # the baseline grows with the series, so it cannot be written down.
+            derivation=f"{row['latest']:.0f} vs "
+                       f"{'an' if str(row['months']).startswith(('8', '11')) else 'a'} "
+                       f"{row['months']}-month mean of "
                        f"{row['baseline']:.0f} = {row['base_pct']:.0f}%"))
 
     below_trades = [d for t, d in (("solar", "solar"), ("hvac", "HVAC"), ("roofing", "roofing"))
