@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-18T13:35:29.724Z",
-  "lastSuccessAt": "2026-09-18T13:35:29.724Z",
+  "lastAttemptAt": "2026-09-19T13:09:05.520Z",
+  "lastSuccessAt": "2026-09-19T13:09:05.520Z",
   "lastError": null,
   "source": {
     "name": "NOAA Storm Events Database",
@@ -717,13 +717,266 @@
     },
     {
       "observedAt": "2026-05-26T23:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:32.675Z",
+      "ingestedAt": "2026-09-19T13:09:08.495Z",
       "key": "1340784",
       "value": {
         "eventType": "Flood",
         "magnitude": "unknown",
         "county": "Williamson",
         "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Three men were successfully rescued after being stranded in trees along Berry Creek near Florence."
+      }
+    },
+    {
+      "observedAt": "2026-06-02T19:27:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.493Z",
+      "key": "1349513",
+      "value": {
+        "eventType": "Hail",
+        "magnitude": "1.00\"",
+        "county": "Hays",
+        "narrative": "A thunderstorm produced quarter size hail east of Buda."
+      }
+    },
+    {
+      "observedAt": "2026-06-02T19:56:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.493Z",
+      "key": "1349514",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "51 mph gust",
+        "county": "Caldwell",
+        "narrative": "A thunderstorm produced wind gusts measured at 51 kts by the AWOS at San Marcos Regional Airport."
+      }
+    },
+    {
+      "observedAt": "2026-06-05T17:45:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.493Z",
+      "key": "1350115",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Burnet",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. FM 243 was closed due to water on roadway east of Mahomet."
+      }
+    },
+    {
+      "observedAt": "2026-06-05T18:17:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.493Z",
+      "key": "1350124",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Williamson",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. A social media picture of the intersection of CR 201 and CR 206 showed a few feet of water over the roadway northwest of Liberty Hill."
+      }
+    },
+    {
+      "observedAt": "2026-06-05T18:58:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.493Z",
+      "key": "1350128",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Williamson",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Several roads in the Andice area were closed with water over the roadway, including CR 241 and CR 245, both at Berry Creek, and CR 208."
+      }
+    },
+    {
+      "observedAt": "2026-06-05T19:15:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.493Z",
+      "key": "1350131",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Travis",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. A video on social media showed fast moving water through a property entering animal structures along Big Sandy Creek near Nameless."
+      }
+    },
+    {
+      "observedAt": "2026-06-05T19:30:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350134",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Travis",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. We received a video of flooding and very fast moving water from Bloody Hollow Creek near the Grand Mesa at Crystal Falls neighborhood near Nameless."
+      }
+    },
+    {
+      "observedAt": "2026-06-05T19:30:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350135",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Williamson",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Several low water crossings of the North Fork San Gabriel River were closed north of Liberty Hill including CR 257 and CR 258."
+      }
+    },
+    {
+      "observedAt": "2026-06-05T19:35:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350136",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Burnet",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. The low water crossing at Mill Creek near Briggs was closed with a few feet of flowing water across the road."
+      }
+    },
+    {
+      "observedAt": "2026-06-05T19:46:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350776",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Williamson",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. CR 279 was flooded, and the bridge was closed at Jinks Branch south of Liberty Hill."
+      }
+    },
+    {
+      "observedAt": "2026-06-05T21:15:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350777",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Travis",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Low water crossings on Nameless Road along Big Sandy Creek in northwestern Travis County were closed due to flooding."
+      }
+    },
+    {
+      "observedAt": "2026-06-05T23:00:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350778",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Williamson",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Water from Block House Creek was 3 to 4 feet deep over Peach Tree Ln. at Peggy Garner Park Cedar Park."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T02:00:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350779",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Williamson",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Leander Rd. was closed due to flooding near Mason Creek in Leander."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T02:30:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350780",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Burnet",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Several low water crossings were closed in southern Burnet county around Marble Falls."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T02:30:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350783",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Travis",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Numerous low water crossings were closed north and northwest of Austin including a number on Spicewood Springs Rd. along Bull Creek."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T02:58:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350785",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Blanco",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Some low water crossings  in Johnson City had as much as three feet of water flowing over them."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T03:00:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350786",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Travis",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Several low water crossings  were flooded across Travis County especially in northern Austin."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T03:09:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350787",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Travis",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Just under two dozen low water crossings were closed in Austin. Shoal Creek at 12th St. crested near nine feet flooding the lowest areas of Pease Park."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T03:45:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350788",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Travis",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. There was a water rescue at the low water crossing at Slaughter Creek on Old San Antonio Rd in southern Austin."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T04:35:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350790",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Williamson",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. There were water rescues at 100 block of CR 472 in Coupland."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T06:13:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350805",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Blanco",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. There were closed roads across Johnson City due to flooding."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T06:13:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350807",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Blanco",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. In Round Mountain 962 E  and W were closed along North Cypress Creek."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T07:22:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:08.494Z",
+      "key": "1350818",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Hays",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. There were 14 low water crossings closed in the eastern part of the county."
       }
     }
   ]

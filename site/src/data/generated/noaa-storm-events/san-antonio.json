@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-18T13:35:32.684Z",
-  "lastSuccessAt": "2026-09-18T13:35:32.684Z",
+  "lastAttemptAt": "2026-09-19T13:09:08.505Z",
+  "lastSuccessAt": "2026-09-19T13:09:08.505Z",
   "lastError": null,
   "source": {
     "name": "NOAA Storm Events Database",
@@ -695,13 +695,354 @@
     },
     {
       "observedAt": "2026-05-26T23:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.527Z",
+      "ingestedAt": "2026-09-19T13:09:11.061Z",
       "key": "1340783",
       "value": {
         "eventType": "Flood",
         "magnitude": "unknown",
         "county": "Guadalupe",
         "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Numerous roads were closed in the Cibolo area due to flooding."
+      }
+    },
+    {
+      "observedAt": "2026-06-02T18:46:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.056Z",
+      "key": "1349512",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "56 mph gust",
+        "county": "Comal",
+        "narrative": "A thunderstorm produced wind gusts estimated at 65 mph that knocked down power lines on Watson Ln W between I-35 and FM 1102 northeast of New Braunfels. A broadcast media partner relayed the report with a photo of the damage."
+      }
+    },
+    {
+      "observedAt": "2026-06-05T05:00:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350093",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. A vehicle stalled in flood waters at S. Alamo St. and Probandt St. near the San Antonio River."
+      }
+    },
+    {
+      "observedAt": "2026-06-05T06:00:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350100",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. There was a high-water rescue of a man who was carried 100 ft downstream by floodwaters from Olmos Creek to near San Pedro Ave. and Basse  Rd. in northern San Antonio."
+      }
+    },
+    {
+      "observedAt": "2026-06-05T06:37:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350109",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Lockhill-Selma Rd. at Gardenview Dr. was closed due to water over the road."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T04:30:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350816",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. A vehicle was swept away at the 1500 block of Lower Mason Creek Rd. into Mason Creek. One person was found dead in the vehicle approximately two miles downstream."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T04:33:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350789",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Kendall",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. RM 1376 was flooded at Wasp Creek, and a vehicle was trapped at a low water crossing."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T04:59:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350791",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Kendall",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Numerous low water crossings were closed due to flooding Boerne."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T05:20:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350792",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. A vehicle was stranded in water at a low water crossing of Red Bluff Creek southeast of Pipe Creek."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T05:25:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350794",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Several low water crossings were flooded in northwestern Bexar County."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T05:33:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350795",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Water covered all four lanes of Hwy 90 at Cupples Rd."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T05:40:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350796",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. There were numerous stranded vehicles and water rescues in northwestern San Antonio."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T05:55:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350799",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. More than 35 low water crossings were closed due to flooding across Bexar County and the San Antonio metro area."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T05:55:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350801",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Kendall",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Part of FM 1376 at Wasp Creek was washed out by flood water."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T06:30:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350808",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Three was a water rescue near Lombrano St. at N. Colorado St. of a person stranded in a vehicle in floodwaters."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T07:03:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350811",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Comal",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Obst Rd. at Leroy Scheel Rd. was closed near Cibolo Creek in Bulverde."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T07:03:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350812",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Comal",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Bulverde Rd. was closed near Indian Creek in Bulverde."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T07:03:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350813",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Comal",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Old Bastrop Rd. was closed by flooding at York Creek south of Hunter."
+      }
+    },
+    {
+      "observedAt": "2026-06-15T07:30:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350819",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Two cars were stranded in two to three feet of water at SE Military Dr. and S. New Braunfels Ave. near Brooks City Base."
+      }
+    },
+    {
+      "observedAt": "2026-06-20T00:22:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350900",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. In the City of Bandera, Hackberry St. was flooded between Main St. and 11th St., and Maple St. was flooded  between Main St. and 14th St."
+      }
+    },
+    {
+      "observedAt": "2026-06-20T00:33:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350901",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. The low water crossing on FM 1283 at PR 37 was closed due to flowing water over the road in Lakehills."
+      }
+    },
+    {
+      "observedAt": "2026-06-20T00:47:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.060Z",
+      "key": "1350902",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. PR 37 between 18th St. and 21st St. had six to eight inches of water over the roadway and at 30th St. a foot of water."
+      }
+    },
+    {
+      "observedAt": "2026-06-20T01:00:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.059Z",
+      "key": "1350903",
+      "value": {
+        "eventType": "Wind",
+        "magnitude": "56 mph gust",
+        "county": "Bexar",
+        "narrative": "A thunderstorm produced wind gusts estimated at 65 mph that knocked down a tree and some large tree limbs in Leon Valley."
+      }
+    },
+    {
+      "observedAt": "2026-06-20T01:05:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.054Z",
+      "key": "1350904",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. FM1283, between Pebble Beach Dr. and Odoms Rd., had 3 feet of water over the road at Mescal Creek. Two cars were stranded in the water one of which was reported as submerged."
+      }
+    },
+    {
+      "observedAt": "2026-06-20T01:06:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.059Z",
+      "key": "1350905",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Streets were flooded along Olmos Creek in northern San Antonio."
+      }
+    },
+    {
+      "observedAt": "2026-06-20T01:15:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.059Z",
+      "key": "1350907",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Street flooding was reported in the Medical Center area of San Antonio."
+      }
+    },
+    {
+      "observedAt": "2026-06-20T01:20:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.059Z",
+      "key": "1350906",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Numerous low water crossings were closed between Helotes and Cross Mountain."
+      }
+    },
+    {
+      "observedAt": "2026-06-20T01:23:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.059Z",
+      "key": "1350909",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Street flooding was reported in Castle Hills."
+      }
+    },
+    {
+      "observedAt": "2026-06-20T01:25:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.059Z",
+      "key": "1350908",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Several low water crossings  were closed by flood water across San Antonio and Bexar County."
+      }
+    },
+    {
+      "observedAt": "2026-06-20T03:30:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.059Z",
+      "key": "1350910",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Medina",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. There were multiple water rescues at FM 471 N at San Geronimo Creek."
+      }
+    },
+    {
+      "observedAt": "2026-06-20T04:30:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.059Z",
+      "key": "1350912",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. A car stalled in a low water crossing of Leon Creek on W. Commerce St."
+      }
+    },
+    {
+      "observedAt": "2026-06-20T04:30:00.000Z",
+      "ingestedAt": "2026-09-19T13:09:11.059Z",
+      "key": "1350913",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. A broadcast media partner shared pictures of a low crossing of Leon Creek with a few feet of flowing water at Hwy  151 and Pinn Rd."
       }
     }
   ]

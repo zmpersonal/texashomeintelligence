@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-18T13:35:34.531Z",
-  "lastSuccessAt": "2026-09-18T13:35:34.531Z",
+  "lastAttemptAt": "2026-09-19T13:09:11.065Z",
+  "lastSuccessAt": "2026-09-19T13:09:11.065Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -20531,7 +20531,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-121160 BP",
       "value": {
         "permitType": "Remodel",
@@ -20542,7 +20542,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-121332 BP",
       "value": {
         "permitType": "Remodel",
@@ -20553,7 +20553,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-121305 BP",
       "value": {
         "permitType": "Remodel",
@@ -20564,7 +20564,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-121407 BP",
       "value": {
         "permitType": "Remodel",
@@ -20575,7 +20575,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-113200 BP",
       "value": {
         "permitType": "Remodel",
@@ -20586,7 +20586,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-113243 BP",
       "value": {
         "permitType": "Remodel",
@@ -20597,7 +20597,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-121078 BP",
       "value": {
         "permitType": "Remodel",
@@ -20608,7 +20608,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-121366 BP",
       "value": {
         "permitType": "Remodel",
@@ -20619,7 +20619,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-121450 BP",
       "value": {
         "permitType": "Remodel",
@@ -20630,7 +20630,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-121272 BP",
       "value": {
         "permitType": "Remodel",
@@ -20641,7 +20641,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-106572 MP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -20651,7 +20651,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-121634 BP",
       "value": {
         "permitType": "Remodel",
@@ -20662,7 +20662,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-113226 BP",
       "value": {
         "permitType": "Remodel",
@@ -20673,7 +20673,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-122340 BP",
       "value": {
         "permitType": "Remodel",
@@ -20684,7 +20684,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-121094 BP",
       "value": {
         "permitType": "Remodel",
@@ -20695,7 +20695,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-120248 BP",
       "value": {
         "permitType": "Repair",
@@ -20706,7 +20706,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-121110 BP",
       "value": {
         "permitType": "Remodel",
@@ -20717,7 +20717,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-121122 BP",
       "value": {
         "permitType": "Remodel",
@@ -20728,7 +20728,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-119190 EP",
       "value": {
         "permitType": "Repair",
@@ -20738,7 +20738,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-121002 BP",
       "value": {
         "permitType": "Remodel",
@@ -20749,7 +20749,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-121183 BP",
       "value": {
         "permitType": "Remodel",
@@ -20760,7 +20760,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-113183 BP",
       "value": {
         "permitType": "Remodel",
@@ -20771,7 +20771,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-113191 BP",
       "value": {
         "permitType": "Remodel",
@@ -20782,7 +20782,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-18T13:35:34.960Z",
+      "ingestedAt": "2026-09-19T13:09:11.536Z",
       "key": "2026-113235 BP",
       "value": {
         "permitType": "Remodel",
