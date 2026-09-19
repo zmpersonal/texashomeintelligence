@@ -30,7 +30,7 @@ import json
 import re
 import sys
 from dataclasses import dataclass, field
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 # Resolve from __file__, never the cwd (social-autoposter step 7: a loader that resolves from
@@ -194,13 +194,55 @@ def _monthly_value(location: str, dataset: str, metric: str, field_name: str,
     )
 
 
+def _last_day_of(month: str) -> date:
+    """`2026-09` -> 2026-09-30."""
+    year, mon = int(month[:4]), int(month[5:7])
+    return date(year + (mon == 12), 1 if mon == 12 else mon + 1, 1) - timedelta(days=1)
+
+
+def permit_coverage_through(location: str) -> date | None:
+    """The last day THI's OWN permit ingestion actually reached, for this city.
+
+    WHY THIS IS NOT IN THE SERIES ITSELF. `permit-trade-activity` is aggregated BY THIS PROJECT
+    from raw records, so each of its rows carries a MONTH KEY as its `observedAt` — September's
+    row says 2026-09-01 whether it was built from thirty days of filings or from three. The
+    coverage lives one dataset upstream, in `municipal-permits`, whose rows are individual
+    permits with real dates.
+
+    Per city, deliberately: at the same ingestion, Austin reached 2026-09-17 and San Antonio
+    2026-09-11. A single global cutoff would call one of them complete when it is not.
+
+    None means unknown, and unknown is refused by the caller. Indeterminate is not permission.
+    """
+    doc = _load("municipal-permits", location)
+    if not _live(doc):
+        return None
+    seen = [o.get("observedAt") for o in doc.get("observations") or [] if o.get("observedAt")]
+    return date.fromisoformat(max(seen)[:10]) if seen else None
+
+
 def _permit_trades(location: str, today: date) -> list[Series]:
     doc = _load("permit-trade-activity", location)
     if not _live(doc):
         return []
     current = _current_month(today)
+    # THE COMPLETENESS GUARD. Dropping the current CALENDAR month is necessary and was not
+    # sufficient: it assumes the dataset is current through the end of every month it keeps,
+    # and the dataset is only as current as the last ingestion reached.
+    #
+    # What that produced: on 2026-10-01 September would have been treated as a complete month
+    # while holding SEVENTEEN DAYS of Austin filings and ELEVEN of San Antonio's. All three
+    # Austin trades read about a third down — three independent trades falling by the same
+    # amount in the same month, which is the fingerprint of a partial month and not of a
+    # market. The article would have been sourced, claim-ledgered, every gate green, and
+    # WRONG: "Austin's remodel boom is cooling" when nothing had cooled.
+    #
+    # So a month is complete only if ingestion actually reached its last day. Fail closed —
+    # an incomplete month is a silent skip, and a few days' wait beats a false crash story.
+    coverage = permit_coverage_through(location)
     by_trade: dict[str, list[Point]] = {}
     dropped: list[str] = []
+    incomplete: list[str] = []
     for obs in doc["observations"]:
         value = obs.get("value") or {}
         trade, month, count = value.get("category"), value.get("month"), value.get("permitCount")
@@ -208,6 +250,9 @@ def _permit_trades(location: str, today: date) -> list[Series]:
             continue
         if month >= current:             # trap 1
             dropped.append(month)
+            continue
+        if coverage is None or coverage < _last_day_of(month):
+            incomplete.append(month)
             continue
         by_trade.setdefault(trade, []).append(Point(f"{month}-01", float(count)))
     out = []
@@ -221,7 +266,11 @@ def _permit_trades(location: str, today: date) -> list[Series]:
             unit="permits/month", cadence="monthly",
             note="permit activity is a COUNT — an activity instrument, never a price "
                  "instrument (THI CLAUDE.md)",
-            dropped=[f"incomplete current month {m}" for m in sorted(set(dropped))],
+            dropped=([f"incomplete current month {m}" for m in sorted(set(dropped))] +
+                     [f"{m}: ingestion reached "
+                      f"{coverage.isoformat() if coverage else 'nowhere (dataset unusable)'}, "
+                      f"month ends {_last_day_of(m).isoformat()}"
+                      for m in sorted(set(incomplete))]),
         ))
     return out
 
