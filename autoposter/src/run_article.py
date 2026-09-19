@@ -664,6 +664,293 @@ TOPIC_ARTICLES["austin-improvement-boom-cooling"] = Builder(
     build_permit_claims, write_permits, title_for=boom_title_for)
 
 
+# =====================================================================================
+# Article 1, REWRITTEN as a recurring builder (2026-09-19).
+#
+# The original was locked to August 2026 and said so in its own halt: its prose named fixed
+# months, fixed comparisons and a fixed ANSWER — the verdict was the literal "**No.**", which
+# is a frozen conclusion of the purest kind. The day Texas power gets dearer year over year,
+# that article answers its own headline question wrongly with every gate green.
+#
+# It is a rewrite rather than an edit because almost nothing survived: the verdict, the peak,
+# the "one month did most of it" claim and the weather cross-check all had to become
+# arithmetic. What is preserved is the ARGUMENT — price now, direction against a year ago,
+# where that sits against the cycle, and then the obvious reader objection ("it was just a mild
+# summer") checked instead of ignored.
+#
+# ONE PERIOD FOR BOTH SERIES. The original read price for August and cooling degree-days for
+# JULY, so its claims aged at different rates and the oldest of them decided when the whole
+# article went stale — it expired on the CDD, ninety days after a month the article barely
+# discussed. This version takes the latest month BOTH series hold, so every claim in the piece
+# is the same age and the staleness gate judges the article the reader actually gets.
+# =====================================================================================
+
+POWER_PUBLISHED_AS = {"2026-08": "Are Texas electricity prices still going up?"}
+POWER_PUBLISHED_SLUG = {"2026-08": SLUG}
+
+
+def power_title(period: str) -> str:
+    """49 characters with the period, against a measured ceiling of ~53.
+
+    "power" for "electricity" is what buys the room; the question is otherwise the one the
+    topic asks. The month is what makes each release a different article rather than the same
+    question with new numbers.
+    """
+    if period[:7] in POWER_PUBLISHED_AS:
+        return POWER_PUBLISHED_AS[period[:7]]
+    return f"Are Texas power prices still going up? ({month_label_short(period)})"
+
+
+def power_slug(period: str) -> str:
+    if period[:7] in POWER_PUBLISHED_SLUG:
+        return POWER_PUBLISHED_SLUG[period[:7]]
+    return _slugify(power_title(period).rstrip("?").replace("'", ""))
+
+
+def _power_period(today: date) -> str:
+    """The latest month BOTH the price series and both metros' cooling degree-days hold."""
+    import thi_source
+    series = {(s.area_id, s.metric): s for s in thi_source.load_history(today)}
+    months = [{p.period[:7] for p in series[key].points} for key in (
+        ("texas", "energy_price_cents_kwh"),
+        ("austin_metro", "cooling_degree_days"),
+        ("san_antonio_metro", "cooling_degree_days"))]
+    common = set.intersection(*months)
+    if not common:
+        raise ledger_mod.LedgerHalt([
+            "no month is held by both the electricity price series and the cooling degree-day "
+            "series, so the weather cross-check cannot be made for any period this article "
+            "could cover."])
+    return max(common)
+
+
+def power_title_for(today: date) -> str:
+    return power_title(_power_period(today))
+
+
+def build_power_claims(feed: dict, config: dict, today: date) -> list[Claim]:
+    """CODE. Texas residential power, for whichever month the data actually supports."""
+    import thi_source
+    series = {(s.area_id, s.metric): s for s in thi_source.load_history(today)}
+    by_month = {p.period[:7]: p.value for p in series[("texas", "energy_price_cents_kwh")].points}
+    period = _power_period(today)
+    as_of = f"{period}-01"
+    label, short = month_label(period), month_label_short(period)
+
+    now = by_month[period]
+    year_key = f"{int(period[:4]) - 1}{period[4:]}"
+    year_ago = by_month.get(year_key)
+    if year_ago is None:
+        raise ledger_mod.LedgerHalt([
+            f"the price series does not reach {year_key}, so the year-over-year comparison this "
+            f"article is built on cannot be made for {label}."])
+
+    # THE VERDICT IS THE SIGN OF A SUBTRACTION. The original wrote "**No.**" into the prose.
+    rising = now > year_ago
+    peak_month = max(by_month, key=lambda m: by_month[m])
+    peak = by_month[peak_month]
+
+    # "Almost the whole decline happened in a single month" named May and June. Which pair of
+    # consecutive months moved most is a fact about the series, so it is found rather than told.
+    ordered = sorted(by_month)
+    steps = [(a, b, _pct(by_month[b], by_month[a]))
+             for a, b in zip(ordered, ordered[1:]) if by_month[a]]
+    biggest = max(steps, key=lambda s: abs(s[2])) if steps else None
+
+    claims = [
+        Claim("C1", f"Texas residential electricity averaged {now:.2f} cents per kilowatt-hour "
+                    f"in {label}.",
+              tier="data", figure=f"{now:.2f} cents per kilowatt-hour",
+              source=EIA_SOURCE, as_of=as_of, metric="energy_price_cents_kwh",
+              notes=f"Dataset: {EIA_DATASET}."),
+        Claim("C2", f"That is {'higher' if rising else 'lower'} than a year earlier.",
+              tier="derived",
+              figure=f"{'up' if rising else 'down'} {abs(_pct(now, year_ago)):.1f}% year over year",
+              source=EIA_SOURCE, as_of=as_of, metric="energy_price_cents_kwh",
+              derivation=f"{now:.2f} ({short}) vs {year_ago:.2f} "
+                         f"({month_label_short(year_key)}) = {_pct(now, year_ago):.1f}%"),
+        Claim("C3", f"It is {'at' if period == peak_month else 'below'} this cycle's peak.",
+              tier="derived",
+              figure=("at the highest month we hold" if period == peak_month
+                      else f"down {abs(_pct(now, peak)):.1f}% from the peak"),
+              source=EIA_SOURCE, as_of=as_of, metric="energy_price_cents_kwh",
+              derivation=f"{now:.2f} ({short}) vs {peak:.2f} "
+                         f"({month_label_short(peak_month)} peak) = {_pct(now, peak):.1f}%"),
+    ]
+    if biggest:
+        a, b, pct = biggest
+        claims.append(Claim(
+            "C4", f"The largest single-month move in the series we hold was "
+                  f"{month_label_short(a)} to {month_label_short(b)}.",
+            tier="derived",
+            figure=f"a {abs(pct):.1f}% {'rise' if pct > 0 else 'fall'} in one month",
+            source=EIA_SOURCE, as_of=as_of, metric="energy_price_cents_kwh",
+            derivation=f"{by_month[a]:.2f} ({month_label_short(a)}) to {by_month[b]:.2f} "
+                       f"({month_label_short(b)}) = {pct:.1f}%"))
+
+    # The objection a reader reaches for — "it was just a mild summer" — is checkable, so it is
+    # checked. The normals come from the file they live in, for THIS month, rather than from a
+    # two-entry July dict that could only ever describe one month of the year.
+    for area, tag in (("austin_metro", "C5"), ("san_antonio_metro", "C8")):
+        location = "austin" if area == "austin_metro" else "san-antonio"
+        normals, normals_source = thi_source.climate_normals(location)
+        normal = normals.get(int(period[5:7]))
+        cdd = series[(area, "cooling_degree_days")]
+        actual = {p.period[:7]: p.value for p in cdd.points}[period]
+        name = "Austin" if area == "austin_metro" else "San Antonio"
+        if normal is None:
+            raise ledger_mod.LedgerHalt([
+                f"no 1991-2020 normal is held for month {period[5:7]} in {name}, so "
+                f"'was it just a mild month?' cannot be answered for {label}."])
+        gap = _pct(actual, normal)
+        claims += [
+            Claim(tag, f"{name} recorded {actual:.0f} cooling degree-days in {label}.",
+                  tier="data", figure=f"{actual:.0f} cooling degree-days",
+                  source=cdd.source, as_of=as_of, metric="cooling_degree_days"),
+            Claim(f"{tag}n", f"{name}'s {label[:-5]} normal is {normal:.1f} cooling "
+                             f"degree-days.",
+                  tier="official", figure=f"{normal:.1f} cooling degree-days",
+                  source=normals_source, as_of="1991-2020", metric="cooling_degree_days",
+                  timeless=True,
+                  notes="A 1991-2020 climate normal is a fixed reference period, not a current "
+                        "reading, so the freshness bound does not apply to it."),
+            Claim(f"{tag}d",
+                  f"{name}'s {label[:-5]} was "
+                  f"{'hotter than' if gap > 5 else 'cooler than' if gap < -5 else 'close to'} "
+                  f"its normal.",
+                  tier="derived", figure=f"{gap:+.1f}% against the normal",
+                  source=normals_source, as_of=as_of, metric="cooling_degree_days",
+                  derivation=f"{actual:.0f} vs {normal:.1f} = {gap:+.1f}%"),
+        ]
+
+    claims.append(Claim(
+        "C9",
+        "We cannot say from the data we hold what moved the price; the cause is not established "
+        "here.",
+        tier="external", hedged=True,
+        notes="A causal explanation would be the single most repeatable wrong thing in this "
+              "article. Nothing in THI's feeds measures fuel cost, contract mix, or rate "
+              "changes, so the cause is named as unknown rather than guessed at."))
+    return claims
+
+
+def write_power(topic: dict, claims: list[Claim], feed: dict) -> dict:
+    """THE ONE MODEL CALL. Language only; every figure and every verdict came from the claims.
+
+    The original opened "**No.**" — the answer to the headline question, typed. This branches on
+    C2's direction, and so does the weather section: "not a mild summer" is only an answer to
+    "was it a mild summer?" while the month was in fact close to or above its normal.
+    """
+    c = {claim.id: claim for claim in claims}
+    rising = c["C2"].figure.startswith("up")
+    label = month_label(c["C1"].as_of[:7])
+    month = label[:-5]
+    S = EIA_SOURCE
+
+    verdict = (f"**Yes.** Texas residential electricity is dearer than it was a year ago."
+               if rising else
+               f"**No.** Texas residential electricity is cheaper than it was a year ago, not "
+               f"dearer.")
+
+    # Both metros' gap against their own normal decides whether the weather explanation is
+    # even available. "It was just a mild month" is a live objection only if the month WAS mild.
+    mild = [t for t in ("C5", "C8") if "cooler than" in c[f"{t}d"].text]
+    # G2 wants every claim's source AND as_of rendered inline, including the normals' fixed
+    # 1991-2020 reference period. The gate caught this paragraph quoting six figures without
+    # citing the two datasets they came from — which is exactly the "sourced" part of the brand
+    # being dropped in prose the model wrote.
+    cdd_cite = f"{c['C5'].source}, as of {label}"
+    norm_cite = c["C5n"].source
+    opening = (f"The obvious explanation is the weather: a mild {month} means less cooling, "
+               f"less demand, less strain.")
+    # "a August" - the article follows the month's first sound, and the month is not known
+    # until the data names it. The normals' source string already carries "1991-2020", which is
+    # what satisfies G2's as_of requirement, so printing the period again just stutters.
+    an = "an" if month[0] in "AO" else "a"
+    readings = (f"Austin recorded {c['C5'].figure} in {label} ({cdd_cite}), against {an} "
+                f"{month} normal of {c['C5n'].figure} ({norm_cite}) — "
+                f"{c['C5d'].figure}. San Antonio recorded {c['C8'].figure} ({cdd_cite}) "
+                f"against {c['C8n'].figure} ({norm_cite}) — {c['C8d'].figure}.")
+    if not mild:
+        weather = (f"{opening} It does not fit. {readings} Neither metro had a mild {month}, so "
+                   f"whatever moved the price, it was not an absent summer.")
+    else:
+        where = " and ".join("Austin" if t == "C5" else "San Antonio" for t in mild)
+        weather = (f"{opening} It is at least available this time — {where} ran below normal. "
+                   f"{readings} Available is not the same as established, and nothing we hold "
+                   f"measures the link.")
+
+    body = f"""
+## The short answer
+
+{verdict} The average residential price in {label} was {c['C1'].figure} — {c['C2'].figure}, and
+{c['C3'].figure} ({S}, as of {label}).
+
+## The series, not the headline
+
+A single month's price is a number; the shape either side of it is the answer. Texas residential
+power is measured here against its own preceding months and against the same month a year
+earlier — never against another state, and never against a bill, which depends on how much you
+used.
+
+- **Against last year:** {c['C1'].figure} now, {c['C2'].figure}.
+- **Against this cycle:** {c['C3'].figure}.
+- **The sharpest single move we hold:** {c.get('C4').figure if c.get('C4') else '—'}.
+
+## "It was just a mild summer"
+
+{weather}
+
+## What we are not saying
+
+{c['C9'].text} A price series records what was charged. It does not record why, and the
+explanations that sound most obvious — fuel costs, a rate change, contract mix — are exactly the
+ones we hold no data for. So we are not going to tell you which it was.
+"""
+    return {
+        "slug": power_slug(c["C1"].as_of),
+        "title": power_title(c["C1"].as_of),
+        "description": (f"Texas residential electricity in {label}, against the same month a "
+                        f"year earlier and against its own cycle, with the mild-summer "
+                        f"explanation checked rather than assumed."),
+        "body": body,
+        "canonical_url": (f"https://texashomeintelligence.com/analysis/"
+                          f"{power_slug(c['C1'].as_of)}/"),
+        "embed": {
+            "kind": "table",
+            "series": "texas/energy_price_cents_kwh",
+            "caption": "Texas residential electricity price, cents per kilowatt-hour, by month",
+            "component": "DataStatus for provenance + a native <table class=\"data-table\">",
+        },
+    }
+
+
+def power_caption(article: dict, claims: list[Claim]) -> str:
+    """Computed, like the article. The hook names the direction C2 found."""
+    c = {claim.id: claim for claim in claims}
+    rising = c["C2"].figure.startswith("up")
+    label = month_label(c["C1"].as_of[:7])
+    hook = ("\"Everything's going up.\" Texas power, for once, is going up too — and here is "
+            "the number."
+            if rising else
+            "\"Everything's going up.\" Texas residential power, for once, is not.")
+    return (
+        f"{hook} {label}: {c['C1'].figure}, {c['C2'].figure}, {c['C3'].figure} "
+        f"(source: {EIA_SOURCE}, as of {c['C1'].as_of}). "
+        f"And no, it was not just a mild summer — Austin ran {c['C5d'].figure} against its "
+        f"1991-2020 normal, San Antonio {c['C8d'].figure}. "
+        f"We can't tell you what moved the price, and we're not going to guess. "
+        f"The series, with the arithmetic shown \u2192 {article['canonical_url']} "
+        f"Send this to whoever told you the power bill only goes one way."
+    )
+
+
+# Texas power RECURS as of 2026-09-19, replacing the builder that was locked to August 2026.
+TOPIC_ARTICLES["electricity-still-rising"] = Builder(
+    build_power_claims, write_power, title_for=power_title_for)
+TOPIC_CAPTIONS["electricity-still-rising"] = power_caption
+
+
 def summer_title(period: str) -> str:
     return f"Was {month_label(period)} hotter than normal in Texas?"
 

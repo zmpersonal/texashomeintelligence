@@ -934,6 +934,81 @@ def test_FROZEN_acrush_CLOSING_follows_it_too():
     assert "tracked the weather" in flipped
 
 
+def _power_claims(today=None):
+    from datetime import date as _date
+    return run_article.build_power_claims(engine.load_feed(), CFG, today or _date(2026, 9, 19))
+
+
+def _rising(claims):
+    """Force the year-over-year comparison the other way, and the verdict with it."""
+    out = _copy.deepcopy(claims)
+    for c in out:
+        if c.id == "C2":
+            c.figure = "up 7.4% year over year"
+            c.text = "That is higher than a year earlier."
+    return out
+
+
+def test_FROZEN_power_verdict_is_the_SIGN_of_the_year_over_year_move():
+    """The original wrote "**No.**" into its prose — the answer to its own headline question,
+    typed. The day Texas power gets dearer year over year that article answers wrongly with
+    every gate green. This is the single most important flip in the rewrite."""
+    feed = engine.load_feed()
+    claims = _power_claims()
+    falling = run_article.write_power({}, claims, feed)["body"]
+    rising = run_article.write_power({}, _rising(claims), feed)["body"]
+    assert "**No.**" in falling and "cheaper than it was a year ago" in falling
+    assert "**No.**" not in rising, "the verdict survived its own condition being inverted"
+    assert "**Yes.**" in rising and "dearer than it was a year ago" in rising
+
+
+def test_FROZEN_power_WEATHER_section_stops_denying_a_mild_month_when_it_was_one():
+    """"Neither metro had a mild summer" is an answer to the objection only while the months
+    were not mild. When one is, the honest line is that the explanation is AVAILABLE — and
+    still not established, because nothing we hold measures the link."""
+    feed = engine.load_feed()
+    claims = _power_claims()
+    real = run_article.write_power({}, claims, feed)["body"]
+    mild = _copy.deepcopy(claims)
+    for c in mild:
+        if c.id == "C5d":
+            c.text = "Austin's August was cooler than its normal."
+            c.figure = "-12.0% against the normal"
+    softened = run_article.write_power({}, mild, feed)["body"]
+    assert "Neither metro had a mild" in real
+    assert "Neither metro had a mild" not in softened, "it denied a mild month that happened"
+    assert "at least available" in softened and "not the same as established" in softened
+
+
+def test_FROZEN_power_CAPTION_hook_follows_the_direction_too():
+    feed = engine.load_feed()
+    caption = run_article.TOPIC_CAPTIONS["electricity-still-rising"]
+    claims = _power_claims()
+    article = run_article.write_power({}, claims, feed)
+    assert "for once, is not" in caption(article, claims)
+    assert "for once, is not" not in caption(article, _rising(claims))
+
+
+def test_the_power_article_CLAIMS_ARE_ALL_ONE_PERIOD():
+    """The original read price for August and cooling degree-days for JULY, so its claims aged
+    at different rates and the oldest decided when the whole article went stale — it expired on
+    a month the piece barely discussed. Every dated claim must now name the same month."""
+    claims = _power_claims()
+    dated = {c.as_of for c in claims if c.as_of and not c.timeless}
+    assert len(dated) == 1, f"the article mixes periods: {sorted(dated)}"
+
+
+def test_the_power_article_REFUSES_a_period_it_cannot_compare():
+    """No year-ago month means no year-over-year claim, and the article is built on one. It
+    halts with the reason rather than quietly comparing against something else."""
+    from datetime import date as _date
+    try:
+        run_article.build_power_claims(engine.load_feed(), CFG, _date(2026, 4, 15))
+        raise AssertionError("it built an article with no year-ago month to compare against")
+    except Exception as exc:
+        assert "year-over-year" in str(exc) and "2025-03" in str(exc), str(exc)
+
+
 def _permit_claims(today=None):
     from datetime import date as _date
     return run_article.build_permit_claims(engine.load_feed(), CFG, today or _date(2026, 9, 19))
