@@ -58,5 +58,17 @@
     "post_publish_detail": "resolved 200",
     "streak_after": 4,
     "note": "streak_after corrected from 2 to 4: it had been read from config.yaml's hand-maintained clean_streak, a number no code ever advanced. It is now counted from this ledger, which is the list of posts and therefore the only thing that cannot drift from it."
+  },
+  {
+    "published_at": "2026-09-19T17:13:44+00:00",
+    "platform": "facebook",
+    "page_id": "1335273942995805",
+    "post_url": "blotato:306c6615-f119-49a6-af7d-b1b057da2f08",
+    "submission_id": "306c6615-f119-49a6-af7d-b1b057da2f08",
+    "article_url": "https://texashomeintelligence.com/analysis/is-austins-home-improvement-boom-cooling-off/",
+    "article_slug": "is-austins-home-improvement-boom-cooling-off",
+    "post_publish_verified": true,
+    "post_publish_detail": "resolved 200",
+    "streak_after": 5
   }
 ]
