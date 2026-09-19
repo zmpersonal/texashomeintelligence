@@ -934,6 +934,84 @@ def test_FROZEN_acrush_CLOSING_follows_it_too():
     assert "tracked the weather" in flipped
 
 
+def _permit_claims(today=None):
+    from datetime import date as _date
+    return run_article.build_permit_claims(engine.load_feed(), CFG, today or _date(2026, 9, 19))
+
+
+def _all_trades(claims, gap):
+    """Force every Austin trade to the same side of its own pace."""
+    out = _copy.deepcopy(claims)
+    for c in out:
+        if c.id.endswith("_base"):
+            c.figure = c.figure.replace("above", gap).replace("below", gap)
+    counted = sum(1 for c in out if c.id.endswith("_base") and gap in c.figure)
+    for c in out:
+        if c.id == "tally":
+            c.figure = f"{counted if gap == 'below' else 0} of 3 trades below their own average"
+    return out
+
+
+def test_FROZEN_austin_permit_verdict_follows_the_tally():
+    """The Austin permits builder RECURS as of 2026-09-19, so its conclusions are now claims
+    about whichever month it runs for rather than about August. Same bar as the others."""
+    feed = engine.load_feed()
+    claims = _permit_claims()
+    real = run_article.write_permits({}, claims, feed)["body"]
+    below = run_article.write_permits({}, _all_trades(claims, "below"), feed)["body"]
+    above = run_article.write_permits({}, _all_trades(claims, "above"), feed)["body"]
+    assert "Mostly no" in real, real.split("\n")[3]
+    assert "More than you might think" in below, "the verdict ignored an all-below month"
+    assert "All three trades are running above" in above, "the verdict ignored an all-above month"
+
+
+def test_FROZEN_austin_useful_read_stops_claiming_a_SPLIT_when_there_is_none():
+    """"installer demand is not uniform across trades" asserts a split. It survived the audit
+    only because the trades happened to be split in all six periods that can be built — the
+    computed-but-constant case the audit cannot tell from a frozen one."""
+    feed = engine.load_feed()
+    claims = _permit_claims()
+    real = run_article.write_permits({}, claims, feed)["body"]
+    below = run_article.write_permits({}, _all_trades(claims, "below"), feed)["body"]
+    above = run_article.write_permits({}, _all_trades(claims, "above"), feed)["body"]
+    assert "not uniform across trades" in real
+    assert "not uniform across trades" not in below, "it claimed a split with every trade below"
+    assert "all three trades are running below" in below
+    assert "not uniform across trades" not in above, "it claimed a split with every trade above"
+    assert "all three trades are running above" in above
+
+
+def test_FROZEN_austin_CAPTION_hook_follows_the_tally_too():
+    """The caption is the one surface L16 kept missing. It was a frozen STRING carrying August's
+    literal figures; now it is a function, and its hook must move with the data like the body's.
+    In September 2026 two of three trades are below their pace, and "the record says otherwise"
+    would tell the reader the data contradicts a claim it actually supports."""
+    feed = engine.load_feed()
+    caption = run_article.TOPIC_CAPTIONS["austin-improvement-boom-cooling"]
+    claims = _permit_claims()
+    article = run_article.write_permits({}, claims, feed)
+    assert "says otherwise" in caption(article, claims)
+    flipped = _all_trades(claims, "below")
+    assert "says otherwise" not in caption(run_article.write_permits({}, flipped, feed), flipped)
+
+
+def test_the_austin_permit_CAPTION_carries_no_literal_figure():
+    """The old caption hardcoded "8% below", "224 permits, up 138%", "as of 2026-08-01" — every
+    one correct for August and false after it, with G1 green because each traced to August's
+    claims. Every numeral in the caption must come from THIS period's claims."""
+    feed = engine.load_feed()
+    caption = run_article.TOPIC_CAPTIONS["austin-improvement-boom-cooling"]
+    import re
+    from datetime import date as _date
+    for today in (_date(2026, 9, 19), _date(2026, 10, 1)):
+        claims = _permit_claims(today)
+        article = run_article.write_permits({}, claims, feed)
+        text = caption(article, claims)
+        legal = {n for c in claims for n in re.findall(r"[\d][\d,.]*", f"{c.figure} {c.as_of or ''}")}
+        for numeral in re.findall(r"[\d][\d,.]*", text.split("http")[0]):
+            assert numeral in legal, f"{numeral!r} in the caption traces to no claim ({today})"
+
+
 def test_FROZEN_sa_verdict_follows_the_tally():
     """San Antonio's tally has never flipped in the six periods that can be built, so the
     verdict LOOKS frozen in an audit. Forcing the flip proves it is not."""

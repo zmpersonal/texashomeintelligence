@@ -250,6 +250,41 @@ if __name__ == "__main__":
 # =====================================================================================
 
 PERMITS_SLUG = "is-austins-home-improvement-boom-cooling-off"
+
+# The ONE period this builder published before it recurred, and the exact title it went out
+# under. Without this the conversion republishes August: the already-written exclusion matches
+# on TITLE, the duplicate gate on URL, and changing the title scheme changes both — so the live
+# August article would become invisible to each of them and the machine would write it again
+# under a new name. That is the repeat the owner's non-negotiable forbids, arriving through a
+# rename rather than through a bug in the gates.
+BOOM_PUBLISHED_AS = {"2026-08": "Is Austin's home-improvement boom actually cooling off?"}
+BOOM_PUBLISHED_SLUG = {"2026-08": PERMITS_SLUG}
+
+
+def boom_title(period: str) -> str:
+    """48 characters with the period, measured against the real card generator.
+
+    The original question is 55 and the ceiling is about 53, so it could never carry a period.
+    "remodel" for "home-improvement" is the same lever San Antonio's title used, and it is the
+    right one: the alternative is widening shared template logic for one title, which silently
+    re-broke an approved headline the last time it was tried.
+
+    The month stays because this builder is RECURRING — the period is what makes each month's
+    article a different article rather than the same one with new numbers.
+    """
+    if period[:7] in BOOM_PUBLISHED_AS:
+        return BOOM_PUBLISHED_AS[period[:7]]
+    return f"Is Austin's remodel boom cooling off? ({month_label_short(period)})"
+
+
+def boom_slug(period: str) -> str:
+    if period[:7] in BOOM_PUBLISHED_SLUG:
+        return BOOM_PUBLISHED_SLUG[period[:7]]
+    return _slugify(boom_title(period).rstrip("?").replace("'", ""))
+
+
+def boom_title_for(today: date) -> str:
+    return boom_title(latest_period(today, "austin_metro", "permit_activity_solar"))
 AUSTIN_PERMITS_SOURCE = "City of Austin Issued Construction Permits (Socrata)"
 TRADES = ("solar", "hvac", "roofing")
 
@@ -270,6 +305,7 @@ def _permit_facts(today: date) -> dict:
             "mom_pct": _pct(latest, prior),
             "base_pct": _pct(latest, baseline),
             "as_of": s.points[-1].period,
+            "prior_as_of": s.points[-2].period,
             "peak": max(values),
         }
     return facts
@@ -285,6 +321,14 @@ def build_permit_claims(feed: dict, config: dict, today: date) -> list[Claim]:
     """
     f = _permit_facts(today)
     as_of = f["solar"]["as_of"]
+    # The month names were LITERALS — "in August 2026", "from July", "(Aug 2026) vs (Jul 2026)".
+    # True of one month and wrong in every other, which is the frozen-conclusion class (L16)
+    # applied to a date rather than a verdict: the arithmetic below was always computed, but the
+    # sentence around it named a month nobody looked up.
+    this_month = month_label(as_of[:7])
+    last_month = month_label(f["solar"]["prior_as_of"][:7])
+    this_short = month_label_short(as_of[:7])
+    last_short = month_label_short(f["solar"]["prior_as_of"][:7])
 
     def count(trade, value):
         return f"{value:,.0f} {trade} permits"
@@ -293,22 +337,25 @@ def build_permit_claims(feed: dict, config: dict, today: date) -> list[Claim]:
     for trade, display in (("solar", "solar"), ("hvac", "HVAC"), ("roofing", "roofing")):
         row = f[trade]
         claims.append(Claim(
-            trade, f"Austin issued {count(display, row['latest'])} in August 2026.",
+            trade, f"Austin issued {count(display, row['latest'])} in {this_month}.",
             tier="data", figure=count(display, row["latest"]),
             source=AUSTIN_PERMITS_SOURCE, as_of=as_of,
             metric=f"permit_activity_{trade}"))
         direction = "up" if row["mom_pct"] >= 0 else "down"
+        # `.capitalize()` lowercases the rest of the word, so "HVAC" became "Hvac". The display
+        # name is already written the way it should read; only the first letter may need lifting.
+        shown = display[0].upper() + display[1:]
         claims.append(Claim(
-            f"{trade}_mom", f"{display.capitalize()} permits {direction} from July.",
+            f"{trade}_mom", f"{shown} permits {direction} from {last_month}.",
             tier="derived",
             figure=f"{direction} {abs(row['mom_pct']):.0f}% month over month",
             source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric=f"permit_activity_{trade}",
-            derivation=f"{row['latest']:.0f} (Aug 2026) vs {row['prior']:.0f} (Jul 2026) = "
+            derivation=f"{row['latest']:.0f} ({this_short}) vs {row['prior']:.0f} ({last_short}) = "
                        f"{row['mom_pct']:.0f}%"))
         gap = "above" if row["base_pct"] >= 0 else "below"
         claims.append(Claim(
             f"{trade}_base",
-            f"{display.capitalize()} filings are running {gap} their own recent pace.",
+            f"{shown} filings are running {gap} their own recent pace.",
             tier="derived",
             figure=f"{abs(row['base_pct']):.0f}% {gap} its {row['months']}-month average",
             source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric=f"permit_activity_{trade}",
@@ -320,7 +367,10 @@ def build_permit_claims(feed: dict, config: dict, today: date) -> list[Claim]:
     above_trades = [d for t, d in (("solar", "solar"), ("hvac", "HVAC"), ("roofing", "roofing"))
                     if f[t]["base_pct"] >= 0]
     claims.append(Claim(
-        "tally", f"{len(below_trades)} of the three trades is running below its own recent pace.",
+        "tally", (f"{len(below_trades)} of the three trades "
+                  f"{'is running below its' if len(below_trades) == 1 else 'are running below their'}"
+                  f" own recent pace." if below_trades else
+                  "None of the three trades is running below its own recent pace."),
         tier="derived",
         figure=f"{len(below_trades)} of 3 trades below their own average",
         source=AUSTIN_PERMITS_SOURCE, as_of=as_of, metric="permit_activity_solar",
@@ -387,6 +437,22 @@ def write_permits(topic: dict, claims: list[Claim], feed: dict) -> dict:
                  f"Even the weakest of the three, {slowest}, is {gap[slowest][0]} — there is no "
                  f"genuinely slow lane in Austin this month ({S}, as of {label}).")
 
+    # "installer demand is not uniform across trades" asserted a SPLIT. In a month where all
+    # three trades sit the same side of their own pace it is simply false — and it is the kind
+    # of sentence that keeps sounding true after the thing it describes has gone. Counted.
+    if below and above:
+        useful = ("If you are getting quotes right now, the useful read is that installer demand "
+                  "is not uniform across trades. That is worth knowing before you assume a slow "
+                  "quote means a slow market.")
+    elif below:
+        useful = ("If you are getting quotes right now, all three trades are running below their "
+                  "own recent pace — so a slow quote is less likely to be one busy installer and "
+                  "more likely to be the month. A permit count cannot tell you which.")
+    else:
+        useful = ("If you are getting quotes right now, all three trades are running above their "
+                  "own recent pace — so a slow quote is more likely to be a busy installer than "
+                  "a slow market. A permit count cannot tell you which.")
+
     body = f"""
 ## The short answer
 
@@ -429,16 +495,16 @@ cause is working from something other than this data.
 
 ## What this is useful for
 
-If you are getting quotes right now, the useful read is that installer demand is not uniform
-across trades. That is worth knowing before you assume a slow quote means a slow market.
+{useful}
 """
     return {
-        "slug": PERMITS_SLUG,
-        "title": topic["question"],
+        "slug": boom_slug(c["solar"].as_of),
+        "title": boom_title(c["solar"].as_of),
         "description": ("Austin's permit record, trade by trade, each measured against its own "
                         "recent pace rather than against another city or a dollar figure."),
         "body": body,
-        "canonical_url": f"https://texashomeintelligence.com/analysis/{PERMITS_SLUG}/",
+        "canonical_url": (f"https://texashomeintelligence.com/analysis/"
+                          f"{boom_slug(c['solar'].as_of)}/"),
         "embed": {
             "kind": "table",
             "series": "austin_metro/permit_activity_solar",
@@ -460,19 +526,49 @@ TOPIC_ARTICLES = {
     "austin-improvement-boom-cooling": (build_permit_claims, write_permits),
 }
 
-PERMITS_CAPTION = (
-    "\"The market's gone quiet.\" Austin's own permit record says otherwise, trade by trade. "
-    "Roofing is running 8% below its 11-month average. HVAC dipped from July but is still "
-    "19% above its own average — a down month inside a strong year. And solar just did "
-    "224 permits, up 138% month over month, its biggest month in the twelve we hold "
-    "(source: City of Austin Issued Construction Permits (Socrata), as of 2026-08-01). "
-    "We can't tell you why from a permit count, and we're not going to guess. "
-    "The three trades, side by side, with the arithmetic shown \u2192 "
-    "https://texashomeintelligence.com/analysis/is-austins-home-improvement-boom-cooling-off/ "
-    "Send this to whoever told you nobody's building right now."
-)
+def boom_caption(article: dict, claims: list[Claim]) -> str:
+    """Every figure comes from the claims. The old caption was a FROZEN STRING carrying literal
+    numbers — "Roofing is running 8% below", "solar just did 224 permits, up 138%", "as of
+    2026-08-01". Correct for August 2026 and false for every month after it, with every gate
+    green, because G1 checks that a numeral traces to a claim and each of those did trace to
+    August's. A hardcoded caption is the frozen-conclusion class wearing the one costume L16
+    does not strip: the caption, not the article.
 
-TOPIC_CAPTIONS = {"austin-improvement-boom-cooling": PERMITS_CAPTION}
+    The lanes are NAMED FROM THE SORT rather than written down, for the same reason the article
+    body does it: the day roofing recovers, a sentence calling it the slow lane is a false claim
+    nobody edited.
+    """
+    c = {claim.id: claim for claim in claims}
+    label = month_label(c["solar"].as_of[:7])
+    trades = ["solar", "hvac", "roofing"]
+    busiest = max(trades, key=lambda t: _signed_pct(c[f"{t}_base"].figure))
+    slowest = min(trades, key=lambda t: _signed_pct(c[f"{t}_base"].figure))
+    # The hook ASSERTED A DIRECTION — "the market's gone quiet... says otherwise" — which is
+    # true only while most trades sit above their own pace. In September 2026 two of the three
+    # are below it, and that sentence would have told the reader the data contradicts a claim it
+    # actually supports. Found by building the next period rather than by reading the month in
+    # front of me. Branched on the same tally the article's verdict branches on.
+    mostly_below = len([t for t in trades if "below" in c[f"{t}_base"].figure]) > len(trades) / 2
+    hook = (f"\"The market's gone quiet.\" Austin's own permit record, trade by trade, {label}: "
+            f"{c['tally'].figure}. "
+            if mostly_below else
+            f"\"The market's gone quiet.\" Austin's own permit record says otherwise, trade by "
+            f"trade, {label}: {c['tally'].figure}. ")
+    return (
+        hook +
+        f"{slowest.capitalize()} is the slowest lane at {c[f'{slowest}_base'].figure}; "
+        f"{busiest} the busiest at {c[f'{busiest}_base'].figure}. "
+        f"(source: {AUSTIN_PERMITS_SOURCE}, as of {c['solar'].as_of}) "
+        f"Every trade is measured against its OWN preceding months, never another city's — "
+        f"different cities, different filing systems. "
+        f"We can't tell you why anything moved, and we're not going to guess. "
+        f"The three trades, side by side, with the arithmetic shown \u2192 "
+        f"{article['canonical_url']} "
+        f"Send this to whoever told you nobody's building right now."
+    )
+
+
+TOPIC_CAPTIONS = {"austin-improvement-boom-cooling": boom_caption}
 
 
 # =====================================================================================
@@ -555,6 +651,13 @@ class Builder:
 # =====================================================================================
 
 GSOM_SOURCE = "NOAA NCEI Global Summary of the Month"
+
+
+# Austin's permit story RECURS, as of 2026-09-19. It was spent after one article purely
+# because its title named no period; the arithmetic underneath was already computed per month.
+# Registered here rather than in the literal above because `Builder` does not exist yet there.
+TOPIC_ARTICLES["austin-improvement-boom-cooling"] = Builder(
+    build_permit_claims, write_permits, title_for=boom_title_for)
 
 
 def summer_title(period: str) -> str:
