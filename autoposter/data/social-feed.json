@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-06T19:21:13+00:00",
+  "generated_at": "2026-09-19T13:10:50+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -14,16 +14,23 @@
         "drought_stage": {
           "value": 2.0,
           "source": "U.S. Drought Monitor",
-          "as_of": "2026-09-01",
-          "vs_baseline": -0.3519,
+          "as_of": "2026-09-15",
+          "vs_baseline": -0.3393,
           "wow": 0.0
         },
+        "air_quality_index": {
+          "value": 51.0,
+          "source": "AirNow",
+          "as_of": "2026-09-07",
+          "vs_baseline": -17.3333,
+          "wow": -25.0
+        },
         "cooling_degree_days": {
-          "value": 644.0,
+          "value": 755.0,
           "source": "NOAA NCEI Global Summary of the Month",
-          "as_of": "2026-07-01",
-          "vs_baseline": 387.3,
-          "mom": 84.0
+          "as_of": "2026-08-01",
+          "vs_baseline": 463.0909,
+          "mom": 111.0
         },
         "permit_activity_electrical": {
           "value": 1515.0,
@@ -69,16 +76,23 @@
         "drought_stage": {
           "value": 1.0,
           "source": "U.S. Drought Monitor",
-          "as_of": "2026-09-01",
-          "vs_baseline": -1.7778,
+          "as_of": "2026-09-15",
+          "vs_baseline": -1.7143,
           "wow": 0.0
         },
+        "air_quality_index": {
+          "value": 61.0,
+          "source": "AirNow",
+          "as_of": "2026-09-07",
+          "vs_baseline": 1.6667,
+          "wow": -6.0
+        },
         "cooling_degree_days": {
-          "value": 607.0,
+          "value": 700.0,
           "source": "NOAA NCEI Global Summary of the Month",
-          "as_of": "2026-07-01",
-          "vs_baseline": 333.5,
-          "mom": 58.0
+          "as_of": "2026-08-01",
+          "vs_baseline": 396.1818,
+          "mom": 93.0
         },
         "permit_activity_electrical": {
           "value": 845.0,
@@ -172,13 +186,13 @@
     },
     {
       "rank": 3,
-      "area_id": "texas",
-      "metric": "energy_price_cents_kwh",
+      "area_id": "austin_metro",
+      "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.369,
-      "why": "a cost signal",
-      "figure": "13.88¢ per kWh (2026-08), +1.1% month over month",
-      "source": "EIA Electricity Data (Texas, residential)",
+      "surprise_score": 0.373,
+      "why": "at a level well outside this area's own range",
+      "figure": "755 cooling degree-days in 2026-08, +17% vs the prior month",
+      "source": "NOAA NCEI Global Summary of the Month",
       "as_of": "2026-08-01",
       "suppressed": false
     },
@@ -196,18 +210,30 @@
     },
     {
       "rank": 5,
-      "area_id": "austin_metro",
-      "metric": "cooling_degree_days",
+      "area_id": "texas",
+      "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.326,
-      "why": "at a level well outside this area's own range",
-      "figure": "644 cooling degree-days in 2026-07, +15% vs the prior month",
-      "source": "NOAA NCEI Global Summary of the Month",
-      "as_of": "2026-07-01",
+      "surprise_score": 0.358,
+      "why": "a cost signal",
+      "figure": "13.88¢ per kWh (2026-08), +1.1% month over month",
+      "source": "EIA Electricity Data (Texas, residential)",
+      "as_of": "2026-08-01",
       "suppressed": false
     },
     {
       "rank": 6,
+      "area_id": "san_antonio_metro",
+      "metric": "cooling_degree_days",
+      "angle": "reveal",
+      "surprise_score": 0.347,
+      "why": "at a level well outside this area's own range",
+      "figure": "700 cooling degree-days in 2026-08, +15% vs the prior month",
+      "source": "NOAA NCEI Global Summary of the Month",
+      "as_of": "2026-08-01",
+      "suppressed": false
+    },
+    {
+      "rank": 7,
       "area_id": "austin_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
@@ -216,18 +242,6 @@
       "figure": "1,037 hvac permits in 2026-08, -15% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
       "as_of": "2026-08-01",
-      "suppressed": false
-    },
-    {
-      "rank": 7,
-      "area_id": "san_antonio_metro",
-      "metric": "cooling_degree_days",
-      "angle": "reveal",
-      "surprise_score": 0.29,
-      "why": "a modest move against its own history",
-      "figure": "607 cooling degree-days in 2026-07, +11% vs the prior month",
-      "source": "NOAA NCEI Global Summary of the Month",
-      "as_of": "2026-07-01",
       "suppressed": false
     },
     {
@@ -268,6 +282,18 @@
     },
     {
       "rank": 11,
+      "area_id": "austin_metro",
+      "metric": "air_quality_index",
+      "angle": "reveal",
+      "surprise_score": 0.217,
+      "why": "a modest move against its own history",
+      "figure": "51.00 (2026-09-07)",
+      "source": "AirNow",
+      "as_of": "2026-09-07",
+      "suppressed": false
+    },
+    {
+      "rank": 12,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
@@ -279,7 +305,7 @@
       "suppressed": false
     },
     {
-      "rank": 12,
+      "rank": 13,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
@@ -291,7 +317,7 @@
       "suppressed": false
     },
     {
-      "rank": 13,
+      "rank": 14,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_foundation",
       "angle": "reveal",
@@ -303,7 +329,7 @@
       "suppressed": false
     },
     {
-      "rank": 14,
+      "rank": 15,
       "area_id": "austin_metro",
       "metric": "permit_activity_roofing",
       "angle": "reveal",
@@ -315,7 +341,7 @@
       "suppressed": false
     },
     {
-      "rank": 15,
+      "rank": 16,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_roofing",
       "angle": "reveal",
@@ -324,6 +350,18 @@
       "figure": "394 roofing permits in 2026-08, +3% month over month",
       "source": "City of San Antonio Permits Open Data",
       "as_of": "2026-08-01",
+      "suppressed": false
+    },
+    {
+      "rank": 17,
+      "area_id": "san_antonio_metro",
+      "metric": "air_quality_index",
+      "angle": "reveal",
+      "surprise_score": 0.109,
+      "why": "a modest move against its own history",
+      "figure": "61.00 (2026-09-07)",
+      "source": "AirNow",
+      "as_of": "2026-09-07",
       "suppressed": false
     }
   ]
