@@ -168,6 +168,54 @@ def test_the_guard_is_on_THI_AGGREGATED_series_only_and_that_is_deliberate():
         assert series.cadence in ("monthly", "weekly", "daily"), series.cadence
 
 
+# ===================== the staleness bound is a backstop; RECURRENCE decides the month
+
+def test_RECURRENCE_not_the_clock_decides_which_month_is_published():
+    """Why widening the permit bound from 60 to 90 days is honest.
+
+    The worry a staleness bound answers is "an old month read as current". For a recurring
+    builder that is not what the clock guards — the builder emits the LATEST COMPLETE month's
+    title, so it cannot write about August while September is complete. It would be writing
+    September. And when September is NOT complete, August is the newest complete data there is,
+    and publishing it says so on its face.
+
+    This asserts the property the widened bound leans on: whatever the date, the title names the
+    newest month the data actually supports.
+    """
+    import run_article
+    for today in (date(2026, 9, 19), date(2026, 10, 1), date(2026, 11, 20), date(2026, 12, 31)):
+        newest = max(p.period[:7] for s_ in thi_source.load_history(today)
+                     if s_.metric == "permit_activity_solar" and s_.area_id == "austin_metro"
+                     for p in s_.points)
+        assert run_article.boom_title_for(today) == run_article.boom_title(newest), (
+            f"on {today} the builder would not be titling the newest complete month ({newest})")
+
+
+def test_the_bound_no_longer_expires_a_month_before_its_successor_arrives():
+    """The seam this closes, as arithmetic rather than as a story.
+
+    A claim is dated the 1st of its month; its successor becomes eligible once ingestion covers
+    that successor's last day. At 60 days those two coincided every month, and for a 31-day
+    month the old claims died a day EARLY — so one bad ingestion day around the turn left
+    nothing publishable at all.
+    """
+    import yaml
+    from datetime import timedelta
+    bound_days = yaml.safe_load(
+        open(os.path.join(os.path.dirname(__file__), "..", "config.yaml"))
+    )["staleness_hours"]["permit_activity_"] // 24
+    for month in (7, 8, 9, 10):
+        dated = date(2026, month, 1)
+        expires = dated + timedelta(days=bound_days)
+        successor_ready = date(2026, month + 2, 1) - timedelta(days=1)
+        assert expires > successor_ready, (
+            f"{dated:%b %Y} claims expire {expires}, but {date(2026, month + 1, 1):%b} is not "
+            f"eligible until {successor_ready} — a gap with nothing publishable")
+        assert (expires - successor_ready).days >= 25, (
+            f"only {(expires - successor_ready).days} days of overlap for {dated:%b %Y}; "
+            f"one slow ingestion still empties the window")
+
+
 if __name__ == "__main__":
     fns = [f for n, f in sorted(globals().items()) if n.startswith("test_")]
     ok = 0
