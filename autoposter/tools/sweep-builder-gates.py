@@ -118,7 +118,10 @@ def sweep_one(topic_id: str, builder, config: dict, today: date) -> list[tuple[s
 
 def main() -> int:
     config = engine.load_config()
-    today = date.today()
+    # An explicit date sweeps a period the calendar has not reached yet. The point of the sweep
+    # is to catch a builder's gate bug AHEAD of its rotation, and a builder whose next period is
+    # already in the data can be swept now rather than on the morning it goes out.
+    today = date.fromisoformat(sys.argv[1]) if len(sys.argv) > 1 else date.today()
     print(f"[sweep] every builder's CURRENT-PERIOD output against every gate, {today}\n")
     failing: list[str] = []
     for topic_id, builder in sorted(run_article.TOPIC_ARTICLES.items()):

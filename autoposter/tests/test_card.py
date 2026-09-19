@@ -934,6 +934,159 @@ def test_FROZEN_acrush_CLOSING_follows_it_too():
     assert "tracked the weather" in flipped
 
 
+def _power_claims(today=None):
+    from datetime import date as _date
+    return run_article.build_power_claims(engine.load_feed(), CFG, today or _date(2026, 9, 19))
+
+
+def _rising(claims):
+    """Force the year-over-year comparison the other way, and the verdict with it."""
+    out = _copy.deepcopy(claims)
+    for c in out:
+        if c.id == "C2":
+            c.figure = "up 7.4% year over year"
+            c.text = "That is higher than a year earlier."
+    return out
+
+
+def test_FROZEN_power_verdict_is_the_SIGN_of_the_year_over_year_move():
+    """The original wrote "**No.**" into its prose — the answer to its own headline question,
+    typed. The day Texas power gets dearer year over year that article answers wrongly with
+    every gate green. This is the single most important flip in the rewrite."""
+    feed = engine.load_feed()
+    claims = _power_claims()
+    falling = run_article.write_power({}, claims, feed)["body"]
+    rising = run_article.write_power({}, _rising(claims), feed)["body"]
+    assert "**No.**" in falling and "cheaper than it was a year ago" in falling
+    assert "**No.**" not in rising, "the verdict survived its own condition being inverted"
+    assert "**Yes.**" in rising and "dearer than it was a year ago" in rising
+
+
+def test_FROZEN_power_WEATHER_section_stops_denying_a_mild_month_when_it_was_one():
+    """"Neither metro had a mild summer" is an answer to the objection only while the months
+    were not mild. When one is, the honest line is that the explanation is AVAILABLE — and
+    still not established, because nothing we hold measures the link."""
+    feed = engine.load_feed()
+    claims = _power_claims()
+    real = run_article.write_power({}, claims, feed)["body"]
+    mild = _copy.deepcopy(claims)
+    for c in mild:
+        if c.id == "C5d":
+            c.text = "Austin's August was cooler than its normal."
+            c.figure = "-12.0% against the normal"
+    softened = run_article.write_power({}, mild, feed)["body"]
+    assert "Neither metro had a mild" in real
+    assert "Neither metro had a mild" not in softened, "it denied a mild month that happened"
+    assert "at least available" in softened and "not the same as established" in softened
+
+
+def test_FROZEN_power_CAPTION_hook_follows_the_direction_too():
+    feed = engine.load_feed()
+    caption = run_article.TOPIC_CAPTIONS["electricity-still-rising"]
+    claims = _power_claims()
+    article = run_article.write_power({}, claims, feed)
+    assert "for once, is not" in caption(article, claims)
+    assert "for once, is not" not in caption(article, _rising(claims))
+
+
+def test_the_power_article_CLAIMS_ARE_ALL_ONE_PERIOD():
+    """The original read price for August and cooling degree-days for JULY, so its claims aged
+    at different rates and the oldest decided when the whole article went stale — it expired on
+    a month the piece barely discussed. Every dated claim must now name the same month."""
+    claims = _power_claims()
+    dated = {c.as_of for c in claims if c.as_of and not c.timeless}
+    assert len(dated) == 1, f"the article mixes periods: {sorted(dated)}"
+
+
+def test_the_power_article_REFUSES_a_period_it_cannot_compare():
+    """No year-ago month means no year-over-year claim, and the article is built on one. It
+    halts with the reason rather than quietly comparing against something else."""
+    from datetime import date as _date
+    try:
+        run_article.build_power_claims(engine.load_feed(), CFG, _date(2026, 4, 15))
+        raise AssertionError("it built an article with no year-ago month to compare against")
+    except Exception as exc:
+        assert "year-over-year" in str(exc) and "2025-03" in str(exc), str(exc)
+
+
+def _permit_claims(today=None):
+    from datetime import date as _date
+    return run_article.build_permit_claims(engine.load_feed(), CFG, today or _date(2026, 9, 19))
+
+
+def _all_trades(claims, gap):
+    """Force every Austin trade to the same side of its own pace."""
+    out = _copy.deepcopy(claims)
+    for c in out:
+        if c.id.endswith("_base"):
+            c.figure = c.figure.replace("above", gap).replace("below", gap)
+    counted = sum(1 for c in out if c.id.endswith("_base") and gap in c.figure)
+    for c in out:
+        if c.id == "tally":
+            c.figure = f"{counted if gap == 'below' else 0} of 3 trades below their own average"
+    return out
+
+
+def test_FROZEN_austin_permit_verdict_follows_the_tally():
+    """The Austin permits builder RECURS as of 2026-09-19, so its conclusions are now claims
+    about whichever month it runs for rather than about August. Same bar as the others."""
+    feed = engine.load_feed()
+    claims = _permit_claims()
+    real = run_article.write_permits({}, claims, feed)["body"]
+    below = run_article.write_permits({}, _all_trades(claims, "below"), feed)["body"]
+    above = run_article.write_permits({}, _all_trades(claims, "above"), feed)["body"]
+    assert "Mostly no" in real, real.split("\n")[3]
+    assert "More than you might think" in below, "the verdict ignored an all-below month"
+    assert "All three trades are running above" in above, "the verdict ignored an all-above month"
+
+
+def test_FROZEN_austin_useful_read_stops_claiming_a_SPLIT_when_there_is_none():
+    """"installer demand is not uniform across trades" asserts a split. It survived the audit
+    only because the trades happened to be split in all six periods that can be built — the
+    computed-but-constant case the audit cannot tell from a frozen one."""
+    feed = engine.load_feed()
+    claims = _permit_claims()
+    real = run_article.write_permits({}, claims, feed)["body"]
+    below = run_article.write_permits({}, _all_trades(claims, "below"), feed)["body"]
+    above = run_article.write_permits({}, _all_trades(claims, "above"), feed)["body"]
+    assert "not uniform across trades" in real
+    assert "not uniform across trades" not in below, "it claimed a split with every trade below"
+    assert "all three trades are running below" in below
+    assert "not uniform across trades" not in above, "it claimed a split with every trade above"
+    assert "all three trades are running above" in above
+
+
+def test_FROZEN_austin_CAPTION_hook_follows_the_tally_too():
+    """The caption is the one surface L16 kept missing. It was a frozen STRING carrying August's
+    literal figures; now it is a function, and its hook must move with the data like the body's.
+    In September 2026 two of three trades are below their pace, and "the record says otherwise"
+    would tell the reader the data contradicts a claim it actually supports."""
+    feed = engine.load_feed()
+    caption = run_article.TOPIC_CAPTIONS["austin-improvement-boom-cooling"]
+    claims = _permit_claims()
+    article = run_article.write_permits({}, claims, feed)
+    assert "says otherwise" in caption(article, claims)
+    flipped = _all_trades(claims, "below")
+    assert "says otherwise" not in caption(run_article.write_permits({}, flipped, feed), flipped)
+
+
+def test_the_austin_permit_CAPTION_carries_no_literal_figure():
+    """The old caption hardcoded "8% below", "224 permits, up 138%", "as of 2026-08-01" — every
+    one correct for August and false after it, with G1 green because each traced to August's
+    claims. Every numeral in the caption must come from THIS period's claims."""
+    feed = engine.load_feed()
+    caption = run_article.TOPIC_CAPTIONS["austin-improvement-boom-cooling"]
+    import re
+    from datetime import date as _date
+    for today in (_date(2026, 9, 19), _date(2026, 10, 1)):
+        claims = _permit_claims(today)
+        article = run_article.write_permits({}, claims, feed)
+        text = caption(article, claims)
+        legal = {n for c in claims for n in re.findall(r"[\d][\d,.]*", f"{c.figure} {c.as_of or ''}")}
+        for numeral in re.findall(r"[\d][\d,.]*", text.split("http")[0]):
+            assert numeral in legal, f"{numeral!r} in the caption traces to no claim ({today})"
+
+
 def test_FROZEN_sa_verdict_follows_the_tally():
     """San Antonio's tally has never flipped in the six periods that can be built, so the
     verdict LOOKS frozen in an audit. Forcing the flip proves it is not."""

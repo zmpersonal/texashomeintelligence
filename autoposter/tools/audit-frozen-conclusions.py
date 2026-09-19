@@ -38,13 +38,13 @@ DIRECTIONAL = re.compile(
     r"hottest|coldest|highest|lowest|peak|opposite|same way|no\b|not\b|never|only|"
     r"busier|quieter|cooling|holding|slower|faster)\b", re.I)
 
-BUILDERS = {
-    "summer-hotter-than-normal": (ra.build_summer_claims, ra.write_summer),
-    "austin-ac-rush-vs-heat":    (ra.build_acrush_claims, ra.write_acrush),
-    "san-antonio-improvement-boom": (ra.build_sa_claims, ra.write_sa),
-    "austin-improvement-boom-cooling": (ra.build_permit_claims, ra.write_permits),
-    "electricity-still-rising":  (ra.build_claims, ra.write),
-}
+# DERIVED FROM THE REGISTRY, never listed here. This was a hand-written table, and it drifted
+# the moment a builder was rewritten: the electricity builder was replaced with a recurring one
+# and the audit went on calling the old locked functions, reporting five halts for a builder
+# that no longer existed. A second copy of a fact is a fact that goes stale, and an audit
+# reading a stale copy is worse than no audit — it reports on code nobody runs.
+BUILDERS = {name: (b.build, b.write) if hasattr(b, "build") else tuple(b)
+            for name, b in ra.TOPIC_ARTICLES.items()}
 
 def sentences(text):
     for raw in re.split(r"(?<=[.!?])\s+|\n", text):
