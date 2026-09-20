@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-19T13:09:18.132Z",
-  "lastSuccessAt": "2026-09-19T13:09:18.132Z",
+  "lastAttemptAt": "2026-09-20T13:35:16.345Z",
+  "lastSuccessAt": "2026-09-20T13:35:16.345Z",
   "lastError": null,
   "source": {
     "name": "U.S. Drought Monitor",
@@ -527,7 +527,7 @@
     },
     {
       "observedAt": "2026-09-15T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:18.420Z",
+      "ingestedAt": "2026-09-20T13:35:16.444Z",
       "key": "48029-2026-09-15T00:00:00",
       "value": {
         "droughtIndex": "D1 — Moderate Drought (32% of county)",
@@ -537,7 +537,7 @@
     },
     {
       "observedAt": "2026-09-15T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:18.688Z",
+      "ingestedAt": "2026-09-20T13:35:16.542Z",
       "key": "48091-2026-09-15T00:00:00",
       "value": {
         "droughtIndex": "D0 — Abnormally Dry (100% of county)",
@@ -547,7 +547,7 @@
     },
     {
       "observedAt": "2026-09-15T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:19.129Z",
+      "ingestedAt": "2026-09-20T13:35:16.642Z",
       "key": "48187-2026-09-15T00:00:00",
       "value": {
         "droughtIndex": "D1 — Moderate Drought (13% of county)",

@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-19T13:09:11.065Z",
-  "lastSuccessAt": "2026-09-19T13:09:11.065Z",
+  "lastAttemptAt": "2026-09-20T13:35:03.203Z",
+  "lastSuccessAt": "2026-09-20T13:35:03.203Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -20531,7 +20531,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-121160 BP",
       "value": {
         "permitType": "Remodel",
@@ -20542,7 +20542,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-121332 BP",
       "value": {
         "permitType": "Remodel",
@@ -20553,7 +20553,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-121305 BP",
       "value": {
         "permitType": "Remodel",
@@ -20564,7 +20564,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-121407 BP",
       "value": {
         "permitType": "Remodel",
@@ -20575,7 +20575,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-113200 BP",
       "value": {
         "permitType": "Remodel",
@@ -20586,7 +20586,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-113243 BP",
       "value": {
         "permitType": "Remodel",
@@ -20597,7 +20597,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-121078 BP",
       "value": {
         "permitType": "Remodel",
@@ -20608,7 +20608,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-121366 BP",
       "value": {
         "permitType": "Remodel",
@@ -20619,7 +20619,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-121450 BP",
       "value": {
         "permitType": "Remodel",
@@ -20630,7 +20630,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-121272 BP",
       "value": {
         "permitType": "Remodel",
@@ -20641,7 +20641,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-106572 MP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -20651,7 +20651,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-121634 BP",
       "value": {
         "permitType": "Remodel",
@@ -20662,7 +20662,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-113226 BP",
       "value": {
         "permitType": "Remodel",
@@ -20673,7 +20673,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-122340 BP",
       "value": {
         "permitType": "Remodel",
@@ -20684,7 +20684,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-121094 BP",
       "value": {
         "permitType": "Remodel",
@@ -20695,7 +20695,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-120248 BP",
       "value": {
         "permitType": "Repair",
@@ -20706,7 +20706,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-121110 BP",
       "value": {
         "permitType": "Remodel",
@@ -20717,7 +20717,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-121122 BP",
       "value": {
         "permitType": "Remodel",
@@ -20728,7 +20728,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-119190 EP",
       "value": {
         "permitType": "Repair",
@@ -20738,7 +20738,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-121002 BP",
       "value": {
         "permitType": "Remodel",
@@ -20749,7 +20749,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-121183 BP",
       "value": {
         "permitType": "Remodel",
@@ -20760,7 +20760,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-113183 BP",
       "value": {
         "permitType": "Remodel",
@@ -20771,7 +20771,7 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-113191 BP",
       "value": {
         "permitType": "Remodel",
@@ -20782,13 +20782,123 @@
     },
     {
       "observedAt": "2026-09-17T00:00:00.000Z",
-      "ingestedAt": "2026-09-19T13:09:11.536Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
       "key": "2026-113235 BP",
       "value": {
         "permitType": "Remodel",
         "workDescription": "simple re-roof - remove and replace shingles on existing roof.",
         "status": "Active",
         "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-09-18T00:00:00.000Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
+      "key": "2026-120494 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Smith - 40-16091- Install new 3.8 kW rooftop solar system to existing residential only using backfed breaker only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-18T00:00:00.000Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
+      "key": "2026-049937 MP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "New construction of 2 story single-family residence 1 car garage 3 bathroom 3 bedroom rear covered patio 2nd floor w/ gable/dormer roof.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-18T00:00:00.000Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
+      "key": "2026-120029 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Install new 5.76 kW rooftop solar system to existing residential only using backfed breaker only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-18T00:00:00.000Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
+      "key": "2024-084967 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "PH2 Install new 3.045 kw rooftop solar system for existing residential only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-18T00:00:00.000Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
+      "key": "2026-078438 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Remodel of restrooms on the first and second levels; new window openings in the existing exterior walls at weight room; new roof top skylights lighting and acoustical tiles at corridor north of competition gym",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-18T00:00:00.000Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
+      "key": "2026-119222 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "8.28kw roof mounted solar system",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-18T00:00:00.000Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
+      "key": "2026-117994 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Express: rooftop solar electric panels tilted up",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-18T00:00:00.000Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
+      "key": "2026-114736 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "INTERIOR REMODEL -REPLACE ALL MISSING FIREPROOFING AND FIRESTOPPING. AFFECTED BY NEW CONSTRUCTION WITH FIREPROOFING TO MATCH BASE BUILDING EXISTING STANARDS.ALL CONSTRUCTION SHALL BE NON-COMBUSTIBLE. 4. ALL WOOD AND WOOD BLOCKING SHALL BE FIRE RETARDANT TREATED",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-18T00:00:00.000Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
+      "key": "2026-122597 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Overylay roof with Karnak Silicone Roofing System",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-18T00:00:00.000Z",
+      "ingestedAt": "2026-09-20T13:35:04.028Z",
+      "key": "2026-118969 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Roof mounted solar",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-19T00:00:00.000Z",
+      "ingestedAt": "2026-09-20T13:35:04.029Z",
+      "key": "2026-105045 EP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "New construction single-family residential 3-story 4 bedroom 2.5 bath with attached 2-car garage covered front porch 3rd floor uncovered roof deck and uncovered wood deck.",
+        "status": "Active"
       }
     }
   ]
