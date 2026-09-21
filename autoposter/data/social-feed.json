@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-20T13:35:45+00:00",
+  "generated_at": "2026-09-21T15:54:17+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -19,11 +19,11 @@
           "wow": 0.0
         },
         "air_quality_index": {
-          "value": 51.0,
+          "value": 64.0,
           "source": "AirNow",
-          "as_of": "2026-09-07",
-          "vs_baseline": -17.3333,
-          "wow": -25.0
+          "as_of": "2026-09-14",
+          "vs_baseline": 0.0,
+          "wow": 13.0
         },
         "cooling_degree_days": {
           "value": 755.0,
@@ -81,11 +81,11 @@
           "wow": 0.0
         },
         "air_quality_index": {
-          "value": 61.0,
+          "value": 95.0,
           "source": "AirNow",
-          "as_of": "2026-09-07",
-          "vs_baseline": 1.6667,
-          "wow": -6.0
+          "as_of": "2026-09-14",
+          "vs_baseline": 35.25,
+          "wow": 34.0
         },
         "cooling_degree_days": {
           "value": 700.0,
@@ -175,6 +175,18 @@
     {
       "rank": 2,
       "area_id": "san_antonio_metro",
+      "metric": "air_quality_index",
+      "angle": "reveal",
+      "surprise_score": 0.573,
+      "why": "a large move against its own history; at a level well outside this area's own range",
+      "figure": "95.00 (2026-09-14)",
+      "source": "AirNow",
+      "as_of": "2026-09-14",
+      "suppressed": false
+    },
+    {
+      "rank": 3,
+      "area_id": "san_antonio_metro",
       "metric": "permit_activity_trees",
       "angle": "reveal",
       "surprise_score": 0.544,
@@ -185,7 +197,7 @@
       "suppressed": false
     },
     {
-      "rank": 3,
+      "rank": 4,
       "area_id": "austin_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
@@ -197,7 +209,7 @@
       "suppressed": false
     },
     {
-      "rank": 4,
+      "rank": 5,
       "area_id": "austin_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
@@ -209,11 +221,11 @@
       "suppressed": false
     },
     {
-      "rank": 5,
+      "rank": 6,
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.357,
+      "surprise_score": 0.356,
       "why": "a cost signal",
       "figure": "13.88¢ per kWh (2026-08), +1.1% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
@@ -221,7 +233,7 @@
       "suppressed": false
     },
     {
-      "rank": 6,
+      "rank": 7,
       "area_id": "san_antonio_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
@@ -233,7 +245,7 @@
       "suppressed": false
     },
     {
-      "rank": 7,
+      "rank": 8,
       "area_id": "austin_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
@@ -245,7 +257,7 @@
       "suppressed": false
     },
     {
-      "rank": 8,
+      "rank": 9,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
@@ -257,7 +269,7 @@
       "suppressed": false
     },
     {
-      "rank": 9,
+      "rank": 10,
       "area_id": "austin_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
@@ -269,7 +281,7 @@
       "suppressed": false
     },
     {
-      "rank": 10,
+      "rank": 11,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_solar",
       "angle": "reveal",
@@ -278,18 +290,6 @@
       "figure": "33 solar permits in 2026-08, -20% month over month",
       "source": "City of San Antonio Permits Open Data",
       "as_of": "2026-08-01",
-      "suppressed": false
-    },
-    {
-      "rank": 11,
-      "area_id": "austin_metro",
-      "metric": "air_quality_index",
-      "angle": "reveal",
-      "surprise_score": 0.217,
-      "why": "a modest move against its own history",
-      "figure": "51.00 (2026-09-07)",
-      "source": "AirNow",
-      "as_of": "2026-09-07",
       "suppressed": false
     },
     {
@@ -354,14 +354,14 @@
     },
     {
       "rank": 17,
-      "area_id": "san_antonio_metro",
+      "area_id": "austin_metro",
       "metric": "air_quality_index",
       "angle": "reveal",
-      "surprise_score": 0.109,
+      "surprise_score": 0.083,
       "why": "a modest move against its own history",
-      "figure": "61.00 (2026-09-07)",
+      "figure": "64.00 (2026-09-14)",
       "source": "AirNow",
-      "as_of": "2026-09-07",
+      "as_of": "2026-09-14",
       "suppressed": false
     }
   ]
