@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-20T13:35:03.203Z",
-  "lastSuccessAt": "2026-09-20T13:35:03.203Z",
+  "lastAttemptAt": "2026-09-21T15:53:27.890Z",
+  "lastSuccessAt": "2026-09-21T15:53:27.890Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -20893,11 +20893,31 @@
     },
     {
       "observedAt": "2026-09-19T00:00:00.000Z",
-      "ingestedAt": "2026-09-20T13:35:04.029Z",
+      "ingestedAt": "2026-09-21T15:53:28.423Z",
       "key": "2026-105045 EP",
       "value": {
         "permitType": "New",
         "workDescription": "New construction single-family residential 3-story 4 bedroom 2.5 bath with attached 2-car garage covered front porch 3rd floor uncovered roof deck and uncovered wood deck.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-20T00:00:00.000Z",
+      "ingestedAt": "2026-09-21T15:53:28.423Z",
+      "key": "2026-089082 EP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "Bldg 3: New construction 3-unit use single-family residential 2-story 4 bedroom 3 bath with attached 1-car garage covered front porch covered rear patio covered roof deck and uncovered roof deck.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-20T00:00:00.000Z",
+      "ingestedAt": "2026-09-21T15:53:28.423Z",
+      "key": "2026-089081 EP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "Bldg2: New construction 3-unit use single-family residential 2-story 3 bedroom 3 bath with attached 1-car garage covered front porch covered rear patio and covered roof deck.",
         "status": "Active"
       }
     }
