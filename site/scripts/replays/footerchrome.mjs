@@ -283,6 +283,39 @@ for (const width of [390, 360]) {
   await c.close();
 }
 
+// ══ NO LABEL IS CUT OFF ══════════════════════════════════════════════════
+// Line boxes via a Range over the anchor's contents, not scrollHeight: the
+// anchor is a 44px flex box on a phone, so its scrollHeight says 44 whether
+// the text inside is one line or two.
+console.log('\n══ NO FOOTER LABEL IS CLIPPED ══');
+for (const width of [390, 360, 320]) {
+  const c = await b.newContext({ viewport: { width, height: 900 } });
+  const p = await c.newPage();
+  await p.goto(B + '/austin/roofing/', { waitUntil: 'networkidle' });
+  const rows = await p.evaluate(() => [...document.querySelectorAll('footer a')].map((a) => {
+    const rng = document.createRange();
+    rng.selectNodeContents(a);
+    const boxes = [...rng.getClientRects()].filter((r) => r.width > 0 && r.height > 0);
+    return {
+      t: (a.getAttribute('aria-label') || a.innerText || '').trim(),
+      lines: boxes.length,
+      clipX: a.scrollWidth > a.clientWidth + 1,
+      clipY: a.scrollHeight > a.clientHeight + 1,
+    };
+  }));
+  const clipped = rows.filter((r) => r.clipX || r.clipY);
+  A(`${width}px — no label is cut off`, clipped.length === 0,
+    clipped.map((r) => r.t).join(', ') || `${rows.length} links, none clipped`);
+  if (width === 390) {
+    // The design width. A gutter wide enough to wrap the longest label here is
+    // how this check earned its place: 4px fits it, 8px did not.
+    const wrapped = rows.filter((r) => r.lines > 1);
+    A('390px — no label wraps', wrapped.length === 0,
+      wrapped.map((r) => `${r.t} (${r.lines} lines)`).join(', ') || 'all single-line');
+  }
+  await c.close();
+}
+
 // ══ WITH SCRIPTING OFF ═══════════════════════════════════════════════════
 // The footer has no JS and must not acquire any: it is chrome on all 272 pages.
 console.log('\n══ THE FOOTER IS THE SAME WITH SCRIPTING OFF ══');

@@ -105,9 +105,19 @@ achieve it. `1.5fr 1fr 1fr 1fr` replaces `2fr 1fr 1fr 1fr`; nothing else in the 
 
 **Tap targets.** Before, every one of the 16 footer links was **18px** tall at 390px. After,
 **19/19 are at least 44px** at both 390px and 360px, and the icon is 44×44. This is the one
-change with a visible cost: the mobile footer grid is **753px** tall where it was 517px. It is
-confined to phones — on a pointer device the rows stay at 18px with 25px between them, which
-keeps the desktop footer the height it was.
+change with a visible cost: the mobile footer grid is **753px** tall at 390px and **775px** at
+360px, where it was 517px. It is confined to phones — on a pointer device the rows stay at 18px
+with 25px between them, which keeps the desktop footer the height it was. §3a is the attempt to
+win that height back.
+
+**The longest label, and a gutter that cost it a line.** "Fire Damage Restoration" is **156px**
+of text in a **163px** column at 390px. The first version of the mobile rule gave each link an
+8px right gutter, which left 155px and wrapped the label onto a second line — by one pixel.
+The gutter is 4px and nothing wraps at 390px. At **360px and below the column itself is 148px,
+narrower than the text**, so it wraps there whatever the gutter is: two lines at 21.8px inside
+a 44px box, clipping nothing. The ways out would be the type scale, which BRAND.md does not
+permit buying a fit with, or the label, which is copy. `footerchrome` now asserts that no label
+is clipped at 390/360/320 and that none wraps at 390.
 
 **No Tailwind token leaked.** The sitewide stylesheet's hash changed, as it must when
 `global.css` changes, so the check is the rule-level diff rather than the hash: **10 rules
@@ -116,7 +126,58 @@ round. No utility appeared.
 
 ---
 
-## 4. Two things the verification caught in itself
+## 3a. Trying to win the mobile height back
+
+The mobile footer is 753px at 390px where it was 517px. Asked to recover that by laying the
+columns out two-up differently — brand full width on top, then the lists paired — rather than
+by shrinking the targets. **Measured, on the built page, by applying each candidate's CSS and
+reading the grid height. The full-width brand row is the worst of them, not the best.**
+
+| layout at 390px | grid height | vs current |
+|---|---|---|
+| **current — [brand \| Company] [Services \| Data]** | **753px** | — |
+| brand full width, then [Company \| Services] [Data \| —] | 984px | **+231px** |
+| brand full width, Connect inline with the blurb | 998px | +245px |
+| brand full width, Connect inline, lists paired by height | 947px | +194px |
+| [brand \| Services] [Company \| Data] — paired by height | **733px** | −20px |
+
+At 360px the same order holds: 775px current, 984px full-width brand, 733px paired.
+
+**Why full width loses.** The brand block is 349px tall in a 163px column and 241px across the
+full 350px — the blurb wraps to fewer lines, so it does get shorter. But it stops sharing a row
+with Company, and the three lists then have to pack into two rows of their own. It buys 108px
+of its own height and spends a whole row to do it.
+
+**Why ~517px is not reachable while every link is a 44px target.** The arithmetic, not an
+opinion:
+
+- 19 links × 44px = **836px** of target height. The old footer had 16 links × 18px = **288px**.
+  The decision to keep 44px costs 548px of link height on its own.
+- The four blocks measure 349 (brand) + 271 (Company) + 373 (Services) + 322 (Data) = **1315px**
+  of content. Packed into two columns with no waste at all that is **658px**, plus the 24px gap
+  — and a perfect pack is not available, because a list cannot be split across a column break
+  without breaking its reading order.
+- The current layout wastes 136px on the two rows' height differences, which is how 658 becomes
+  753.
+
+So the floor for this content at 44px is about **682px**, and the best real pairing reaches
+**733px**. 517px needs either smaller targets or less in the footer.
+
+**What was shipped, and why not the 733px pairing.** The layout is unchanged; only the 4px
+gutter fix went in. Pairing by height saves 20px at 390px and 42px at 360px, and it buys that
+by reordering the columns visually on phones — brand, **Services, Company**, Data — while the
+DOM, and therefore focus order and every screen reader, keeps brand, Company, Services, Data.
+A keyboard user would tab from the bottom-left column back up to the top-right one. That is a
+meaningful-sequence problem (WCAG 1.3.2) in exchange for 20px, so it is offered rather than
+taken. It is one `order` rule in `global.css` if the owner wants it.
+
+The alternatives that would actually reach 517px are both owner decisions, not build ones:
+smaller targets (24px plus spacing satisfies WCAG 2.2 AA and lands near 520px), or fewer links
+in the mobile footer.
+
+---
+
+## 4. Three things the verification caught in itself
 
 Both were defects in the new assertions, not in the footer, and both are recorded because the
 first version of each **passed for the wrong reason**.
@@ -130,6 +191,11 @@ the jump and the page then shifts up ~32px as the web fonts swap in, and does no
 So the margin is 128px, not 96px, and the replay now opens a fresh context per anchor. Both
 land at 96px clear of a header whose bottom is at 69px.
 
+**The gutter that wrapped the longest label.** Covered in §3 — an 8px right gutter on a 163px
+column left 155px for 156px of text. It cost one line, on one link, at one width, and only a
+line-box count finds it: the anchor is a 44px flex box on a phone, so its `scrollHeight` reads
+44 whether the text inside is one line or two, and nothing clipped or overflowed.
+
 **The icon was "not found" twice, for two different reasons.** First, an icon link's
 `innerText` is a whitespace string — truthy — so `innerText || ariaLabel` returned the
 whitespace and never read the label. Then, with the label read, it was truncated to 28
@@ -140,7 +206,7 @@ on Facebook". The replay now finds the icon by the class the stylesheet keys its
 
 ## 5. Replay changes, exactly
 
-`footerchrome.mjs` went from 63 assertions to **89**. **No existing assertion changed its
+`footerchrome.mjs` went from 63 assertions to **93**. **No existing assertion changed its
 expectation** — the seven Austin service links, the `/tools/` hub link, the absence of
 `/services/` and `/start/`, the absence of "Project Brief" / "All services" text, and one
 identical footer across the eight sampled pages all still hold unmodified, which is the point
@@ -160,6 +226,9 @@ column could have been renamed, reordered or emptied without an assertion moving
   sticky header on a cold load — the one internal link `check-links` cannot judge, because it
   normalizes the fragment away and `/data/#nothing-here` passes as `/data/`;
 - every footer target at least 44px tall at 390px and 360px, and the icon 44×44;
+- no label clipped at 390px, 360px or 320px, and no label wrapping at 390px — measured from
+  the text's own line boxes rather than the anchor's scroll height, which a 44px flex box
+  makes useless for the question;
 - the footer identical with scripting off.
 
 ---
@@ -174,7 +243,7 @@ npm run sweep            26/26 steps
                          verify-content · check-links 0 broken · check-orphans 0 orphans
   12 render replays      toolshubrender 44 · roofscanrender 105 · dashmobile 38
                          aclifespanrender 48 · triagerender 127 · signinrender 18 · r9render 18
-                         saservicerender 315 · footerchrome 89 · analysisrender 148
+                         saservicerender 315 · footerchrome 93 · analysisrender 148
                          datalinksrender 34 · r7replay 68
 wrangler deploy --dry-run   58 modules, 1042 KiB, 4 bindings, exit 0
 determinism                 two consecutive builds, 354 files, byte-identical

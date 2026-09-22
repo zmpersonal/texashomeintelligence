@@ -469,8 +469,15 @@ table.data-table th,
 @media (max-width: 760px) {
   .footer-grid li { margin-bottom: 0; }
   .footer-grid li > a {
-    display: flex; align-items: center; min-height: 44px; padding-right: 8px;
+    display: flex; align-items: center; min-height: 44px; padding-right: 4px;
   }
+  /* 4px, not 8. Measured: "Fire Damage Restoration" is 156px of text in a
+     163px column at 390px, so an 8px gutter was enough to wrap the longest
+     label in the footer onto a second line. It still wraps at 360px and below,
+     where the column itself is narrower than the text — the only ways out of
+     that are the type scale or the label, and BRAND.md does not permit buying
+     a fit with the first while the second is copy. Two lines inside the 44px
+     box clip nothing. */
   .footer-social-link { margin-left: 0; }
 }
 .footer-grid h4 { font-family: var(--thi-font-ui); color: var(--thi-on-dark); font-size: var(--thi-fs-label); font-weight: 600; text-transform: uppercase; letter-spacing: var(--thi-ls-label); margin-bottom: 10px; }

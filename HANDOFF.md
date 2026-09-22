@@ -2461,4 +2461,13 @@ separate go-live step — not implied by any phase above being "done."
   browser does not re-adjust. A same-document fragment change lands correctly either way, which
   is why this hid from the first version of the check.
   **Footer links are 44px tall on phones (≤760px) and 18px on pointer devices.** That makes the
-  mobile footer 753px where it was 517px — a deliberate trade, not an accident.
+  mobile footer 753px at 390px and 775px at 360px, where it was 517px — a deliberate trade, not
+  an accident. **Do not try to win that height back with a full-width brand row: measured, it
+  is 231px WORSE**, because the brand block stops sharing a row with Company and the three
+  lists then need two rows of their own. The floor for this content at 44px is ~682px and the
+  best real pairing is 733px; ~517px needs smaller targets or fewer links, both owner calls.
+  The numbers are in `docs/audits/round-33-footer.md` §3a.
+  **The longest label is "Fire Damage Restoration" at 156px of text.** The mobile column is
+  163px at 390px and 148px at 360px, so it fits at 390px only while the anchor's right gutter
+  stays at 4px — an 8px gutter wrapped it by one pixel — and it wraps at 360px and below
+  whatever the gutter is. `footerchrome` guards both.
