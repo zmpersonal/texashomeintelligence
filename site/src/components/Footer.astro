@@ -14,12 +14,35 @@ const serviceOrder = [
 const orderedServices = serviceOrder
   .map((slug) => services.find((s) => s.id === slug))
   .filter((s) => s !== undefined);
+
+/**
+ * Round 33. Social profiles, as a list rather than one hardcoded anchor, so
+ * adding YouTube or Pinterest later is a line here and nothing else.
+ *
+ * A profile ships only when its URL is REAL. There is no placeholder entry and
+ * no "#" — an icon pointing at a profile that does not exist is a broken
+ * promise on all 272 pages, and a guessed URL is worse than a missing icon.
+ * Facebook is the only account confirmed by the owner this round.
+ *
+ * The mark is the official Facebook glyph, inline and single-path, drawn in
+ * `currentColor` so it inherits the footer's on-dark text colour. No icon font
+ * and no third-party script: a footer icon is not worth a request to someone
+ * else's CDN, and a social script on every page is a tracking surface.
+ */
+const socialProfiles = [
+  {
+    name: "Facebook",
+    href: "https://www.facebook.com/people/Texas-Home-Intelligence/61593991198459/",
+    // Official f-in-circle mark, unaltered, 24x24.
+    path: "M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z",
+  },
+];
 ---
 
 <footer class="site-footer">
   <div class="wrap">
     <div class="footer-grid">
-      <div>
+      <div class="footer-brand">
         <h4>Texas Home Intelligence</h4>
         <p class="footer-blurb">
           Continuously updated local home intelligence for Texas homeowners —
@@ -27,12 +50,52 @@ const orderedServices = serviceOrder
           costs for Austin, San Antonio, and beyond. Every reading shows its
           source and how current it is.
         </p>
+        <h4 class="footer-connect-heading">Connect</h4>
+        <ul class="footer-social">
+          {socialProfiles.map((profile) => (
+            <li>
+              <a
+                class="footer-social-link"
+                href={profile.href}
+                rel="me noopener"
+                aria-label={`Texas Home Intelligence on ${profile.name}`}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path d={profile.path} />
+                </svg>
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
+      {/* Round 33: Locations folded into Company. Austin and San Antonio are
+          the two metros the site covers, not a category of their own, and the
+          column they had to themselves carried two links against the grid's
+          full row height — 67% of it empty at 1366px, measured.
+
+          Round 29 put Tools here and the reason still holds, so it stays:
+          /tools/ was an INDEXED ORPHAN — measured across every built page, the
+          only inbound links it had came from the breadcrumbs of its own three
+          children. Re-measured before this round: 3 inbound sources outside the
+          footer, ALL of them its own children. Remove this link and the hub and
+          the three tools behind it go back to hanging off nothing. Tools stays
+          OUT of the header nav, which CLAUDE.md fixes at Data, Analysis,
+          Locations and My Dashboard. */}
       <div>
-        <h4>Locations</h4>
+        <h4>Company</h4>
         <ul>
           <li><a href="/austin/">Austin</a></li>
           <li><a href="/san-antonio/">San Antonio</a></li>
+          <li><a href="/tools/">Tools</a></li>
+          <li><a href="/home/sign-in/">Sign in</a></li>
+          <li><a href="/dashboard/">My Dashboard</a></li>
         </ul>
       </div>
       {/* Round 10b: the "All services" link to /services/ is gone. ROADMAP is
@@ -50,32 +113,21 @@ const orderedServices = serviceOrder
           ))}
         </ul>
       </div>
-      {/* Round 29: TOOLS LANDS HERE, and the reason is a measurement.
-          /tools/ was an INDEXED ORPHAN — measured across all 266 built pages,
-          the only inbound links it had came from the breadcrumbs of its own
-          three children, so the hub and the three tools behind it hung off a
-          page nothing on the site pointed to. It lost its inbound links in
-          pieces: the nav item went with the Round 2 nav change, the hero's
-          "Explore Free Tools" CTA and the four below-hero cards went with the
-          homepage rebuild, and nothing replaced any of them.
-
-          This column rather than a fifth one: it already carries Data Catalog
-          and My Dashboard, so it is in practice the published-surfaces column
-          and not a company column, and a fifth track would change the footer
-          grid on every page to no benefit. Placed next to Data Catalog because
-          the two are the same kind of thing — a hub over what the site
-          publishes. Tools stays OUT of the header nav, which CLAUDE.md fixes
-          at Data, Locations and My Dashboard. */}
+      {/* Round 33: the published-surfaces column, split out of Company. The
+          two metro links are ANCHORS INTO /data/, not location hubs — no
+          /data/austin/ hub page is claimed here, and the ids they target are
+          emitted by the catalog's own loop over the registry rather than
+          written down, so a location that stops publishing takes its anchor
+          with it. */}
       <div>
-        <h4>Company</h4>
+        <h4>Data</h4>
         <ul>
           <li><a href="/data/">Data Catalog</a></li>
           <li><a href="/analysis/">Analysis</a></li>
-          <li><a href="/tools/">Tools</a></li>
           <li><a href="/methodology/">Methodology</a></li>
-          <li><a href="/home/sign-in/">Sign in</a></li>
+          <li><a href="/data/#austin">Austin Data</a></li>
+          <li><a href="/data/#san-antonio">San Antonio Data</a></li>
           <li><a href="/privacy/">Privacy</a></li>
-          <li><a href="/dashboard/">My Dashboard</a></li>
         </ul>
       </div>
     </div>

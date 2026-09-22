@@ -20,7 +20,7 @@ owner outside the repo and is deliberately absent here.
 |---|---|---|---|
 | 31 | Analysis discoverability + article formatting | 9, 10 | nothing (nav + homepage module surfaced as decisions, not built) |
 | 32 | Zero broken internal links (shipped) | — | nothing — done, see `docs/audits/round-32-broken-data-links.md` |
-| 33 | Footer restructure | 2 | decisions D2a–D2e |
+| 33 | Footer restructure (shipped) | 2 | nothing — done, see `docs/audits/round-33-footer.md` |
 | 34 | Dashboard free-account card accent | 5a | nothing — small |
 | 35 | Privacy disclosure → tag container → conversion events | 3 | D3a–D3d; privacy copy is 🔴 owner-approved before any tag ships |
 | 36 | Metric contract for external readers (`data-metric` / JSON) | 6 | D6 (the consumer's config) |
@@ -55,6 +55,12 @@ allow-list already includes Travis, Bexar, Harris, Dallas and Tarrant CAD domain
 **Decision needed:** none yet — the probe's audit produces the decision list.
 
 ### 2 · Footer restructure
+
+> **SHIPPED — Round 33** (`docs/audits/round-33-footer.md`). Four columns: brand + Connect,
+> Company, Services, Data. Decisions taken: D2a keep all seven service links in their own
+> column · D2b Tools in Company · D2c metro links are anchors on `/data/`, no location hubs ·
+> D2d no About link until there is copy · D2e Facebook only. **Still open from this item:**
+> the About page and its link, and YouTube / Pinterest icons if those accounts are created.
 
 **Owner:**
 - Locations → **Company**: add About, keep locations (Austin, San Antonio), Sign in, My Dashboard

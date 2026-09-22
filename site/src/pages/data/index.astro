@@ -78,7 +78,20 @@ const datasetJsonLd = {
         {listedLocations.map((loc) => {
           const forLocation = published.filter(({ spec }) => spec.location === loc.id);
           return (
-            <div class="card">
+            /* Round 33: the id is the anchor the footer's "Austin Data" and
+               "San Antonio Data" links target. It comes off the same loop that
+               renders the card, so it cannot name a location this page does
+               not list.
+
+               The margin clears the 69px sticky header, and clears it by more
+               than looks necessary on purpose. Measured: on a COLD load of
+               /data/#austin the browser makes the anchor jump and the page
+               then shifts up ~32px as the web fonts swap in, and it does not
+               re-adjust — at 96px the card heading ended up 5px BEHIND the
+               header. It was invisible from a second navigation to the same
+               page, which is a same-document jump against settled layout and
+               lands correctly either way. */
+            <div class="card" id={loc.id} style="scroll-margin-top:128px;">
               <h3>{loc.name}</h3>
               <p>
                 Weather &amp; storm exposure, permit activity, drought conditions, and more

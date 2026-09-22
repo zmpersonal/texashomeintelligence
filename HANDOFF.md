@@ -2441,3 +2441,24 @@ separate go-live step — not implied by any phase above being "done."
   `--skip-build` reuses `dist/` and re-seeds only if the artifact is gone; `--only=a,b` runs a
   subset. `check-citations` is deliberately excluded — it needs the real network and runs weekly
   in CI.
+
+- **Round 33 — the footer is four columns: brand+Connect, Company, Services, Data.** Locations
+  folded into Company; `/methodology/` and `/privacy/` moved to Data; the seven Austin service
+  links are untouched in their own column. **`/tools/` must keep its footer link** — re-measured
+  this round, its only three non-footer inbound links are the breadcrumbs of its own three
+  children, so removing it makes the hub an indexed orphan again (Round 29's finding, still
+  true). The service pages are not in that position: each keeps four non-footer inbound sources
+  with the footer discounted.
+  **One social profile ships: Facebook**, as a real `<a href>` with `rel="me noopener"`, an
+  `aria-label`, and the official mark as a single inline `<path>` in `currentColor`. The profile
+  list is an array in `Footer.astro` — **adding YouTube or Pinterest is one entry once their
+  URLs exist, and there is deliberately no placeholder entry for them now.** No icon font, no
+  third-party script.
+  **"Austin Data" / "San Antonio Data" are anchors into `/data/`, not hub pages.** The ids are
+  emitted by the catalog's own loop (`id={loc.id}`), so they cannot name a location the page
+  does not list. `scroll-margin-top` is **128px, not the 96px that looks sufficient**: on a cold
+  load the anchor jump happens and the page then shifts up ~32px as the fonts swap, and the
+  browser does not re-adjust. A same-document fragment change lands correctly either way, which
+  is why this hid from the first version of the check.
+  **Footer links are 44px tall on phones (≤760px) and 18px on pointer devices.** That makes the
+  mobile footer 753px where it was 517px — a deliberate trade, not an accident.
