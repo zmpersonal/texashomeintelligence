@@ -32,6 +32,46 @@ Probes (P1, P2) can run in any gap; they write an audit and change no served pag
 
 ---
 
+## Standing note — how a probe can get its data
+
+**No external host is reachable from a Claude Code session.** Measured repeatedly: every host
+tried answers **403 to CONNECT** — a gateway policy denial, not DNS, TLS or a timeout. That
+includes `texashomeintelligence.com` itself and **the feed hosts already shipping**, such as
+`data.austintexas.gov` and `data.sanantonio.gov`.
+
+That is not a contradiction of the live ingestion. **Ingestion runs in GitHub Actions**
+(`.github/workflows/data-ingestion.yml`), on runners with ordinary egress, and never in a
+session. A host working in production says nothing about whether it is reachable here, and a
+round must never assume otherwise — Round 35 was scoped on that assumption and stopped at its
+first command.
+
+**So every probe takes one of three shapes:**
+
+| shape | what it is | when it fits |
+|---|---|---|
+| **Files on disk** | the owner downloads terms, a field dictionary and a sample, and commits them (`docs/source/…`) | the default. Answers availability, granularity and comparability without a single fetch |
+| **A temporary Actions workflow** | a throwaway workflow that fetches and commits exactly what the probe needs, then is deleted | when the data is large, or needs many requests, or must be re-pulled |
+| **An owner-widened network policy** | the session's egress is opened to named hosts | when a probe is genuinely iterative and the two above would mean many round trips |
+
+One nuance worth knowing: **MCP-backed sources are not subject to this**, because an MCP server
+reaches the network through its own infrastructure rather than this sandbox's egress. That may
+make a SEMrush-style probe (item: the reserved content-demand system) feasible in-session where
+direct HTTP is not — **untested**, and testing it would spend the owner's API units, which is
+ask-first under `SECURITY.md`.
+
+**Which shape each probe-style item would take:**
+
+- **Item 1 · appraisal data** — *files on disk*, and not merely because of egress: the districts
+  refuse non-browser clients and one publishes no bulk export at all. Owner-gated, records
+  requests. See the item.
+- **Item 7 · crime** — *moot.* Closed on reasoning in Round 35b without any data; see the item.
+- **Item 3 · tag container / pixels** — not a probe. Needs owner accounts and approved privacy
+  copy, not a fetch.
+- **Item 6 · metric contract** — not a probe. Needs the consumer's config from the owner.
+- **Items 4 / 5b · hero system** — not a probe. Design decisions.
+
+---
+
 ## Items
 
 ### 1 · County appraisal data → property-tax overpayment estimate
@@ -201,27 +241,34 @@ routes already exist per topic (`/data/[location]/[topic]/[csvName].csv`).
 
 ### 7 · Crime stats and data feeds
 
-> **PROBE BLOCKED — 2026-09-22, not started.** Every source the probe needs is refused by this
-> environment's egress, so none of availability, granularity or comparability could be measured.
-> Nothing about whether crime belongs on THI has been established either way; the questions
-> below are unchanged and unanswered.
+> **NOT VIABLE — Round 35b** (`docs/audits/round-35b-crime-memo.md`). Recommended for closure,
+> pending the owner's agreement. Answered on reasoning, not data: **no candidate framing produces
+> a reading whose value changes what a homeowner does.** The best honest line pairs a crime number
+> with an action — check the lighting, check the locks — that is correct whatever the number says,
+> which means the data does no work. Separately, it is the one THI reading with a mechanism by
+> which a reader is worse off for its publication, and the only one whose downside falls partly on
+> people who never visited the site.
+>
+> **The data was never the binding constraint.** Even the best case sections A–D could have
+> returned — clean, point-located, current, comparable data under permissive terms — would not
+> change the answer, which is why the memo was written without gathering a file.
+>
+> **Still open and NOT answered here:** the fair-housing and steering question, which is named in
+> the memo's §2 the way HANDOFF names its lead-handoff regulatory question, and which belongs
+> with counsel **before** any reconsideration rather than after.
+>
+> **Worth keeping:** the homeowner benefit lives in security-adjacent reminders — an
+> exterior-lighting check, a lock or alarm test — which need no crime data and are two rows in the
+> existing reminder catalogue. Logged as **D7a**.
+
+> **Reachability, for the record (2026-09-22).** The Round 35 probe stopped before measuring
+> anything: all six sources answer 403 to CONNECT — `data.austintexas.gov`,
+> `data.sanantonio.gov`, `opendata-cosagis.opendata.arcgis.com`, `www.sanantonio.gov`,
+> `api.usa.gov`, `cde.ucr.cjis.gov`. See the standing note above; this is now a known property of
+> the environment rather than a finding about these sources.
 
 **Owner:** Add crime stats and API data feeds.
 
-**Reachability, measured 2026-09-22.** All six hosts answer **403 to CONNECT** — a gateway
-policy denial, not DNS, TLS or a timeout: `data.austintexas.gov`, `data.sanantonio.gov`,
-`opendata-cosagis.opendata.arcgis.com`, `www.sanantonio.gov`, `api.usa.gov`, `cde.ucr.cjis.gov`.
-
-**Why the two city hosts being blocked is not a contradiction.** The permit and other fetchers
-really do read `data.austintexas.gov` and `data.sanantonio.gov` — but ingestion runs in **GitHub
-Actions** (`.github/workflows/data-ingestion.yml`), on runners with ordinary egress, and never
-in a Claude Code session. A host working in production says nothing about whether it is
-reachable here.
-
-**Two ways to unblock, whenever the owner wants this probed:** widen the session environment's
-network policy to those hosts, or hand over the files — a dataset's terms/licence page, its
-field dictionary, and one export or sample per metro — which is enough to answer availability,
-granularity and comparability without any fetch at all.
 
 **Why this is a probe first:**
 - *Data gate.* What APD and SAPD (and county) publish, at what grain, how current, and under what
@@ -232,7 +279,11 @@ granularity and comparability without any fetch at all.
   how they are framed and where they appear. Name it; the owner decides with qualified input.
 
 **Decision needed:**
-- **D7** — after the probe: whether crime belongs on THI at all, and at what grain.
+- **D7** — whether to accept Round 35b's recommendation and close this item.
+- **D7a** — whether to add security-adjacent reminders (exterior lighting, lock/alarm test) to
+  the reminder catalogue. Independent of crime data; needs no probe.
+- **D7b** — if crime is revisited despite the memo, the fair-housing question goes to counsel
+  **first**, ahead of any data gathering.
 
 ### 9 · Article formatting
 
