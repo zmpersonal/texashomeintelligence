@@ -2417,13 +2417,27 @@ separate go-live step — not implied by any phase above being "done."
   `site/scripts/replays/datalinksrender.mjs` asks the same question of the served site.
   `npm run check-orphans` is now a script name too; the file has been committed since Round 29.
 
-- **🟡 Round 32 — an Austin storms data page is an OPEN OWNER DECISION.** Grounding corrected
+- **Round 32 — the Austin storms page: DECIDED, option A, no page now.** Grounding corrected
   the premise: Austin's NOAA storm-events file (88 non-seed records, live) is already
   published — as `/data/austin/roofing/`, whose own description covers "hail, wind, flood and
   tornado events". The broken href came from a **topic slug**, not missing data: `austinRoofing`
   is `topic: "roofing"`, `sanAntonioStorms` is `topic: "storms"`, and the readings layer asked
   every metro for `storms`. Three options, with the recommendation, are in
-  `docs/audits/round-32-broken-data-links.md` §4. Nothing is broken while it is open — the
-  Austin reading simply carries no onward link. **Do not add a second page over the same 88
-  records without deciding what happens to `/data/austin/roofing/`** — that is a URL change
-  with a 301, not an addition.
+  `docs/audits/round-32-broken-data-links.md` §4. **The owner took option A: no Austin storms
+  page now.** Nothing is broken by that — the Austin reading carries its source and as-of and no
+  onward link. The slug mismatch itself is parked as BACKLOG item 11 with a candidate fix (301
+  roofing → storms, roofing as a section) and needs its own round, because moving a published
+  indexed URL is a citation risk. **Do not add a second page over the same 88 records without
+  deciding what happens to `/data/austin/roofing/` first.**
+
+- **Round 32 — the sweep runs itself now: `npm run sweep`.** build → `npm run check` → stop the
+  worker → `npm run fixture` → start the worker → 13 units and gates → 12 render replays → stop
+  the worker. The ordering is the one `scripts/replays/README.md` already described; it is code
+  now because prose did not stop it being got wrong. The specific trap: `npm run build` deletes
+  `dist/client/data/stress-index/fixture-condition.json`, so a rebuild without a re-seed fails
+  r7replay's four condition-card assertions with "no card rendered", which reads as a product
+  regression and is not one (Round 16, and again in Round 32). The runner re-seeds
+  unconditionally after a build and refuses to continue if the artifact is still missing.
+  `--skip-build` reuses `dist/` and re-seeds only if the artifact is gone; `--only=a,b` runs a
+  subset. `check-citations` is deliberately excluded — it needs the real network and runs weekly
+  in CI.

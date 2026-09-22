@@ -11,6 +11,7 @@
     "check": "astro check",
     "verify-content": "node scripts/verify-content.mjs",
     "check-links": "node scripts/check-links.mjs",
+    "sweep": "node scripts/run-sweep.mjs",
     "check-orphans": "node scripts/check-orphans.mjs",
     "ingest": "tsx scripts/ingest.ts",
     "fetch-drought-map": "tsx scripts/fetch-drought-map.ts",

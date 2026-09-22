@@ -10,6 +10,11 @@ the console. "Review is management" — a different view catches what the build 
 ---
 
 ## 0. Build integrity
+
+> `npm run sweep` runs everything in this section plus the replays, in an order that cannot be
+> got wrong (it re-seeds the local fixture after the build, which is the step that kept being
+> missed). Prefer it over running the steps by hand.
+
 - [ ] `npm run build` succeeds from `site/` (no errors).
 - [ ] `npm run check` (astro check / typecheck) is clean, or every remaining item is
       understood and surfaced.

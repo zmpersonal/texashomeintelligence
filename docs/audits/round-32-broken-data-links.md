@@ -157,6 +157,11 @@ in Round 29 but was never wired to a script name.
 
 ## 4. Decision for the owner — an Austin storms page (NOT built)
 
+> **Decided after review: option A.** No Austin storms page now. The slug mismatch is parked
+> as BACKLOG item 11 — candidate fix, a 301 from roofing to storms with roofing as a section,
+> in its own round because it moves a published indexed URL.
+
+
 Out of scope by the round's own terms, and it is a new indexed page over live data, so it is
 brought here rather than shipped.
 
@@ -190,6 +195,11 @@ the roofing reading as a section of it — and that is a URL change with a 301, 
 ## 5. Verification
 
 Build · check · verify-content, then the full replay suite against the built worker on 9400.
+
+Since review, the whole of this runs as one step — `npm run sweep`
+(`site/scripts/run-sweep.mjs`), which builds, re-seeds the fixture with the worker stopped,
+starts the worker, runs the 13 units and gates and the 12 render replays, and stops it again.
+The r7replay false-failure below is exactly what it exists to prevent.
 
 ```
 npm run build            Complete (272 pages)
