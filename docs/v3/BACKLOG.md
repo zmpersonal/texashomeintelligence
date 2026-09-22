@@ -32,6 +32,20 @@ Probes (P1, P2) can run in any gap; they write an audit and change no served pag
 
 ---
 
+## Standing test — does the number change the action?
+
+**Before any new data domain is proposed, it has to pass this: does the reading's VALUE change
+what a homeowner does?** Not "can an action be written for it" — an action can always be
+written. Every signal THI ships passes the real test. Drought changes what to do with water this
+week; a freeze forecast changes what to do tonight; recorded hail changes whether looking at the
+roof is worth doing now rather than at the next seasonal check.
+
+A reading whose action is the same whatever the number says is a reminder with a number stapled
+to it, and the data is doing no work. Established in `docs/audits/round-35b-crime-memo.md` §1,
+which is where crime failed it.
+
+---
+
 ## Standing note — how a probe can get its data
 
 **No external host is reachable from a Claude Code session.** Measured repeatedly: every host
@@ -53,11 +67,14 @@ first command.
 | **A temporary Actions workflow** | a throwaway workflow that fetches and commits exactly what the probe needs, then is deleted | when the data is large, or needs many requests, or must be re-pulled |
 | **An owner-widened network policy** | the session's egress is opened to named hosts | when a probe is genuinely iterative and the two above would mean many round trips |
 
-One nuance worth knowing: **MCP-backed sources are not subject to this**, because an MCP server
-reaches the network through its own infrastructure rather than this sandbox's egress. That may
-make a SEMrush-style probe (item: the reserved content-demand system) feasible in-session where
-direct HTTP is not — **untested**, and testing it would spend the owner's API units, which is
-ask-first under `SECURITY.md`.
+One nuance worth knowing, and deliberately left unverified: **MCP-backed sources may not be
+subject to this**, because an MCP server reaches the network through its own infrastructure
+rather than this sandbox's egress. That could make a SEMrush-style probe (the reserved
+content-demand system) feasible in-session where direct HTTP is not. **UNTESTED, and not to be
+tested until something actually needs it** — a call spends the owner's API units, which is
+ask-first under `SECURITY.md`, and nothing on this backlog needs it today (owner's instruction,
+2026-09-22). Recorded so a future round knows the question exists, not as a capability to rely
+on.
 
 **Which shape each probe-style item would take:**
 
@@ -241,8 +258,9 @@ routes already exist per topic (`/data/[location]/[topic]/[csvName].csv`).
 
 ### 7 · Crime stats and data feeds
 
-> **NOT VIABLE — Round 35b** (`docs/audits/round-35b-crime-memo.md`). Recommended for closure,
-> pending the owner's agreement. Answered on reasoning, not data: **no candidate framing produces
+> **CLOSED — D7 accepted by the owner, 2026-09-22.** Not viable; see
+> `docs/audits/round-35b-crime-memo.md`. Kept here as a record of why, not as work. Answered on
+> reasoning, not data: **no candidate framing produces
 > a reading whose value changes what a homeowner does.** The best honest line pairs a crime number
 > with an action — check the lighting, check the locks — that is correct whatever the number says,
 > which means the data does no work. Separately, it is the one THI reading with a mechanism by
@@ -278,12 +296,12 @@ routes already exist per topic (`/data/[location]/[topic]/[csvName].csv`).
 - *Risk.* Neighbourhood crime figures on a housing-adjacent site raise fair-housing concerns in
   how they are framed and where they appear. Name it; the owner decides with qualified input.
 
-**Decision needed:**
-- **D7** — whether to accept Round 35b's recommendation and close this item.
-- **D7a** — whether to add security-adjacent reminders (exterior lighting, lock/alarm test) to
-  the reminder catalogue. Independent of crime data; needs no probe.
-- **D7b** — if crime is revisited despite the memo, the fair-housing question goes to counsel
-  **first**, ahead of any data gathering.
+**Decisions, all taken 2026-09-22:**
+- **D7 — ACCEPTED.** Crime does not belong on THI. Item closed.
+- **D7a — YES, but not now.** The security-adjacent reminders are split out as **item 13**.
+- **D7b — NOTED.** If crime is ever revisited, the fair-housing question goes to counsel
+  **first**, ahead of any data gathering. That ordering is the standing instruction, not a
+  suggestion.
 
 ### 9 · Article formatting
 
@@ -366,3 +384,25 @@ reaches every paragraph in every card on the site.
 **Decision needed:** which fix, and whether the eyebrows should be 12px at all.
 
 **Scope → unscheduled.**
+
+### 13 · Security-adjacent reminders in the maintenance catalogue
+
+**Owner (D7a, 2026-09-22): yes, but not this round.**
+
+**What it is:** two rows in the existing reminder catalogue — an **exterior lighting check** and
+a **lock / alarm test**. The catalogue already carries eight recurring tasks on the same
+mechanism, including a smoke/CO alarm test, so this is a list addition rather than a feature.
+
+**Where it came from:** Round 35b's crime memo. Working through whether a crime reading could
+end in a homeowner action showed that the *action* is worth having and the *data* is not — the
+advice is correct whatever any crime figure says, which is precisely why it needs no crime feed,
+no probe and no new data domain.
+
+**Constraints it inherits:** the reminder engine's own grammar. A cadence in days, a task a
+homeowner can mark done, and copy that stays inside the banned-phrase guard — conditions and
+checks, never damage and fix. Nothing here implies a threat or references an area.
+
+**Decision needed:** the two default cadences, and whether the pair ships as one item or one at
+a time.
+
+**Scope → unscheduled, small.**
