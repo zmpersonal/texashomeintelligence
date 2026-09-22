@@ -32,15 +32,92 @@ Probes (P1, P2) can run in any gap; they write an audit and change no served pag
 
 ---
 
+## Standing test — does the number change the action?
+
+**Before any new data domain is proposed, it has to pass this: does the reading's VALUE change
+what a homeowner does?** Not "can an action be written for it" — an action can always be
+written. Every signal THI ships passes the real test. Drought changes what to do with water this
+week; a freeze forecast changes what to do tonight; recorded hail changes whether looking at the
+roof is worth doing now rather than at the next seasonal check.
+
+A reading whose action is the same whatever the number says is a reminder with a number stapled
+to it, and the data is doing no work. Established in `docs/audits/round-35b-crime-memo.md` §1,
+which is where crime failed it.
+
+---
+
+## Standing note — how a probe can get its data
+
+**No external host is reachable from a Claude Code session.** Measured repeatedly: every host
+tried answers **403 to CONNECT** — a gateway policy denial, not DNS, TLS or a timeout. That
+includes `texashomeintelligence.com` itself and **the feed hosts already shipping**, such as
+`data.austintexas.gov` and `data.sanantonio.gov`.
+
+That is not a contradiction of the live ingestion. **Ingestion runs in GitHub Actions**
+(`.github/workflows/data-ingestion.yml`), on runners with ordinary egress, and never in a
+session. A host working in production says nothing about whether it is reachable here, and a
+round must never assume otherwise — Round 35 was scoped on that assumption and stopped at its
+first command.
+
+**So every probe takes one of three shapes:**
+
+| shape | what it is | when it fits |
+|---|---|---|
+| **Files on disk** | the owner downloads terms, a field dictionary and a sample, and commits them (`docs/source/…`) | the default. Answers availability, granularity and comparability without a single fetch |
+| **A temporary Actions workflow** | a throwaway workflow that fetches and commits exactly what the probe needs, then is deleted | when the data is large, or needs many requests, or must be re-pulled |
+| **An owner-widened network policy** | the session's egress is opened to named hosts | when a probe is genuinely iterative and the two above would mean many round trips |
+
+One nuance worth knowing, and deliberately left unverified: **MCP-backed sources may not be
+subject to this**, because an MCP server reaches the network through its own infrastructure
+rather than this sandbox's egress. That could make a SEMrush-style probe (the reserved
+content-demand system) feasible in-session where direct HTTP is not. **UNTESTED, and not to be
+tested until something actually needs it** — a call spends the owner's API units, which is
+ask-first under `SECURITY.md`, and nothing on this backlog needs it today (owner's instruction,
+2026-09-22). Recorded so a future round knows the question exists, not as a capability to rely
+on.
+
+**Which shape each probe-style item would take:**
+
+- **Item 1 · appraisal data** — *files on disk*, and not merely because of egress: the districts
+  refuse non-browser clients and one publishes no bulk export at all. Owner-gated, records
+  requests. See the item.
+- **Item 7 · crime** — *moot.* Closed on reasoning in Round 35b without any data; see the item.
+- **Item 3 · tag container / pixels** — not a probe. Needs owner accounts and approved privacy
+  copy, not a fetch.
+- **Item 6 · metric contract** — not a probe. Needs the consumer's config from the owner.
+- **Items 4 / 5b · hero system** — not a probe. Design decisions.
+
+---
+
 ## Items
 
 ### 1 · County appraisal data → property-tax overpayment estimate
 
+> **DEFERRED — owner-gated: requires records requests.** Not probeable from a Claude Code
+> session as things stand; see the three corrections below.
+
 **Owner:** County appraisal reports etc. to calculate how much someone is overpaying on their
 property taxes.
 
-**Grounding:** New data domain; no appraisal-district ingestion exists. The sandbox network
-allow-list already includes Travis, Bexar, Harris, Dallas and Tarrant CAD domains.
+**Grounding:** New data domain; no appraisal-district ingestion exists.
+
+**Three corrections, 2026-09-22.** The line this item used to carry — that the sandbox
+allow-list already includes the Travis, Bexar, Harris, Dallas and Tarrant CAD domains — **is
+wrong**, and two further facts close the in-session route entirely:
+
+1. **All five CAD domains are refused by egress.** `traviscad.org`, `bcad.org`, `hcad.org`,
+   `dallascad.org` and `tad.org` each answer 403 to CONNECT, as do `www.traviscad.org` and
+   `public.hcad.org`. Measured directly, not inferred.
+2. **Travis CAD's own server refuses non-browser clients** (established outside this sandbox),
+   so lifting the egress rule alone would not be enough.
+3. **Bexar CAD publishes no bulk parcel export at all.** Parcel data is obtained by signed
+   Public Information Act request — a human, paper-and-signature step, not a fetch.
+
+**What it would now take:** the terms-of-use / data-licensing document first, since it can end
+the item on its own; then a field-layout document plus a bulk file or a sample of one; one
+parcel's detail page end to end; and whatever ARB/protest statistics the district publishes,
+which is the only thing that could support a word like *overpayment* rather than *value*.
+Handed over as files, not fetched.
 
 **Why this is a probe first:**
 - *Data gate (Meta-Rule 5).* Unknown whether CAD data is available in bulk, at parcel grain,
@@ -181,7 +258,35 @@ routes already exist per topic (`/data/[location]/[topic]/[csvName].csv`).
 
 ### 7 · Crime stats and data feeds
 
+> **CLOSED — D7 accepted by the owner, 2026-09-22.** Not viable; see
+> `docs/audits/round-35b-crime-memo.md`. Kept here as a record of why, not as work. Answered on
+> reasoning, not data: **no candidate framing produces
+> a reading whose value changes what a homeowner does.** The best honest line pairs a crime number
+> with an action — check the lighting, check the locks — that is correct whatever the number says,
+> which means the data does no work. Separately, it is the one THI reading with a mechanism by
+> which a reader is worse off for its publication, and the only one whose downside falls partly on
+> people who never visited the site.
+>
+> **The data was never the binding constraint.** Even the best case sections A–D could have
+> returned — clean, point-located, current, comparable data under permissive terms — would not
+> change the answer, which is why the memo was written without gathering a file.
+>
+> **Still open and NOT answered here:** the fair-housing and steering question, which is named in
+> the memo's §2 the way HANDOFF names its lead-handoff regulatory question, and which belongs
+> with counsel **before** any reconsideration rather than after.
+>
+> **Worth keeping:** the homeowner benefit lives in security-adjacent reminders — an
+> exterior-lighting check, a lock or alarm test — which need no crime data and are two rows in the
+> existing reminder catalogue. Logged as **D7a**.
+
+> **Reachability, for the record (2026-09-22).** The Round 35 probe stopped before measuring
+> anything: all six sources answer 403 to CONNECT — `data.austintexas.gov`,
+> `data.sanantonio.gov`, `opendata-cosagis.opendata.arcgis.com`, `www.sanantonio.gov`,
+> `api.usa.gov`, `cde.ucr.cjis.gov`. See the standing note above; this is now a known property of
+> the environment rather than a finding about these sources.
+
 **Owner:** Add crime stats and API data feeds.
+
 
 **Why this is a probe first:**
 - *Data gate.* What APD and SAPD (and county) publish, at what grain, how current, and under what
@@ -191,8 +296,12 @@ routes already exist per topic (`/data/[location]/[topic]/[csvName].csv`).
 - *Risk.* Neighbourhood crime figures on a housing-adjacent site raise fair-housing concerns in
   how they are framed and where they appear. Name it; the owner decides with qualified input.
 
-**Decision needed:**
-- **D7** — after the probe: whether crime belongs on THI at all, and at what grain.
+**Decisions, all taken 2026-09-22:**
+- **D7 — ACCEPTED.** Crime does not belong on THI. Item closed.
+- **D7a — YES, but not now.** The security-adjacent reminders are split out as **item 13**.
+- **D7b — NOTED.** If crime is ever revisited, the fair-housing question goes to counsel
+  **first**, ahead of any data gathering. That ordering is the standing instruction, not a
+  suggestion.
 
 ### 9 · Article formatting
 
@@ -275,3 +384,25 @@ reaches every paragraph in every card on the site.
 **Decision needed:** which fix, and whether the eyebrows should be 12px at all.
 
 **Scope → unscheduled.**
+
+### 13 · Security-adjacent reminders in the maintenance catalogue
+
+**Owner (D7a, 2026-09-22): yes, but not this round.**
+
+**What it is:** two rows in the existing reminder catalogue — an **exterior lighting check** and
+a **lock / alarm test**. The catalogue already carries eight recurring tasks on the same
+mechanism, including a smoke/CO alarm test, so this is a list addition rather than a feature.
+
+**Where it came from:** Round 35b's crime memo. Working through whether a crime reading could
+end in a homeowner action showed that the *action* is worth having and the *data* is not — the
+advice is correct whatever any crime figure says, which is precisely why it needs no crime feed,
+no probe and no new data domain.
+
+**Constraints it inherits:** the reminder engine's own grammar. A cadence in days, a task a
+homeowner can mark done, and copy that stays inside the banned-phrase guard — conditions and
+checks, never damage and fix. Nothing here implies a threat or references an area.
+
+**Decision needed:** the two default cadences, and whether the pair ships as one item or one at
+a time.
+
+**Scope → unscheduled, small.**
