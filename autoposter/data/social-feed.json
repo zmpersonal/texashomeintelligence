@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T15:54:17+00:00",
+  "generated_at": "2026-09-22T14:02:42+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -201,7 +201,7 @@
       "area_id": "austin_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.372,
+      "surprise_score": 0.371,
       "why": "at a level well outside this area's own range",
       "figure": "755 cooling degree-days in 2026-08, +17% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -225,7 +225,7 @@
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.356,
+      "surprise_score": 0.355,
       "why": "a cost signal",
       "figure": "13.88¢ per kWh (2026-08), +1.1% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
@@ -237,7 +237,7 @@
       "area_id": "san_antonio_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.346,
+      "surprise_score": 0.345,
       "why": "at a level well outside this area's own range",
       "figure": "700 cooling degree-days in 2026-08, +15% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
