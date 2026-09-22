@@ -32,6 +32,24 @@ Probes (P1, P2) can run in any gap; they write an audit and change no served pag
 
 ---
 
+## Standing rule — a replay that reports a value is not a check
+
+**When a replay measures something worth measuring, it asserts it.** A value printed into a
+note is documentation; only an assertion fails a round. Two drifts survived precisely this gap:
+
+- **The eyebrow's 3px.** `eyebrowrender` printed the computed font size in every assertion's
+  note and never asserted it, so a 15.04px render sat under a rule asking for 12px across 225
+  indexed pages until Round 36 went looking (item 12).
+- **The `/home/` label check that had nothing to look at.** It loaded the signed-in dashboard
+  without a session, found no label, and counted "no accented label found" as a pass. An
+  assertion that cannot fail is not a check — it now loads a session, requires the label to be
+  **present** as well as correct, and separately asserts the page did not redirect (Round 34).
+
+The pattern in both: the replay was looking at the right thing and declined to hold it to
+anything. If a number is worth printing, decide what it must be.
+
+---
+
 ## Standing test — does the number change the action?
 
 **Before any new data domain is proposed, it has to pass this: does the reading's VALUE change
@@ -434,3 +452,41 @@ checks, never damage and fix. Nothing here implies a threat or references an are
 a time.
 
 **Scope → unscheduled, small.**
+
+### 14 · The condition eyebrow's label is longer than its pill
+
+**Owner's, to write — copy, not type.** Logged from Round 36; no replacement copy is proposed
+here.
+
+**What renders:** `/home/`'s condition card carries `{alert.label} · condition detected` as its
+eyebrow. Four alert labels exist — Freeze, Hail, Extreme heat, and Heavy rain and flooding — so
+four strings are possible, and the one a reader sees depends on which condition fired.
+
+**Measured** at the 12px label size Round 36 restored, by substituting each label into the real
+pill and counting its rendered line boxes (not by calculating widths — an arithmetic check
+disagreed with the render by a pixel, and the render is what a reader sees):
+
+| eyebrow | 390px | 360px | 320px |
+|---|---|---|---|
+| FREEZE · CONDITION DETECTED | 1 line | 1 line | 1 line |
+| HAIL · CONDITION DETECTED | 1 line | 1 line | 1 line |
+| EXTREME HEAT · CONDITION DETECTED | 1 line | **2 lines** | **2 lines** |
+| HEAVY RAIN AND FLOODING · CONDITION DETECTED | **2 lines** | **2 lines** | **2 lines** |
+
+So two of the four fit everywhere, one wraps below the design width, and **the longest wraps at
+the design width itself**. Nothing clips at any width — a wrapped eyebrow is legible, just two
+lines of a shouting label where one was intended.
+
+**Why type cannot fix it.** At the previous 15.04px every one of these was worse; the label size
+removed wraps rather than causing them (item 12). Going smaller than the label token would break
+the type scale, which BRAND.md does not permit buying a fit with. The string is longer than the
+column, and only the string can change.
+
+**Constraint on whatever replaces it:** it is rendered by `.card-tag`, shares that pill with two
+other eyebrows, and is uppercased by CSS — so it is read at roughly 1.4× the character width of
+its source, and a replacement should be judged at 320px with the longest alert label, not at
+desktop with the shortest.
+
+**Decision needed:** the replacement wording, from the owner.
+
+**Scope → unscheduled, copy.**
