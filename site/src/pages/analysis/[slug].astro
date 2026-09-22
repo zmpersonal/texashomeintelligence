@@ -157,10 +157,11 @@ const freshness = dataset ? freshnessOf(dataset) : undefined;
 
     {/*
       Sources. The collection stores a name and an `asOf` and NO URL, so these
-      are named, not linked — inventing a URL for a source is exactly the kind
-      of plausible-looking detail this site does not publish. An optional
-      `url` field is proposed in the round's audit; until the schema carries
-      one, a name is what there is.
+      carry an OPTIONAL `url` as of Round 31b. A source with one is linked; a
+      source without one is named and not linked, because inventing a URL is
+      exactly the kind of plausible-looking detail this site does not publish.
+      No article was backfilled, so today every source renders as a name — the
+      link path is here for whatever the autoposter writes next.
 
       `asOfDisplay` because the field holds two different kinds of value: a
       date like "2026-08-01", and a normals period like "1991-2020" which is
@@ -170,9 +171,11 @@ const freshness = dataset ? freshnessOf(dataset) : undefined;
     <footer class="analysis-sources">
       <h2>Sources</h2>
       <ul class="analysis-source-list">
-        {sources.map((s: { name: string; asOf: string }) => (
+        {sources.map((s: { name: string; asOf: string; url?: string }) => (
           <li>
-            <span class="analysis-source-name">{s.name}</span>
+            <span class="analysis-source-name">
+              {s.url ? <a href={s.url} rel="nofollow noopener">{s.name}</a> : s.name}
+            </span>
             <span class="analysis-source-asof">
               as of <time datetime={asOfDatetime(s.asOf)}>{asOfDisplay(s.asOf)}</time>
             </span>

@@ -374,9 +374,29 @@ section.block h2 { max-width: 40em; }
 .table-scroll { overflow-x: auto; }
 table.data-table caption { text-align: left; font-size: 0.85rem; color: var(--ink-soft); padding-bottom: 8px; }
 
+/* `.analysis > table` joins each selector below rather than getting rules of
+ * its own. A markdown table cannot carry a class, so an article's body table
+ * arrived as a bare <table> with no padding and no rules between cells, and
+ * read as run-together text — "Cooling demand755 cooling degree-daysup 17%".
+ * Giving it the same treatment the data pages use means a table in an article
+ * reads like a table anywhere else on the site, and there is still one
+ * definition of what a THI table looks like. */
 table.data-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin: 12px 0 20px; }
-table.data-table th, table.data-table td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); }
-table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-soft); }
+.analysis > table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin: 12px 0 20px; }
+table.data-table th, table.data-table td,
+.analysis > table th, .analysis > table td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); }
+table.data-table th,
+.analysis > table th { background: var(--paper-alt); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-soft); }
+.analysis > table td { font-variant-numeric: tabular-nums; }
+/* A body table has no wrapper to scroll inside — markdown provides none, and
+ * adding one would need a plugin over every collection on the site. Making the
+ * table itself the scroll container is the equivalent: on a phone a table too
+ * wide for the column scrolls within its own box instead of taking the
+ * document sideways with it. Columns still align, which is measured rather
+ * than assumed (`analysisrender.mjs` compares cell offsets row by row). */
+@media (max-width: 640px) {
+  .analysis > table { display: block; overflow-x: auto; width: max-content; max-width: 100%; }
+}
 
 /* ---- Homepage: "Something on your mind?" service picker ---- */
 .pick-card { background: var(--surface); border: var(--thi-border); border-radius: var(--thi-r-card); box-shadow: var(--thi-shadow-sm); padding: var(--thi-sp-4) var(--thi-sp-5); }
@@ -961,6 +981,10 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
  * reader scanning it sees what each article FOUND, not only what it asked.
  */
 .analysis-index { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+/* The homepage module reuses the hub's card markup and only changes the track
+ * count — three across where the page has the width for it, stacked where it
+ * does not. One card definition, two placements. */
+.home-analysis-index { grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); }
 .analysis-card { display: grid; gap: 6px; }
 .analysis-card-date {
   font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption);
@@ -969,7 +993,7 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
 .analysis-card-title { font-size: 1.22rem; margin: 0; }
 .analysis-card-title a { color: var(--ink); text-decoration: none; }
 .analysis-card-title a:hover { color: var(--brand); text-decoration: underline; }
-.analysis-card-standfirst { color: var(--ink-soft); margin: 0; }
+.analysis-card-standfirst { color: var(--ink-soft); margin: 0; max-width: 68ch; }
 /* The figure block: mono value, plain-language movement, provenance. The same
  * eyebrow → value → source rhythm every data card on the site uses. */
 .analysis-card-figure {
@@ -990,7 +1014,7 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
  * one place on this site where the reading is continuous rather than scanned,
  * and 68ch is the width the rest of the site's prose blocks already use.
  */
-.analysis { max-width: 68ch; }
+.analysis { max-width: 64ch; }
 .analysis-standfirst { font-size: 1.08rem; color: var(--ink-soft); }
 
 .analysis-dateline {
@@ -1045,6 +1069,15 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
   padding-bottom: 16px; border-radius: 0 0 var(--thi-r-card) var(--thi-r-card);
   margin-bottom: 22px;
 }
+
+/* Headings owned no space above them, so each one sat as close to the
+ * paragraph it followed as to the paragraph it introduced, and the article
+ * read as one undifferentiated column. The space belongs above the heading:
+ * that is what groups a heading with its own section rather than the previous
+ * one. The answer box sets its own top margin and is excluded. */
+.analysis h2:not(#the-short-answer) { margin-top: 2.1em; }
+.analysis h3 { margin-top: 1.6em; }
+.analysis > p { margin-bottom: 1em; line-height: 1.65; }
 
 .analysis-datalink { margin: 14px 0 0; font-weight: 600; }
 

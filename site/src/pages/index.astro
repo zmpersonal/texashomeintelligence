@@ -19,6 +19,8 @@
  * Figures come from the same generated datasets the data pages read, via the
  * published-page registry, so the homepage cannot contradict them.
  */
+import { articleDatetime, publishedArticles } from "../lib/analysis";
+import { formatDate } from "../lib/format";
 import Base from "../layouts/Base.astro";
 import DataStatus from "../components/DataStatus.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
@@ -82,6 +84,13 @@ const dateModified = featured
 const title = "Texas Home Intelligence — Data, Tools & Local Home Intelligence for Texas Homeowners";
 const description =
   "Texas-specific data, tools, and local home-service intelligence to help homeowners understand risks, maintenance, repair costs, and when to take action.";
+
+// D10b — "Latest analysis", the three most recent published articles, resolved
+// at build time. Same helper and same `published` gate the hub uses, so the
+// homepage can never surface an article that has no route. Every string on the
+// module is the article's own: title, standfirst, date, and the `card` block's
+// figure. Nothing here is written or computed.
+const latestAnalysis = (await publishedArticles()).slice(0, 3);
 ---
 
 <Base title={title} description={description} article={{ dateModified }}>
@@ -257,6 +266,39 @@ const description =
       <p style="margin-top:20px;"><a href="/methodology/">See every source and its current state &rarr;</a></p>
     </div>
   </section>
+
+  {latestAnalysis.length > 0 && (
+    <section class="block" id="latest-analysis">
+      <div class="wrap">
+        <h2>Latest analysis</h2>
+        <ol class="analysis-index home-analysis-index">
+          {latestAnalysis.map((a) => (
+            <li class="card analysis-card">
+              <p class="analysis-card-date">
+                <time datetime={articleDatetime(a.data.publishedAt)}>
+                  {formatDate(a.data.publishedAt)}
+                </time>
+              </p>
+              <h3 class="analysis-card-title">
+                <a href={`/analysis/${a.id}/`}>{a.data.title}</a>
+              </h3>
+              <p class="analysis-card-standfirst">{a.data.description}</p>
+              {a.data.card && (
+                <p class="analysis-card-figure">
+                  <span class="analysis-card-headline">{a.data.card.headline}</span>
+                  <span class="analysis-card-subhead">{a.data.card.subhead}</span>
+                  <span class="analysis-card-provenance">
+                    {a.data.card.source} &middot; {a.data.card.asOf}
+                  </span>
+                </p>
+              )}
+            </li>
+          ))}
+        </ol>
+        <p style="margin-top:20px;"><a href="/analysis/">All analysis &rarr;</a></p>
+      </div>
+    </section>
+  )}
 
   <section class="cta-band">
     <div class="wrap">

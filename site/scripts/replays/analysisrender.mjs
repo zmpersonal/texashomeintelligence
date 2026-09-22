@@ -78,6 +78,7 @@ console.log('\n══ /analysis/ — the hub ══');
       href: e.querySelector('.analysis-card-title a')?.getAttribute('href'),
       standfirst: e.querySelector('.analysis-card-standfirst')?.innerText.trim(),
       date: e.querySelector('.analysis-card-date time')?.getAttribute('datetime'),
+      dateText: e.querySelector('.analysis-card-date')?.innerText.trim(),
       headline: e.querySelector('.analysis-card-headline')?.innerText.trim(),
       subhead: e.querySelector('.analysis-card-subhead')?.innerText.trim(),
     })),
@@ -98,6 +99,15 @@ console.log('\n══ /analysis/ — the hub ══');
       !!src?.card && e.headline === src.card.headline && e.subhead === src.card.subhead,
       `${e.headline} / ${e.subhead}`);
   }
+  // ROUND 31b — the hub printed raw ISO (`2026-09-18`) with no label. It now
+  // renders a human date with the machine form underneath it.
+  for (const e of r.entries) {
+    A(`${e.href}: the hub date is human-readable, not raw ISO`,
+      !/^\d{4}-\d{2}-\d{2}$/.test(e.dateText) && /\d{4}$/.test(e.dateText), e.dateText);
+    A(`${e.href}: and carries the machine date underneath`,
+      /^\d{4}-\d{2}-\d{2}$/.test(e.date), e.date);
+  }
+
   const collection = r.jsonLd.find((j) => j['@type'] === 'CollectionPage');
   A('CollectionPage schema is present', !!collection);
   A('its ItemList matches the rendered list',
@@ -142,9 +152,33 @@ for (const art of live) {
       more: [...document.querySelectorAll('.analysis-more-list a')].map((a) => a.getAttribute('href')),
       dataLink: q('.analysis-datalink a')?.getAttribute('href') ?? null,
       tables: [...document.querySelectorAll('.analysis table')].length,
+      bodyTables: [...document.querySelectorAll('.analysis > table')].map((t) => {
+        const cell = t.querySelector('td');
+        const th = t.querySelector('th');
+        const cs = cell ? getComputedStyle(cell) : null;
+        const rows = [...t.querySelectorAll('tr')]
+          .map((tr) => [...tr.children].map((c) => Math.round(c.getBoundingClientRect().left)));
+        return {
+          cellPad: cs ? cs.padding : '0px',
+          cellBorder: cs ? cs.borderBottomWidth : '0px',
+          thStyled: th ? getComputedStyle(th).backgroundColor !== 'rgba(0, 0, 0, 0)' : false,
+          thBg: th ? getComputedStyle(th).backgroundColor : '—',
+          aligned: rows.every((r2) => r2.every((x, i) => Math.abs(x - rows[0][i]) < 2)),
+        };
+      }),
       scrollers: [...document.querySelectorAll('.analysis .table-scroll')]
         .map((e) => getComputedStyle(e).overflowX),
       measure: q('.analysis') ? getComputedStyle(q('.analysis')).maxWidth : null,
+      measureCh: (() => {
+        const p2 = q('.analysis > p');
+        if (!p2) return 0;
+        const fs = parseFloat(getComputedStyle(p2).fontSize);
+        return Math.round(p2.getBoundingClientRect().width / (fs * 0.5));
+      })(),
+      h2MarginTop: (() => {
+        const h = [...document.querySelectorAll('.analysis h2')].find((x) => x.id !== 'the-short-answer');
+        return h ? parseFloat(getComputedStyle(h).marginTop) : 0;
+      })(),
       articleJsonLd: [...document.querySelectorAll('script[type="application/ld+json"]')]
         .map((s) => JSON.parse(s.textContent)).find((j) => j['@type'] === 'Article'),
     };
@@ -191,12 +225,30 @@ for (const art of live) {
     !r.more.includes(`/analysis/${art.slug}/`) && r.more.length > 0,
     `${r.more.length} links`);
 
+  // ROUND 31b — BODY TABLES. A markdown table carries no class, so an
+  // article's table arrived as a bare <table>: no cell padding, no rules
+  // between cells, reading as run-together text. It now gets the same
+  // treatment the data pages use. Column alignment is compared row by row
+  // rather than assumed, because the mobile scroll affordance changes the
+  // table's display type and that is exactly what could break it.
+  for (const t of r.bodyTables) {
+    A(`a body table is padded and ruled like every other THI table`,
+      t.cellPad !== '0px' && t.cellBorder !== '0px', `padding ${t.cellPad}, rule ${t.cellBorder}`);
+    A(`its header row is styled`, t.thStyled, t.thBg);
+    A(`and its columns line up`, t.aligned);
+  }
+
   // Table and the data-page link.
   if (r.tables > 0) {
     A('the table is horizontally scrollable', r.scrollers.every((o) => o === 'auto'),
       r.scrollers.join(', '));
   }
-  A('a measure is set for reading', /ch$|px$/.test(r.measure ?? ''), r.measure);
+  // ROUND 31b — a measure, and a measure in the right BAND. "max-width is set"
+  // passed at 76ch, which is still wider than comfortable long-form reading.
+  A('body text sits in a comfortable measure (65-75ch)',
+    r.measureCh >= 60 && r.measureCh <= 78, `≈${r.measureCh}ch (${r.measure})`);
+  A('and headings own the space above them, not below',
+    r.h2MarginTop > 20, `h2 margin-top ${r.h2MarginTop}px`);
   A('Article schema still carries the dates',
     r.articleJsonLd?.datePublished === art.publishedAt);
   await c.close();
@@ -247,6 +299,107 @@ console.log('\n══ SCRIPTING DISABLED ══');
   A('the hub lists every article with scripting off',
     live.every((a) => hub.includes(a.title)), `${live.length} titles`);
   await c2.close();
+
+  // Round 31b's two additions are chrome and a build-time module, so both must
+  // be in the served HTML rather than assembled after load.
+  const c3 = await b.newContext({ viewport: { width: 1366, height: 900 }, javaScriptEnabled: false });
+  const p3 = await c3.newPage();
+  await p3.goto(`${B}/`, { waitUntil: 'domcontentloaded' });
+  const homeHtml = await p3.content();
+  A('the nav item is in the served HTML', /href="\/analysis\/"/.test(homeHtml));
+  A('the homepage module is in the served HTML', /id="latest-analysis"/.test(homeHtml));
+  const newest3 = live.slice().sort((a2, z) => z.publishedAt.localeCompare(a2.publishedAt)).slice(0, 3);
+  A('with its three articles and their figures',
+    newest3.every((a2) => homeHtml.includes(a2.title) && homeHtml.includes(a2.card.headline)));
+  await c3.close();
+
+  // A body table has to be a real table in the served HTML, not a script's output.
+  const c4 = await b.newContext({ viewport: { width: 1366, height: 900 }, javaScriptEnabled: false });
+  const p4 = await c4.newPage();
+  await p4.goto(`${B}/analysis/did-austins-ac-rush-follow-the-heat-in-august-2026/`,
+    { waitUntil: 'domcontentloaded' });
+  const tblHtml = await p4.content();
+  A('the body table is real <table> markup in the served HTML',
+    /<table>[\s\S]*?<th>August 2026<\/th>/.test(tblHtml));
+  await c4.close();
+}
+
+// ══ 4b. THE OWNER DECISIONS: NAV ITEM AND HOMEPAGE MODULE (Round 31b) ═════
+console.log('\n══ NAV ITEM (D10a) AND HOMEPAGE MODULE (D10b) ══');
+{
+  const c = await b.newContext({ viewport: { width: 1366, height: 900 } });
+  const p = await c.newPage();
+  await p.goto(`${B}/austin/roofing/`, { waitUntil: 'networkidle' });
+  const nav = await p.evaluate(() => {
+    const items = [...document.querySelectorAll('.nav-links > li')].map((li) => ({
+      text: li.innerText.trim().split('\n')[0],
+      href: li.querySelector('a')?.getAttribute('href') ?? null,
+    }));
+    const a = document.querySelector('.nav-links a[href="/analysis/"]');
+    return { items, present: !!a, tag: a?.tagName, inNav: !!a?.closest('nav[aria-label="Primary"]') };
+  });
+  A('the nav carries Analysis', nav.present && nav.tag === 'A' && nav.inNav);
+  A('and it sits between Data and Locations',
+    nav.items.map((i) => i.text).join(' · ') === 'Data · Analysis · Locations',
+    nav.items.map((i) => i.text).join(' · '));
+
+  // Keyboard reachability: a real <a> in the primary nav is tabbable, and the
+  // CSS-only mobile menu reveals the same <ul>, so no JS is involved either way.
+  const focused = await p.evaluate(() => {
+    const a = document.querySelector('.nav-links a[href="/analysis/"]');
+    a.focus();
+    return document.activeElement === a && a.tabIndex >= 0;
+  });
+  A('the nav item is keyboard-focusable', focused);
+  await c.close();
+
+  // The mobile menu is a CSS checkbox toggle — assert the item is inside what
+  // the toggle reveals, at a width where the menu is collapsed.
+  const c2 = await b.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
+  const p2 = await c2.newPage();
+  await p2.goto(`${B}/austin/roofing/`, { waitUntil: 'networkidle' });
+  const mob = await p2.evaluate(() => {
+    const toggle = document.getElementById('nav-toggle');
+    const a = document.querySelector('.nav-links a[href="/analysis/"]');
+    const before = a.getBoundingClientRect().height > 0;
+    toggle.checked = true;
+    toggle.dispatchEvent(new Event('change', { bubbles: true }));
+    return { toggleExists: !!toggle, before, after: a.getBoundingClientRect().height > 0 };
+  });
+  A('on a phone the item lives inside the CSS-only menu the toggle reveals',
+    mob.toggleExists && mob.after, `visible before toggle=${mob.before}, after=${mob.after}`);
+  await c2.close();
+}
+
+{
+  const c = await b.newContext({ viewport: { width: 1366, height: 900 } });
+  const p = await c.newPage();
+  await p.goto(`${B}/`, { waitUntil: 'networkidle' });
+  const home = await p.evaluate(() => {
+    const sec = document.getElementById('latest-analysis');
+    if (!sec) return null;
+    return {
+      heading: sec.querySelector('h2')?.innerText.trim(),
+      entries: [...sec.querySelectorAll('.analysis-card')].map((e) => ({
+        href: e.querySelector('.analysis-card-title a')?.getAttribute('href'),
+        date: e.querySelector('.analysis-card-date time')?.getAttribute('datetime'),
+        headline: e.querySelector('.analysis-card-headline')?.innerText.trim(),
+      })),
+      allLink: !!sec.querySelector('a[href="/analysis/"]'),
+    };
+  });
+  A('the homepage carries a Latest analysis module', !!home, home?.heading);
+  A('its heading is the owner copy', home?.heading === 'Latest analysis', home?.heading);
+  A('it lists exactly three articles', home?.entries.length === 3, `${home?.entries.length}`);
+  const newest = live.slice().sort((a2, z) => z.publishedAt.localeCompare(a2.publishedAt)).slice(0, 3);
+  A('and they are the three newest published ones',
+    home?.entries.map((e) => e.href).join(',') === newest.map((a2) => `/analysis/${a2.slug}/`).join(','),
+    home?.entries.map((e) => e.href).join(', '));
+  A('each figure is that article\'s own card block',
+    home?.entries.every((e, i) => e.headline === newest[i].card?.headline),
+    home?.entries.map((e) => e.headline).join(' | '));
+  A('and it links on to the hub', home?.allLink);
+  await c.close();
 }
 
 // ══ 5. THE FOOTER CARRIES /analysis/ ══════════════════════════════════════

@@ -2383,3 +2383,32 @@ separate go-live step — not implied by any phase above being "done."
   the unavailable state when no dataset is committed and a real box-scoped, radar-derived count
   when one is. What it guards either way is unchanged: never a bare zero standing in for a feed we
   do not hold, and the product always named as radar-derived rather than confirmed hail.
+
+- **Round 31b — the three Round 31 decisions are built, and the nav line moved.**
+  **D10a:** `Analysis` is in the header nav, between Data and Locations, and **`CLAUDE.md`'s nav
+  line now reads `Data · Analysis · Locations`** with the decision recorded inline — the
+  governance file and the shipped nav agree. It is a crawlable `<a href>` inside the `<ul>` the
+  CSS-only mobile toggle already reveals, so no JS and no change to the toggle.
+  **D10b:** the homepage carries a "Latest analysis" module — three most recent, build-time,
+  reusing the hub's card markup, placed after "Built from primary sources". It adds a section
+  rather than editing one, so no frozen homepage copy was touched.
+  **Schema:** `sources[]` now carries an **optional** `url`. Additive, no backfill — every
+  existing article and everything the autoposter writes today stays valid. The template links a
+  source only where a URL is stored; today that is none of them, and an unlinked source renders
+  as a name rather than an invented link. **If the autoposter starts emitting source URLs, they
+  will render as links with no further change here.**
+
+- **Round 31b — markdown body tables now use the site's table treatment.** An article's
+  markdown table carries no class, so it arrived as a bare `<table>` with no cell padding and no
+  rules, reading as run-together text. `.analysis > table` was added to the existing
+  `table.data-table` selectors rather than given its own rules, so there is still one definition
+  of what a THI table looks like. On phones the table itself is the scroll container (≤640px) —
+  a body table has no wrapper to scroll inside and adding one would need a markdown plugin over
+  every collection. Column alignment under that display change is asserted, not assumed.
+
+- **🟡 Round 31b — `/data/austin/storms/` is still broken, and is the only broken internal link
+  on the site.** 290 internal hrefs checked, 1 broken, from `/austin/roofing/` and
+  `/tools/roof-scan/`. Scoped to the next round by the owner. Note for whoever takes it: the
+  earlier count of four included three false positives — `/home/` and `/home/sign-in/` are SSR
+  routes with no static file, and `/dashboard/${e}/` is a template literal inside a script
+  string. The link checker used in 31b strips `<script>` blocks and excludes the SSR routes.
