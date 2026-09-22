@@ -2491,3 +2491,11 @@ separate go-live step — not implied by any phase above being "done."
   It affects all three eyebrows. Fixing it is a type change on 225 indexed pages, not a one-line
   correction, so it needs its own round. It does not affect the contrast threshold: 15.04px at
   weight 600 is not WCAG large text either way.
+
+- **Verification standard, set by the owner after Round 34: the branch is Claude Code's to
+  verify, the live domain is the owner's.** Rounds are verified with the build, `npm run sweep`
+  and render-side screenshots on the branch. **Reaching `texashomeintelligence.com` is not a
+  gate** — this sandbox's egress policy answers 403 to CONNECT for it and has in every round so
+  far; note it in one line rather than retrying or holding the round open. After a merge, hand
+  over a short list of what to look at live: the routes, the widths, and what should be
+  different on each. `REVIEW.md` §8 carries the checklist form of this.
