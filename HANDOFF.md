@@ -2471,3 +2471,23 @@ separate go-live step — not implied by any phase above being "done."
   163px at 390px and 148px at 360px, so it fits at 390px only while the anchor's right gutter
   stays at 4px — an 8px gutter wrapped it by one pixel — and it wraps at 360px and below
   whatever the gutter is. `footerchrome` guards both.
+
+- **Round 34 — the free-account eyebrow is the one content accent on a ZIP dashboard.** Ink
+  `#0E1726` on an amber `#C4772E` pill, **5.15:1**, through `.card-tag-accent` — a MODIFIER, not
+  a change to `.card-tag`. That class is shared with two labels that must stay quiet ("Modeled —
+  per-ZIP coming soon" on the same page, "&lt;alert&gt; · condition detected" on the signed-in
+  dashboard); `eyebrowrender.mjs` asserts both stay on mist, so moving the colour onto
+  `.card-tag` fails loudly rather than repainting three labels.
+  **Amber text on the old pill was never an option: `#C4772E` on `#EEF1F5` is 3.08:1 and fails
+  AA.** Navy on the amber pill passes at 4.53:1 — by 0.03, which the owner rightly declined.
+  Both colours shipped are existing tokens; a new shade of amber would have been a brand change.
+  **The header wordmark's amber is brand chrome and does not spend the view's accent** (owner's
+  ruling). The replay excludes `header`/`footer` by position rather than by name, so a second
+  amber cannot appear beside the wordmark unnoticed.
+
+- **🟡 `.card p` overrides the label type on every `.card-tag` — BACKLOG item 12, unscheduled.**
+  `.card-tag` asks for `var(--thi-fs-label)` (12px) and renders at **15.04px**, because
+  `.card p { font-size: .94rem }` is more specific and the eyebrow is a `<p>` inside a `.card`.
+  It affects all three eyebrows. Fixing it is a type change on 225 indexed pages, not a one-line
+  correction, so it needs its own round. It does not affect the contrast threshold: 15.04px at
+  weight 600 is not WCAG large text either way.
