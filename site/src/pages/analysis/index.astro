@@ -1,16 +1,50 @@
 ---
 /**
- * The analysis hub. Lists published articles only — the same `published`
- * filter the article route uses, so an unpublished draft is absent here for
- * the same reason it has no URL.
+ * The analysis hub — the index for THI's citable layer.
+ *
+ * ── WHAT CHANGED IN ROUND 31, AND WHY ─────────────────────────────────────
+ * This was a plain `<ul>` of title, description and a raw ISO date. It is now
+ * an index: newest first, each entry carrying its standfirst, a formatted
+ * date, and the headline figure the article already stores in its `card`
+ * block. It is the same content — nothing is re-typed and nothing is
+ * computed — laid out so a reader scanning the list can see what each article
+ * found, not only what it asked.
+ *
+ * ── THE FIGURE IS THE ARTICLE'S OWN ───────────────────────────────────────
+ * `card.headline` and `card.subhead` are written by the autoposter and
+ * ledger-verified against the article's claims. This page prints them and
+ * stops. An article with no `card` block shows no figure — withheld rather
+ * than synthesised, which is the same rule every reading on this site follows.
  */
-import { getCollection } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import { articleDatetime, publishedArticles } from "../../lib/analysis";
+import { formatDate } from "../../lib/format";
 
-const articles = (await getCollection("analysis", ({ data }) => data.published === true)).sort(
-  (a, b) => b.data.publishedAt.localeCompare(a.data.publishedAt),
-);
+const articles = await publishedArticles();
+const SITE = "https://texashomeintelligence.com";
+
+// CollectionPage + ItemList: the hub's own answer to "what is this page and
+// what is on it". Built from the same list the page renders, so the schema
+// cannot describe a different set of articles than the reader sees.
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Analysis — Texas Home Intelligence",
+  description:
+    "Sourced answers to the questions Texas homeowners are actually asking, from our own data.",
+  url: `${SITE}/analysis/`,
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: articles.length,
+    itemListElement: articles.map((a, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${SITE}/analysis/${a.id}/`,
+      name: a.data.title,
+    })),
+  },
+};
 ---
 
 <Base
@@ -19,23 +53,49 @@ const articles = (await getCollection("analysis", ({ data }) => data.published =
 >
   <Breadcrumbs crumbs={[{ name: "Home", url: "/" }, { name: "Analysis", url: "/analysis/" }]} />
 
-  <h1>Analysis</h1>
-  <p>
-    Sourced answers to questions Texas homeowners are actually asking. Every figure carries the
-    source it came from and the date it was true.
-  </p>
+  <section class="hero">
+    <div class="wrap" style="max-width:820px;">
+      <span class="eyebrow">ANALYSIS</span>
+      <h1>Analysis</h1>
+      <p class="lede">
+        Sourced answers to questions Texas homeowners are actually asking. Every figure carries
+        the source it came from and the date it was true.
+      </p>
+    </div>
+  </section>
 
-  {articles.length === 0 ? (
-    <p><em>No analysis published yet.</em></p>
-  ) : (
-    <ul class="analysis-index">
-      {articles.map((a) => (
-        <li>
-          <a href={`/analysis/${a.id}/`}>{a.data.title}</a>
-          <p>{a.data.description}</p>
-          <p class="analysis-date">{a.data.publishedAt}</p>
-        </li>
-      ))}
-    </ul>
-  )}
+  <section class="block">
+    <div class="wrap" style="max-width:820px;">
+      {articles.length === 0 ? (
+        <p><em>No analysis published yet.</em></p>
+      ) : (
+        <ol class="analysis-index">
+          {articles.map((a) => (
+            <li class="card analysis-card">
+              <p class="analysis-card-date">
+                <time datetime={articleDatetime(a.data.publishedAt)}>
+                  {formatDate(a.data.publishedAt)}
+                </time>
+              </p>
+              <h2 class="analysis-card-title">
+                <a href={`/analysis/${a.id}/`}>{a.data.title}</a>
+              </h2>
+              <p class="analysis-card-standfirst">{a.data.description}</p>
+              {a.data.card && (
+                <p class="analysis-card-figure">
+                  <span class="analysis-card-headline">{a.data.card.headline}</span>
+                  <span class="analysis-card-subhead">{a.data.card.subhead}</span>
+                  <span class="analysis-card-provenance">
+                    {a.data.card.source} · {a.data.card.asOf}
+                  </span>
+                </p>
+              )}
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
 </Base>

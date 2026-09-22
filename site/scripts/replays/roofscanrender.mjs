@@ -363,8 +363,27 @@ console.log('\n══ SCRIPTING DISABLED ══');
   A('both permit readings are in the served HTML',
     /Re-roof permits on record, Austin/.test(text) && /Re-roof permits on record, San Antonio/.test(text));
   A('the licensing position is in the served HTML', /It does not license roofing/.test(text));
-  A('the radar feed states its unavailable status rather than a zero',
-    /Not published yet/.test(text) && !/Radar hail signatures over the Austin box\s*0\b/.test(text));
+  // ROUND 31: the transition Round 27's §8 was written to catch has happened —
+  // an ingestion run landed swdi-nx3hail, so the radar card now carries a real
+  // count where it used to carry "Not published yet". This assertion described
+  // the old state and went stale the moment the data arrived; it is now
+  // state-aware, so it holds in both worlds and cannot go stale again.
+  //
+  // What matters in EITHER state is the same, and is what is asserted: the
+  // card never shows a bare zero standing in for a feed we do not hold, and it
+  // always names the product as radar-derived rather than confirmed hail.
+  if (RADAR_COMMITTED) {
+    A('the radar feed publishes a real count, not a zero standing in for one',
+      /signatures recorded/.test(text)
+      && !/Radar hail signatures over the Austin box\s*0\b/.test(text));
+    A('and the count is stated over a box, named as radar-derived',
+      /over a box 0\.5°/.test(text)
+      && /radar-derived hail signatures, not confirmed hail reports/.test(text));
+  } else {
+    A('the radar feed states its unavailable status rather than a zero',
+      /Not published yet/.test(text)
+      && !/Radar hail signatures over the Austin box\s*0\b/.test(text));
+  }
   A('the limits section is in the served HTML', /What this tool cannot see/.test(text));
   A('the page explains what needs scripts', /needs JavaScript/.test(text));
   A('and the label reads as nothing entered', /Nothing entered/.test(text));

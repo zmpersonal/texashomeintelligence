@@ -2334,3 +2334,52 @@ separate go-live step — not implied by any phase above being "done."
   *(The first cost guard was too broad — it matched the word "cost" in an authored question,
   "what does that cost?", and in the sitewide footer. Narrowed to currency amounts and range
   phrasing, scoped to the tool's own `<main>`.)*
+
+- **Round 31 — the analysis layer became reachable, and three owner seams opened.**
+  `/analysis/` was an **indexed orphan**: in the sitemap, five published articles behind it, and
+  its only inbound links the breadcrumbs of its own children. One `<li>` in the footer's Company
+  column closed it — `check-orphans.mjs` went 1 → 0. The five articles were **not** orphans (each
+  had one inbound link, from the hub), which is why one link fixed five pages. The backlog's
+  claim that "the hub and every article" were orphans was half right, and the half that was wrong
+  is what determined the fix.
+
+  **🔴 Owner decisions still open.** Both were left blank in the round prompt and so were
+  prepared rather than built:
+  - **D10a — "Analysis" in the header nav.** Recommended yes, between Data and Locations. This is
+    a Rule 1 change to CLAUDE.md's nav line, not a build detail. The footer link already removes
+    the orphan, so the nav item is an amplifier.
+  - **D10b — homepage "Latest analysis" module.** Recommended yes, three most recent, build-time,
+    reusing the hub's card markup. **Needs one line of owner copy:** the section heading. Every
+    other string on the module comes from the articles. It adds a section rather than editing one,
+    so no frozen homepage copy is touched.
+
+  **🟡 Schema proposal — an optional `url` on `sources[]`.** The analysis collection stores
+  `{name, asOf}` and no URL, so article sources render as names, not links. A citable page with
+  unlinked sources does less than it could for KPI #1. Proposed as **additive and optional**
+  (`url: z.string().url().optional()`), which keeps every existing article and everything the
+  autoposter writes today valid. Surfaced rather than applied: the autoposter writes against this
+  schema, so the change is its decision as much as the site's.
+
+- **Round 31 — a date-only fact was rendering as the previous day.** The shared `machineDate()`
+  normalises through `toISOString()`, so `"2026-09-18"` became `"2026-09-18T00:00:00.000Z"` — a
+  valid timestamp asserting midnight UTC, which a consumer rendering in local time shows as
+  **September 17 across the Americas**. The thirteen other callers pass real timestamps where the
+  time component is genuine, so the fix is local to the analysis layer (`articleDatetime()`)
+  rather than a change underneath them. Worth knowing if another date-only field is ever put
+  through that helper.
+
+- **🟡 Round 31 — a broken internal link, pre-existing, left for its own round.**
+  `/data/austin/storms/` is linked from `/austin/roofing/` and `/tools/roof-scan/` and **does not
+  exist**: `lib/roofScan.ts:129` and `lib/belowHeroReadings.ts:254` both build
+  `/data/${location}/storms/`, but only San Antonio has a storms data page. Confirmed pre-existing
+  by building unmodified `main`. Out of Round 31's scope (service and tool pages). The fix is
+  either an Austin storms data page or guarding the href against the published data-page registry
+  — which is what `dataPageFor()` in `lib/analysis.ts` now does for articles and is reusable.
+
+- **Round 31 — the SWDI feed Round 27 was waiting for has landed.** `swdi-nx3hail` is committed
+  and live: **268 Austin, 190 San Antonio** signatures. The Roof Scan radar cards now carry real
+  counts where they said "Not published yet". Round 27's replay assertion described the old state
+  and failed on arrival, **on `main` as well as on the branch**; it is now state-aware, asserting
+  the unavailable state when no dataset is committed and a real box-scoped, radar-derived count
+  when one is. What it guards either way is unchanged: never a bare zero standing in for a feed we
+  do not hold, and the product always named as radar-derived rather than confirmed hail.

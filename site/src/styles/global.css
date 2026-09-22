@@ -953,3 +953,115 @@ table.data-table th { background: var(--paper-alt); font-size: 0.78rem; text-tra
 .analysis > ol { margin: 0 0 1em; padding-left: 1.25em; }
 .analysis > ul { list-style: disc; }
 .analysis > ol { list-style: decimal; }
+
+/* ── Analysis: the hub index (Round 31) ──────────────────────────────────
+ * The hub was a bare list of links. Each entry is now a card carrying the
+ * article's own standfirst, its date, and the headline figure it already
+ * stores — so the index reads like the rest of the instrument panel, and a
+ * reader scanning it sees what each article FOUND, not only what it asked.
+ */
+.analysis-index { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.analysis-card { display: grid; gap: 6px; }
+.analysis-card-date {
+  font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption);
+  color: var(--ink-soft); margin: 0;
+}
+.analysis-card-title { font-size: 1.22rem; margin: 0; }
+.analysis-card-title a { color: var(--ink); text-decoration: none; }
+.analysis-card-title a:hover { color: var(--brand); text-decoration: underline; }
+.analysis-card-standfirst { color: var(--ink-soft); margin: 0; }
+/* The figure block: mono value, plain-language movement, provenance. The same
+ * eyebrow → value → source rhythm every data card on the site uses. */
+.analysis-card-figure {
+  display: grid; gap: 2px; margin: 6px 0 0;
+  padding-left: 12px; border-left: 2px solid var(--accent);
+}
+.analysis-card-headline {
+  font-family: var(--thi-font-mono); font-feature-settings: "tnum" 1;
+  font-size: 1.32rem; font-weight: 700; color: var(--ink); line-height: 1.15;
+}
+.analysis-card-subhead { color: var(--ink-soft); font-size: var(--thi-fs-body-sm); }
+.analysis-card-provenance {
+  font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption); color: var(--ink-soft);
+}
+
+/* ── Analysis: the article (Round 31) ────────────────────────────────────
+ * A comfortable measure. Long-form prose at the full container width is the
+ * one place on this site where the reading is continuous rather than scanned,
+ * and 68ch is the width the rest of the site's prose blocks already use.
+ */
+.analysis { max-width: 68ch; }
+.analysis-standfirst { font-size: 1.08rem; color: var(--ink-soft); }
+
+.analysis-dateline {
+  font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption);
+  color: var(--ink-soft); margin: 0 0 18px;
+}
+.analysis-dateline-sep { margin: 0 8px; }
+
+/* The key figure. THE ONE DELIBERATE ACCENT ON THIS VIEW — BRAND.md allows
+ * Caliche Amber sparingly, one accent per view, so the answer box below is
+ * deliberately neutral and this is the only amber on an article page. */
+.analysis-keyfigure {
+  margin: 0 0 22px; padding: 14px 16px;
+  background: var(--paper-alt); border: 1px solid var(--line);
+  border-left: 3px solid var(--accent); border-radius: var(--thi-r-card);
+}
+.analysis-keyfigure-headline {
+  font-family: var(--thi-font-mono); font-feature-settings: "tnum" 1;
+  font-size: 1.85rem; font-weight: 700; line-height: 1.1; color: var(--ink); margin: 0;
+}
+.analysis-keyfigure-subhead { margin: 4px 0 0; color: var(--ink); }
+.analysis-keyfigure-provenance {
+  font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption);
+  color: var(--ink-soft); margin: 6px 0 0;
+}
+
+/* The answer box.
+ *
+ * Markdown prose cannot carry a class, so this is styled off the heading slug
+ * the articles already produce. MEASURED, not assumed: all five published
+ * articles render `h2#the-short-answer` followed by exactly two paragraphs,
+ * and `analysisunit.ts` asserts that shape so a sixth article cannot break it
+ * silently. Deliberately a tinted panel with a navy rule rather than an amber
+ * one: the key figure above is this view's single accent.
+ *
+ * It degrades rather than breaks. A future article with a third paragraph
+ * renders that paragraph as ordinary prose — a shorter panel, not a torn one.
+ */
+.analysis h2#the-short-answer {
+  margin-top: 0; padding: 14px 16px 8px;
+  background: var(--thi-mist); border-left: 3px solid var(--brand);
+  border-radius: var(--thi-r-card) var(--thi-r-card) 0 0;
+  font-size: 1.1rem;
+}
+.analysis h2#the-short-answer + p,
+.analysis h2#the-short-answer + p + p {
+  margin: 0; padding: 0 16px 14px;
+  background: var(--thi-mist); border-left: 3px solid var(--brand);
+}
+.analysis h2#the-short-answer + p { padding-top: 0; padding-bottom: 10px; }
+.analysis h2#the-short-answer + p + p {
+  padding-bottom: 16px; border-radius: 0 0 var(--thi-r-card) var(--thi-r-card);
+  margin-bottom: 22px;
+}
+
+.analysis-datalink { margin: 14px 0 0; font-weight: 600; }
+
+/* Sources: named, not linked — the collection stores no URL. Mono for the
+ * as-of so it column-aligns the way every other provenance line does. */
+.analysis-sources { margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--line); }
+.analysis-source-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.analysis-source-list li { display: grid; gap: 2px; }
+.analysis-source-name { color: var(--ink); }
+.analysis-source-asof {
+  font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption); color: var(--ink-soft);
+}
+
+.analysis-more { margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--line); }
+.analysis-more-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.analysis-more-list li { display: grid; gap: 2px; }
+.analysis-more-list a { font-weight: 600; }
+.analysis-more-date {
+  font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption); color: var(--ink-soft);
+}
