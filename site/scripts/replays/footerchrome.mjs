@@ -11,6 +11,15 @@
  * the footer. Retiring a link is only safe if it does not orphan the page it
  * pointed at, and the fourteen service links are a third of the indexed site's
  * internal linking.
+ *
+ * ROUND 33 restructured the columns. NONE of the Round 10b/29 assertions below
+ * changed their expectations — the seven Austin service links, the /tools/ hub
+ * link, the absence of /services/ and /start/, and one identical footer
+ * sitewide all still hold, which is the point of leaving them alone. What is
+ * new is everything after them: the exact columns and their exact links (the
+ * old file asserted a handful of links and never the SHAPE, so a column could
+ * be renamed, reordered or emptied without an assertion moving), the single
+ * social profile, and the phone tap targets.
  */
 import { launchChromium } from './browser.mjs';
 
@@ -106,6 +115,226 @@ for (const from of ['/austin/', '/austin/electrical/', '/san-antonio/tree-trimmi
   A(`/services/ still reachable from ${from}`, links.includes('/services/'),
     links.includes('/services/') ? 'in-body link present' : 'NO in-body link');
   await c.close();
+}
+
+// ══ ROUND 33 — THE EXACT FOOTER ══════════════════════════════════════════
+// Headings are compared case-insensitively: .footer-grid h4 carries a shouting
+// text-transform, so innerText hands back "COMPANY" where the source says
+// "Company". The assertion is about the words and their order, not the casing.
+console.log('\n══ THE COLUMNS, EXACTLY ══');
+const EXPECTED_COLUMNS = [
+  ['Texas Home Intelligence', []],
+  ['Company', ['/austin/', '/san-antonio/', '/tools/', '/home/sign-in/', '/dashboard/']],
+  ['Services', [
+    '/austin/roofing/', '/austin/hvac/', '/austin/plumbing/',
+    '/austin/fire-damage-restoration/', '/austin/mold-remediation/',
+    '/austin/electrical/', '/austin/tree-trimming/',
+  ]],
+  ['Data', [
+    '/data/', '/analysis/', '/methodology/',
+    '/data/#austin', '/data/#san-antonio', '/privacy/',
+  ]],
+];
+const FACEBOOK = 'https://www.facebook.com/people/Texas-Home-Intelligence/61593991198459/';
+
+{
+  const c = await b.newContext({ viewport: { width: 1366, height: 1200 } });
+  const p = await c.newPage();
+  await p.goto(B + '/austin/roofing/', { waitUntil: 'networkidle' });
+  const cols = await p.evaluate(() =>
+    [...document.querySelectorAll('.footer-grid > div')].map((el) => ({
+      heading: el.querySelector('h4')?.textContent.trim(),
+      headings: [...el.querySelectorAll('h4')].map((h) => h.textContent.trim()),
+      links: [...el.querySelectorAll('ul:not(.footer-social) a')].map((a) => a.getAttribute('href')),
+    })));
+
+  A('four columns', cols.length === 4, `${cols.length}`);
+  A('column order', cols.map((x) => x.heading?.toLowerCase()).join(' | ') ===
+    EXPECTED_COLUMNS.map(([h]) => h.toLowerCase()).join(' | '),
+    cols.map((x) => x.heading).join(' | '));
+  for (const [i, [heading, links]] of EXPECTED_COLUMNS.entries()) {
+    const got = cols[i];
+    if (!got) { A(`column ${i + 1} (${heading}) exists`, false); continue; }
+    A(`${heading} — its links, in order`, got.links.join(' ') === links.join(' '),
+      got.links.join(' ') || '(none)');
+  }
+  A('the brand column carries the Connect label',
+    (cols[0]?.headings ?? []).some((h) => /^connect$/i.test(h)),
+    (cols[0]?.headings ?? []).join(' | '));
+  A('no Locations column survives',
+    !cols.some((x) => /^locations$/i.test(x.heading ?? '')),
+    cols.map((x) => x.heading).join(' | '));
+  A('no About link until there is an About page',
+    !cols.some((x) => x.links.some((h) => /about/i.test(h ?? ''))));
+
+  // ── the social profile ──
+  const social = await p.evaluate(() =>
+    [...document.querySelectorAll('.footer-social a')].map((a) => ({
+      href: a.getAttribute('href'),
+      rel: a.getAttribute('rel'),
+      label: a.getAttribute('aria-label'),
+      // The accessible name a screen reader announces, not the markup: an icon
+      // link with no text has nothing else to offer one.
+      name: (a.getAttribute('aria-label') || a.innerText || '').trim(),
+      svgs: a.querySelectorAll('svg').length,
+      svgHidden: [...a.querySelectorAll('svg')].every((s2) => s2.getAttribute('aria-hidden') === 'true'),
+      imgs: a.querySelectorAll('img').length,
+    })));
+  A('exactly one social profile ships', social.length === 1, `${social.length}`);
+  A('and it is the exact Facebook URL', social[0]?.href === FACEBOOK, social[0]?.href);
+  A('rel names me and noopener',
+    /\bme\b/.test(social[0]?.rel ?? '') && /\bnoopener\b/.test(social[0]?.rel ?? ''),
+    social[0]?.rel);
+  A('it has an accessible name', /facebook/i.test(social[0]?.name ?? ''), social[0]?.name);
+  A('the mark is an inline svg, hidden from the accessibility tree',
+    social[0]?.svgs === 1 && social[0]?.svgHidden && social[0]?.imgs === 0,
+    `${social[0]?.svgs} svg, ${social[0]?.imgs} img`);
+  // No YouTube or Pinterest this round, and no placeholder standing in for one.
+  const allFooterHrefs = await p.evaluate(() =>
+    [...document.querySelectorAll('footer a')].map((a) => a.getAttribute('href')));
+  A('no YouTube or Pinterest icon',
+    !allFooterHrefs.some((h) => /youtube|pinterest/i.test(h ?? '')));
+  A('no placeholder href anywhere in the footer',
+    !allFooterHrefs.some((h) => !h || h === '#' || h.startsWith('javascript:')),
+    allFooterHrefs.filter((h) => !h || h === '#').join(', ') || 'none');
+  // No third-party script pulled in for an icon.
+  const foreign = await p.evaluate(() =>
+    [...document.querySelectorAll('script[src], link[rel="stylesheet"]')]
+      .map((e) => e.getAttribute('src') || e.getAttribute('href'))
+      .filter((u) => u && /^https?:/i.test(u) && !u.includes('texashomeintelligence.com')));
+  A('no third-party script or stylesheet for the icon', foreign.length === 0, foreign.join(', ') || 'none');
+  await c.close();
+}
+
+// ══ THE /data/ ANCHORS THE FOOTER POINTS AT ══════════════════════════════
+// A fragment is the one kind of internal link check-links cannot judge: it
+// normalizes the fragment away, so /data/#nothing-here passes as /data/.
+console.log('\n══ THE METRO ANCHORS EXIST AND LAND CLEAR ══');
+for (const id of ['austin', 'san-antonio']) {
+  // A FRESH CONTEXT PER ANCHOR, and that is the assertion working rather than
+  // a tidiness habit. Navigating an open page from /data/#austin to
+  // /data/#san-antonio is a same-document jump against settled layout, which
+  // lands correctly whatever the margin is; a cold load makes the jump and
+  // then shifts as the fonts swap. Reusing the page tested the easy path and
+  // reported the hard one as passing.
+  const c = await b.newContext({ viewport: { width: 1366, height: 1000 } });
+  const p = await c.newPage();
+  {
+    await p.goto(`${B}/data/#${id}`, { waitUntil: 'networkidle' });
+    // `html { scroll-behavior: smooth }` means the jump is ANIMATED. Measuring
+    // straight after navigation catches the element mid-flight and reports a
+    // position it is only passing through — which is how this first failed.
+    await p.waitForFunction(() => new Promise((done) => {
+      let last = -1, still = 0;
+      const tick = () => {
+        const y = Math.round(window.scrollY);
+        still = y === last ? still + 1 : 0;
+        last = y;
+        still >= 3 ? done(true) : requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }), null, { timeout: 5000 });
+    const r = await p.evaluate((wanted) => {
+      const el = document.getElementById(wanted);
+      if (!el) return null;
+      const nav = document.querySelector('.site-nav');
+      const box = el.getBoundingClientRect();
+      return {
+        heading: el.querySelector('h3')?.innerText.trim(),
+        top: Math.round(box.top),
+        navBottom: Math.round(nav?.getBoundingClientRect().bottom ?? 0),
+      };
+    }, id);
+    A(`/data/#${id} is a real element`, r !== null, r?.heading);
+    if (r) A(`/data/#${id} lands clear of the sticky header`, r.top >= r.navBottom,
+      `card top ${r.top}px, header bottom ${r.navBottom}px`);
+  }
+  await c.close();
+}
+
+// ══ TAP TARGETS ON A PHONE ═══════════════════════════════════════════════
+console.log('\n══ EVERY FOOTER TARGET IS 44px ON A PHONE ══');
+for (const width of [390, 360]) {
+  const c = await b.newContext({ viewport: { width, height: 900 } });
+  const p = await c.newPage();
+  await p.goto(B + '/austin/roofing/', { waitUntil: 'networkidle' });
+  const taps = await p.evaluate(() =>
+    [...document.querySelectorAll('footer a')].map((a) => {
+      const r = a.getBoundingClientRect();
+      return {
+        h: Math.round(r.height), w: Math.round(r.width),
+        // Found by CLASS, not by matching its text. Two goes at the text
+        // failed for different reasons: an icon link's innerText is a
+        // whitespace string, which is truthy, so `innerText || label` never
+        // read the label; and the label that did come through was then cut to
+        // 28 characters for the log, which removes the word "Facebook" from
+        // "Texas Home Intelligence on Facebook". The class is what the
+        // stylesheet keys the 44px box off, so it is the honest handle.
+        social: a.classList.contains('footer-social-link'),
+        t: (a.getAttribute('aria-label') || a.innerText || '').trim().slice(0, 40),
+      };
+    }));
+  const small = taps.filter((t) => t.h < 44);
+  A(`${width}px — every footer link is at least 44px tall`, small.length === 0,
+    `${taps.length - small.length}/${taps.length}${small.length ? ' — ' + small.slice(0, 3).map((t) => `${t.h}px "${t.t}"`).join(', ') : ''}`);
+  const icon = taps.find((t) => t.social);
+  A(`${width}px — the icon target is 44px both ways`, !!icon && icon.h >= 44 && icon.w >= 44,
+    icon ? `${icon.w}x${icon.h}` : 'icon link not found');
+  await c.close();
+}
+
+// ══ NO LABEL IS CUT OFF ══════════════════════════════════════════════════
+// Line boxes via a Range over the anchor's contents, not scrollHeight: the
+// anchor is a 44px flex box on a phone, so its scrollHeight says 44 whether
+// the text inside is one line or two.
+console.log('\n══ NO FOOTER LABEL IS CLIPPED ══');
+for (const width of [390, 360, 320]) {
+  const c = await b.newContext({ viewport: { width, height: 900 } });
+  const p = await c.newPage();
+  await p.goto(B + '/austin/roofing/', { waitUntil: 'networkidle' });
+  const rows = await p.evaluate(() => [...document.querySelectorAll('footer a')].map((a) => {
+    const rng = document.createRange();
+    rng.selectNodeContents(a);
+    const boxes = [...rng.getClientRects()].filter((r) => r.width > 0 && r.height > 0);
+    return {
+      t: (a.getAttribute('aria-label') || a.innerText || '').trim(),
+      lines: boxes.length,
+      clipX: a.scrollWidth > a.clientWidth + 1,
+      clipY: a.scrollHeight > a.clientHeight + 1,
+    };
+  }));
+  const clipped = rows.filter((r) => r.clipX || r.clipY);
+  A(`${width}px — no label is cut off`, clipped.length === 0,
+    clipped.map((r) => r.t).join(', ') || `${rows.length} links, none clipped`);
+  if (width === 390) {
+    // The design width. A gutter wide enough to wrap the longest label here is
+    // how this check earned its place: 4px fits it, 8px did not.
+    const wrapped = rows.filter((r) => r.lines > 1);
+    A('390px — no label wraps', wrapped.length === 0,
+      wrapped.map((r) => `${r.t} (${r.lines} lines)`).join(', ') || 'all single-line');
+  }
+  await c.close();
+}
+
+// ══ WITH SCRIPTING OFF ═══════════════════════════════════════════════════
+// The footer has no JS and must not acquire any: it is chrome on all 272 pages.
+console.log('\n══ THE FOOTER IS THE SAME WITH SCRIPTING OFF ══');
+{
+  const on = await b.newContext({ viewport: { width: 1366, height: 1200 } });
+  const off = await b.newContext({ viewport: { width: 1366, height: 1200 }, javaScriptEnabled: false });
+  const read = async (ctx) => {
+    const p = await ctx.newPage();
+    await p.goto(B + '/austin/roofing/', { waitUntil: 'load' });
+    return p.evaluate ? await p.evaluate(() => {
+      const f = document.querySelector('footer');
+      return [...f.querySelectorAll('a')].map((a) => `${a.getAttribute('href')}|${(a.innerText || a.getAttribute('aria-label') || '').trim()}`).join('\n');
+    }) : '';
+  };
+  const withJs = await read(on);
+  const withoutJs = await read(off);
+  A('identical footer links and labels with JS off', withJs === withoutJs,
+    withJs === withoutJs ? `${withJs.split('\n').length} links, identical` : 'DIFFERENT');
+  await on.close(); await off.close();
 }
 
 await b.close();

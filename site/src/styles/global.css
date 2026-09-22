@@ -443,8 +443,43 @@ table.data-table th,
 .site-footer a { color: var(--thi-on-dark); text-decoration: none; }
 .site-footer a:hover { color: #fff; text-decoration: underline; text-decoration-color: var(--thi-amber); text-underline-offset: 3px; }
 .footer-blurb { color: var(--thi-on-dark-muted); max-width: 34em; }
-.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 24px; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 24px; }
 @media (max-width: 760px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+/* Round 33. The brand column was 2fr and carried three lines of text against
+   the full row height - 51% of it empty at 1366px, measured. Narrowing the
+   track lets the blurb use the height the row already has, and the Connect
+   block sits in what is left rather than in a fifth column nothing else
+   needs. */
+.footer-connect-heading { margin-top: 20px; }
+.footer-social { list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; }
+/* 44px of hit area around a 20px mark: an icon with no text label is the one
+   target in this footer a thumb has nothing else to aim at. */
+.footer-social-link {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 44px; min-height: 44px; margin-left: -10px;
+  border-radius: var(--thi-radius-chip, 4px);
+  color: var(--thi-on-dark);
+}
+.footer-social-link:hover { color: #fff; text-decoration: none; }
+.footer-social-link:focus-visible { outline: 2px solid var(--thi-amber); outline-offset: 2px; }
+.footer-social-link svg { display: block; }
+/* Phones only: every footer link becomes a full-width 44px target. On a
+   pointer device the 18px rows with 25px between them are comfortable and
+   keep the footer short; under a thumb they are not. */
+@media (max-width: 760px) {
+  .footer-grid li { margin-bottom: 0; }
+  .footer-grid li > a {
+    display: flex; align-items: center; min-height: 44px; padding-right: 4px;
+  }
+  /* 4px, not 8. Measured: "Fire Damage Restoration" is 156px of text in a
+     163px column at 390px, so an 8px gutter was enough to wrap the longest
+     label in the footer onto a second line. It still wraps at 360px and below,
+     where the column itself is narrower than the text — the only ways out of
+     that are the type scale or the label, and BRAND.md does not permit buying
+     a fit with the first while the second is copy. Two lines inside the 44px
+     box clip nothing. */
+  .footer-social-link { margin-left: 0; }
+}
 .footer-grid h4 { font-family: var(--thi-font-ui); color: var(--thi-on-dark); font-size: var(--thi-fs-label); font-weight: 600; text-transform: uppercase; letter-spacing: var(--thi-ls-label); margin-bottom: 10px; }
 .footer-grid ul { list-style: none; margin: 0; padding: 0; color: inherit; }
 .footer-grid li { margin-bottom: 7px; }
