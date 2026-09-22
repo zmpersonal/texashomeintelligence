@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-21T15:53:27.890Z",
-  "lastSuccessAt": "2026-09-21T15:53:27.890Z",
+  "lastAttemptAt": "2026-09-22T14:01:48.789Z",
+  "lastSuccessAt": "2026-09-22T14:01:48.789Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -20903,7 +20903,7 @@
     },
     {
       "observedAt": "2026-09-20T00:00:00.000Z",
-      "ingestedAt": "2026-09-21T15:53:28.423Z",
+      "ingestedAt": "2026-09-22T14:01:52.900Z",
       "key": "2026-089082 EP",
       "value": {
         "permitType": "New",
@@ -20913,11 +20913,31 @@
     },
     {
       "observedAt": "2026-09-20T00:00:00.000Z",
-      "ingestedAt": "2026-09-21T15:53:28.423Z",
+      "ingestedAt": "2026-09-22T14:01:52.900Z",
       "key": "2026-089081 EP",
       "value": {
         "permitType": "New",
         "workDescription": "Bldg2: New construction 3-unit use single-family residential 2-story 3 bedroom 3 bath with attached 1-car garage covered front porch covered rear patio and covered roof deck.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-21T00:00:00.000Z",
+      "ingestedAt": "2026-09-22T14:01:52.900Z",
+      "key": "2026-094307 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "*PARTIAL DEMO* ePlan: Residential Expedited Review - Addition and Remodel to Existing 2-Story Single Family Res. [3bed 3bath] Work to include: New Uncovered Front Porch  Partial Demo of existing roof to make space for New attached Gym room.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-21T00:00:00.000Z",
+      "ingestedAt": "2026-09-22T14:01:52.900Z",
+      "key": "2026-116477 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Installation of a new roof top solar PV system 44.625 Kw DC and interconnection to the existing service",
         "status": "Active"
       }
     }

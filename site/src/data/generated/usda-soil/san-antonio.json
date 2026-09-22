@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-21T15:53:50.742Z",
-  "lastSuccessAt": "2026-09-21T15:53:50.742Z",
+  "lastAttemptAt": "2026-09-22T14:02:07.321Z",
+  "lastSuccessAt": "2026-09-22T14:02:07.321Z",
   "lastError": null,
   "source": {
     "name": "USDA Soil Data Access",
@@ -12,8 +12,8 @@
   },
   "observations": [
     {
-      "observedAt": "2026-09-21T15:53:51.019Z",
-      "ingestedAt": "2026-09-21T15:53:51.019Z",
+      "observedAt": "2026-09-22T14:02:07.409Z",
+      "ingestedAt": "2026-09-22T14:02:07.409Z",
       "key": "2026-09",
       "value": {
         "soilType": "Branyon clay, 0 to 1 percent slopes",
