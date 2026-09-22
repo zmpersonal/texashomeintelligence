@@ -19,6 +19,8 @@ import Base from "../../layouts/Base.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import DataStatus from "../../components/DataStatus.astro";
 import { findDataset, freshnessOf } from "../../lib/datasets";
+import { articleDatetime, asOfDatetime, asOfDisplay, dataPageFor, otherArticles } from "../../lib/analysis";
+import { formatDate } from "../../lib/format";
 
 // Unannotated on purpose: an explicit `GetStaticPaths` type erases the props
 // inference, and `Astro.props` degrades to `unknown`. The data pages do the
@@ -39,7 +41,12 @@ const OG_CARDS = import.meta.glob<{
 }>("../../data/og-cards/*.json", { eager: true });
 const ogImage = OG_CARDS[`../../data/og-cards/${entry.id}.json`]?.default;
 const { Content } = await render(entry);
-const { title, description, publishedAt, updatedAt, sources, embed } = entry.data;
+const { title, description, publishedAt, updatedAt, sources, embed, card } = entry.data;
+
+// Related reading and the link onward to the series' own data page. Both are
+// resolved at build time from what is already committed — no runtime fetch.
+const more = await otherArticles(entry.id);
+const dataPage = dataPageFor(embed?.series);
 
 // The live-data embed. Rendered from the committed series at build time — the
 // serving path never fetches (COST.md), and the numbers on the page are the
@@ -66,9 +73,53 @@ const freshness = dataset ? freshnessOf(dataset) : undefined;
     ]}
   />
 
+  {/*
+    The article sits in the site's standard centred column. It had none: the
+    `<article>` was a direct child of the layout, so at 390px its text began at
+    x=0, flush against the viewport edge, while every other page on the site
+    starts at x=20. Full-bleed prose hid it; a reading measure makes it plain.
+  */}
+  <section class="block">
+    <div class="wrap" style="max-width:720px;">
   <article class="analysis">
     <h1>{title}</h1>
     <p class="analysis-standfirst">{description}</p>
+
+    {/*
+      The dates were in the page's metadata and nowhere a reader could see
+      them. They are the freshness signal this whole layer trades on, so they
+      now render, labelled for what they are. "Updated" appears only when
+      `updatedAt` is actually stored: an article that has never been revised
+      shows one date, not the same date printed twice under two labels.
+    */}
+    <p class="analysis-dateline">
+      <span>
+        Published <time datetime={articleDatetime(publishedAt)}>{formatDate(publishedAt)}</time>
+      </span>
+      {updatedAt && (
+        <>
+          <span aria-hidden="true" class="analysis-dateline-sep">·</span>
+          <span>
+            Updated <time datetime={articleDatetime(updatedAt)}>{formatDate(updatedAt)}</time>
+          </span>
+        </>
+      )}
+    </p>
+
+    {/*
+      The key figure, printed from the `card` block and from nothing else.
+      These four strings are written by the autoposter and ledger-verified
+      against the article's own claims, so the strip states the article's
+      finding rather than a second opinion about it. No `card` block, no
+      strip — withheld, never synthesised.
+    */}
+    {card && (
+      <aside class="analysis-keyfigure" aria-label="Key figure">
+        <p class="analysis-keyfigure-headline">{card.headline}</p>
+        <p class="analysis-keyfigure-subhead">{card.subhead}</p>
+        <p class="analysis-keyfigure-provenance">{card.source} · {card.asOf}</p>
+      </aside>
+    )}
 
     <Content />
 
@@ -96,16 +147,58 @@ const freshness = dataset ? freshnessOf(dataset) : undefined;
             </tbody>
           </table>
         </div>
+        {dataPage && (
+          <p class="analysis-datalink">
+            <a href={dataPage.href}>{dataPage.label}: full series, sources and limitations &rarr;</a>
+          </p>
+        )}
       </section>
     )}
 
+    {/*
+      Sources. The collection stores a name and an `asOf` and NO URL, so these
+      are named, not linked — inventing a URL for a source is exactly the kind
+      of plausible-looking detail this site does not publish. An optional
+      `url` field is proposed in the round's audit; until the schema carries
+      one, a name is what there is.
+
+      `asOfDisplay` because the field holds two different kinds of value: a
+      date like "2026-08-01", and a normals period like "1991-2020" which is
+      thirty averaged years rather than a day. The first is formatted, the
+      second is passed through, and only the first gets a `datetime`.
+    */}
     <footer class="analysis-sources">
       <h2>Sources</h2>
-      <ul>
+      <ul class="analysis-source-list">
         {sources.map((s: { name: string; asOf: string }) => (
-          <li>{s.name} — as of {s.asOf}</li>
+          <li>
+            <span class="analysis-source-name">{s.name}</span>
+            <span class="analysis-source-asof">
+              as of <time datetime={asOfDatetime(s.asOf)}>{asOfDisplay(s.asOf)}</time>
+            </span>
+          </li>
         ))}
       </ul>
     </footer>
+
+    {more.length > 0 && (
+      <nav class="analysis-more" aria-label="More analysis">
+        <h2>More analysis</h2>
+        <ul class="analysis-more-list">
+          {more.map((a) => (
+            <li>
+              <a href={`/analysis/${a.id}/`}>{a.data.title}</a>
+              <span class="analysis-more-date">
+                <time datetime={articleDatetime(a.data.publishedAt)}>
+                  {formatDate(a.data.publishedAt)}
+                </time>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
   </article>
+    </div>
+  </section>
 </Base>
