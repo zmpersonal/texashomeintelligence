@@ -58,7 +58,7 @@ const UNITS = [
 const RENDERS = [
   'toolshubrender', 'roofscanrender', 'dashmobile', 'aclifespanrender', 'triagerender',
   'signinrender', 'r9render', 'saservicerender', 'footerchrome', 'analysisrender',
-  'datalinksrender', 'r7replay',
+  'datalinksrender', 'eyebrowrender', 'r7replay',
 ].map((n) => [n, ['node', `scripts/replays/${n}.mjs`]]);
 
 const wanted = ([name]) => !ONLY || ONLY.includes(name);

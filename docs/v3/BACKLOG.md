@@ -144,6 +144,11 @@ indexed pages as AI-first, not conversion-first.
 
 ### 5 · Dashboard free-account card
 
+> **5a SHIPPED — Round 34** (`docs/audits/round-34-eyebrow-accent.md`). The "Free account · Two
+> minutes" eyebrow carries the logo's Caliche Amber as ink `#0E1726` on an amber `#C4772E` pill,
+> **5.15:1**. Applied through a modifier class so the two quiet `.card-tag` labels are untouched.
+> 5b (hero system) is unaffected and still open.
+
 **Owner:** (a) The "FREE ACCOUNT · TWO MINUTES" eyebrow should be accented in the logo orange.
 (b) This might be the place for a Scrolltide hero.
 
@@ -247,3 +252,26 @@ URLs, which is the near-duplicate an answer engine resolves by picking one.
 
 **Scope → unscheduled.** Options and the Round 32 recommendation are in
 `docs/audits/round-32-broken-data-links.md` §4.
+
+### 12 · `.card p` overrides the label type on every `.card-tag`
+
+**Found in Round 34's grounding, measured not assumed.** `.card-tag` asks for
+`font-size: var(--thi-fs-label)` — `0.75rem`, 12px. It renders at **15.04px**, because
+`.card p { font-size: .94rem }` is more specific and the eyebrow is a `<p>` inside a `.card`.
+The label token is being ignored wherever a `.card-tag` sits in a card, which is all three of
+them: the free-account eyebrow and the "Modeled — per-ZIP coming soon" label on a ZIP dashboard,
+and "<alert> · condition detected" on the signed-in dashboard.
+
+**Why it needs its own round rather than a one-line fix:** putting the eyebrows back on the
+label scale shrinks them by 3px on 225 indexed pages plus the signed-in view, which changes the
+card's type rhythm and the vertical space the heading beneath it sits in. It is a type change
+dressed as a specificity bug. It also wants a decision on whether the fix is a more specific
+`.card .card-tag` rule, a reordering, or dropping `.card p`'s size altogether — the last of which
+reaches every paragraph in every card on the site.
+
+**Not a contrast problem.** 15.04px at weight 600 is not WCAG large text either way (that needs
+18.66px AND bold), so the 4.5:1 threshold Round 34 measured against applies at either size.
+
+**Decision needed:** which fix, and whether the eyebrows should be 12px at all.
+
+**Scope → unscheduled.**

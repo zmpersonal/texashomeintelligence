@@ -318,6 +318,21 @@ section.block h2 { max-width: 40em; }
 .card-featured { border-top: 2px solid var(--thi-amber); }
 .card-featured .icon-badge { width: 46px; height: 46px; font-size: 1.15rem; }
 .card-tag { display: inline-block; font-family: var(--thi-font-ui); font-size: var(--thi-fs-label); font-weight: 600; text-transform: uppercase; letter-spacing: var(--thi-ls-chip); color: var(--thi-slate-700); background: var(--thi-mist); padding: 3px 10px; border-radius: var(--thi-r-chip); margin-bottom: 10px; }
+/* Round 34. The one content accent on a ZIP dashboard: the free-account
+   eyebrow, carrying the logo's Caliche Amber.
+
+   A MODIFIER, not a change to .card-tag, because that class is shared with two
+   labels that must stay quiet — "Modeled - per-ZIP coming soon" on the same
+   page and "<alert> - condition detected" on the signed-in dashboard. Those are
+   data labels; this is the one place the brand spends its accent.
+
+   Ink rather than navy on the pill. Navy measures 4.53:1 against this amber,
+   which passes AA for 15px text by 0.03 - a margin that a later nudge to
+   either token would erase without anything failing loudly. Ink is 5.15:1 on
+   the same pill, so the accent survives a token tweak. Both are existing
+   brand tokens; no new shade of amber was introduced, which would have been a
+   brand change rather than a build one. */
+.card-tag-accent { color: var(--thi-ink); background: var(--thi-amber); }
 
 .image-note { border: 1px dashed var(--line); background: var(--paper-alt); color: var(--ink-soft); font-size: 0.82rem; padding: 10px 14px; border-radius: 8px; margin: 8px 0 20px; }
 .image-note b { color: var(--ink); }
