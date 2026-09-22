@@ -36,11 +36,31 @@ Probes (P1, P2) can run in any gap; they write an audit and change no served pag
 
 ### 1 · County appraisal data → property-tax overpayment estimate
 
+> **DEFERRED — owner-gated: requires records requests.** Not probeable from a Claude Code
+> session as things stand; see the three corrections below.
+
 **Owner:** County appraisal reports etc. to calculate how much someone is overpaying on their
 property taxes.
 
-**Grounding:** New data domain; no appraisal-district ingestion exists. The sandbox network
-allow-list already includes Travis, Bexar, Harris, Dallas and Tarrant CAD domains.
+**Grounding:** New data domain; no appraisal-district ingestion exists.
+
+**Three corrections, 2026-09-22.** The line this item used to carry — that the sandbox
+allow-list already includes the Travis, Bexar, Harris, Dallas and Tarrant CAD domains — **is
+wrong**, and two further facts close the in-session route entirely:
+
+1. **All five CAD domains are refused by egress.** `traviscad.org`, `bcad.org`, `hcad.org`,
+   `dallascad.org` and `tad.org` each answer 403 to CONNECT, as do `www.traviscad.org` and
+   `public.hcad.org`. Measured directly, not inferred.
+2. **Travis CAD's own server refuses non-browser clients** (established outside this sandbox),
+   so lifting the egress rule alone would not be enough.
+3. **Bexar CAD publishes no bulk parcel export at all.** Parcel data is obtained by signed
+   Public Information Act request — a human, paper-and-signature step, not a fetch.
+
+**What it would now take:** the terms-of-use / data-licensing document first, since it can end
+the item on its own; then a field-layout document plus a bulk file or a sample of one; one
+parcel's detail page end to end; and whatever ARB/protest statistics the district publishes,
+which is the only thing that could support a word like *overpayment* rather than *value*.
+Handed over as files, not fetched.
 
 **Why this is a probe first:**
 - *Data gate (Meta-Rule 5).* Unknown whether CAD data is available in bulk, at parcel grain,
@@ -181,7 +201,27 @@ routes already exist per topic (`/data/[location]/[topic]/[csvName].csv`).
 
 ### 7 · Crime stats and data feeds
 
+> **PROBE BLOCKED — 2026-09-22, not started.** Every source the probe needs is refused by this
+> environment's egress, so none of availability, granularity or comparability could be measured.
+> Nothing about whether crime belongs on THI has been established either way; the questions
+> below are unchanged and unanswered.
+
 **Owner:** Add crime stats and API data feeds.
+
+**Reachability, measured 2026-09-22.** All six hosts answer **403 to CONNECT** — a gateway
+policy denial, not DNS, TLS or a timeout: `data.austintexas.gov`, `data.sanantonio.gov`,
+`opendata-cosagis.opendata.arcgis.com`, `www.sanantonio.gov`, `api.usa.gov`, `cde.ucr.cjis.gov`.
+
+**Why the two city hosts being blocked is not a contradiction.** The permit and other fetchers
+really do read `data.austintexas.gov` and `data.sanantonio.gov` — but ingestion runs in **GitHub
+Actions** (`.github/workflows/data-ingestion.yml`), on runners with ordinary egress, and never
+in a Claude Code session. A host working in production says nothing about whether it is
+reachable here.
+
+**Two ways to unblock, whenever the owner wants this probed:** widen the session environment's
+network policy to those hosts, or hand over the files — a dataset's terms/licence page, its
+field dictionary, and one export or sample per metro — which is enough to answer availability,
+granularity and comparability without any fetch at all.
 
 **Why this is a probe first:**
 - *Data gate.* What APD and SAPD (and county) publish, at what grain, how current, and under what
