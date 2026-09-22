@@ -154,7 +154,14 @@ const analysis = defineCollection({
     updatedAt: z.string().optional(),
     published: z.boolean().default(false), // deploy-on-command; false builds no route
     metrics: z.array(z.string()), // feed metrics the claims rest on
-    sources: z.array(z.object({ name: z.string(), asOf: z.string() })).min(1),
+    // `url` approved in Round 31b: ADDITIVE AND OPTIONAL, with no backfill of
+    // existing articles. Every article written before it — and everything the
+    // autoposter writes today — stays valid, and the template links a source
+    // only where a URL is actually stored. An unlinked source is a named
+    // source, never an invented link.
+    sources: z
+      .array(z.object({ name: z.string(), asOf: z.string(), url: z.url().optional() }))
+      .min(1),
     // `series` is "<datasetId>/<location>" in THIS repo's terms — the two
     // arguments `findDataset()` takes, e.g. "eia-electricity/texas". Not the
     // article engine's metric key: the first build rendered an empty embed

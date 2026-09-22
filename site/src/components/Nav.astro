@@ -38,6 +38,12 @@ const ctaLabel = "My Dashboard";
     <nav aria-label="Primary" class="nav-menu">
       <ul class="nav-links">
         <li><a href="/data/">Data</a></li>
+        {/* D10a. Between Data and Locations because it reads as Data's sibling —
+            both answer "what does this site publish" — and it keeps My Dashboard
+            in its locked top-right slot. A real crawlable <a href>, inside the
+            same <ul> the CSS-only mobile menu reveals, so it needs no JS and no
+            change to the toggle. */}
+        <li><a href="/analysis/">Analysis</a></li>
         <li>
           <details class="nav-dropdown">
             <summary>Locations</summary>

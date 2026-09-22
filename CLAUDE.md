@@ -90,8 +90,10 @@ is the pipe when we get there.
   `.claude/skills/content-demand-ingestion/SKILL.md` — but not built until greenlit).
 - Anything AHI.
 
-**Nav for this build (confirm before writing):** `Data · Locations(dropdown: Austin, San
-Antonio)` + a persistent top-right **"My Dashboard"** button → `/dashboard/`. Methodology
+**Nav for this build (confirm before writing):** `Data · Analysis · Locations(dropdown: Austin,
+San Antonio)` + a persistent top-right **"My Dashboard"** button → `/dashboard/`. *(Analysis
+added by owner decision D10a, Round 31b — the article stream is the site's most citable layer
+and KPI #1 is citation.)* Methodology
 lives in the footer. No Tools, no Services. All nav/CTAs are real crawlable `<a href>`;
 the Locations dropdown is keyboard/touch accessible (no hover-only).
 

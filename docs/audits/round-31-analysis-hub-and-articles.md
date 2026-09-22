@@ -309,3 +309,120 @@ pages. Normalising the site footer and the stylesheet filename:
   removed none** — no Tailwind scan leak.
 - The six service pages, all three tools, `/methodology/home-stress-index/`, both
   `data/stress-index/*.json` and **`sitemap-0.xml`** are unchanged.
+
+---
+
+# 31b — Formatting pass and the owner decisions
+
+Date: 2026-09-22 · Same branch, `claude/thi-v3-round31-analysis`.
+
+Changed: `site/src/components/Nav.astro`, `site/src/pages/index.astro`,
+`site/src/pages/analysis/[slug].astro`, `site/src/content.config.ts`,
+`site/src/styles/global.css`, `site/scripts/replays/analysisrender.mjs`, `CLAUDE.md`.
+Article copy and `autoposter/` remain diff-empty against `main`.
+
+## 1. Grounding: which of the five the branch already fixed
+
+The owner's two screenshots are of `main`. Rendering the same pages from the branch at 1366px and
+390px, issue by issue:
+
+| # | Reported on `main` | On the branch | Evidence |
+|---|---|---|---|
+| 1 | Content pinned to the left edge, no gutter | **already fixed** in Round 31 | h1 at **x=343** on articles, **x=293** on the hub at 1366px; `main` was x=0 |
+| 2 | Hub dates raw ISO, unlabelled | **already fixed** in Round 31 | renders `Sep 18, 2026`, `datetime="2026-09-18"` underneath |
+| 3 | Body tables unstyled, cells run together | **NOT fixed — still broken** | `class="(none)"`, `cellPadding=0px`, `cellBorder=0px`, not in a scroller |
+| 4 | ~150-character lines, no measure | **partly fixed** | articles **76ch** (target 65–75, so still wide); **the hub's standfirst was 97ch** |
+| 5 | h2s crowd the paragraph above | **NOT fixed** | every body `h2` had `margin-top: 0px` |
+
+**Body tables, all five articles checked**, as the prompt asked: three have one —
+`did-austins-ac-rush…`, `is-austins-home-improvement-boom…`, `san-antonio-home-improvement-boom…`
+— and two have none. Round 31 styled only the embed table (`.data-table` inside
+`.analysis-embed`); a markdown table carries no class, so body tables got nothing.
+
+## 2. What 31b changed
+
+**Body tables (#3).** `.analysis > table` was added to the *existing* `table.data-table`
+selectors rather than given rules of its own, so a table in an article is the same object as a
+table on a data page and there is still one definition of what a THI table looks like.
+
+The scroll affordance needed a decision and did not need escalating. A body table has no wrapper
+to scroll inside, and adding one would need a markdown plugin over every collection on the site.
+Making the table itself the scroll container at ≤640px is the equivalent and stays in CSS. The
+risk in that pattern is column alignment, so it is measured rather than trusted: cell offsets are
+compared row by row on every body table, at 390px and 1366px, and the replay asserts it.
+
+**Measure (#4).** `.analysis` 68ch → **64ch**, which renders at ≈70ch of body text. The hub's
+standfirst is capped at 68ch — it was running the full card width at 97ch.
+
+**Vertical rhythm (#5).** Body `h2`s get `margin-top: 2.1em`, `h3`s `1.6em`, and body paragraphs
+`line-height: 1.65`. The space belongs *above* a heading: that is what groups it with its own
+section rather than the one before it. The answer box sets its own top margin and is excluded.
+
+## 3. The owner decisions, built
+
+**D10a · "Analysis" in the header nav — yes.** Placed between Data and Locations: it reads as
+Data's sibling (both answer "what does this site publish"), and it keeps My Dashboard in its
+locked top-right slot. A real crawlable `<a href>` inside the same `<ul>` the CSS-only checkbox
+menu reveals, so the mobile toggle needed no change and no JS is involved on either breakpoint.
+**`CLAUDE.md`'s nav line now reads `Data · Analysis · Locations`**, with the decision recorded
+inline, so the governance file matches what ships.
+
+Asserted: the item is present, it is the second of three, it is keyboard-focusable, and at 390px
+it is inside what the toggle reveals.
+
+**D10b · Homepage "Latest analysis" module — yes.** Heading exactly as supplied. The three most
+recent published articles, resolved at build time through the same `publishedArticles()` helper
+and the same `published` gate the hub uses, so the homepage cannot surface an article that has no
+route. It reuses the hub's card markup unchanged; only the track count differs.
+
+Placed after "Built from primary sources" and before the CTA band — editorial authority content
+sitting after the sourcing block. **It adds a section rather than editing one, so no frozen
+homepage copy is touched.** Every string on it is the article's own: title, standfirst, date, and
+the `card` block's figure.
+
+**Schema · optional `url` on `sources[]` — approved, and additive only.** `url: z.url().optional()`.
+No article was backfilled, so every source still renders as a name today; the template links a
+source only where a URL is actually stored, and an unlinked source stays a named source rather
+than an invented link. Everything the autoposter writes today remains valid.
+
+*(One incidental: `z.string().url()` is deprecated in this Zod and raised the sweep's only hint.
+Written as `z.url()`, the current form. 0 errors, 0 warnings, 0 hints.)*
+
+## 4. Verification
+
+**Replay suite, all green.** `analysisrender` **148** (110 → 148; +38 for this round's
+guarantees) · toolshub 44 · footerchrome 63 · roofscan 105 · dashmobile 38 · ac-lifespan 48 ·
+triage 127 · sign-in 18 · r9 18 · saservice 315 · r7 68, plus every unit replay.
+
+New assertions, so the next round cannot silently regress them: body tables padded, ruled,
+header-styled and **column-aligned**; hub dates human-readable with the machine date underneath;
+body text in a 65–75ch band; headings owning the space above them; the nav item present, ordered,
+keyboard-focusable and inside the mobile menu; the homepage module listing exactly the three
+newest with each figure equal to that article's `card` block; and all of it present with
+scripting disabled, including the body table as real `<table>` markup.
+
+**Sweep.** `build` · `check` (0/0/0) · `tsc` clean · `verify-content` clean · orphan check
+**0 orphans** · `wrangler deploy --dry-run` clean · **determinism 354/354 identical** across two
+consecutive builds.
+
+**Link check: 290 internal hrefs, 1 broken** — `/data/austin/storms/`, from `/austin/roofing/` and
+`/tools/roof-scan/`. Unchanged and untouched: the round scoped it to the next one. *(The earlier
+count of four included three false positives — two SSR routes with no static file, and a template
+literal inside a script string. The checker now strips `<script>` blocks and knows the SSR routes.)*
+
+**Article copy:** `git diff --stat main -- site/src/data/analysis/` and `-- autoposter/` are both
+empty.
+
+## 5. Where the same defect exists outside `/analysis/`
+
+Reported, not fixed, per scope. The gutter and measure defects were specific to the article
+template, which was the one page type rendering outside the site's standard `.wrap`. Every other
+page type sampled — service pages, tool pages, data pages, the dashboard, the homepage — already
+renders inside `.wrap` and starts at x=20 on a phone. **No other page type needs this fix.**
+
+## 6. The preview URL
+
+Workers Builds deploys on push to `main`; this branch is not merged, and no preview deployment
+was produced or requested from here. If branch previews are enabled on the Cloudflare side, the
+URL would come from that dashboard rather than from this session — nothing in the repo records
+one, and none is asserted.
