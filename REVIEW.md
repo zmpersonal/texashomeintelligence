@@ -86,3 +86,21 @@ the console. "Review is management" — a different view catches what the build 
 - [ ] Work is on a **branch**; diff + change summary ready for the owner.
 - [ ] Any owner seam left is stubbed with a documented TODO in `HANDOFF.md`.
 - [ ] **Deploy to live only on the owner's explicit command.** Staging approval ≠ auto-deploy.
+
+## 8. Verifying a round — who checks what
+
+**The division of labour, set by the owner after Round 34.** A round is verified on the
+**branch**: the build, `npm run sweep`, and render-side screenshots at the widths the round
+cares about. **The live domain is the owner's check, not Claude Code's.**
+
+- [ ] Branch verification is complete and quoted — the sweep's step count, the replay totals,
+      and screenshots of what changed.
+- [ ] **Do not block a round on reaching `texashomeintelligence.com`.** This sandbox's egress
+      policy refuses CONNECT to it (`connect_rejected`, a 403 from the gateway) and has through
+      every round so far. Note it in one line and move on; it is not a failure of the round and
+      it is not something to retry at length.
+- [ ] After a merge, **hand the owner a short list of exactly what to look at live** — the
+      routes, the widths, and the specific thing that should be different on each. That list is
+      the deliverable in place of a live screenshot.
+- [ ] Never present a branch screenshot as a live one, and never describe the live site as
+      confirmed on the strength of a branch render.
