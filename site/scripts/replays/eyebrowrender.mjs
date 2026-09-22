@@ -96,6 +96,12 @@ for (const zip of ['78704', '78205']) {
     A(`/dashboard/${zip}/ @${width} — it is the amber pill, in ink`,
       r.bg === AMBER && r.color === INK && r.hasModifier,
       `${r.color} on ${r.bg}`);
+    // Round 36. NEW, not a changed expectation — this file reported the size in
+    // a note and never asserted it, which is how the eyebrow rendered 3px over
+    // the label token for as long as it did. `.card p` is more specific than
+    // `.card-tag`, so the token was being ignored inside every card.
+    A(`/dashboard/${zip}/ @${width} — renders at the label token, 12px`,
+      Math.round(r.fontSize) === 12, `${r.fontSize}px`);
     await c.close();
   }
 }
@@ -178,6 +184,58 @@ for (const [path, needle, sid] of [
   A(`${path} — no unaccented .card-tag turned amber`,
     quiet.every((t) => t.bg !== AMBER), `${quiet.length} quiet label(s)`);
   await c.close();
+}
+
+console.log('\n══ NO EYEBROW WRAPS OR CLIPS ══');
+// Line boxes from a Range over the element's contents: an eyebrow is an
+// inline-block pill, and its own scrollHeight cannot tell one line from two
+// once padding is in play. At 15.04px the two QUIET eyebrows wrapped to two
+// lines at 390px; at the label size none of them do.
+for (const [path, sid] of [['/dashboard/78704/', null], ['/home/', SESSION.FIRED]]) {
+  for (const width of [390, 360]) {
+    const c = await b.newContext({ viewport: { width, height: 1100 } });
+    if (sid) await c.addCookies([
+      { name: 'thi_session', value: sid, domain: '127.0.0.1', path: '/', httpOnly: true, sameSite: 'Lax' },
+      { name: 'thi_signed_in', value: '1', domain: '127.0.0.1', path: '/', sameSite: 'Lax' },
+    ]);
+    const p = await c.newPage();
+    const res = await p.goto(B + path, { waitUntil: 'networkidle' });
+    const landed = new URL(p.url()).pathname;
+    A(`${path} @${width} — renders, not a redirect`, res.status() === 200 && landed === path,
+      `${res.status()} at ${landed}`);
+    if (res.status() !== 200 || landed !== path) { await c.close(); continue; }
+    const tags = await p.evaluate(() => [...document.querySelectorAll('.card-tag')].map((el) => {
+      const rng = document.createRange();
+      rng.selectNodeContents(el);
+      const boxes = [...rng.getClientRects()].filter((r) => r.width > 0 && r.height > 0);
+      return {
+        text: el.innerText.trim().slice(0, 34),
+        size: getComputedStyle(el).fontSize,
+        lines: boxes.length,
+        clipped: el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1,
+      };
+    }));
+    // WHAT IS ASSERTED, AND WHY IT IS NOT "never two lines anywhere".
+    // Measured across 15.04px and 12px at 390/360/320: the label size never
+    // ADDS a line at any width and removes four, so the fix strictly reduces
+    // wrapping. What remains is one long label — the signed-in condition
+    // eyebrow — which wraps at 360px and narrower at BOTH sizes, because the
+    // string is longer than the column. That is copy length, not type size,
+    // and shortening it is a copy change. So: one line at the design width on
+    // every page, one line at 360 on the 225-page ZIP surface, and nothing
+    // clipped anywhere.
+    if (width === 390 || path === '/dashboard/78704/') {
+      A(`${path} @${width} — every eyebrow is one line`, tags.every((t) => t.lines === 1),
+        tags.map((t) => `"${t.text}" ${t.lines}L ${t.size}`).join(' · '));
+    } else {
+      console.log(`     (line counts at ${width}: ` +
+        tags.map((t) => `"${t.text}" ${t.lines}L`).join(' · ') +
+        ' — the long label wraps at this width at either size, pre-existing)');
+    }
+    A(`${path} @${width} — no eyebrow is clipped`, tags.every((t) => !t.clipped),
+      tags.map((t) => t.size).join(', '));
+    await c.close();
+  }
 }
 
 console.log('\n══ WITH SCRIPTING OFF ══');

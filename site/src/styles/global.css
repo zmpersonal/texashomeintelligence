@@ -333,6 +333,15 @@ section.block h2 { max-width: 40em; }
    brand tokens; no new shade of amber was introduced, which would have been a
    brand change rather than a build one. */
 .card-tag-accent { color: var(--thi-ink); background: var(--thi-amber); }
+/* Round 36, BACKLOG item 12. `.card p { font-size: .94rem }` sits below this
+   file's card rules and is MORE SPECIFIC than `.card-tag` — one class plus an
+   element against one class — so every eyebrow inside a card rendered at
+   15.04px while its own rule asked for the 12px label token. Two classes win
+   it back without touching `.card p`, so no other paragraph in any card moves.
+   Scoped to `.card-tag` rather than to the accent modifier: all three eyebrows
+   were affected, and the two quiet ones deserve the label scale as much as the
+   accented one. */
+.card .card-tag { font-size: var(--thi-fs-label); }
 
 .image-note { border: 1px dashed var(--line); background: var(--paper-alt); color: var(--ink-soft); font-size: 0.82rem; padding: 10px 14px; border-radius: 8px; margin: 8px 0 20px; }
 .image-note b { color: var(--ink); }

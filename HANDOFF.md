@@ -2499,3 +2499,24 @@ separate go-live step — not implied by any phase above being "done."
   far; note it in one line rather than retrying or holding the round open. After a merge, hand
   over a short list of what to look at live: the routes, the widths, and what should be
   different on each. `REVIEW.md` §8 carries the checklist form of this.
+
+- **Round 36 — Pinterest, the eyebrow type fix, and two reminder rows.**
+  **Pinterest** joins Facebook in `Footer.astro`'s `socialProfiles` array — a data change, not a
+  markup one, so a third network is one more entry. Two 44px icons at an 8px gap fit the 163px
+  column, so the Connect block stays on one row and the footer height is unchanged (226px at
+  1366, 753px at 390). **No YouTube: that account does not exist and nothing stands in for it.**
+  **The eyebrow type fix is one rule** — `.card .card-tag { font-size: var(--thi-fs-label) }`.
+  Two classes beat `.card p`'s class-plus-element without touching it. Verified by a rule-level
+  diff of two builds: one rule added, none removed. **It removed wraps rather than causing them**
+  — two of the three eyebrows were already wrapping at 390px at 15.04px, unmeasured. Contrast is
+  unchanged at 5.15:1 and 12px/600 is still not WCAG large text, so 4.5:1 still applies.
+  **Still open, and it is copy not type:** the signed-in condition eyebrow wraps at 360px and
+  narrower at *either* size, because the string is longer than the column. Nothing clips.
+  **Two catalogue rows at 180 days each**, riding the smoke/CO test's twice-a-year rhythm. Both
+  read as maintenance, name no area, imply no threat, and pass the banned-phrase guard — asserted
+  in `r7replay`, along with the add → complete → recalculate path that makes a row a reminder.
+
+- **A note for anyone adding a `.card-tag`:** it is now pinned at the label token by
+  `.card .card-tag`. If a future rule needs to beat that, beat it deliberately — the 3px drift
+  this fixed survived for many rounds precisely because a size was reported in a replay note and
+  never asserted. `eyebrowrender` asserts the computed size now.

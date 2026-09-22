@@ -32,6 +32,24 @@ Probes (P1, P2) can run in any gap; they write an audit and change no served pag
 
 ---
 
+## Standing rule — a replay that reports a value is not a check
+
+**When a replay measures something worth measuring, it asserts it.** A value printed into a
+note is documentation; only an assertion fails a round. Two drifts survived precisely this gap:
+
+- **The eyebrow's 3px.** `eyebrowrender` printed the computed font size in every assertion's
+  note and never asserted it, so a 15.04px render sat under a rule asking for 12px across 225
+  indexed pages until Round 36 went looking (item 12).
+- **The `/home/` label check that had nothing to look at.** It loaded the signed-in dashboard
+  without a session, found no label, and counted "no accented label found" as a pass. An
+  assertion that cannot fail is not a check — it now loads a session, requires the label to be
+  **present** as well as correct, and separately asserts the page did not redirect (Round 34).
+
+The pattern in both: the replay was looking at the right thing and declined to hold it to
+anything. If a number is worth printing, decide what it must be.
+
+---
+
 ## Standing test — does the number change the action?
 
 **Before any new data domain is proposed, it has to pass this: does the reading's VALUE change
@@ -136,8 +154,12 @@ Handed over as files, not fetched.
 > **SHIPPED — Round 33** (`docs/audits/round-33-footer.md`). Four columns: brand + Connect,
 > Company, Services, Data. Decisions taken: D2a keep all seven service links in their own
 > column · D2b Tools in Company · D2c metro links are anchors on `/data/`, no location hubs ·
-> D2d no About link until there is copy · D2e Facebook only. **Still open from this item:**
-> the About page and its link, and YouTube / Pinterest icons if those accounts are created.
+> D2d no About link until there is copy · D2e Facebook only.
+>
+> **Pinterest added in Round 36** (`docs/audits/round-36-chrome-and-reminders.md`), same
+> treatment, into the same profiles array; the Connect block stays on one row and the footer
+> height is unchanged at both widths. **Still open from this item:** the About page and its
+> link, and a YouTube icon if that account is ever created.
 
 **Owner:**
 - Locations → **Company**: add About, keep locations (Austin, San Antonio), Sign in, My Dashboard
@@ -364,6 +386,21 @@ URLs, which is the near-duplicate an answer engine resolves by picking one.
 
 ### 12 · `.card p` overrides the label type on every `.card-tag`
 
+> **SHIPPED — Round 36** (`docs/audits/round-36-chrome-and-reminders.md`). Fixed with one rule,
+> `.card .card-tag { font-size: var(--thi-fs-label) }` — two classes beat `.card p`'s class plus
+> element without touching it, so no other paragraph in any card moved. Verified by a
+> rule-level diff of two builds: **one rule added, none removed, none changed.**
+>
+> **It removed wraps rather than causing them.** Two of the three eyebrows were already wrapping
+> to two lines at 390px at the old size, unmeasured. At the label size the count never rises at
+> any width and falls in four cases. **Contrast unchanged at 5.15:1**, and 12px/600 is still not
+> WCAG large text, so the 4.5:1 threshold still applies — now asserted alongside the size, which
+> this file previously reported and never checked.
+>
+> **One thing left, and it is copy, not type:** the signed-in condition eyebrow wraps at 360px
+> and narrower at *either* size, because the string is longer than the column. Nothing clips.
+> Shortening it would be a copy change.
+
 **Found in Round 34's grounding, measured not assumed.** `.card-tag` asks for
 `font-size: var(--thi-fs-label)` — `0.75rem`, 12px. It renders at **15.04px**, because
 `.card p { font-size: .94rem }` is more specific and the eyebrow is a `<p>` inside a `.card`.
@@ -387,6 +424,15 @@ reaches every paragraph in every card on the site.
 
 ### 13 · Security-adjacent reminders in the maintenance catalogue
 
+> **SHIPPED — Round 36** (`docs/audits/round-36-chrome-and-reminders.md`). `exterior-lighting`
+> ("Exterior lighting check") and `locks-latches` ("Locks and alarm test"), **both at 180 days**
+> — the twice-a-year rhythm the smoke/CO test already sets, which is when a homeowner is walking
+> the house anyway. Editable like every other row. Both pass the banned-phrase guard, name no
+> area and imply no threat, and one is proven end to end: added, rendered, and recalculating its
+> next due date from the day it is marked done. **The owner may change either cadence** — that
+> was the standing instruction, and the numbers are an argument about batching rather than a
+> finding.
+
 **Owner (D7a, 2026-09-22): yes, but not this round.**
 
 **What it is:** two rows in the existing reminder catalogue — an **exterior lighting check** and
@@ -406,3 +452,41 @@ checks, never damage and fix. Nothing here implies a threat or references an are
 a time.
 
 **Scope → unscheduled, small.**
+
+### 14 · The condition eyebrow's label is longer than its pill
+
+**Owner's, to write — copy, not type.** Logged from Round 36; no replacement copy is proposed
+here.
+
+**What renders:** `/home/`'s condition card carries `{alert.label} · condition detected` as its
+eyebrow. Four alert labels exist — Freeze, Hail, Extreme heat, and Heavy rain and flooding — so
+four strings are possible, and the one a reader sees depends on which condition fired.
+
+**Measured** at the 12px label size Round 36 restored, by substituting each label into the real
+pill and counting its rendered line boxes (not by calculating widths — an arithmetic check
+disagreed with the render by a pixel, and the render is what a reader sees):
+
+| eyebrow | 390px | 360px | 320px |
+|---|---|---|---|
+| FREEZE · CONDITION DETECTED | 1 line | 1 line | 1 line |
+| HAIL · CONDITION DETECTED | 1 line | 1 line | 1 line |
+| EXTREME HEAT · CONDITION DETECTED | 1 line | **2 lines** | **2 lines** |
+| HEAVY RAIN AND FLOODING · CONDITION DETECTED | **2 lines** | **2 lines** | **2 lines** |
+
+So two of the four fit everywhere, one wraps below the design width, and **the longest wraps at
+the design width itself**. Nothing clips at any width — a wrapped eyebrow is legible, just two
+lines of a shouting label where one was intended.
+
+**Why type cannot fix it.** At the previous 15.04px every one of these was worse; the label size
+removed wraps rather than causing them (item 12). Going smaller than the label token would break
+the type scale, which BRAND.md does not permit buying a fit with. The string is longer than the
+column, and only the string can change.
+
+**Constraint on whatever replaces it:** it is rendered by `.card-tag`, shares that pill with two
+other eyebrows, and is uppercased by CSS — so it is read at roughly 1.4× the character width of
+its source, and a replacement should be judged at 320px with the longest alert label, not at
+desktop with the shortest.
+
+**Decision needed:** the replacement wording, from the owner.
+
+**Scope → unscheduled, copy.**
