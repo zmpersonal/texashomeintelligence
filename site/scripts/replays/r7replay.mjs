@@ -435,6 +435,69 @@ console.log('\n══ PUBLIC ZIP DASHBOARD UNTOUCHED ══');
   await c.close();
 }
 
+// ══ ROUND 36 — THE TWO NEW CATALOGUE ROWS ════════════════════════════════
+// Added, not changed: nothing above this pinned the catalogue's contents, so
+// no existing expectation moves. What is asserted is that the new rows behave
+// like the eight that were already there — offered, addable, and recalculating
+// from the day they are marked done — and that their copy stays inside the
+// same guard every rendered action does.
+console.log('\n══ NEW REMINDERS: EXTERIOR LIGHTING AND LOCKS ══');
+{
+  const NEW = ['exterior-lighting', 'locks-latches'];
+  const { p, c } = await open(S.POP);
+
+  const offered = await p.evaluate(() =>
+    [...document.querySelectorAll('[name="task_key"] option')]
+      .map((o) => ({ key: o.value, text: o.textContent.trim() })));
+  for (const key of NEW) {
+    const row = offered.find((o) => o.key === key);
+    A('13', `${key} is offered in the catalogue`, !!row, row?.text);
+    // It must read as upkeep. The same guard the rendered actions pass.
+    const hit = row && BANNED.find((w) => new RegExp(`\\b${w}\\b`, 'i').test(row.text));
+    A('13', `${key} passes the banned-phrase guard`, !hit, hit ? `HIT: ${hit}` : row?.text ?? '');
+    // And it must not reach for a place or a threat — the memo's whole point.
+    A('13', `${key} names no area and implies no threat`,
+      !!row && !/crime|burglar|theft|break-in|unsafe|danger|neighbou?rhood|ZIP/i.test(row.text),
+      row?.text ?? '');
+  }
+
+  // Add one, complete it, and read the next due date back. The recalculation
+  // is the behaviour that makes a catalogue row a reminder rather than a label.
+  const added = await p.evaluate(async () => {
+    const fd = new FormData();
+    fd.append('task_key', 'exterior-lighting');
+    const res = await fetch('/api/reminders/', { method: 'POST', body: fd });
+    return res.status;
+  });
+  A('13', 'exterior-lighting can be added', added >= 200 && added < 400, `HTTP ${added}`);
+
+  const { p: p2, c: c2 } = await open(S.POP);
+  const before = await p2.evaluate(() => {
+    const el = [...document.querySelectorAll('[data-reminder]')]
+      .find((e) => /exterior lighting/i.test(e.innerText));
+    return el ? { id: el.dataset.reminder, text: el.innerText.replace(/\s+/g, ' ').trim().slice(0, 80) } : null;
+  });
+  A('13', 'exterior-lighting renders as a reminder row', before !== null, before?.text);
+  if (before) {
+    await p2.evaluate(async (rid) => {
+      const fd = new FormData();
+      fd.append('reminder_id', rid); fd.append('action', 'complete'); fd.append('days', '180');
+      await fetch('/api/reminders/action/', { method: 'POST', body: fd });
+    }, before.id);
+    const { p: p3, c: c3 } = await open(S.POP);
+    const after = await p3.evaluate(() => {
+      const el = [...document.querySelectorAll('[data-reminder]')]
+        .find((e) => /exterior lighting/i.test(e.innerText));
+      return el ? el.innerText.replace(/\s+/g, ' ').trim().slice(0, 120) : null;
+    });
+    A('13', 'marking it done recalculates from that day', after !== null && after !== before.text,
+      after ?? 'row vanished');
+    await c3.close();
+  }
+  await c2.close();
+  await c.close();
+}
+
 console.log(`\n═══ ${pass} passed, ${fail} failed ═══`);
 fs.writeFileSync('/tmp/r7results.json', JSON.stringify({ pass, fail, popHeight, results }, null, 2));
 await b.close();

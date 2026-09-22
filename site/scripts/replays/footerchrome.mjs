@@ -135,7 +135,15 @@ const EXPECTED_COLUMNS = [
     '/data/#austin', '/data/#san-antonio', '/privacy/',
   ]],
 ];
-const FACEBOOK = 'https://www.facebook.com/people/Texas-Home-Intelligence/61593991198459/';
+// Round 36 changed two expectations in this file, and only two: the profile
+// COUNT (one -> two) and the Pinterest half of the "no YouTube or Pinterest"
+// assertion, which Round 33 wrote when neither account existed. Pinterest now
+// does; YouTube still does not, and the assertion still says so. Everything
+// else here is untouched.
+const PROFILES = [
+  ['Facebook', 'https://www.facebook.com/people/Texas-Home-Intelligence/61593991198459/'],
+  ['Pinterest', 'https://www.pinterest.com/texasintelligence/'],
+];
 
 {
   const c = await b.newContext({ viewport: { width: 1366, height: 1200 } });
@@ -180,20 +188,21 @@ const FACEBOOK = 'https://www.facebook.com/people/Texas-Home-Intelligence/615939
       svgHidden: [...a.querySelectorAll('svg')].every((s2) => s2.getAttribute('aria-hidden') === 'true'),
       imgs: a.querySelectorAll('img').length,
     })));
-  A('exactly one social profile ships', social.length === 1, `${social.length}`);
-  A('and it is the exact Facebook URL', social[0]?.href === FACEBOOK, social[0]?.href);
-  A('rel names me and noopener',
-    /\bme\b/.test(social[0]?.rel ?? '') && /\bnoopener\b/.test(social[0]?.rel ?? ''),
-    social[0]?.rel);
-  A('it has an accessible name', /facebook/i.test(social[0]?.name ?? ''), social[0]?.name);
-  A('the mark is an inline svg, hidden from the accessibility tree',
-    social[0]?.svgs === 1 && social[0]?.svgHidden && social[0]?.imgs === 0,
-    `${social[0]?.svgs} svg, ${social[0]?.imgs} img`);
-  // No YouTube or Pinterest this round, and no placeholder standing in for one.
+  A(`${PROFILES.length} social profiles ship`, social.length === PROFILES.length, `${social.length}`);
+  for (const [i, [name, url]] of PROFILES.entries()) {
+    const got = social[i];
+    A(`${name} — the exact URL, in order`, got?.href === url, got?.href);
+    A(`${name} — rel names me and noopener`,
+      /\bme\b/.test(got?.rel ?? '') && /\bnoopener\b/.test(got?.rel ?? ''), got?.rel);
+    A(`${name} — has an accessible name`, new RegExp(name, 'i').test(got?.name ?? ''), got?.name);
+    A(`${name} — an inline svg, hidden from the accessibility tree`,
+      got?.svgs === 1 && got?.svgHidden && got?.imgs === 0,
+      `${got?.svgs} svg, ${got?.imgs} img`);
+  }
+  // YouTube still does not exist, and nothing stands in for it.
   const allFooterHrefs = await p.evaluate(() =>
     [...document.querySelectorAll('footer a')].map((a) => a.getAttribute('href')));
-  A('no YouTube or Pinterest icon',
-    !allFooterHrefs.some((h) => /youtube|pinterest/i.test(h ?? '')));
+  A('no YouTube icon', !allFooterHrefs.some((h) => /youtube/i.test(h ?? '')));
   A('no placeholder href anywhere in the footer',
     !allFooterHrefs.some((h) => !h || h === '#' || h.startsWith('javascript:')),
     allFooterHrefs.filter((h) => !h || h === '#').join(', ') || 'none');
@@ -271,15 +280,20 @@ for (const width of [390, 360]) {
         // "Texas Home Intelligence on Facebook". The class is what the
         // stylesheet keys the 44px box off, so it is the honest handle.
         social: a.classList.contains('footer-social-link'),
+        top: Math.round(r.top),
         t: (a.getAttribute('aria-label') || a.innerText || '').trim().slice(0, 40),
       };
     }));
   const small = taps.filter((t) => t.h < 44);
   A(`${width}px — every footer link is at least 44px tall`, small.length === 0,
     `${taps.length - small.length}/${taps.length}${small.length ? ' — ' + small.slice(0, 3).map((t) => `${t.h}px "${t.t}"`).join(', ') : ''}`);
-  const icon = taps.find((t) => t.social);
-  A(`${width}px — the icon target is 44px both ways`, !!icon && icon.h >= 44 && icon.w >= 44,
-    icon ? `${icon.w}x${icon.h}` : 'icon link not found');
+  const icons = taps.filter((t) => t.social);
+  A(`${width}px — every icon target is 44px both ways`,
+    icons.length === PROFILES.length && icons.every((i) => i.h >= 44 && i.w >= 44),
+    icons.map((i) => `${i.w}x${i.h}`).join(', ') || 'no icon links found');
+  // A second icon must not push the Connect block onto a second row on a phone.
+  const rows = new Set(icons.map((i) => i.top));
+  A(`${width}px — the icons sit on one row`, rows.size === 1, `${rows.size} row(s)`);
   await c.close();
 }
 

@@ -97,6 +97,19 @@ export const TASK_CATALOGUE: TaskDefinition[] = [
     note: "Spring and autumn, sooner under heavy tree cover." },
   { key: "hvac-seasonal", label: "HVAC seasonal service", defaultCadenceDays: 182,
     note: "Before cooling season and before heating season." },
+  // Round 36, BACKLOG item 13. Both ride the twice-a-year rhythm the smoke/CO
+  // test already sets, because that is when a homeowner is walking the house
+  // anyway — the cadence is an argument about batching, not a finding, and
+  // like every row here it is a default the homeowner can change.
+  //
+  // They read as maintenance because that is what they are: hardware wears and
+  // bulbs fail. Neither says anything about an area, and neither implies a
+  // threat — the round that produced them established that the useful part of
+  // the idea was the upkeep, not any figure attached to a place.
+  { key: "exterior-lighting", label: "Exterior lighting check", defaultCadenceDays: 180,
+    note: "Bulbs and photocells fail quietly; a walk round after dark finds them." },
+  { key: "locks-latches", label: "Locks and alarm test", defaultCadenceDays: 180,
+    note: "Deadbolts and window latches stiffen with use; test alongside the alarms." },
 ];
 
 /**
