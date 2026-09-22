@@ -44,6 +44,45 @@ export function publishedDataPages(location?: string): DataPageSpec<any>[] {
   );
 }
 
+/**
+ * The link to a feed's data page, or `undefined` when no such page is built.
+ *
+ * Round 32. Two callers wrote `/data/${location}/storms/` by hand and only one
+ * metro has a spec with that topic, so on the other the href pointed at a
+ * route that does not exist. The registry is the only thing that knows which
+ * pages build, so every cross-link into /data/ resolves through here. A caller
+ * that gets `undefined` withholds the LINK and keeps its source and as-of
+ * label: the provenance of a reading never depends on whether there is a page
+ * to link to.
+ *
+ * `topic` is optional but rarely optional in practice. A dataset can back more
+ * than one page — `noaa-storm-events` backs both `/data/san-antonio/storms/`
+ * and `/data/austin/roofing/`, which frames the same NOAA records for a
+ * roofing reader — so a lookup by dataset alone can resolve to a page the
+ * caller did not mean, under a heading its link text does not match. Callers
+ * naming a specific page pass the topic; the article layer, which only knows
+ * the series a chart was drawn from, does not.
+ */
+export function dataPageLink(
+  datasetId: string,
+  location: string,
+  topic?: string,
+): { href: string; label: string } | undefined {
+  const spec = publishedDataPages(location).find(
+    (s) => s.datasetId === datasetId && (topic === undefined || s.topic === topic),
+  );
+  return spec ? { href: `/data/${spec.location}/${spec.topic}/`, label: spec.h1 } : undefined;
+}
+
+/** The href alone, for callers that carry their own link text. */
+export function dataPageHref(
+  datasetId: string,
+  location: string,
+  topic?: string,
+): string | undefined {
+  return dataPageLink(datasetId, location, topic)?.href;
+}
+
 /** Whether `/data/{location}/` exists — callers must not link to it otherwise. */
 export function hasDataHub(location: string): boolean {
   return publishedDataPages(location).length > 0;

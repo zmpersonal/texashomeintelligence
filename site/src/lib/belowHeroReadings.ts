@@ -6,6 +6,7 @@
  * Each reader states the ONE fact its feed supports and nothing beyond it.
  */
 import { findDataset, freshnessOf, type Freshness } from "./datasets";
+import { dataPageHref } from "./dataPages";
 // Round 10b: a module-scope `new Date()` reads 1970 under the Workers runtime
 // that Astro builds against. Anything that needs the real build date uses this.
 import { buildNow } from "../data/serviceNotices";
@@ -251,7 +252,7 @@ const READERS: Record<string, Reader> = {
       freshness: freshnessOf(dataset),
       sourceName: dataset.source.name,
       sourceUrl: dataset.source.url,
-      href: `/data/${location}/storms/`,
+      href: dataPageHref("noaa-storm-events", location, "storms"),
       linkLabel: "Full storm and flood event data, sources and limitations",
       lagDays: Math.round((buildNow().getTime() - new Date(rows[0].observedAt).getTime()) / 86_400_000),
     };
@@ -333,7 +334,7 @@ const READERS: Record<string, Reader> = {
       freshness: freshnessOf(hit.dataset),
       sourceName: hit.dataset.source.name,
       sourceUrl: hit.dataset.source.url,
-      href: `/data/${location}/drought/`,
+      href: dataPageHref("usdm-drought", location, "drought"),
       linkLabel: "Full drought data, sources and limitations",
     };
   },

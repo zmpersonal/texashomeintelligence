@@ -19,11 +19,12 @@ owner outside the repo and is deliberately absent here.
 | Round | Objective | Items | Blocked on |
 |---|---|---|---|
 | 31 | Analysis discoverability + article formatting | 9, 10 | nothing (nav + homepage module surfaced as decisions, not built) |
-| 32 | Footer restructure | 2 | decisions D2a–D2e |
-| 33 | Dashboard free-account card accent | 5a | nothing — small; may fold into 32 if owner prefers |
-| 34 | Privacy disclosure → tag container → conversion events | 3 | D3a–D3d; privacy copy is 🔴 owner-approved before any tag ships |
-| 35 | Metric contract for external readers (`data-metric` / JSON) | 6 | D6 (the consumer's config) |
-| 36 | Hero system evaluation (probe, then build) | 4, 5b | D4a–D4c |
+| 32 | Zero broken internal links (shipped) | — | nothing — done, see `docs/audits/round-32-broken-data-links.md` |
+| 33 | Footer restructure | 2 | decisions D2a–D2e |
+| 34 | Dashboard free-account card accent | 5a | nothing — small |
+| 35 | Privacy disclosure → tag container → conversion events | 3 | D3a–D3d; privacy copy is 🔴 owner-approved before any tag ships |
+| 36 | Metric contract for external readers (`data-metric` / JSON) | 6 | D6 (the consumer's config) |
+| 37 | Hero system evaluation (probe, then build) | 4, 5b | D4a–D4c |
 | P1 | Probe: county appraisal data | 1 | probe only — no build until data + legal gates pass |
 | P2 | Probe: crime data | 7 | probe only — D7 |
 
@@ -214,3 +215,29 @@ confirmed by `check-orphans.mjs`.**
 
 **Scope → Round 31** (footer link + hub + article template; nav and homepage module built only on
 owner approval).
+
+### 11 · Data-page slug parity
+
+**Owner (Round 32 decision A):** Austin storm events publish at `/data/austin/roofing/`,
+San Antonio's at `/data/san-antonio/storms/`. Candidate fix: 301 roofing → storms with roofing
+as a section; needs its own round (URL move, citation risk).
+
+**Grounding (measured in Round 32, not a chat read):** both pages render the same feed —
+`austinRoofing.ts` is `topic: "roofing"`, `sanAntonioStorms.ts` is `topic: "storms"`, and both
+carry `datasetId: "noaa-storm-events"`. Austin's file holds 88 non-seed records over 7 counties
+(wind 33, flood 34, hail 20, tornado 1); San Antonio's 94 over 8. `/data/austin/roofing/` is not
+a roofing subset: its own description covers "hail, wind, flood and tornado events for the
+seven-county Austin area". The mismatch cost a broken link — the readings layer asked every
+metro for `storms` and Austin did not have it — which Round 32 fixed at the source. **Nothing is
+broken while this sits:** the Austin storm reading keeps its source and as-of and carries no
+onward link, where San Antonio's links out.
+
+**Why its own round:** moving a published, indexed URL is a citation risk (KPI #1), needs a 301,
+touches `llms.txt`, the sitemap, the CSV endpoint and every cross-link, and the alternative —
+adding `/data/austin/storms/` beside the roofing page — publishes the same 88 records at two
+URLs, which is the near-duplicate an answer engine resolves by picking one.
+
+**Decisions needed:** which direction the 301 runs, and what the surviving page is called.
+
+**Scope → unscheduled.** Options and the Round 32 recommendation are in
+`docs/audits/round-32-broken-data-links.md` §4.

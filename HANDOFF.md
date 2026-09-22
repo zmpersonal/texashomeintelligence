@@ -2406,9 +2406,38 @@ separate go-live step — not implied by any phase above being "done."
   a body table has no wrapper to scroll inside and adding one would need a markdown plugin over
   every collection. Column alignment under that display change is asserted, not assumed.
 
-- **🟡 Round 31b — `/data/austin/storms/` is still broken, and is the only broken internal link
-  on the site.** 290 internal hrefs checked, 1 broken, from `/austin/roofing/` and
-  `/tools/roof-scan/`. Scoped to the next round by the owner. Note for whoever takes it: the
-  earlier count of four included three false positives — `/home/` and `/home/sign-in/` are SSR
-  routes with no static file, and `/dashboard/${e}/` is a template literal inside a script
-  string. The link checker used in 31b strips `<script>` blocks and excludes the SSR routes.
+- **Round 32 — `/data/austin/storms/` is fixed at the source, and the link check now gates.**
+  Every cross-link into `/data/` resolves through `dataPageLink()` / `dataPageHref()` in the
+  data-page registry (`site/src/lib/dataPages/index.ts`), which returns `undefined` when no
+  such page builds; a reading that gets `undefined` withholds the LINK and keeps its source
+  and as-of. `site/scripts/check-links.mjs` (`npm run check-links`) walks the built site and
+  **exits 1** on any internal href nothing serves — run it before calling a round done. It
+  reads the SSR route list out of `src/pages/**` (`export const prerender = false`) rather
+  than a hand-fed list, which is what produced 31b's three false positives.
+  `site/scripts/replays/datalinksrender.mjs` asks the same question of the served site.
+  `npm run check-orphans` is now a script name too; the file has been committed since Round 29.
+
+- **Round 32 — the Austin storms page: DECIDED, option A, no page now.** Grounding corrected
+  the premise: Austin's NOAA storm-events file (88 non-seed records, live) is already
+  published — as `/data/austin/roofing/`, whose own description covers "hail, wind, flood and
+  tornado events". The broken href came from a **topic slug**, not missing data: `austinRoofing`
+  is `topic: "roofing"`, `sanAntonioStorms` is `topic: "storms"`, and the readings layer asked
+  every metro for `storms`. Three options, with the recommendation, are in
+  `docs/audits/round-32-broken-data-links.md` §4. **The owner took option A: no Austin storms
+  page now.** Nothing is broken by that — the Austin reading carries its source and as-of and no
+  onward link. The slug mismatch itself is parked as BACKLOG item 11 with a candidate fix (301
+  roofing → storms, roofing as a section) and needs its own round, because moving a published
+  indexed URL is a citation risk. **Do not add a second page over the same 88 records without
+  deciding what happens to `/data/austin/roofing/` first.**
+
+- **Round 32 — the sweep runs itself now: `npm run sweep`.** build → `npm run check` → stop the
+  worker → `npm run fixture` → start the worker → 13 units and gates → 12 render replays → stop
+  the worker. The ordering is the one `scripts/replays/README.md` already described; it is code
+  now because prose did not stop it being got wrong. The specific trap: `npm run build` deletes
+  `dist/client/data/stress-index/fixture-condition.json`, so a rebuild without a re-seed fails
+  r7replay's four condition-card assertions with "no card rendered", which reads as a product
+  regression and is not one (Round 16, and again in Round 32). The runner re-seeds
+  unconditionally after a build and refuses to continue if the artifact is still missing.
+  `--skip-build` reuses `dist/` and re-seeds only if the artifact is gone; `--only=a,b` runs a
+  subset. `check-citations` is deliberately excluded — it needs the real network and runs weekly
+  in CI.

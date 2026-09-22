@@ -4,6 +4,19 @@ These run the **built worker** in a browser and assert on what it actually rende
 A green `npm run build` does not catch a dropped source line, a withheld day shown
 anyway, or an action that says "fix" instead of "check" — these do.
 
+## Just run the sweep
+
+```bash
+npm run sweep            # build, check, seed the fixture, start the worker,
+                         #   run every unit, gate and render replay, stop the worker
+npm run sweep -- --skip-build          # reuse dist/ (re-seeds only if the artifact is gone)
+npm run sweep -- --only=r7replay       # one step
+```
+
+`scripts/run-sweep.mjs` executes the order below so it cannot be got wrong — that is the whole
+reason it exists. What follows is still accurate and is what the runner does; read it when a
+step fails, or when you need to drive one by hand.
+
 ## The order matters
 
 The worker keeps local D1 **in memory** and flushes its own state back over anything
