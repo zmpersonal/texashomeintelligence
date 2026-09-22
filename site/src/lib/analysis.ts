@@ -20,7 +20,7 @@
  */
 import { getCollection, type CollectionEntry } from "astro:content";
 import { formatDate, isIsoLike, machineDate } from "./format";
-import { publishedDataPages } from "./dataPages";
+import { dataPageLink } from "./dataPages";
 
 export type Article = CollectionEntry<"analysis">;
 
@@ -88,9 +88,11 @@ export function articleDatetime(value: string): string | undefined {
  * `series` is "<datasetId>/<location>" — the two arguments `findDataset()`
  * takes. The data pages are registered with those same two fields, so the link
  * is a lookup in that registry rather than a URL assembled from the slug.
- * `publishedDataPages()` rather than the full list on purpose: a spec whose
- * dataset is not publishable builds no route, and a link to a page that does
- * not exist is worse than no link.
+ *
+ * Round 31 wrote that lookup here; Round 32 moved it to `dataPageLink()` in
+ * the registry, where the readings layer and this one share it. The rule it
+ * enforces is unchanged: a spec whose dataset is not publishable builds no
+ * route, and a link to a page that does not exist is worse than no link.
  */
 export function dataPageFor(series: string | undefined):
   | { href: string; label: string }
@@ -98,8 +100,5 @@ export function dataPageFor(series: string | undefined):
   if (!series) return undefined;
   const [datasetId, location] = series.split("/");
   if (!datasetId || !location) return undefined;
-  const spec = publishedDataPages().find(
-    (s) => s.datasetId === datasetId && s.location === location,
-  );
-  return spec ? { href: `/data/${spec.location}/${spec.topic}/`, label: spec.h1 } : undefined;
+  return dataPageLink(datasetId, location);
 }

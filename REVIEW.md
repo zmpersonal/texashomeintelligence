@@ -14,8 +14,14 @@ the console. "Review is management" — a different view catches what the build 
 - [ ] `npm run check` (astro check / typecheck) is clean, or every remaining item is
       understood and surfaced.
 - [ ] `npm run verify-content` passes (if the round touched content).
-- [ ] No dead links; nav and CTAs are real crawlable `<a href>`; Locations dropdown works by
-      keyboard and touch (not hover-only).
+- [ ] `npm run check-links` passes — **0 broken internal links. This one fails the round.**
+      It exits 1 on any href nothing serves. Round 32 added it after `/data/austin/storms/`
+      shipped on two indexed pages: a link to a page that does not exist builds green, and
+      nothing else asks the question. A new cross-link into a generated section resolves
+      through that section's registry rather than being assembled from a slug.
+- [ ] `npm run check-orphans` passes — no indexed page that nothing links to.
+- [ ] Nav and CTAs are real crawlable `<a href>`; Locations dropdown works by keyboard and
+      touch (not hover-only).
 
 ## 1. Facts, sourcing, freshness (trust)
 - [ ] Every data reading shows its **source + "as of / updated"** line.

@@ -225,9 +225,16 @@ const areaLabels = Object.fromEntries(areaDefinitions().map((a) => [a.areaId, a.
               dataThrough={confirmed.freshness.dataThrough}
               source={confirmed.sourceName}
             />
-            <p style="margin-top:12px;">
-              <a href={confirmed.href}>Full storm and flood event data, sources and limitations &rarr;</a>
-            </p>
+            {/* The link is conditional and the DataStatus above it is not:
+                a metro whose storm page is not published keeps its source and
+                as-of label and loses only the onward link. */}
+            {confirmed.href && (
+              <p style="margin-top:12px;">
+                <a href={confirmed.href}>
+                  Full storm and flood event data, sources and limitations &rarr;
+                </a>
+              </p>
+            )}
           </div>
         ) : null,
       )}

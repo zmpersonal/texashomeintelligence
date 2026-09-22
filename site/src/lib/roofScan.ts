@@ -12,6 +12,7 @@
  * one thing this tool must not do is let a reader add them together.
  */
 import { findDataset, freshnessOf, type Freshness } from "./datasets";
+import { dataPageHref } from "./dataPages";
 import { ZIP_AREAS } from "../data/zip-areas";
 import { buildNow } from "../data/serviceNotices";
 
@@ -59,7 +60,10 @@ export interface ConfirmedHailReading {
   freshness: Freshness;
   sourceName: string;
   sourceUrl: string;
-  href: string;
+  /** The metro's storm data page, when one is published. Optional because a
+   * metro can have the dataset and no page built over it — the reading still
+   * renders, with its source and as-of, minus the link. */
+  href?: string;
 }
 
 export type RadarHailReading =
@@ -126,7 +130,7 @@ export function confirmedHail(metro: string): ConfirmedHailReading | undefined {
     freshness: freshnessOf(dataset),
     sourceName: dataset.source.name,
     sourceUrl: dataset.source.url,
-    href: `/data/${metro}/storms/`,
+    href: dataPageHref("noaa-storm-events", metro, "storms"),
   };
 }
 
