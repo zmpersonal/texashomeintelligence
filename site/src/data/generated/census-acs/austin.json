@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-22T14:02:07.620Z",
-  "lastSuccessAt": "2026-09-22T14:02:07.620Z",
+  "lastAttemptAt": "2026-09-23T14:14:33.868Z",
+  "lastSuccessAt": "2026-09-23T14:14:33.868Z",
   "lastError": null,
   "source": {
     "name": "Census ACS",
@@ -13,7 +13,7 @@
   "observations": [
     {
       "observedAt": "2023-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-22T14:02:08.220Z",
+      "ingestedAt": "2026-09-23T14:14:34.748Z",
       "key": "acs5-2023",
       "value": {
         "medianHomeAgeYears": 29,

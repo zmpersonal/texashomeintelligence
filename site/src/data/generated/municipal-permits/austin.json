@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-22T14:01:48.789Z",
-  "lastSuccessAt": "2026-09-22T14:01:48.789Z",
+  "lastAttemptAt": "2026-09-23T14:14:08.325Z",
+  "lastSuccessAt": "2026-09-23T14:14:08.325Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -20923,7 +20923,7 @@
     },
     {
       "observedAt": "2026-09-21T00:00:00.000Z",
-      "ingestedAt": "2026-09-22T14:01:52.900Z",
+      "ingestedAt": "2026-09-23T14:14:08.945Z",
       "key": "2026-094307 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -20933,11 +20933,73 @@
     },
     {
       "observedAt": "2026-09-21T00:00:00.000Z",
-      "ingestedAt": "2026-09-22T14:01:52.900Z",
+      "ingestedAt": "2026-09-23T14:14:08.945Z",
       "key": "2026-116477 BP",
       "value": {
         "permitType": "Remodel",
         "workDescription": "Installation of a new roof top solar PV system 44.625 Kw DC and interconnection to the existing service",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-22T00:00:00.000Z",
+      "ingestedAt": "2026-09-23T14:14:08.945Z",
+      "key": "2026-124692 BP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "ePlan: Residential Expedited Review - Addition and Remodel to Existing Single Family Res. Scope of Work to Include Reconfiguration of Kitchen living Bedrooms and Baths Including an Addition of One Bathroom New Foundation/Framing Roof/Exterior E/P/M work and Patio.",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-22T00:00:00.000Z",
+      "ingestedAt": "2026-09-23T14:14:08.945Z",
+      "key": "2026-034244 MP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "All Interior remodel with New Roof. No addition to the footprint or increase in house square \nfootage. However a new roof will be added due to tree damage and itll increase the height of the \nstructure from 14-4.5 to 15-8.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-22T00:00:00.000Z",
+      "ingestedAt": "2026-09-23T14:14:08.945Z",
+      "key": "2026-124316 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "roof replacement with TPO tapered insulation for positive drainage and potentially replace rotted plywood.",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-22T00:00:00.000Z",
+      "ingestedAt": "2026-09-23T14:14:08.945Z",
+      "key": "2026-091674 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Install new roof-mounted solar system and energy storage system to existing single family residence. Underground AE",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-22T00:00:00.000Z",
+      "ingestedAt": "2026-09-23T14:14:08.945Z",
+      "key": "2026-064799 PP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition of exterior awning at rear Interior remodel with replacement doors and windows. Structural work is proposed at living room to accommodate a wider unit remove and replace backer board waterproofing tile and fixtures in 3 existing bathrooms. Update interior doors baseboards new flooring new s",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-22T00:00:00.000Z",
+      "ingestedAt": "2026-09-23T14:14:08.945Z",
+      "key": "2026-123387 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "INTERIOR REMODEL -AMENITIES CENTER. REPLACE ALL MISSING FIREPROOFING AND FIRESTOPPING. AFFECTED BY NEW CONSTRUCTION WITH FIREPROOFING TO MATCH BASE BUILDING EXISTING STANARDS.ALL CONSTRUCTION SHALL BE NON-COMBUSTIBLE. 4. ALL WOOD AND WOOD BLOCKING SHALL BE FIRE RETARDANT TREATED",
         "status": "Active"
       }
     }
