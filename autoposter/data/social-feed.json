@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-22T14:02:42+00:00",
+  "generated_at": "2026-09-23T14:15:47+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -201,7 +201,7 @@
       "area_id": "austin_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.371,
+      "surprise_score": 0.37,
       "why": "at a level well outside this area's own range",
       "figure": "755 cooling degree-days in 2026-08, +17% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -237,7 +237,7 @@
       "area_id": "san_antonio_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.345,
+      "surprise_score": 0.344,
       "why": "at a level well outside this area's own range",
       "figure": "700 cooling degree-days in 2026-08, +15% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
