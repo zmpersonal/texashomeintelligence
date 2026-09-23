@@ -198,7 +198,22 @@ staleness_hours:
   # --- metrics the generator actually emits today (Phase 2) ---
   energy_price_cents_kwh: 2160   # EIA monthly, published with a 1-2 month lag -> 90 days
   cooling_degree_days: 2160      # NOAA monthly summaries, similar lag -> 90 days
-  permit_activity_: 1440         # prefix rule: monthly permit counts -> 60 days, all trades
+  # 2026-09-19: 60 -> 90 days, bringing permits in line with every other monthly series here.
+  #
+  # 60 days is almost exactly one month, so a month's claims expired at the moment its
+  # SUCCESSOR became eligible — and for a 31-day month, one day BEFORE. A knife-edge at every
+  # month boundary, structural rather than occasional.
+  #
+  # Why widening it is honest and not just seam-removal: for a RECURRING builder the clock is
+  # not what decides which month the article discusses. Recurrence is. The builder emits the
+  # latest COMPLETE month's title, so it cannot talk about August while September is complete —
+  # it would be writing September. And if September is not complete, August IS the newest
+  # complete data there is, and saying so in mid-October is accurate, not stale.
+  #
+  # So this bound is a backstop for a decision recurrence already makes, more precisely. What
+  # actually protects the reader from an old month read as current is the title naming its
+  # period, the completeness guard, and recurrence — none of which this touches.
+  permit_activity_: 2160         # prefix rule: monthly permit counts -> 90 days, all trades
   air_quality_index: 72          # daily; a 3-day-old AQI is not "today's air"
   # --- names carried from the package; kept for when those feeds land ---
   hail_window: 48
