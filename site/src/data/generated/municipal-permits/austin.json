@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-23T14:14:08.325Z",
-  "lastSuccessAt": "2026-09-23T14:14:08.325Z",
+  "lastAttemptAt": "2026-09-24T14:12:18.816Z",
+  "lastSuccessAt": "2026-09-24T14:12:18.816Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -20943,7 +20943,7 @@
     },
     {
       "observedAt": "2026-09-22T00:00:00.000Z",
-      "ingestedAt": "2026-09-23T14:14:08.945Z",
+      "ingestedAt": "2026-09-24T14:12:19.446Z",
       "key": "2026-124692 BP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -20954,7 +20954,7 @@
     },
     {
       "observedAt": "2026-09-22T00:00:00.000Z",
-      "ingestedAt": "2026-09-23T14:14:08.945Z",
+      "ingestedAt": "2026-09-24T14:12:19.445Z",
       "key": "2026-034244 MP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -20964,7 +20964,7 @@
     },
     {
       "observedAt": "2026-09-22T00:00:00.000Z",
-      "ingestedAt": "2026-09-23T14:14:08.945Z",
+      "ingestedAt": "2026-09-24T14:12:19.445Z",
       "key": "2026-124316 BP",
       "value": {
         "permitType": "Remodel",
@@ -20975,7 +20975,7 @@
     },
     {
       "observedAt": "2026-09-22T00:00:00.000Z",
-      "ingestedAt": "2026-09-23T14:14:08.945Z",
+      "ingestedAt": "2026-09-24T14:12:19.446Z",
       "key": "2026-091674 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -20985,7 +20985,7 @@
     },
     {
       "observedAt": "2026-09-22T00:00:00.000Z",
-      "ingestedAt": "2026-09-23T14:14:08.945Z",
+      "ingestedAt": "2026-09-24T14:12:19.445Z",
       "key": "2026-064799 PP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -20995,11 +20995,62 @@
     },
     {
       "observedAt": "2026-09-22T00:00:00.000Z",
-      "ingestedAt": "2026-09-23T14:14:08.945Z",
+      "ingestedAt": "2026-09-24T14:12:19.445Z",
       "key": "2026-123387 BP",
       "value": {
         "permitType": "Remodel",
         "workDescription": "INTERIOR REMODEL -AMENITIES CENTER. REPLACE ALL MISSING FIREPROOFING AND FIRESTOPPING. AFFECTED BY NEW CONSTRUCTION WITH FIREPROOFING TO MATCH BASE BUILDING EXISTING STANARDS.ALL CONSTRUCTION SHALL BE NON-COMBUSTIBLE. 4. ALL WOOD AND WOOD BLOCKING SHALL BE FIRE RETARDANT TREATED",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-23T00:00:00.000Z",
+      "ingestedAt": "2026-09-24T14:12:19.446Z",
+      "key": "2026-119890 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Reroof - emergency department and postpartum. Existing hospital.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-23T00:00:00.000Z",
+      "ingestedAt": "2026-09-24T14:12:19.446Z",
+      "key": "2026-124692 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "ePlan: Residential Expedited Review - Addition and Remodel to Existing Single Family Res. Scope of Work to Include Reconfiguration of Kitchen living Bedrooms and Baths Including an Addition of One Bathroom New Foundation/Framing Roof/Exterior E/P/M work and Patio.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-23T00:00:00.000Z",
+      "ingestedAt": "2026-09-24T14:12:19.446Z",
+      "key": "2026-102216 PP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Remodel Unit all new mechanicals such as electrical plumbing hvac insulation drywall exterior siding roofing portion chimney exterior brick door- due to Fire Damage to Unit 104",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-23T00:00:00.000Z",
+      "ingestedAt": "2026-09-24T14:12:19.446Z",
+      "key": "2026-107591 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "T-Mobile is modifying their equipment at this Rooftop wireless site. Swapping anetnnas radios cabinets.",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-23T00:00:00.000Z",
+      "ingestedAt": "2026-09-24T14:12:19.446Z",
+      "key": "2026-102216 MP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Remodel Unit all new mechanicals such as electrical plumbing hvac insulation drywall exterior siding roofing portion chimney exterior brick door- due to Fire Damage to Unit 104",
         "status": "Active"
       }
     }

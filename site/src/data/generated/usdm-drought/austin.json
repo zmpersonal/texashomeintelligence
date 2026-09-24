@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-23T14:14:30.915Z",
-  "lastSuccessAt": "2026-09-23T14:14:30.915Z",
+  "lastAttemptAt": "2026-09-24T14:12:26.485Z",
+  "lastSuccessAt": "2026-09-24T14:12:26.485Z",
   "lastError": null,
   "source": {
     "name": "U.S. Drought Monitor",
@@ -527,7 +527,7 @@
     },
     {
       "observedAt": "2026-09-15T00:00:00.000Z",
-      "ingestedAt": "2026-09-23T14:14:31.297Z",
+      "ingestedAt": "2026-09-24T14:12:26.871Z",
       "key": "48453-2026-09-15T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (35% of county)",
@@ -537,7 +537,7 @@
     },
     {
       "observedAt": "2026-09-15T00:00:00.000Z",
-      "ingestedAt": "2026-09-23T14:14:31.599Z",
+      "ingestedAt": "2026-09-24T14:12:27.120Z",
       "key": "48491-2026-09-15T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (56% of county)",
@@ -547,10 +547,40 @@
     },
     {
       "observedAt": "2026-09-15T00:00:00.000Z",
-      "ingestedAt": "2026-09-23T14:14:31.712Z",
+      "ingestedAt": "2026-09-24T14:12:27.209Z",
       "key": "48209-2026-09-15T00:00:00",
       "value": {
         "droughtIndex": "D1 — Moderate Drought (55% of county)",
+        "county": "Hays",
+        "countyFips": "48209"
+      }
+    },
+    {
+      "observedAt": "2026-09-22T00:00:00.000Z",
+      "ingestedAt": "2026-09-24T14:12:26.870Z",
+      "key": "48453-2026-09-22T00:00:00",
+      "value": {
+        "droughtIndex": "D3 — Extreme Drought (22% of county)",
+        "county": "Travis",
+        "countyFips": "48453"
+      }
+    },
+    {
+      "observedAt": "2026-09-22T00:00:00.000Z",
+      "ingestedAt": "2026-09-24T14:12:27.120Z",
+      "key": "48491-2026-09-22T00:00:00",
+      "value": {
+        "droughtIndex": "D3 — Extreme Drought (14% of county)",
+        "county": "Williamson",
+        "countyFips": "48491"
+      }
+    },
+    {
+      "observedAt": "2026-09-22T00:00:00.000Z",
+      "ingestedAt": "2026-09-24T14:12:27.209Z",
+      "key": "48209-2026-09-22T00:00:00",
+      "value": {
+        "droughtIndex": "D1 — Moderate Drought (99% of county)",
         "county": "Hays",
         "countyFips": "48209"
       }
