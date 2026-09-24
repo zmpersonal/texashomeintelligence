@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-23T14:15:47+00:00",
+  "generated_at": "2026-09-24T14:13:14+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -12,11 +12,14 @@
       "type": "metro",
       "metrics": {
         "drought_stage": {
-          "value": 2.0,
+          "value": 3.0,
           "source": "U.S. Drought Monitor",
-          "as_of": "2026-09-15",
-          "vs_baseline": -0.3393,
-          "wow": 0.0
+          "as_of": "2026-09-22",
+          "vs_baseline": 0.6667,
+          "wow": 1.0,
+          "crossed": [
+            "crossed into Extreme Drought (D3)"
+          ]
         },
         "air_quality_index": {
           "value": 64.0,
@@ -76,8 +79,8 @@
         "drought_stage": {
           "value": 1.0,
           "source": "U.S. Drought Monitor",
-          "as_of": "2026-09-15",
-          "vs_baseline": -1.7143,
+          "as_of": "2026-09-22",
+          "vs_baseline": -1.6842,
           "wow": 0.0
         },
         "air_quality_index": {
@@ -163,6 +166,19 @@
     {
       "rank": 1,
       "area_id": "austin_metro",
+      "county": "Travis",
+      "metric": "drought_stage",
+      "angle": "warning",
+      "surprise_score": 0.744,
+      "why": "crossed into Extreme Drought (D3); a large move against its own history",
+      "figure": "crossed into Extreme Drought (D3) — now D3",
+      "source": "U.S. Drought Monitor",
+      "as_of": "2026-09-22",
+      "suppressed": false
+    },
+    {
+      "rank": 2,
+      "area_id": "austin_metro",
       "metric": "permit_activity_solar",
       "angle": "reveal",
       "surprise_score": 0.658,
@@ -173,7 +189,7 @@
       "suppressed": false
     },
     {
-      "rank": 2,
+      "rank": 3,
       "area_id": "san_antonio_metro",
       "metric": "air_quality_index",
       "angle": "reveal",
@@ -185,7 +201,7 @@
       "suppressed": false
     },
     {
-      "rank": 3,
+      "rank": 4,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_trees",
       "angle": "reveal",
@@ -197,11 +213,11 @@
       "suppressed": false
     },
     {
-      "rank": 4,
+      "rank": 5,
       "area_id": "austin_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.37,
+      "surprise_score": 0.369,
       "why": "at a level well outside this area's own range",
       "figure": "755 cooling degree-days in 2026-08, +17% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -209,7 +225,7 @@
       "suppressed": false
     },
     {
-      "rank": 5,
+      "rank": 6,
       "area_id": "austin_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
@@ -221,11 +237,11 @@
       "suppressed": false
     },
     {
-      "rank": 6,
+      "rank": 7,
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.355,
+      "surprise_score": 0.354,
       "why": "a cost signal",
       "figure": "13.88¢ per kWh (2026-08), +1.1% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
@@ -233,11 +249,11 @@
       "suppressed": false
     },
     {
-      "rank": 7,
+      "rank": 8,
       "area_id": "san_antonio_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.344,
+      "surprise_score": 0.343,
       "why": "at a level well outside this area's own range",
       "figure": "700 cooling degree-days in 2026-08, +15% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -245,7 +261,7 @@
       "suppressed": false
     },
     {
-      "rank": 8,
+      "rank": 9,
       "area_id": "austin_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
@@ -257,7 +273,7 @@
       "suppressed": false
     },
     {
-      "rank": 9,
+      "rank": 10,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
@@ -269,7 +285,7 @@
       "suppressed": false
     },
     {
-      "rank": 10,
+      "rank": 11,
       "area_id": "austin_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
@@ -281,7 +297,7 @@
       "suppressed": false
     },
     {
-      "rank": 11,
+      "rank": 12,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_solar",
       "angle": "reveal",
@@ -293,7 +309,7 @@
       "suppressed": false
     },
     {
-      "rank": 12,
+      "rank": 13,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
@@ -305,7 +321,7 @@
       "suppressed": false
     },
     {
-      "rank": 13,
+      "rank": 14,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
@@ -317,7 +333,7 @@
       "suppressed": false
     },
     {
-      "rank": 14,
+      "rank": 15,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_foundation",
       "angle": "reveal",
@@ -329,7 +345,7 @@
       "suppressed": false
     },
     {
-      "rank": 15,
+      "rank": 16,
       "area_id": "austin_metro",
       "metric": "permit_activity_roofing",
       "angle": "reveal",
@@ -341,7 +357,7 @@
       "suppressed": false
     },
     {
-      "rank": 16,
+      "rank": 17,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_roofing",
       "angle": "reveal",
@@ -353,7 +369,7 @@
       "suppressed": false
     },
     {
-      "rank": 17,
+      "rank": 18,
       "area_id": "austin_metro",
       "metric": "air_quality_index",
       "angle": "reveal",
