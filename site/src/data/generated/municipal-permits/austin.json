@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-24T14:12:18.816Z",
-  "lastSuccessAt": "2026-09-24T14:12:18.816Z",
+  "lastAttemptAt": "2026-09-25T14:35:59.149Z",
+  "lastSuccessAt": "2026-09-25T14:35:59.149Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -7292,16 +7292,6 @@
       }
     },
     {
-      "observedAt": "2025-12-13T00:00:00.000Z",
-      "ingestedAt": "2026-08-24T15:57:40.356Z",
-      "key": "2025-148127 MP",
-      "value": {
-        "permitType": "Repair",
-        "workDescription": "Express: roof repair electrical repair drywall/insulation repair exempt work (cabinets/flooring)\n\nREVISION: Add Mechanical and Plumbing Permits",
-        "status": "Cancelled - Contractor Required"
-      }
-    },
-    {
       "observedAt": "2025-12-15T00:00:00.000Z",
       "ingestedAt": "2026-08-24T15:57:40.356Z",
       "key": "2024-146926 MP",
@@ -12200,16 +12190,6 @@
       "value": {
         "permitType": "Remodel",
         "workDescription": "Exterior repair new windows and doors (none extant) new roof structural repairs and prep for future tenant finish-out. Reconstruct historic canopy refurbish existing parking",
-        "status": "Active"
-      }
-    },
-    {
-      "observedAt": "2026-04-06T00:00:00.000Z",
-      "ingestedAt": "2026-08-24T15:57:40.359Z",
-      "key": "2026-018766 EP",
-      "value": {
-        "permitType": "Addition and Remodel",
-        "workDescription": "Interior Remodel in both units of duplex. New roof new doors new windows new garage doors new siding paint whole house new floors new tile in showers new lights lamps outlets and switches new kitchen cabinets. Foundation level. Remove walls from shower A and B. Cut kitchen wall at 36 inches in heigh",
         "status": "Active"
       }
     },
@@ -21005,7 +20985,7 @@
     },
     {
       "observedAt": "2026-09-23T00:00:00.000Z",
-      "ingestedAt": "2026-09-24T14:12:19.446Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
       "key": "2026-119890 BP",
       "value": {
         "permitType": "Remodel",
@@ -21015,7 +20995,7 @@
     },
     {
       "observedAt": "2026-09-23T00:00:00.000Z",
-      "ingestedAt": "2026-09-24T14:12:19.446Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
       "key": "2026-124692 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21025,7 +21005,7 @@
     },
     {
       "observedAt": "2026-09-23T00:00:00.000Z",
-      "ingestedAt": "2026-09-24T14:12:19.446Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
       "key": "2026-102216 PP",
       "value": {
         "permitType": "Remodel",
@@ -21035,7 +21015,7 @@
     },
     {
       "observedAt": "2026-09-23T00:00:00.000Z",
-      "ingestedAt": "2026-09-24T14:12:19.446Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
       "key": "2026-107591 BP",
       "value": {
         "permitType": "Remodel",
@@ -21046,12 +21026,146 @@
     },
     {
       "observedAt": "2026-09-23T00:00:00.000Z",
-      "ingestedAt": "2026-09-24T14:12:19.446Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
       "key": "2026-102216 MP",
       "value": {
         "permitType": "Remodel",
         "workDescription": "Remodel Unit all new mechanicals such as electrical plumbing hvac insulation drywall exterior siding roofing portion chimney exterior brick door- due to Fire Damage to Unit 104",
         "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-24T00:00:00.000Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "key": "2025-148127 MP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express: roof repair electrical repair drywall/insulation repair exempt work (cabinets/flooring)\n\nREVISION: Add Mechanical and Plumbing Permits",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-24T00:00:00.000Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "key": "2026-018766 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Interior Remodel in both units of duplex. New roof new doors new windows new garage doors new siding paint whole house new floors new tile in showers new lights lamps outlets and switches new kitchen cabinets. Foundation level. Remove walls from shower A and B. Cut kitchen wall at 36 inches in heigh",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-24T00:00:00.000Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "key": "2026-125103 PP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "There was a gas leak that was found on the roof and fixed. The gas company pulled the meter and are now needing a permit.",
+        "status": "Final"
+      }
+    },
+    {
+      "observedAt": "2026-09-24T00:00:00.000Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "key": "2026-126300 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "TPO Roof Overlay",
+        "status": "Active",
+        "valuationUsd": 70000
+      }
+    },
+    {
+      "observedAt": "2026-09-24T00:00:00.000Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "key": "2025-063927 PP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "ePlan: Commercial Expedited Review - Remodel to Existing PARD Recreation - including roof replacement abatement restoration of windows door chimneys electrical/plumbing upgrades new HVAC system and reconfiguration of restroom and support spaces (3169 SF)",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-24T00:00:00.000Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "key": "2026-125872 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "TPO Roof Overlay",
+        "status": "Active",
+        "valuationUsd": 70000
+      }
+    },
+    {
+      "observedAt": "2026-09-24T00:00:00.000Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "key": "2026-116477 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Installation of a new roof top solar PV system 44.625 Kw DC and interconnection to the existing service",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-24T00:00:00.000Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "key": "2026-123711 PP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Create 3 access points and clear dirt in crwal space for access at the bathroom and kitchen\nTrench 178 to repalce all drains and main sewer\nRun new Drain and vent through the roof- Homeowenr will hire roofer",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-24T00:00:00.000Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "key": "2026-124692 PP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "ePlan: Residential Expedited Review - Addition and Remodel to Existing Single Family Res. Scope of Work to Include Reconfiguration of Kitchen living Bedrooms and Baths Including an Addition of One Bathroom New Foundation/Framing Roof/Exterior E/P/M work and Patio.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-24T00:00:00.000Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "key": "2026-056100 MP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition and remodel\n\nRemodel of kitchen and living spaces and adding a master suite pool bathroom and new roof",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-24T00:00:00.000Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "key": "2026-037737 PP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Includes reorganization of existing kitchen equipment and addition of new fryers units. The existing Type 1 hood and wrapped ducts will be replaced with Type 1 new equipment. Rooftop equipment will remain existing.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-24T00:00:00.000Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "key": "2026-125744 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express- Reroof shingle to shingle.",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-24T00:00:00.000Z",
+      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "key": "2026-126272 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "TPO Roof Overlay",
+        "status": "Active",
+        "valuationUsd": 70000
       }
     }
   ]

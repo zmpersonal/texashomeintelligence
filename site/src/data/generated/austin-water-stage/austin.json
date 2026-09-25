@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-24T14:12:40.784Z",
-  "lastSuccessAt": "2026-09-24T14:12:40.784Z",
+  "lastAttemptAt": "2026-09-25T14:36:26.221Z",
+  "lastSuccessAt": "2026-09-25T14:36:26.221Z",
   "lastError": null,
   "source": {
     "name": "Austin Water",
@@ -265,6 +265,16 @@
       "observedAt": "2026-09-24T00:00:00.000Z",
       "ingestedAt": "2026-09-24T14:12:56.596Z",
       "key": "austin-water-2026-09-24",
+      "value": {
+        "stage": "Conservation Stage",
+        "strategy": "cue-near-stage",
+        "sourceUrl": "https://www.austintexas.gov/water/austin-water-drought-response"
+      }
+    },
+    {
+      "observedAt": "2026-09-25T00:00:00.000Z",
+      "ingestedAt": "2026-09-25T14:36:27.761Z",
+      "key": "austin-water-2026-09-25",
       "value": {
         "stage": "Conservation Stage",
         "strategy": "cue-near-stage",
