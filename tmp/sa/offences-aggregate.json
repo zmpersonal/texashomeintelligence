@@ -1,5 +1,5 @@
 {
-  "fetched_at_utc": "2026-09-25T18:51:15+00:00",
+  "fetched_at_utc": "2026-09-25T19:03:15+00:00",
   "source_url": "https://data.sanantonio.gov/dataset/04991fd6-25aa-47ed-946c-4ea204ab3558/resource/f36bb931-8fb4-481c-83d9-a3589108bb20/download/pubsafedash_offenses.csv",
   "file": {
     "bytes": 55002185,
@@ -182,20 +182,27 @@
   ],
   "distinct_zips": 69,
   "distinct_service_areas": 7,
-  "report_minus_datetime_days": {
-    "-1339": 378,
-    "-1338": 441,
-    "-1337": 484,
-    "-1336": 443,
-    "-1335": 426,
-    "-1334": 423,
-    "-1333": 456,
-    "-1332": 375,
-    "-1331": 448,
-    "-1330": 420,
-    "-1329": 429,
-    "-1328": 429
-  },
   "report_minus_datetime_total": 538978,
-  "datetime_parse_failures": 0
+  "datetime_parse_failures": 0,
+  "datetime_summary": {
+    "min": "2026-09-01",
+    "max": "2026-09-01",
+    "distinct_dates": 1,
+    "share_same_day_as_report": 0.0,
+    "share_datetime_after_report": 1.0,
+    "days_p0": -1339,
+    "days_p1": -1327,
+    "days_p25": -1032,
+    "days_p50": -720,
+    "days_p75": -369,
+    "days_p99": -15,
+    "days_p100": -1
+  },
+  "datetime_examples": [
+    "2026-09-01",
+    "2026-09-01",
+    "2026-09-01",
+    "2026-09-01",
+    "2026-09-01"
+  ]
 }
