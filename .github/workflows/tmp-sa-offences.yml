@@ -51,6 +51,7 @@ jobs:
           rep_min, rep_max = None, None
           dt_vs_rep = collections.Counter()   # (Report_Date - DateTime date) in days
           dt_parse_fail = 0
+          dt_samples, dt_dates = [], []
           with open(src, newline='', encoding='utf-8', errors='replace') as fh:
               rd = csv.DictReader(fh)
               cols = rd.fieldnames
@@ -78,6 +79,8 @@ jobs:
                           d1 = datetime.date.fromisoformat(rep)
                           d2 = datetime.date.fromisoformat(dt[:10])
                           dt_vs_rep[(d1 - d2).days] += 1
+                          dt_samples.append(dt)
+                          dt_dates.append(dt[:10])
                       except ValueError:
                           dt_parse_fail += 1
           out = {
@@ -95,9 +98,25 @@ jobs:
             'distinct_offence_names': len(offence),
             'top_offences': offence.most_common(20),
             'distinct_zips': len(zips), 'distinct_service_areas': len(areas),
-            'report_minus_datetime_days': dict(sorted(dt_vs_rep.items())[:12]),
             'report_minus_datetime_total': sum(dt_vs_rep.values()),
             'datetime_parse_failures': dt_parse_fail,
+            # What IS the DateTime column? Pass 1 sampled the 12 smallest day
+            # differences and learned only that some are ~1,300 days negative,
+            # which says nothing about the shape. A percentile summary and the
+            # column's own range do.
+            'datetime_summary': (lambda ds, diffs: {
+                'min': min(ds), 'max': max(ds),
+                'distinct_dates': len(set(d[:10] for d in ds)),
+                'has_time_component': sum(1 for d in ds[:5000] if len(d) > 10),
+                'share_same_day_as_report': round(diffs.get(0, 0) / max(1, sum(diffs.values())), 6),
+                'percentiles_days': {
+                    p: sorted(k for k, n in diffs.items() for _ in range(min(n, 1)))[
+                        int(len(set(diffs)) * p / 100)] if diffs else None
+                    for p in (0, 25, 50, 75, 100)},
+                'weighted_percentiles_days': (lambda flat: {
+                    p: flat[min(len(flat) - 1, int(len(flat) * p / 100))] for p in (0, 1, 25, 50, 75, 99, 100)
+                })(sorted(k for k, n in diffs.items() for _ in range(n))),
+            })(dt_dates, dt_vs_rep),
           }
           with open('tmp/sa/offences-aggregate.json', 'w') as fh:
               json.dump(out, fh, indent=2)
