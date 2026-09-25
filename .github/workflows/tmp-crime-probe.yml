@@ -33,12 +33,10 @@ jobs:
           set -u
           OUT=tmp/crime-probe
           mkdir -p "$OUT/austin" "$OUT/san-antonio" "$OUT/meta"
-          LOG="$OUT/meta/fetch-log.txt"
+          LOG="$OUT/meta/fetch-log-2.txt"
           : > "$LOG"
-
           note () { echo "$*" | tee -a "$LOG"; }
-
-          get () {   # get <url> <outfile>
+          get () {
             local url="$1" dest="$2" code
             code=$(curl -sS -L --max-time 120 -w '%{http_code}' -o "$dest" \
                      -H 'Accept: application/json' \
@@ -48,47 +46,37 @@ jobs:
             [ "$code" = "200" ]
           }
 
-          note "=== robots.txt and portal terms ==="
-          for d in data.austintexas.gov data.sanantonio.gov opendata-cosagis.opendata.arcgis.com; do
-            get "https://$d/robots.txt" "$OUT/meta/robots-$d.txt" || true
+          # PASS 1 FINDINGS this pass corrects:
+          #  - the Socrata catalog returned 0 results for "crime" on Austin's
+          #    domain, so search the portal's OWN catalogue and several terms;
+          #  - data.sanantonio.gov is CKAN, not Socrata ("Domain not found"),
+          #    which is why it 404'd. THI's own permit fetcher already uses its
+          #    /api/3/action/ endpoints.
+          note "=== Austin · Socrata, portal's own catalogue, several terms ==="
+          for q in crime incident police offense arrest; do
+            get "https://data.austintexas.gov/api/catalog/v1?q=$q&limit=60" \
+                "$OUT/meta/austin-catalog-$q.json" || true
+          done
+          note ""
+          note "=== Austin · the dataset the APD crime reports are published as ==="
+          for id in fdj4-gpfu; do
+            get "https://data.austintexas.gov/api/views/$id.json" "$OUT/austin/$id.meta.json" || true
+            get "https://data.austintexas.gov/resource/$id.json?\$limit=2000" "$OUT/austin/$id.sample.json" || true
           done
 
           note ""
-          note "=== Socrata catalogue search ==="
-          for d in data.austintexas.gov data.sanantonio.gov; do
-            get "https://api.us.socrata.com/api/catalog/v1?domains=$d&q=crime&limit=100" \
-                "$OUT/meta/catalog-$d.json" || true
+          note "=== San Antonio · CKAN package search ==="
+          for q in crime incident police offense sapd; do
+            get "https://data.sanantonio.gov/api/3/action/package_search?q=$q&rows=40" \
+                "$OUT/meta/sa-ckan-$q.json" || true
           done
 
           note ""
-          note "=== candidate datasets, metadata then sample ==="
-          pick () {   # pick <domain> <dir>
-            local domain="$1" dir="$2"
-            jq -r '[.results[]
-                    | select((.resource.name // "") + " " + (.resource.description // "")
-                             | test("crime|incident|police|offense|offence"; "i"))]
-                   | .[0:4][] | .resource.id + "\t" + .resource.name' \
-              "$OUT/meta/catalog-$domain.json" 2>/dev/null || true
-          }
-          for d in data.austintexas.gov data.sanantonio.gov; do
-            dir="$OUT/austin"; [ "$d" = "data.sanantonio.gov" ] && dir="$OUT/san-antonio"
-            pick "$d" "$dir" | while IFS=$'\t' read -r id name; do
-              [ -n "$id" ] || continue
-              note "-- $id  $name"
-              get "https://$d/api/views/$id.json" "$dir/$id.meta.json" || true
-              get "https://$d/resource/$id.json?\$limit=2000" "$dir/$id.sample.json" || true
-            done
+          note "=== San Antonio · ArcGIS Hub, broader terms ==="
+          for q in incident police sapd offense; do
+            get "https://opendata-cosagis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=$q&limit=50" \
+                "$OUT/meta/arcgis-$q.json" || true
           done
-
-          note ""
-          note "=== San Antonio ArcGIS Hub search ==="
-          get "https://opendata-cosagis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=crime&limit=50" \
-              "$OUT/meta/arcgis-cosagis-crime.json" || true
-
-          note ""
-          note "=== FBI Crime Data Explorer (expected to need a key) ==="
-          get "https://api.usa.gov/crime/fbi/cde/summarized/agency/TXAPD0000/all?from=01-2024&to=12-2024" \
-              "$OUT/meta/fbi-cde-probe.json" || true
 
           note ""
           note "=== what landed ==="
