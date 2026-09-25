@@ -1,0 +1,105 @@
+# TEMPORARY — Round 37 crime probe. DELETE THIS FILE BEFORE THE ROUND ENDS.
+#
+# No external host is reachable from a Claude Code session (BACKLOG standing
+# note), so this is the "temporary Actions workflow" shape: it runs on a
+# GitHub runner, fetches raw samples, and commits them to a clearly temporary
+# path for measurement. It writes nothing under site/src/data/ and is not part
+# of the ingestion pipeline.
+#
+# It is push-triggered on the probe branch alone, and only when this file
+# itself changes, so it cannot fire from ordinary work and needs nothing on
+# main. It reads public APIs only: Socrata's documented catalog and resource
+# endpoints, and ArcGIS Hub's search API. robots.txt and each dataset's own
+# licence metadata are fetched FIRST and saved, because whether the terms
+# permit anything is the question that can end this round.
+name: TEMPORARY crime probe (Round 37)
+
+on:
+  push:
+    branches: [claude/thi-v3-round37-crime-probe]
+    paths: ['.github/workflows/tmp-crime-probe.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch samples
+        run: |
+          set -u
+          OUT=tmp/crime-probe
+          mkdir -p "$OUT/austin" "$OUT/san-antonio" "$OUT/meta"
+          LOG="$OUT/meta/fetch-log.txt"
+          : > "$LOG"
+
+          note () { echo "$*" | tee -a "$LOG"; }
+
+          get () {   # get <url> <outfile>
+            local url="$1" dest="$2" code
+            code=$(curl -sS -L --max-time 120 -w '%{http_code}' -o "$dest" \
+                     -H 'Accept: application/json' \
+                     -A 'TexasHomeIntelligence-probe/1.0 (one-off research fetch)' \
+                     "$url" || echo "000")
+            note "$code  $(wc -c < "$dest" 2>/dev/null || echo 0) bytes  $url"
+            [ "$code" = "200" ]
+          }
+
+          note "=== robots.txt and portal terms ==="
+          for d in data.austintexas.gov data.sanantonio.gov opendata-cosagis.opendata.arcgis.com; do
+            get "https://$d/robots.txt" "$OUT/meta/robots-$d.txt" || true
+          done
+
+          note ""
+          note "=== Socrata catalogue search ==="
+          for d in data.austintexas.gov data.sanantonio.gov; do
+            get "https://api.us.socrata.com/api/catalog/v1?domains=$d&q=crime&limit=100" \
+                "$OUT/meta/catalog-$d.json" || true
+          done
+
+          note ""
+          note "=== candidate datasets, metadata then sample ==="
+          pick () {   # pick <domain> <dir>
+            local domain="$1" dir="$2"
+            jq -r '[.results[]
+                    | select((.resource.name // "") + " " + (.resource.description // "")
+                             | test("crime|incident|police|offense|offence"; "i"))]
+                   | .[0:4][] | .resource.id + "\t" + .resource.name' \
+              "$OUT/meta/catalog-$domain.json" 2>/dev/null || true
+          }
+          for d in data.austintexas.gov data.sanantonio.gov; do
+            dir="$OUT/austin"; [ "$d" = "data.sanantonio.gov" ] && dir="$OUT/san-antonio"
+            pick "$d" "$dir" | while IFS=$'\t' read -r id name; do
+              [ -n "$id" ] || continue
+              note "-- $id  $name"
+              get "https://$d/api/views/$id.json" "$dir/$id.meta.json" || true
+              get "https://$d/resource/$id.json?\$limit=2000" "$dir/$id.sample.json" || true
+            done
+          done
+
+          note ""
+          note "=== San Antonio ArcGIS Hub search ==="
+          get "https://opendata-cosagis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=crime&limit=50" \
+              "$OUT/meta/arcgis-cosagis-crime.json" || true
+
+          note ""
+          note "=== FBI Crime Data Explorer (expected to need a key) ==="
+          get "https://api.usa.gov/crime/fbi/cde/summarized/agency/TXAPD0000/all?from=01-2024&to=12-2024" \
+              "$OUT/meta/fbi-cde-probe.json" || true
+
+          note ""
+          note "=== what landed ==="
+          find "$OUT" -type f | sort | while read -r f; do
+            note "$(wc -c < "$f") bytes  $f"
+          done
+
+      - name: Commit samples
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A tmp/crime-probe
+          git commit -m "TEMPORARY: Round 37 crime probe samples (delete with the workflow)" || echo "nothing to commit"
+          git push
