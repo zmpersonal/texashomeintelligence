@@ -300,9 +300,20 @@ routes already exist per topic (`/data/[location]/[topic]/[csvName].csv`).
 > taxonomy (UCR plus free text vs NIBRS), cadence (weekly vs monthly). The round-6 permit ruling
 > applies — measure within a city, never across.
 >
-> **Decisions open: D7c** (build the article — which of the three candidates in §E) and **D7d**
-> (build the San Antonio reading anyway, against the recommendation, with Austin showing a
-> withheld state). **Nothing the probe fetched is kept** — the audit quotes the licence strings,
+> **D7d — CLOSED, not deferred** (owner, 2026-09-25). **No `/home/` crime reading, and no path
+> back to one from today's data.** Austin cannot resolve its census block group to a home without
+> sending a member's street address to a third party, which the privacy page forbids; San Antonio
+> resolves trivially but a ZIP is not a home. A revisit would need data **neither city publishes
+> today** — an address-level or coordinate-level geography from Austin, and something finer than
+> ZIP from San Antonio. Not "waiting on a decision": waiting on data that does not exist.
+>
+> **D7c — DONE.** One article, San Antonio, shipped in Round 38
+> (`docs/audits/round-38-sa-crime-article.md`): *What does San Antonio's police offence data
+> actually cover?* The §E candidate chosen was the records piece, and the choice turned out to be
+> **forced rather than preferred** — the reporting-lag candidate is not computable for San
+> Antonio, because the file carries no occurrence date and its `DateTime` column is a single
+> constant extract stamp. No cross-metro comparison, no rate per head, no sub-metro figure, no
+> recommendation line. **Nothing the probe fetched is kept** — the audit quotes the licence strings,
 > the robots rules, the counts and the resource URL it relies on.
 >
 > **One correction the audit carries against itself:** `data.sanantonio.gov`'s robots.txt

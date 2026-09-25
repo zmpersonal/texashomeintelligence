@@ -57,10 +57,14 @@ and `/OData.svc/`, none of which this probe touched. `Crawl-delay: 1`, respected
 > 40-odd named scraper and SEO agents — AhrefsBot, SemrushBot, Scrapy, HTTrack, Yandex and
 > similar — not to `*`.
 >
-> **Binding on any build round that follows:** take the CSV URL once, by hand, from the dataset's
-> own page, and fetch only that path. **No `/api/3/action/` call, ever.** The catalogue lookups
-> this probe used to discover the dataset do not need repeating — the resource URL is recorded in
-> §E's source line and in this document.
+> **Binding on any build round that follows:** fetch the CSV resource path and nothing else.
+> **No `/api/3/action/` call, ever.**
+>
+> **Correction, added in Round 38:** this paragraph previously said the resource URL was "recorded
+> in §E's source line and in this document". **It was not — this document contains no URLs at
+> all**, which Round 38 discovered when it went to use it. The URL is now recorded in one place,
+> `docs/audits/round-38-sa-crime-article.md` §1, and in that article's claim ledger beside the
+> file's size and checksum. A future round takes it from there.
 
 **FBI Crime Data Explorer: not available.** `api.usa.gov/crime/fbi/cde/…` returns
 `{"error":{"code":"API_KEY_MISSING"}}`. It needs an api.data.gov key, which this project does not
