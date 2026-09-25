@@ -1,0 +1,50 @@
+=== Austin · Socrata, portal's own catalogue, several terms ===
+200  489966 bytes  https://data.austintexas.gov/api/catalog/v1?q=crime&limit=60
+200  553869 bytes  https://data.austintexas.gov/api/catalog/v1?q=incident&limit=60
+200  360086 bytes  https://data.austintexas.gov/api/catalog/v1?q=police&limit=60
+200  380484 bytes  https://data.austintexas.gov/api/catalog/v1?q=offense&limit=60
+200  389003 bytes  https://data.austintexas.gov/api/catalog/v1?q=arrest&limit=60
+
+=== Austin · the dataset the APD crime reports are published as ===
+200  42951 bytes  https://data.austintexas.gov/api/views/fdj4-gpfu.json
+200  980176 bytes  https://data.austintexas.gov/resource/fdj4-gpfu.json?$limit=2000
+
+=== San Antonio · CKAN package search ===
+200  12649 bytes  https://data.sanantonio.gov/api/3/action/package_search?q=crime&rows=40
+200  4976 bytes  https://data.sanantonio.gov/api/3/action/package_search?q=incident&rows=40
+200  85435 bytes  https://data.sanantonio.gov/api/3/action/package_search?q=police&rows=40
+200  5129 bytes  https://data.sanantonio.gov/api/3/action/package_search?q=offense&rows=40
+200  74331 bytes  https://data.sanantonio.gov/api/3/action/package_search?q=sapd&rows=40
+
+=== San Antonio · ArcGIS Hub, broader terms ===
+200  452 bytes  https://opendata-cosagis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=incident&limit=50
+200  27157 bytes  https://opendata-cosagis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=police&limit=50
+200  20428 bytes  https://opendata-cosagis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=sapd&limit=50
+200  452 bytes  https://opendata-cosagis.opendata.arcgis.com/api/search/v1/collections/dataset/items?q=offense&limit=50
+
+=== what landed ===
+42951 bytes  tmp/crime-probe/austin/fdj4-gpfu.meta.json
+980176 bytes  tmp/crime-probe/austin/fdj4-gpfu.sample.json
+5221 bytes  tmp/crime-probe/meta/arcgis-cosagis-crime.json
+452 bytes  tmp/crime-probe/meta/arcgis-incident.json
+452 bytes  tmp/crime-probe/meta/arcgis-offense.json
+27157 bytes  tmp/crime-probe/meta/arcgis-police.json
+20428 bytes  tmp/crime-probe/meta/arcgis-sapd.json
+389003 bytes  tmp/crime-probe/meta/austin-catalog-arrest.json
+489966 bytes  tmp/crime-probe/meta/austin-catalog-crime.json
+553869 bytes  tmp/crime-probe/meta/austin-catalog-incident.json
+380484 bytes  tmp/crime-probe/meta/austin-catalog-offense.json
+360086 bytes  tmp/crime-probe/meta/austin-catalog-police.json
+129 bytes  tmp/crime-probe/meta/catalog-data.austintexas.gov.json
+49 bytes  tmp/crime-probe/meta/catalog-data.sanantonio.gov.json
+144 bytes  tmp/crime-probe/meta/fbi-cde-probe.json
+2623 bytes  tmp/crime-probe/meta/fetch-log-2.txt
+1352 bytes  tmp/crime-probe/meta/fetch-log.txt
+1751 bytes  tmp/crime-probe/meta/robots-data.austintexas.gov.txt
+3074 bytes  tmp/crime-probe/meta/robots-data.sanantonio.gov.txt
+213 bytes  tmp/crime-probe/meta/robots-opendata-cosagis.opendata.arcgis.com.txt
+12649 bytes  tmp/crime-probe/meta/sa-ckan-crime.json
+4976 bytes  tmp/crime-probe/meta/sa-ckan-incident.json
+5129 bytes  tmp/crime-probe/meta/sa-ckan-offense.json
+85435 bytes  tmp/crime-probe/meta/sa-ckan-police.json
+74331 bytes  tmp/crime-probe/meta/sa-ckan-sapd.json
