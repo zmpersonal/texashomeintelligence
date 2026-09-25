@@ -40,6 +40,23 @@ jobs:
           h = hashlib.sha256()
           with open(src, 'rb') as fh:
               for chunk in iter(lambda: fh.read(1 << 20), b''): h.update(chunk)
+          def dt_summary(dates, diffs):
+              # What IS the DateTime column? Pass 1 kept only the twelve
+              # smallest day differences, which said nothing about the shape.
+              flat = sorted(k for k, n in diffs.items() for _ in range(n))
+              total = len(flat) or 1
+              pct = lambda q: flat[min(len(flat) - 1, int(total * q / 100))]
+              return {
+                  'min': min(dates) if dates else None,
+                  'max': max(dates) if dates else None,
+                  'distinct_dates': len(set(dates)),
+                  'share_same_day_as_report': round(diffs.get(0, 0) / total, 6),
+                  'share_datetime_after_report': round(sum(n for k, n in diffs.items() if k < 0) / total, 6),
+                  'days_p0': pct(0), 'days_p1': pct(1), 'days_p25': pct(25),
+                  'days_p50': pct(50), 'days_p75': pct(75), 'days_p99': pct(99),
+                  'days_p100': pct(100),
+              }
+
           rows = 0
           ids = set()
           blanks = collections.Counter()
@@ -79,7 +96,7 @@ jobs:
                           d1 = datetime.date.fromisoformat(rep)
                           d2 = datetime.date.fromisoformat(dt[:10])
                           dt_vs_rep[(d1 - d2).days] += 1
-                          dt_samples.append(dt)
+                          if len(dt_samples) < 5: dt_samples.append(dt)
                           dt_dates.append(dt[:10])
                       except ValueError:
                           dt_parse_fail += 1
@@ -100,23 +117,8 @@ jobs:
             'distinct_zips': len(zips), 'distinct_service_areas': len(areas),
             'report_minus_datetime_total': sum(dt_vs_rep.values()),
             'datetime_parse_failures': dt_parse_fail,
-            # What IS the DateTime column? Pass 1 sampled the 12 smallest day
-            # differences and learned only that some are ~1,300 days negative,
-            # which says nothing about the shape. A percentile summary and the
-            # column's own range do.
-            'datetime_summary': (lambda ds, diffs: {
-                'min': min(ds), 'max': max(ds),
-                'distinct_dates': len(set(d[:10] for d in ds)),
-                'has_time_component': sum(1 for d in ds[:5000] if len(d) > 10),
-                'share_same_day_as_report': round(diffs.get(0, 0) / max(1, sum(diffs.values())), 6),
-                'percentiles_days': {
-                    p: sorted(k for k, n in diffs.items() for _ in range(min(n, 1)))[
-                        int(len(set(diffs)) * p / 100)] if diffs else None
-                    for p in (0, 25, 50, 75, 100)},
-                'weighted_percentiles_days': (lambda flat: {
-                    p: flat[min(len(flat) - 1, int(len(flat) * p / 100))] for p in (0, 1, 25, 50, 75, 99, 100)
-                })(sorted(k for k, n in diffs.items() for _ in range(n))),
-            })(dt_dates, dt_vs_rep),
+            'datetime_summary': dt_summary(dt_dates, dt_vs_rep),
+            'datetime_examples': dt_samples,
           }
           with open('tmp/sa/offences-aggregate.json', 'w') as fh:
               json.dump(out, fh, indent=2)
