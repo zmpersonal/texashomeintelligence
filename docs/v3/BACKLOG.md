@@ -280,8 +280,32 @@ routes already exist per topic (`/data/[location]/[topic]/[csvName].csv`).
 
 ### 7 · Crime stats and data feeds
 
-> **CLOSED — D7 accepted by the owner, 2026-09-22.** Not viable; see
-> `docs/audits/round-35b-crime-memo.md`. Kept here as a record of why, not as work. Answered on
+> **REOPENED, NARROWED — owner's ruling, 2026-09-25.** The Round 35b verdict **stands for what
+> it tested** — a per-ZIP public signal or score — and that stays closed. Reopened: crime as
+> **article** subject matter at metro level, and as a **context reading on `/home/` only**.
+> Never on the 225 indexed `/dashboard/<zip>/` pages; no score, rank, index or comparison; no
+> Home Stress Index signal; no recommendation line.
+>
+> **PROBED — Round 37** (`docs/audits/round-37-crime-data-probe.md`), data fetched and measured.
+> **Article: VIABLE** — both metros publish incident-level records, Austin as Public Domain and
+> San Antonio as CC-BY, current to within weeks, every figure ledger-verifiable. **`/home/`
+> reading: viable for San Antonio only, and recommended against.** San Antonio publishes a ZIP
+> per row, which the account already holds, so it resolves with no geocoder. **Austin cannot
+> support it at all:** its finest geography is a census block group (99.5% populated) that
+> cannot be derived from a stored address without sending that address to a third party, which
+> the privacy page forbids. A ZIP-level count also still fails the standing test — the number
+> changes no action — which is why the ruling attaches none.
+>
+> **Not comparable across metros, in three independent ways:** geography (block group vs ZIP),
+> taxonomy (UCR plus free text vs NIBRS), cadence (weekly vs monthly). The round-6 permit ruling
+> applies — measure within a city, never across.
+>
+> **Decisions open: D7c** (build the article — which of the three candidates in §E) and **D7d**
+> (build the San Antonio reading anyway, against the recommendation, with Austin showing a
+> withheld state). `tmp/crime-probe/` holds 380 KB of terms evidence and should not survive a
+> merge to `main`.
+
+> **Round 35b's reasoning, unchanged and still governing the closed part.** Answered on
 > reasoning, not data: **no candidate framing produces
 > a reading whose value changes what a homeowner does.** The best honest line pairs a crime number
 > with an action — check the lighting, check the locks — that is correct whatever the number says,
