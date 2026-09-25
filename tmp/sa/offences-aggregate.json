@@ -1,0 +1,201 @@
+{
+  "fetched_at_utc": "2026-09-25T18:51:15+00:00",
+  "source_url": "https://data.sanantonio.gov/dataset/04991fd6-25aa-47ed-946c-4ea204ab3558/resource/f36bb931-8fb4-481c-83d9-a3589108bb20/download/pubsafedash_offenses.csv",
+  "file": {
+    "bytes": 55002185,
+    "sha256": "1642797a0d4f951009da6a07acdc16385ae4ea9c8c98f290713c68515f17fa42"
+  },
+  "columns": [
+    "Report_ID",
+    "Report_Date",
+    "NIBRS_Code_Name",
+    "NIBRS_Crime_Against",
+    "Service_Area",
+    "NIBRS_Group",
+    "Zip_Code",
+    "DateTime"
+  ],
+  "rows": 538978,
+  "distinct_report_ids": 493052,
+  "blank_by_column": {},
+  "report_date_min": "2023-01-01",
+  "report_date_max": "2026-08-31",
+  "rows_per_month": {
+    "2023-01": 12812,
+    "2023-02": 11802,
+    "2023-03": 13300,
+    "2023-04": 13107,
+    "2023-05": 13463,
+    "2023-06": 13399,
+    "2023-07": 14388,
+    "2023-08": 14065,
+    "2023-09": 13232,
+    "2023-10": 13894,
+    "2023-11": 12605,
+    "2023-12": 13508,
+    "2024-01": 12531,
+    "2024-02": 12620,
+    "2024-03": 13563,
+    "2024-04": 13703,
+    "2024-05": 13054,
+    "2024-06": 13060,
+    "2024-07": 13698,
+    "2024-08": 13463,
+    "2024-09": 12998,
+    "2024-10": 12369,
+    "2024-11": 11197,
+    "2024-12": 11626,
+    "2025-01": 11161,
+    "2025-02": 10365,
+    "2025-03": 12010,
+    "2025-04": 11263,
+    "2025-05": 12013,
+    "2025-06": 11620,
+    "2025-07": 12094,
+    "2025-08": 11665,
+    "2025-09": 11538,
+    "2025-10": 11587,
+    "2025-11": 10665,
+    "2025-12": 10722,
+    "2026-01": 10409,
+    "2026-02": 10196,
+    "2026-03": 11469,
+    "2026-04": 11583,
+    "2026-05": 11355,
+    "2026-06": 10950,
+    "2026-07": 11554,
+    "2026-08": 11302
+  },
+  "crime_against": {
+    "PROPERTY": 374232,
+    "PERSON": 114968,
+    "SOCIETY": 49778
+  },
+  "nibrs_group": {
+    "Larceny/Theft Offenses": 180014,
+    "Assault Offenses": 105827,
+    "Destruction/Damage/Vandalism of Property": 69599,
+    "Motor Vehicle Theft": 48239,
+    "Drug/Narcotics Offenses": 39323,
+    "Fraud Offenses": 34990,
+    "Breaking & Entering": 26463,
+    "Sex Offenses, Forcible": 8172,
+    "Weapon Law Violations": 6943,
+    "Robbery": 5846,
+    "Counterfeiting/Forgery": 5662,
+    "Pornography/Obscene Material": 2390,
+    "Stolen Property Offenses": 1478,
+    "Embezzlement": 918,
+    "Prostitution Offenses": 632,
+    "Arson": 630,
+    "Homicide Offenses": 493,
+    "Animal Cruelty": 470,
+    "Kidnapping/Abduction": 374,
+    "Extortion/Blackmail": 368,
+    "Human Trafficking": 91,
+    "Bribery": 25,
+    "Gambling Offenses": 20,
+    "Sex Offenses, Nonforcible": 11
+  },
+  "distinct_offence_names": 49,
+  "top_offences": [
+    [
+      "Simple Assault",
+      72861
+    ],
+    [
+      "Destruction/Damage/Vandalism of Property",
+      69599
+    ],
+    [
+      "Theft From Motor Vehicle",
+      62472
+    ],
+    [
+      "Motor Vehicle Theft",
+      48239
+    ],
+    [
+      "Shoplifting",
+      47153
+    ],
+    [
+      "All Other Larceny",
+      41997
+    ],
+    [
+      "Drug/Narcotic Violations",
+      31014
+    ],
+    [
+      "Burglary/Breaking & Entering",
+      26463
+    ],
+    [
+      "Aggravated Assault",
+      18245
+    ],
+    [
+      "Theft of Motor Vehicle Parts or Accessories",
+      15048
+    ],
+    [
+      "Intimidation",
+      14721
+    ],
+    [
+      "Theft From Building",
+      12463
+    ],
+    [
+      "Credit Card/Automated Teller Machine Fraud",
+      11506
+    ],
+    [
+      "Identity Theft",
+      11128
+    ],
+    [
+      "False Pretenses/Swindle/Confidence Game",
+      8771
+    ],
+    [
+      "Drug Equipment Violations",
+      8309
+    ],
+    [
+      "Weapon Law Violations",
+      6943
+    ],
+    [
+      "Robbery",
+      5846
+    ],
+    [
+      "Counterfeiting/Forgery",
+      5662
+    ],
+    [
+      "Rape",
+      4813
+    ]
+  ],
+  "distinct_zips": 69,
+  "distinct_service_areas": 7,
+  "report_minus_datetime_days": {
+    "-1339": 378,
+    "-1338": 441,
+    "-1337": 484,
+    "-1336": 443,
+    "-1335": 426,
+    "-1334": 423,
+    "-1333": 456,
+    "-1332": 375,
+    "-1331": 448,
+    "-1330": 420,
+    "-1329": 429,
+    "-1328": 429
+  },
+  "report_minus_datetime_total": 538978,
+  "datetime_parse_failures": 0
+}
