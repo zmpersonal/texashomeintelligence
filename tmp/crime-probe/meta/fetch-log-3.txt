@@ -1,0 +1,55 @@
+=== Austin · RECENT rows, newest reported first ===
+200  2445932 bytes  https://data.austintexas.gov/resource/fdj4-gpfu.json?$order=rep_date%20DESC&$limit=5000
+=== Austin · a full recent year, counted by the API rather than downloaded ===
+200  22 bytes  https://data.austintexas.gov/resource/fdj4-gpfu.json?$select=count(1)&$where=rep_date%3E%272025-09-01T00:00:00%27
+=== Austin · how much of the recent record carries each geography ===
+200  22 bytes  https://data.austintexas.gov/resource/fdj4-gpfu.json?$select=count(1)&$where=rep_date%3E%272025-09-01T00:00:00%27%20AND%20census_block_group%20IS%20NOT%20NULL
+200  22 bytes  https://data.austintexas.gov/resource/fdj4-gpfu.json?$select=count(1)&$where=rep_date%3E%272025-09-01T00:00:00%27%20AND%20council_district%20IS%20NOT%20NULL
+200  22 bytes  https://data.austintexas.gov/resource/fdj4-gpfu.json?$select=count(1)&$where=rep_date%3E%272025-09-01T00:00:00%27%20AND%20sector%20IS%20NOT%20NULL
+200  22 bytes  https://data.austintexas.gov/resource/fdj4-gpfu.json?$select=count(1)&$where=rep_date%3E%272025-09-01T00:00:00%27%20AND%20district%20IS%20NOT%20NULL
+
+=== San Antonio · SAPD Offenses (CKAN, CC-Attribution) ===
+200  5019 bytes  https://data.sanantonio.gov/api/3/action/package_show?id=sapd-offenses
+resource url: https://data.sanantonio.gov/dataset/04991fd6-25aa-47ed-946c-4ea204ab3558/resource/f36bb931-8fb4-481c-83d9-a3589108bb20/download/pubsafedash_offenses.csv
+200  55002185 bytes  https://data.sanantonio.gov/dataset/04991fd6-25aa-47ed-946c-4ea204ab3558/resource/f36bb931-8fb4-481c-83d9-a3589108bb20/download/pubsafedash_offenses.csv
+full CSV: 538979 lines, 55002185 bytes
+=== San Antonio · the data-preparation PDF (its own description of the fields) ===
+200  92238 bytes  https://data.sanantonio.gov/dataset/04991fd6-25aa-47ed-946c-4ea204ab3558/resource/e84ac8bb-1905-49df-b7c1-2c418bd38b38/download/data-preparation-offenses.pdf
+
+=== what landed ===
+22 bytes  tmp/crime-probe/austin/count-census_block_group.json
+22 bytes  tmp/crime-probe/austin/count-council_district.json
+22 bytes  tmp/crime-probe/austin/count-district.json
+22 bytes  tmp/crime-probe/austin/count-sector.json
+22 bytes  tmp/crime-probe/austin/count-since-2025-09.json
+42951 bytes  tmp/crime-probe/austin/fdj4-gpfu.meta.json
+2445932 bytes  tmp/crime-probe/austin/fdj4-gpfu.recent.json
+980176 bytes  tmp/crime-probe/austin/fdj4-gpfu.sample.json
+5221 bytes  tmp/crime-probe/meta/arcgis-cosagis-crime.json
+452 bytes  tmp/crime-probe/meta/arcgis-incident.json
+452 bytes  tmp/crime-probe/meta/arcgis-offense.json
+27157 bytes  tmp/crime-probe/meta/arcgis-police.json
+20428 bytes  tmp/crime-probe/meta/arcgis-sapd.json
+389003 bytes  tmp/crime-probe/meta/austin-catalog-arrest.json
+489966 bytes  tmp/crime-probe/meta/austin-catalog-crime.json
+553869 bytes  tmp/crime-probe/meta/austin-catalog-incident.json
+380484 bytes  tmp/crime-probe/meta/austin-catalog-offense.json
+360086 bytes  tmp/crime-probe/meta/austin-catalog-police.json
+129 bytes  tmp/crime-probe/meta/catalog-data.austintexas.gov.json
+49 bytes  tmp/crime-probe/meta/catalog-data.sanantonio.gov.json
+144 bytes  tmp/crime-probe/meta/fbi-cde-probe.json
+3196 bytes  tmp/crime-probe/meta/fetch-log-2.txt
+3194 bytes  tmp/crime-probe/meta/fetch-log-3.txt
+1352 bytes  tmp/crime-probe/meta/fetch-log.txt
+1751 bytes  tmp/crime-probe/meta/robots-data.austintexas.gov.txt
+3074 bytes  tmp/crime-probe/meta/robots-data.sanantonio.gov.txt
+213 bytes  tmp/crime-probe/meta/robots-opendata-cosagis.opendata.arcgis.com.txt
+12649 bytes  tmp/crime-probe/meta/sa-ckan-crime.json
+4976 bytes  tmp/crime-probe/meta/sa-ckan-incident.json
+5129 bytes  tmp/crime-probe/meta/sa-ckan-offense.json
+85435 bytes  tmp/crime-probe/meta/sa-ckan-police.json
+74331 bytes  tmp/crime-probe/meta/sa-ckan-sapd.json
+92238 bytes  tmp/crime-probe/san-antonio/offenses-data-preparation.pdf
+471624 bytes  tmp/crime-probe/san-antonio/sapd-offenses.head.csv
+5019 bytes  tmp/crime-probe/san-antonio/sapd-offenses.package.json
+495606 bytes  tmp/crime-probe/san-antonio/sapd-offenses.tail.csv
