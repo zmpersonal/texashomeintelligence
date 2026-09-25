@@ -15,8 +15,8 @@ Round 36 merge (`fe41e79`) is in the base, confirmed with `git merge-base --is-a
   sending that address to a third party, which the privacy page forbids. §F has the reasoning
   for the recommendation.
 
-This round changed no served page and built neither. The temporary fetch workflow has been
-deleted (§G).
+This round changed no served page and built neither. The temporary fetch workflow has been deleted and nothing
+the probe fetched remains in the repository (§G).
 
 ---
 
@@ -32,12 +32,35 @@ deleted (§G).
 **Republication of derived figures is permitted for both.** Neither metro ends here. San Antonio
 requires attribution, which THI's source line gives every reading anyway.
 
-**robots.txt, checked before anything was fetched.** Austin disallows only faceted `/browse?*`
-paths; the `/api/views/` and `/resource/` endpoints used here are not disallowed. San Antonio
-disallows `/datastore/*`, `/dataset/activity/*`, `/dataset/groups/*`, `/dataset/showcases/*` and
-`/dataset/*/issues/*`; this probe used `/api/3/action/package_search`, `package_show` and the
-resource download path, none of which are disallowed. **The CKAN datastore API is off limits and
-was not used.**
+### robots.txt — and a correction against this probe
+
+Both files were fetched before anything else. Re-read properly afterwards, rule by rule, against
+the `User-agent: *` group:
+
+**Austin — clean.** Every endpoint used (`/api/views/…`, `/resource/…`, `/api/catalog/v1`) is
+permitted. The `*` group disallows faceted `/browse?*` paths, `/api/odata/`, `/api/collocate*`
+and `/OData.svc/`, none of which this probe touched. `Crawl-delay: 1`, respected by construction
+— the probe made a handful of sequential requests.
+
+> **San Antonio — this probe broke a rule, and the correction belongs here rather than in a
+> footnote.** `data.sanantonio.gov`'s `User-agent: *` group contains **`Disallow: /api/`**. The
+> probe made **six requests to `/api/3/action/`** — five `package_search` calls and one
+> `package_show`. Those were disallowed. An earlier draft of this section stated the opposite,
+> on a skim of the first dozen `Disallow:` lines rather than a parse of the file; that was wrong
+> and is retracted.
+>
+> **What is permitted:** the resource download path itself —
+> `/dataset/<id>/resource/<id>/download/<file>.csv` — matches no `Disallow` rule. The data is
+> published CC-BY for reuse and that is the route to it.
+>
+> **The blanket `Disallow: /` entries in the same file do not apply to us.** They are scoped to
+> 40-odd named scraper and SEO agents — AhrefsBot, SemrushBot, Scrapy, HTTrack, Yandex and
+> similar — not to `*`.
+>
+> **Binding on any build round that follows:** take the CSV URL once, by hand, from the dataset's
+> own page, and fetch only that path. **No `/api/3/action/` call, ever.** The catalogue lookups
+> this probe used to discover the dataset do not need repeating — the resource URL is recorded in
+> §E's source line and in this document.
 
 **FBI Crime Data Explorer: not available.** `api.usa.gov/crime/fbi/cde/…` returns
 `{"error":{"code":"API_KEY_MISSING"}}`. It needs an api.data.gov key, which this project does not
@@ -228,17 +251,20 @@ state rather than a substitute figure.
 
 ---
 
-## G · The temporary workflow
+## G · The temporary workflow, and what was kept
 
 `.github/workflows/tmp-crime-probe.yml` ran three times on this branch and **has been deleted**;
-`.github/workflows/` now holds only the eight pre-existing workflows. It was push-triggered on
-this branch alone and only when the file itself changed, so it never needed anything on `main`
-and could not fire from ordinary work. It read public APIs, fetched `robots.txt` and licence
-metadata before anything else, and wrote only under `tmp/crime-probe/`.
+`.github/workflows/` holds only the eight pre-existing workflows. It was push-triggered on this
+branch alone and only when the file itself changed, so it never needed anything on `main` and
+could not fire from ordinary work. It fetched `robots.txt` and licence metadata before anything
+else and wrote only under a temporary path.
 
-**What remains in `tmp/crime-probe/` is 380 KB of terms evidence** — licence metadata, the three
-`robots.txt` files, the catalogue and package responses, the row counts, and the three fetch
-logs. **The bulk row samples were deleted after measurement**: 55 MB of San Antonio offence
-records and 3.4 MB of Austin reports do not belong in a public repository, the measurements that
-matter are in this document, and nothing here needs them again. Whatever the owner decides,
-`tmp/crime-probe/` should not survive a merge to `main`.
+**Nothing from the probe is kept in the repository.** The bulk row samples went first — 55 MB of
+San Antonio offence records and 3.4 MB of Austin reports do not belong in a public repository —
+and the remaining terms evidence was deleted before this branch merged, on the owner's
+instruction, because **this document is the artifact worth keeping and it quotes what it
+relies on**: the licence strings and attribution in §A, the robots rules and the correction
+against them in §A, the population counts in §B, and the resource URL in §E.
+
+**Everything here is reproducible without it.** The sources are named, the endpoints are quoted,
+and the counts came from `$where` queries whose text is in §B rather than from any stored file.

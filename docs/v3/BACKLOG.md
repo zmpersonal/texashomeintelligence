@@ -302,8 +302,13 @@ routes already exist per topic (`/data/[location]/[topic]/[csvName].csv`).
 >
 > **Decisions open: D7c** (build the article — which of the three candidates in §E) and **D7d**
 > (build the San Antonio reading anyway, against the recommendation, with Austin showing a
-> withheld state). `tmp/crime-probe/` holds 380 KB of terms evidence and should not survive a
-> merge to `main`.
+> withheld state). **Nothing the probe fetched is kept** — the audit quotes the licence strings,
+> the robots rules, the counts and the resource URL it relies on.
+>
+> **One correction the audit carries against itself:** `data.sanantonio.gov`'s robots.txt
+> disallows `/api/` for all agents, and the probe made six `/api/3/action/` calls before that was
+> noticed. The CSV resource path is permitted and is the route any build round must use — **no
+> `/api/3/action/` call, ever.**
 
 > **Round 35b's reasoning, unchanged and still governing the closed part.** Answered on
 > reasoning, not data: **no candidate framing produces
