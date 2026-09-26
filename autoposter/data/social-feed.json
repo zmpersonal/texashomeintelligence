@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-25T14:36:42+00:00",
+  "generated_at": "2026-09-26T13:45:07+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -169,7 +169,7 @@
       "county": "Travis",
       "metric": "drought_stage",
       "angle": "warning",
-      "surprise_score": 0.739,
+      "surprise_score": 0.734,
       "why": "crossed into Extreme Drought (D3); a large move against its own history",
       "figure": "crossed into Extreme Drought (D3) — now D3",
       "source": "U.S. Drought Monitor",
@@ -217,7 +217,7 @@
       "area_id": "austin_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.369,
+      "surprise_score": 0.368,
       "why": "at a level well outside this area's own range",
       "figure": "755 cooling degree-days in 2026-08, +17% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -241,7 +241,7 @@
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.353,
+      "surprise_score": 0.352,
       "why": "a cost signal",
       "figure": "13.88¢ per kWh (2026-08), +1.1% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
