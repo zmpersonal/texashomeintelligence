@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-25T14:35:59.149Z",
-  "lastSuccessAt": "2026-09-25T14:35:59.149Z",
+  "lastAttemptAt": "2026-09-26T13:44:37.063Z",
+  "lastSuccessAt": "2026-09-26T13:44:37.063Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -21036,7 +21036,7 @@
     },
     {
       "observedAt": "2026-09-24T00:00:00.000Z",
-      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
       "key": "2025-148127 MP",
       "value": {
         "permitType": "Repair",
@@ -21046,7 +21046,7 @@
     },
     {
       "observedAt": "2026-09-24T00:00:00.000Z",
-      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
       "key": "2026-018766 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21056,7 +21056,7 @@
     },
     {
       "observedAt": "2026-09-24T00:00:00.000Z",
-      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
       "key": "2026-125103 PP",
       "value": {
         "permitType": "Repair",
@@ -21066,7 +21066,7 @@
     },
     {
       "observedAt": "2026-09-24T00:00:00.000Z",
-      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
       "key": "2026-126300 BP",
       "value": {
         "permitType": "Remodel",
@@ -21077,7 +21077,7 @@
     },
     {
       "observedAt": "2026-09-24T00:00:00.000Z",
-      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
       "key": "2025-063927 PP",
       "value": {
         "permitType": "Remodel",
@@ -21087,7 +21087,7 @@
     },
     {
       "observedAt": "2026-09-24T00:00:00.000Z",
-      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
       "key": "2026-125872 BP",
       "value": {
         "permitType": "Remodel",
@@ -21098,7 +21098,7 @@
     },
     {
       "observedAt": "2026-09-24T00:00:00.000Z",
-      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
       "key": "2026-116477 EP",
       "value": {
         "permitType": "Remodel",
@@ -21108,7 +21108,7 @@
     },
     {
       "observedAt": "2026-09-24T00:00:00.000Z",
-      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
       "key": "2026-123711 PP",
       "value": {
         "permitType": "Repair",
@@ -21118,7 +21118,7 @@
     },
     {
       "observedAt": "2026-09-24T00:00:00.000Z",
-      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
       "key": "2026-124692 PP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21128,7 +21128,7 @@
     },
     {
       "observedAt": "2026-09-24T00:00:00.000Z",
-      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
       "key": "2026-056100 MP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21138,7 +21138,7 @@
     },
     {
       "observedAt": "2026-09-24T00:00:00.000Z",
-      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
       "key": "2026-037737 PP",
       "value": {
         "permitType": "Remodel",
@@ -21148,7 +21148,7 @@
     },
     {
       "observedAt": "2026-09-24T00:00:00.000Z",
-      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
       "key": "2026-125744 BP",
       "value": {
         "permitType": "Repair",
@@ -21159,13 +21159,84 @@
     },
     {
       "observedAt": "2026-09-24T00:00:00.000Z",
-      "ingestedAt": "2026-09-25T14:36:05.320Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
       "key": "2026-126272 BP",
       "value": {
         "permitType": "Remodel",
         "workDescription": "TPO Roof Overlay",
         "status": "Active",
         "valuationUsd": 70000
+      }
+    },
+    {
+      "observedAt": "2026-09-25T00:00:00.000Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
+      "key": "2026-123094 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express: re-roof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-25T00:00:00.000Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
+      "key": "2026-124495 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Mciver - 40-18701- Install new 3.8 kW rooftop solar system to existing residential only using backfed breaker only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-25T00:00:00.000Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
+      "key": "2026-125460 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Install new 12.035kW rooftop solar system for existing residential only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-25T00:00:00.000Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
+      "key": "2021-084973 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "*partial demo* New exterior stairs replace roof & rear deck interior remodel\nNotary to be confirmed",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-25T00:00:00.000Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
+      "key": "2026-090510 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Bathroom addition to existing 1-story single family residence. New bath includes 2 sinks 1 wc 1 shower new windows new framing new siding new foundation and roof.  3 bed/2 bath",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-25T00:00:00.000Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
+      "key": "2026-125428 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "PH2: Install additional new 5.1kW rooftop solar system for existing residential only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-25T00:00:00.000Z",
+      "ingestedAt": "2026-09-26T13:44:37.449Z",
+      "key": "2026-124537 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "ETJ - Bell - 40-16033 - Install new 5.76 kW rooftop solar system to existing residential only using backfed breaker only.",
+        "status": "Active"
       }
     }
   ]
