@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-27T14:41:26.721Z",
-  "lastSuccessAt": "2026-09-27T14:41:26.721Z",
+  "lastAttemptAt": "2026-09-28T17:39:16.207Z",
+  "lastSuccessAt": "2026-09-28T17:39:16.207Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -21170,7 +21170,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-09-27T14:41:27.275Z",
+      "ingestedAt": "2026-09-28T17:39:16.538Z",
       "key": "2026-123094 BP",
       "value": {
         "permitType": "Repair",
@@ -21181,7 +21181,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-09-27T14:41:27.275Z",
+      "ingestedAt": "2026-09-28T17:39:16.538Z",
       "key": "2026-124495 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -21191,7 +21191,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-09-27T14:41:27.275Z",
+      "ingestedAt": "2026-09-28T17:39:16.538Z",
       "key": "2026-125460 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -21201,7 +21201,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-09-27T14:41:27.275Z",
+      "ingestedAt": "2026-09-28T17:39:16.538Z",
       "key": "2021-084973 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21211,7 +21211,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-09-27T14:41:27.275Z",
+      "ingestedAt": "2026-09-28T17:39:16.538Z",
       "key": "2026-090510 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21221,7 +21221,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-09-27T14:41:27.275Z",
+      "ingestedAt": "2026-09-28T17:39:16.538Z",
       "key": "2026-125428 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -21231,12 +21231,53 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-09-27T14:41:27.275Z",
+      "ingestedAt": "2026-09-28T17:39:16.538Z",
       "key": "2026-124537 EP",
       "value": {
         "permitType": "Auxiliary Power",
         "workDescription": "ETJ - Bell - 40-16033 - Install new 5.76 kW rooftop solar system to existing residential only using backfed breaker only.",
         "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-27T00:00:00.000Z",
+      "ingestedAt": "2026-09-28T17:39:16.538Z",
+      "key": "2026-102504 EP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "Bldg. 2 - New construction of 3 story SFR w/ attached carport covered front porch and uncovered wood steps at rear and rooftop uncovered balcony. 3 bedroom 3.5 baths",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-27T00:00:00.000Z",
+      "ingestedAt": "2026-09-28T17:39:16.538Z",
+      "key": "2026-102505 EP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "Bldg. 3 - New construction of 3 story SFR w/ attached carport covered front porch and uncovered wood steps at rear and rooftop uncovered balcony. 3 bedroom 3.5 baths",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-27T00:00:00.000Z",
+      "ingestedAt": "2026-09-28T17:39:16.538Z",
+      "key": "2026-102503 EP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "Bldg. 1 - New construction of 3 story SFR w/ attached carport covered front porch and uncovered wood steps at rear and rooftop uncovered balcony. 3 bedroom 3.5 baths",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-28T00:00:00.000Z",
+      "ingestedAt": "2026-09-28T17:39:16.538Z",
+      "key": "2026-123620 BP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Interior Remodel- Full home remodel all bathrooms (tile and fixtures no plumbing relocation in BRs) and kitchen. New added load bearing beam for support. Replaced siding and roof. Installed new AC unit. New insulation in attic.",
+        "status": "Active",
+        "valuationUsd": 1
       }
     }
   ]
