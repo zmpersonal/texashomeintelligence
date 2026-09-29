@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-28T17:39:16.207Z",
-  "lastSuccessAt": "2026-09-28T17:39:16.207Z",
+  "lastAttemptAt": "2026-09-29T15:50:04.814Z",
+  "lastSuccessAt": "2026-09-29T15:50:04.814Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -21271,13 +21271,75 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-09-28T17:39:16.538Z",
+      "ingestedAt": "2026-09-29T15:50:05.492Z",
       "key": "2026-123620 BP",
       "value": {
         "permitType": "Addition and Remodel",
         "workDescription": "Interior Remodel- Full home remodel all bathrooms (tile and fixtures no plumbing relocation in BRs) and kitchen. New added load bearing beam for support. Replaced siding and roof. Installed new AC unit. New insulation in attic.",
         "status": "Active",
         "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-28T00:00:00.000Z",
+      "ingestedAt": "2026-09-29T15:50:05.492Z",
+      "key": "2026-126536 BP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "*Partial Demo* Interior remodel and the permitting of a roof extension to main house.",
+        "status": "Active",
+        "valuationUsd": 290000
+      }
+    },
+    {
+      "observedAt": "2026-09-28T00:00:00.000Z",
+      "ingestedAt": "2026-09-29T15:50:05.492Z",
+      "key": "2026-127493 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Porch Enclosure- Enclose existing second floor balcony to create a sunroom. No expansion of building footprint of modification to existing roof columns beams or framing. \n\nEP added 9/28/2026",
+        "status": "Pending"
+      }
+    },
+    {
+      "observedAt": "2026-09-28T00:00:00.000Z",
+      "ingestedAt": "2026-09-29T15:50:05.492Z",
+      "key": "2026-045630 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Rooftop Solar",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-28T00:00:00.000Z",
+      "ingestedAt": "2026-09-29T15:50:05.492Z",
+      "key": "2026-124275 BP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Porch Enclosure- Enclose existing second floor balcony to create a sunroom. No expansion of building footprint of modification to existing roof columns beams or framing.",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-28T00:00:00.000Z",
+      "ingestedAt": "2026-09-29T15:50:05.492Z",
+      "key": "2026-126346 MP",
+      "value": {
+        "permitType": "Change Out",
+        "workDescription": "Replacement of complete existing central heat and air system with or without duct work Replacement of air handler and condenser (rooftop unit)",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-28T00:00:00.000Z",
+      "ingestedAt": "2026-09-29T15:50:05.492Z",
+      "key": "2026-008710 PP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "New 1-story detached stand-alone bathroom 8x10 single slope roof containing plumbing/electrical.",
+        "status": "Active"
       }
     }
   ]
