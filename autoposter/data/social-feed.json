@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T15:50:50+00:00",
+  "generated_at": "2026-09-30T15:55:16+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -169,7 +169,7 @@
       "county": "Travis",
       "metric": "drought_stage",
       "angle": "warning",
-      "surprise_score": 0.719,
+      "surprise_score": 0.714,
       "why": "crossed into Extreme Drought (D3); a large move against its own history",
       "figure": "crossed into Extreme Drought (D3) — now D3",
       "source": "U.S. Drought Monitor",
