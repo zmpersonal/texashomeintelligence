@@ -105,48 +105,50 @@ jobs:
               log.append({'url': url, 'label': label, 'status': st, 'bytes': len(body)})
               return body if st == 200 else None
 
-          # ---- PASS 5 ----
-          # Pass 4 settled the corridor (no city publishes a permit feed) and
-          # Houston (robots refuses every machine-readable path). Two loose ends:
+          # ---- PASS 6 ----
+          # Two corrections to pass 5, both mine:
           #
-          #  * Dallas came back status 0 on all three queries — my own bug, not
-          #    the city's: the SoQL contained raw spaces and urllib rejected the
-          #    URL before a request was ever made. Quote the query.
-          #  * data.fortworthtexas.gov 404s on /api/catalog/v1 AND /api/views/,
-          #    and its robots.txt is byte-identical to hub.arcgis.com's apart
-          #    from the sitemap host. It is an ArcGIS Hub site, so the Socrata id
-          #    from pass 1's cross-domain search was a false match. Ask Hub.
+          #  * Dallas' `issued_date` is a TEXT column holding "12/31/19", and
+          #    by_month 400'd because date_trunc_ym cannot parse it. That means
+          #    max()/min() were LEXICOGRAPHIC, not chronological: a row reading
+          #    "01/15/20" sorts below "12/31/19" on the first character, so it
+          #    would be invisible to both extremes. "oldest 01/01/19, newest
+          #    12/31/19" therefore does NOT establish the dataset stops in 2019.
+          #    Count rows per year suffix instead — unambiguous on a text column.
+          #  * The Hub search for Fort Worth returned other people's maps, none
+          #    owned by the city. Ask the site's own DCAT catalogue, which is
+          #    what an ArcGIS Hub open-data site publishes its holdings through.
           findings = collections.defaultdict(dict)
 
           DH, DID = 'www.dallasopendata.com', 'e7gq-4sah'
-          for label, q in [
-              ('range', '$select=max(issued_date) as newest, min(issued_date) as oldest, count(1) as n'),
-              ('by_month', '$select=date_trunc_ym(issued_date) as m, count(1) as n&$group=m&$order=m DESC&$limit=30'),
-              ('by_type', '$select=permit_type, count(1) as n&$group=permit_type&$order=n DESC&$limit=15'),
-          ]:
-              qs = '&'.join(urllib.parse.quote(part, safe='=$(),*') for part in q.split('&'))
-              b = fetch(f'https://{DH}/resource/{DID}.json?{qs}', f'dallas:{label}')
+          years = {}
+          for yy in ['19', '20', '21', '22', '23', '24', '25', '26']:
+              q = urllib.parse.quote(f"$select=count(1) as n&$where=issued_date like '%/{yy}'",
+                                     safe="=$&(),*%'")
+              b = fetch(f'https://{DH}/resource/{DID}.json?{q}', f'dallas:yr{yy}')
               if b:
-                  v, err = jparse(b, label)
-                  findings['dallas'][label] = err or v
+                  v, err = jparse(b, f'yr{yy}')
+                  years[f'20{yy}'] = err or (v[0]['n'] if v else None)
+          findings['dallas']['rows_by_year_suffix'] = years
 
-          # Fort Worth via the ArcGIS Hub API its robots.txt fingerprints it as.
-          for label, q in [('permits', 'Fort Worth permits'), ('building', 'Fort Worth building permit')]:
-              b = fetch('https://hub.arcgis.com/api/v3/datasets'
-                        f'?q={urllib.parse.quote(q)}&page[size]=12', f'fw-hub:{label}')
-              if b:
-                  v, err = jparse(b, 'fw-hub')
-                  findings['fortworth'][label] = err or [
-                      {'name': (d.get('attributes') or {}).get('name'),
-                       'owner': (d.get('attributes') or {}).get('source'),
-                       'type': (d.get('attributes') or {}).get('type'),
-                       'license': (d.get('attributes') or {}).get('license'),
-                       'modified': (d.get('attributes') or {}).get('modified'),
-                       'recordCount': (d.get('attributes') or {}).get('recordCount'),
-                       'url': (d.get('attributes') or {}).get('url')}
-                      for d in (v.get('data') or [])]
+          FH = 'data.fortworthtexas.gov'
+          b = fetch(f'https://{FH}/api/feed/dcat-us/1.1.json', 'fortworth:dcat')
+          if b:
+              v, err = jparse(b, 'fw-dcat')
+              if err:
+                  findings['fortworth']['dcat'] = err
+              else:
+                  ds = v.get('dataset', [])
+                  findings['fortworth']['dcat_dataset_count'] = len(ds)
+                  findings['fortworth']['permit_datasets'] = [
+                      {'title': d.get('title'), 'license': d.get('license'),
+                       'modified': d.get('modified'), 'identifier': d.get('identifier'),
+                       'publisher': (d.get('publisher') or {}).get('name'),
+                       'formats': [x.get('format') for x in d.get('distribution', [])]}
+                      for d in ds if 'permit' in (d.get('title', '') + d.get('description', '')).lower()]
+                  findings['fortworth']['all_titles'] = [d.get('title') for d in ds][:120]
 
-          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-5.json', 'w'), indent=2)
+          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-6.json', 'w'), indent=2)
           print(json.dumps(findings, indent=2)[:6000])
           print(f'\n{len(log)} requests; skipped by robots: '
                 f'{sum(1 for x in log if x["status"] == "SKIPPED_BY_ROBOTS")}')
