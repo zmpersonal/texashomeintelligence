@@ -1,0 +1,616 @@
+{
+  "findings": {
+    "gazetteer_columns": [
+      "USPS",
+      "GEOID",
+      "ANSICODE",
+      "NAME",
+      "LSAD",
+      "FUNCSTAT",
+      "ALAND",
+      "AWATER",
+      "ALAND_SQMI",
+      "AWATER_SQMI",
+      "INTPTLAT",
+      "INTPTLONG"
+    ],
+    "points": {
+      "Austin city": {
+        "geoid": "4805000",
+        "lat": 30.298622,
+        "lon": -97.754134,
+        "aland_sqmi": "326.365"
+      },
+      "New Braunfels city": {
+        "geoid": "4850820",
+        "lat": 29.699306,
+        "lon": -98.115127,
+        "aland_sqmi": "45.035"
+      },
+      "San Antonio city": {
+        "geoid": "4865000",
+        "lat": 29.462809,
+        "lon": -98.524635,
+        "aland_sqmi": "498.922"
+      },
+      "San Marcos city": {
+        "geoid": "4865600",
+        "lat": 29.872399,
+        "lon": -97.936022,
+        "aland_sqmi": "38.871"
+      }
+    },
+    "points_source": "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2023_Gazetteer/2023_gaz_place_48.txt",
+    "city_to_metro_point_miles": {
+      "New Braunfels": {
+        "austin": 45.1,
+        "san-antonio": 29.6
+      },
+      "San Marcos": {
+        "austin": 29.6,
+        "san-antonio": 45.6
+      }
+    },
+    "airnow": {
+      "has_key": true,
+      "78701": {
+        "who": "Austin core",
+        "rows": [
+          {
+            "ReportingArea": "Austin",
+            "StateCode": "TX",
+            "Latitude": 30.267,
+            "Longitude": -97.734,
+            "ParameterName": "O3",
+            "AQI": 26
+          },
+          {
+            "ReportingArea": "Austin",
+            "StateCode": "TX",
+            "Latitude": 30.267,
+            "Longitude": -97.734,
+            "ParameterName": "PM2.5",
+            "AQI": 57
+          },
+          {
+            "ReportingArea": "Austin",
+            "StateCode": "TX",
+            "Latitude": 30.267,
+            "Longitude": -97.734,
+            "ParameterName": "PM10",
+            "AQI": 18
+          }
+        ]
+      },
+      "78205": {
+        "who": "San Antonio core",
+        "rows": [
+          {
+            "ReportingArea": "San Antonio",
+            "StateCode": "TX",
+            "Latitude": 29.417,
+            "Longitude": -98.484,
+            "ParameterName": "O3",
+            "AQI": 25
+          },
+          {
+            "ReportingArea": "San Antonio",
+            "StateCode": "TX",
+            "Latitude": 29.417,
+            "Longitude": -98.484,
+            "ParameterName": "PM2.5",
+            "AQI": 61
+          },
+          {
+            "ReportingArea": "San Antonio",
+            "StateCode": "TX",
+            "Latitude": 29.417,
+            "Longitude": -98.484,
+            "ParameterName": "PM10",
+            "AQI": 27
+          }
+        ]
+      },
+      "78130": {
+        "who": "New Braunfels",
+        "rows": []
+      },
+      "78132": {
+        "who": "New Braunfels",
+        "rows": []
+      },
+      "78666": {
+        "who": "San Marcos",
+        "rows": []
+      },
+      "78640": {
+        "who": "Kyle",
+        "rows": [
+          {
+            "ReportingArea": "Austin",
+            "StateCode": "TX",
+            "Latitude": 30.267,
+            "Longitude": -97.734,
+            "ParameterName": "O3",
+            "AQI": 26
+          },
+          {
+            "ReportingArea": "Austin",
+            "StateCode": "TX",
+            "Latitude": 30.267,
+            "Longitude": -97.734,
+            "ParameterName": "PM2.5",
+            "AQI": 57
+          },
+          {
+            "ReportingArea": "Austin",
+            "StateCode": "TX",
+            "Latitude": 30.267,
+            "Longitude": -97.734,
+            "ParameterName": "PM10",
+            "AQI": 18
+          }
+        ]
+      }
+    },
+    "ghcnd": {
+      "usw_station_count": 1909,
+      "austin core": [
+        {
+          "id": "USW00013958",
+          "name": "AUSTIN-CAMP MABRY",
+          "miles": 1.6,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00013904",
+          "name": "AUSTIN BERGSTROM INTL AP",
+          "miles": 9.1,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00000230",
+          "name": "AUSTIN EXECUTIVE AP",
+          "miles": 13.0,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00000166",
+          "name": "LAGO VISTA RUSTY ALLEN AP",
+          "miles": 18.8,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00063904",
+          "name": "TAYLOR MUNI AP",
+          "miles": 26.5,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00053942",
+          "name": "GEORGETOWN MUNI AP",
+          "miles": 26.7,
+          "has_monthly_normals": false
+        }
+      ],
+      "san antonio core": [
+        {
+          "id": "USW00012921",
+          "name": "SAN ANTONIO INTL AP",
+          "miles": 6.1,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00012909",
+          "name": "SAN ANTONIO KELLY AFB",
+          "miles": 6.5,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00012931",
+          "name": "SAN ANTONIO BROOKS AFB",
+          "miles": 9.0,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00012970",
+          "name": "SAN ANTONIO STINSON MUNI AP",
+          "miles": 9.1,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00012911",
+          "name": "RANDOLPH AFB",
+          "miles": 16.5,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00000263",
+          "name": "BOERNE STAGE FIELD AP",
+          "miles": 20.7,
+          "has_monthly_normals": false
+        }
+      ],
+      "New Braunfels": [
+        {
+          "id": "USW00012971",
+          "name": "AUSTIN SAN ANTONIO",
+          "miles": 5.2,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00012911",
+          "name": "RANDOLPH AFB",
+          "miles": 14.5,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00012910",
+          "name": "SAN MARCOS GARY AFB",
+          "miles": 19.6,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00012979",
+          "name": "SAN MARCOS MUNI AP",
+          "miles": 20.0,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00012921",
+          "name": "SAN ANTONIO INTL AP",
+          "miles": 24.6,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00012931",
+          "name": "SAN ANTONIO BROOKS AFB",
+          "miles": 31.4,
+          "has_monthly_normals": false
+        }
+      ],
+      "San Marcos": [
+        {
+          "id": "USW00012910",
+          "name": "SAN MARCOS GARY AFB",
+          "miles": 4.2,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00012979",
+          "name": "SAN MARCOS MUNI AP",
+          "miles": 4.5,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00012971",
+          "name": "AUSTIN SAN ANTONIO",
+          "miles": 12.9,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00013904",
+          "name": "AUSTIN BERGSTROM INTL AP",
+          "miles": 26.4,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00012911",
+          "name": "RANDOLPH AFB",
+          "miles": 30.6,
+          "has_monthly_normals": false
+        },
+        {
+          "id": "USW00013958",
+          "name": "AUSTIN-CAMP MABRY",
+          "miles": 32.7,
+          "has_monthly_normals": false
+        }
+      ]
+    },
+    "swdi": {
+      "austin core": {
+        "bbox": "-98.2541,29.7986,-97.2541,30.7986",
+        "count_body": null
+      },
+      "san antonio core": {
+        "bbox": "-99.0246,28.9628,-98.0246,29.9628",
+        "count_body": null
+      },
+      "New Braunfels": {
+        "bbox": "-98.6151,29.1993,-97.6151,30.1993",
+        "count_body": null
+      },
+      "San Marcos": {
+        "bbox": "-98.4360,29.3724,-97.4360,30.3724",
+        "count_body": null
+      },
+      "box_overlap_fraction": {
+        "New Braunfels": {
+          "vs_san-antonio": 0.45
+        },
+        "San Marcos": {
+          "vs_austin": 0.488
+        }
+      }
+    },
+    "acs": {
+      "has_key": true,
+      "place_fips": {
+        "New Braunfels": "50820",
+        "San Marcos": "65600"
+      },
+      "place:New Braunfels": [
+        [
+          "NAME",
+          "B25035_001E",
+          "B25003_001E",
+          "B25003_002E",
+          "state",
+          "place"
+        ],
+        [
+          "New Braunfels city, Texas",
+          "2005",
+          "38483",
+          "25095",
+          "48",
+          "50820"
+        ]
+      ],
+      "place:San Marcos": [
+        [
+          "NAME",
+          "B25035_001E",
+          "B25003_001E",
+          "B25003_002E",
+          "state",
+          "place"
+        ],
+        [
+          "San Marcos city, Texas",
+          "1998",
+          "27606",
+          "8408",
+          "48",
+          "65600"
+        ]
+      ],
+      "county:Comal": [
+        [
+          "NAME",
+          "B25035_001E",
+          "B25003_001E",
+          "B25003_002E",
+          "state",
+          "county"
+        ],
+        [
+          "Comal County, Texas",
+          "2003",
+          "67651",
+          "51991",
+          "48",
+          "091"
+        ]
+      ],
+      "county:Hays": [
+        [
+          "NAME",
+          "B25035_001E",
+          "B25003_001E",
+          "B25003_002E",
+          "state",
+          "county"
+        ],
+        [
+          "Hays County, Texas",
+          "2005",
+          "94499",
+          "60587",
+          "48",
+          "209"
+        ]
+      ],
+      "county:Travis": [
+        [
+          "NAME",
+          "B25035_001E",
+          "B25003_001E",
+          "B25003_002E",
+          "state",
+          "county"
+        ],
+        [
+          "Travis County, Texas",
+          "1997",
+          "561491",
+          "297755",
+          "48",
+          "453"
+        ]
+      ],
+      "county:Bexar": [
+        [
+          "NAME",
+          "B25035_001E",
+          "B25003_001E",
+          "B25003_002E",
+          "state",
+          "county"
+        ],
+        [
+          "Bexar County, Texas",
+          "1989",
+          "740402",
+          "437637",
+          "48",
+          "029"
+        ]
+      ],
+      "place_vintages_new_braunfels": {
+        "2019": "ok",
+        "2020": "ok",
+        "2021": "ok",
+        "2022": "ok",
+        "2023": "ok"
+      }
+    }
+  },
+  "log": [
+    {
+      "url": "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2023_Gazetteer/2023_gaz_place_48.txt",
+      "label": "gazetteer:tx-places",
+      "status": 200,
+      "bytes": 374659
+    },
+    {
+      "url": "https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=78701&distance=25&API_KEY=268D3CB0-045A-4E5E-8322-4BAC530E1A3A",
+      "label": "airnow:78701",
+      "status": 200,
+      "bytes": 664
+    },
+    {
+      "url": "https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=78205&distance=25&API_KEY=268D3CB0-045A-4E5E-8322-4BAC530E1A3A",
+      "label": "airnow:78205",
+      "status": 200,
+      "bytes": 679
+    },
+    {
+      "url": "https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=78130&distance=25&API_KEY=268D3CB0-045A-4E5E-8322-4BAC530E1A3A",
+      "label": "airnow:78130",
+      "status": 200,
+      "bytes": 2
+    },
+    {
+      "url": "https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=78132&distance=25&API_KEY=268D3CB0-045A-4E5E-8322-4BAC530E1A3A",
+      "label": "airnow:78132",
+      "status": 200,
+      "bytes": 2
+    },
+    {
+      "url": "https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=78666&distance=25&API_KEY=268D3CB0-045A-4E5E-8322-4BAC530E1A3A",
+      "label": "airnow:78666",
+      "status": 200,
+      "bytes": 2
+    },
+    {
+      "url": "https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=78640&distance=25&API_KEY=268D3CB0-045A-4E5E-8322-4BAC530E1A3A",
+      "label": "airnow:78640",
+      "status": 200,
+      "bytes": 664
+    },
+    {
+      "url": "https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt",
+      "label": "ghcnd:stations",
+      "status": 200,
+      "bytes": 11395258
+    },
+    {
+      "url": "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/access/",
+      "label": "ghcnd:normals-index",
+      "status": "SKIPPED_BY_ROBOTS",
+      "disallowed_by": [
+        "/data*"
+      ]
+    },
+    {
+      "url": "https://www.ncdc.noaa.gov/swdiws/csv/nx3hail/20260501:20260531?bbox=-98.2541%2C29.7986%2C-97.2541%2C30.7986&stat=count",
+      "label": "swdi:austin core",
+      "status": "SKIPPED_BY_ROBOTS",
+      "disallowed_by": [
+        "/swdiws/"
+      ]
+    },
+    {
+      "url": "https://www.ncdc.noaa.gov/swdiws/csv/nx3hail/20260501:20260531?bbox=-99.0246%2C28.9628%2C-98.0246%2C29.9628&stat=count",
+      "label": "swdi:san antonio core",
+      "status": "SKIPPED_BY_ROBOTS",
+      "disallowed_by": [
+        "/swdiws/"
+      ]
+    },
+    {
+      "url": "https://www.ncdc.noaa.gov/swdiws/csv/nx3hail/20260501:20260531?bbox=-98.6151%2C29.1993%2C-97.6151%2C30.1993&stat=count",
+      "label": "swdi:New Braunfels",
+      "status": "SKIPPED_BY_ROBOTS",
+      "disallowed_by": [
+        "/swdiws/"
+      ]
+    },
+    {
+      "url": "https://www.ncdc.noaa.gov/swdiws/csv/nx3hail/20260501:20260531?bbox=-98.4360%2C29.3724%2C-97.4360%2C30.3724&stat=count",
+      "label": "swdi:San Marcos",
+      "status": "SKIPPED_BY_ROBOTS",
+      "disallowed_by": [
+        "/swdiws/"
+      ]
+    },
+    {
+      "url": "https://api.census.gov/data/2023/acs/acs5?get=NAME%2CB25035_001E%2CB25003_001E%2CB25003_002E&for=place%3A50820&in=state:48&key=981e58994702ec843b6e24b96881b21c42f8e680",
+      "label": "acs:place-New Braunfels:2023",
+      "status": 200,
+      "bytes": 135
+    },
+    {
+      "url": "https://api.census.gov/data/2023/acs/acs5?get=NAME%2CB25035_001E%2CB25003_001E%2CB25003_002E&for=place%3A65600&in=state:48&key=981e58994702ec843b6e24b96881b21c42f8e680",
+      "label": "acs:place-San Marcos:2023",
+      "status": 200,
+      "bytes": 131
+    },
+    {
+      "url": "https://api.census.gov/data/2023/acs/acs5?get=NAME%2CB25035_001E%2CB25003_001E%2CB25003_002E&for=county%3A091&in=state:48&key=981e58994702ec843b6e24b96881b21c42f8e680",
+      "label": "acs:county-Comal:2023",
+      "status": 200,
+      "bytes": 128
+    },
+    {
+      "url": "https://api.census.gov/data/2023/acs/acs5?get=NAME%2CB25035_001E%2CB25003_001E%2CB25003_002E&for=county%3A209&in=state:48&key=981e58994702ec843b6e24b96881b21c42f8e680",
+      "label": "acs:county-Hays:2023",
+      "status": 200,
+      "bytes": 127
+    },
+    {
+      "url": "https://api.census.gov/data/2023/acs/acs5?get=NAME%2CB25035_001E%2CB25003_001E%2CB25003_002E&for=county%3A453&in=state:48&key=981e58994702ec843b6e24b96881b21c42f8e680",
+      "label": "acs:county-Travis:2023",
+      "status": 200,
+      "bytes": 131
+    },
+    {
+      "url": "https://api.census.gov/data/2023/acs/acs5?get=NAME%2CB25035_001E%2CB25003_001E%2CB25003_002E&for=county%3A029&in=state:48&key=981e58994702ec843b6e24b96881b21c42f8e680",
+      "label": "acs:county-Bexar:2023",
+      "status": 200,
+      "bytes": 130
+    },
+    {
+      "url": "https://api.census.gov/data/2019/acs/acs5?get=NAME%2CB25035_001E%2CB25003_001E%2CB25003_002E&for=place%3A50820&in=state:48&key=981e58994702ec843b6e24b96881b21c42f8e680",
+      "label": "acs:nb-2019:2019",
+      "status": 200,
+      "bytes": 135
+    },
+    {
+      "url": "https://api.census.gov/data/2020/acs/acs5?get=NAME%2CB25035_001E%2CB25003_001E%2CB25003_002E&for=place%3A50820&in=state:48&key=981e58994702ec843b6e24b96881b21c42f8e680",
+      "label": "acs:nb-2020:2020",
+      "status": 200,
+      "bytes": 135
+    },
+    {
+      "url": "https://api.census.gov/data/2021/acs/acs5?get=NAME%2CB25035_001E%2CB25003_001E%2CB25003_002E&for=place%3A50820&in=state:48&key=981e58994702ec843b6e24b96881b21c42f8e680",
+      "label": "acs:nb-2021:2021",
+      "status": 200,
+      "bytes": 135
+    },
+    {
+      "url": "https://api.census.gov/data/2022/acs/acs5?get=NAME%2CB25035_001E%2CB25003_001E%2CB25003_002E&for=place%3A50820&in=state:48&key=981e58994702ec843b6e24b96881b21c42f8e680",
+      "label": "acs:nb-2022:2022",
+      "status": 200,
+      "bytes": 135
+    },
+    {
+      "url": "https://api.census.gov/data/2023/acs/acs5?get=NAME%2CB25035_001E%2CB25003_001E%2CB25003_002E&for=place%3A50820&in=state:48&key=981e58994702ec843b6e24b96881b21c42f8e680",
+      "label": "acs:nb-2023:2023",
+      "status": 200,
+      "bytes": 135
+    }
+  ]
+}
