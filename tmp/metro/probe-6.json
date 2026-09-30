@@ -1,0 +1,211 @@
+{
+  "findings": {
+    "dallas": {
+      "rows_by_year_suffix": {
+        "2019": "0",
+        "2020": "0",
+        "2021": "0",
+        "2022": "0",
+        "2023": "0",
+        "2024": "0",
+        "2025": "0",
+        "2026": "0"
+      }
+    },
+    "fortworth": {
+      "dcat_dataset_count": 53,
+      "permit_datasets": [
+        {
+          "title": "CFW Development Permits Table",
+          "license": "https://creativecommons.org/licenses/by/4.0",
+          "modified": "2026-09-30T11:25:29.883Z",
+          "identifier": "https://www.arcgis.com/home/item.html?id=d2740f4d746b4bfaa03e25de0376238b&sublayer=0",
+          "publisher": "City of Fort Worth",
+          "formats": [
+            "Web Page",
+            "ArcGIS GeoServices REST API",
+            "CSV",
+            "ZIP",
+            "GeoJSON",
+            "KML",
+            "ZIP",
+            "TXT",
+            "XLSX",
+            "GPKG",
+            "GDB"
+          ]
+        },
+        {
+          "title": "CFW Development Permits Points",
+          "license": "https://creativecommons.org/licenses/by/4.0",
+          "modified": "2026-09-30T07:09:35.199Z",
+          "identifier": "https://www.arcgis.com/home/item.html?id=12ca73741a5545bf87ead3f9a1c8c0e7&sublayer=0",
+          "publisher": "City of Fort Worth",
+          "formats": [
+            "Web Page",
+            "ArcGIS GeoServices REST API",
+            "CSV",
+            "ZIP",
+            "GeoJSON",
+            "KML"
+          ]
+        },
+        {
+          "title": "Permit Location App",
+          "license": "Public",
+          "modified": "2026-07-30T22:23:16.000Z",
+          "identifier": "https://www.arcgis.com/home/item.html?id=921c2fd93f2c439c9fd2c053c3f3482f",
+          "publisher": "City of Fort Worth",
+          "formats": [
+            "Web Page",
+            "ArcGIS GeoServices REST API"
+          ]
+        },
+        {
+          "title": "Average Time to Approve Permit ",
+          "license": "https://creativecommons.org/licenses/by/4.0",
+          "modified": "2026-05-26T00:00:00.000Z",
+          "identifier": "https://www.arcgis.com/home/item.html?id=442c597094b74ae494b3df478bb5f494",
+          "publisher": "City of Fort Worth",
+          "formats": [
+            "Web Page",
+            "ArcGIS GeoServices REST API"
+          ]
+        },
+        {
+          "title": "Permit Locations Map",
+          "license": "",
+          "modified": "2026-05-04T21:45:34.000Z",
+          "identifier": "https://www.arcgis.com/home/item.html?id=b2a2e9487cbf4d0ba3d992160ae74c9a",
+          "publisher": "City of Fort Worth",
+          "formats": [
+            "Web Page",
+            "ArcGIS GeoServices REST API"
+          ]
+        },
+        {
+          "title": "Building Permits: Time to First City Comment Dashboard",
+          "license": "",
+          "modified": "2026-02-04T14:36:28.000Z",
+          "identifier": "https://www.arcgis.com/home/item.html?id=933017882e8d4602a6119a5ee2251f82",
+          "publisher": "City of Fort Worth",
+          "formats": [
+            "Web Page",
+            "ArcGIS GeoServices REST API"
+          ]
+        }
+      ],
+      "all_titles": [
+        "CFW Development Permits Table",
+        "CFW Current Traffic Accidents",
+        "CFW Code Violations Points",
+        "CFW Code Violations Table",
+        "CFW Certificates of Occupancy Table",
+        "CFW Development Permits Points",
+        "CFW Police Crime Data Points",
+        "CFW Police Crime Data Table",
+        "CFW Nearby Facilities Table",
+        "CFW Neighborhood Organizations",
+        "CFW Growth Centers",
+        "CFW Urban Villages",
+        "CFW Future Land Use",
+        "CFW Extraterritorial Jurisdiction (ETJ)",
+        "Community Center Member Data Dashboard",
+        "CFW City Limits",
+        "CFW Neighborhood Empowerment Zones (NEZ)",
+        "CFW Council Districts",
+        "Permit Location App",
+        "CFW Police Reporting Areas (PRA)",
+        "CFW Police Divisions",
+        "CFW Police Districts",
+        "CFW Police Beats",
+        "Master Roadway Network Viewer",
+        "Crime Data App",
+        "Upcoming Board and Commission Cases",
+        "CFW Master Roadway Network",
+        "Data Service Standard",
+        "Budget Priorities Survey Dashboard",
+        "Average Time to Approve Permit ",
+        "Code Violations Map",
+        "Code Violations App",
+        "Permit Locations Map",
+        "Crime Data Map",
+        "GIS Data Download",
+        "One Address",
+        "Health Inspections",
+        "Police Report Search",
+        "FWPD Incident Response Dashboard",
+        "NET Force Dashboard",
+        "City Area Dashboard",
+        "Fort Worth Crime Report",
+        "Animal Shelter Population Report",
+        "2026 Bond Program Feedback",
+        "City of Fort Worth Employment Statistics Dashboard",
+        "Budget vs Actual Dashboard",
+        "Building Permits: Time to First City Comment Dashboard",
+        "CFW Police Facilities",
+        "CFW Parks",
+        "CFW Fire Stations",
+        "CFW Libraries",
+        "CFW Community Centers",
+        "CFW Public Improvement District Boundaries"
+      ]
+    }
+  },
+  "log": [
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%%2F19'",
+      "label": "dallas:yr19",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%%2F20'",
+      "label": "dallas:yr20",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%%2F21'",
+      "label": "dallas:yr21",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%%2F22'",
+      "label": "dallas:yr22",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%%2F23'",
+      "label": "dallas:yr23",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%%2F24'",
+      "label": "dallas:yr24",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%%2F25'",
+      "label": "dallas:yr25",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%%2F26'",
+      "label": "dallas:yr26",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "url": "https://data.fortworthtexas.gov/api/feed/dcat-us/1.1.json",
+      "label": "fortworth:dcat",
+      "status": 200,
+      "bytes": 169477
+    }
+  ]
+}
