@@ -788,3 +788,39 @@ city.
 it wants a reason rather than a round number.
 
 **Scope → unscheduled, small, but blocked on the pad decision.**
+
+---
+
+### 24 · Cooling load: New Braunfels has a station, San Marcos does not
+
+Round 41e measured this against the existing bar in `noaaClimate.ts` — `USW` within 0.35°, must
+carry `years_`, 12/12 months, zero months flagged `E`, zero months under 10 years — and verified
+the probe reproduces what the site ships today, Kelly AFB's `years=2, comp_flag=E` rejection
+included. See `docs/audits/round-41e-corridor-cooling-load.md`.
+
+| City | Verdict | Station | Distance |
+|---|---|---|---|
+| **New Braunfels** | **PASS** | USW00012971 | **5.2 mi** — nearer than San Antonio's own (6.0) |
+| **San Marcos** | passes the rule; **recommend withholding** | USW00012971 | **12.9 mi** — New Braunfels' station |
+
+**New Braunfels gets a real reading:** 17–20 years of record, no estimated months, 141 monthly
+GSOM actuals (2015-01 → 2026-09), and an annual 3,144 CDD against Austin's 3,290 and San
+Antonio's 3,474 — measurably different from both, not a relabelled metro figure.
+
+**San Marcos is the honest no.** Both stations named San Marcos — Gary AFB (4.2 mi) and San
+Marcos Muni (4.5 mi) — publish **no 1991-2020 monthly normals** at all. What the rule returns
+instead is New Braunfels' station 12.9 miles off, so two city pages would show one identical set
+of twelve numbers. Recommended wording is in the audit §6.
+
+**Two things to decide when 41b lands:**
+
+1. **Whether to publish San Marcos at all.** If yes, the defensible form labels the reading by
+   station and distance rather than by the city — the discipline 41a established.
+2. **The station's published name is `AUSTIN SAN ANTONIO`.** On a New Braunfels page a source
+   line naming it would read as an error. The name is NOAA's; whatever renders it has to lead
+   with the distance or carry the id without the name.
+
+**Blocked on 41b** — `noaaClimate.ts` writes `noaa-climate/{location}.json` keyed by `AreaId`,
+and a city is not an area.
+
+**Scope → blocked on 41b, then small.**
