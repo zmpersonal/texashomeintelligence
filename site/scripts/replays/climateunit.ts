@@ -321,8 +321,17 @@ async function main() {
   // ── 8. Registration, scoring, freshness.
   console.log("\n8. registration, scoring, freshness");
   const entries = REGISTRY.filter((e) => e.fetcher.datasetId === "noaa-climate");
-  assert("both launch metros registered", entries.length === 2,
-    entries.map((e) => e.fetcher.location).join(", "));
+  // Round 41b widened this. The meaningful assertion is no longer a count: it
+  // is that New Braunfels IS registered and San Marcos is NOT. Both stations
+  // bearing San Marcos' name publish no 1991-2020 normal, and the nearest that
+  // does is New Braunfels' own station 12.9 miles away — registering it would
+  // publish one set of twelve numbers under two city names.
+  const registered = entries.map((e) => e.fetcher.location).sort();
+  assert("the two metros and New Braunfels are registered",
+    JSON.stringify(registered) === JSON.stringify(["austin", "new-braunfels", "san-antonio"]),
+    registered.join(", "));
+  assert("San Marcos is NOT registered — its reading is withheld, not borrowed",
+    !registered.includes("san-marcos"), registered.join(", "));
   assert("no secret required", entries.every((e) => e.fetcher.requiredEnvVars.length === 0));
   const compute = readFileSync(path.join(SITE_DIR, "src", "lib", "stressIndex", "compute.ts"), "utf8");
   assert("the Home Stress Index does not read this feed", !compute.includes("noaa-climate"),

@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-30T15:54:43.056Z",
-  "lastSuccessAt": "2026-09-30T15:54:43.056Z",
+  "lastAttemptAt": "2026-09-30T22:31:10.796Z",
+  "lastSuccessAt": "2026-09-30T22:31:10.796Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -21271,7 +21271,7 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-09-30T15:54:43.443Z",
+      "ingestedAt": "2026-09-30T22:31:11.413Z",
       "key": "2026-123620 BP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21282,7 +21282,7 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-09-30T15:54:43.443Z",
+      "ingestedAt": "2026-09-30T22:31:11.413Z",
       "key": "2026-126536 BP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21293,7 +21293,7 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-09-30T15:54:43.443Z",
+      "ingestedAt": "2026-09-30T22:31:11.413Z",
       "key": "2026-127493 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21303,7 +21303,7 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-09-30T15:54:43.443Z",
+      "ingestedAt": "2026-09-30T22:31:11.413Z",
       "key": "2026-045630 EP",
       "value": {
         "permitType": "Remodel",
@@ -21313,7 +21313,7 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-09-30T15:54:43.442Z",
+      "ingestedAt": "2026-09-30T22:31:11.412Z",
       "key": "2026-124275 BP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21324,7 +21324,7 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-09-30T15:54:43.443Z",
+      "ingestedAt": "2026-09-30T22:31:11.413Z",
       "key": "2026-126346 MP",
       "value": {
         "permitType": "Change Out",
@@ -21334,7 +21334,7 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-09-30T15:54:43.443Z",
+      "ingestedAt": "2026-09-30T22:31:11.413Z",
       "key": "2026-008710 PP",
       "value": {
         "permitType": "New",

@@ -1,10 +1,10 @@
 {
   "datasetId": "census-acs",
-  "location": "san-antonio",
+  "location": "san-marcos",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-30T22:31:54.353Z",
-  "lastSuccessAt": "2026-09-30T22:31:54.353Z",
+  "lastAttemptAt": "2026-09-30T22:31:55.302Z",
+  "lastSuccessAt": "2026-09-30T22:31:55.302Z",
   "lastError": null,
   "source": {
     "name": "Census ACS",
@@ -13,15 +13,15 @@
   "observations": [
     {
       "observedAt": "2023-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-30T22:31:54.925Z",
+      "ingestedAt": "2026-09-30T22:31:55.619Z",
       "key": "acs5-2023",
       "value": {
-        "medianHomeAgeYears": 37,
-        "ownerOccupiedPct": 59.1,
+        "medianHomeAgeYears": 28,
+        "ownerOccupiedPct": 30.5,
         "geography": {
-          "grain": "county",
-          "label": "Bexar County",
-          "fips": "029"
+          "grain": "place",
+          "label": "San Marcos city",
+          "fips": "65600"
         }
       }
     }

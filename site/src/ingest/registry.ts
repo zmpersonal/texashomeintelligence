@@ -7,14 +7,23 @@ import { austinPermits } from "./fetchers/austinPermits";
 import { sanAntonioPermits } from "./fetchers/sanAntonioPermits";
 import { eiaElectricityPrice } from "./fetchers/eiaElectricityPrice";
 import { nwsAustin } from "./fetchers/nws";
-import { noaaClimateAustin, noaaClimateSanAntonio } from "./fetchers/noaaClimate";
+import {
+  noaaClimateAustin,
+  noaaClimateSanAntonio,
+  noaaClimateNewBraunfels,
+} from "./fetchers/noaaClimate";
 import { swdiHailAustin, swdiHailSanAntonio } from "./fetchers/swdiHail";
 import { femaFlood } from "./fetchers/femaFlood";
 import { tdiLosses } from "./fetchers/tdiLosses";
 import { usdmAustin, usdmSanAntonio } from "./fetchers/usdm";
 import { usdaSoilAustin, usdaSoilSanAntonio } from "./fetchers/usdaSoil";
 import { airnowAustin, airnowSanAntonio } from "./fetchers/airnow";
-import { censusAcsAustin, censusAcsSanAntonio } from "./fetchers/censusAcs";
+import {
+  censusAcsAustin,
+  censusAcsSanAntonio,
+  censusAcsNewBraunfels,
+  censusAcsSanMarcos,
+} from "./fetchers/censusAcs";
 import { blsWagesAustin, blsWagesSanAntonio } from "./fetchers/blsWages";
 import { ercot } from "./fetchers/ercot";
 import { txForestService } from "./fetchers/txForestService";
@@ -72,6 +81,10 @@ export const REGISTRY: RegistryEntry[] = [
   // news. Adding it would make the index move on a number that cannot change.
   entry("deep", noaaClimateAustin),
   entry("deep", noaaClimateSanAntonio),
+  // Round 41b/41e — New Braunfels resolves USW00012971 at 5.2 mi from its own
+  // point. San Marcos is deliberately absent: no station near it publishes a
+  // 1991-2020 normal, so its reading is withheld rather than borrowed.
+  entry("deep", noaaClimateNewBraunfels),
 
   // Round 22: NEXRAD radar-derived hail signatures, one file per metro.
   // SEPARATE FROM noaa-storm-events ON PURPOSE — that feed is human reports of
@@ -99,6 +112,10 @@ export const REGISTRY: RegistryEntry[] = [
   entry("stub", airnowSanAntonio),
   entry("stub", censusAcsAustin),
   entry("stub", censusAcsSanAntonio), // Round 4b
+  // Round 41b — city grain. `for=place:` through the identical query, so these
+  // are config rows rather than a second code path.
+  entry("stub", censusAcsNewBraunfels),
+  entry("stub", censusAcsSanMarcos),
   entry("stub", blsWagesAustin),
   entry("stub", blsWagesSanAntonio), // Round 4b
   // Round 8: permit activity by trade category and month. Deliberately NOT in

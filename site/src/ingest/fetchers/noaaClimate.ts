@@ -1,5 +1,6 @@
 import type { FetcherModule, Observation } from "../types";
 import { ZIP_AREAS, type AreaId } from "../../data/zip-areas";
+import { locationDef } from "../../data/locations";
 
 /**
  * Two kinds of cooling-degree-day reading. They answer different questions and
@@ -108,7 +109,6 @@ export interface CoolingDegreeDayValue {
  * clothes. Distance alone would have picked it. See `MIN_YEARS_OF_RECORD` and
  * `ESTIMATED_FLAG`.
  */
-type Metro = AreaId;
 
 const ACCESS_DATA_V1 = "https://www.ncei.noaa.gov/access/services/data/v1";
 const GHCND_STATIONS = "https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt";
@@ -177,12 +177,49 @@ interface Station {
 /** One row of either dataset. Every field arrives as a string. */
 type ApiRow = Record<string, string | undefined>;
 
-function pointFor(location: Metro): { lat: number; lon: number } {
-  const area = ZIP_AREAS.find((a) => a.areaId === location);
+/**
+ * What this fetcher resolves a station for. Round 41b.
+ *
+ * It used to be a metro id, and every step from `candidateStations` down looked
+ * the point up from `ZIP_AREAS`. That made the metro the only geography a
+ * cooling-load reading could have. A SITE is just "a name for the output file
+ * and a point to search around", which is all the resolution ever needed — so a
+ * city is another row rather than another code path.
+ *
+ * The selection rule is UNCHANGED: nearest first-order station inside
+ * BOX_PAD_DEGREES that clears the record-quality bar. New Braunfels is not
+ * handed a pre-chosen station; it is resolved from its own point by the same
+ * code that resolves Austin's, which is why its result can be trusted the same
+ * way. Round 41e measured what that resolution lands on.
+ */
+interface ClimateSite {
+  /** The `location` on the generated file — an area id or a location slug. */
+  id: string;
+  point: { lat: number; lon: number };
+}
+
+function areaSite(areaId: AreaId): ClimateSite {
+  const area = ZIP_AREAS.find((a) => a.areaId === areaId);
   if (!area) {
-    throw new Error(`noaa-climate: no area "${location}" in src/data/zip-areas.ts.`);
+    throw new Error(`noaa-climate: no area "${areaId}" in src/data/zip-areas.ts.`);
   }
-  return area.point;
+  return { id: areaId, point: area.point };
+}
+
+function locationSite(slug: string): ClimateSite {
+  const loc = locationDef(slug);
+  if (!loc.climateStation) {
+    // Not a defensive check — the registry must not list a location whose own
+    // measurement said no station qualifies. San Marcos is that case, and
+    // ingesting it would produce a file the page has already decided to
+    // withhold. Failing here is how that decision stays enforced.
+    throw new Error(
+      `noaa-climate: "${slug}" has no climateStation in src/data/locations.ts, so no ` +
+        `cooling-load reading may be ingested for it. See ` +
+        `docs/audits/round-41e-corridor-cooling-load.md.`,
+    );
+  }
+  return { id: slug, point: loc.point };
 }
 
 function greatCircleMiles(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -267,8 +304,8 @@ export function __resetStationTableCacheForTests(): void {
  * came from the normals directory-index pre-filter, which went with it. Every
  * remaining rejection is recorded by `resolveNormals`, which is where a station
  * is now actually rejected. */
-async function candidateStations(location: Metro): Promise<Station[]> {
-  const { lat, lon } = pointFor(location);
+async function candidateStations(site: ClimateSite): Promise<Station[]> {
+  const { lat, lon } = site.point;
   const all = await loadStationTable();
   const nearby = all
     .filter(
@@ -346,12 +383,12 @@ interface NormalsResult {
  * because "we skipped the nearest station" is something a reader has to be able
  * to see.
  */
-async function resolveNormals(location: Metro, rejections: string[]): Promise<NormalsResult> {
-  const candidates = await candidateStations(location);
+async function resolveNormals(site: ClimateSite, rejections: string[]): Promise<NormalsResult> {
+  const candidates = await candidateStations(site);
   if (candidates.length === 0) {
     throw new Error(
-      `noaa-climate/${location}: no USW station with a published normals file within ` +
-        `${BOX_PAD_DEGREES} deg of the metro point. USC co-op and US1 CoCoRaHS stations are ` +
+      `noaa-climate/${site.id}: no USW station with a published normals file within ` +
+        `${BOX_PAD_DEGREES} deg of its point. USC co-op and US1 CoCoRaHS stations are ` +
         `excluded on purpose — they do not report temperature.` +
         (rejections.length ? ` Skipped: ${rejections.join(" | ")}` : ""),
     );
@@ -422,11 +459,12 @@ async function resolveNormals(location: Metro, rejections: string[]): Promise<No
   }
 
   throw new Error(
-    `noaa-climate/${location}: no USW station passed the record-quality bar. Rejected: ${rejections.join(" | ")}`,
+     `noaa-climate/${site.id}: no USW station passed the record-quality bar. Rejected: ${rejections.join(" | ")}`,
   );
 }
 
-function makeFetcher(location: Metro): FetcherModule<CoolingDegreeDayValue> {
+function makeFetcher(site: ClimateSite): FetcherModule<CoolingDegreeDayValue> {
+  const location = site.id;
   return {
     datasetId: "noaa-climate",
     location,
@@ -437,7 +475,7 @@ function makeFetcher(location: Metro): FetcherModule<CoolingDegreeDayValue> {
     requiredEnvVars: [],
     async fetchRaw(ctx): Promise<Observation<CoolingDegreeDayValue>[]> {
       const rejections: string[] = [];
-      const { station, rows: normals } = await resolveNormals(location, rejections);
+      const { station, rows: normals } = await resolveNormals(site, rejections);
       if (rejections.length > 0) {
         // Not an error — a record of a real decision, on the run that made it.
         console.log(
@@ -544,5 +582,19 @@ function makeFetcher(location: Metro): FetcherModule<CoolingDegreeDayValue> {
   };
 }
 
-export const noaaClimateAustin = makeFetcher("austin");
-export const noaaClimateSanAntonio = makeFetcher("san-antonio");
+export const noaaClimateAustin = makeFetcher(areaSite("austin"));
+export const noaaClimateSanAntonio = makeFetcher(areaSite("san-antonio"));
+
+/**
+ * New Braunfels. Round 41e resolved USW00012971 at 5.2 miles — nearer than San
+ * Antonio is to its own station — with 12/12 usable months, 17-20 years of
+ * record and no month flagged estimated.
+ *
+ * There is deliberately no San Marcos fetcher. Both stations carrying its name
+ * publish no 1991-2020 normals, and the nearest that does is this same station
+ * 12.9 miles away in another county: San Marcos would have shown New Braunfels'
+ * twelve numbers under its own name. `locationSite()` throws for a location
+ * with no `climateStation`, so adding one here by accident fails the run rather
+ * than publishing the repetition.
+ */
+export const noaaClimateNewBraunfels = makeFetcher(locationSite("new-braunfels"));

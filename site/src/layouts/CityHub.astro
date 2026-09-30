@@ -1,0 +1,208 @@
+---
+/**
+ * City hub — `/new-braunfels/`, `/san-marcos/`.
+ *
+ * Distinct from `LocationHub.astro`, which is a METRO page: it renders the
+ * metro's data-page grid and a service grid, neither of which a city has. A
+ * city page is county readings plus city context, and — the reason it is worth
+ * publishing at all — an explicit account of what it does not have.
+ *
+ * Every reading here carries the county it was measured in, beside the number.
+ * That is Round 41a's finding as a layout rule rather than a convention.
+ */
+import Base from "./Base.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import DataStatus from "../components/DataStatus.astro";
+import { getEntry } from "astro:content";
+import { locationDef } from "../data/locations";
+import { areaLabel } from "../data/zip-areas";
+import {
+  droughtFor,
+  stormsFor,
+  housingFor,
+  coolingLoadFor,
+  isWithheld,
+} from "../lib/locationReadings";
+import { dataPageHref } from "../lib/dataPages";
+
+interface Props {
+  locationSlug: string;
+}
+const { locationSlug } = Astro.props;
+
+const loc = locationDef(locationSlug);
+const entry = await getEntry("locations", locationSlug);
+if (!entry) throw new Error(`CityHub: no locations entry for "${locationSlug}"`);
+const copy = entry.data;
+const metroLabel = areaLabel(loc.areaId);
+
+const drought = droughtFor(loc);
+const storms = stormsFor(loc);
+const housing = housingFor(loc);
+const cooling = coolingLoadFor(loc);
+
+const readings = [
+  {
+    key: "storms",
+    label: `Severe-weather events, ${loc.county.name} County`,
+    reading: storms,
+    note: "Recorded by NOAA's Storm Events Database.",
+    href: dataPageHref("noaa-storm-events", loc.areaId),
+  },
+  {
+    key: "drought",
+    label: `Drought category, ${loc.county.name} County`,
+    reading: drought,
+    note: "Weekly U.S. Drought Monitor assessment.",
+    href: dataPageHref("usdm-drought", loc.areaId, "drought"),
+  },
+  {
+    key: "cooling",
+    // The station's NOAA name is deliberately absent — see coolingLoadFor().
+    label: `Cooling load, ${copy.name}`,
+    reading: cooling,
+    href: undefined,
+  },
+  {
+    key: "housing",
+    label: `Housing stock, ${copy.name}`,
+    reading: housing,
+    href: undefined,
+  },
+];
+const live = readings.filter((r) => !isWithheld(r.reading));
+
+/**
+ * What this page does NOT publish, and why. Withholding with a reason is the
+ * site's idiom; a city page is mostly an exercise in doing it well.
+ */
+const gaps: { label: string; reason: string }[] = [
+  {
+    label: "Building permits",
+    reason:
+      `${copy.name} does not publish building-permit data. We measure permit activity for ` +
+      `Austin and San Antonio because those cities publish it as open data; ${copy.name} ` +
+      `issues its own permits and does not. There is no figure to show here.`,
+  },
+];
+if (!loc.climateStation) {
+  gaps.push({
+    label: "Cooling load",
+    reason:
+      `No weather station in ${copy.name} publishes a 1991–2020 climate normal. The two ` +
+      `stations that carry the city's name report daily weather but no 30-year normal, and ` +
+      `the nearest station that does is 12.9 miles away in another county — far enough that ` +
+      `the reading would describe that place rather than this one. So no cooling-load figure ` +
+      `is published for ${copy.name}.`,
+  });
+}
+
+const dateModified = live
+  .map((r) => (isWithheld(r.reading) ? undefined : r.reading.freshness.asOf))
+  .filter((v): v is string => Boolean(v))
+  .sort()
+  .at(-1);
+
+const title = `${copy.name}, TX Home Conditions & Local Data | Texas Home Intelligence`;
+const description =
+  `Measured conditions for ${copy.name}, Texas — ${loc.county.name} County drought and ` +
+  `severe-weather records, with what we do not publish for this city stated plainly.`;
+const fmt = (iso?: string) =>
+  iso ? new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "";
+---
+
+<Base title={title} description={description} article={{ dateModified }}>
+  <Breadcrumbs
+    crumbs={[
+      { name: "Home", url: "/" },
+      { name: metroLabel, url: `/${loc.areaId}/` },
+      { name: copy.name, url: `/${locationSlug}/` },
+    ]}
+  />
+
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow">{copy.region}</span>
+      <h1>{copy.name} Home Intelligence</h1>
+      <p class="lede">{copy.hubIntro}</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <h2>What is measured in {loc.county.name} County</h2>
+      <p style="max-width:44em;">
+        {live.length > 0
+          ? `Every figure below is measured in ${loc.county.name} County and labelled with it. ` +
+            `${copy.name} sits in the ${metroLabel} metro, but these are not ${metroLabel} numbers.`
+          : `We do not yet publish a measured reading for ${loc.county.name} County.`}
+      </p>
+      <div class="grid-4">
+        {live.map(({ label, reading, href }) => {
+          if (isWithheld(reading)) return null;
+          const card = (
+            <>
+              <p class="metric-label">{label}</p>
+              <p class="metric-value">{reading.value}</p>
+              <p class="metric-note">{reading.detail}</p>
+              {/* The grain the number was measured at, on the card rather than
+                  only in the heading. For cooling load this is the station
+                  DISTANCE — the station's NOAA name is "AUSTIN SAN ANTONIO",
+                  which on this page would read as an error. */}
+              <p class="metric-note">Measured: {reading.county}</p>
+              <p class="metric-note">
+                {reading.observations} record{reading.observations === 1 ? "" : "s"}
+                {reading.from && reading.to ? `, ${fmt(reading.from)} – ${fmt(reading.to)}` : ""}
+              </p>
+              <DataStatus
+                status={reading.freshness.display}
+                asOf={reading.freshness.asOf}
+                dataThrough={reading.freshness.dataThrough}
+                source={reading.sourceName}
+              />
+            </>
+          );
+          return href ? (
+            <a class="card data-card card-link" href={href}>{card}</a>
+          ) : (
+            <div class="card data-card">{card}</div>
+          );
+        })}
+      </div>
+      <p style="margin-top:20px;">
+        <a href={`/${loc.areaId}/`}>All {metroLabel} metro data &rarr;</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap" style="max-width:820px;">
+      <h2>What this page does not publish</h2>
+      <p>
+        These are the readings {copy.name} does not get, and the reason in each case. We would
+        rather name a gap than fill it with a number measured somewhere else.
+      </p>
+      <dl class="gap-list">
+        {gaps.map((g) => (
+          <>
+            <dt>{g.label}</dt>
+            <dd>{g.reason}</dd>
+          </>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap" style="max-width:760px;">
+      <h2>About {copy.name} Home Intelligence</h2>
+      <p>
+        Texas Home Intelligence publishes continuously updated homeowner intelligence for
+        {" "}{copy.name} &mdash; covering {copy.counties}, inside the {metroLabel} metro. See our
+        {" "}<a href="/methodology/">methodology</a> for how data is sourced, updated and
+        labelled, or the {" "}<a href={`/${loc.areaId}/`}>{metroLabel} hub</a> for the wider
+        metro picture.
+      </p>
+    </div>
+  </section>
+</Base>

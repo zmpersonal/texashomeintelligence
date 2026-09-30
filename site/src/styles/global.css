@@ -1157,3 +1157,18 @@ table.data-table th,
 .analysis-more-date {
   font-family: var(--thi-font-mono); font-size: var(--thi-fs-caption); color: var(--ink-soft);
 }
+
+/* Round 41b — the "what this page does not publish" list on a city hub.
+   A definition list because that is what it is: a withheld reading and the
+   reason it is withheld. The reason is the content, so it gets body measure
+   rather than the metric-note treatment a footnote would get. */
+.gap-list { margin: 20px 0 0; }
+.gap-list dt {
+  font-family: var(--thi-font-mono, ui-monospace, monospace);
+  font-size: var(--thi-fs-label);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-top: 20px;
+}
+.gap-list dd { margin: 6px 0 0; max-width: 44em; color: var(--ink-soft); }

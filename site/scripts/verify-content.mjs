@@ -35,7 +35,11 @@ function loadFile(name) {
   return parse(readFileSync(path.join(dataDir, name), "utf8"));
 }
 
-const EXPECTED_LOCATIONS = ["austin", "san-antonio"];
+// Round 41b. Two metros and two cities. The cities set `servicePages: false`,
+// so the location x service product below counts metros only — a city hub is
+// one page, not one page plus seven.
+const EXPECTED_LOCATIONS = ["austin", "san-antonio", "new-braunfels", "san-marcos"];
+const EXPECTED_SERVICE_LOCATIONS = ["austin", "san-antonio"];
 const EXPECTED_SERVICES = [
   "roofing",
   "hvac",
@@ -317,7 +321,7 @@ if (problems.length > 0) {
 }
 
 console.log(
-  `✓ Content verified: ${EXPECTED_LOCATIONS.length} locations × ${EXPECTED_SERVICES.length} services ` +
+  `✓ Content verified: ${EXPECTED_LOCATIONS.length} locations (${EXPECTED_SERVICE_LOCATIONS.length} with services × ${EXPECTED_SERVICES.length} services) ` +
     `(${SUPPLIED_SERVICES.length} supplied w/ PPC hero, ${
       EXPECTED_SERVICES.length - SUPPLIED_SERVICES.length
     } draft), ` +

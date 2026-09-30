@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-30T15:54:50.642Z",
-  "lastSuccessAt": "2026-09-30T15:54:50.642Z",
+  "lastAttemptAt": "2026-09-30T22:31:53.614Z",
+  "lastSuccessAt": "2026-09-30T22:31:53.614Z",
   "lastError": null,
   "source": {
     "name": "Census ACS",
@@ -13,11 +13,16 @@
   "observations": [
     {
       "observedAt": "2023-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-09-30T15:54:51.200Z",
+      "ingestedAt": "2026-09-30T22:31:54.353Z",
       "key": "acs5-2023",
       "value": {
         "medianHomeAgeYears": 29,
-        "ownerOccupiedPct": 53
+        "ownerOccupiedPct": 53,
+        "geography": {
+          "grain": "county",
+          "label": "Travis County",
+          "fips": "453"
+        }
       }
     },
     {

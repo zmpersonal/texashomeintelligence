@@ -580,7 +580,7 @@ to the city, not by code.
 
 ---
 
-### 16 · Nav still names two metros, in owner copy
+### 16 · ✅ CLOSED by Round 41b — Nav named two metros, in owner copy
 
 **Owner's, to write — copy, not code.** Logged from Round 40; no replacement copy is proposed
 here.
@@ -596,7 +596,8 @@ Round 40 left **both** alone on purpose. Deriving the dropdown while leaving a l
 exactly two metros would make the page disagree with itself — the dropdown would show three, the
 line above it would say two. The two have to move together, and the line is the owner's to write.
 
-**Decision needed:** the replacement eyebrow wording. The dropdown change ships with it.
+**CLOSED.** The owner supplied `Central Texas • more metros coming soon`, and Round 41b shipped
+it with the dropdown change — San Marcos and New Braunfels now sit under their metros.
 
 **Scope → blocked on copy, then small.**
 
@@ -791,7 +792,7 @@ it wants a reason rather than a round number.
 
 ---
 
-### 24 · Cooling load: New Braunfels has a station, San Marcos does not
+### 24 · ✅ CLOSED by Round 41b — cooling load: New Braunfels has a station, San Marcos does not
 
 Round 41e measured this against the existing bar in `noaaClimate.ts` — `USW` within 0.35°, must
 carry `years_`, 12/12 months, zero months flagged `E`, zero months under 10 years — and verified
@@ -812,7 +813,11 @@ Marcos Muni (4.5 mi) — publish **no 1991-2020 monthly normals** at all. What t
 instead is New Braunfels' station 12.9 miles off, so two city pages would show one identical set
 of twelve numbers. Recommended wording is in the audit §6.
 
-**Two things to decide when 41b lands:**
+**✅ BOTH DECIDED AND SHIPPED IN ROUND 41B.** San Marcos is withheld with a stated reason,
+enforced in code — `locationSite()` throws for a location with no `climateStation`, so it cannot
+be registered by accident. The station's NOAA name `AUSTIN SAN ANTONIO` never renders; the card
+leads with the distance, and both the name and the id are asserted absent from the page's HTML.
+See `docs/audits/round-41b-corridor-locations.md`. The two questions as originally posed:
 
 1. **Whether to publish San Marcos at all.** If yes, the defensible form labels the reading by
    station and distance rather than by the city — the discipline 41a established.
@@ -820,7 +825,39 @@ of twelve numbers. Recommended wording is in the audit §6.
    line naming it would read as an error. The name is NOAA's; whatever renders it has to lead
    with the distance or carry the id without the name.
 
-**Blocked on 41b** — `noaaClimate.ts` writes `noaa-climate/{location}.json` keyed by `AreaId`,
-and a city is not an area.
+~~Blocked on 41b~~ — unblocked: Round 41b gave `noaaClimate.ts` a *site* rather than a metro id,
+so a city is now a config row.
 
-**Scope → blocked on 41b, then small.**
+**Scope → done.**
+
+---
+
+### 25 · `/new-braunfels/` and `/dashboard/78130/` disagree about the same ZIP
+
+Round 41b. The city page publishes **Comal County** readings. The ZIP dashboard for 78130 —
+which is New Braunfels' main ZIP — publishes **Bexar County** readings, because the dashboard
+resolves a ZIP to its metro and then reads that metro's primary county.
+
+**The city page is the more accurate surface.** 78130 is in Comal County, and Comal is what the
+city page measures.
+
+**This is inconsistent, not false**, which is why it can wait. The dashboard's own copy already
+tells the reader exactly what it is doing, verbatim:
+
+> 78130 is in Comal County. The readings shown are for Bexar County, which is the county we
+> publish for the San Antonio metro — so they describe nearby conditions rather than Comal
+> County itself. This ZIP spans 2 counties in the metro. It also crosses the Austin–San Antonio
+> metro boundary; we report it under San Antonio.
+
+plus a separate boundary note naming both metros. A reader is not misled; they are told less
+than the city page could tell them.
+
+**Not reconciled in 41b** — the dashboard reads per-metro artifacts, and pointing a ZIP at its
+own county's readings is a change to how every ZIP resolves, not a change to one page. That
+wants its own round and its own verification.
+
+**Decision needed:** whether the ZIP dashboard should prefer the ZIP's own county where one is
+ingested (Comal, Hays, Williamson and Guadalupe all are), falling back to the metro's primary
+county otherwise — and what that does to the 52 of 231 crosswalk rows where the two differ.
+
+**Scope → unscheduled, medium.**

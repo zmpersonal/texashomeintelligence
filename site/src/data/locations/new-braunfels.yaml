@@ -1,0 +1,9 @@
+name: New Braunfels
+region: "Comal County · San Antonio metro"
+counties: "Comal County"
+servicePages: false
+hubIntro: >-
+  New Braunfels sits in Comal County, inside the San Antonio metro. The readings below are
+  measured in Comal County itself, not borrowed from Bexar. Where a signal does
+  not exist for this county, the page says so rather than substituting the metro's
+  number.

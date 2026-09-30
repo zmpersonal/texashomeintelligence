@@ -142,7 +142,18 @@ const description = `What we measure for ${loc.name}, TX homeowners — storm hi
             <div class="icon-badge">{svc.data.name.slice(0, 1)}</div>
             <h3 style="color:var(--ink);">{svc.data.name}</h3>
             <p>{svc.data.intakeFocus}</p>
-            {SERVICE_SIGNALS[svc.id] && <p class="metric-note">Backed by local data</p>}
+            {/* Round 41b. This read `SERVICE_SIGNALS[svc.id]` alone — keyed by the
+                SERVICE, not by whether THIS location has the data behind it — so a
+                location with zero published datasets still advertised "Backed by
+                local data". Measured with a stub location during the Round 41
+                pre-check. Now it also requires the signal's own data page to exist
+                here, which is the same resolution `ServicePage.astro` uses. */}
+            {SERVICE_SIGNALS[svc.id] &&
+              localPages.some(
+                (p) =>
+                  p.topic === SERVICE_SIGNALS[svc.id].topic ||
+                  p.topic === SERVICE_SIGNALS[svc.id].fallbackTopic,
+              ) && <p class="metric-note">Backed by local data</p>}
           </a>
         ))}
       </div>
