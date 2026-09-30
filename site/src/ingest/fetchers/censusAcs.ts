@@ -1,9 +1,19 @@
 import type { FetcherModule, Observation } from "../types";
 import type { AreaId } from "../../data/zip-areas";
+import { locationDef } from "../../data/locations";
 
 export interface HousingStockValue {
   medianHomeAgeYears?: number;
   ownerOccupiedPct?: number;
+  /**
+   * The geography this row was measured over, carried WITH the number.
+   * Round 41b. A county figure and a city figure look identical once they are
+   * two decimals in a card, and Round 41a's defect was exactly that — a reading
+   * whose grain lived only in copy someone had to remember to keep true. San
+   * Marcos city is 30% owner-occupied against Hays County's 64%; nothing about
+   * the number itself says which one it is.
+   */
+  geography?: { grain: "county" | "place"; label: string; fips: string };
 }
 
 /**
@@ -40,10 +50,42 @@ const COUNTY_FIPS: Record<AreaId, { fips: string; label: string }> = {
   "san-antonio": { fips: "029", label: "Bexar" },
 };
 
+/**
+ * The geography one file covers. Round 41b.
+ *
+ * ACS takes `for=county:NNN` and `for=place:NNNNN` through the identical query
+ * — same endpoint, same variables, same parsing — so a city is a different
+ * ROW of config here, not a different code path. That was the thing this round
+ * set out to test, and the answer is that no special case was needed: the two
+ * constructors below differ only in which clause they build.
+ */
+interface AcsGeography {
+  /** The `for=` clause, e.g. `county:453` or `place:50820`. */
+  forClause: string;
+  grain: "county" | "place";
+  /** How the reading is labelled — "Travis County", "San Marcos city". */
+  label: string;
+  fips: string;
+}
+
+function countyGeography(area: AreaId): AcsGeography {
+  const c = COUNTY_FIPS[area];
+  return { forClause: `county:${c.fips}`, grain: "county", label: `${c.label} County`, fips: c.fips };
+}
+
+function placeGeography(slug: string): AcsGeography {
+  const loc = locationDef(slug);
+  return {
+    forClause: `place:${loc.censusPlaceFips}`,
+    grain: "place",
+    label: `${loc.label} city`,
+    fips: loc.censusPlaceFips,
+  };
+}
+
 interface AcsResponse extends Array<string[]> {}
 
-function makeFetcher(location: AreaId): FetcherModule<HousingStockValue> {
-  const county = COUNTY_FIPS[location];
+function makeFetcher(location: string, geo: AcsGeography): FetcherModule<HousingStockValue> {
   return {
   datasetId: "census-acs",
   location,
@@ -52,7 +94,7 @@ function makeFetcher(location: AreaId): FetcherModule<HousingStockValue> {
   async fetchRaw(_ctx): Promise<Observation<HousingStockValue>[]> {
     const url = new URL(`https://api.census.gov/data/${VINTAGE}/acs/acs5`);
     url.searchParams.set("get", "NAME,B25035_001E,B25003_001E,B25003_002E");
-    url.searchParams.set("for", `county:${county.fips}`);
+    url.searchParams.set("for", geo.forClause);
     url.searchParams.set("in", `state:${STATE_FIPS}`);
     if (_ctx.env.CENSUS_API_KEY) url.searchParams.set("key", _ctx.env.CENSUS_API_KEY);
 
@@ -63,7 +105,9 @@ function makeFetcher(location: AreaId): FetcherModule<HousingStockValue> {
     const rows = (await res.json()) as AcsResponse;
     const [header, data] = rows;
     if (!data) {
-      throw new Error(`Census ACS returned no data row for state=${STATE_FIPS} county=${county.fips} (${county.label})`);
+      throw new Error(
+        `Census ACS returned no data row for state=${STATE_FIPS} ${geo.forClause} (${geo.label})`,
+      );
     }
     const col = (name: string) => data[header.indexOf(name)];
 
@@ -77,6 +121,7 @@ function makeFetcher(location: AreaId): FetcherModule<HousingStockValue> {
         Number.isFinite(totalUnits) && totalUnits > 0 && Number.isFinite(ownerUnits)
           ? Math.round((ownerUnits / totalUnits) * 1000) / 10
           : undefined,
+      geography: { grain: geo.grain, label: geo.label, fips: geo.fips },
     };
 
     return [
@@ -91,5 +136,18 @@ function makeFetcher(location: AreaId): FetcherModule<HousingStockValue> {
   };
 }
 
-export const censusAcsAustin = makeFetcher("austin");
-export const censusAcsSanAntonio = makeFetcher("san-antonio");
+export const censusAcsAustin = makeFetcher("austin", countyGeography("austin"));
+export const censusAcsSanAntonio = makeFetcher("san-antonio", countyGeography("san-antonio"));
+
+/**
+ * City grain. Round 41c measured that these are genuinely different figures and
+ * not relabelled county ones — San Marcos city is 30% owner-occupied against
+ * Hays County's 64%, because it is a university town and the county is not.
+ * Publishing the county number under the city's name would have been wrong by
+ * more than a rounding.
+ */
+export const censusAcsNewBraunfels = makeFetcher(
+  "new-braunfels",
+  placeGeography("new-braunfels"),
+);
+export const censusAcsSanMarcos = makeFetcher("san-marcos", placeGeography("san-marcos"));
