@@ -120,8 +120,6 @@ jobs:
           F = collections.defaultdict(dict)
 
           def probe(url, label, note):
-              """Record the robots verdict AND the rules it was judged against,
-              so a refusal in this audit can be checked without re-running."""
               u = urllib.parse.urlparse(url)
               st, dis, allow = star_rules(u.netloc)
               ok, why = allowed(url)
@@ -132,73 +130,71 @@ jobs:
                   b = fetch(url, label)
                   rec['http'] = next((e['status'] for e in reversed(log) if e['url'] == url), None)
                   rec['bytes'] = len(b) if b else 0
-                  rec['body_head'] = b[:400].decode('utf-8', 'replace') if b else None
+                  rec['body_head'] = b[:600].decode('utf-8', 'replace') if b else None
                   return rec, b
               return rec, None
 
-          # ════════════════════════════════════════════════════════════════
-          # A · SWDI HAIL
-          # Current: https://www.ncdc.noaa.gov/swdiws/csv/nx3hail/{window}?bbox=
-          # Blocked by `Disallow: /swdiws/` and `Disallow: /*.csv` on ncdc.
-          # ════════════════════════════════════════════════════════════════
-          WINDOW = '20260501:20260531'
-          BBOX = '-98.9936,28.9241,-97.9936,29.9241'   # the committed San Antonio box
-          SWDI_CANDIDATES = [
-              (f'https://www.ncei.noaa.gov/swdiws/csv/nx3hail/{WINDOW}?bbox={BBOX}',
-               'same web service on the NCEI host — ncei robots has no /swdiws/ rule'),
-              (f'https://www.ncei.noaa.gov/swdiws/json/nx3hail/{WINDOW}?bbox={BBOX}',
-               'NCEI host, JSON instead of CSV (ncdc also disallows /*.csv)'),
-              (f'https://www.ncdc.noaa.gov/swdiws/json/nx3hail/{WINDOW}?bbox={BBOX}',
-               'ncdc host, JSON — tests whether /*.csv was the only bar'),
-              ('https://www.ncei.noaa.gov/pub/data/swdi/database-csv/v2/',
-               'bulk SWDI archive under /pub/data/, which ncei permits'),
-              ('https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=swdi',
-               'is SWDI exposed through the /access/ service family at all'),
-          ]
-          for url, note in SWDI_CANDIDATES:
-              rec, b = probe(url, f'swdi:{url}', note)
-              F['swdi'][url] = rec
+          # ── PASS 2 ──────────────────────────────────────────────────────
+          # Pass 1 found a permitted path for both feeds. Two things decide
+          # whether either can actually be used.
 
-          # ════════════════════════════════════════════════════════════════
-          # B · NCEI MONTHLY NORMALS
-          # Current: /data/normals-monthly/1991-2020/access/{ID}.csv
-          # Blocked by `Disallow: /data*`. The other three NCEI families the
-          # fetcher uses are already on permitted paths.
-          #
-          # EQUIVALENCE BASELINE, from src/data/generated/noaa-climate/*.json:
-          #   USW00013958 Austin-Camp Mabry  MLY-CLDD-NORMAL by month
-          #     1:9.6 2:24 3:73.2 4:171.7 5:369.9 6:541.4
-          #     7:644.8 8:664.8 9:473.7 10:238.3 11:62.3 12:16.1
-          #     years 29 (Apr/May 30), comp_flag S
-          #   USW00012970 San Antonio Stinson
-          #     1:11 2:35.2 3:95.2 4:206.6 5:408.9 6:563.9
-          #     7:643.3 8:667.9 9:487.8 10:263.9 11:70.8 12:19.5
-          #     years 19/20, comp_flag R
-          # ════════════════════════════════════════════════════════════════
-          STATION = 'USW00013958'
+          # A · SWDI: does the NCEI host return THE SAME ROWS as the committed
+          #     data? Comparing against src/data/generated/swdi-nx3hail, whose
+          #     San Antonio window is 2026-08-27 .. 2026-09-12.
+          BBOX = '-98.9936,28.9241,-97.9936,29.9241'
+          u = f'https://www.ncei.noaa.gov/swdiws/csv/nx3hail/20260827:20260913?bbox={BBOX}'
+          rec, b = probe(u, 'swdi:equivalence-window', 'same window as the committed San Antonio rows')
+          if b:
+              txt = b.decode('utf-8', 'replace')
+              rows = [l for l in txt.splitlines() if l and not l.startswith('#')]
+              rec['header'] = rows[0] if rows else None
+              rec['data_rows'] = max(0, len(rows) - 1)
+              rec['first_five'] = rows[1:6]
+              rec['last_two'] = rows[-2:]
+          F['swdi_equivalence'] = rec
+
+          # Is the ncdc host simply redirecting to ncei? If it is, the two are
+          # the same service and equivalence is structural, not coincidental.
+          for host_url, note in [
+              ('https://www.ncei.noaa.gov/swdiws/', 'ncei swdiws root'),
+              ('https://www.ncdc.noaa.gov/', 'does ncdc redirect to ncei at all'),
+          ]:
+              r2, b2 = probe(host_url, f'redirect:{host_url}', note)
+              F['host_relationship'][host_url] = r2
+
+          # B · NORMALS: the Access Data Service returned the VALUES but not the
+          #     three qualifying columns Round 19c made essential — years,
+          #     comp_flag, meas_flag. Without them the Kelly AFB rejection
+          #     (years=2, comp_flag=E) cannot be made, and a two-year estimated
+          #     record would be published as a 30-year normal. Can they be had?
           ADS = 'https://www.ncei.noaa.gov/access/services/data/v1'
-          NORMALS_CANDIDATES = [
-              (f'{ADS}?dataset=normals-monthly-1991-2020&stations={STATION}'
-               f'&dataTypes=MLY-CLDD-NORMAL&format=json&startDate=2010-01-01&endDate=2010-12-31',
-               'Access Data Service, normals dataset — the family already used for GSOM'),
-              (f'{ADS}?dataset=normals-monthly-1991-2020&stations={STATION}'
-               f'&dataTypes=MLY-CLDD-NORMAL&format=json',
-               'same, without a date range'),
-              (f'{ADS}?dataset=normals-monthly&stations={STATION}'
-               f'&dataTypes=MLY-CLDD-NORMAL&format=json',
-               'alternate dataset id spelling'),
-              ('https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=normals',
-               'what the service itself calls its normals datasets'),
-              (f'https://www.ncei.noaa.gov/pub/data/normals/1991-2020/access/{STATION}.csv',
-               'the same static CSV under /pub/data/, which ncei permits'),
-              ('https://www.ncei.noaa.gov/pub/data/normals/1991-2020/',
-               'does a /pub/data/ normals tree exist at all'),
+          ST = 'USW00013958'
+          NORMALS_ATTRS = [
+              (f'{ADS}?dataset=normals-monthly-1991-2020&stations={ST}'
+               f'&dataTypes=MLY-CLDD-NORMAL&format=json&includeAttributes=true',
+               'includeAttributes=true'),
+              (f'{ADS}?dataset=normals-monthly-1991-2020&stations={ST}'
+               f'&dataTypes=MLY-CLDD-NORMAL,years_MLY-CLDD-NORMAL,comp_flag_MLY-CLDD-NORMAL'
+               f'&format=json', 'ask for the companion columns by name'),
+              (f'{ADS}?dataset=normals-monthly-1991-2020&stations={ST}&format=json',
+               'no dataTypes at all — does it return every column'),
+              (f'{ADS}?dataset=normals-monthly-1991-2020&stations={ST}'
+               f'&dataTypes=MLY-CLDD-NORMAL&format=csv&includeAttributes=true',
+               'csv with attributes'),
           ]
-          for url, note in NORMALS_CANDIDATES:
-              rec, b = probe(url, f'normals:{url}', note)
-              F['normals'][url] = rec
+          for url, note in NORMALS_ATTRS:
+              r3, _ = probe(url, f'normals-attrs:{note}', note)
+              F['normals_attributes'][note] = r3
 
-          json.dump({'findings': F, 'log': log}, open(f'{OUT}/probe-1.json', 'w'), indent=2)
+          # And the same for the station this actually selected for San Antonio,
+          # whose committed normals carry years=19/20 and comp_flag=R — a
+          # station the quality filter ACCEPTED, so its flags must survive too.
+          r4, _ = probe(f'{ADS}?dataset=normals-monthly-1991-2020&stations=USW00012970'
+                        f'&dataTypes=MLY-CLDD-NORMAL&format=json&includeAttributes=true',
+                        'normals:sa-station', 'San Antonio Stinson, committed years=19/20 flag=R')
+          F['normals_attributes']['sa_station'] = r4
+
+          json.dump({'findings': F, 'log': log}, open(f'{OUT}/probe-2.json', 'w'), indent=2)
           for group in ('swdi', 'normals'):
               print(f'\n══ {group.upper()} ══')
               for url, r in F[group].items():
