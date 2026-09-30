@@ -1,0 +1,201 @@
+{
+  "findings": {
+    "swdi": {
+      "https://www.ncei.noaa.gov/swdiws/csv/nx3hail/20260501:20260531?bbox=-98.9936,28.9241,-97.9936,29.9241": {
+        "url": "https://www.ncei.noaa.gov/swdiws/csv/nx3hail/20260501:20260531?bbox=-98.9936,28.9241,-97.9936,29.9241",
+        "note": "same web service on the NCEI host \u2014 ncei robots has no /swdiws/ rule",
+        "host": "www.ncei.noaa.gov",
+        "robots_status": 200,
+        "star_disallow_count": 2,
+        "robots_allows": true,
+        "matched_disallow": [],
+        "http": 200,
+        "bytes": 8908,
+        "body_head": "ZTIME,WSR_ID,CELL_ID,PROB,SEVPROB,MAXSIZE,LAT,LON\n2026-05-01T06:01:26Z,KCRP,O3,100,20,0.75,29.575,-98.060\n2026-05-01T06:03:52Z,KDFX,I3,100,40,1,29.602,-98.020\n2026-05-01T06:04:12Z,KGRK,T9,100,20,0.75,29.570,-97.997\n2026-05-01T09:52:16Z,KDFX,K5,100,0,0.5,28.944,-98.259\n2026-05-01T09:52:59Z,KEWX,X4,100,20,0.75,28.945,-98.260\n2026-05-01T09:53:44Z,KCRP,N7,100,20,0.75,28.951,-98.248\n2026-05-01T09:56:52"
+      },
+      "https://www.ncei.noaa.gov/swdiws/json/nx3hail/20260501:20260531?bbox=-98.9936,28.9241,-97.9936,29.9241": {
+        "url": "https://www.ncei.noaa.gov/swdiws/json/nx3hail/20260501:20260531?bbox=-98.9936,28.9241,-97.9936,29.9241",
+        "note": "NCEI host, JSON instead of CSV (ncdc also disallows /*.csv)",
+        "host": "www.ncei.noaa.gov",
+        "robots_status": 200,
+        "star_disallow_count": 2,
+        "robots_allows": true,
+        "matched_disallow": [],
+        "http": 200,
+        "bytes": 26156,
+        "body_head": "{\n\"swdiJsonResponse\": \n{\"columnTypes\":{\"PROB\":\"NUMBER\",\"SHAPE\":\"MDSYS.SDO_GEOMETRY\",\"WSR_ID\":\"VARCHAR2\",\"CELL_ID\":\"VARCHAR2\",\"ZTIME\":\"VARCHAR2\",\"SEVPROB\":\"NUMBER\",\"MAXSIZE\":\"NUMBER\"}}\n,\"result\": \n[\n{\"PROB\":\"100\",\"SHAPE\":\"POINT (-98.0599236198571 29.5745780735851)\",\"WSR_ID\":\"KCRP\",\"CELL_ID\":\"O3\",\"ZTIME\":\"2026-05-01T06:01:26Z\",\"SEVPROB\":\"20\",\"MAXSIZE\":\"0.75\"}\n,{\"PROB\":\"100\",\"SHAPE\":\"POINT (-98.02017"
+      },
+      "https://www.ncdc.noaa.gov/swdiws/json/nx3hail/20260501:20260531?bbox=-98.9936,28.9241,-97.9936,29.9241": {
+        "url": "https://www.ncdc.noaa.gov/swdiws/json/nx3hail/20260501:20260531?bbox=-98.9936,28.9241,-97.9936,29.9241",
+        "note": "ncdc host, JSON \u2014 tests whether /*.csv was the only bar",
+        "host": "www.ncdc.noaa.gov",
+        "robots_status": 200,
+        "star_disallow_count": 91,
+        "robots_allows": false,
+        "matched_disallow": [
+          "/swdiws/"
+        ]
+      },
+      "https://www.ncei.noaa.gov/pub/data/swdi/database-csv/v2/": {
+        "url": "https://www.ncei.noaa.gov/pub/data/swdi/database-csv/v2/",
+        "note": "bulk SWDI archive under /pub/data/, which ncei permits",
+        "host": "www.ncei.noaa.gov",
+        "robots_status": 200,
+        "star_disallow_count": 2,
+        "robots_allows": true,
+        "matched_disallow": [],
+        "http": 200,
+        "bytes": 68984,
+        "body_head": "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n<title>Index of /pub/data/swdi/database-csv/v2/</title>\n</head>\n<body>\n<h1>Index of /pub/data/swdi/database-csv/v2/</h1>\n<table><tbody>\n<tr>\n<th>Name</th>\n<th>Last modified</th>\n<th>Size</th>\n<th>Description</th>\n</tr>\n<tr><th colspan=\"4\"><hr></th></tr>\n<tr>\n<td"
+      },
+      "https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=swdi": {
+        "url": "https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=swdi",
+        "note": "is SWDI exposed through the /access/ service family at all",
+        "host": "www.ncei.noaa.gov",
+        "robots_status": 200,
+        "star_disallow_count": 2,
+        "robots_allows": true,
+        "matched_disallow": [],
+        "http": 200,
+        "bytes": 365,
+        "body_head": "{\"formats\":{\"docCountError\":0,\"buckets\":[],\"sumOfOtherDocCounts\":0},\"observationTypes\":{\"docCountError\":0,\"buckets\":[],\"sumOfOtherDocCounts\":0},\"keywords\":{\"docCountError\":0,\"buckets\":[],\"sumOfOtherDocCounts\":0},\"count\":0,\"bounds\":{\"bottomRight\":null,\"topLeft\":null},\"datasets\":{\"docCountError\":0,\"buckets\":[],\"sumOfOtherDocCounts\":0},\"totalCount\":100,\"results\":[]}"
+      }
+    },
+    "normals": {
+      "https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly-1991-2020&stations=USW00013958&dataTypes=MLY-CLDD-NORMAL&format=json&startDate=2010-01-01&endDate=2010-12-31": {
+        "url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly-1991-2020&stations=USW00013958&dataTypes=MLY-CLDD-NORMAL&format=json&startDate=2010-01-01&endDate=2010-12-31",
+        "note": "Access Data Service, normals dataset \u2014 the family already used for GSOM",
+        "host": "www.ncei.noaa.gov",
+        "robots_status": 200,
+        "star_disallow_count": 2,
+        "robots_allows": true,
+        "matched_disallow": [],
+        "http": 200,
+        "bytes": 819,
+        "body_head": "[\n{\"DATE\":\"01\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"     9.6\"}\n,{\"DATE\":\"02\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"    24.0\"}\n,{\"DATE\":\"03\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"    73.2\"}\n,{\"DATE\":\"04\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"   171.7\"}\n,{\"DATE\":\"05\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"   369.9\"}\n,{\"DATE\":\"06\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"  "
+      },
+      "https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly-1991-2020&stations=USW00013958&dataTypes=MLY-CLDD-NORMAL&format=json": {
+        "url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly-1991-2020&stations=USW00013958&dataTypes=MLY-CLDD-NORMAL&format=json",
+        "note": "same, without a date range",
+        "host": "www.ncei.noaa.gov",
+        "robots_status": 200,
+        "star_disallow_count": 2,
+        "robots_allows": true,
+        "matched_disallow": [],
+        "http": 200,
+        "bytes": 819,
+        "body_head": "[\n{\"DATE\":\"01\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"     9.6\"}\n,{\"DATE\":\"02\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"    24.0\"}\n,{\"DATE\":\"03\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"    73.2\"}\n,{\"DATE\":\"04\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"   171.7\"}\n,{\"DATE\":\"05\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"   369.9\"}\n,{\"DATE\":\"06\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"  "
+      },
+      "https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly&stations=USW00013958&dataTypes=MLY-CLDD-NORMAL&format=json": {
+        "url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly&stations=USW00013958&dataTypes=MLY-CLDD-NORMAL&format=json",
+        "note": "alternate dataset id spelling",
+        "host": "www.ncei.noaa.gov",
+        "robots_status": 200,
+        "star_disallow_count": 2,
+        "robots_allows": true,
+        "matched_disallow": [],
+        "http": 200,
+        "bytes": 753,
+        "body_head": "[\n{\"DATE\":\"01\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"9\"}\n,{\"DATE\":\"02\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"18\"}\n,{\"DATE\":\"03\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"61\"}\n,{\"DATE\":\"04\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"164\"}\n,{\"DATE\":\"05\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"361\"}\n,{\"DATE\":\"06\",\"STATION\":\"USW00013958\",\"MLY-CLDD-NORMAL\":\"516\"}\n,{\"DATE\":\"07\",\"STATION\":\""
+      },
+      "https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=normals": {
+        "url": "https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=normals",
+        "note": "what the service itself calls its normals datasets",
+        "host": "www.ncei.noaa.gov",
+        "robots_status": 200,
+        "star_disallow_count": 2,
+        "robots_allows": true,
+        "matched_disallow": [],
+        "http": 200,
+        "bytes": 324437,
+        "body_head": "{\"formats\":{\"docCountError\":0,\"buckets\":[{\"docCount\":12,\"key\":\"csv\"},{\"docCount\":12,\"key\":\"json\"},{\"docCount\":9,\"key\":\"pdf\"},{\"docCount\":1,\"key\":\"pub\"}],\"sumOfOtherDocCounts\":0},\"observationTypes\":{\"docCountError\":0,\"buckets\":[{\"docCount\":4,\"key\":\"Land Surface\"}],\"sumOfOtherDocCounts\":0},\"keywords\":{\"docCountError\":0,\"buckets\":[],\"sumOfOtherDocCounts\":0},\"endDate\":\"2024-01-01T00:00:00.000Z\",\"count"
+      },
+      "https://www.ncei.noaa.gov/pub/data/normals/1991-2020/access/USW00013958.csv": {
+        "url": "https://www.ncei.noaa.gov/pub/data/normals/1991-2020/access/USW00013958.csv",
+        "note": "the same static CSV under /pub/data/, which ncei permits",
+        "host": "www.ncei.noaa.gov",
+        "robots_status": 200,
+        "star_disallow_count": 2,
+        "robots_allows": true,
+        "matched_disallow": [],
+        "http": 404,
+        "bytes": 0,
+        "body_head": null
+      },
+      "https://www.ncei.noaa.gov/pub/data/normals/1991-2020/": {
+        "url": "https://www.ncei.noaa.gov/pub/data/normals/1991-2020/",
+        "note": "does a /pub/data/ normals tree exist at all",
+        "host": "www.ncei.noaa.gov",
+        "robots_status": 200,
+        "star_disallow_count": 2,
+        "robots_allows": true,
+        "matched_disallow": [],
+        "http": 404,
+        "bytes": 0,
+        "body_head": null
+      }
+    }
+  },
+  "log": [
+    {
+      "url": "https://www.ncei.noaa.gov/swdiws/csv/nx3hail/20260501:20260531?bbox=-98.9936,28.9241,-97.9936,29.9241",
+      "label": "swdi:https://www.ncei.noaa.gov/swdiws/csv/nx3hail/20260501:20260531?bbox=-98.9936,28.9241,-97.9936,29.9241",
+      "status": 200,
+      "bytes": 8908
+    },
+    {
+      "url": "https://www.ncei.noaa.gov/swdiws/json/nx3hail/20260501:20260531?bbox=-98.9936,28.9241,-97.9936,29.9241",
+      "label": "swdi:https://www.ncei.noaa.gov/swdiws/json/nx3hail/20260501:20260531?bbox=-98.9936,28.9241,-97.9936,29.9241",
+      "status": 200,
+      "bytes": 26156
+    },
+    {
+      "url": "https://www.ncei.noaa.gov/pub/data/swdi/database-csv/v2/",
+      "label": "swdi:https://www.ncei.noaa.gov/pub/data/swdi/database-csv/v2/",
+      "status": 200,
+      "bytes": 68984
+    },
+    {
+      "url": "https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=swdi",
+      "label": "swdi:https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=swdi",
+      "status": 200,
+      "bytes": 365
+    },
+    {
+      "url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly-1991-2020&stations=USW00013958&dataTypes=MLY-CLDD-NORMAL&format=json&startDate=2010-01-01&endDate=2010-12-31",
+      "label": "normals:https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly-1991-2020&stations=USW00013958&dataTypes=MLY-CLDD-NORMAL&format=json&startDate=2010-01-01&endDate=2010-12-31",
+      "status": 200,
+      "bytes": 819
+    },
+    {
+      "url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly-1991-2020&stations=USW00013958&dataTypes=MLY-CLDD-NORMAL&format=json",
+      "label": "normals:https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly-1991-2020&stations=USW00013958&dataTypes=MLY-CLDD-NORMAL&format=json",
+      "status": 200,
+      "bytes": 819
+    },
+    {
+      "url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly&stations=USW00013958&dataTypes=MLY-CLDD-NORMAL&format=json",
+      "label": "normals:https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly&stations=USW00013958&dataTypes=MLY-CLDD-NORMAL&format=json",
+      "status": 200,
+      "bytes": 753
+    },
+    {
+      "url": "https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=normals",
+      "label": "normals:https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=normals",
+      "status": 200,
+      "bytes": 324437
+    },
+    {
+      "url": "https://www.ncei.noaa.gov/pub/data/normals/1991-2020/access/USW00013958.csv",
+      "label": "normals:https://www.ncei.noaa.gov/pub/data/normals/1991-2020/access/USW00013958.csv",
+      "status": 404,
+      "bytes": 25
+    },
+    {
+      "url": "https://www.ncei.noaa.gov/pub/data/normals/1991-2020/",
+      "label": "normals:https://www.ncei.noaa.gov/pub/data/normals/1991-2020/",
+      "status": 404,
+      "bytes": 25
+    }
+  ]
+}
