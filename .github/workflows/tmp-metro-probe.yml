@@ -105,50 +105,60 @@ jobs:
               log.append({'url': url, 'label': label, 'status': st, 'bytes': len(body)})
               return body if st == 200 else None
 
-          # ---- PASS 6 ----
-          # Two corrections to pass 5, both mine:
-          #
-          #  * Dallas' `issued_date` is a TEXT column holding "12/31/19", and
-          #    by_month 400'd because date_trunc_ym cannot parse it. That means
-          #    max()/min() were LEXICOGRAPHIC, not chronological: a row reading
-          #    "01/15/20" sorts below "12/31/19" on the first character, so it
-          #    would be invisible to both extremes. "oldest 01/01/19, newest
-          #    12/31/19" therefore does NOT establish the dataset stops in 2019.
-          #    Count rows per year suffix instead — unambiguous on a text column.
-          #  * The Hub search for Fort Worth returned other people's maps, none
-          #    owned by the city. Ask the site's own DCAT catalogue, which is
-          #    what an ArcGIS Hub open-data site publishes its holdings through.
+          # ---- PASS 7 ----
+          #  * Dallas: every year bucket came back 0, which is my encoding bug,
+          #    not an empty dataset — I left `%` in the `safe` set, so the LIKE
+          #    wildcards went to the server as raw `%` and were read as broken
+          #    percent-escapes. Encode them properly.
+          #  * Fort Worth: the city's own DCAT feed lists "CFW Development
+          #    Permits Table"/"Points", publisher City of Fort Worth, licence
+          #    CC BY 4.0, modified today. Follow the GeoServices distribution to
+          #    the layer and ask it for its fields, row count and date range.
           findings = collections.defaultdict(dict)
 
           DH, DID = 'www.dallasopendata.com', 'e7gq-4sah'
           years = {}
           for yy in ['19', '20', '21', '22', '23', '24', '25', '26']:
               q = urllib.parse.quote(f"$select=count(1) as n&$where=issued_date like '%/{yy}'",
-                                     safe="=$&(),*%'")
+                                     safe="=$&(),*'")
               b = fetch(f'https://{DH}/resource/{DID}.json?{q}', f'dallas:yr{yy}')
               if b:
                   v, err = jparse(b, f'yr{yy}')
-                  years[f'20{yy}'] = err or (v[0]['n'] if v else None)
+                  years[f'20{yy}'] = err or (v[0].get('n') if v else None)
           findings['dallas']['rows_by_year_suffix'] = years
 
           FH = 'data.fortworthtexas.gov'
           b = fetch(f'https://{FH}/api/feed/dcat-us/1.1.json', 'fortworth:dcat')
           if b:
-              v, err = jparse(b, 'fw-dcat')
-              if err:
-                  findings['fortworth']['dcat'] = err
-              else:
-                  ds = v.get('dataset', [])
-                  findings['fortworth']['dcat_dataset_count'] = len(ds)
-                  findings['fortworth']['permit_datasets'] = [
-                      {'title': d.get('title'), 'license': d.get('license'),
-                       'modified': d.get('modified'), 'identifier': d.get('identifier'),
-                       'publisher': (d.get('publisher') or {}).get('name'),
-                       'formats': [x.get('format') for x in d.get('distribution', [])]}
-                      for d in ds if 'permit' in (d.get('title', '') + d.get('description', '')).lower()]
-                  findings['fortworth']['all_titles'] = [d.get('title') for d in ds][:120]
+              v, _ = jparse(b, 'fw-dcat')
+              for d in (v or {}).get('dataset', []):
+                  t = d.get('title', '')
+                  if 'Development Permits' not in t: continue
+                  rec = {'title': t, 'license': d.get('license'), 'modified': d.get('modified'),
+                         'publisher': (d.get('publisher') or {}).get('name'),
+                         'rights': d.get('rights'), 'accrualPeriodicity': d.get('accrualPeriodicity'),
+                         'distributions': [{'format': x.get('format'), 'url': x.get('accessURL') or x.get('downloadURL')}
+                                           for x in d.get('distribution', [])]}
+                  rest = next((x['url'] for x in rec['distributions']
+                               if x['url'] and '/rest/services/' in x['url']), None)
+                  if rest:
+                      rest = rest.split('?')[0].rstrip('/')
+                      mb = fetch(f'{rest}?f=json', f'fw-layer-meta:{t}')
+                      if mb:
+                          m, e = jparse(mb, 'layer')
+                          if not e:
+                              rec['layer'] = {
+                                  'name': m.get('name'), 'type': m.get('type'),
+                                  'maxRecordCount': m.get('maxRecordCount'),
+                                  'supportsPagination': (m.get('advancedQueryCapabilities') or {}).get('supportsPagination'),
+                                  'fields': [(f.get('name'), f.get('type')) for f in m.get('fields', [])]}
+                      cb = fetch(f'{rest}/query?where=1%3D1&returnCountOnly=true&f=json', f'fw-count:{t}')
+                      if cb:
+                          c, e = jparse(cb, 'count')
+                          rec['rowCount'] = c if e is None else e
+                  findings['fortworth'][t] = rec
 
-          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-6.json', 'w'), indent=2)
+          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-7.json', 'w'), indent=2)
           print(json.dumps(findings, indent=2)[:6000])
           print(f'\n{len(log)} requests; skipped by robots: '
                 f'{sum(1 for x in log if x["status"] == "SKIPPED_BY_ROBOTS")}')
