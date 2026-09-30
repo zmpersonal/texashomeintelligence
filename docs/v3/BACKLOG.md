@@ -675,3 +675,69 @@ page would be one long series and two short ones.
 **Decision needed:** whether to do this at all, and if so the replacement copy.
 
 **Scope → blocked on copy, then small.**
+
+---
+
+### 20 · ⚠️ Two shipped fetchers request robots-disallowed paths
+
+**Found in Round 41c** (`docs/audits/round-41c-per-location-feeds.md` §0), by applying Round 39's
+robots guard to hosts the production ingest already uses. **Your ruling is needed before any
+per-location work on these two feeds can proceed.**
+
+**1 · `swdiHail.ts`.** `www.ncdc.noaa.gov/robots.txt`, `User-agent: *`, contains
+`Disallow: /swdiws/` and `Disallow: /*.csv`. The fetcher requests
+`https://www.ncdc.noaa.gov/swdiws/csv/nx3hail/…`, matched by both. This feed publishes on
+`/data/austin/roofing/` and `/data/san-antonio/storms/`.
+
+**2 · `noaaClimate.ts`.** `www.ncei.noaa.gov/robots.txt`, `User-agent: *`, contains
+`Disallow: /data*`, with the only `Allow:` being `/data/oceans/coris/library*`. Exactly one of
+the fetcher's four NCEI URL families is caught: `data/normals-monthly/1991-2020/access/` — the
+index and every station's normals CSV. The GSOM observations (`/access/…`), the GHCND station
+table and the storm-events listing (both `/pub/data/…`) are all permitted.
+
+**Nothing was changed.** Changing either breaks a live reading, and the decision is not Claude's.
+
+**The tension is real and worth stating both ways.** Round 37's correction established that this
+project treats `robots.txt` as binding; Round 39 made it a mechanism. Against that: `swdiws` is
+*SWDI Web Service* and the Access Data Service is likewise published for programmatic use, and a
+scheduled API client is arguably not a crawler. Either position is defensible. **The current
+state — a written standard saying one thing while two shipped fetchers do another — is not.**
+
+**Decision needed:** narrow the standard to say it governs crawling and not documented web
+services (and record that), or change the two fetchers and accept losing the hail count and the
+cooling-load normals. A third path exists for NCEI specifically: ask NOAA whether an alternate
+normals endpoint outside `/data*` is published.
+
+**Knock-on:** Round 41c could not measure whether the station 5.2 miles from New Braunfels has a
+usable 1991–2020 normal, because that check reads the disallowed path. Per-location cooling load
+is blocked behind this item.
+
+**Scope → blocked on your ruling, then small for the standard / medium for the fetchers.**
+
+---
+
+### 21 · Per-location feeds: only Census ACS passes, and it needs 41b first
+
+Round 41c measured whether four per-metro feeds can resolve per location.
+
+| Feed | Finer grain? | Nearest real source to NB / SM | Blocked on |
+|---|---|---|---|
+| **Census ACS** | **yes — `for=place:`** | the city itself | **41b's location entity** |
+| Cooling load | yes — station id | **5.2 mi / 4.2 mi** | item 20 |
+| Hail | yes — `bbox` already | n/a | item 20, **and box geometry** |
+| Air quality | yes — `zipCode` already | **no monitor within 25 mi** | nothing to build |
+
+**Census ACS is the one clean pass**, with **five vintages (2019–2023)** at city grain. It is not
+a relabelled county figure: San Marcos city is **30% owner-occupied against Hays County's 64%**.
+It is unbuilt only because `censusAcs.ts` writes `census-acs/{location}.json` keyed by `AreaId`,
+and a place is not an area — giving New Braunfels an `AreaId` would make it a metro.
+
+**Air quality is a dead end, not a blocked one:** 78130, 78132 and 78666 return no rows at all.
+78640 (Kyle) returns a reading and it is **Austin's** — AirNow answers by *reporting area*, so if
+this feed is ever extended it must publish `ReportingArea` as the label.
+
+**Hail needs a second decision beyond item 20:** `BOX_PAD_DEGREES = 0.5` is a ~69-mile box, and
+New Braunfels sits 29.6 miles from the San Antonio point. Two such boxes would count mostly the
+same storms. Per-location hail requires shrinking the pad, not just moving the centre.
+
+**Scope → ACS is small once 41b lands; the rest waits on item 20.**
