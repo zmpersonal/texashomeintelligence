@@ -76,7 +76,10 @@ jobs:
           def allowed(url):
               u = urllib.parse.urlparse(url)
               st, dis, allow = star_rules(u.netloc)
-              path = u.path or '/'
+              # Match on path AND query. Dallas' rules are query-scoped
+              # (`Disallow: /browse?*&q=`), so a path-only match would silently
+              # ignore every one of them.
+              path = (u.path or '/') + (f'?{u.query}' if u.query else '')
               d = [r for r in dis if match(r, path)]
               a = [r for r in allow if match(r, path)]
               # longest-match wins; Allow beats Disallow at equal length
@@ -102,7 +105,7 @@ jobs:
               log.append({'url': url, 'label': label, 'status': st, 'bytes': len(body)})
               return body if st == 200 else None
 
-          # ---- PASS 3 ----
+          # ---- PASS 4 (pass 3's queries; pass 3 lost them to a stale print) ----
           # Pass 2 findings this pass settles:
           #  * Dallas' rowsUpdatedAt is 2020-08-30 while its own metadata claims
           #    "Update Frequency: Daily". Do not kill a metro on a metadata field
@@ -149,12 +152,52 @@ jobs:
                                   'custom': (m.get('metadata') or {}).get('custom_fields'),
                                   'columns': [c.get('fieldName') for c in m.get('columns', [])]}
 
-          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-3.json', 'w'), indent=2)
-          print(json.dumps(findings['city_domains'], indent=2))
+          # ---- corridor: one looser look, then done ----
+          # Pass 1 searched ArcGIS Hub for "building permits" per city and pass 2
+          # found no open-data host for any of the four. This is the last look:
+          # a looser Hub query and the city's own Socrata footprint. If nothing
+          # machine-readable turns up here, that is the finding — no workaround.
+          findings['corridor'] = {}
+          for city in ['New Braunfels', 'San Marcos TX', 'Round Rock', 'Kyle TX']:
+              row = {}
+              q = urllib.parse.quote(f'{city} permit')
+              b = fetch(f'https://hub.arcgis.com/api/v3/datasets?q={q}&page[size]=10',
+                        f'corridor-hub:{city}')
+              if b:
+                  v, err = jparse(b, 'hub')
+                  row['hub'] = err or [
+                      {'title': (d.get('attributes') or {}).get('name'),
+                       'owner': (d.get('attributes') or {}).get('source'),
+                       'type': (d.get('attributes') or {}).get('type')}
+                      for d in (v.get('data') or [])]
+              b = fetch(f'https://api.us.socrata.com/api/catalog/v1?q={q}&limit=10',
+                        f'corridor-socrata:{city}')
+              if b:
+                  v, err = jparse(b, 'socrata')
+                  row['socrata'] = err or [
+                      {'name': r['resource']['name'],
+                       'domain': r.get('metadata', {}).get('domain')}
+                      for r in (v.get('results') or [])]
+              findings['corridor'][city] = row
+
+          # ---- Houston: record the refusal, do not work around it ----
+          hst, hdis, hallow = star_rules('data.houstontx.gov')
+          findings['houston'] = {
+              'robots_status': hst,
+              'star_group_disallow_count': len(hdis),
+              'machine_readable_paths_disallowed': [r for r in hdis
+                                                    if r.startswith(('/api', '/datastore'))],
+              'note': 'CKAN portal. Both /api/ and /datastore/* are disallowed for '
+                      'User-agent: *, so no compliant machine-readable read exists. '
+                      'No workaround attempted.'}
+
+          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-4.json', 'w'), indent=2)
+          print(json.dumps(findings, indent=2)[:6000])
           print(f'\n{len(log)} requests; skipped by robots: '
                 f'{sum(1 for x in log if x["status"] == "SKIPPED_BY_ROBOTS")}')
           PY
       - name: Commit findings
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
