@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-29T15:50:13.277Z",
-  "lastSuccessAt": "2026-09-29T15:50:13.277Z",
+  "lastAttemptAt": "2026-09-30T15:54:48.797Z",
+  "lastSuccessAt": "2026-09-30T15:54:48.797Z",
   "lastError": null,
   "source": {
     "name": "National Weather Service API",
@@ -482,6 +482,16 @@
         "forecastHighF": 97,
         "forecastLowF": 76,
         "activeAlert": "Flood Watch issued September 29 at 9:24AM CDT until October 2 at 7:00PM CDT by NWS Austin/San Antonio TX"
+      }
+    },
+    {
+      "observedAt": "2026-09-30T14:00:00.000Z",
+      "ingestedAt": "2026-09-30T15:54:48.918Z",
+      "key": "2026-09-30T09:00:00-05:00",
+      "value": {
+        "forecastHighF": 96,
+        "forecastLowF": 77,
+        "activeAlert": "Flood Watch issued September 29 at 5:47PM CDT until October 2 at 7:00PM CDT by NWS Austin/San Antonio TX"
       }
     }
   ]

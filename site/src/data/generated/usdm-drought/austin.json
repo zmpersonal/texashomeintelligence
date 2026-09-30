@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-29T15:50:14.692Z",
-  "lastSuccessAt": "2026-09-29T15:50:14.692Z",
+  "lastAttemptAt": "2026-09-30T15:54:49.000Z",
+  "lastSuccessAt": "2026-09-30T15:54:49.000Z",
   "lastError": null,
   "source": {
     "name": "U.S. Drought Monitor",
@@ -557,7 +557,7 @@
     },
     {
       "observedAt": "2026-09-22T00:00:00.000Z",
-      "ingestedAt": "2026-09-29T15:50:15.014Z",
+      "ingestedAt": "2026-09-30T15:54:49.262Z",
       "key": "48453-2026-09-22T00:00:00",
       "value": {
         "droughtIndex": "D3 — Extreme Drought (22% of county)",
@@ -567,7 +567,7 @@
     },
     {
       "observedAt": "2026-09-22T00:00:00.000Z",
-      "ingestedAt": "2026-09-29T15:50:15.322Z",
+      "ingestedAt": "2026-09-30T15:54:49.528Z",
       "key": "48491-2026-09-22T00:00:00",
       "value": {
         "droughtIndex": "D3 — Extreme Drought (14% of county)",
@@ -577,7 +577,7 @@
     },
     {
       "observedAt": "2026-09-22T00:00:00.000Z",
-      "ingestedAt": "2026-09-29T15:50:15.428Z",
+      "ingestedAt": "2026-09-30T15:54:49.605Z",
       "key": "48209-2026-09-22T00:00:00",
       "value": {
         "droughtIndex": "D1 — Moderate Drought (99% of county)",
