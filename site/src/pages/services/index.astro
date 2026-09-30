@@ -25,7 +25,13 @@ const SERVICE_ORDER = [
   "electrical",
   "tree-trimming",
 ];
+// Round 40. Kept as an ORDER, not a filter — see the sort below. A metro absent
+// from this list used to be absent from the page.
 const LOCATION_ORDER = ["austin", "san-antonio"];
+const locationRank = (id: string) => {
+  const i = LOCATION_ORDER.indexOf(id);
+  return i === -1 ? Number.MAX_SAFE_INTEGER : i;
+};
 
 const services = await getCollection("services");
 const locations = await getCollection("locations");
@@ -33,7 +39,9 @@ const locations = await getCollection("locations");
 const orderedServices = SERVICE_ORDER.map((slug) => services.find((s) => s.id === slug)).filter(
   (s) => s !== undefined,
 );
-const orderedLocations = LOCATION_ORDER.map((id) => locations.find((l) => l.id === id)).filter(
+const orderedLocations = [...locations]
+  .sort((a, b) => locationRank(a.id) - locationRank(b.id) || a.id.localeCompare(b.id))
+  .filter(
   (l) => l !== undefined,
 );
 
@@ -41,7 +49,7 @@ const orderedLocations = LOCATION_ORDER.map((id) => locations.find((l) => l.id =
 const withSignal = orderedServices.filter((svc) => {
   const signal = SERVICE_SIGNALS[svc.id];
   if (!signal) return false;
-  return LOCATION_ORDER.some((loc) => {
+  return locations.map((l) => l.id).some((loc) => {
     const pages = publishedDataPages(loc);
     return pages.some((p) => p.topic === signal.topic || p.topic === signal.fallbackTopic);
   });

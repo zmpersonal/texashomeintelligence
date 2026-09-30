@@ -1,4 +1,5 @@
 import type { FetcherModule, Observation } from "../types";
+import type { AreaId } from "../../data/zip-areas";
 
 export interface SoilValue {
   soilType?: string;
@@ -34,7 +35,7 @@ export interface SoilValue {
 const SDA_URL = "https://sdmdataaccess.nrcs.usda.gov/Tabular/post.rest";
 
 /** Matches `AREA_DEFINITIONS[].point` in `src/data/zip-areas.ts`. */
-const REPRESENTATIVE_POINT: Record<"austin" | "san-antonio", { lat: number; lon: number }> = {
+const REPRESENTATIVE_POINT: Record<AreaId, { lat: number; lon: number }> = {
   austin: { lat: 30.2672, lon: -97.7431 }, // downtown Austin
   "san-antonio": { lat: 29.4241, lon: -98.4936 }, // downtown San Antonio
 };
@@ -59,7 +60,7 @@ function monthKey(d: Date): string {
   return d.toISOString().slice(0, 7);
 }
 
-function makeFetcher(location: "austin" | "san-antonio"): FetcherModule<SoilValue> {
+function makeFetcher(location: AreaId): FetcherModule<SoilValue> {
   const point = REPRESENTATIVE_POINT[location];
   return {
   datasetId: "usda-soil",

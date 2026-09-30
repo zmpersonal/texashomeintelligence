@@ -1,5 +1,5 @@
 import type { FetcherModule, Observation } from "../types";
-import { ZIP_AREAS } from "../../data/zip-areas";
+import { ZIP_AREAS, type AreaId } from "../../data/zip-areas";
 import { parseCsv, rowsToRecords } from "../csv";
 
 /**
@@ -109,7 +109,7 @@ export interface CoolingDegreeDayValue {
  * clothes. Distance alone would have picked it. See `MIN_YEARS_OF_RECORD` and
  * `ESTIMATED_FLAG`.
  */
-type Metro = "austin" | "san-antonio";
+type Metro = AreaId;
 
 const ACCESS_DATA_V1 = "https://www.ncei.noaa.gov/access/services/data/v1";
 const GHCND_STATIONS = "https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt";

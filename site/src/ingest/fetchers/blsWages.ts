@@ -1,4 +1,5 @@
 import type { FetcherModule, Observation } from "../types";
+import type { AreaId } from "../../data/zip-areas";
 
 export interface TradeWageValue {
   trade: string;
@@ -39,7 +40,7 @@ export interface TradeWageValue {
  */
 
 /** CBSA code per metro, zero-padded to 7 digits inside the series id. */
-const CBSA: Record<"austin" | "san-antonio", { code: string; label: string }> = {
+const CBSA: Record<AreaId, { code: string; label: string }> = {
   austin: { code: "0012420", label: "Austin-Round Rock-Georgetown MSA" },
   "san-antonio": { code: "0041700", label: "San Antonio-New Braunfels MSA" },
 };
@@ -47,7 +48,7 @@ const CBSA: Record<"austin" | "san-antonio", { code: string; label: string }> = 
 const SOC_PLUMBERS = "472152";
 const DATA_TYPE_MEDIAN_HOURLY = "08";
 
-function seriesIdFor(location: "austin" | "san-antonio"): string {
+function seriesIdFor(location: AreaId): string {
   return `OEUM${CBSA[location].code}000000${SOC_PLUMBERS}${DATA_TYPE_MEDIAN_HOURLY}`;
 }
 
@@ -63,7 +64,7 @@ interface BlsResponse {
   Results?: { series?: { seriesID: string; data?: BlsSeriesDataPoint[] }[] };
 }
 
-function makeFetcher(location: "austin" | "san-antonio"): FetcherModule<TradeWageValue> {
+function makeFetcher(location: AreaId): FetcherModule<TradeWageValue> {
   const SERIES_ID = seriesIdFor(location);
   const TRADE_LABEL = `Plumbers, Pipefitters, and Steamfitters (${CBSA[location].label})`;
   return {

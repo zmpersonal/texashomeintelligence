@@ -1,4 +1,5 @@
 import type { FetcherModule, Observation } from "../types";
+import type { AreaId } from "../../data/zip-areas";
 
 export interface AirQualityValue {
   aqi?: number;
@@ -15,7 +16,7 @@ export interface AirQualityValue {
  * returns one row per monitored pollutant (O3, PM2.5, ...); we report
  * the worst (highest AQI) of the returned rows, per AQI convention.
  */
-const ZIP_BY_LOCATION: Record<"austin" | "san-antonio", string> = {
+const ZIP_BY_LOCATION: Record<AreaId, string> = {
   austin: "78701",
   "san-antonio": "78205",
 };
@@ -29,7 +30,7 @@ interface AirNowObservation {
   Category?: { Number?: number; Name?: string };
 }
 
-function makeFetcher(location: "austin" | "san-antonio"): FetcherModule<AirQualityValue> {
+function makeFetcher(location: AreaId): FetcherModule<AirQualityValue> {
   return {
     datasetId: "airnow",
     location,

@@ -10,6 +10,7 @@ import { dataPageHref } from "./dataPages";
 // Round 10b: a module-scope `new Date()` reads 1970 under the Workers runtime
 // that Astro builds against. Anything that needs the real build date uses this.
 import { buildNow } from "../data/serviceNotices";
+import { primaryCountyName } from "../data/zip-areas";
 
 export interface ContextReading {
   label: string;
@@ -227,7 +228,11 @@ const READERS: Record<string, Reader> = {
       location,
     );
     if (!dataset || dataset.status === "sample") return undefined;
-    const county = location === "san-antonio" ? "Bexar" : "Travis";
+    // Round 40. Was `location === "san-antonio" ? "Bexar" : "Travis"`, which
+    // would have filtered a third metro's storm rows to TRAVIS COUNTY and
+    // published the result as that metro's reading. The primary county is
+    // config, and this now reads it from there.
+    const county = primaryCountyName(location);
     const rows = dataset.observations
       .filter((o) => !o.seed && o.value.county === county)
       .sort((a, b) => b.observedAt.localeCompare(a.observedAt));

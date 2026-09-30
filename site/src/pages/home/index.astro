@@ -145,7 +145,7 @@ const unused = TASK_CATALOGUE.filter((t) => !reminders.some((r) => r.taskKey ===
           <p class="dash-precision" data-account-email>{auth.account.email}</p>
           {address && <p class="dash-precision" data-address>{address}</p>}
           <p class="dash-precision" data-precision-note>Readings are for {home.countyName} County and the{" "}
-            {home.areaId === "austin" ? "Austin" : "San Antonio"} metro — they describe the area,
+            {index.areaLabel} metro — they describe the area,
             not this address.</p>
           <form method="post" action="/api/auth/sign-out/">
             <button class="btn secondary" type="submit">Sign out</button>

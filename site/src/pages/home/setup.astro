@@ -5,6 +5,7 @@ import Base from "../../layouts/Base.astro";
 import { authenticate } from "../../lib/auth/guard";
 import { supportedZips } from "../../lib/dashboard";
 import { CROSSWALK } from "../../lib/zipCrosswalk";
+import { ZIP_AREAS, areaLabel } from "../../data/zip-areas";
 
 const auth = await authenticate(Astro.request);
 if (!auth) return Astro.redirect("/home/sign-in/");
@@ -28,8 +29,8 @@ const zips = supportedZips().map((z) => ({ zip: z, county: CROSSWALK.get(z)!.pri
         <input type="hidden" name="consent_source" value="home_setup" />
         <label class="notify-label" for="zip">ZIP code</label>
         <select id="zip" name="zip" class="notify-input" required>
-          {["austin","san-antonio"].map((area) => (
-            <optgroup label={area === "austin" ? "Austin metro" : "San Antonio metro"}>
+          {ZIP_AREAS.map((a) => a.areaId).map((area) => (
+            <optgroup label={`${areaLabel(area)} metro`}>
               {zips.filter((z) => z.area === area).map((z) => (
                 <option value={z.zip}>{z.zip} — {z.county} County</option>
               ))}

@@ -43,14 +43,14 @@ export interface ZipArea {
    * the ingested set and the published set cannot drift.
    * These are the counties the crosswalk marks `drought_county_granular=yes`.
    */
-  droughtCounties: AreaCounty[];
+  droughtCounties: readonly AreaCounty[];
   /**
    * Counties that appear in this area's NOAA storm records. Wider than the MSA
    * county list because NOAA files events by forecast zone — Burnet and Blanco
    * rows show up in the Austin feed. Documentation only: storm scoring uses the
    * area's primary county alone.
    */
-  stormCounties: string[];
+  stormCounties: readonly string[];
   /**
    * Metro centroid. The NWS fetcher resolves a forecast gridpoint from a
    * lat/lon via `/points/{lat},{lon}`, so this carries the point and lets the
@@ -60,7 +60,7 @@ export interface ZipArea {
   point: { lat: number; lon: number };
 }
 
-export const ZIP_AREAS: ZipArea[] = [
+export const ZIP_AREAS = [
   {
     areaId: "austin",
     label: "Austin",
@@ -85,7 +85,53 @@ export const ZIP_AREAS: ZipArea[] = [
     stormCounties: ["Bexar", "Comal", "Guadalupe", "Medina", "Wilson", "Atascosa", "Bandera", "Kendall"],
     point: { lat: 29.4241, lon: -98.4936 },
   },
-];
+] as const satisfies readonly ZipArea[];
+
+/**
+ * ⚠️ THE AREA UNION IS DERIVED, NOT DECLARED. Round 40.
+ *
+ * Every module that used to write `"austin" | "san-antonio"` by hand now writes
+ * `AreaId`. Adding an entry to ZIP_AREAS above widens this union everywhere at
+ * once, so a metro can never be half-added: the union and the config cannot
+ * drift, because there is only one of them.
+ *
+ * The lookups a metro still needs — a county set for storms, a ZIP for air
+ * quality, a CBSA for wages, a county FIPS for ACS, a soil point — are typed
+ * `Record<AreaId, …>`. That is deliberate: adding an entry here turns those
+ * five into COMPILE ERRORS naming exactly what is missing, rather than letting
+ * a new metro build successfully with silent gaps. See
+ * `docs/audits/round-40-third-metro-readiness.md`.
+ */
+export type AreaId = (typeof ZIP_AREAS)[number]["areaId"];
+
+/**
+ * The display name for an area, from the same config every page renders from.
+ *
+ * ⚠️ THROWS on an unknown id, and that is the feature. Round 39 found this as
+ * a two-metro ternary in `lib/account/alerts.ts`:
+ *
+ *     areaId === "san-antonio" ? "San Antonio" : "Austin"
+ *
+ * A third metro did not fail there — it was silently labelled "Austin" in
+ * account alerts. It typechecked, it built, and it was wrong. A wrong place
+ * name in an alert is a false statement to a homeowner about their own home,
+ * which is worse than a failed build by every measure this project uses. So
+ * this resolves or it stops the build; it never falls back.
+ *
+ * `lib/zipAreas.ts` already throws the same way for a crosswalk row with no
+ * ZIP_AREAS entry — this is that rule applied to the label.
+ */
+export function areaLabel(areaId: string): string {
+  const area = ZIP_AREAS.find((a) => a.areaId === areaId);
+  if (!area) {
+    throw new Error(
+      `areaLabel("${areaId}"): no entry in ZIP_AREAS. Known areas: ` +
+        `${ZIP_AREAS.map((a) => a.areaId).join(", ")}. Add the area to ` +
+        `src/data/zip-areas.ts rather than defaulting to a metro.`,
+    );
+  }
+  return area.label;
+}
 
 /**
  * ⚠️ THE ONE PLACE A HUMAN JUDGEMENT DECIDES, NOT THE CENSUS FILE.
@@ -134,6 +180,26 @@ export const CROSS_METRO_ZIPS: Record<string, { area: string; note: string }> = 
  * .csv before a single fetcher runs. The ingest path therefore imports this
  * function from here, where the only dependency is the ZIP_AREAS literal above.
  */
+/**
+ * The county whose readings an area publishes.
+ *
+ * Round 40. `lib/belowHeroReadings.ts` carried this as
+ * `location === "san-antonio" ? "Bexar" : "Travis"`, so a third metro's storm
+ * rows would have been filtered to Travis County and the result published as
+ * that metro's reading — a wrong county attached to a real number. Same rule as
+ * `areaLabel`: it resolves from config or it throws.
+ */
+export function primaryCountyName(areaId: string): string {
+  const area = ZIP_AREAS.find((a) => a.areaId === areaId);
+  if (!area) {
+    throw new Error(
+      `primaryCountyName("${areaId}"): no entry in ZIP_AREAS. Known areas: ` +
+        `${ZIP_AREAS.map((a) => a.areaId).join(", ")}.`,
+    );
+  }
+  return area.primaryCounty.name;
+}
+
 export function ingestCounties(areaId: string): { name: string; fips: string }[] {
   const area = ZIP_AREAS.find((a) => a.areaId === areaId);
   return (area?.droughtCounties ?? []).map((c) => ({ name: c.name, fips: c.fips }));

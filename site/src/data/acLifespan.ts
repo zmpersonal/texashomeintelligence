@@ -18,13 +18,17 @@
  * see. `LIMITS` is not a disclaimer at the bottom; it is a section of the tool.
  */
 
-/** The two launch metros, in the order the page renders them. */
-export const METROS = [
-  { id: "austin", label: "Austin" },
-  { id: "san-antonio", label: "San Antonio" },
-] as const;
+import { ZIP_AREAS, type AreaId } from "./zip-areas";
 
-export type MetroId = (typeof METROS)[number]["id"];
+/** The metros this tool offers, in the order the page renders them.
+ *
+ * Round 40. Was a second hand-written copy of the metro list. It agreed with
+ * `ZIP_AREAS` only because nobody had changed either — a metro added to the
+ * config would have resolved everywhere else and simply not appeared in this
+ * tool's picker. Derived, so there is one list. */
+export const METROS = ZIP_AREAS.map((a) => ({ id: a.areaId, label: a.label }));
+
+export type MetroId = AreaId;
 
 /**
  * The parts-warranty convention.

@@ -22,7 +22,7 @@ import Breadcrumbs from "../components/Breadcrumbs.astro";
 import DataStatus from "../components/DataStatus.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
 import LiveConditionsPanel from "../components/LiveConditionsPanel.astro";
-import { getEntry } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
 import { hasDataHub, publishedDataPages } from "../lib/dataPages";
 import { findDataset, freshnessOf } from "../lib/datasets";
 import { SERVICE_SIGNALS, SERVICES_WITHOUT_SIGNAL } from "../lib/serviceSignals";
@@ -49,7 +49,15 @@ const loc = locEntry.data;
 
 const cityName = loc.name;
 
-const otherLocationSlug = locationSlug === "austin" ? "san-antonio" : "austin";
+// Round 40. Was `locationSlug === "austin" ? "san-antonio" : "austin"`, so
+// every metro that was not Austin pointed at Austin — with three metros, two of
+// them would have cross-linked to the same place and the third to itself never.
+// "The other one" is only meaningful for two, so this takes the NEXT location in
+// the collection's own order, wrapping at the end. With two metros that is the
+// identical pairing; with three it is a cycle rather than a collision.
+const locationSlugs = (await getCollection("locations")).map((e) => e.id).sort();
+const otherLocationSlug =
+  locationSlugs[(locationSlugs.indexOf(locationSlug) + 1) % locationSlugs.length];
 const otherLocationEntry = await getEntry("locations", otherLocationSlug);
 const otherLocationName = otherLocationEntry?.data.name ?? "";
 

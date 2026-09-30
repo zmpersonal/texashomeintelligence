@@ -14,11 +14,8 @@ import { updateProjectStatus, insertGeneratedBrief } from "../../../../lib/db";
 // globs every generated dataset eagerly, which is right for static pages but
 // would pull ~2 MB of permit JSON into this Worker's bundle for a handful of
 // summary lines. These four files are ~25 KB each.
-import stormAustin from "../../../../data/generated/noaa-storm-events/austin.json";
-import stormSanAntonio from "../../../../data/generated/noaa-storm-events/san-antonio.json";
-import droughtAustin from "../../../../data/generated/usdm-drought/austin.json";
-import droughtSanAntonio from "../../../../data/generated/usdm-drought/san-antonio.json";
 import type { DatasetFile } from "../../../../ingest/types";
+import { findDataset } from "../../../../lib/datasets";
 import { generateBrief } from "../../../../lib/brief";
 
 export const prerender = false;
@@ -71,11 +68,15 @@ export const POST: APIRoute = async ({ params, request }) => {
   // Local context for the brief comes from real published datasets rather than
   // the location YAML's retired `conditions` placeholders — so a brief carries
   // measured readings with their sources, not "pending live feed" notes.
-  const localDatasets: DatasetFile<any>[] = (
-    state.location === "san-antonio"
-      ? [stormSanAntonio, droughtSanAntonio]
-      : [stormAustin, droughtAustin]
-  ) as DatasetFile<any>[];
+  // Round 40. Was a two-metro ternary over four hardcoded JSON imports, so any
+  // metro that was not San Antonio received AUSTIN's storm and drought readings
+  // in its brief — measured numbers, correctly sourced, about the wrong place.
+  // Resolved through the same registry every page uses; an area with no file
+  // yields nothing rather than someone else's data.
+  const localDatasets: DatasetFile<any>[] = [
+    findDataset<any>("noaa-storm-events", state.location),
+    findDataset<any>("usdm-drought", state.location),
+  ].filter((d): d is DatasetFile<any> => d !== undefined);
 
   const locationConditions = localDatasets
     .filter((d) => d.status === "live" || d.status === "stale")

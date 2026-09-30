@@ -21,6 +21,7 @@ import { computeStressIndex, explainComposite } from "../../../lib/stressIndex";
 import { buildDashboard } from "../../../lib/dashboard";
 import { evaluateAlerts } from "../../../lib/account/alerts";
 import { ZIP_AREAS } from "../../../lib/zipAreas";
+import type { AreaId } from "../../../data/zip-areas";
 import { EXCLUDED_INPUTS, SIGNAL_WEIGHTS, STORM_DECAY_HALF_LIFE_DAYS } from "../../../lib/stressIndex";
 import { areaDefinitions } from "../../../lib/zipAreas";
 import { readStageReading } from "../../../lib/municipal/stageReading";
@@ -28,12 +29,24 @@ import { readStageReading } from "../../../lib/municipal/stageReading";
 export const getStaticPaths: GetStaticPaths = () =>
   areaDefinitions().map((area) => ({ params: { area: area.areaId }, props: { area } }));
 
+/** A representative covered ZIP per area, only to reuse the dashboard view
+ * builder — the reading is per-metro, so any covered ZIP yields the same one. */
+const SAMPLE_ZIP: Record<AreaId, string> = {
+  austin: "78704",
+  "san-antonio": "78205",
+};
+
 export const GET: APIRoute = ({ props }) => {
   const result = computeStressIndex(props.area);
   const area = ZIP_AREAS.find((a) => a.areaId === props.area.areaId)!;
   // A representative ZIP for this area, only to reuse the dashboard view
   // builder — the reading is per-metro, so any covered ZIP yields the same one.
-  const sampleZip = props.area.areaId === "austin" ? "78704" : "78205";
+  // Round 40. Was `areaId === "austin" ? "78704" : "78205"`, so a third metro
+  // would have been handed a SAN ANTONIO ZIP to build its dashboard view from.
+  // Kept as an explicit per-area choice rather than "first covered ZIP" because
+  // these two are deliberate, but typed `Record<AreaId, …>` so adding a metro is
+  // a compile error here instead of a wrong ZIP.
+  const sampleZip = SAMPLE_ZIP[props.area.areaId as AreaId];
   const view = buildDashboard(sampleZip);
 
   const body = {
