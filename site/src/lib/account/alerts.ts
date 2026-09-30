@@ -14,6 +14,12 @@
  * burst.
  */
 import { findDataset } from "../datasets";
+// Round 40. This used to be a local two-metro ternary that returned "Austin"
+// for anything that was not San Antonio, so a third metro would have been
+// silently mislabelled in every alert headline it produced. The shared
+// resolver reads the same ZIP_AREAS config the rest of the site renders from
+// and throws on an unknown area rather than defaulting to one.
+import { areaLabel } from "../../data/zip-areas";
 import type { Observation } from "../../ingest/types";
 
 export type { AlertKey, AlertDefinition, FiredAlert } from "./alertCatalogue";
@@ -130,6 +136,4 @@ export function evaluateAlerts(areaId: string, countyName: string, referenceDate
   return fired;
 }
 
-function areaLabel(areaId: string): string {
-  return areaId === "san-antonio" ? "San Antonio" : "Austin";
-}
+

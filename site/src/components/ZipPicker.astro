@@ -10,6 +10,7 @@
  */
 import { supportedZips } from "../lib/dashboard";
 import { CROSSWALK } from "../lib/zipCrosswalk";
+import { ZIP_AREAS } from "../data/zip-areas";
 
 interface Props {
   current?: string;
@@ -20,10 +21,14 @@ const zips = supportedZips().map((zip) => {
   const row = CROSSWALK.get(zip)!;
   return { zip, label: `${zip} — ${row.primaryCountyName} County`, area: row.areaId };
 });
-const grouped = [
-  { label: "Austin metro", items: zips.filter((z) => z.area === "austin") },
-  { label: "San Antonio metro", items: zips.filter((z) => z.area === "san-antonio") },
-];
+// Round 40. Was two hardcoded groups. A third metro's ZIPs would have resolved
+// correctly everywhere else and then silently vanished from this picker, which
+// is the quietest failure of the lot: the ZIP works if you type it, and does
+// not exist if you look for it. Derived from ZIP_AREAS, in its declared order.
+const grouped = ZIP_AREAS.map((a) => ({
+  label: `${a.label} metro`,
+  items: zips.filter((z) => z.area === a.areaId),
+})).filter((g) => g.items.length > 0);
 ---
 
 <form class="zip-picker" action="/dashboard/" method="get" data-zip-picker>

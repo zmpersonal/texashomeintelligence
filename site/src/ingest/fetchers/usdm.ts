@@ -1,4 +1,4 @@
-import { ingestCounties } from "../../data/zip-areas";
+import { ingestCounties, type AreaId } from "../../data/zip-areas";
 import type { FetcherModule, Observation } from "../types";
 
 export interface DroughtValue {
@@ -86,7 +86,7 @@ function parseMapDate(mapDate: string): string {
   return new Date(withZone).toISOString();
 }
 
-function makeFetcher(location: "austin" | "san-antonio"): FetcherModule<DroughtValue> {
+function makeFetcher(location: AreaId): FetcherModule<DroughtValue> {
   return {
     datasetId: "usdm-drought",
     location,

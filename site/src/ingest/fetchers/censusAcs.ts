@@ -1,4 +1,5 @@
 import type { FetcherModule, Observation } from "../types";
+import type { AreaId } from "../../data/zip-areas";
 
 export interface HousingStockValue {
   medianHomeAgeYears?: number;
@@ -34,14 +35,14 @@ const VINTAGE = 2023;
 const STATE_FIPS = "48";
 
 /** County part of the FIPS in `src/data/zip-areas.ts` — 48453 / 48029. */
-const COUNTY_FIPS: Record<"austin" | "san-antonio", { fips: string; label: string }> = {
+const COUNTY_FIPS: Record<AreaId, { fips: string; label: string }> = {
   austin: { fips: "453", label: "Travis" },
   "san-antonio": { fips: "029", label: "Bexar" },
 };
 
 interface AcsResponse extends Array<string[]> {}
 
-function makeFetcher(location: "austin" | "san-antonio"): FetcherModule<HousingStockValue> {
+function makeFetcher(location: AreaId): FetcherModule<HousingStockValue> {
   const county = COUNTY_FIPS[location];
   return {
   datasetId: "census-acs",

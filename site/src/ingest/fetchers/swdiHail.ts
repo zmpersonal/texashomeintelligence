@@ -1,6 +1,6 @@
 import type { FetcherModule, Observation } from "../types";
 import { parseCsv } from "../csv";
-import { ZIP_AREAS } from "../../data/zip-areas";
+import { ZIP_AREAS, type AreaId } from "../../data/zip-areas";
 
 /**
  * One NEXRAD hail signature.
@@ -100,7 +100,7 @@ export interface RadarHailSignatureValue {
  * folding one into the other is the sibling-product error that cost rounds 19
  * through 19e. Separate `datasetId`, separate files, no shared rows.
  */
-type Metro = "austin" | "san-antonio";
+type Metro = AreaId;
 
 const SWDI_BASE = "https://www.ncdc.noaa.gov/swdiws";
 const PRODUCT = "nx3hail";

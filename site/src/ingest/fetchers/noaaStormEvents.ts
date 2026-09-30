@@ -1,6 +1,7 @@
 import { gunzipSync } from "node:zlib";
 import type { FetcherModule, Observation } from "../types";
 import { parseCsv, rowsToRecords } from "../csv";
+import type { AreaId } from "../../data/zip-areas";
 
 export interface StormEventValue {
   eventType: "Hail" | "Wind" | "Tornado" | "Flood";
@@ -14,7 +15,7 @@ const LISTING_URL = "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfile
 // Travis County (Austin) and Bexar County (San Antonio) plus each one's
 // bordering counties — CZ_NAME in the NOAA CSVs is the plain county name,
 // upper-cased, no "COUNTY" suffix.
-const COUNTIES_BY_LOCATION: Record<"austin" | "san-antonio", Set<string>> = {
+const COUNTIES_BY_LOCATION: Record<AreaId, Set<string>> = {
   austin: new Set(["TRAVIS", "WILLIAMSON", "HAYS", "BASTROP", "CALDWELL", "BURNET", "BLANCO"]),
   "san-antonio": new Set(["BEXAR", "BANDERA", "MEDINA", "ATASCOSA", "WILSON", "GUADALUPE", "COMAL", "KENDALL"]),
 };
@@ -125,7 +126,7 @@ function parseBeginObservedAt(row: Record<string, string>): string | null {
 
 function mapRow(
   row: Record<string, string>,
-  location: "austin" | "san-antonio",
+  location: AreaId,
   since: string,
   until: string,
 ): Observation<StormEventValue> | null {
@@ -165,7 +166,7 @@ function mapRow(
  * the network and `ctx`, returns Observation<StormEventValue>[] — no
  * filesystem access, no persistence (that's runIngestion.ts's job).
  */
-function makeFetcher(location: "austin" | "san-antonio"): FetcherModule<StormEventValue> {
+function makeFetcher(location: AreaId): FetcherModule<StormEventValue> {
   return {
     datasetId: "noaa-storm-events",
     location,

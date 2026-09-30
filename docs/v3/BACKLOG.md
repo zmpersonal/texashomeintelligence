@@ -530,3 +530,64 @@ desktop with the shortest.
 **Decision needed:** the replacement wording, from the owner.
 
 **Scope → unscheduled, copy.**
+
+---
+
+### 16 · Nav still names two metros, in owner copy
+
+**Owner's, to write — copy, not code.** Logged from Round 40; no replacement copy is proposed
+here.
+
+`site/src/components/Nav.astro` carries two things a third metro would contradict:
+
+1. The **Locations dropdown**, which lists Austin and San Antonio as two literal `<a href>`s.
+   Deriving it from the locations collection is a one-line change.
+2. The **eyebrow string** `"Austin & San Antonio • more Texas metros coming soon"`. This is copy,
+   and CLAUDE.md freezes copy once provided.
+
+Round 40 left **both** alone on purpose. Deriving the dropdown while leaving a line that names
+exactly two metros would make the page disagree with itself — the dropdown would show three, the
+line above it would say two. The two have to move together, and the line is the owner's to write.
+
+**Decision needed:** the replacement eyebrow wording. The dropdown change ships with it.
+
+**Scope → blocked on copy, then small.**
+
+---
+
+### 17 · The NWS forecast fetcher is Austin-only
+
+Found in Round 39, confirmed in Round 40. `site/src/ingest/fetchers/nws.ts` is typed
+`Record<"austin", …>` and exports only `nwsAustin`. **San Antonio was never wired to it.**
+
+This is not a third-metro gap — it is a gap in the second metro. `nws-api` is the feed the freeze
+and extreme-heat alerts read (`lib/account/alerts.ts`), and the heat-load signal names it when it
+is missing: *"No National Weather Service forecast feed for {area}."* So San Antonio accounts
+cannot currently receive a freeze or heat alert.
+
+Round 40 did not touch it: wiring San Antonio means ingesting a feed that is not ingested today,
+which is new data and a behaviour change, and that round's constraint was that nothing moves.
+
+**Decision needed:** whether San Antonio should have forecast-driven alerts. If yes, this is
+small — the fetcher already resolves its gridpoint from a lat/lon, and the centroid is in
+`ZIP_AREAS`.
+
+**Scope → unscheduled, small.**
+
+---
+
+### 18 · Two sweep steps fail on a clean tree
+
+Found in Round 40 while establishing a baseline. Both fail on `main` with no changes applied, so
+`npm run sweep` has read **26/28** for some time and the two failures are invisible as signal.
+
+- **`weeklyunit`** — `scripts/replays/weeklyunit.ts:34` reads `/tmp/austin.bak.json`
+  unconditionally. That file is a leftover from an earlier run on the same machine; in a fresh
+  container it does not exist and the unit dies with `ENOENT`. A gate that passes only when `/tmp`
+  happens to hold state from a previous run is not a gate.
+- **`r9render`** — fails identically on a clean tree. Not diagnosed.
+
+This matters beyond the two tests: a sweep with standing failures trains everyone to read
+"26/28" as success, which is exactly how a real regression gets through.
+
+**Scope → unscheduled, small. Do this before the next round that relies on the sweep as a gate.**

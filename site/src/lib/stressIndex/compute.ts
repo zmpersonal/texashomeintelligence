@@ -20,7 +20,7 @@ export interface AreaDefinition {
   areaLabel: string;
   /** The county the reading represents — see SignalContext.primaryCounty. */
   primaryCounty: string;
-  counties: string[];
+  counties: readonly string[];
 }
 
 /** Every dataset the index may read, so `referenceDate` can be derived before

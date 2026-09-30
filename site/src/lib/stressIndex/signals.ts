@@ -17,6 +17,7 @@ import {
 } from "./config";
 import { ageDays, bandFor, clamp, decayWeight, saturate, toScore } from "./scale";
 import type { ScoreTerm, SignalFreshness, SignalId, SignalResult, SourceInput } from "./types";
+import { ZIP_AREAS } from "../../data/zip-areas";
 
 export interface SignalContext {
   areaId: string;
@@ -35,7 +36,7 @@ export interface SignalContext {
   primaryCounty: string;
   /** Every county in the metro. Not used for scoring; retained for the
    * ingestion config and for a future county-level read. */
-  counties: string[];
+  counties: readonly string[];
   /** All time maths is measured from here — see StressIndexResult.referenceDate. */
   referenceDate: Date;
 }
@@ -575,7 +576,11 @@ export function hvac(ctx: SignalContext, weight: number): SignalResult {
  * metro. Neighbouring counties are ingested too (see the USDM fetcher) and are
  * available for a future county-level read; the index deliberately reports the
  * primary county rather than averaging, so the reading maps to a real place. */
-export const PRIMARY_FIPS: Record<string, string> = {
-  austin: "48453", // Travis
-  "san-antonio": "48029", // Bexar
-};
+/* Round 40. Was a hand-keyed literal that duplicated `primaryCounty.fips` in
+ * `data/zip-areas.ts`, so a third metro got `undefined` here — and every signal
+ * that reads it (`storms`, `drought`, `trees-yard`) would have gone unavailable
+ * with no explanation naming the real cause. Derived, so adding a metro needs
+ * no edit in this file and the two cannot drift. */
+export const PRIMARY_FIPS: Record<string, string> = Object.fromEntries(
+  ZIP_AREAS.map((a) => [a.areaId, a.primaryCounty.fips]),
+);

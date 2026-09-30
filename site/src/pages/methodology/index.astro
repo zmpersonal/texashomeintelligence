@@ -4,6 +4,7 @@ import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import DataStatus from "../../components/DataStatus.astro";
 import { getCollection } from "astro:content";
 import { findDataset, freshnessOf, type DisplayStatus } from "../../lib/datasets";
+import { ZIP_AREAS } from "../../data/zip-areas";
 
 const title = "Methodology | Texas Home Intelligence";
 const description =
@@ -19,7 +20,10 @@ const description =
  * kind of thing that goes stale once a feed changes.
  */
 const sources = await getCollection("dataSources");
-const LOCATIONS = ["austin", "san-antonio", "texas"];
+// Round 40. Was a hardcoded list, so a third metro's feeds would have been
+// missing from every status badge on this page. Derived from the config, plus
+// "texas" — the statewide data hub, which is not a ZIP area and has no entry.
+const LOCATIONS = [...ZIP_AREAS.map((a) => a.areaId), "texas"];
 
 /** Least to most severe, for reducing a multi-location source to one badge. */
 const DISPLAY_SEVERITY: DisplayStatus[] = [

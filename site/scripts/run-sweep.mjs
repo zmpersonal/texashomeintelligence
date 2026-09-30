@@ -48,6 +48,7 @@ const UNITS = [
   ['privacyunit', ['npx', 'tsx', 'scripts/replays/privacyunit.ts']],
   ['climateunit', ['npx', 'tsx', 'scripts/replays/climateunit.ts']],
   ['citationcheckunit', ['npx', 'tsx', 'scripts/replays/citationcheckunit.ts']],
+  ['thirdmetrounit', ['npx', 'tsx', 'scripts/replays/thirdmetrounit.ts']],
   ['verify-trade-mapping', ['npx', 'tsx', 'scripts/verify-trade-mapping.ts']],
   ['verify-content', ['node', 'scripts/verify-content.mjs']],
   ['check-links', ['node', 'scripts/check-links.mjs']],
