@@ -1,0 +1,288 @@
+# TEMPORARY — Round 41e probe. DELETE BEFORE THE ROUND ENDS.
+#
+# Do the stations near New Braunfels and San Marcos clear the SAME bar Austin's
+# and San Antonio's stations clear? The bar is not invented here — it is read
+# out of src/ingest/fetchers/noaaClimate.ts:
+#
+#   USW station, within BOX_PAD_DEGREES = 0.35 of the point
+#   must carry years_MLY-CLDD-NORMAL          (else record length is uncheckable)
+#   all 12 months usable
+#   ZERO months flagged comp_flag = "E"       (ESTIMATED_FLAG)
+#   ZERO months with years < 10               (MIN_YEARS_OF_RECORD)
+#
+# Round 19c is the precedent this follows: Kelly AFB sits 6.1 mi from San
+# Antonio — nearer than the station actually selected — and was rejected because
+# every row read years=2, comp_flag=E. Proximity does not override quality.
+#
+# Austin and San Antonio's own stations are run through the identical check as
+# controls, so a pass or fail here can be read against a known-good result.
+name: TEMPORARY corridor cooling-load probe (Round 41e)
+
+on:
+  push:
+    branches: [claude/thi-v3-round41e-corridor-cdd]
+    paths: ['.github/workflows/tmp-cdd-probe.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe corridor stations
+        env:
+          AIRNOW_API_KEY: ${{ secrets.AIRNOW_API_KEY }}
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+        run: |
+          mkdir -p tmp/cdd/robots
+          python3 - <<'PY'
+          import json, os, re, math, csv, io, urllib.parse, urllib.request, collections
+
+          UA = 'TexasHomeIntelligence-probe/1.0 (one-off research; texashomeintelligence.com)'
+          OUT = 'tmp/cdd'
+          log = []
+          def get(url, timeout=90):
+              req = urllib.request.Request(url, headers={'User-Agent': UA, 'Accept': 'application/json'})
+              try:
+                  with urllib.request.urlopen(req, timeout=timeout) as r:
+                      return r.status, r.read()
+              except Exception as e:
+                  code = getattr(e, 'code', 0)
+                  return code, str(e).encode()
+
+          # ---- robots: parse the User-agent: * group properly ----
+          robots_cache = {}
+          def star_rules(host):
+              if host in robots_cache: return robots_cache[host]
+              st, body = get(f'https://{host}/robots.txt', timeout=30)
+              txt = body.decode('utf-8', 'replace') if st == 200 else ''
+              open(f'{OUT}/robots/{host}.txt', 'w').write(txt if st == 200 else f'(HTTP {st})')
+              groups, cur, agents = [], None, []
+              for line in txt.splitlines():
+                  l = line.split('#')[0].strip()
+                  # ⚠️ A BLANK LINE ENDS A GROUP (RFC 9309 §2.2.1). Pass 1 skipped
+                  # blank lines, so on www2.census.gov — which opens with a bare
+                  # `User-agent: *` and no rules, then a blank line, then
+                  # `User-agent: RavenCrawler` / `Disallow: /` — it merged the two
+                  # and refused the whole host to everyone. A guard that errs
+                  # toward refusing still produces a false finding.
+                  if not l:
+                      # UNCONDITIONALLY, even with no rules. Pass 2 kept the
+                      # `and cur['rules']` guard here and so changed nothing:
+                      # `User-agent: *` with an empty rule set is still a
+                      # complete group, and leaving it open let the next
+                      # `User-agent:` line join it. That guard belongs only on
+                      # the user-agent branch, where CONSECUTIVE agent lines do
+                      # legitimately share one group.
+                      if cur is not None:
+                          groups.append(cur)
+                          cur = None
+                      continue
+                  k, _, v = l.partition(':')
+                  k, v = k.strip().lower(), v.strip()
+                  if k == 'user-agent':
+                      if cur is not None and cur['rules']:
+                          groups.append(cur); cur = None
+                      if cur is None: cur = {'agents': [], 'rules': []}
+                      cur['agents'].append(v)
+                  elif cur is not None and k in ('allow', 'disallow'):
+                      cur['rules'].append((k, v))
+              if cur is not None: groups.append(cur)
+              dis = [v for g in groups if '*' in g['agents'] for k, v in g['rules'] if k == 'disallow' and v]
+              allow = [v for g in groups if '*' in g['agents'] for k, v in g['rules'] if k == 'allow' and v]
+              robots_cache[host] = (st, dis, allow)
+              return robots_cache[host]
+
+          def match(rule, path):
+              pat = re.escape(rule).replace(r'\*', '.*')
+              if pat.endswith(r'\$'): return re.match('^' + pat[:-2] + '$', path) is not None
+              return re.match('^' + pat, path) is not None
+
+          def allowed(url):
+              u = urllib.parse.urlparse(url)
+              st, dis, allow = star_rules(u.netloc)
+              # Path AND query. Round 39 pass 4: Dallas' rules were query-scoped
+              # (`Disallow: /browse?*&q=`) and a path-only match ignored them all.
+              path = (u.path or '/') + (f'?{u.query}' if u.query else '')
+              d = [r for r in dis if match(r, path)]
+              a = [r for r in allow if match(r, path)]
+              # longest-match wins; Allow beats Disallow at equal length
+              if d and (not a or max(len(x) for x in a) < max(len(x) for x in d)):
+                  return False, d
+              return True, []
+
+          def fetch(url, label):
+              ok, why = allowed(url)
+              if not ok:
+                  log.append({'url': url, 'label': label, 'status': 'SKIPPED_BY_ROBOTS', 'disallowed_by': why})
+                  return None
+              st, body = get(url)
+              log.append({'url': url, 'label': label, 'status': st, 'bytes': len(body)})
+              return body if st == 200 else None
+
+          import math
+
+          def jparse(b, label):
+              try:
+                  return json.loads(b), None
+              except Exception as e:
+                  return None, {'parse_error': str(e), 'body_prefix': b[:200].decode('utf-8', 'replace')}
+
+          def miles(a_lat, a_lon, b_lat, b_lon):
+              R = 3958.7613
+              p1, p2 = math.radians(a_lat), math.radians(b_lat)
+              dp, dl = math.radians(b_lat - a_lat), math.radians(b_lon - a_lon)
+              h = math.sin(dp/2)**2 + math.cos(p1)*math.cos(p2)*math.sin(dl/2)**2
+              return 2 * R * math.asin(math.sqrt(h))
+
+          # ── the bar, copied from noaaClimate.ts. Not reinterpreted. ──────
+          BOX_PAD_DEGREES = 0.35
+          MIN_YEARS_OF_RECORD = 10
+          ESTIMATED_FLAG = 'E'
+          MAX_CANDIDATES = 6
+          CDD = 'MLY-CLDD-NORMAL'
+          YEARS = f'years_{CDD}'
+          COMP = f'comp_flag_{CDD}'
+
+          ADS = 'https://www.ncei.noaa.gov/access/services/data/v1'
+
+          # Census 2023 Gazetteer internal points (Round 41c, §1) and the metro
+          # points the site already ships, as controls.
+          TARGETS = {
+              'New Braunfels': (29.699306, -98.115127),
+              'San Marcos':    (29.872399, -97.936022),
+              'Austin (control)':      (30.2672, -97.7431),
+              'San Antonio (control)': (29.4241, -98.4936),
+          }
+
+          F = collections.defaultdict(dict)
+
+          # ── station table ────────────────────────────────────────────────
+          b = fetch('https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt', 'ghcnd:stations')
+          stations = []
+          if b:
+              for line in b.decode('utf-8', 'replace').splitlines():
+                  if len(line) < 72: continue
+                  sid = line[0:11].strip()
+                  if not sid.startswith('USW'): continue
+                  try:
+                      stations.append({'id': sid, 'lat': float(line[12:20]),
+                                       'lon': float(line[21:30]), 'name': line[41:71].strip()})
+                  except ValueError:
+                      continue
+          F['station_table_usw_count'] = len(stations)
+
+          normals_cache = {}
+          def normals_for(sid):
+              if sid in normals_cache: return normals_cache[sid]
+              u = (f'{ADS}?dataset=normals-monthly-1991-2020&stations={sid}'
+                   f'&dataTypes={CDD}&includeAttributes=true&format=json')
+              bb = fetch(u, f'normals:{sid}')
+              if bb is None:
+                  normals_cache[sid] = ('no-200', None); return normals_cache[sid]
+              v, err = jparse(bb, 'normals')
+              normals_cache[sid] = (err, v) if err else (None, v)
+              return normals_cache[sid]
+
+          def judge(sid):
+              """The same sequence resolveNormals() walks, in the same order."""
+              err, rows = normals_for(sid)
+              if err: return {'verdict': 'ERROR', 'why': err}
+              if not rows: return {'verdict': 'FAIL', 'why': 'no 1991-2020 monthly normals published'}
+              cols = set(rows[0].keys())
+              if CDD not in cols:
+                  return {'verdict': 'FAIL', 'why': f'no {CDD} column', 'columns': sorted(cols)}
+              if YEARS not in cols:
+                  return {'verdict': 'FAIL', 'why': f'no {YEARS} column — record length uncheckable',
+                          'columns': sorted(cols)}
+              per_month, estimated, short, years_seen, flags = [], 0, 0, [], collections.Counter()
+              for r in rows:
+                  try: month = int((r.get('DATE') or '').strip())
+                  except ValueError: continue
+                  raw = (r.get(CDD) or '').strip()
+                  if month < 1 or month > 12 or raw in ('', '-9999'): continue
+                  y = (r.get(YEARS) or '').strip()
+                  fl = (r.get(COMP) or '').strip()
+                  yn = int(y) if y.isdigit() else None
+                  flags[fl or '(blank)'] += 1
+                  if yn is not None:
+                      years_seen.append(yn)
+                      if yn < MIN_YEARS_OF_RECORD: short += 1
+                  if fl.upper() == ESTIMATED_FLAG: estimated += 1
+                  per_month.append({'month': month, 'cdd': float(raw), 'years': yn, 'flag': fl})
+              out = {'months_usable': len(per_month),
+                     'years_min': min(years_seen) if years_seen else None,
+                     'years_max': max(years_seen) if years_seen else None,
+                     'comp_flags': dict(flags),
+                     'months_estimated': estimated, 'months_under_10y': short,
+                     'cdd_by_month': {p['month']: p['cdd'] for p in sorted(per_month, key=lambda x: x['month'])}}
+              if len(per_month) < 12:
+                  out.update(verdict='FAIL', why=f'only {len(per_month)}/12 usable monthly normals')
+              elif estimated > 0:
+                  out.update(verdict='FAIL',
+                             why=f'{estimated}/12 month(s) flagged "{ESTIMATED_FLAG}" (estimated) — '
+                                 f'an estimated record is not a normal')
+              elif short > 0:
+                  out.update(verdict='FAIL',
+                             why=f'{short}/12 month(s) built on fewer than {MIN_YEARS_OF_RECORD} years '
+                                 f'(min {out["years_min"]})')
+              else:
+                  out.update(verdict='PASS', why=f'12/12 months, min {out["years_min"]} years, '
+                                                 f'no estimated months')
+              return out
+
+          for label, (lat, lon) in TARGETS.items():
+              nearby = sorted(
+                  ({**s, 'mi': round(miles(lat, lon, s['lat'], s['lon']), 1)} for s in stations
+                   if abs(s['lat'] - lat) <= BOX_PAD_DEGREES and abs(s['lon'] - lon) <= BOX_PAD_DEGREES),
+                  key=lambda s: s['mi'])[:MAX_CANDIDATES]
+              rows = []
+              selected = None
+              for s in nearby:
+                  v = judge(s['id'])
+                  rows.append({'id': s['id'], 'name': s['name'], 'miles': s['mi'], **v})
+                  if selected is None and v.get('verdict') == 'PASS':
+                      selected = s['id']
+              F['by_city'][label] = {'candidates_in_box': len(nearby), 'rows': rows,
+                                     'selected': selected}
+
+              # C · a normal is only half a reading — the fetcher needs GSOM
+              #     actuals for the same station too, and Round 19d asserts a
+              #     station with normals but no actuals must throw rather than
+              #     publish. So ask how much actual history the winner has.
+              if selected:
+                  u = (f'{ADS}?dataset=global-summary-of-the-month&stations={selected}'
+                       f'&dataTypes=CLDD&startDate=2015-01-01&endDate=2026-09-30&format=json')
+                  bb = fetch(u, f'gsom:{selected}')
+                  if bb is None:
+                      F['gsom'][label] = {'result': 'no 200'}
+                  else:
+                      v, err = jparse(bb, 'gsom')
+                      if err:
+                          F['gsom'][label] = err
+                      else:
+                          dates = sorted((r.get('DATE') or '') for r in (v or []))
+                          F['gsom'][label] = {'station': selected, 'rows': len(v or []),
+                                              'first': dates[0] if dates else None,
+                                              'last': dates[-1] if dates else None,
+                                              'sample': (v or [])[:2]}
+
+          json.dump({'findings': F, 'log': log}, open(f'{OUT}/probe-1.json', 'w'), indent=2)
+          for label, d in F['by_city'].items():
+              print(f"\n══ {label} ══  ({d['candidates_in_box']} USW station(s) in the 0.35deg box)")
+              for r in d['rows']:
+                  print(f"  {r.get('verdict','?'):6s} {r['miles']:6.1f} mi  {r['id']}  {r['name'][:28]:28s} {r.get('why','')}")
+              print(f"  -> selected: {d['selected'] or 'NONE'}")
+          print(f'\n{len(log)} requests; skipped by robots: '
+                f'{sum(1 for x in log if x["status"] == "SKIPPED_BY_ROBOTS")}')
+          PY
+      - name: Commit findings
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A tmp/cdd
+          git commit -m "TEMPORARY: Round 41e probe findings" || echo "nothing to commit"
+          git push
