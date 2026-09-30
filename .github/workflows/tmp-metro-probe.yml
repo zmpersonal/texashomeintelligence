@@ -105,40 +105,28 @@ jobs:
               log.append({'url': url, 'label': label, 'status': st, 'bytes': len(body)})
               return body if st == 200 else None
 
-          # ---- PASS 10 (last) ----
-          # Houston, fairly. data.houstontx.gov disallows /api/ and /datastore/*
-          # for User-agent: *, and that stands — nothing here re-attempts it.
-          # But Fort Worth turned viable only once its OTHER publishing host was
-          # asked, and Dallas was nearly killed on one dataset. Houston deserves
-          # the same: ask its ArcGIS Hub site, which is a different host with its
-          # own robots.txt that the guard evaluates independently. Checking a
-          # second publisher is not routing around the first one's refusal.
+          # ---- PASS 11 (last) ----
+          # Houston is settled: its open-data portal refuses /api/ and
+          # /datastore/* to User-agent: *, and all three candidate ArcGIS Hub
+          # hostnames 404. I am now guessing hostnames, which is the thing this
+          # round was told not to do, so Houston stops here.
+          #
+          # Last item: the round requires licence terms QUOTED, not summarised.
+          # Fort Worth's feed declares CC BY 4.0 by URL. Fetch the deed and the
+          # legal code so the audit quotes the obligation verbatim rather than
+          # me writing from memory what CC BY 4.0 requires.
           findings = collections.defaultdict(dict)
 
-          for host in ['cohgis-mycity.opendata.arcgis.com', 'mycity.maps.arcgis.com',
-                       'houston-hub-coh.hub.arcgis.com']:
-              b = fetch(f'https://{host}/api/feed/dcat-us/1.1.json', f'houston-dcat:{host}')
-              if not b:
-                  findings['houston'][host] = 'no DCAT feed'
-                  continue
-              v, err = jparse(b, 'h-dcat')
-              if err:
-                  findings['houston'][host] = err
-                  continue
-              ds = v.get('dataset', [])
-              findings['houston'][host] = {
-                  'dataset_count': len(ds),
-                  'permit_datasets': [
-                      {'title': d.get('title'), 'license': d.get('license'),
-                       'modified': d.get('modified'),
-                       'publisher': (d.get('publisher') or {}).get('name'),
-                       'formats': [x.get('format') for x in d.get('distribution', [])],
-                       'rest': next((x.get('accessURL') for x in d.get('distribution', [])
-                                     if '/rest/services/' in (x.get('accessURL') or '')), None)}
-                      for d in ds
-                      if 'permit' in (d.get('title', '') + ' ' + d.get('description', '')).lower()]}
+          for label, url in [
+              ('deed', 'https://creativecommons.org/licenses/by/4.0/'),
+              ('legalcode', 'https://creativecommons.org/licenses/by/4.0/legalcode.txt')]:
+              b = fetch(url, f'ccby:{label}')
+              if b:
+                  txt = b.decode('utf-8', 'replace')
+                  findings['ccby40'][label] = {'url': url, 'bytes': len(txt),
+                                               'text': txt if label == 'legalcode' else txt[:200]}
 
-          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-10.json', 'w'), indent=2)
+          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-11.json', 'w'), indent=2)
           print(json.dumps(findings, indent=2)[:6000])
           print(f'\n{len(log)} requests; skipped by robots: '
                 f'{sum(1 for x in log if x["status"] == "SKIPPED_BY_ROBOTS")}')
