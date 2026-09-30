@@ -105,67 +105,40 @@ jobs:
               log.append({'url': url, 'label': label, 'status': st, 'bytes': len(body)})
               return body if st == 200 else None
 
-          # ---- PASS 9 (last) ----
-          #  * Pass 8's Dallas catalogue query was FEDERATED and I read it as
-          #    Dallas'. It returned 3syk-w9eu — Austin's own Issued Construction
-          #    Permits, the dataset this site already ingests — and quz7-xnsy,
-          #    the id pass 1 had wrongly attached to Fort Worth. Scope it to the
-          #    Dallas domain, which is the same mistake pass 1 made and the same
-          #    fix.
-          #  * Fort Worth: Permit_Category is 76,051 "NA" out of 81,442, so
-          #    "only 258 ReRoof rows" is a statement about an unpopulated field,
-          #    not about Fort Worth's roofing activity. Ask Permit_SubType and
-          #    the work description before saying there is no roofing signal.
+          # ---- PASS 10 (last) ----
+          # Houston, fairly. data.houstontx.gov disallows /api/ and /datastore/*
+          # for User-agent: *, and that stands — nothing here re-attempts it.
+          # But Fort Worth turned viable only once its OTHER publishing host was
+          # asked, and Dallas was nearly killed on one dataset. Houston deserves
+          # the same: ask its ArcGIS Hub site, which is a different host with its
+          # own robots.txt that the guard evaluates independently. Checking a
+          # second publisher is not routing around the first one's refusal.
           findings = collections.defaultdict(dict)
 
-          b = fetch('https://api.us.socrata.com/api/catalog/v1?q=permit'
-                    '&domains=www.dallasopendata.com'
-                    '&search_context=www.dallasopendata.com&limit=40', 'dallas:own-catalogue')
-          if b:
-              v, err = jparse(b, 'dal-cat')
-              rows = [] if err else [
-                  {'name': r['resource']['name'], 'id': r['resource']['id'],
-                   'domain': (r.get('metadata') or {}).get('domain'),
-                   'updated': r['resource'].get('updatedAt')}
-                  for r in (v.get('results') or [])]
-              findings['dallas']['own_catalogue'] = err or rows
-              for r in [x for x in rows if x['domain'] == 'www.dallasopendata.com'][:6]:
-                  mb = fetch(f"https://www.dallasopendata.com/api/views/{r['id']}.json",
-                             f"dallas-meta:{r['id']}")
-                  if mb:
-                      m, e = jparse(mb, 'dal-meta')
-                      if not e:
-                          findings['dallas'][r['id']] = {
-                              'name': m.get('name'), 'license': m.get('license'),
-                              'rowsUpdatedAt': m.get('rowsUpdatedAt'),
-                              'custom': (m.get('metadata') or {}).get('custom_fields'),
-                              'columns': [c.get('fieldName') for c in m.get('columns', [])]}
+          for host in ['cohgis-mycity.opendata.arcgis.com', 'mycity.maps.arcgis.com',
+                       'houston-hub-coh.hub.arcgis.com']:
+              b = fetch(f'https://{host}/api/feed/dcat-us/1.1.json', f'houston-dcat:{host}')
+              if not b:
+                  findings['houston'][host] = 'no DCAT feed'
+                  continue
+              v, err = jparse(b, 'h-dcat')
+              if err:
+                  findings['houston'][host] = err
+                  continue
+              ds = v.get('dataset', [])
+              findings['houston'][host] = {
+                  'dataset_count': len(ds),
+                  'permit_datasets': [
+                      {'title': d.get('title'), 'license': d.get('license'),
+                       'modified': d.get('modified'),
+                       'publisher': (d.get('publisher') or {}).get('name'),
+                       'formats': [x.get('format') for x in d.get('distribution', [])],
+                       'rest': next((x.get('accessURL') for x in d.get('distribution', [])
+                                     if '/rest/services/' in (x.get('accessURL') or '')), None)}
+                      for d in ds
+                      if 'permit' in (d.get('title', '') + ' ' + d.get('description', '')).lower()]}
 
-          FW = ('https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services'
-                '/CFW_Open_Data_Development_Permits_View/FeatureServer/0')
-          stats = '[{"statisticType":"count","onStatisticField":"Permit_No","outStatisticFieldName":"n"}]'
-          w = "File_Date >= timestamp '2025-09-01 00:00:00'"
-          b = fetch(f'{FW}/query?where={urllib.parse.quote(w)}'
-                    f'&outStatistics={urllib.parse.quote(stats)}'
-                    '&groupByFieldsForStatistics=Permit_SubType&f=json&resultRecordCount=100',
-                    'fw-by:Permit_SubType')
-          if b:
-              v, err = jparse(b, 'fw-sub')
-              findings['fortworth']['by_Permit_SubType'] = err or sorted(
-                  [f['attributes'] for f in (v.get('features') or [])],
-                  key=lambda a: -(a.get('n') or 0))[:40]
-
-          for label, clause in [
-              ('desc_roof', "B1_WORK_DESC LIKE '%ROOF%'"),
-              ('desc_roof_lower', "UPPER(B1_WORK_DESC) LIKE '%ROOF%'"),
-              ('subtype_roof', "UPPER(Permit_SubType) LIKE '%ROOF%'")]:
-              b = fetch(f'{FW}/query?where={urllib.parse.quote(w + " AND " + clause)}'
-                        '&returnCountOnly=true&f=json', f'fw-roof:{label}')
-              if b:
-                  v, err = jparse(b, 'fw-roof')
-                  findings['fortworth'][label] = err or v
-
-          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-9.json', 'w'), indent=2)
+          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-10.json', 'w'), indent=2)
           print(json.dumps(findings, indent=2)[:6000])
           print(f'\n{len(log)} requests; skipped by robots: '
                 f'{sum(1 for x in log if x["status"] == "SKIPPED_BY_ROBOTS")}')
