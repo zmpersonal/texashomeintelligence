@@ -8,6 +8,10 @@
  */
 import type { DatasetFile, Observation } from "../ingest/types";
 import { resolveDisplayStatus, type DisplayStatus } from "./dataFreshness";
+// Round 41a: these two moved to a Vite-free module so the data-page spec
+// layer is testable under plain Node. Re-exported so no caller changed.
+import { earliestObservedAt, latestObservedAt } from "./observations";
+export { earliestObservedAt, latestObservedAt };
 
 export type { DisplayStatus };
 
@@ -81,21 +85,6 @@ export function freshnessOf<T>(dataset: DatasetFile<T>, now?: Date): Freshness {
   };
 }
 
-export function latestObservedAt<T>(observations: Observation<T>[]): string | undefined {
-  let latest: string | undefined;
-  for (const o of observations) {
-    if (!latest || o.observedAt > latest) latest = o.observedAt;
-  }
-  return latest;
-}
-
-export function earliestObservedAt<T>(observations: Observation<T>[]): string | undefined {
-  let earliest: string | undefined;
-  for (const o of observations) {
-    if (!earliest || o.observedAt < earliest) earliest = o.observedAt;
-  }
-  return earliest;
-}
 
 /** Observations within the trailing `days` window, newest first. */
 export function trailingWindow<T>(

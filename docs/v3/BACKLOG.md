@@ -643,3 +643,35 @@ This matters beyond the two tests: a sweep with standing failures trains everyon
 "26/28" as success, which is exactly how a real regression gets through.
 
 **Scope → unscheduled, small. Do this before the next round that relies on the sweep as a gate.**
+
+---
+
+### 19 · Drought pages: show all metro counties, or keep one?
+
+Round 41a fixed the live defect by scoping each drought page to the county its copy already
+names (`docs/audits/round-41a-drought-county-fix.md` §5). That was the minimal correct change:
+it made approved copy true without needing new copy.
+
+**The open question is whether it is the right page.** The file holds three counties per metro
+and the fix now hides two of them. An Austin reader arguably wants Hays and Williamson alongside
+Travis — it is more data, correctly labelled, from a feed already ingested.
+
+Option B was built and measured in 41a. It renders 68 rows and resolves every county, but it is
+**not a config change** — it needs three decisions, and all three are copy:
+
+1. **The lede.** "recorded for Travis County" has to become a claim about several counties.
+2. **The headline stat.** B does not fix the tie-break: three rows still share the newest date,
+   so it needs an explicit "the primary county's latest" rule on top. `datascopeunit` §3 fails
+   on B as drafted.
+3. **Every "weeks" figure.** B still says "68 of the 68 weekly readings" over a 58-week window,
+   and "57 weeks reached D2 or worse". Those count county-weeks. Under the shipped fix they are
+   58 and 54 and simply correct; under B each needs re-framing.
+
+**Also worth knowing before deciding:** the neighbouring counties are thin. Travis and Bexar
+have **58 weekly readings**; Hays, Williamson, Comal and Guadalupe have **5** each
+(2026-08-25 → 2026-09-22), because they were only added to the ingest recently. A three-county
+page would be one long series and two short ones.
+
+**Decision needed:** whether to do this at all, and if so the replacement copy.
+
+**Scope → blocked on copy, then small.**

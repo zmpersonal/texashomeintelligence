@@ -17,6 +17,7 @@ import type { DataPageSpec, DataPageContext } from "../lib/dataPages";
 import { requireDataset, freshnessOf, earliestObservedAt, latestObservedAt } from "../lib/datasets";
 import { machineDate } from "../lib/format";
 import { organizationId } from "../lib/urls";
+import { specObservations } from "../lib/dataPages";
 
 interface Props {
   spec: DataPageSpec<any>;
@@ -27,9 +28,7 @@ const { spec } = Astro.props;
 const dataset = requireDataset(spec.datasetId, spec.location);
 // Seeded rows are retired by the ingestion layer, but filter defensively so a
 // fabricated row can never reach an indexed page even if one slips onto disk.
-const observations = dataset.observations
-  .filter((o) => !o.seed)
-  .sort((a, b) => b.observedAt.localeCompare(a.observedAt));
+const observations = specObservations(spec, dataset);
 const ctx: DataPageContext<any> = { dataset, observations };
 
 const freshness = freshnessOf(dataset);

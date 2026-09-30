@@ -47,12 +47,27 @@ interface DroughtPageOptions {
   location: string;
   locationLabel: string;
   countyName: string;
+  /**
+   * The county's FIPS code — REQUIRED, and the reason this round exists.
+   *
+   * `countyName` was here from the start, but only as a word to put in copy:
+   * the page said "recorded for Travis County" while rendering every row in
+   * `usdm-drought/austin.json`. That was true until Round 4b added Williamson
+   * and Hays to the same file for the stress index, and from then on the page
+   * published 68 weekly readings from three counties under one county's name —
+   * three different values all dated the same week, none of them labelled.
+   *
+   * The FIPS is what the observation keys are actually keyed by (`48453-...`),
+   * so taking it here makes the county claim and the rows enforce each other.
+   * A name alone cannot do that; that is exactly how this happened.
+   */
+  countyFips: string;
   /** Soil/foundation context specific to the metro, used in the interpretation. */
   soilNote: string;
 }
 
 export function makeDroughtSpec(opts: DroughtPageOptions): DataPageSpec<DroughtValue> {
-  const { location, locationLabel, countyName, soilNote } = opts;
+  const { location, locationLabel, countyName, countyFips, soilNote } = opts;
 
   /** Weekly readings oldest-first, which several figures below need. */
   const chronological = (observations: Observation<DroughtValue>[]) =>
@@ -79,6 +94,23 @@ export function makeDroughtSpec(opts: DroughtPageOptions): DataPageSpec<DroughtV
   return {
     location,
     topic: "drought",
+
+    /**
+     * ⚠️ THIS PAGE IS ONE COUNTY. The dataset file is not.
+     *
+     * Observation keys are `{fips}-{mapDate}`, so this is the county's own
+     * rows and nothing else. `specObservations()` applies it before any
+     * callback below sees an observation, and before the CSV is written, so
+     * the stat, the findings, the table, the CSV and the date range all
+     * describe the county this page names.
+     *
+     * It also makes the headline reading deterministic. "Current category" is
+     * `observations[0]`, and with three counties in the file that was whichever
+     * row happened to sort first among three rows sharing the newest date — a
+     * tie broken by array order, not by anything meaningful. One county has one
+     * reading per week, so newest-first now has a single unambiguous answer.
+     */
+    scope: (o) => o.key.startsWith(`${countyFips}-`),
     locationLabel,
     datasetId: "usdm-drought",
 
@@ -254,6 +286,7 @@ export const austinDrought = makeDroughtSpec({
   location: "austin",
   locationLabel: "Austin",
   countyName: "Travis",
+  countyFips: "48453",
   soilNote:
     "Much of the Austin area sits on expansive clay soils that swell when wet and shrink when dry.",
 });
@@ -262,6 +295,7 @@ export const sanAntonioDrought = makeDroughtSpec({
   location: "san-antonio",
   locationLabel: "San Antonio",
   countyName: "Bexar",
+  countyFips: "48029",
   soilNote:
     "Much of the San Antonio area sits on expansive clay soils that swell when wet and shrink when dry.",
 });

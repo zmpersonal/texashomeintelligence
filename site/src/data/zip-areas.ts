@@ -200,6 +200,20 @@ export function primaryCountyName(areaId: string): string {
   return area.primaryCounty.name;
 }
 
+/** The FIPS of the county whose readings an area publishes. Round 41a — the
+ * drought observations are keyed `{fips}-{mapDate}`, so picking a metro's own
+ * county needs the code, not the name. Throws like its siblings. */
+export function primaryCountyFips(areaId: string): string {
+  const area = ZIP_AREAS.find((a) => a.areaId === areaId);
+  if (!area) {
+    throw new Error(
+      `primaryCountyFips("${areaId}"): no entry in ZIP_AREAS. Known areas: ` +
+        `${ZIP_AREAS.map((a) => a.areaId).join(", ")}.`,
+    );
+  }
+  return area.primaryCounty.fips;
+}
+
 export function ingestCounties(areaId: string): { name: string; fips: string }[] {
   const area = ZIP_AREAS.find((a) => a.areaId === areaId);
   return (area?.droughtCounties ?? []).map((c) => ({ name: c.name, fips: c.fips }));

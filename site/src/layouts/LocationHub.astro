@@ -15,7 +15,7 @@ import Base from "./Base.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import DataStatus from "../components/DataStatus.astro";
 import { getEntry, getCollection } from "astro:content";
-import { hasDataHub, publishedDataPages } from "../lib/dataPages";
+import { hasDataHub, publishedDataPages, specObservations } from "../lib/dataPages";
 import { findDataset, freshnessOf } from "../lib/datasets";
 import { SERVICE_SIGNALS } from "../lib/serviceSignals";
 
@@ -33,9 +33,7 @@ const loc = locEntry.data;
 const localPages = publishedDataPages(locationSlug);
 const readings = localPages.map((spec) => {
   const dataset = findDataset(spec.datasetId, spec.location)!;
-  const observations = dataset.observations
-    .filter((o) => !o.seed)
-    .sort((a, b) => b.observedAt.localeCompare(a.observedAt));
+  const observations = specObservations(spec, dataset);
   return {
     spec,
     dataset,

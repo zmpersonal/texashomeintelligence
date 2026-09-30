@@ -16,6 +16,9 @@ import { austinRoofPermits, sanAntonioRoofPermits } from "./permits";
 import { texasElectricity } from "./texasElectricity";
 
 export type { DataPageSpec, DataPageContext, DataPageStat, DataPageQuestion } from "./types";
+export { specObservations } from "./scope";
+
+
 export { publishable } from "./types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the registry is

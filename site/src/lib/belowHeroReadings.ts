@@ -1,3 +1,4 @@
+import type { Observation } from "../ingest/types";
 /**
  * The single live reading each #context block renders.
  *
@@ -10,7 +11,7 @@ import { dataPageHref } from "./dataPages";
 // Round 10b: a module-scope `new Date()` reads 1970 under the Workers runtime
 // that Astro builds against. Anything that needs the real build date uses this.
 import { buildNow } from "../data/serviceNotices";
-import { primaryCountyName } from "../data/zip-areas";
+import { primaryCountyName, primaryCountyFips } from "../data/zip-areas";
 
 export interface ContextReading {
   label: string;
@@ -64,11 +65,16 @@ function monthLabel(key: string): string {
   return name ? `${name} ${y}` : key;
 }
 
-function latest<T>(datasetId: string, location: string) {
+function latest<T>(
+  datasetId: string,
+  location: string,
+  scope?: (o: Observation<T>) => boolean,
+) {
   const dataset = findDataset<T>(datasetId, location);
   if (!dataset || dataset.status === "sample") return undefined;
   const obs = dataset.observations
     .filter((o) => !o.seed)
+    .filter((o) => (scope ? scope(o) : true))
     .sort((a, b) => b.observedAt.localeCompare(a.observedAt));
   if (obs.length === 0) return undefined;
   return { dataset, newest: obs[0] };
@@ -331,7 +337,15 @@ const READERS: Record<string, Reader> = {
     };
   },
   drought: (location) => {
-    const hit = latest<{ droughtIndex: string; county: string }>("usdm-drought", location);
+    // Round 41a. `latest()` took the newest row across the whole file, and since
+    // Round 4b that file holds three counties with one row each per week — so
+    // which county this named was decided by a tie broken on array order. It
+    // happened to land on the metro's own county; nothing made it do so.
+    const hit = latest<{ droughtIndex: string; county: string }>(
+      "usdm-drought",
+      location,
+      (o) => o.key.startsWith(`${primaryCountyFips(location)}-`),
+    );
     if (!hit) return undefined;
     return {
       label: `Drought category, ${hit.newest.value.county} County`,
