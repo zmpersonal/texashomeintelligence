@@ -102,7 +102,27 @@ export interface RadarHailSignatureValue {
  */
 type Metro = AreaId;
 
-const SWDI_BASE = "https://www.ncdc.noaa.gov/swdiws";
+/**
+ * ⚠️ THE HOST IS PART OF THE COMPLIANCE, NOT A DETAIL. Round 41d.
+ *
+ * This was `www.ncdc.noaa.gov/swdiws`, and that host's robots.txt refuses it
+ * twice over for `User-agent: *`:
+ *
+ *     Disallow: /*.csv
+ *     Disallow: /swdiws/
+ *
+ * NCEI serves the identical web service, and its robots.txt carries no rule
+ * matching either path — its `*` group disallows only `/data*` and `/orders*`.
+ * Measured equivalence, same bbox and the same window the committed San Antonio
+ * rows cover (2026-08-27 → 2026-09-12): identical header
+ * `ZTIME,WSR_ID,CELL_ID,PROB,SEVPROB,MAXSIZE,LAT,LON`, identical first row
+ * (`2026-08-27T20:34:56Z,KEWX,J0,100,40,1,29.904,-98.383`), and a trailer
+ * `count,190` against 190 committed rows.
+ *
+ * So this is a host change and nothing else — same service, same shape, same
+ * rows, on a path the host permits. Do not point it back at ncdc.
+ */
+const SWDI_BASE = "https://www.ncei.noaa.gov/swdiws";
 const PRODUCT = "nx3hail";
 
 /**
@@ -203,7 +223,7 @@ function makeFetcher(location: Metro): FetcherModule<RadarHailSignatureValue> {
       name:
         "NOAA Severe Weather Data Inventory — nx3hail (NEXRAD radar-derived hail signatures, " +
         "not confirmed hail reports)",
-      url: "https://www.ncdc.noaa.gov/swdiws/",
+      url: "https://www.ncei.noaa.gov/swdiws/",
     },
     requiredEnvVars: [],
     async fetchRaw(ctx): Promise<Observation<RadarHailSignatureValue>[]> {

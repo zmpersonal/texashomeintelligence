@@ -68,66 +68,72 @@ const STATIONS = [
  * the value WITHOUT these, which is the whole Round 19e finding, so section 4
  * builds an API-shaped file too and proves it is rejected.
  */
-function normalsCsv(id: string, name: string, cdd: number[], years: number[], flag: string,
-                    withProvenance = true) {
-  const cols = ["STATION", "DATE", "NAME", "MLY-CLDD-NORMAL", "MLY-CLDD-BASE40", "MLY-TMAX-NORMAL"];
-  if (withProvenance) cols.push("years_MLY-CLDD-NORMAL", "comp_flag_MLY-CLDD-NORMAL", "meas_flag_MLY-CLDD-NORMAL");
-  const lines = [cols.join(",")];
+/**
+ * Round 41d. This built the static per-station CSV that used to be fetched from
+ * `/data/normals-monthly/…`. That path is disallowed by NCEI's robots.txt, so
+ * the fetcher now reads the same normals from the Access Data Service, and this
+ * builds that shape instead — measured from a live response:
+ *
+ *   {"DATE":"01","STATION":"USW00013958","comp_flag_MLY-CLDD-NORMAL":"S",
+ *    "meas_flag_MLY-CLDD-NORMAL":" ","MLY-CLDD-NORMAL":"     9.6",
+ *    "years_MLY-CLDD-NORMAL":"29"}
+ *
+ * The values are left-padded and the flags are single characters, exactly as
+ * the service returns them, so the parsing is exercised on the real shape.
+ */
+function normalsJson(id: string, _name: string, cdd: number[], years: number[], flag: string,
+                     withProvenance = true) {
+  const rows = [];
   for (let i = 0; i < 12; i++) {
-    // The station NAME carries a comma on purpose — a naive split(",") would
-    // shift every column after it, and these files run to 400+ columns.
-    const row = [id, String(i + 1).padStart(2, "0"), `"${name}"`,
-                 cdd[i].toFixed(1), "0.0", "80.0"];
-    if (withProvenance) row.push(String(years[i]), flag, "");
-    lines.push(row.join(","));
+    const row: Record<string, string> = {
+      DATE: String(i + 1).padStart(2, "0"),
+      STATION: id,
+      "MLY-CLDD-NORMAL": cdd[i].toFixed(1).padStart(8, " "),
+    };
+    if (withProvenance) {
+      row["years_MLY-CLDD-NORMAL"] = String(years[i]);
+      row["comp_flag_MLY-CLDD-NORMAL"] = flag;
+      row["meas_flag_MLY-CLDD-NORMAL"] = " ";
+    }
+    rows.push(row);
   }
-  return lines.join("\n") + "\n";
+  return JSON.stringify(rows);
 }
 
-const NORMALS_CSV: Record<string, string> = {
-  USW00013958: normalsCsv("USW00013958", "AUSTIN-CAMP MABRY, TX US", AUSTIN_CDD,
+const NORMALS_JSON: Record<string, string> = {
+  USW00013958: normalsJson("USW00013958", "AUSTIN-CAMP MABRY, TX US", AUSTIN_CDD,
                           [29, 29, 30, 30, 30, 30, 30, 30, 29, 30, 29, 29], "C"),
   // MEASURED: every row years=2, comp_flag=E. A two-year estimated record.
-  USW00012909: normalsCsv("USW00012909", "SAN ANTONIO KELLY AFB, TX US", STINSON_CDD,
+  USW00012909: normalsJson("USW00012909", "SAN ANTONIO KELLY AFB, TX US", STINSON_CDD,
                           new Array(12).fill(2), "E"),
-  USW00012970: normalsCsv("USW00012970", "SAN ANTONIO STINSON MUNI AP, TX US", STINSON_CDD,
+  USW00012970: normalsJson("USW00012970", "SAN ANTONIO STINSON MUNI AP, TX US", STINSON_CDD,
                           [19, 20, 21, 22, 22, 22, 22, 22, 21, 20, 20, 19], "S"),
 };
-
-/** Only these station ids have a published normals file. */
-const INDEXED = ["USW00013958", "USW00013904", "USW00012909", "USW00012970"];
-const INDEX_HTML = "<html>" + INDEXED.map((i) => `<a href="${i}.csv">x</a>`).join("") + "</html>";
 
 let requested: string[] = [];
 /** `overrides` lets one scenario bend one response without rebuilding the world. */
 function installFetch(
   overrides: Record<string, string | null> = {},
   stationText = STATIONS,
-  indexHtml: string | null = INDEX_HTML,
 ) {
   requested = [];
   globalThis.fetch = (async (input: any) => {
     const url = String(input);
     requested.push(url);
     const ok = (body: string) => ({ ok: true, status: 200, async text() { return body; } }) as any;
-    const notFound = { ok: false, status: 404, async text() { return ""; } } as any;
 
     if (url.includes("ghcnd-stations.txt")) return ok(stationText);
-    if (url.endsWith("/access/")) {
-      return indexHtml === null ? { ok: false, status: 503, async text() { return ""; } } as any
-                                : ok(indexHtml);
-    }
-    // Static normals CSV.
-    const csvMatch = url.match(/access\/([A-Z0-9]+)\.csv$/);
-    if (csvMatch) {
-      const sid = csvMatch[1];
-      const o = overrides[sid];
-      if (o === null) return notFound;
-      const body = o ?? NORMALS_CSV[sid];
-      return body === undefined ? notFound : ok(body);
-    }
-    // GSOM actuals still come from data/v1 with an explicit station id.
     const u = new URL(url);
+    // Normals now come from the same service as GSOM. A station with no
+    // published normals answers with an empty array, not a 404 — there is no
+    // directory index any more, so "no normals" is discovered per station.
+    if (u.searchParams.get("dataset") === "normals-monthly-1991-2020") {
+      const sid = u.searchParams.get("stations") ?? "";
+      const o = overrides[sid];
+      if (o === null) return ok("[]");
+      const body = o ?? NORMALS_JSON[sid];
+      return ok(body ?? "[]");
+    }
     if (u.searchParams.get("dataset") === "global-summary-of-the-month") {
       const sid = u.searchParams.get("stations") ?? "";
       const o = overrides["__gsom"];
@@ -211,15 +217,28 @@ async function main() {
   assert("no US1 station is queried", !requested.some((u) => u.includes("US1TX")),
     "Round 19b sampled US1 CoCoRaHS gauges and concluded the product had no degree days");
 
-  // ── 5b. Round 19e: normals come from the static CSV, actuals from the API.
-  console.log("\n5b. normals read from the static CSV; actuals stay on data/v1");
+  // ── 5b. Round 41d INVERTED what this used to assert, and the inversion is the
+  // point. Round 19e sent normals to the static CSV because the API "returns
+  // values without years_" — which was true of the request it tried. With
+  // `includeAttributes=true` the service returns years_, comp_flag_ and
+  // meas_flag_, so the reason for the static file is gone, and the static file
+  // sits under `/data*`, which NCEI's robots.txt disallows.
+  //
+  // So these now assert the opposite, plus the compliance that motivated it:
+  // NOTHING may request `/data/`.
+  console.log("\n5b. normals come from the permitted service, with their provenance");
   installFetch();
   await run(noaaClimateAustin);
-  assert("the normals request is a static .csv",
-    requested.some((u) => /normals-monthly\/1991-2020\/access\/USW00013958\.csv$/.test(u)));
-  assert("no normals request goes to data/v1",
-    !requested.some((u) => u.includes("/data/v1") && u.includes("normals")),
-    "the API returns values without years_ — that is what broke the first live run");
+  assert("the normals request goes to data/v1 with the normals dataset",
+    requested.some((u) => u.includes("/access/services/data/v1")
+                          && /dataset=normals-monthly-1991-2020/.test(u)));
+  assert("and asks for the qualifying columns",
+    requested.some((u) => /dataset=normals-monthly-1991-2020/.test(u)
+                          && /includeAttributes=true/.test(u)),
+    "without years_ and comp_flag_ a two-year estimated record passes as a normal");
+  assert("no request touches a robots-disallowed /data/ path",
+    !requested.some((u) => new URL(u).pathname.startsWith("/data")),
+    requested.filter((u) => new URL(u).pathname.startsWith("/data")).join(" | "));
   assert("actuals still come from data/v1 with an explicit station",
     requested.some((u) => u.includes("/data/v1") && /dataset=global-summary-of-the-month/.test(u)
                           && /stations=USW/.test(u)));
@@ -227,9 +246,9 @@ async function main() {
   // ── 5c. An API-shaped normals file — value present, provenance absent.
   console.log("\n5c. a normals source with no years_ column is rejected, not worked around");
   installFetch({
-    USW00013958: normalsCsv("USW00013958", "AUSTIN-CAMP MABRY, TX US", AUSTIN_CDD,
+    USW00013958: normalsJson("USW00013958", "AUSTIN-CAMP MABRY, TX US", AUSTIN_CDD,
                             [], "", /* withProvenance */ false),
-    USW00013904: normalsCsv("USW00013904", "AUSTIN BERGSTROM INTL AP, TX US", AUSTIN_CDD,
+    USW00013904: normalsJson("USW00013904", "AUSTIN BERGSTROM INTL AP, TX US", AUSTIN_CDD,
                             [], "", false),
   });
   threw = "";
@@ -248,14 +267,25 @@ async function main() {
   assert("the index is fetched once, not per station",
     requested.filter((u) => u.endsWith("/access/")).length <= 1);
 
-  // ── 5e. Losing the index costs requests, not correctness.
-  console.log("\n5e. an unreadable index degrades to 404-handling");
+  // ── 5e. A station with no published normals is skipped by name.
+  //
+  // Round 41d replaced what this used to assert. There was a directory-index
+  // pre-filter that listed which stations had a normals file; it lived under a
+  // path NCEI's robots.txt disallows and went with the move to the Access Data
+  // Service. "No normals" is now discovered per station — an empty result — so
+  // this asserts the run survives one and still lands on the right station.
+  console.log("\n5e. a station with no published normals is skipped, not fatal");
   __resetStationTableCacheForTests();
-  installFetch({ USW00012931: null }, STATIONS, null);
+  // Kelly Field is the NEAREST candidate, so emptying it exercises the skip
+  // before a good station is reached — emptying a farther one would prove
+  // nothing, because the loop returns on the first success.
+  installFetch({ USW00012909: null });
   const degraded = await run(noaaClimateSanAntonio);
   assert("the run still succeeds", degraded.length > 0);
   assert("and still lands on Stinson",
     degraded[0].value.sourceRef === "USW00012970", degraded[0].value.sourceRef);
+  assert("the nearer station was asked and skipped",
+    requested.some((u) => u.includes("USW00012909")), "it was never even asked");
 
   // ── 6. Never a bounding box. Three rounds died on this parameter.
   console.log("\n6. no request asks a server to interpret a bounding box");

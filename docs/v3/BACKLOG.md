@@ -678,11 +678,16 @@ page would be one long series and two short ones.
 
 ---
 
-### 20 · ⚠️ Two shipped fetchers request robots-disallowed paths
+### 20 · ✅ CLOSED by Round 41d — two shipped fetchers requested robots-disallowed paths
 
 **Found in Round 41c** (`docs/audits/round-41c-per-location-feeds.md` §0), by applying Round 39's
-robots guard to hosts the production ingest already uses. **Your ruling is needed before any
-per-location work on these two feeds can proceed.**
+robots guard to hosts the production ingest already uses. ~~Your ruling is needed before any per-location work on these two feeds can proceed.~~
+**CLOSED — no ruling was needed.** Round 41d found a permitted path for both: the identical SWDI
+web service on the NCEI host, whose robots carries no `/swdiws/` rule, and NCEI's Access Data
+Service with `includeAttributes=true` for monthly normals. Both were moved and proven equivalent
+value-for-value, with nothing published changing. See
+`docs/audits/round-41d-robots-allowed-paths.md`. The evidence below is kept as the record of
+what was wrong and how it was found.
 
 **1 · `swdiHail.ts`.** `www.ncdc.noaa.gov/robots.txt`, `User-agent: *`, contains
 `Disallow: /swdiws/` and `Disallow: /*.csv`. The fetcher requests
@@ -741,3 +746,45 @@ New Braunfels sits 29.6 miles from the San Antonio point. Two such boxes would c
 same storms. Per-location hail requires shrinking the pad, not just moving the centre.
 
 **Scope → ACS is small once 41b lands; the rest waits on item 20.**
+
+---
+
+### 22 · Unresolved: does a blank line end a robots.txt group?
+
+Round 41d, §3. Round 41c changed the probe guard so a blank line closes a group. That rests on a
+contested reading of RFC 9309, whose ABNF (`startgroupline+ *(rule / emptyline / commentline)`)
+allows empty lines inside the rule section but is silent on one between two `User-agent:` lines.
+**Google's reference parser does not treat blank lines as separators.**
+
+Under Google's reading, `www2.census.gov` — `User-agent: *`, blank, `User-agent: RavenCrawler`,
+`Disallow: /` — refuses everything for `*`, which is what the pass-1 parser concluded before it
+was "fixed".
+
+**It changed no verdict in 41c or 41d**: both NOAA files put rules immediately after
+`User-agent: *`, so the two readings agree on every path either round touched, and 41d verified
+that explicitly rather than assuming it. The Gazetteer fetch in 41c is the only call whose
+outcome depends on it.
+
+**Decision needed:** which reading the project adopts, written down once. Worth resolving before
+any future probe leans on the permissive one.
+
+**Scope → unscheduled, small.**
+
+---
+
+### 23 · Per-location hail needs the bbox pad shrunk, not just re-centred
+
+Out of scope for 41d, raised by 41c. `swdiHail.ts` sets `BOX_PAD_DEGREES = 0.5` — a ±0.5° box,
+roughly 69 miles across — around a metro point. New Braunfels sits **29.6 miles** from the San
+Antonio point and San Marcos **29.6 miles** from Austin's, so two such boxes would share most of
+their area and count largely the same storms.
+
+Moving the centre alone would produce two "local" counts whose difference is an artefact of box
+placement rather than of weather. **Per-location hail requires a smaller pad**, and the existing
+`areaBasis` note — "signatures near the city, never in Travis County" — has to be restated per
+city.
+
+**Decision needed:** what pad, and on what basis. A pad is a claim about what "near" means, so
+it wants a reason rather than a round number.
+
+**Scope → unscheduled, small, but blocked on the pad decision.**

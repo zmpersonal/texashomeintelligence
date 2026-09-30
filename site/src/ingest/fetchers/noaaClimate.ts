@@ -1,6 +1,5 @@
 import type { FetcherModule, Observation } from "../types";
 import { ZIP_AREAS, type AreaId } from "../../data/zip-areas";
-import { parseCsv, rowsToRecords } from "../csv";
 
 /**
  * Two kinds of cooling-degree-day reading. They answer different questions and
@@ -113,7 +112,28 @@ type Metro = AreaId;
 
 const ACCESS_DATA_V1 = "https://www.ncei.noaa.gov/access/services/data/v1";
 const GHCND_STATIONS = "https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt";
-const NORMALS_ACCESS = "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/access/";
+/**
+ * ⚠️ NOT `/data/normals-monthly/…`. Round 41d.
+ *
+ * The static per-station CSV under `/data/normals-monthly/1991-2020/access/` is
+ * refused by NCEI's robots.txt: the `User-agent: *` group carries
+ * `Disallow: /data*`, and the single `Allow:` beside it is for a coral-reef
+ * library. Every other NCEI family this fetcher uses — the Access Data Service
+ * under `/access/`, the GHCND station table under `/pub/data/` — is permitted,
+ * so normals was the one caught path.
+ *
+ * The SAME normals come through the Access Data Service, which this file
+ * already uses for GSOM, and `includeAttributes=true` returns the three
+ * qualifying companions the static CSV carried. Measured against the committed
+ * output, station for station and month for month:
+ *
+ *   USW00013958   9.6 24.0 73.2 171.7 369.9 …  years 29 (Apr/May 30), flag S
+ *   USW00012970  11.0 35.2 95.2 206.6 408.9 …  years 19/20,           flag R
+ *
+ * Both match exactly, and `DATE` still arrives as "01".."12", so every line of
+ * parsing below is unchanged. Do not point this back at `/data/`.
+ */
+const NORMALS_DATASET = "normals-monthly-1991-2020";
 const GSOM_DATASET = "global-summary-of-the-month";
 
 /** The CDD normal, and the three per-element companions that qualify it. */
@@ -225,40 +245,17 @@ export function __resetStationTableCacheForTests(): void {
   stationTablePromise = null;
 }
 
-/**
- * The set of station ids that actually have a published normals file, read from
- * the `access/` directory index once per process.
+/*
+ * Round 41d. A pre-filter lived here that read the `access/` directory index
+ * once per process to skip stations with no normals file — Round 19e added it
+ * after a live run spent five of eleven requests on stations that had none.
  *
- * Round 19e added this because the first live run spent five of its eleven
- * requests on stations with no normals at all — Austin Executive, Lago Vista,
- * Taylor Muni, Brooks AFB and Boerne Stage Field each came back "no normals
- * rows returned". They are in `ghcnd-stations.txt`, which lists every GHCN
- * station, but not in the normals product. Filtering here means the fetcher
- * stops asking for files that do not exist.
+ * That listing is under `/data*`, which NCEI's robots.txt disallows, and the
+ * Access Data Service publishes no directory index to replace it. It was only
+ * ever an optimisation, and the code already tolerated losing it: a station
+ * with no normals now returns an empty result that `resolveNormals` rejects by
+ * name. The cost is a few requests per run; correctness is unchanged.
  */
-let normalsIndexPromise: Promise<Set<string>> | null = null;
-
-async function loadNormalsIndex(): Promise<Set<string>> {
-  if (!normalsIndexPromise) {
-    normalsIndexPromise = (async () => {
-      const res = await fetch(NORMALS_ACCESS);
-      if (!res.ok) {
-        throw new Error(`normals access index fetch failed: HTTP ${res.status} from ${NORMALS_ACCESS}`);
-      }
-      const html = await res.text();
-      const ids = new Set<string>();
-      for (const m of html.matchAll(/href="([A-Za-z0-9_\-]+)\.csv"/g)) ids.add(m[1]);
-      if (ids.size === 0) {
-        throw new Error("normals access index listed no .csv files — the page shape may have changed.");
-      }
-      return ids;
-    })().catch((err) => {
-      normalsIndexPromise = null;
-      throw err;
-    });
-  }
-  return normalsIndexPromise;
-}
 
 /**
  * USW is the first-order/airport tier — the one that reports temperature. USC
@@ -266,7 +263,11 @@ async function loadNormalsIndex(): Promise<Set<string>> {
  * lower: Round 19b's whole failure was letting a precipitation-only tier into
  * the running at all.
  */
-async function candidateStations(location: Metro, rejections: string[]): Promise<Station[]> {
+/* `rejections` was dropped in Round 41d: the only entries this function added
+ * came from the normals directory-index pre-filter, which went with it. Every
+ * remaining rejection is recorded by `resolveNormals`, which is where a station
+ * is now actually rejected. */
+async function candidateStations(location: Metro): Promise<Station[]> {
   const { lat, lon } = pointFor(location);
   const all = await loadStationTable();
   const nearby = all
@@ -279,28 +280,8 @@ async function candidateStations(location: Metro, rejections: string[]): Promise
     .map((s) => ({ ...s, distanceMiles: greatCircleMiles(lat, lon, s.lat, s.lon) }))
     .sort((a, b) => a.distanceMiles - b.distanceMiles);
 
-  // A failure to read the index must not fail the run: a station with no file
-  // 404s below and is rejected there instead. Losing the pre-filter costs
-  // requests, not correctness.
-  let index: Set<string> | null = null;
-  try {
-    index = await loadNormalsIndex();
-  } catch (err) {
-    console.log(
-      `noaa-climate/${location}: could not read the normals index ` +
-        `(${err instanceof Error ? err.message : String(err)}) — continuing without the pre-filter.`,
-    );
-  }
-
   const eligible: Station[] = [];
   for (const s of nearby) {
-    if (index && !index.has(s.id)) {
-      rejections.push(
-        `${s.id} (${s.name}, ${s.distanceMiles.toFixed(1)} mi): not in the normals access/ index — ` +
-          "no normals file is published for it, so it was never requested",
-      );
-      continue;
-    }
     eligible.push(s);
     if (eligible.length >= MAX_CANDIDATES) break;
   }
@@ -330,18 +311,19 @@ async function getRows(params: Record<string, string>): Promise<ApiRow[]> {
  * Static file, no query parameters. There is nothing here for a server to
  * reject, which after four attempted mechanisms is the point.
  */
-async function fetchNormalsCsv(stationId: string): Promise<Record<string, string>[] | null> {
-  const url = `${NORMALS_ACCESS}${stationId}.csv`;
-  const res = await fetch(url);
-  if (res.status === 404) return null;
-  if (!res.ok) {
-    throw new Error(`NOAA normals CSV fetch failed: HTTP ${res.status} from ${url}`);
-  }
-  const text = await res.text();
-  if (text.trim() === "") return [];
-  // A normals row carries a station NAME, which contains commas. A naive
-  // split(",") would shift every one of the 200-400 columns after it.
-  return rowsToRecords(parseCsv(text));
+async function fetchNormalsRows(stationId: string): Promise<Record<string, string>[]> {
+  // The static CSV said "this station has no normals" with a 404; the service
+  // says it with an empty array. `resolveNormals` already rejects an empty
+  // result by name, so the two collapse to one case rather than needing a
+  // sentinel that no longer has anything to represent.
+  const rows = await getRows({
+    dataset: NORMALS_DATASET,
+    stations: stationId,
+    dataTypes: CDD_NORMAL_COLUMN,
+    includeAttributes: "true",
+    format: "json",
+  });
+  return rows as unknown as Record<string, string>[];
 }
 
 function numberOrNull(raw: string | undefined): number | null {
@@ -365,7 +347,7 @@ interface NormalsResult {
  * to see.
  */
 async function resolveNormals(location: Metro, rejections: string[]): Promise<NormalsResult> {
-  const candidates = await candidateStations(location, rejections);
+  const candidates = await candidateStations(location);
   if (candidates.length === 0) {
     throw new Error(
       `noaa-climate/${location}: no USW station with a published normals file within ` +
@@ -377,13 +359,9 @@ async function resolveNormals(location: Metro, rejections: string[]): Promise<No
 
   for (const station of candidates) {
     const label = `${station.id} (${station.name}, ${station.distanceMiles.toFixed(1)} mi)`;
-    const rows = await fetchNormalsCsv(station.id);
-    if (rows === null) {
-      rejections.push(`${label}: no normals CSV published (HTTP 404)`);
-      continue;
-    }
+    const rows = await fetchNormalsRows(station.id);
     if (rows.length === 0) {
-      rejections.push(`${label}: normals CSV is empty`);
+      rejections.push(`${label}: no 1991-2020 monthly normals published for this station`);
       continue;
     }
 
@@ -454,7 +432,7 @@ function makeFetcher(location: Metro): FetcherModule<CoolingDegreeDayValue> {
     location,
     source: {
       name: "NOAA NCEI U.S. Climate Normals 1991-2020 (station CSV) and Global Summary of the Month",
-      url: NORMALS_ACCESS,
+      url: `${ACCESS_DATA_V1}?dataset=${NORMALS_DATASET}`,
     },
     requiredEnvVars: [],
     async fetchRaw(ctx): Promise<Observation<CoolingDegreeDayValue>[]> {

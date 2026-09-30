@@ -159,6 +159,15 @@ async function main() {
   assert("the bbox is sent, and no token", /bbox=/.test(requested[0])
     && !/token|apikey|[?&]key=/i.test(requested[0]));
   assert("the product path is nx3hail", /\/csv\/nx3hail\//.test(requested[0]));
+  // Round 41d. The host is part of the compliance, not a detail: ncdc.noaa.gov
+  // refuses this path twice over for `User-agent: *` (`Disallow: /swdiws/` and
+  // `Disallow: /*.csv`). NCEI serves the identical service and disallows
+  // neither. A revert to ncdc would be silent without this.
+  assert("every request goes to the NCEI host, which permits /swdiws/",
+    requested.every((u) => new URL(u).host === "www.ncei.noaa.gov"),
+    requested.map((u) => new URL(u).host).join(", "));
+  assert("nothing requests the ncdc host",
+    !requested.some((u) => /ncdc\.noaa\.gov/.test(u)));
   assert("plsr is never requested — it does not exist on SWDI",
     !requested.some((u) => /plsr/.test(u)));
 
