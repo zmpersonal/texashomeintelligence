@@ -530,3 +530,50 @@ desktop with the shortest.
 **Decision needed:** the replacement wording, from the owner.
 
 **Scope → unscheduled, copy.**
+
+---
+
+### 15 · Metro expansion — Fort Worth is the only viable candidate
+
+**Measured in Round 39** (`docs/audits/round-39-metro-expansion-probe.md`), against the seven
+metros the round named. Carrying the findings here so the sequencing decision does not need the
+audit reopened.
+
+**Verdict, in one table:**
+
+| Metro | Verdict | The deciding fact |
+|---|---|---|
+| Fort Worth | **FULL** | 1,616,404-row permit feed, CC BY 4.0, modified the day of the probe, with a real date field and trade mix above Austin's. |
+| Dallas | **NOT VIABLE** | Building permits stop in 2020 (52,037 rows dated 2019, 27,459 dated 2020, zero after). The only live permit data is right-of-way work. |
+| Houston | **NOT VIABLE** | `data.houstontx.gov` disallows `/api/` and `/datastore/*` to `User-agent: *` — both CKAN machine-readable routes. No alternate publisher found. |
+| New Braunfels · San Marcos · Round Rock · Kyle | **ALREADY SERVED, minus permits** | Their ZIPs are in the committed crosswalk today and already get every weather signal. None publishes a permit feed. |
+
+**The corridor is not an expansion question.** 78130, 78132, 78666, 78664, 78665, 78681 and 78640
+already resolve to Austin or San Antonio and are already drought-county-granular. A homeowner in
+any of the four gets the full weather, drought, storm, hail, air-quality and cooling-load read
+today. The only gap is city-issued permits, which none of them publishes.
+
+**What Fort Worth would cost.** Not config-only. Roughly 15 files, of which:
+a new `fortWorthPermits.ts` (ArcGIS GeoServices — a third API shape after Socrata and CKAN);
+a trade mapping in `tradeCategories.ts`; the `"austin" | "san-antonio"` union widened in eight
+fetchers; new crosswalk rows for the DFW MSA cut from the owner's Census file (**owner seam**);
+and a CC BY 4.0 licence notice that is stricter than what the Austin and San Antonio data pages
+carry today.
+
+**Blockers to settle first, both Rule 1:**
+
+1. **`site/src/lib/account/alerts.ts:134` silently mislabels a third metro.**
+   `areaId === "san-antonio" ? "San Antonio" : "Austin"` — a Fort Worth alert would read
+   "Austin". It typechecks and builds. **Fix this before any metro is added**, not during.
+2. **`Owner_Full_Name` is in the Fort Worth feed.** Must be an explicit exclusion in the fetcher,
+   never an oversight.
+
+**Also noted, unrelated to expansion:** the NWS forecast fetcher is **Austin-only**
+(`Record<"austin", …>`); San Antonio was never wired to it.
+
+**Decision needed:** whether to add Fort Worth at all, given that it makes "Austin & San Antonio"
+stale in the nav and arguably in the brand — a positioning question, not a data one. Houston and
+Dallas need no decision: they are not available, and Houston's is reversible only by an approach
+to the city, not by code.
+
+**Scope → unscheduled, medium (one metro ≈ one round, plus the two blockers first).**
