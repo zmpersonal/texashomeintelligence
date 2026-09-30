@@ -144,8 +144,14 @@ jobs:
           if b:
               txt = b.decode('latin-1')
               rdr = csv.DictReader(io.StringIO(txt), delimiter='\t')
+              # The Gazetteer's header carries trailing whitespace on its last
+              # column, so `INTPTLONG` is really `INTPTLONG\t   `. Normalise
+              # every key rather than special-casing that one.
+              rdr.fieldnames = [(f or '').strip() for f in (rdr.fieldnames or [])]
+              F['gazetteer_columns'] = rdr.fieldnames
               want = {'New Braunfels city', 'San Marcos city', 'Austin city', 'San Antonio city'}
-              for row in rdr:
+              for raw in rdr:
+                  row = {k: (v or '') for k, v in raw.items()}
                   name = (row.get('NAME') or '').strip()
                   if name in want:
                       POINTS[name] = {
@@ -288,7 +294,7 @@ jobs:
                   hist[vintage] = 'ok' if isinstance(r, list) and len(r) > 1 else r
           F['acs']['place_vintages_new_braunfels'] = hist
 
-          json.dump({'findings': F, 'log': log}, open(f'{OUT}/probe-3.json', 'w'), indent=2)
+          json.dump({'findings': F, 'log': log}, open(f'{OUT}/probe-4.json', 'w'), indent=2)
           print(json.dumps({k: v for k, v in F.items() if k in ('points', 'city_to_metro_point_miles')}, indent=2))
           print(f'\n{len(log)} requests; skipped by robots: '
                 f'{sum(1 for x in log if x["status"] == "SKIPPED_BY_ROBOTS")}')
