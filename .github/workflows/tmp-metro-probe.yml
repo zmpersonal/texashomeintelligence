@@ -102,58 +102,54 @@ jobs:
               log.append({'url': url, 'label': label, 'status': st, 'bytes': len(body)})
               return body if st == 200 else None
 
-          # ---- PASS 2: the three candidates that showed real permit datasets ----
-          findings = {'datasets': {}, 'houston_catalogue': None, 'corridor': {}, 'city_domains': {}}
+          # ---- PASS 3 ----
+          # Pass 2 findings this pass settles:
+          #  * Dallas' rowsUpdatedAt is 2020-08-30 while its own metadata claims
+          #    "Update Frequency: Daily". Do not kill a metro on a metadata field
+          #    when that metro's OTHER metadata field was just caught lying —
+          #    ask the data for its own max(issued_date).
+          #  * Fort Worth's id from the cross-domain search 404s on its own host,
+          #    so ask that host's catalogue instead.
+          #  * Houston's /api/ is disallowed for User-agent: * and the guard
+          #    refused it. That is the finding; no workaround is attempted.
+          findings = {'dallas': {}, 'fortworth': {}, 'houston': 'ROBOTS: /api/ disallowed for *'}
 
-          DATASETS = [
-              ('Dallas', 'www.dallasopendata.com', 'e7gq-4sah', 'Building Permits'),
-              ('Fort Worth', 'data.fortworthtexas.gov', 'quz7-xnsy', 'Development Permits'),
-          ]
-          for city, host, did, label in DATASETS:
-              rec = {'host': host, 'id': did, 'label': label}
-              b = fetch(f'https://{host}/api/views/{did}.json', f'meta:{city}')
-              if b:
-                  m, err = jparse(b, 'meta')
-                  if err: rec['meta_error'] = err
-                  else:
-                      rec['license'] = m.get('license')
-                      rec['licenseId'] = m.get('licenseId')
-                      rec['attribution'] = m.get('attribution')
-                      rec['custom'] = (m.get('metadata') or {}).get('custom_fields')
-                      rec['columns'] = [{'field': c.get('fieldName'), 'type': c.get('dataTypeName'),
-                                         'name': c.get('name')} for c in m.get('columns', [])]
-                      rec['rowsUpdatedAt'] = m.get('rowsUpdatedAt')
-              b = fetch(f'https://{host}/resource/{did}.json?$select=count(1)', f'count:{city}')
-              if b:
-                  v, err = jparse(b, 'count')
-                  rec['total_rows'] = err or v
-              findings['datasets'][city] = rec
-
-          b = fetch('https://data.houstontx.gov/api/catalog/v1?q=permit&limit=40', 'houston-catalogue')
-          if b:
-              d2, err = jparse(b, 'houston')
-              if err:
-                  findings['houston_catalogue'] = err
-              else:
-                  findings['houston_catalogue'] = {
-                      'result_count': d2.get('resultSetSize'),
-                      'results': [{'name': r['resource']['name'], 'id': r['resource']['id'],
-                                   'type': r['resource'].get('type')} for r in d2.get('results', [])[:15]]}
-
-          for city, hosts in [
-              ('New Braunfels', ['data.newbraunfels.gov', 'newbraunfels-nbtexas.opendata.arcgis.com']),
-              ('San Marcos', ['opendata-sanmarcostx.hub.arcgis.com', 'gis-sanmarcostx.opendata.arcgis.com']),
-              ('Round Rock', ['data.roundrocktexas.gov', 'roundrock-rrtx.opendata.arcgis.com']),
-              ('Kyle', ['data.cityofkyle.com', 'opendata-cityofkyle.hub.arcgis.com']),
+          DH, DID = 'www.dallasopendata.com', 'e7gq-4sah'
+          for label, q in [
+              ('range', '$select=max(issued_date) as newest, min(issued_date) as oldest, count(1) as n'),
+              ('by_month', '$select=date_trunc_ym(issued_date) as m, count(1) as n&$group=m&$order=m DESC&$limit=30'),
+              ('by_type', '$select=permit_type, count(1) as n&$group=permit_type&$order=n DESC&$limit=15'),
           ]:
-              findings['corridor'][city] = {h: {'robots_http': star_rules(h)[0]} for h in hosts}
+              b = fetch(f'https://{DH}/resource/{DID}.json?{q}', f'dallas:{label}')
+              if b:
+                  v, err = jparse(b, label)
+                  findings['dallas'][label] = err or v
 
-          for host in ['data.houstontx.gov', 'www.dallasopendata.com', 'data.fortworthtexas.gov']:
-              st, dis, allow = star_rules(host)
-              findings['city_domains'][host] = {'robots_http': st, 'star_disallow_count': len(dis),
-                                                'star_disallow_sample': dis[:14]}
+          FH = 'data.fortworthtexas.gov'
+          b = fetch(f'https://{FH}/api/catalog/v1?q=permit&limit=40', 'fortworth:catalogue')
+          if b:
+              v, err = jparse(b, 'fw-cat')
+              if err: findings['fortworth']['catalogue'] = err
+              else:
+                  findings['fortworth']['catalogue'] = [
+                      {'name': r['resource']['name'], 'id': r['resource']['id'],
+                       'type': r['resource'].get('type'), 'updated': r['resource'].get('updatedAt')}
+                      for r in v.get('results', [])[:15]]
+                  for r in v.get('results', [])[:6]:
+                      if r['resource'].get('type') != 'dataset': continue
+                      rid = r['resource']['id']
+                      mb = fetch(f'https://{FH}/api/views/{rid}.json', f'fw-meta:{rid}')
+                      if mb:
+                          m, e2 = jparse(mb, 'fw-meta')
+                          if not e2:
+                              findings['fortworth'][rid] = {
+                                  'name': m.get('name'), 'license': m.get('license'),
+                                  'licenseId': m.get('licenseId'), 'attribution': m.get('attribution'),
+                                  'rowsUpdatedAt': m.get('rowsUpdatedAt'),
+                                  'custom': (m.get('metadata') or {}).get('custom_fields'),
+                                  'columns': [c.get('fieldName') for c in m.get('columns', [])]}
 
-          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-2.json', 'w'), indent=2)
+          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-3.json', 'w'), indent=2)
           print(json.dumps(findings['city_domains'], indent=2))
           print(f'\n{len(log)} requests; skipped by robots: '
                 f'{sum(1 for x in log if x["status"] == "SKIPPED_BY_ROBOTS")}')
