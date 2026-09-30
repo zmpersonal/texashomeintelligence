@@ -93,50 +93,68 @@ jobs:
               log.append({'url': url, 'label': label, 'status': st, 'bytes': len(body)})
               return body if st == 200 else None
 
-          # ---- global discovery: find portals without guessing hostnames ----
-          CITIES = ['Houston', 'Dallas', 'Fort Worth', 'New Braunfels', 'San Marcos', 'Round Rock', 'Kyle']
-          findings = {'socrata': {}, 'arcgis': {}, 'city_domains': {}}
+          # ---- PASS 2: the three candidates that showed real permit datasets ----
+          # Pass 1's cross-domain search was noisy (Chicago, Calgary, Howard
+          # County MD all matched "building permits"). Only three hits sat on a
+          # Texas city's own domain. This asks those domains directly, and asks
+          # Houston's own catalogue, which the global search never surfaced.
+          findings = {'datasets': {}, 'houston_catalogue': None, 'corridor': {}, 'city_domains': {}}
 
-          for city in CITIES:
-              q = urllib.parse.quote(f'building permits {city} Texas')
-              b = fetch(f'https://api.us.socrata.com/api/catalog/v1?q={q}&limit=25', f'socrata-discovery:{city}')
+          DATASETS = [
+              ('Dallas', 'www.dallasopendata.com', 'e7gq-4sah', 'Building Permits'),
+              ('Fort Worth', 'data.fortworthtexas.gov', 'quz7-xnsy', 'Development Permits'),
+          ]
+          for city, host, did, label in DATASETS:
+              rec = {'host': host, 'id': did, 'label': label}
+              b = fetch(f'https://{host}/api/views/{did}.json', f'meta:{city}')
               if b:
                   try:
-                      d = json.loads(b)
-                      findings['socrata'][city] = [
-                          {'name': r['resource']['name'], 'id': r['resource']['id'],
-                           'domain': r['metadata']['domain'], 'type': r['resource'].get('type'),
-                           'updated': r['resource'].get('updatedAt'),
-                           'rows': r['resource'].get('rows_size'),
-                           'license': (r.get('metadata') or {}).get('license')}
-                          for r in d.get('results', [])[:8]]
+                      m = json.loads(b)
+                      rec['license'] = m.get('license')
+                      rec['licenseId'] = m.get('licenseId')
+                      rec['attribution'] = m.get('attribution')
+                      rec['custom'] = (m.get('metadata') or {}).get('custom_fields')
+                      rec['columns'] = [{'field': c.get('fieldName'), 'type': c.get('dataTypeName'),
+                                         'name': c.get('name')} for c in m.get('columns', [])]
+                      rec['rowsUpdatedAt'] = m.get('rowsUpdatedAt')
                   except Exception as e:
-                      findings['socrata'][city] = f'parse error: {e}'
-              b = fetch(f'https://hub.arcgis.com/api/search/v1/collections/dataset/items?q={q}&limit=15',
-                        f'arcgis-hub:{city}')
-              if b:
-                  try:
-                      d = json.loads(b)
-                      findings['arcgis'][city] = [
-                          {'title': f['properties'].get('title'),
-                           'source': f['properties'].get('source'),
-                           'type': f['properties'].get('type'),
-                           'modified': f['properties'].get('modified'),
-                           'license': (f['properties'].get('license') or '')[:120],
-                           'url': (f['properties'].get('landingPage') or '')[:160]}
-                          for f in d.get('features', [])[:8]]
-                  except Exception as e:
-                      findings['arcgis'][city] = f'parse error: {e}'
+                      rec['meta_error'] = str(e)
+              # Counts, not rows: cheap, and the whole record rather than a sample.
+              b = fetch(f'https://{host}/resource/{did}.json?$select=count(1)', f'count:{city}')
+              if b: rec['total_rows'] = json.loads(b)
+              findings['datasets'][city] = rec
 
-          # ---- do the obvious city portals exist at all? ----
-          for host in ['data.houstontx.gov', 'www.dallasopendata.com', 'data.fortworthtexas.gov',
-                       'data.sanmarcostx.gov', 'www.newbraunfels.gov', 'www.roundrocktexas.gov',
-                       'www.cityofkyle.com']:
+          # Houston: ask its own portal, since the cross-domain search found nothing there.
+          b = fetch('https://data.houstontx.gov/api/catalog/v1?q=permit&limit=40', 'houston-catalogue')
+          if b:
+              try:
+                  d = json.loads(b)
+                  findings['houston_catalogue'] = {
+                      'result_count': d.get('resultSetSize'),
+                      'results': [{'name': r['resource']['name'], 'id': r['resource']['id'],
+                                   'type': r['resource'].get('type')} for r in d.get('results', [])[:15]]}
+              except Exception as e:
+                  findings['houston_catalogue'] = f'parse error: {e}'
+
+          # Corridor cities: one look each for an open-data portal, then move on.
+          for city, hosts in [
+              ('New Braunfels', ['data.newbraunfels.gov', 'newbraunfels-nbtexas.opendata.arcgis.com']),
+              ('San Marcos', ['opendata-sanmarcostx.hub.arcgis.com', 'gis-sanmarcostx.opendata.arcgis.com']),
+              ('Round Rock', ['data.roundrocktexas.gov', 'roundrock-rrtx.opendata.arcgis.com']),
+              ('Kyle', ['data.cityofkyle.com', 'opendata-cityofkyle.hub.arcgis.com']),
+          ]:
+              out = {}
+              for h in hosts:
+                  st, dis, allow = star_rules(h)
+                  out[h] = {'robots_http': st}
+              findings['corridor'][city] = out
+
+          for host in ['data.houstontx.gov', 'www.dallasopendata.com', 'data.fortworthtexas.gov']:
               st, dis, allow = star_rules(host)
               findings['city_domains'][host] = {'robots_http': st, 'star_disallow_count': len(dis),
-                                                'star_disallow_sample': dis[:12]}
+                                                'star_disallow_sample': dis[:14]}
 
-          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-1.json', 'w'), indent=2)
+          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-2.json', 'w'), indent=2)
           print(json.dumps(findings['city_domains'], indent=2))
           print(f'\n{len(log)} requests; skipped by robots: '
                 f'{sum(1 for x in log if x["status"] == "SKIPPED_BY_ROBOTS")}')
