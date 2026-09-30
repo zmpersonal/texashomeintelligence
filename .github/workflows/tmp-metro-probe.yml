@@ -105,60 +105,60 @@ jobs:
               log.append({'url': url, 'label': label, 'status': st, 'bytes': len(body)})
               return body if st == 200 else None
 
-          # ---- PASS 7 ----
-          #  * Dallas: every year bucket came back 0, which is my encoding bug,
-          #    not an empty dataset — I left `%` in the `safe` set, so the LIKE
-          #    wildcards went to the server as raw `%` and were read as broken
-          #    percent-escapes. Encode them properly.
-          #  * Fort Worth: the city's own DCAT feed lists "CFW Development
-          #    Permits Table"/"Points", publisher City of Fort Worth, licence
-          #    CC BY 4.0, modified today. Follow the GeoServices distribution to
-          #    the layer and ask it for its fields, row count and date range.
+          # ---- PASS 8 (last) ----
+          #  * Dallas' e7gq-4sah holds 52,037 rows dated 2019 and 27,459 dated
+          #    2020 and nothing after — it stops mid-2020, matching its
+          #    rowsUpdatedAt and contradicting its own "Update Frequency: Daily".
+          #    But killing a metro on ONE dataset is the same error as killing it
+          #    on one metadata field, so ask Dallas' own catalogue what else it
+          #    publishes before calling it.
+          #  * Fort Worth's Development Permits Table is 1,616,404 rows with a
+          #    real File_Date and a Permit_Type. Section C needs volume: monthly
+          #    counts, and the trade mix over the last year.
           findings = collections.defaultdict(dict)
 
-          DH, DID = 'www.dallasopendata.com', 'e7gq-4sah'
-          years = {}
-          for yy in ['19', '20', '21', '22', '23', '24', '25', '26']:
-              q = urllib.parse.quote(f"$select=count(1) as n&$where=issued_date like '%/{yy}'",
-                                     safe="=$&(),*'")
-              b = fetch(f'https://{DH}/resource/{DID}.json?{q}', f'dallas:yr{yy}')
-              if b:
-                  v, err = jparse(b, f'yr{yy}')
-                  years[f'20{yy}'] = err or (v[0].get('n') if v else None)
-          findings['dallas']['rows_by_year_suffix'] = years
-
-          FH = 'data.fortworthtexas.gov'
-          b = fetch(f'https://{FH}/api/feed/dcat-us/1.1.json', 'fortworth:dcat')
+          b = fetch('https://www.dallasopendata.com/api/catalog/v1?q=permit&limit=40',
+                    'dallas:catalogue')
           if b:
-              v, _ = jparse(b, 'fw-dcat')
-              for d in (v or {}).get('dataset', []):
-                  t = d.get('title', '')
-                  if 'Development Permits' not in t: continue
-                  rec = {'title': t, 'license': d.get('license'), 'modified': d.get('modified'),
-                         'publisher': (d.get('publisher') or {}).get('name'),
-                         'rights': d.get('rights'), 'accrualPeriodicity': d.get('accrualPeriodicity'),
-                         'distributions': [{'format': x.get('format'), 'url': x.get('accessURL') or x.get('downloadURL')}
-                                           for x in d.get('distribution', [])]}
-                  rest = next((x['url'] for x in rec['distributions']
-                               if x['url'] and '/rest/services/' in x['url']), None)
-                  if rest:
-                      rest = rest.split('?')[0].rstrip('/')
-                      mb = fetch(f'{rest}?f=json', f'fw-layer-meta:{t}')
-                      if mb:
-                          m, e = jparse(mb, 'layer')
-                          if not e:
-                              rec['layer'] = {
-                                  'name': m.get('name'), 'type': m.get('type'),
-                                  'maxRecordCount': m.get('maxRecordCount'),
-                                  'supportsPagination': (m.get('advancedQueryCapabilities') or {}).get('supportsPagination'),
-                                  'fields': [(f.get('name'), f.get('type')) for f in m.get('fields', [])]}
-                      cb = fetch(f'{rest}/query?where=1%3D1&returnCountOnly=true&f=json', f'fw-count:{t}')
-                      if cb:
-                          c, e = jparse(cb, 'count')
-                          rec['rowCount'] = c if e is None else e
-                  findings['fortworth'][t] = rec
+              v, err = jparse(b, 'dal-cat')
+              findings['dallas']['catalogue'] = err or [
+                  {'name': r['resource']['name'], 'id': r['resource']['id'],
+                   'updated': r['resource'].get('updatedAt'),
+                   'rows': r['resource'].get('rows_size')}
+                  for r in (v.get('results') or [])]
 
-          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-7.json', 'w'), indent=2)
+          FW = ('https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services'
+                '/CFW_Open_Data_Development_Permits_View/FeatureServer/0')
+          months = ['2025-09', '2025-10', '2025-11', '2025-12', '2026-01', '2026-02',
+                    '2026-03', '2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09']
+          def nxt(m):
+              y, mo = int(m[:4]), int(m[5:])
+              return f'{y + (mo == 12)}-{1 if mo == 12 else mo + 1:02d}'
+          counts = {}
+          for m in months:
+              w = (f"File_Date >= timestamp '{m}-01 00:00:00' "
+                   f"AND File_Date < timestamp '{nxt(m)}-01 00:00:00'")
+              b = fetch(f'{FW}/query?where={urllib.parse.quote(w)}&returnCountOnly=true&f=json',
+                        f'fw-month:{m}')
+              if b:
+                  v, err = jparse(b, 'fw-month')
+                  counts[m] = err or (v.get('count') if isinstance(v, dict) else v)
+          findings['fortworth']['monthly_counts'] = counts
+
+          stats = '[{"statisticType":"count","onStatisticField":"Permit_No","outStatisticFieldName":"n"}]'
+          w = "File_Date >= timestamp '2025-09-01 00:00:00'"
+          for field in ['Permit_Type', 'Permit_Category']:
+              b = fetch(f'{FW}/query?where={urllib.parse.quote(w)}'
+                        f'&outStatistics={urllib.parse.quote(stats)}'
+                        f'&groupByFieldsForStatistics={field}&f=json&resultRecordCount=60',
+                        f'fw-by:{field}')
+              if b:
+                  v, err = jparse(b, 'fw-by')
+                  findings['fortworth'][f'by_{field}'] = err or sorted(
+                      [f['attributes'] for f in (v.get('features') or [])],
+                      key=lambda a: -(a.get('n') or 0))[:25]
+
+          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-8.json', 'w'), indent=2)
           print(json.dumps(findings, indent=2)[:6000])
           print(f'\n{len(log)} requests; skipped by robots: '
                 f'{sum(1 for x in log if x["status"] == "SKIPPED_BY_ROBOTS")}')
