@@ -105,60 +105,67 @@ jobs:
               log.append({'url': url, 'label': label, 'status': st, 'bytes': len(body)})
               return body if st == 200 else None
 
-          # ---- PASS 8 (last) ----
-          #  * Dallas' e7gq-4sah holds 52,037 rows dated 2019 and 27,459 dated
-          #    2020 and nothing after — it stops mid-2020, matching its
-          #    rowsUpdatedAt and contradicting its own "Update Frequency: Daily".
-          #    But killing a metro on ONE dataset is the same error as killing it
-          #    on one metadata field, so ask Dallas' own catalogue what else it
-          #    publishes before calling it.
-          #  * Fort Worth's Development Permits Table is 1,616,404 rows with a
-          #    real File_Date and a Permit_Type. Section C needs volume: monthly
-          #    counts, and the trade mix over the last year.
+          # ---- PASS 9 (last) ----
+          #  * Pass 8's Dallas catalogue query was FEDERATED and I read it as
+          #    Dallas'. It returned 3syk-w9eu — Austin's own Issued Construction
+          #    Permits, the dataset this site already ingests — and quz7-xnsy,
+          #    the id pass 1 had wrongly attached to Fort Worth. Scope it to the
+          #    Dallas domain, which is the same mistake pass 1 made and the same
+          #    fix.
+          #  * Fort Worth: Permit_Category is 76,051 "NA" out of 81,442, so
+          #    "only 258 ReRoof rows" is a statement about an unpopulated field,
+          #    not about Fort Worth's roofing activity. Ask Permit_SubType and
+          #    the work description before saying there is no roofing signal.
           findings = collections.defaultdict(dict)
 
-          b = fetch('https://www.dallasopendata.com/api/catalog/v1?q=permit&limit=40',
-                    'dallas:catalogue')
+          b = fetch('https://api.us.socrata.com/api/catalog/v1?q=permit'
+                    '&domains=www.dallasopendata.com'
+                    '&search_context=www.dallasopendata.com&limit=40', 'dallas:own-catalogue')
           if b:
               v, err = jparse(b, 'dal-cat')
-              findings['dallas']['catalogue'] = err or [
+              rows = [] if err else [
                   {'name': r['resource']['name'], 'id': r['resource']['id'],
-                   'updated': r['resource'].get('updatedAt'),
-                   'rows': r['resource'].get('rows_size')}
+                   'domain': (r.get('metadata') or {}).get('domain'),
+                   'updated': r['resource'].get('updatedAt')}
                   for r in (v.get('results') or [])]
+              findings['dallas']['own_catalogue'] = err or rows
+              for r in [x for x in rows if x['domain'] == 'www.dallasopendata.com'][:6]:
+                  mb = fetch(f"https://www.dallasopendata.com/api/views/{r['id']}.json",
+                             f"dallas-meta:{r['id']}")
+                  if mb:
+                      m, e = jparse(mb, 'dal-meta')
+                      if not e:
+                          findings['dallas'][r['id']] = {
+                              'name': m.get('name'), 'license': m.get('license'),
+                              'rowsUpdatedAt': m.get('rowsUpdatedAt'),
+                              'custom': (m.get('metadata') or {}).get('custom_fields'),
+                              'columns': [c.get('fieldName') for c in m.get('columns', [])]}
 
           FW = ('https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services'
                 '/CFW_Open_Data_Development_Permits_View/FeatureServer/0')
-          months = ['2025-09', '2025-10', '2025-11', '2025-12', '2026-01', '2026-02',
-                    '2026-03', '2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09']
-          def nxt(m):
-              y, mo = int(m[:4]), int(m[5:])
-              return f'{y + (mo == 12)}-{1 if mo == 12 else mo + 1:02d}'
-          counts = {}
-          for m in months:
-              w = (f"File_Date >= timestamp '{m}-01 00:00:00' "
-                   f"AND File_Date < timestamp '{nxt(m)}-01 00:00:00'")
-              b = fetch(f'{FW}/query?where={urllib.parse.quote(w)}&returnCountOnly=true&f=json',
-                        f'fw-month:{m}')
-              if b:
-                  v, err = jparse(b, 'fw-month')
-                  counts[m] = err or (v.get('count') if isinstance(v, dict) else v)
-          findings['fortworth']['monthly_counts'] = counts
-
           stats = '[{"statisticType":"count","onStatisticField":"Permit_No","outStatisticFieldName":"n"}]'
           w = "File_Date >= timestamp '2025-09-01 00:00:00'"
-          for field in ['Permit_Type', 'Permit_Category']:
-              b = fetch(f'{FW}/query?where={urllib.parse.quote(w)}'
-                        f'&outStatistics={urllib.parse.quote(stats)}'
-                        f'&groupByFieldsForStatistics={field}&f=json&resultRecordCount=60',
-                        f'fw-by:{field}')
-              if b:
-                  v, err = jparse(b, 'fw-by')
-                  findings['fortworth'][f'by_{field}'] = err or sorted(
-                      [f['attributes'] for f in (v.get('features') or [])],
-                      key=lambda a: -(a.get('n') or 0))[:25]
+          b = fetch(f'{FW}/query?where={urllib.parse.quote(w)}'
+                    f'&outStatistics={urllib.parse.quote(stats)}'
+                    '&groupByFieldsForStatistics=Permit_SubType&f=json&resultRecordCount=100',
+                    'fw-by:Permit_SubType')
+          if b:
+              v, err = jparse(b, 'fw-sub')
+              findings['fortworth']['by_Permit_SubType'] = err or sorted(
+                  [f['attributes'] for f in (v.get('features') or [])],
+                  key=lambda a: -(a.get('n') or 0))[:40]
 
-          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-8.json', 'w'), indent=2)
+          for label, clause in [
+              ('desc_roof', "B1_WORK_DESC LIKE '%ROOF%'"),
+              ('desc_roof_lower', "UPPER(B1_WORK_DESC) LIKE '%ROOF%'"),
+              ('subtype_roof', "UPPER(Permit_SubType) LIKE '%ROOF%'")]:
+              b = fetch(f'{FW}/query?where={urllib.parse.quote(w + " AND " + clause)}'
+                        '&returnCountOnly=true&f=json', f'fw-roof:{label}')
+              if b:
+                  v, err = jparse(b, 'fw-roof')
+                  findings['fortworth'][label] = err or v
+
+          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-9.json', 'w'), indent=2)
           print(json.dumps(findings, indent=2)[:6000])
           print(f'\n{len(log)} requests; skipped by robots: '
                 f'{sum(1 for x in log if x["status"] == "SKIPPED_BY_ROBOTS")}')
