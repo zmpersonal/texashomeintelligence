@@ -1,0 +1,217 @@
+# TEMPORARY — Round 41d probe. DELETE BEFORE THE ROUND ENDS.
+#
+# Item 20: two shipped fetchers request paths their host disallows for
+# `User-agent: *`. This looks for the SAME DATA on a path the host permits.
+#
+# It does not assume one exists. Each candidate is (a) robots-checked against
+# the literal file, (b) fetched, and (c) compared against the values already
+# committed in src/data/generated — which is the only available baseline, since
+# the current path cannot be fetched to compare against.
+#
+# Robots guard carried from Round 39/41c, including BOTH 41c corrections:
+# a blank line closes a group even when it has no rules, and rules are matched
+# against path AND query.
+name: TEMPORARY allowed-path probe (Round 41d)
+
+on:
+  push:
+    branches: [claude/thi-v3-round41d-allowed-paths]
+    paths: ['.github/workflows/tmp-allowed-probe.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe allowed paths
+        env:
+          AIRNOW_API_KEY: ${{ secrets.AIRNOW_API_KEY }}
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+        run: |
+          mkdir -p tmp/allowed/robots
+          python3 - <<'PY'
+          import json, os, re, math, csv, io, urllib.parse, urllib.request, collections
+
+          UA = 'TexasHomeIntelligence-probe/1.0 (one-off research; texashomeintelligence.com)'
+          OUT = 'tmp/allowed'
+          log = []
+          def get(url, timeout=90):
+              req = urllib.request.Request(url, headers={'User-Agent': UA, 'Accept': 'application/json'})
+              try:
+                  with urllib.request.urlopen(req, timeout=timeout) as r:
+                      return r.status, r.read()
+              except Exception as e:
+                  code = getattr(e, 'code', 0)
+                  return code, str(e).encode()
+
+          # ---- robots: parse the User-agent: * group properly ----
+          robots_cache = {}
+          def star_rules(host):
+              if host in robots_cache: return robots_cache[host]
+              st, body = get(f'https://{host}/robots.txt', timeout=30)
+              txt = body.decode('utf-8', 'replace') if st == 200 else ''
+              open(f'{OUT}/robots/{host}.txt', 'w').write(txt if st == 200 else f'(HTTP {st})')
+              groups, cur, agents = [], None, []
+              for line in txt.splitlines():
+                  l = line.split('#')[0].strip()
+                  # ⚠️ A BLANK LINE ENDS A GROUP (RFC 9309 §2.2.1). Pass 1 skipped
+                  # blank lines, so on www2.census.gov — which opens with a bare
+                  # `User-agent: *` and no rules, then a blank line, then
+                  # `User-agent: RavenCrawler` / `Disallow: /` — it merged the two
+                  # and refused the whole host to everyone. A guard that errs
+                  # toward refusing still produces a false finding.
+                  if not l:
+                      # UNCONDITIONALLY, even with no rules. Pass 2 kept the
+                      # `and cur['rules']` guard here and so changed nothing:
+                      # `User-agent: *` with an empty rule set is still a
+                      # complete group, and leaving it open let the next
+                      # `User-agent:` line join it. That guard belongs only on
+                      # the user-agent branch, where CONSECUTIVE agent lines do
+                      # legitimately share one group.
+                      if cur is not None:
+                          groups.append(cur)
+                          cur = None
+                      continue
+                  k, _, v = l.partition(':')
+                  k, v = k.strip().lower(), v.strip()
+                  if k == 'user-agent':
+                      if cur is not None and cur['rules']:
+                          groups.append(cur); cur = None
+                      if cur is None: cur = {'agents': [], 'rules': []}
+                      cur['agents'].append(v)
+                  elif cur is not None and k in ('allow', 'disallow'):
+                      cur['rules'].append((k, v))
+              if cur is not None: groups.append(cur)
+              dis = [v for g in groups if '*' in g['agents'] for k, v in g['rules'] if k == 'disallow' and v]
+              allow = [v for g in groups if '*' in g['agents'] for k, v in g['rules'] if k == 'allow' and v]
+              robots_cache[host] = (st, dis, allow)
+              return robots_cache[host]
+
+          def match(rule, path):
+              pat = re.escape(rule).replace(r'\*', '.*')
+              if pat.endswith(r'\$'): return re.match('^' + pat[:-2] + '$', path) is not None
+              return re.match('^' + pat, path) is not None
+
+          def allowed(url):
+              u = urllib.parse.urlparse(url)
+              st, dis, allow = star_rules(u.netloc)
+              # Path AND query. Round 39 pass 4: Dallas' rules were query-scoped
+              # (`Disallow: /browse?*&q=`) and a path-only match ignored them all.
+              path = (u.path or '/') + (f'?{u.query}' if u.query else '')
+              d = [r for r in dis if match(r, path)]
+              a = [r for r in allow if match(r, path)]
+              # longest-match wins; Allow beats Disallow at equal length
+              if d and (not a or max(len(x) for x in a) < max(len(x) for x in d)):
+                  return False, d
+              return True, []
+
+          def fetch(url, label):
+              ok, why = allowed(url)
+              if not ok:
+                  log.append({'url': url, 'label': label, 'status': 'SKIPPED_BY_ROBOTS', 'disallowed_by': why})
+                  return None
+              st, body = get(url)
+              log.append({'url': url, 'label': label, 'status': st, 'bytes': len(body)})
+              return body if st == 200 else None
+
+          F = collections.defaultdict(dict)
+
+          def probe(url, label, note):
+              """Record the robots verdict AND the rules it was judged against,
+              so a refusal in this audit can be checked without re-running."""
+              u = urllib.parse.urlparse(url)
+              st, dis, allow = star_rules(u.netloc)
+              ok, why = allowed(url)
+              rec = {'url': url, 'note': note, 'host': u.netloc,
+                     'robots_status': st, 'star_disallow_count': len(dis),
+                     'robots_allows': ok, 'matched_disallow': why}
+              if ok:
+                  b = fetch(url, label)
+                  rec['http'] = next((e['status'] for e in reversed(log) if e['url'] == url), None)
+                  rec['bytes'] = len(b) if b else 0
+                  rec['body_head'] = b[:400].decode('utf-8', 'replace') if b else None
+                  return rec, b
+              return rec, None
+
+          # ════════════════════════════════════════════════════════════════
+          # A · SWDI HAIL
+          # Current: https://www.ncdc.noaa.gov/swdiws/csv/nx3hail/{window}?bbox=
+          # Blocked by `Disallow: /swdiws/` and `Disallow: /*.csv` on ncdc.
+          # ════════════════════════════════════════════════════════════════
+          WINDOW = '20260501:20260531'
+          BBOX = '-98.9936,28.9241,-97.9936,29.9241'   # the committed San Antonio box
+          SWDI_CANDIDATES = [
+              (f'https://www.ncei.noaa.gov/swdiws/csv/nx3hail/{WINDOW}?bbox={BBOX}',
+               'same web service on the NCEI host — ncei robots has no /swdiws/ rule'),
+              (f'https://www.ncei.noaa.gov/swdiws/json/nx3hail/{WINDOW}?bbox={BBOX}',
+               'NCEI host, JSON instead of CSV (ncdc also disallows /*.csv)'),
+              (f'https://www.ncdc.noaa.gov/swdiws/json/nx3hail/{WINDOW}?bbox={BBOX}',
+               'ncdc host, JSON — tests whether /*.csv was the only bar'),
+              ('https://www.ncei.noaa.gov/pub/data/swdi/database-csv/v2/',
+               'bulk SWDI archive under /pub/data/, which ncei permits'),
+              ('https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=swdi',
+               'is SWDI exposed through the /access/ service family at all'),
+          ]
+          for url, note in SWDI_CANDIDATES:
+              rec, b = probe(url, f'swdi:{url}', note)
+              F['swdi'][url] = rec
+
+          # ════════════════════════════════════════════════════════════════
+          # B · NCEI MONTHLY NORMALS
+          # Current: /data/normals-monthly/1991-2020/access/{ID}.csv
+          # Blocked by `Disallow: /data*`. The other three NCEI families the
+          # fetcher uses are already on permitted paths.
+          #
+          # EQUIVALENCE BASELINE, from src/data/generated/noaa-climate/*.json:
+          #   USW00013958 Austin-Camp Mabry  MLY-CLDD-NORMAL by month
+          #     1:9.6 2:24 3:73.2 4:171.7 5:369.9 6:541.4
+          #     7:644.8 8:664.8 9:473.7 10:238.3 11:62.3 12:16.1
+          #     years 29 (Apr/May 30), comp_flag S
+          #   USW00012970 San Antonio Stinson
+          #     1:11 2:35.2 3:95.2 4:206.6 5:408.9 6:563.9
+          #     7:643.3 8:667.9 9:487.8 10:263.9 11:70.8 12:19.5
+          #     years 19/20, comp_flag R
+          # ════════════════════════════════════════════════════════════════
+          STATION = 'USW00013958'
+          ADS = 'https://www.ncei.noaa.gov/access/services/data/v1'
+          NORMALS_CANDIDATES = [
+              (f'{ADS}?dataset=normals-monthly-1991-2020&stations={STATION}'
+               f'&dataTypes=MLY-CLDD-NORMAL&format=json&startDate=2010-01-01&endDate=2010-12-31',
+               'Access Data Service, normals dataset — the family already used for GSOM'),
+              (f'{ADS}?dataset=normals-monthly-1991-2020&stations={STATION}'
+               f'&dataTypes=MLY-CLDD-NORMAL&format=json',
+               'same, without a date range'),
+              (f'{ADS}?dataset=normals-monthly&stations={STATION}'
+               f'&dataTypes=MLY-CLDD-NORMAL&format=json',
+               'alternate dataset id spelling'),
+              ('https://www.ncei.noaa.gov/access/services/search/v1/datasets?text=normals',
+               'what the service itself calls its normals datasets'),
+              (f'https://www.ncei.noaa.gov/pub/data/normals/1991-2020/access/{STATION}.csv',
+               'the same static CSV under /pub/data/, which ncei permits'),
+              ('https://www.ncei.noaa.gov/pub/data/normals/1991-2020/',
+               'does a /pub/data/ normals tree exist at all'),
+          ]
+          for url, note in NORMALS_CANDIDATES:
+              rec, b = probe(url, f'normals:{url}', note)
+              F['normals'][url] = rec
+
+          json.dump({'findings': F, 'log': log}, open(f'{OUT}/probe-1.json', 'w'), indent=2)
+          for group in ('swdi', 'normals'):
+              print(f'\n══ {group.upper()} ══')
+              for url, r in F[group].items():
+                  verdict = 'ROBOTS-REFUSED' if not r['robots_allows'] else f"HTTP {r.get('http')} ({r.get('bytes')}b)"
+                  print(f"  {verdict:24s} {url[:95]}")
+          print(f'\n{len(log)} requests; skipped by robots: '
+                f'{sum(1 for x in log if x["status"] == "SKIPPED_BY_ROBOTS")}')
+          PY
+      - name: Commit findings
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A tmp/allowed
+          git commit -m "TEMPORARY: Round 41d probe findings" || echo "nothing to commit"
+          git push
