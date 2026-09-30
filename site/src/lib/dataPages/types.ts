@@ -14,7 +14,7 @@
  *     is connected" while its own badge read LIVE over 75 real rows).
  */
 import type { DatasetFile, Observation } from "../../ingest/types";
-import { earliestObservedAt, latestObservedAt } from "../datasets";
+import { earliestObservedAt, latestObservedAt } from "../observations";
 import { formatMonth } from "../format";
 
 export interface DataPageContext<T> {
@@ -45,6 +45,28 @@ export interface DataPageSpec<T> {
   topic: string;
   locationLabel: string;
   datasetId: string;
+
+  /**
+   * Which of the dataset's observations this page is about. Round 41a.
+   *
+   * ⚠️ A DATASET FILE IS NOT ALWAYS ONE PAGE'S WORTH OF DATA, and assuming it
+   * was produced a live false statement. `usdm-drought/austin.json` held only
+   * Travis County when the drought page was written; Round 4b added Williamson
+   * and Hays to the same file for the stress index, and the page — which says
+   * "recorded for Travis County" — went on rendering every row in the file. It
+   * published 68 weekly readings from three counties under one county's name,
+   * including three different values all dated the same week.
+   *
+   * So a spec that speaks for a subset must SAY which subset, here, once.
+   * `specObservations()` in ./index.ts applies it, and every surface that
+   * builds a context — the data page, its CSV, the location hub, the service
+   * pages, the homepage and the conditions panel — goes through that helper, so
+   * a page and its own CSV cannot disagree about what the page covers.
+   *
+   * Omitted means the whole file, which is correct for a feed whose file is
+   * already exactly one page's scope.
+   */
+  scope?: (o: Observation<T>) => boolean;
 
   title: string;
   description: string;

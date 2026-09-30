@@ -9,7 +9,7 @@
  * disagree. The URL is unchanged (CLAUDE.md: preserve URLs).
  */
 import type { APIRoute, GetStaticPaths } from "astro";
-import { publishedDataPages, type DataPageSpec } from "../../../../lib/dataPages";
+import { publishedDataPages, type DataPageSpec, specObservations } from "../../../../lib/dataPages";
 import { requireDataset } from "../../../../lib/datasets";
 
 export const getStaticPaths: GetStaticPaths = () =>
@@ -26,9 +26,7 @@ function csvCell(value: string): string {
 export const GET: APIRoute = ({ props }) => {
   const spec = props.spec as DataPageSpec<any>;
   const dataset = requireDataset(spec.datasetId, spec.location);
-  const observations = dataset.observations
-    .filter((o) => !o.seed)
-    .sort((a, b) => b.observedAt.localeCompare(a.observedAt));
+  const observations = specObservations(spec, dataset);
 
   const header = ["observed_at", ...spec.columns.map((c) => c.header)];
   const rows = observations.map((o) => [o.observedAt, ...spec.columns.map((c) => c.cell(o))]);

@@ -23,7 +23,7 @@ import DataStatus from "../components/DataStatus.astro";
 import FaqAccordion from "../components/FaqAccordion.astro";
 import LiveConditionsPanel from "../components/LiveConditionsPanel.astro";
 import { getCollection, getEntry } from "astro:content";
-import { hasDataHub, publishedDataPages } from "../lib/dataPages";
+import { hasDataHub, publishedDataPages, specObservations } from "../lib/dataPages";
 import { findDataset, freshnessOf } from "../lib/datasets";
 import { SERVICE_SIGNALS, SERVICES_WITHOUT_SIGNAL } from "../lib/serviceSignals";
 import BelowHero from "../components/BelowHero.astro";
@@ -72,9 +72,7 @@ const signalSpec = signal
 const signalReading = signalSpec
   ? (() => {
       const dataset = findDataset(signalSpec.datasetId, signalSpec.location)!;
-      const observations = dataset.observations
-        .filter((o) => !o.seed)
-        .sort((a, b) => b.observedAt.localeCompare(a.observedAt));
+      const observations = specObservations(signalSpec, dataset);
       return {
         dataset,
         freshness: freshnessOf(dataset),

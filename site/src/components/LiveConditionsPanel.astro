@@ -13,7 +13,7 @@
  * Every reading is computed from the generated datasets, with its source and
  * dates, so the panel is subject to the same honesty rules as a data page.
  */
-import { publishedDataPages } from "../lib/dataPages";
+import { publishedDataPages, specObservations } from "../lib/dataPages";
 import { findDataset, freshnessOf } from "../lib/datasets";
 import { sparkline } from "../lib/sparkline";
 import { formatDate } from "../lib/format";
@@ -39,9 +39,7 @@ const readings = topics
     const spec = published.find((s) => s.topic === topic);
     if (!spec) return undefined;
     const dataset = findDataset(spec.datasetId, spec.location)!;
-    const observations = dataset.observations
-      .filter((o) => !o.seed)
-      .sort((a, b) => b.observedAt.localeCompare(a.observedAt));
+    const observations = specObservations(spec, dataset);
     const stat = spec.stats({ dataset, observations })[0];
     return { spec, dataset, stat, freshness: freshnessOf(dataset) };
   })

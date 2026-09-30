@@ -2520,3 +2520,30 @@ separate go-live step — not implied by any phase above being "done."
   `.card .card-tag`. If a future rule needs to beat that, beat it deliberately — the 3px drift
   this fixed survived for many rounds precisely because a size was reported in a replay note and
   never asserted. `eyebrowrender` asserts the computed size now.
+
+- **Round 41a — a dataset file is not always one page's worth of data.**
+  `/data/austin/drought/` said *"Every weekly U.S. Drought Monitor reading recorded for Travis
+  County"* and rendered **68 rows from three counties**, including three different values all
+  dated Sep 22 2026 with nothing to distinguish them. San Antonio was the same with Bexar, Comal
+  and Guadalupe. **The page was correct when it shipped**; Round 4b added neighbouring counties
+  to the same file for the stress index, and nothing told the page. `makeDroughtSpec` took a
+  `countyName` — but only as a word for copy. **A word cannot enforce anything.**
+  **The fix is `DataPageSpec.scope`**, applied in exactly one place (`dataPages/scope.ts`), which
+  six surfaces now go through: the data page, its CSV endpoint, the location hub, the service
+  pages, the homepage and the live conditions panel. Each had rebuilt the list by hand.
+  `countyFips` is now required on the drought spec, because the observation keys are
+  `{fips}-{mapDate}` and the FIPS is the thing the rows can be checked against.
+  **Two further defects fell out of it.** The homepage never sorted its observations, so the
+  drought card published **D1 from 2025-08-19 under a LIVE badge and "Data through Sep 22, 2026"**
+  — thirteen months stale, two categories low; it now reads D3. And every "weeks" figure was
+  counting rows: *"68 of the 68 weekly readings"* across a **58-week** window, on six pages.
+  **The rule for a headline reading: narrow to the page's own scope first, then take the newest.**
+  Before, "Current category" was `observations[0]` across three counties — a tie broken by array
+  order. `datascopeunit` proves it by reshuffling the file: the unfixed spec returns D3 or D1
+  depending only on row order.
+
+- **A note for anyone adding a data page, or changing an ingest fetcher's county list:** if a
+  spec speaks for a subset of its file, it must say so via `scope`, and it must say so with
+  something the data carries (a FIPS, a key prefix) rather than a name only a human reads. If you
+  widen what a fetcher writes into an existing file, check every spec that reads it —
+  `datascopeunit` will catch a scope violation, but only for specs that declare one.

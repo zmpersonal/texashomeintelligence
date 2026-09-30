@@ -27,7 +27,7 @@ import FaqAccordion from "../components/FaqAccordion.astro";
 import DroughtMapHero from "../components/DroughtMapHero.astro";
 import LiveConditionsPanel from "../components/LiveConditionsPanel.astro";
 import { getCollection } from "astro:content";
-import { publishedDataPages } from "../lib/dataPages";
+import { publishedDataPages, specObservations } from "../lib/dataPages";
 import { findDataset, freshnessOf } from "../lib/datasets";
 
 const faqEntries = await getCollection("faq");
@@ -50,7 +50,7 @@ const featured = FEATURED.map((f) => {
   const spec = published.find((s) => s.location === f.location && s.topic === f.topic);
   if (!spec) return undefined;
   const dataset = findDataset(spec.datasetId, spec.location)!;
-  const observations = dataset.observations.filter((o) => !o.seed);
+  const observations = specObservations(spec, dataset);
   const stat = spec.stats({ dataset, observations })[0];
   return { spec, dataset, freshness: freshnessOf(dataset), label: f.label, stat };
 }).filter((f) => f !== undefined);
