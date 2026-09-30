@@ -105,17 +105,18 @@ jobs:
               log.append({'url': url, 'label': label, 'status': st, 'bytes': len(body)})
               return body if st == 200 else None
 
-          # ---- PASS 4 (pass 3's queries; pass 3 lost them to a stale print) ----
-          # Pass 2 findings this pass settles:
-          #  * Dallas' rowsUpdatedAt is 2020-08-30 while its own metadata claims
-          #    "Update Frequency: Daily". Do not kill a metro on a metadata field
-          #    when that metro's OTHER metadata field was just caught lying —
-          #    ask the data for its own max(issued_date).
-          #  * Fort Worth's id from the cross-domain search 404s on its own host,
-          #    so ask that host's catalogue instead.
-          #  * Houston's /api/ is disallowed for User-agent: * and the guard
-          #    refused it. That is the finding; no workaround is attempted.
-          findings = {'dallas': {}, 'fortworth': {}, 'houston': 'ROBOTS: /api/ disallowed for *'}
+          # ---- PASS 5 ----
+          # Pass 4 settled the corridor (no city publishes a permit feed) and
+          # Houston (robots refuses every machine-readable path). Two loose ends:
+          #
+          #  * Dallas came back status 0 on all three queries — my own bug, not
+          #    the city's: the SoQL contained raw spaces and urllib rejected the
+          #    URL before a request was ever made. Quote the query.
+          #  * data.fortworthtexas.gov 404s on /api/catalog/v1 AND /api/views/,
+          #    and its robots.txt is byte-identical to hub.arcgis.com's apart
+          #    from the sitemap host. It is an ArcGIS Hub site, so the Socrata id
+          #    from pass 1's cross-domain search was a false match. Ask Hub.
+          findings = collections.defaultdict(dict)
 
           DH, DID = 'www.dallasopendata.com', 'e7gq-4sah'
           for label, q in [
@@ -123,75 +124,29 @@ jobs:
               ('by_month', '$select=date_trunc_ym(issued_date) as m, count(1) as n&$group=m&$order=m DESC&$limit=30'),
               ('by_type', '$select=permit_type, count(1) as n&$group=permit_type&$order=n DESC&$limit=15'),
           ]:
-              b = fetch(f'https://{DH}/resource/{DID}.json?{q}', f'dallas:{label}')
+              qs = '&'.join(urllib.parse.quote(part, safe='=$(),*') for part in q.split('&'))
+              b = fetch(f'https://{DH}/resource/{DID}.json?{qs}', f'dallas:{label}')
               if b:
                   v, err = jparse(b, label)
                   findings['dallas'][label] = err or v
 
-          FH = 'data.fortworthtexas.gov'
-          b = fetch(f'https://{FH}/api/catalog/v1?q=permit&limit=40', 'fortworth:catalogue')
-          if b:
-              v, err = jparse(b, 'fw-cat')
-              if err: findings['fortworth']['catalogue'] = err
-              else:
-                  findings['fortworth']['catalogue'] = [
-                      {'name': r['resource']['name'], 'id': r['resource']['id'],
-                       'type': r['resource'].get('type'), 'updated': r['resource'].get('updatedAt')}
-                      for r in v.get('results', [])[:15]]
-                  for r in v.get('results', [])[:6]:
-                      if r['resource'].get('type') != 'dataset': continue
-                      rid = r['resource']['id']
-                      mb = fetch(f'https://{FH}/api/views/{rid}.json', f'fw-meta:{rid}')
-                      if mb:
-                          m, e2 = jparse(mb, 'fw-meta')
-                          if not e2:
-                              findings['fortworth'][rid] = {
-                                  'name': m.get('name'), 'license': m.get('license'),
-                                  'licenseId': m.get('licenseId'), 'attribution': m.get('attribution'),
-                                  'rowsUpdatedAt': m.get('rowsUpdatedAt'),
-                                  'custom': (m.get('metadata') or {}).get('custom_fields'),
-                                  'columns': [c.get('fieldName') for c in m.get('columns', [])]}
-
-          # ---- corridor: one looser look, then done ----
-          # Pass 1 searched ArcGIS Hub for "building permits" per city and pass 2
-          # found no open-data host for any of the four. This is the last look:
-          # a looser Hub query and the city's own Socrata footprint. If nothing
-          # machine-readable turns up here, that is the finding — no workaround.
-          findings['corridor'] = {}
-          for city in ['New Braunfels', 'San Marcos TX', 'Round Rock', 'Kyle TX']:
-              row = {}
-              q = urllib.parse.quote(f'{city} permit')
-              b = fetch(f'https://hub.arcgis.com/api/v3/datasets?q={q}&page[size]=10',
-                        f'corridor-hub:{city}')
+          # Fort Worth via the ArcGIS Hub API its robots.txt fingerprints it as.
+          for label, q in [('permits', 'Fort Worth permits'), ('building', 'Fort Worth building permit')]:
+              b = fetch('https://hub.arcgis.com/api/v3/datasets'
+                        f'?q={urllib.parse.quote(q)}&page[size]=12', f'fw-hub:{label}')
               if b:
-                  v, err = jparse(b, 'hub')
-                  row['hub'] = err or [
-                      {'title': (d.get('attributes') or {}).get('name'),
+                  v, err = jparse(b, 'fw-hub')
+                  findings['fortworth'][label] = err or [
+                      {'name': (d.get('attributes') or {}).get('name'),
                        'owner': (d.get('attributes') or {}).get('source'),
-                       'type': (d.get('attributes') or {}).get('type')}
+                       'type': (d.get('attributes') or {}).get('type'),
+                       'license': (d.get('attributes') or {}).get('license'),
+                       'modified': (d.get('attributes') or {}).get('modified'),
+                       'recordCount': (d.get('attributes') or {}).get('recordCount'),
+                       'url': (d.get('attributes') or {}).get('url')}
                       for d in (v.get('data') or [])]
-              b = fetch(f'https://api.us.socrata.com/api/catalog/v1?q={q}&limit=10',
-                        f'corridor-socrata:{city}')
-              if b:
-                  v, err = jparse(b, 'socrata')
-                  row['socrata'] = err or [
-                      {'name': r['resource']['name'],
-                       'domain': r.get('metadata', {}).get('domain')}
-                      for r in (v.get('results') or [])]
-              findings['corridor'][city] = row
 
-          # ---- Houston: record the refusal, do not work around it ----
-          hst, hdis, hallow = star_rules('data.houstontx.gov')
-          findings['houston'] = {
-              'robots_status': hst,
-              'star_group_disallow_count': len(hdis),
-              'machine_readable_paths_disallowed': [r for r in hdis
-                                                    if r.startswith(('/api', '/datastore'))],
-              'note': 'CKAN portal. Both /api/ and /datastore/* are disallowed for '
-                      'User-agent: *, so no compliant machine-readable read exists. '
-                      'No workaround attempted.'}
-
-          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-4.json', 'w'), indent=2)
+          json.dump({'findings': findings, 'log': log}, open(f'{OUT}/probe-5.json', 'w'), indent=2)
           print(json.dumps(findings, indent=2)[:6000])
           print(f'\n{len(log)} requests; skipped by robots: '
                 f'{sum(1 for x in log if x["status"] == "SKIPPED_BY_ROBOTS")}')
