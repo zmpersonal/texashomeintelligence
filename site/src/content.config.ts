@@ -22,6 +22,21 @@ const locations = defineCollection({
     region: z.string(),
     counties: z.string(),
     hubIntro: z.string(),
+    /**
+     * Whether `/{location}/{service}/` pages generate for this location.
+     *
+     * Round 41b. `[location]/[service]/index.astro` crosses every location with
+     * every service, so adding one location YAML generated eight pages — the hub
+     * and seven service pages — whether or not anyone wanted them. Measured with
+     * a stub during the Round 41 pre-check.
+     *
+     * Defaults true, so Austin and San Antonio are untouched. New Braunfels and
+     * San Marcos set it false: they are city pages backed by county readings,
+     * with no city-level service data behind a `/new-braunfels/roofing/`. This
+     * is a field on the schema rather than a slug list in the route, so a future
+     * location answers the question in its own file.
+     */
+    servicePages: z.boolean().default(true),
   }),
 });
 

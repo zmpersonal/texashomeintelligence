@@ -1,6 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 import LocationHub from "../../layouts/LocationHub.astro";
+import CityHub from "../../layouts/CityHub.astro";
+import { isLocation } from "../../data/locations";
 
 export async function getStaticPaths() {
   const locations = await getCollection("locations");
@@ -12,4 +14,4 @@ export async function getStaticPaths() {
 const { location } = Astro.params;
 ---
 
-<LocationHub locationSlug={location} />
+{isLocation(location!) ? <CityHub locationSlug={location} /> : <LocationHub locationSlug={location} />}

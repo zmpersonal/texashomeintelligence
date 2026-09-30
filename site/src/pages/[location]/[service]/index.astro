@@ -9,6 +9,10 @@ export async function getStaticPaths() {
   const services = await getCollection("services");
   const paths = [];
   for (const loc of locations) {
+    // Round 41b: a location can opt out of service pages entirely. Without
+    // this, adding one YAML file generated seven service pages nobody asked
+    // for, each one indexed and in the sitemap.
+    if (loc.data.servicePages === false) continue;
     for (const svc of services) {
       paths.push({ params: { location: loc.id, service: svc.id } });
     }

@@ -93,9 +93,14 @@ const datasetJsonLd = {
                lands correctly either way. */
             <div class="card" id={loc.id} style="scroll-margin-top:128px;">
               <h3>{loc.name}</h3>
+              {/* Round 41b. This promised "permit activity" for every location on
+                  the catalog, which became false the moment a city that publishes
+                  no permits was listed. Derived from what this location actually
+                  has, so the sentence cannot outrun the data. */}
               <p>
-                Weather &amp; storm exposure, permit activity, drought conditions, and more
-                {loc.counties ? ` for ${loc.counties}` : ""}.
+                {forLocation.length > 0
+                  ? `${forLocation.map(({ spec }) => spec.h1).join(", ")}${loc.counties ? ` — ${loc.counties}` : ""}.`
+                  : `Measured conditions${loc.counties ? ` for ${loc.counties}` : ""}.`}
               </p>
               {forLocation.length > 0 ? (
                 <>

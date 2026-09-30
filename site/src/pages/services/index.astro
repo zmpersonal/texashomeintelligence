@@ -34,7 +34,11 @@ const locationRank = (id: string) => {
 };
 
 const services = await getCollection("services");
-const locations = await getCollection("locations");
+// Round 41b: this page is a location x service grid, so it lists only
+// locations that have service pages.
+const locations = (await getCollection("locations")).filter(
+  (l) => l.data.servicePages !== false,
+);
 
 const orderedServices = SERVICE_ORDER.map((slug) => services.find((s) => s.id === slug)).filter(
   (s) => s !== undefined,

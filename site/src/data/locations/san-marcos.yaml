@@ -1,0 +1,9 @@
+name: San Marcos
+region: "Hays County · Austin metro"
+counties: "Hays County"
+servicePages: false
+hubIntro: >-
+  San Marcos sits in Hays County, inside the Austin metro. The readings below are
+  measured in Hays County itself, not borrowed from Travis — and where a signal
+  does not exist for this county, the page says so rather than substituting the
+  metro's number.

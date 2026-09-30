@@ -55,7 +55,13 @@ const cityName = loc.name;
 // "The other one" is only meaningful for two, so this takes the NEXT location in
 // the collection's own order, wrapping at the end. With two metros that is the
 // identical pairing; with three it is a cycle rather than a collision.
-const locationSlugs = (await getCollection("locations")).map((e) => e.id).sort();
+// Round 41b: only locations that HAVE service pages can be cross-linked to.
+// New Braunfels and San Marcos set servicePages:false, and linking a
+// roofing page at /new-braunfels/roofing/ would be a link to nothing.
+const locationSlugs = (await getCollection("locations"))
+  .filter((e) => e.data.servicePages !== false)
+  .map((e) => e.id)
+  .sort();
 const otherLocationSlug =
   locationSlugs[(locationSlugs.indexOf(locationSlug) + 1) % locationSlugs.length];
 const otherLocationEntry = await getEntry("locations", otherLocationSlug);
