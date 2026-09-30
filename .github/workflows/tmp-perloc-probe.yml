@@ -65,7 +65,14 @@ jobs:
                   # and refused the whole host to everyone. A guard that errs
                   # toward refusing still produces a false finding.
                   if not l:
-                      if cur is not None and cur['rules']:
+                      # UNCONDITIONALLY, even with no rules. Pass 2 kept the
+                      # `and cur['rules']` guard here and so changed nothing:
+                      # `User-agent: *` with an empty rule set is still a
+                      # complete group, and leaving it open let the next
+                      # `User-agent:` line join it. That guard belongs only on
+                      # the user-agent branch, where CONSECUTIVE agent lines do
+                      # legitimately share one group.
+                      if cur is not None:
                           groups.append(cur)
                           cur = None
                       continue
@@ -281,7 +288,7 @@ jobs:
                   hist[vintage] = 'ok' if isinstance(r, list) and len(r) > 1 else r
           F['acs']['place_vintages_new_braunfels'] = hist
 
-          json.dump({'findings': F, 'log': log}, open(f'{OUT}/probe-2.json', 'w'), indent=2)
+          json.dump({'findings': F, 'log': log}, open(f'{OUT}/probe-3.json', 'w'), indent=2)
           print(json.dumps({k: v for k, v in F.items() if k in ('points', 'city_to_metro_point_miles')}, indent=2))
           print(f'\n{len(log)} requests; skipped by robots: '
                 f'{sum(1 for x in log if x["status"] == "SKIPPED_BY_ROBOTS")}')
