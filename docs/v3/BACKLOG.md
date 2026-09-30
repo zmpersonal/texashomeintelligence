@@ -580,7 +580,7 @@ to the city, not by code.
 
 ---
 
-### 16 · Nav still names two metros, in owner copy
+### 16 · ✅ CLOSED by Round 41b — Nav named two metros, in owner copy
 
 **Owner's, to write — copy, not code.** Logged from Round 40; no replacement copy is proposed
 here.
@@ -596,7 +596,8 @@ Round 40 left **both** alone on purpose. Deriving the dropdown while leaving a l
 exactly two metros would make the page disagree with itself — the dropdown would show three, the
 line above it would say two. The two have to move together, and the line is the owner's to write.
 
-**Decision needed:** the replacement eyebrow wording. The dropdown change ships with it.
+**CLOSED.** The owner supplied `Central Texas • more metros coming soon`, and Round 41b shipped
+it with the dropdown change — San Marcos and New Braunfels now sit under their metros.
 
 **Scope → blocked on copy, then small.**
 
@@ -788,3 +789,51 @@ city.
 it wants a reason rather than a round number.
 
 **Scope → unscheduled, small, but blocked on the pad decision.**
+
+---
+
+### 24 · ✅ CLOSED by Round 41b — defined on the unmerged 41e branch
+
+**Item 24 lives on the Round 41e branch, not in this file.** It recorded that New Braunfels has
+a qualifying cooling-load station at 5.2 mi and San Marcos does not, and asked two questions:
+whether to publish San Marcos at all, and how to handle the station's published name.
+
+**Both answered and shipped in Round 41b.** San Marcos is withheld with a stated reason, enforced
+in code — `locationSite()` throws for a location with no `climateStation`. The station's NOAA
+name `AUSTIN SAN ANTONIO` never renders; the card leads with the distance. See
+`docs/audits/round-41b-corridor-locations.md`.
+
+**When 41e merges, item 24 arrives already closed.** Reconcile the two sections rather than
+leaving both open.
+
+---
+
+### 25 · `/new-braunfels/` and `/dashboard/78130/` disagree about the same ZIP
+
+Round 41b. The city page publishes **Comal County** readings. The ZIP dashboard for 78130 —
+which is New Braunfels' main ZIP — publishes **Bexar County** readings, because the dashboard
+resolves a ZIP to its metro and then reads that metro's primary county.
+
+**The city page is the more accurate surface.** 78130 is in Comal County, and Comal is what the
+city page measures.
+
+**This is inconsistent, not false**, which is why it can wait. The dashboard's own copy already
+tells the reader exactly what it is doing, verbatim:
+
+> 78130 is in Comal County. The readings shown are for Bexar County, which is the county we
+> publish for the San Antonio metro — so they describe nearby conditions rather than Comal
+> County itself. This ZIP spans 2 counties in the metro. It also crosses the Austin–San Antonio
+> metro boundary; we report it under San Antonio.
+
+plus a separate boundary note naming both metros. A reader is not misled; they are told less
+than the city page could tell them.
+
+**Not reconciled in 41b** — the dashboard reads per-metro artifacts, and pointing a ZIP at its
+own county's readings is a change to how every ZIP resolves, not a change to one page. That
+wants its own round and its own verification.
+
+**Decision needed:** whether the ZIP dashboard should prefer the ZIP's own county where one is
+ingested (Comal, Hays, Williamson and Guadalupe all are), falling back to the metro's primary
+county otherwise — and what that does to the 52 of 231 crosswalk rows where the two differ.
+
+**Scope → unscheduled, medium.**

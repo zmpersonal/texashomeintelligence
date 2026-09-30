@@ -16,7 +16,13 @@ import DataStatus from "../components/DataStatus.astro";
 import { getEntry } from "astro:content";
 import { locationDef } from "../data/locations";
 import { areaLabel } from "../data/zip-areas";
-import { droughtFor, stormsFor, isWithheld } from "../lib/locationReadings";
+import {
+  droughtFor,
+  stormsFor,
+  housingFor,
+  coolingLoadFor,
+  isWithheld,
+} from "../lib/locationReadings";
 import { dataPageHref } from "../lib/dataPages";
 
 interface Props {
@@ -32,6 +38,8 @@ const metroLabel = areaLabel(loc.areaId);
 
 const drought = droughtFor(loc);
 const storms = stormsFor(loc);
+const housing = housingFor(loc);
+const cooling = coolingLoadFor(loc);
 
 const readings = [
   {
@@ -47,6 +55,19 @@ const readings = [
     reading: drought,
     note: "Weekly U.S. Drought Monitor assessment.",
     href: dataPageHref("usdm-drought", loc.areaId, "drought"),
+  },
+  {
+    key: "cooling",
+    // The station's NOAA name is deliberately absent — see coolingLoadFor().
+    label: `Cooling load, ${copy.name}`,
+    reading: cooling,
+    href: undefined,
+  },
+  {
+    key: "housing",
+    label: `Housing stock, ${copy.name}`,
+    reading: housing,
+    href: undefined,
   },
 ];
 const live = readings.filter((r) => !isWithheld(r.reading));
@@ -116,7 +137,7 @@ const fmt = (iso?: string) =>
             `${copy.name} sits in the ${metroLabel} metro, but these are not ${metroLabel} numbers.`
           : `We do not yet publish a measured reading for ${loc.county.name} County.`}
       </p>
-      <div class="grid-3">
+      <div class="grid-4">
         {live.map(({ label, reading, href }) => {
           if (isWithheld(reading)) return null;
           const card = (
@@ -124,6 +145,11 @@ const fmt = (iso?: string) =>
               <p class="metric-label">{label}</p>
               <p class="metric-value">{reading.value}</p>
               <p class="metric-note">{reading.detail}</p>
+              {/* The grain the number was measured at, on the card rather than
+                  only in the heading. For cooling load this is the station
+                  DISTANCE — the station's NOAA name is "AUSTIN SAN ANTONIO",
+                  which on this page would read as an error. */}
+              <p class="metric-note">Measured: {reading.county}</p>
               <p class="metric-note">
                 {reading.observations} record{reading.observations === 1 ? "" : "s"}
                 {reading.from && reading.to ? `, ${fmt(reading.from)} – ${fmt(reading.to)}` : ""}

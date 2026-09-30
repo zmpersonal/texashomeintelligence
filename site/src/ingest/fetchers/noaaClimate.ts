@@ -459,7 +459,7 @@ async function resolveNormals(site: ClimateSite, rejections: string[]): Promise<
   }
 
   throw new Error(
-    `noaa-climate/${location}: no USW station passed the record-quality bar. Rejected: ${rejections.join(" | ")}`,
+     `noaa-climate/${site.id}: no USW station passed the record-quality bar. Rejected: ${rejections.join(" | ")}`,
   );
 }
 

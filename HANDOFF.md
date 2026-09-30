@@ -2547,3 +2547,34 @@ separate go-live step — not implied by any phase above being "done."
   something the data carries (a FIPS, a key prefix) rather than a name only a human reads. If you
   widen what a fetcher writes into an existing file, check every spec that reads it —
   `datascopeunit` will catch a scope violation, but only for specs that declare one.
+
+- **Round 41b — a location is not a metro, and the difference is a config row.**
+  `src/data/locations.ts` is the entity three rounds kept needing. 41a scoped drought to a
+  county, 41c found Census ACS publishes at `for=place:`, 41e found a qualifying station 5.2 mi
+  from New Braunfels — each blocked because **`AreaId` was the only geography and a city is not
+  an area**. Giving New Braunfels an `AreaId` would have made it a metro: service pages, a data
+  hub, a ZIP grouping, a nav entry, none of which is true of it.
+  **Neither fetcher needed a special case, which is what the round set out to test.**
+  `censusAcs.ts` takes a geography descriptor — `for=county:NNN` and `for=place:NNNNN` go through
+  the identical endpoint and parsing. `noaaClimate.ts` takes a *site* (a file name and a point)
+  instead of a metro id, which is all its station resolution ever needed; New Braunfels is
+  resolved from its own point by the same code that resolves Austin's, and landed on the station
+  41e measured independently.
+  **`climateStation?` is the round's argument in one field.** Its absence IS San Marcos' withheld
+  reading: `locationSite()` throws for a location without one, so registering San Marcos by
+  accident fails the run rather than publishing New Braunfels' twelve numbers under a second
+  city's name. `climateunit` asserts it by name, not by count.
+  **The station's published name is `AUSTIN SAN ANTONIO`** — NOAA's, unchangeable, and on a New
+  Braunfels page it reads as an error. `coolingLoadFor()` never returns it; the card leads with
+  the distance, which is what qualified the station anyway. Asserted absent from both pages' HTML.
+  **`servicePages: false`** is the mechanism for a hub-only location. Adding two YAMLs produced
+  **14 broken links** immediately — `ServicePage.astro`'s cross-link cycle and `/services/` both
+  assumed every location has service pages. The link gate caught both; a page-level review would
+  not have.
+
+- **A note for anyone adding a location:** put it in `src/data/locations.ts` AND
+  `src/data/locations/{slug}.yaml`, set `servicePages` deliberately, and give it a
+  `climateStation` only if a station has actually been measured against the bar in
+  `noaaClimate.ts` — proximity does not qualify one (Round 19c/41e). Every reading renders the
+  grain it was measured at on the card itself; if you add a reading, it carries its own grain or
+  it does not ship.
