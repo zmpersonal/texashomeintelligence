@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-30T15:54:57.968Z",
-  "lastSuccessAt": "2026-09-30T15:54:57.968Z",
+  "lastAttemptAt": "2026-09-30T22:32:06.163Z",
+  "lastSuccessAt": "2026-09-30T22:32:06.163Z",
   "lastError": null,
   "source": {
     "name": "Austin Water",
@@ -323,7 +323,7 @@
     },
     {
       "observedAt": "2026-09-30T00:00:00.000Z",
-      "ingestedAt": "2026-09-30T15:55:00.320Z",
+      "ingestedAt": "2026-09-30T22:32:06.369Z",
       "key": "austin-water-2026-09-30",
       "value": {
         "stage": "Conservation Stage",
