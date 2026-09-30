@@ -1,0 +1,472 @@
+{
+  "findings": {
+    "dallas": {
+      "rows_by_year_suffix": {
+        "2019": "52037",
+        "2020": "27459",
+        "2021": "0",
+        "2022": "0",
+        "2023": "0",
+        "2024": "0",
+        "2025": "0",
+        "2026": "0"
+      }
+    },
+    "fortworth": {
+      "CFW Development Permits Table": {
+        "title": "CFW Development Permits Table",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "modified": "2026-09-30T11:25:29.883Z",
+        "publisher": "City of Fort Worth",
+        "rights": null,
+        "accrualPeriodicity": null,
+        "distributions": [
+          {
+            "format": "Web Page",
+            "url": "https://data.fortworthtexas.gov/datasets/CFW::cfw-development-permits-table"
+          },
+          {
+            "format": "ArcGIS GeoServices REST API",
+            "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0"
+          },
+          {
+            "format": "CSV",
+            "url": "https://data.fortworthtexas.gov/api/download/v1/items/d2740f4d746b4bfaa03e25de0376238b/csv?layers=0"
+          },
+          {
+            "format": "ZIP",
+            "url": "https://data.fortworthtexas.gov/api/download/v1/items/d2740f4d746b4bfaa03e25de0376238b/shapefile?layers=0"
+          },
+          {
+            "format": "GeoJSON",
+            "url": "https://data.fortworthtexas.gov/api/download/v1/items/d2740f4d746b4bfaa03e25de0376238b/geojson?layers=0"
+          },
+          {
+            "format": "KML",
+            "url": "https://data.fortworthtexas.gov/api/download/v1/items/d2740f4d746b4bfaa03e25de0376238b/kml?layers=0"
+          },
+          {
+            "format": "ZIP",
+            "url": "https://data.fortworthtexas.gov/api/download/v1/items/d2740f4d746b4bfaa03e25de0376238b/filegdb?layers=0"
+          },
+          {
+            "format": "TXT",
+            "url": "https://data.fortworthtexas.gov/api/download/v1/items/d2740f4d746b4bfaa03e25de0376238b/featureCollection?layers=0"
+          },
+          {
+            "format": "XLSX",
+            "url": "https://data.fortworthtexas.gov/api/download/v1/items/d2740f4d746b4bfaa03e25de0376238b/excel?layers=0"
+          },
+          {
+            "format": "GPKG",
+            "url": "https://data.fortworthtexas.gov/api/download/v1/items/d2740f4d746b4bfaa03e25de0376238b/geoPackage?layers=0"
+          },
+          {
+            "format": "GDB",
+            "url": "https://data.fortworthtexas.gov/api/download/v1/items/d2740f4d746b4bfaa03e25de0376238b/sqlite?layers=0"
+          }
+        ],
+        "layer": {
+          "name": "Development Permits",
+          "type": "Table",
+          "maxRecordCount": 1000,
+          "supportsPagination": true,
+          "fields": [
+            [
+              "Unique_ID",
+              "esriFieldTypeString"
+            ],
+            [
+              "Count_",
+              "esriFieldTypeInteger"
+            ],
+            [
+              "Permit_No",
+              "esriFieldTypeString"
+            ],
+            [
+              "Permit_Type",
+              "esriFieldTypeString"
+            ],
+            [
+              "Permit_SubType",
+              "esriFieldTypeString"
+            ],
+            [
+              "Permit_Category",
+              "esriFieldTypeString"
+            ],
+            [
+              "B1_SPECIAL_TEXT",
+              "esriFieldTypeString"
+            ],
+            [
+              "B1_WORK_DESC",
+              "esriFieldTypeString"
+            ],
+            [
+              "Addr_No",
+              "esriFieldTypeInteger"
+            ],
+            [
+              "Direction",
+              "esriFieldTypeString"
+            ],
+            [
+              "Street_Name",
+              "esriFieldTypeString"
+            ],
+            [
+              "Street_Suffix",
+              "esriFieldTypeString"
+            ],
+            [
+              "Street_Suffix_Dir",
+              "esriFieldTypeString"
+            ],
+            [
+              "Full_Street_Address",
+              "esriFieldTypeString"
+            ],
+            [
+              "Zip_Code",
+              "esriFieldTypeInteger"
+            ],
+            [
+              "B1_LOT",
+              "esriFieldTypeString"
+            ],
+            [
+              "B1_BLOCK",
+              "esriFieldTypeString"
+            ],
+            [
+              "B1_TRACT",
+              "esriFieldTypeString"
+            ],
+            [
+              "B1_LEGAL_DESC",
+              "esriFieldTypeString"
+            ],
+            [
+              "Owner_Full_Name",
+              "esriFieldTypeString"
+            ],
+            [
+              "File_Date",
+              "esriFieldTypeDate"
+            ],
+            [
+              "Current_Status",
+              "esriFieldTypeString"
+            ],
+            [
+              "Status_Date",
+              "esriFieldTypeDate"
+            ],
+            [
+              "Location_1",
+              "esriFieldTypeString"
+            ],
+            [
+              "JobValue",
+              "esriFieldTypeString"
+            ],
+            [
+              "Use_Type",
+              "esriFieldTypeString"
+            ],
+            [
+              "Specific_Use",
+              "esriFieldTypeString"
+            ],
+            [
+              "Units",
+              "esriFieldTypeString"
+            ],
+            [
+              "SqFt",
+              "esriFieldTypeString"
+            ],
+            [
+              "ObjectId",
+              "esriFieldTypeOID"
+            ]
+          ]
+        },
+        "rowCount": {
+          "count": 1616404
+        }
+      },
+      "CFW Development Permits Points": {
+        "title": "CFW Development Permits Points",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "modified": "2026-09-30T07:09:35.199Z",
+        "publisher": "City of Fort Worth",
+        "rights": null,
+        "accrualPeriodicity": null,
+        "distributions": [
+          {
+            "format": "Web Page",
+            "url": "https://data.fortworthtexas.gov/datasets/CFW::cfw-development-permits-points"
+          },
+          {
+            "format": "ArcGIS GeoServices REST API",
+            "url": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/Permits/MapServer/0"
+          },
+          {
+            "format": "CSV",
+            "url": "https://data.fortworthtexas.gov/api/download/v1/items/12ca73741a5545bf87ead3f9a1c8c0e7/csv?layers=0"
+          },
+          {
+            "format": "ZIP",
+            "url": "https://data.fortworthtexas.gov/api/download/v1/items/12ca73741a5545bf87ead3f9a1c8c0e7/shapefile?layers=0"
+          },
+          {
+            "format": "GeoJSON",
+            "url": "https://data.fortworthtexas.gov/api/download/v1/items/12ca73741a5545bf87ead3f9a1c8c0e7/geojson?layers=0"
+          },
+          {
+            "format": "KML",
+            "url": "https://data.fortworthtexas.gov/api/download/v1/items/12ca73741a5545bf87ead3f9a1c8c0e7/kml?layers=0"
+          }
+        ],
+        "layer": {
+          "name": "Permits",
+          "type": "Feature Layer",
+          "maxRecordCount": 1000,
+          "supportsPagination": true,
+          "fields": [
+            [
+              "Unique_ID",
+              "esriFieldTypeString"
+            ],
+            [
+              "Count_",
+              "esriFieldTypeInteger"
+            ],
+            [
+              "Permit_No",
+              "esriFieldTypeString"
+            ],
+            [
+              "Permit_Type",
+              "esriFieldTypeString"
+            ],
+            [
+              "Permit_SubType",
+              "esriFieldTypeString"
+            ],
+            [
+              "Permit_Category",
+              "esriFieldTypeString"
+            ],
+            [
+              "B1_SPECIAL_TEXT",
+              "esriFieldTypeString"
+            ],
+            [
+              "B1_WORK_DESC",
+              "esriFieldTypeString"
+            ],
+            [
+              "Addr_No",
+              "esriFieldTypeInteger"
+            ],
+            [
+              "Direction",
+              "esriFieldTypeString"
+            ],
+            [
+              "Street_Name",
+              "esriFieldTypeString"
+            ],
+            [
+              "Street_Suffix",
+              "esriFieldTypeString"
+            ],
+            [
+              "Street_Suffix_Dir",
+              "esriFieldTypeString"
+            ],
+            [
+              "Address",
+              "esriFieldTypeString"
+            ],
+            [
+              "Zip_Code",
+              "esriFieldTypeString"
+            ],
+            [
+              "B1_LOT",
+              "esriFieldTypeString"
+            ],
+            [
+              "B1_BLOCK",
+              "esriFieldTypeString"
+            ],
+            [
+              "B1_TRACT",
+              "esriFieldTypeString"
+            ],
+            [
+              "B1_LEGAL_DESC",
+              "esriFieldTypeString"
+            ],
+            [
+              "Owner_Full_Name",
+              "esriFieldTypeString"
+            ],
+            [
+              "File_Date",
+              "esriFieldTypeDate"
+            ],
+            [
+              "Current_Status",
+              "esriFieldTypeString"
+            ],
+            [
+              "Status_Date",
+              "esriFieldTypeDate"
+            ],
+            [
+              "Location_1",
+              "esriFieldTypeString"
+            ],
+            [
+              "GeoCodeScore",
+              "esriFieldTypeInteger"
+            ],
+            [
+              "X_Coordinate",
+              "esriFieldTypeDouble"
+            ],
+            [
+              "Y_Coordinate",
+              "esriFieldTypeDouble"
+            ],
+            [
+              "Latitude",
+              "esriFieldTypeDouble"
+            ],
+            [
+              "Longitude",
+              "esriFieldTypeDouble"
+            ],
+            [
+              "shape",
+              "esriFieldTypeGeometry"
+            ],
+            [
+              "CAPID",
+              "esriFieldTypeOID"
+            ],
+            [
+              "JobValue",
+              "esriFieldTypeDouble"
+            ],
+            [
+              "Use_Type",
+              "esriFieldTypeString"
+            ],
+            [
+              "Specific_Use",
+              "esriFieldTypeString"
+            ],
+            [
+              "Units",
+              "esriFieldTypeString"
+            ],
+            [
+              "SqFt",
+              "esriFieldTypeString"
+            ]
+          ]
+        },
+        "rowCount": {
+          "count": 770067
+        }
+      }
+    }
+  },
+  "log": [
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%25%2F19'",
+      "label": "dallas:yr19",
+      "status": 200,
+      "bytes": 16
+    },
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%25%2F20'",
+      "label": "dallas:yr20",
+      "status": 200,
+      "bytes": 16
+    },
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%25%2F21'",
+      "label": "dallas:yr21",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%25%2F22'",
+      "label": "dallas:yr22",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%25%2F23'",
+      "label": "dallas:yr23",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%25%2F24'",
+      "label": "dallas:yr24",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%25%2F25'",
+      "label": "dallas:yr25",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "url": "https://www.dallasopendata.com/resource/e7gq-4sah.json?$select=count(1)%20as%20n&$where=issued_date%20like%20'%25%2F26'",
+      "label": "dallas:yr26",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "url": "https://data.fortworthtexas.gov/api/feed/dcat-us/1.1.json",
+      "label": "fortworth:dcat",
+      "status": 200,
+      "bytes": 169477
+    },
+    {
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0?f=json",
+      "label": "fw-layer-meta:CFW Development Permits Table",
+      "status": 200,
+      "bytes": 11662
+    },
+    {
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json",
+      "label": "fw-count:CFW Development Permits Table",
+      "status": 200,
+      "bytes": 17
+    },
+    {
+      "url": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/Permits/MapServer/0?f=json",
+      "label": "fw-layer-meta:CFW Development Permits Points",
+      "status": 200,
+      "bytes": 24549
+    },
+    {
+      "url": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/Permits/MapServer/0/query?where=1%3D1&returnCountOnly=true&f=json",
+      "label": "fw-count:CFW Development Permits Points",
+      "status": 200,
+      "bytes": 16
+    }
+  ]
+}
