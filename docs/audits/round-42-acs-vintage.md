@@ -6,8 +6,16 @@ Date: 2026-10-01 · Branch: `claude/thi-v3-round42-acs-vintage`, from `origin/ma
 40 requests to `api.census.gov`: **30 × 200, 10 × 404, 0 refused by the robots guard.** Every
 404 is a 2025 request; `api.census.gov/robots.txt` disallows nothing on these paths.
 
-The pin moved `2023 → 2024`. Four published figures changed, on two pages. **Nothing has been
-merged** — §6 is the decision this round exists to hand over.
+The pin moved `2023 → 2024`. Four published figures changed, on two pages.
+
+> **Superseded in part by Round 43.** §5 below reports the seed-contamination finding as **nine
+> rows**; the true count is **ten** — `airnow/san-antonio.json` was seeded on 2026-08-24 and this
+> round's scan anchored on 2026-08-23. Round 43 removed them, added reproduction-based detection
+> and a sweep assertion, and withdrew the electricity article. See
+> `docs/audits/round-43-seed-contamination.md`. **§1–§4 and §6 of this document — the vintage
+> tables, the variable check and every ACS figure — are unaffected**, and were re-verified after
+> rebasing onto the Round 43 merge: the four published figures render identically and no
+> 2023-vintage value survives anywhere in `dist/`.
 
 ---
 
