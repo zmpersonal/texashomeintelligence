@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-09-30T22:31:54.353Z",
-  "lastSuccessAt": "2026-09-30T22:31:54.353Z",
+  "lastAttemptAt": "2026-10-01T12:19:01.240Z",
+  "lastSuccessAt": "2026-10-01T12:19:01.240Z",
   "lastError": null,
   "source": {
     "name": "Census ACS",
@@ -18,6 +18,20 @@
       "value": {
         "medianHomeAgeYears": 37,
         "ownerOccupiedPct": 59.1,
+        "geography": {
+          "grain": "county",
+          "label": "Bexar County",
+          "fips": "029"
+        }
+      }
+    },
+    {
+      "observedAt": "2024-01-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-01T12:19:01.569Z",
+      "key": "acs5-2024",
+      "value": {
+        "medianHomeAgeYears": 36,
+        "ownerOccupiedPct": 58.8,
         "geography": {
           "grain": "county",
           "label": "Bexar County",
