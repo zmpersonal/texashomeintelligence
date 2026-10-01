@@ -213,9 +213,13 @@ That asymmetry is the whole explanation, and it is confirmed by the single count
 it is the one whose value says `"X (SAMPLE)"` — so the purge could see it, and its file being
 `status: sample` sent it down the tag-and-keep branch rather than the delete branch.
 
-This repo's history begins at `a220599` (2026-09-11) and already contains these rows, so when
-the stamp was added relative to the 2026-08-23 bootstrap cannot be established from here — but
-it does not need to be. The fingerprint gap explains the surviving rows without it.
+The fingerprint gap explains the surviving rows on its own, with no appeal to history.
+
+> **Correction (Round 43b).** This paragraph originally read *"this repo's history begins at
+> `a220599` (2026-09-11), so when the stamp was added … cannot be established from here."* That
+> was wrong: the session's clone is **shallow** (`clone_depth` 50). `origin/main` carries 461
+> commits and the history runs well before the bootstrap. Nothing here depends on it, but the
+> stated reason was a false premise.
 
 ### What is published as a result
 
