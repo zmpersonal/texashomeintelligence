@@ -864,11 +864,77 @@ county otherwise — and what that does to the 52 of 231 crosswalk rows where th
 
 ---
 
-### 26 · ✅ CLOSED by Round 43 — fabricated seed rows survived retirement
+### 26 · ✅ RESOLVED by Round 43 — fabricated seed rows survived retirement
 
-*Note on numbering: items 26 and 27 are logged on the unmerged Round 42 branch and arrive with
-it. This is an append so the two merge side by side rather than conflicting. Read this as the
-closure record for that item 26 whichever order they land in.*
+*Kept as logged by Round 42, when it was live. The closure record is the item 26 below.*
+
+Round 42, found while tracing an unexplained row in `census-acs/austin.json`. Full evidence in
+`docs/audits/round-42-acs-vintage.md` §5. **Present on `main`, not introduced by any branch.**
+
+Nine rows across eight generated datasets, all written by one bootstrap run at
+`2026-08-23T07:05:17`, all carrying values byte-identical to `seed.ts`'s `GENERATORS`, and
+**none carrying `seed: true`** — so `runIngestion`'s `filter((o) => !o.seed)` has never retired
+them and never will.
+
+**The one that is published.** `eia-electricity/texas.json` is `status: live`, its real EIA
+series stops at **2026-05**, and its three newest rows — 2026-06/07/08 at 13.58 / 13.73 /
+13.88¢ — are the last three values of the deterministic seed series, reproducible by re-running
+`mulberry32(seedFromString("eia-electricity/texas"))`. `latest()` takes the newest, so **13.88¢
+renders on eight built pages**: the homepage (under a **LIVE** badge, "Latest (August 2026)",
+sourced to the EIA), `/data/texas/electricity-prices/` (including "about $139 a month on a
+1,000 kWh bill", the FAQ "the most recent month the EIA has published", and the CSV), both
+`/{metro}/hvac/` pages, `/tools/ac-lifespan/`, `/analysis/`, and
+`/analysis/are-texas-electricity-prices-still-going-up/` — whose answer "No" rests on "down
+10.2% year over year" and "a 17.4% fall in one month", both artifacts of the seed tail sitting
+~2.5¢ below the real series.
+
+**Why three guards all miss it.** `verify-content.mjs`'s `looksSeeded` and
+`purge-seed-observations.mjs`'s `isSeed` are the same test: `seed === true`, a `sample-` key
+prefix, or the literal `SAMPLE` in the value. The purge calls those "the two fingerprints
+`seed.ts` has **always** written" — false. Only `noaaStormEvents` and `municipalPermits` write
+the prefix; `eiaElectricityPrice` and the `single()` helper write a bare `monthKey`. Only three
+of the ten `single()` feeds embed SAMPLE. **Eight of the thirteen generators carry neither
+fingerprint.** The proof is the single counter-example: `fema-nfhl/austin.json` holds the only
+`seed: true` row left in the tree, and it is the one whose value says `"X (SAMPLE)"`.
+
+`verify-content` passing is therefore not evidence these rows are absent.
+
+**The rest do not render today** — `census-acs/austin`'s 34 yrs / 58%, `nws-api/austin`'s
+96/74°F, `airnow/austin`'s AQI 42, and three `status: sample` files that `latest()` correctly
+withholds. But that is position, not protection: `eia-electricity` is what happens when a real
+feed stalls and a fabricated row becomes the newest, and `nws-api` and `airnow` are one outage
+away from it.
+
+**Fix, not applied:** (1) delete the nine rows — the purge script cannot find them; (2) widen
+the fingerprint at source so it cannot recur, by having `seed.ts` write a `sample-` prefixed key
+from *every* generator, and correct the comment that claims it already does; (3) re-run the
+gates. This removes a published figure from the homepage, a data page, a CSV and an indexed
+analysis article, so it is the owner's call.
+
+**Scope → own round, urgent.**
+
+---
+
+### 27 · `EXCLUDED_INPUTS` still says census-acs is Austin-only
+
+Round 42, one line. `src/lib/stressIndex/config.ts` excludes `census-acs` because "it is a metro
+median and **we only hold it for Austin**". Since 41b we hold four files — Travis, Bexar, Comal
+and Hays — so the stated reason is stale even though the exclusion may well still be right (the
+grain argument stands on its own; the availability argument no longer does).
+
+Trivial, but it is a reason-of-record for excluding a signal from a published score, so it
+should say something true.
+
+**Scope → trivial, bundle with any stress-index round.**
+
+---
+
+### 26 · ✅ CLOSED by Round 43 — closure record for item 26 above
+
+*Numbering: this is the closure of the item 26 immediately above, which Round 42 logged and
+Round 43 fixed. The two were written on branches that merged in the opposite order to the one
+they were done in, and they are kept side by side rather than collapsed — the finding and its
+resolution are both worth reading.*
 
 Round 43 removed them. **The count was ten, not nine** — `airnow/san-antonio.json` was seeded on
 2026-08-24 and Round 42's scan anchored on 2026-08-23, so its inventory missed one. Seven rows
