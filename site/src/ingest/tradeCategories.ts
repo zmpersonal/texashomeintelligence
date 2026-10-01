@@ -34,6 +34,8 @@
  * count and report it.
  */
 
+import type { AreaId } from "../data/zip-areas";
+
 /** The seven categories. Nothing outside this list is a category. */
 export const TRADE_CATEGORIES = [
   "roofing",
@@ -279,8 +281,23 @@ export function isUnknownAustinType(permitTypeDesc: string): boolean {
  * text-matched out of `description`, but Round 6 never measured that, and
  * this round classifies only from observed values. So they are absent, not
  * zero — a distinction a page must respect.
+ *
+ * ── ROUND 44: `Record<AreaId, …>`, NOT `Record<string, …>` ────────────────
+ * This was keyed by plain `string` until Round 44, which made it the one
+ * per-metro lookup a new metro could miss silently. Round 40's third-metro test
+ * reports "no file beyond the named lookups is implicated" — and it was right,
+ * because a `Record<string, …>` with a missing key is not an error. The gap was
+ * in what the compiler could see, not in the test.
+ *
+ * It matters more than most: this list is what tells a page a category is
+ * ABSENT rather than zero. A metro missing from here would silently claim it has
+ * a source for every trade, and a page would render an empty series as "no
+ * activity" instead of "we do not measure this here".
+ *
+ * `as const satisfies` rather than an annotation, so the literal keeps its
+ * narrow value types while the key set is still checked against `AreaId`.
  */
-export const CATEGORIES_WITHOUT_SOURCE: Record<string, TradeCategory[]> = {
+export const CATEGORIES_WITHOUT_SOURCE = {
   austin: ["foundation", "trees"],
   "san-antonio": [],
-};
+} as const satisfies Record<AreaId, readonly TradeCategory[]>;

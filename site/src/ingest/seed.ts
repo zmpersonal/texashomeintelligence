@@ -186,6 +186,23 @@ const NEVER_SEED = new Set([
   "arr-collection-schedule",
   "austin-water-stage",
   "permit-trade-activity",
+  // Round 44. `municipal-permits` belonged here from Round 8 and was missed:
+  // the reason given for `permit-trade-activity` — "a fabricated permit count is
+  // an invented fact about a real city, and the honest bootstrap state is no
+  // file at all until a real fetch succeeds" — is the same reason, about the
+  // same permits, from the same cities. Nothing distinguishes the two.
+  //
+  // Round 43 is why it is no longer merely untidy. Ten fabricated rows survived
+  // in production because the retirement filter could not recognise them, and
+  // one reached the homepage. Launching a metro by writing a fabricated permit
+  // file to disk first is the worst available way to start, even though
+  // `publishable()` would refuse it while the status stayed "sample" — that
+  // refusal is the second line of defence, not a licence to fabricate behind it.
+  //
+  // Safe for Austin and San Antonio: `seedIfMissing` skips any file that exists,
+  // and both of theirs have been live for many rounds, so nothing is re-seeded
+  // and nothing on disk changes.
+  "municipal-permits",
   "noaa-climate",
   // Round 22. A seeded hail signature is the worst kind of placeholder this
   // list guards against: it carries a LATITUDE AND LONGITUDE, so it does not

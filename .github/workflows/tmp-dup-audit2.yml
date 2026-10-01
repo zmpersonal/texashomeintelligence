@@ -1,0 +1,178 @@
+# TEMPORARY — Round 44, ruling 5, pass 2. DELETE BEFORE THE ROUND ENDS.
+#
+# AUSTIN IS CLEAN and is not re-asked: 59,811 rows in the window, 59,811 distinct
+# permit_number, 0.00% duplication, every repeat count exactly 1, and the
+# roof-matched subset 1:1 at 2,037/2,037. Its live figures are permit counts.
+#
+# SAN ANTONIO is unresolved because the CSV download returned HTTP 403 — and
+# that is my request's fault, not the feed's: the live fetcher pulls the same
+# resource successfully every day (permit-trade-activity/san-antonio.json has
+# lastSuccessAt 2026-10-01T12:19 and lastError null). The difference is the
+# header. `permitTradeActivity.ts` calls plain `fetch()` with no custom
+# User-Agent; my probe sent one. So this pass requests it the way the fetcher
+# does, and tries three header shapes rather than guessing which one matters.
+#
+# The question is unchanged and it is the one that outranks the round: does
+# San Antonio publish multiple rows per permit? If it does, every San Antonio
+# trade figure on the site is inflated and has been since Round 10.
+name: TEMPORARY duplicate-permit audit, San Antonio only (Round 44)
+
+on:
+  push:
+    branches: [claude/thi-v3-round44-fort-worth]
+    paths: ['.github/workflows/tmp-dup-audit2.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit San Antonio for duplicate permit rows
+        run: |
+          mkdir -p tmp/dup2
+          python3 - <<'PY'
+          import json, csv, io, re, collections, urllib.request, datetime
+
+          OUT = 'tmp/dup2'
+          log, F = [], {}
+          until = datetime.datetime(2026, 10, 1)
+          since = datetime.datetime(2025, 9, 1)
+
+          # Three header shapes, least-invented first. The fetcher sends NONE, so
+          # that is the one whose result counts; the others only tell us whether
+          # the 403 was about the header at all.
+          SHAPES = [
+              ('no-custom-headers', {}),
+              ('accept-only', {'Accept': '*/*'}),
+              ('browserish', {'User-Agent': 'Mozilla/5.0', 'Accept': '*/*'}),
+          ]
+
+          def get(url, headers, label, timeout=900):
+              req = urllib.request.Request(url, headers=headers)
+              try:
+                  with urllib.request.urlopen(req, timeout=timeout) as r:
+                      body = r.read()
+                      log.append({'label': label, 'status': r.status, 'bytes': len(body)})
+                      return r.status, body
+              except Exception as e:
+                  log.append({'label': label, 'status': getattr(e, 'code', 0), 'err': str(e)[:200]})
+                  return getattr(e, 'code', 0), b''
+
+          # Resource list, chosen the way sanAntonioCsvUrl() chooses: every name
+          # matching /permits?\s*issued/i, then the latest last_modified.
+          st, body = get('https://data.sanantonio.gov/api/3/action/package_show?id=building-permits',
+                         {}, 'package-show', timeout=300)
+          res_url = None
+          if st == 200:
+              pkg = json.loads(body)
+              cands = [r for r in pkg['result']['resources']
+                       if re.search(r'permits?\s*issued', r.get('name', ''), re.I)]
+              cands.sort(key=lambda r: (r.get('last_modified') or r.get('created') or ''), reverse=True)
+              F['resources'] = [{'name': r.get('name'), 'last_modified': r.get('last_modified'),
+                                 'url': r.get('url')} for r in cands]
+              if cands:
+                  res_url = cands[0]['url']
+                  F['chosen'] = cands[0]['name']
+                  F['chosen_url'] = res_url
+
+          text = None
+          for label, hdrs in SHAPES:
+              if text is not None: break
+              if not res_url: break
+              st, body = get(res_url, hdrs, f'csv-{label}')
+              F.setdefault('attempts', []).append({'shape': label, 'status': st, 'bytes': len(body)})
+              if st == 200 and len(body) > 1000:
+                  text = body.decode('utf-8', 'replace')
+                  F['worked_with'] = label
+
+          if text:
+              rdr = csv.DictReader(io.StringIO(text))
+              hdrs = rdr.fieldnames or []
+              F['headers'] = hdrs
+              def resolve(cands):
+                  for c in cands:
+                      for h in hdrs:
+                          if h.strip().upper() == c: return h
+                  return None
+              # The two the fetcher resolves, plus every plausible identifier.
+              date_col = resolve(['DATE ISSUED', 'ISSUE DATE', 'ISSUED DATE',
+                                  'ISSUE_DATE', 'ISSUED_DATE'])
+              type_col = resolve(['PERMIT TYPE', 'PERMIT_TYPE', 'PERMITTYPE', 'TYPE'])
+              id_candidates = [h for h in hdrs
+                               if re.search(r'permit\s*#|permit\s*num|permit\s*no|^permit$'
+                                            r'|record|case|folder|application', h, re.I)]
+              F['date_col'], F['type_col'] = date_col, type_col
+              F['id_candidates'] = id_candidates
+              # Count duplication against EVERY identifier candidate, because
+              # picking one and reporting it would be picking the answer.
+              rows_total = rows_in = 0
+              counters = {h: collections.Counter() for h in id_candidates}
+              blanks = {h: 0 for h in id_candidates}
+              by_type_rows = collections.Counter()
+              by_type_ids = {h: collections.defaultdict(set) for h in id_candidates}
+              for row in rdr:
+                  rows_total += 1
+                  raw = (row.get(date_col) or '').strip() if date_col else ''
+                  if not raw: continue
+                  dt = None
+                  for fmt in ('%Y-%m-%d', '%m/%d/%Y', '%Y-%m-%dT%H:%M:%S'):
+                      try:
+                          dt = datetime.datetime.strptime(raw[:len(fmt) + 2].strip(), fmt); break
+                      except ValueError:
+                          continue
+                  if dt is None:
+                      try: dt = datetime.datetime.fromisoformat(raw.replace('Z', ''))
+                      except ValueError: continue
+                  if not (since <= dt < until): continue
+                  rows_in += 1
+                  t = (row.get(type_col) or '').strip() if type_col else ''
+                  by_type_rows[t] += 1
+                  for h in id_candidates:
+                      v = (row.get(h) or '').strip()
+                      if v:
+                          counters[h][v] += 1
+                          by_type_ids[h][t].add(v)
+                      else:
+                          blanks[h] += 1
+              F['rows_total'] = rows_total
+              F['rows_in_window'] = rows_in
+              F['per_identifier'] = {
+                  h: {'distinct': len(counters[h]), 'blank_rows': blanks[h],
+                      'duplication_pct': (round((1 - len(counters[h]) / rows_in) * 100, 2)
+                                          if rows_in and counters[h] else None),
+                      'top_repeats': counters[h].most_common(10)}
+                  for h in id_candidates}
+              # And per trade-ish permit type, the figure a page would render.
+              F['by_permit_type_rows'] = by_type_rows.most_common(25)
+              if id_candidates:
+                  best = id_candidates[0]
+                  F['by_permit_type_distinct_example_identifier'] = best
+                  F['by_permit_type_distinct'] = {t: len(s) for t, s in
+                                                  sorted(by_type_ids[best].items(),
+                                                         key=lambda kv: -len(kv[1]))[:25]}
+
+          json.dump({'findings': F, 'log': log}, open(f'{OUT}/dup-audit-sa.json', 'w'), indent=2)
+
+          print('chosen resource :', F.get('chosen'), '|', F.get('chosen_url'))
+          print('attempts        :', F.get('attempts'))
+          print('worked with     :', F.get('worked_with'))
+          print('headers         :', F.get('headers'))
+          print('date / type col :', F.get('date_col'), '/', F.get('type_col'))
+          print('id candidates   :', F.get('id_candidates'))
+          print('rows total / in window:', F.get('rows_total'), '/', F.get('rows_in_window'))
+          for h, v in (F.get('per_identifier') or {}).items():
+              print(f"  {h}: distinct {v['distinct']}  blanks {v['blank_rows']}  "
+                    f"duplication {v['duplication_pct']}%  top {v['top_repeats'][:4]}")
+          print('by permit type (rows):', (F.get('by_permit_type_rows') or [])[:10])
+          PY
+      - name: Commit findings
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A tmp/dup2
+          git commit -m "TEMPORARY: Round 44 duplicate-permit audit, San Antonio" || echo "nothing to commit"
+          git push
