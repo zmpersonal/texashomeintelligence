@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-30T15:55:16+00:00",
+  "generated_at": "2026-10-01T12:19:44+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -169,7 +169,7 @@
       "county": "Travis",
       "metric": "drought_stage",
       "angle": "warning",
-      "surprise_score": 0.714,
+      "surprise_score": 0.709,
       "why": "crossed into Extreme Drought (D3); a large move against its own history",
       "figure": "crossed into Extreme Drought (D3) — now D3",
       "source": "U.S. Drought Monitor",
@@ -203,18 +203,6 @@
     {
       "rank": 4,
       "area_id": "austin_metro",
-      "metric": "cooling_degree_days",
-      "angle": "reveal",
-      "surprise_score": 0.365,
-      "why": "at a level well outside this area's own range",
-      "figure": "755 cooling degree-days in 2026-08, +17% vs the prior month",
-      "source": "NOAA NCEI Global Summary of the Month",
-      "as_of": "2026-08-01",
-      "suppressed": false
-    },
-    {
-      "rank": 5,
-      "area_id": "austin_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
       "surprise_score": 0.365,
@@ -225,11 +213,23 @@
       "suppressed": false
     },
     {
+      "rank": 5,
+      "area_id": "austin_metro",
+      "metric": "cooling_degree_days",
+      "angle": "reveal",
+      "surprise_score": 0.364,
+      "why": "at a level well outside this area's own range",
+      "figure": "755 cooling degree-days in 2026-08, +17% vs the prior month",
+      "source": "NOAA NCEI Global Summary of the Month",
+      "as_of": "2026-08-01",
+      "suppressed": false
+    },
+    {
       "rank": 6,
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.349,
+      "surprise_score": 0.348,
       "why": "a cost signal",
       "figure": "13.88¢ per kWh (2026-08), +1.1% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
@@ -241,7 +241,7 @@
       "area_id": "san_antonio_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.339,
+      "surprise_score": 0.338,
       "why": "at a level well outside this area's own range",
       "figure": "700 cooling degree-days in 2026-08, +15% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
