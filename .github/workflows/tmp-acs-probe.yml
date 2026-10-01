@@ -32,9 +32,6 @@ jobs:
       - name: Probe ACS vintages
         env:
           CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
-        env:
-          AIRNOW_API_KEY: ${{ secrets.AIRNOW_API_KEY }}
-          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
         run: |
           mkdir -p tmp/acs/robots
           python3 - <<'PY'
