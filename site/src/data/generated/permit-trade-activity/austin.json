@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-01T16:26:31.635Z",
-  "lastSuccessAt": "2026-10-01T16:26:31.635Z",
+  "lastAttemptAt": "2026-10-01T16:44:55.983Z",
+  "lastSuccessAt": "2026-10-01T16:44:55.983Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -1383,7 +1383,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T16:26:34.455Z",
+      "ingestedAt": "2026-10-01T16:45:00.269Z",
       "key": "trades-v1/plumbing/2026-10",
       "value": {
         "category": "plumbing",

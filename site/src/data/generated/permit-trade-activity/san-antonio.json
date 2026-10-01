@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-01T16:26:34.458Z",
-  "lastSuccessAt": "2026-10-01T16:26:34.458Z",
+  "lastAttemptAt": "2026-10-01T16:45:00.272Z",
+  "lastSuccessAt": "2026-10-01T16:45:00.272Z",
   "lastError": null,
   "source": {
     "name": "City of San Antonio Permits Open Data",
@@ -2425,12 +2425,12 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T16:26:36.806Z",
+      "ingestedAt": "2026-10-01T16:45:03.418Z",
       "key": "trades-v1/electrical/2026-09",
       "value": {
         "category": "electrical",
         "month": "2026-09",
-        "permitCount": 723,
+        "permitCount": 676,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -2461,7 +2461,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T16:26:36.806Z",
+      "ingestedAt": "2026-10-01T16:45:03.418Z",
       "key": "trades-v1/foundation/2026-09",
       "value": {
         "category": "foundation",
@@ -2481,7 +2481,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T16:26:36.806Z",
+      "ingestedAt": "2026-10-01T16:45:03.418Z",
       "key": "trades-v1/hvac/2026-09",
       "value": {
         "category": "hvac",
@@ -2509,12 +2509,12 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T16:26:36.806Z",
+      "ingestedAt": "2026-10-01T16:45:03.418Z",
       "key": "trades-v1/plumbing/2026-09",
       "value": {
         "category": "plumbing",
         "month": "2026-09",
-        "permitCount": 1585,
+        "permitCount": 1486,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -2522,7 +2522,7 @@
         "sourceValues": [
           {
             "value": "Plumbing General Permit",
-            "count": 627
+            "count": 626
           },
           {
             "value": "Plumbing Irrigation Permit",
@@ -2557,7 +2557,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T16:26:36.806Z",
+      "ingestedAt": "2026-10-01T16:45:03.418Z",
       "key": "trades-v1/roofing/2026-09",
       "value": {
         "category": "roofing",
@@ -2577,7 +2577,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T16:26:36.806Z",
+      "ingestedAt": "2026-10-01T16:45:03.418Z",
       "key": "trades-v1/solar/2026-09",
       "value": {
         "category": "solar",
@@ -2597,7 +2597,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T16:26:36.806Z",
+      "ingestedAt": "2026-10-01T16:45:03.418Z",
       "key": "trades-v1/trees/2026-09",
       "value": {
         "category": "trees",
