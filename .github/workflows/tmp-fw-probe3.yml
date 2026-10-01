@@ -1,0 +1,307 @@
+# TEMPORARY — Round 44 pass 3. DELETE BEFORE THE ROUND ENDS.
+#
+# Three things pass 2 left open, two of them my own errors.
+#
+#   A · THE STATION. Pass 2 asked NCEI for normals by bbox and got HTTP 400,
+#       because that is not the mechanism noaaClimate.ts uses. It loads
+#       ghcnd-stations.txt, filters USW inside BOX_PAD_DEGREES of the point,
+#       sorts by distance, takes MAX_CANDIDATES, then asks for each station's
+#       normals by `stations=<id>`. This pass copies that, constants included,
+#       instead of restating it — the Round 41e discipline I failed to follow.
+#       Austin and San Antonio are run as controls: the probe has to reproduce
+#       the stations the site already ships, or it is not applying the real bar.
+#
+#   B · THE CLASSIFIER, refined and re-sampled. Reading 40 of pass 2's
+#       `reroof_text` sample by hand (not by re-applying the predicate, which is
+#       circular) gave roughly 28 standalone re-roofs, 7 roof work inside a
+#       larger job, and 5 outright false positives — new-construction shingles,
+#       two patio covers, a new steel gable structure, a new shed roof. So
+#       `reroof_text` needs the exclusions `roof_minus_solar_minus_other`
+#       already carries, plus the new-construction and accessory-structure
+#       cases the hand read surfaced. Counted monthly and re-sampled so
+#       precision is measured on the predicate that would actually ship.
+#
+#   C · IS Permit_No UNIQUE? Pass 2's sample returned "Bldg # 10 Reroof -
+#       Antigua Village Apartments" twice and the same patio cover twice. If a
+#       permit spans rows, counting rows overstates permits and every monthly
+#       figure in this round is wrong. The layer carries a separate Unique_ID,
+#       which is a hint, not an answer.
+#
+#   D · B1_SPECIAL_TEXT's vocabulary — 28,786 of 81,701 rows are non-empty and
+#       nobody has looked at it. The PII question cannot be closed without it.
+name: TEMPORARY Fort Worth probe pass 3 (Round 44)
+
+on:
+  push:
+    branches: [claude/thi-v3-round44-fort-worth]
+    paths: ['.github/workflows/tmp-fw-probe3.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe pass 3
+        run: |
+          mkdir -p tmp/fw3
+          python3 - <<'PY'
+          import json, math, re, urllib.parse, urllib.request, collections
+
+          UA = 'TexasHomeIntelligence-probe/1.0 (one-off research; texashomeintelligence.com)'
+          OUT = 'tmp/fw3'
+          LAYER = ('https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/'
+                   'CFW_Open_Data_Development_Permits_View/FeatureServer/0')
+          WINDOW = "File_Date >= DATE '2025-09-01' AND File_Date < DATE '2026-10-01'"
+          log = []
+
+          # ── constants COPIED from src/ingest/fetchers/noaaClimate.ts ────────
+          ACCESS_DATA_V1 = 'https://www.ncei.noaa.gov/access/services/data/v1'
+          GHCND_STATIONS = 'https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt'
+          NORMALS_DATASET = 'normals-monthly-1991-2020'
+          CDD_NORMAL_COLUMN = 'MLY-CLDD-NORMAL'
+          BOX_PAD_DEGREES = 0.35
+          MIN_YEARS_OF_RECORD = 10
+          ESTIMATED_FLAG = 'E'
+          MAX_CANDIDATES = 6
+
+          def get(url, timeout=240):
+              req = urllib.request.Request(url, headers={'User-Agent': UA})
+              try:
+                  with urllib.request.urlopen(req, timeout=timeout) as r:
+                      return r.status, r.read()
+              except Exception as e:
+                  return getattr(e, 'code', 0), str(e).encode()
+
+          def jget(url, label):
+              st, body = get(url)
+              log.append({'label': label, 'status': st, 'bytes': len(body)})
+              if st != 200: return None
+              try: return json.loads(body)
+              except Exception as e:
+                  log.append({'label': label, 'parse_error': str(e),
+                              'prefix': body[:200].decode('utf-8', 'replace')})
+                  return None
+
+          def count(where, label):
+              d = jget(f'{LAYER}/query?where={urllib.parse.quote(where)}'
+                       f'&returnCountOnly=true&f=json', label)
+              return (d or {}).get('count')
+
+          F = {}
+
+          # ══ A · THE STATION, via the shipped mechanism ══════════════════════
+          st, body = get(GHCND_STATIONS)
+          log.append({'label': 'ghcnd-stations', 'status': st, 'bytes': len(body)})
+          stations = []
+          if st == 200:
+              for line in body.decode('utf-8', 'replace').split('\n'):
+                  if len(line) < 71: continue
+                  sid = line[0:11].strip()
+                  try: lat, lon = float(line[12:20]), float(line[21:30])
+                  except ValueError: continue
+                  stations.append({'id': sid, 'name': line[41:71].strip(), 'lat': lat, 'lon': lon})
+          F['station_table_rows'] = len(stations)
+
+          def great_circle_miles(a_lat, a_lon, b_lat, b_lon):
+              R = 3958.7613
+              p1, p2 = math.radians(a_lat), math.radians(b_lat)
+              dp = p2 - p1
+              dl = math.radians(b_lon - a_lon)
+              h = math.sin(dp/2)**2 + math.cos(p1)*math.cos(p2)*math.sin(dl/2)**2
+              return 2 * R * math.asin(min(1.0, math.sqrt(h)))
+
+          def candidates(lat, lon):
+              near = [dict(s, distanceMiles=great_circle_miles(lat, lon, s['lat'], s['lon']))
+                      for s in stations
+                      if s['id'].startswith('USW')
+                      and abs(s['lat'] - lat) <= BOX_PAD_DEGREES
+                      and abs(s['lon'] - lon) <= BOX_PAD_DEGREES]
+              near.sort(key=lambda s: s['distanceMiles'])
+              return near[:MAX_CANDIDATES]
+
+          def normals(sid):
+              u = (f'{ACCESS_DATA_V1}?dataset={NORMALS_DATASET}&stations={sid}'
+                   f'&dataTypes={CDD_NORMAL_COLUMN}&includeAttributes=true&format=json')
+              d = jget(u, f'normals-{sid}')
+              return d if isinstance(d, list) else []
+
+          def num(x):
+              try:
+                  v = float(x)
+                  return None if v == -9999 else v
+              except (TypeError, ValueError):
+                  return None
+
+          def judge(sid):
+              rows = normals(sid)
+              if not rows: return {'rejected': 'no normals rows'}
+              yrs, comp, meas, cdd = [], [], [], []
+              for r in rows:
+                  yrs.append(num(r.get(f'years_{CDD_NORMAL_COLUMN}')))
+                  comp.append((r.get(f'comp_flag_{CDD_NORMAL_COLUMN}') or '').strip())
+                  meas.append((r.get(f'meas_flag_{CDD_NORMAL_COLUMN}') or '').strip())
+                  cdd.append(num(r.get(CDD_NORMAL_COLUMN)))
+              out = {'months': len(rows),
+                     'years_min': min([y for y in yrs if y is not None], default=None),
+                     'years_max': max([y for y in yrs if y is not None], default=None),
+                     'comp_flags': sorted({c for c in comp if c}),
+                     'meas_flags': sorted({m for m in meas if m}),
+                     'cdd_months_present': sum(1 for c in cdd if c is not None),
+                     'annual_cdd': round(sum(c for c in cdd if c is not None), 1)}
+              reasons = []
+              if out['months'] != 12 or out['cdd_months_present'] != 12:
+                  reasons.append(f"not 12/12 usable months ({out['cdd_months_present']}/12)")
+              if ESTIMATED_FLAG in out['comp_flags']:
+                  reasons.append(f"comp_flag {ESTIMATED_FLAG} present")
+              if out['years_min'] is None or out['years_min'] < MIN_YEARS_OF_RECORD:
+                  reasons.append(f"years_min {out['years_min']} < {MIN_YEARS_OF_RECORD}")
+              out['passes'] = not reasons
+              out['reasons'] = reasons
+              return out
+
+          POINTS = {
+              # Fort Worth's centroid, the value the ZIP_AREAS row would carry.
+              'fort-worth': (32.7555, -97.3308),
+              # CONTROLS. The probe must reproduce what the site already ships
+              # (Camp Mabry 3.8 mi, Stinson 6.0 mi) or it is not applying the bar.
+              'austin': (30.2672, -97.7431),
+              'san-antonio': (29.4241, -98.4936),
+          }
+          F['stations'] = {}
+          for name, (lat, lon) in POINTS.items():
+              cands = candidates(lat, lon)
+              rows = []
+              chosen = None
+              for c in cands:
+                  v = judge(c['id'])
+                  rows.append({'id': c['id'], 'name': c['name'],
+                               'distance_miles': round(c['distanceMiles'], 1), **v})
+                  if chosen is None and v.get('passes'): chosen = rows[-1]
+              F['stations'][name] = {'candidates': rows, 'chosen': chosen}
+
+          # ══ C · is Permit_No unique? ════════════════════════════════════════
+          stats = json.dumps([
+              {'statisticType': 'count', 'onStatisticField': 'Permit_No', 'outStatisticFieldName': 'rows'},
+              {'statisticType': 'count', 'onStatisticField': 'Unique_ID', 'outStatisticFieldName': 'uids'},
+          ])
+          d = jget(f'{LAYER}/query?where={urllib.parse.quote(WINDOW)}'
+                   f'&outStatistics={urllib.parse.quote(stats)}&f=json', 'counts-both')
+          F['row_counts'] = (d or {}).get('features', [{}])[0].get('attributes')
+          # Distinct Permit_No in the window, by paging the grouped result.
+          seen, off = 0, 0
+          while True:
+              s2 = json.dumps([{'statisticType': 'count', 'onStatisticField': 'Unique_ID',
+                                'outStatisticFieldName': 'n'}])
+              d = jget(f'{LAYER}/query?where={urllib.parse.quote(WINDOW)}'
+                       f'&groupByFieldsForStatistics=Permit_No'
+                       f'&outStatistics={urllib.parse.quote(s2)}'
+                       f'&resultRecordCount=2000&resultOffset={off}&f=json', f'distinct-permitno-{off}')
+              feats = (d or {}).get('features') or []
+              seen += len(feats)
+              if len(feats) < 2000: break
+              off += 2000
+              if off > 120000: break
+          F['distinct_permit_no_in_window'] = seen
+
+          # ══ B · the refined predicate ══════════════════════════════════════
+          SOLAR = ("(UPPER(B1_WORK_DESC) LIKE '%SOLAR%'"
+                   " OR UPPER(B1_WORK_DESC) LIKE '%PHOTOVOLTAIC%'"
+                   " OR UPPER(B1_WORK_DESC) LIKE '%PV %' OR UPPER(B1_WORK_DESC) LIKE '% PV%')")
+          # Every exclusion below is a string a HAND READ of pass 2's sample
+          # produced. Nothing here is anticipated.
+          EXCLUDE = ("(UPPER(B1_WORK_DESC) LIKE '%WATERPROOF%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%CARPORT%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%PATIO COVER%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%PORCH COVER%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%SHED ROOF%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%ROOFTOP UNIT%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%RTU%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%HOOD%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%CONSTRUCTION OF NEW%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%NEW HOUSE%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%NEW SINGLE FAMILY%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%GROUND UP%')")
+          REROOF_TEXT = ("(UPPER(B1_WORK_DESC) LIKE '%REROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%RE-ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%RE ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF REPLACEMENT%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%REPLACE ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF REPAIR%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%REPAIR ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF COVERING%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF DECKING%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%DOWN TO DECKING%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%TEAR OFF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%SHINGLE%')")
+          CAT = "Permit_Category = 'ReRoof'"
+          SHIPPABLE = f"(({REROOF_TEXT} AND NOT {SOLAR} AND NOT {EXCLUDE}) OR {CAT})"
+          F['shippable_sql'] = {'reroof_text': REROOF_TEXT, 'solar': SOLAR,
+                               'exclude': EXCLUDE, 'category': CAT, 'shippable': SHIPPABLE}
+
+          F['shippable_total'] = count(f'{WINDOW} AND {SHIPPABLE}', 'shippable-total')
+          F['shippable_recall_on_category'] = count(f'{WINDOW} AND {CAT} AND {SHIPPABLE}', 'shippable-recall')
+          F['excluded_from_text'] = count(
+              f'{WINDOW} AND {REROOF_TEXT} AND ({SOLAR} OR {EXCLUDE})', 'excluded-count')
+
+          MONTHS = [(2025, m) for m in range(9, 13)] + [(2026, m) for m in range(1, 10)]
+          def bounds(y, m):
+              ny, nm = (y + 1, 1) if m == 12 else (y, m + 1)
+              return f'{y:04d}-{m:02d}-01', f'{ny:04d}-{nm:02d}-01'
+          F['shippable_monthly'] = {}
+          F['solar_monthly'] = {}
+          for (y, m) in MONTHS:
+              a, b = bounds(y, m)
+              w = f"File_Date >= DATE '{a}' AND File_Date < DATE '{b}'"
+              F['shippable_monthly'][f'{y:04d}-{m:02d}'] = count(f'{w} AND {SHIPPABLE}', f'sm-{y}{m:02d}')
+              F['solar_monthly'][f'{y:04d}-{m:02d}'] = count(f'{w} AND {SOLAR}', f'so-{y}{m:02d}')
+
+          # A fresh sample of what would ship, ordered by ObjectId so it is not
+          # the same head of the list pass 2 read.
+          d = jget(f'{LAYER}/query?where={urllib.parse.quote(f"{WINDOW} AND {SHIPPABLE}")}'
+                   f'&outFields={urllib.parse.quote("Permit_No,Permit_Type,Permit_Category,B1_WORK_DESC")}'
+                   f'&orderByFields={urllib.parse.quote("ObjectId DESC")}'
+                   f'&resultRecordCount=120&f=json', 'sample-shippable')
+          F['sample_shippable'] = [f.get('attributes', {}) for f in ((d or {}).get('features') or [])]
+
+          # ══ D · B1_SPECIAL_TEXT ════════════════════════════════════════════
+          s3 = json.dumps([{'statisticType': 'count', 'onStatisticField': 'Permit_No',
+                            'outStatisticFieldName': 'n'}])
+          d = jget(f'{LAYER}/query?where={urllib.parse.quote(WINDOW)}'
+                   f'&groupByFieldsForStatistics=B1_SPECIAL_TEXT'
+                   f'&outStatistics={urllib.parse.quote(s3)}'
+                   f'&orderByFields={urllib.parse.quote("n DESC")}'
+                   f'&resultRecordCount=120&f=json', 'special-text-vocab')
+          F['special_text_top'] = [f.get('attributes', {}) for f in ((d or {}).get('features') or [])]
+
+          json.dump({'findings': F, 'log': log}, open(f'{OUT}/probe-3.json', 'w'), indent=2)
+
+          print('── stations ──')
+          for name, s in F['stations'].items():
+              print(f'  {name}:')
+              for c in s['candidates']:
+                  print(f"    {c['id']} {str(c.get('name'))[:26]:28s} {c.get('distance_miles')} mi "
+                        f"yrs {c.get('years_min')}-{c.get('years_max')} comp{c.get('comp_flags')} "
+                        f"{'PASS' if c.get('passes') else 'reject: ' + '; '.join(c.get('reasons') or [c.get('rejected','?')])}")
+              ch = s['chosen']
+              print(f"    -> chosen: {ch['id'] if ch else 'NONE'}"
+                    f"{' (' + str(ch.get('distance_miles')) + ' mi, annual CDD ' + str(ch.get('annual_cdd')) + ')' if ch else ''}")
+          print('\n── Permit_No uniqueness ──', F.get('row_counts'),
+                'distinct Permit_No:', F.get('distinct_permit_no_in_window'))
+          print('\n── shippable roofing ──', F.get('shippable_total'),
+                '| recall on ReRoof category:', F.get('shippable_recall_on_category'), 'of 260',
+                '| excluded from the text match:', F.get('excluded_from_text'))
+          print('  monthly:', list(F['shippable_monthly'].values()))
+          print('  solar  :', list(F['solar_monthly'].values()))
+          print(f"\n{len(log)} requests; non-200: {[(x['label'], x['status']) for x in log if x.get('status') != 200][:6]}")
+          PY
+      - name: Commit findings
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A tmp/fw3
+          git commit -m "TEMPORARY: Round 44 Fort Worth probe pass 3" || echo "nothing to commit"
+          git push
