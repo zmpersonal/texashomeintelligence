@@ -1,0 +1,1072 @@
+{
+  "findings": {
+    "station_table_rows": 133039,
+    "stations": {
+      "fort-worth": {
+        "candidates": [
+          {
+            "id": "USW00093904",
+            "name": "FT WORTH MEACHAM FLD NAAF",
+            "distance_miles": 4.4,
+            "months": 12,
+            "years_min": 10.0,
+            "years_max": 15.0,
+            "comp_flags": [
+              "R"
+            ],
+            "meas_flags": [],
+            "cdd_months_present": 12,
+            "annual_cdd": 2963.4,
+            "passes": true,
+            "reasons": []
+          },
+          {
+            "id": "USW00013961",
+            "name": "FT WORTH MEACHAM FLD",
+            "distance_miles": 5.2,
+            "months": 12,
+            "years_min": 25.0,
+            "years_max": 27.0,
+            "comp_flags": [
+              "S"
+            ],
+            "meas_flags": [],
+            "cdd_months_present": 12,
+            "annual_cdd": 2693.1,
+            "passes": true,
+            "reasons": []
+          },
+          {
+            "id": "USW00013911",
+            "name": "FT WORTH NAS",
+            "distance_miles": 7.0,
+            "months": 12,
+            "years_min": 20.0,
+            "years_max": 22.0,
+            "comp_flags": [
+              "R"
+            ],
+            "meas_flags": [],
+            "cdd_months_present": 12,
+            "annual_cdd": 3033.5,
+            "passes": true,
+            "reasons": []
+          },
+          {
+            "id": "USW00003985",
+            "name": "FORT WORTH SPINKS AP",
+            "distance_miles": 13.2,
+            "rejected": "no normals rows"
+          },
+          {
+            "id": "USW00053907",
+            "name": "ARLINGTON MUNI AP",
+            "distance_miles": 15.3,
+            "months": 12,
+            "years_min": 17.0,
+            "years_max": 18.0,
+            "comp_flags": [
+              "R"
+            ],
+            "meas_flags": [],
+            "cdd_months_present": 12,
+            "annual_cdd": 2823.7,
+            "passes": true,
+            "reasons": []
+          },
+          {
+            "id": "USW00053909",
+            "name": "FT WORTH ALLIANCE AP",
+            "distance_miles": 16.5,
+            "months": 12,
+            "years_min": 19.0,
+            "years_max": 21.0,
+            "comp_flags": [
+              "R"
+            ],
+            "meas_flags": [],
+            "cdd_months_present": 12,
+            "annual_cdd": 2929.4,
+            "passes": true,
+            "reasons": []
+          }
+        ],
+        "chosen": {
+          "id": "USW00093904",
+          "name": "FT WORTH MEACHAM FLD NAAF",
+          "distance_miles": 4.4,
+          "months": 12,
+          "years_min": 10.0,
+          "years_max": 15.0,
+          "comp_flags": [
+            "R"
+          ],
+          "meas_flags": [],
+          "cdd_months_present": 12,
+          "annual_cdd": 2963.4,
+          "passes": true,
+          "reasons": []
+        }
+      },
+      "austin": {
+        "candidates": [
+          {
+            "id": "USW00013958",
+            "name": "AUSTIN-CAMP MABRY",
+            "distance_miles": 3.8,
+            "months": 12,
+            "years_min": 29.0,
+            "years_max": 30.0,
+            "comp_flags": [
+              "S"
+            ],
+            "meas_flags": [],
+            "cdd_months_present": 12,
+            "annual_cdd": 3289.8,
+            "passes": true,
+            "reasons": []
+          },
+          {
+            "id": "USW00013904",
+            "name": "AUSTIN BERGSTROM INTL AP",
+            "distance_miles": 6.9,
+            "months": 12,
+            "years_min": 24.0,
+            "years_max": 26.0,
+            "comp_flags": [
+              "R",
+              "S"
+            ],
+            "meas_flags": [],
+            "cdd_months_present": 12,
+            "annual_cdd": 2996.0,
+            "passes": true,
+            "reasons": []
+          },
+          {
+            "id": "USW00000230",
+            "name": "AUSTIN EXECUTIVE AP",
+            "distance_miles": 13.7,
+            "rejected": "no normals rows"
+          },
+          {
+            "id": "USW00000166",
+            "name": "LAGO VISTA RUSTY ALLEN AP",
+            "distance_miles": 20.9,
+            "rejected": "no normals rows"
+          },
+          {
+            "id": "USW00063904",
+            "name": "TAYLOR MUNI AP",
+            "distance_miles": 27.6,
+            "rejected": "no normals rows"
+          }
+        ],
+        "chosen": {
+          "id": "USW00013958",
+          "name": "AUSTIN-CAMP MABRY",
+          "distance_miles": 3.8,
+          "months": 12,
+          "years_min": 29.0,
+          "years_max": 30.0,
+          "comp_flags": [
+            "S"
+          ],
+          "meas_flags": [],
+          "cdd_months_present": 12,
+          "annual_cdd": 3289.8,
+          "passes": true,
+          "reasons": []
+        }
+      },
+      "san-antonio": {
+        "candidates": [
+          {
+            "id": "USW00012931",
+            "name": "SAN ANTONIO BROOKS AFB",
+            "distance_miles": 5.8,
+            "rejected": "no normals rows"
+          },
+          {
+            "id": "USW00012970",
+            "name": "SAN ANTONIO STINSON MUNI AP",
+            "distance_miles": 6.0,
+            "months": 12,
+            "years_min": 19.0,
+            "years_max": 20.0,
+            "comp_flags": [
+              "R"
+            ],
+            "meas_flags": [],
+            "cdd_months_present": 12,
+            "annual_cdd": 3474.0,
+            "passes": true,
+            "reasons": []
+          },
+          {
+            "id": "USW00012909",
+            "name": "SAN ANTONIO KELLY AFB",
+            "distance_miles": 6.1,
+            "months": 12,
+            "years_min": 2.0,
+            "years_max": 2.0,
+            "comp_flags": [
+              "E"
+            ],
+            "meas_flags": [],
+            "cdd_months_present": 12,
+            "annual_cdd": 3155.4,
+            "passes": false,
+            "reasons": [
+              "comp_flag E present",
+              "years_min 2.0 < 10"
+            ]
+          },
+          {
+            "id": "USW00012921",
+            "name": "SAN ANTONIO INTL AP",
+            "distance_miles": 8.3,
+            "months": 12,
+            "years_min": 23.0,
+            "years_max": 26.0,
+            "comp_flags": [
+              "R",
+              "S"
+            ],
+            "meas_flags": [],
+            "cdd_months_present": 12,
+            "annual_cdd": 3147.8,
+            "passes": true,
+            "reasons": []
+          },
+          {
+            "id": "USW00012911",
+            "name": "RANDOLPH AFB",
+            "distance_miles": 15.8,
+            "months": 12,
+            "years_min": 2.0,
+            "years_max": 2.0,
+            "comp_flags": [
+              "E"
+            ],
+            "meas_flags": [],
+            "cdd_months_present": 12,
+            "annual_cdd": 2951.1,
+            "passes": false,
+            "reasons": [
+              "comp_flag E present",
+              "years_min 2.0 < 10"
+            ]
+          },
+          {
+            "id": "USW00000263",
+            "name": "BOERNE STAGE FIELD AP",
+            "distance_miles": 24.0,
+            "rejected": "no normals rows"
+          }
+        ],
+        "chosen": {
+          "id": "USW00012970",
+          "name": "SAN ANTONIO STINSON MUNI AP",
+          "distance_miles": 6.0,
+          "months": 12,
+          "years_min": 19.0,
+          "years_max": 20.0,
+          "comp_flags": [
+            "R"
+          ],
+          "meas_flags": [],
+          "cdd_months_present": 12,
+          "annual_cdd": 3474.0,
+          "passes": true,
+          "reasons": []
+        }
+      }
+    },
+    "row_counts": {
+      "rows": 81701,
+      "uids": 81701
+    },
+    "distinct_permit_no_in_window": 1000,
+    "shippable_sql": {
+      "reroof_text": "(UPPER(B1_WORK_DESC) LIKE '%REROOF%' OR UPPER(B1_WORK_DESC) LIKE '%RE-ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%RE ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%ROOF REPLACEMENT%' OR UPPER(B1_WORK_DESC) LIKE '%REPLACE ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%ROOF REPAIR%' OR UPPER(B1_WORK_DESC) LIKE '%REPAIR ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%ROOF COVERING%' OR UPPER(B1_WORK_DESC) LIKE '%ROOF DECKING%' OR UPPER(B1_WORK_DESC) LIKE '%DOWN TO DECKING%' OR UPPER(B1_WORK_DESC) LIKE '%TEAR OFF%' OR UPPER(B1_WORK_DESC) LIKE '%SHINGLE%')",
+      "solar": "(UPPER(B1_WORK_DESC) LIKE '%SOLAR%' OR UPPER(B1_WORK_DESC) LIKE '%PHOTOVOLTAIC%' OR UPPER(B1_WORK_DESC) LIKE '%PV %' OR UPPER(B1_WORK_DESC) LIKE '% PV%')",
+      "exclude": "(UPPER(B1_WORK_DESC) LIKE '%WATERPROOF%' OR UPPER(B1_WORK_DESC) LIKE '%CARPORT%' OR UPPER(B1_WORK_DESC) LIKE '%PATIO COVER%' OR UPPER(B1_WORK_DESC) LIKE '%PORCH COVER%' OR UPPER(B1_WORK_DESC) LIKE '%SHED ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%ROOFTOP UNIT%' OR UPPER(B1_WORK_DESC) LIKE '%RTU%' OR UPPER(B1_WORK_DESC) LIKE '%HOOD%' OR UPPER(B1_WORK_DESC) LIKE '%CONSTRUCTION OF NEW%' OR UPPER(B1_WORK_DESC) LIKE '%NEW HOUSE%' OR UPPER(B1_WORK_DESC) LIKE '%NEW SINGLE FAMILY%' OR UPPER(B1_WORK_DESC) LIKE '%GROUND UP%')",
+      "category": "Permit_Category = 'ReRoof'",
+      "shippable": "(((UPPER(B1_WORK_DESC) LIKE '%REROOF%' OR UPPER(B1_WORK_DESC) LIKE '%RE-ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%RE ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%ROOF REPLACEMENT%' OR UPPER(B1_WORK_DESC) LIKE '%REPLACE ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%ROOF REPAIR%' OR UPPER(B1_WORK_DESC) LIKE '%REPAIR ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%ROOF COVERING%' OR UPPER(B1_WORK_DESC) LIKE '%ROOF DECKING%' OR UPPER(B1_WORK_DESC) LIKE '%DOWN TO DECKING%' OR UPPER(B1_WORK_DESC) LIKE '%TEAR OFF%' OR UPPER(B1_WORK_DESC) LIKE '%SHINGLE%') AND NOT (UPPER(B1_WORK_DESC) LIKE '%SOLAR%' OR UPPER(B1_WORK_DESC) LIKE '%PHOTOVOLTAIC%' OR UPPER(B1_WORK_DESC) LIKE '%PV %' OR UPPER(B1_WORK_DESC) LIKE '% PV%') AND NOT (UPPER(B1_WORK_DESC) LIKE '%WATERPROOF%' OR UPPER(B1_WORK_DESC) LIKE '%CARPORT%' OR UPPER(B1_WORK_DESC) LIKE '%PATIO COVER%' OR UPPER(B1_WORK_DESC) LIKE '%PORCH COVER%' OR UPPER(B1_WORK_DESC) LIKE '%SHED ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%ROOFTOP UNIT%' OR UPPER(B1_WORK_DESC) LIKE '%RTU%' OR UPPER(B1_WORK_DESC) LIKE '%HOOD%' OR UPPER(B1_WORK_DESC) LIKE '%CONSTRUCTION OF NEW%' OR UPPER(B1_WORK_DESC) LIKE '%NEW HOUSE%' OR UPPER(B1_WORK_DESC) LIKE '%NEW SINGLE FAMILY%' OR UPPER(B1_WORK_DESC) LIKE '%GROUND UP%')) OR Permit_Category = 'ReRoof')"
+    },
+    "shippable_total": 504,
+    "shippable_recall_on_category": null,
+    "excluded_from_text": 59,
+    "shippable_monthly": {
+      "2025-09": 28,
+      "2025-10": 35,
+      "2025-11": 25,
+      "2025-12": 19,
+      "2026-01": 21,
+      "2026-02": 24,
+      "2026-03": 65,
+      "2026-04": 51,
+      "2026-05": 40,
+      "2026-06": 64,
+      "2026-07": 59,
+      "2026-08": 41,
+      "2026-09": 32
+    },
+    "solar_monthly": {
+      "2025-09": 219,
+      "2025-10": 169,
+      "2025-11": 112,
+      "2025-12": 107,
+      "2026-01": 59,
+      "2026-02": 77,
+      "2026-03": 138,
+      "2026-04": 133,
+      "2026-05": 76,
+      "2026-06": 102,
+      "2026-07": 117,
+      "2026-08": 94,
+      "2026-09": 66
+    },
+    "sample_shippable": [],
+    "special_text_top": [
+      {
+        "n": 52915,
+        "B1_SPECIAL_TEXT": null
+      },
+      {
+        "n": 4701,
+        "B1_SPECIAL_TEXT": "METRO CODE"
+      },
+      {
+        "n": 1999,
+        "B1_SPECIAL_TEXT": "DR Horton"
+      },
+      {
+        "n": 1024,
+        "B1_SPECIAL_TEXT": "Martin"
+      },
+      {
+        "n": 560,
+        "B1_SPECIAL_TEXT": "Bureau Veritas - Tavolo Park - Integrity"
+      },
+      {
+        "n": 468,
+        "B1_SPECIAL_TEXT": "SUNRUN INSTALLATION SERVICES INC"
+      },
+      {
+        "n": 290,
+        "B1_SPECIAL_TEXT": "Bureau Veritas - Tavolo Park - Integrity - Torino"
+      },
+      {
+        "n": 280,
+        "B1_SPECIAL_TEXT": "Bureau Veritas - Tavolo Park - Integrity Group"
+      },
+      {
+        "n": 226,
+        "B1_SPECIAL_TEXT": "GL Hunt Company Inc."
+      },
+      {
+        "n": 223,
+        "B1_SPECIAL_TEXT": "Bureau Veritas"
+      },
+      {
+        "n": 206,
+        "B1_SPECIAL_TEXT": "Orchard Farms"
+      },
+      {
+        "n": 195,
+        "B1_SPECIAL_TEXT": "Perry Homes"
+      },
+      {
+        "n": 179,
+        "B1_SPECIAL_TEXT": "LC Electrical Installation and Repair"
+      },
+      {
+        "n": 166,
+        "B1_SPECIAL_TEXT": "LC ELECTRICAL INSTILLATION AND REPAIR"
+      },
+      {
+        "n": 149,
+        "B1_SPECIAL_TEXT": "WINDOW WORLD"
+      },
+      {
+        "n": 123,
+        "B1_SPECIAL_TEXT": "GTO1 Construction Corporation"
+      },
+      {
+        "n": 117,
+        "B1_SPECIAL_TEXT": "Pinnacle Foundation Repair"
+      },
+      {
+        "n": 102,
+        "B1_SPECIAL_TEXT": "Service Electric of Arlington"
+      },
+      {
+        "n": 100,
+        "B1_SPECIAL_TEXT": "Pulte Homes"
+      },
+      {
+        "n": 82,
+        "B1_SPECIAL_TEXT": "Dallas PWD (Pella)"
+      },
+      {
+        "n": 82,
+        "B1_SPECIAL_TEXT": "Erick Cordova"
+      },
+      {
+        "n": 77,
+        "B1_SPECIAL_TEXT": "The Cooper Fort Worth LLC"
+      },
+      {
+        "n": 75,
+        "B1_SPECIAL_TEXT": "Bureau Veritas - Walsh Ranch Quail Valley - David Weekley"
+      },
+      {
+        "n": 66,
+        "B1_SPECIAL_TEXT": "HOME DEPOT"
+      },
+      {
+        "n": 62,
+        "B1_SPECIAL_TEXT": "HOMESTEAD"
+      },
+      {
+        "n": 56,
+        "B1_SPECIAL_TEXT": "RENEWAL BY ANDERSEN"
+      },
+      {
+        "n": 56,
+        "B1_SPECIAL_TEXT": "X TEAM /// Tradition South (Wildflower) Ph 2 Amenity Center"
+      },
+      {
+        "n": 54,
+        "B1_SPECIAL_TEXT": "DFH-COVENTRY HOMES"
+      },
+      {
+        "n": 51,
+        "B1_SPECIAL_TEXT": "RODRIGUEZ LAWN CARE"
+      },
+      {
+        "n": 48,
+        "B1_SPECIAL_TEXT": "Shadow Construction"
+      },
+      {
+        "n": 47,
+        "B1_SPECIAL_TEXT": "Foundation repair"
+      },
+      {
+        "n": 44,
+        "B1_SPECIAL_TEXT": "Groundworks"
+      },
+      {
+        "n": 44,
+        "B1_SPECIAL_TEXT": "Shadow Contruction"
+      },
+      {
+        "n": 42,
+        "B1_SPECIAL_TEXT": "J. Caldwell Custom Pools"
+      },
+      {
+        "n": 41,
+        "B1_SPECIAL_TEXT": "JB Quality Foundation Repair"
+      },
+      {
+        "n": 40,
+        "B1_SPECIAL_TEXT": "K. Hovnanian Homes"
+      },
+      {
+        "n": 36,
+        "B1_SPECIAL_TEXT": "Commercial Vent-A-Hood Service"
+      },
+      {
+        "n": 35,
+        "B1_SPECIAL_TEXT": "X TEAM /// Harmony School of Excellence"
+      },
+      {
+        "n": 34,
+        "B1_SPECIAL_TEXT": "Bell Plant 3 FWLC Mast Insconcing Storage"
+      },
+      {
+        "n": 34,
+        "B1_SPECIAL_TEXT": "FTW Area habitat for humanity"
+      },
+      {
+        "n": 33,
+        "B1_SPECIAL_TEXT": "X TEAM /// Alexan Copper Ranch"
+      },
+      {
+        "n": 32,
+        "B1_SPECIAL_TEXT": "Deer Creek Meadows Ph 4 Amenity Center"
+      },
+      {
+        "n": 32,
+        "B1_SPECIAL_TEXT": "Sage Homes Burleson: Clubhouse_v1"
+      },
+      {
+        "n": 31,
+        "B1_SPECIAL_TEXT": "BEST BUY WINDOWS AND SIDING"
+      },
+      {
+        "n": 31,
+        "B1_SPECIAL_TEXT": "Stoney Swafford"
+      },
+      {
+        "n": 28,
+        "B1_SPECIAL_TEXT": "CHAMPION HEATING AND AIR LLC"
+      },
+      {
+        "n": 28,
+        "B1_SPECIAL_TEXT": "chis culbertson"
+      },
+      {
+        "n": 28,
+        "B1_SPECIAL_TEXT": "Daniel's Plumbing Repair"
+      },
+      {
+        "n": 28,
+        "B1_SPECIAL_TEXT": "E&S EXCAVATING AND STONE WORKS"
+      },
+      {
+        "n": 28,
+        "B1_SPECIAL_TEXT": "Sage Homes Burleson: Building Eight_A-DR_v1"
+      },
+      {
+        "n": 28,
+        "B1_SPECIAL_TEXT": "Sage Homes Burleson: Building Eleven_A-HC-DL_v1"
+      },
+      {
+        "n": 28,
+        "B1_SPECIAL_TEXT": "Sage Homes Burleson: Building Four_A-DR_v1"
+      },
+      {
+        "n": 28,
+        "B1_SPECIAL_TEXT": "Sage Homes Burleson: Building One_A_v1"
+      },
+      {
+        "n": 28,
+        "B1_SPECIAL_TEXT": "Sage Homes Burleson: Building Six_B_v1"
+      },
+      {
+        "n": 28,
+        "B1_SPECIAL_TEXT": "Sage Homes Burleson: Building Ten_A-DL_v1"
+      },
+      {
+        "n": 28,
+        "B1_SPECIAL_TEXT": "Sage Homes Burleson: Building Thirteen_A-DL_v1"
+      },
+      {
+        "n": 28,
+        "B1_SPECIAL_TEXT": "Sage Homes Burleson: Building Three_A-HC_v1"
+      },
+      {
+        "n": 28,
+        "B1_SPECIAL_TEXT": "Sage Homes Burleson: Building Twelve_A-DL_v1"
+      },
+      {
+        "n": 28,
+        "B1_SPECIAL_TEXT": "Stanley Cantey Townhouses"
+      },
+      {
+        "n": 27,
+        "B1_SPECIAL_TEXT": "Patio Cover"
+      },
+      {
+        "n": 27,
+        "B1_SPECIAL_TEXT": "STANDARD ELECTRIC SERVICES LLC"
+      },
+      {
+        "n": 26,
+        "B1_SPECIAL_TEXT": "821 E Terrell Ave"
+      },
+      {
+        "n": 26,
+        "B1_SPECIAL_TEXT": "Bureau Veritas - Summer Crest - Chesmar Homes"
+      },
+      {
+        "n": 25,
+        "B1_SPECIAL_TEXT": "JPS Health Center for Women"
+      },
+      {
+        "n": 25,
+        "B1_SPECIAL_TEXT": "RIVERSIDE BUILDERS"
+      },
+      {
+        "n": 24,
+        "B1_SPECIAL_TEXT": "22 ELECTRIC SERVICES"
+      },
+      {
+        "n": 24,
+        "B1_SPECIAL_TEXT": "Bureau Veritas - Westpoint Park - Chesmar Homes"
+      },
+      {
+        "n": 24,
+        "B1_SPECIAL_TEXT": "Carport"
+      },
+      {
+        "n": 23,
+        "B1_SPECIAL_TEXT": "Atlas Foundation Company, Inc."
+      },
+      {
+        "n": 23,
+        "B1_SPECIAL_TEXT": "Home Depot USA"
+      },
+      {
+        "n": 22,
+        "B1_SPECIAL_TEXT": "Bureau Veritas - Tavolo Park - David Weekley"
+      },
+      {
+        "n": 22,
+        "B1_SPECIAL_TEXT": "Graham Hart"
+      },
+      {
+        "n": 22,
+        "B1_SPECIAL_TEXT": "Reroofing"
+      },
+      {
+        "n": 21,
+        "B1_SPECIAL_TEXT": "Storage Shed"
+      },
+      {
+        "n": 20,
+        "B1_SPECIAL_TEXT": "BANKSTON'S BUILDERS LLC"
+      },
+      {
+        "n": 20,
+        "B1_SPECIAL_TEXT": "SPYER ROOFING"
+      },
+      {
+        "n": 19,
+        "B1_SPECIAL_TEXT": "DANIEL'S PLUMBING"
+      },
+      {
+        "n": 19,
+        "B1_SPECIAL_TEXT": "EMPIRE ELECTRICAL SYSTEMS"
+      },
+      {
+        "n": 19,
+        "B1_SPECIAL_TEXT": "Marlowe Wellington II"
+      },
+      {
+        "n": 19,
+        "B1_SPECIAL_TEXT": "Palomares Electric LLC"
+      },
+      {
+        "n": 19,
+        "B1_SPECIAL_TEXT": "Pools123 DFW"
+      },
+      {
+        "n": 19,
+        "B1_SPECIAL_TEXT": "Worth Remodeling"
+      },
+      {
+        "n": 18,
+        "B1_SPECIAL_TEXT": "AB-MINI"
+      },
+      {
+        "n": 18,
+        "B1_SPECIAL_TEXT": "Bureau Veritas - Tavolo Park - Integrity - Castella"
+      },
+      {
+        "n": 18,
+        "B1_SPECIAL_TEXT": "Evans and Rosedale"
+      },
+      {
+        "n": 18,
+        "B1_SPECIAL_TEXT": "PALOMARES ELECTRIC"
+      },
+      {
+        "n": 18,
+        "B1_SPECIAL_TEXT": "R&S Custom Pools"
+      },
+      {
+        "n": 18,
+        "B1_SPECIAL_TEXT": "Reel Plumbing, LLC"
+      },
+      {
+        "n": 18,
+        "B1_SPECIAL_TEXT": "SLUDER EMERGENCY POWER SERVICES"
+      },
+      {
+        "n": 18,
+        "B1_SPECIAL_TEXT": "X TEAM /// Cobblestone Manor - Building 1"
+      },
+      {
+        "n": 17,
+        "B1_SPECIAL_TEXT": "Brock Johnston"
+      },
+      {
+        "n": 17,
+        "B1_SPECIAL_TEXT": "The Hadley Riverside"
+      },
+      {
+        "n": 16,
+        "B1_SPECIAL_TEXT": "Edged Addition"
+      },
+      {
+        "n": 16,
+        "B1_SPECIAL_TEXT": "Francisco Castaneda"
+      },
+      {
+        "n": 16,
+        "B1_SPECIAL_TEXT": "HOME2SUITES HOTEL BY HILTON"
+      },
+      {
+        "n": 16,
+        "B1_SPECIAL_TEXT": "JB Quality Foundation  Repair"
+      },
+      {
+        "n": 16,
+        "B1_SPECIAL_TEXT": "Sage Homes Burleson: Building Nine_A_v1"
+      },
+      {
+        "n": 16,
+        "B1_SPECIAL_TEXT": "The Trails at Champion Circle"
+      },
+      {
+        "n": 16,
+        "B1_SPECIAL_TEXT": "WINDOW ZONE"
+      },
+      {
+        "n": 16,
+        "B1_SPECIAL_TEXT": "X TEAM /// ACS Data Center Phase I Substation"
+      },
+      {
+        "n": 15,
+        "B1_SPECIAL_TEXT": "Chick-fil-a #5779"
+      },
+      {
+        "n": 15,
+        "B1_SPECIAL_TEXT": "Clarity Windows and Doors"
+      },
+      {
+        "n": 15,
+        "B1_SPECIAL_TEXT": "LaPrelle Ph 1 Amenity Center"
+      },
+      {
+        "n": 15,
+        "B1_SPECIAL_TEXT": "To Install solar panels"
+      },
+      {
+        "n": 14,
+        "B1_SPECIAL_TEXT": "Dunmore Apartments"
+      },
+      {
+        "n": 14,
+        "B1_SPECIAL_TEXT": "Lennar at Eagle's Crossing PH 2 - Plan 1916 D-L"
+      },
+      {
+        "n": 14,
+        "B1_SPECIAL_TEXT": "Lennar at Eagle's Crossing PH 2 - Plan 1926 C-R"
+      },
+      {
+        "n": 14,
+        "B1_SPECIAL_TEXT": "MEP FIRE ALARM TIRE SPRINKLER"
+      },
+      {
+        "n": 14,
+        "B1_SPECIAL_TEXT": "PARADISE CONSTRUCTION"
+      },
+      {
+        "n": 14,
+        "B1_SPECIAL_TEXT": "Pavement Services"
+      },
+      {
+        "n": 14,
+        "B1_SPECIAL_TEXT": "SP HOMES LLC"
+      },
+      {
+        "n": 13,
+        "B1_SPECIAL_TEXT": "Atlas Foundation Company Inc."
+      },
+      {
+        "n": 13,
+        "B1_SPECIAL_TEXT": "Bell Advanced Manufacturing Center (AMC)"
+      },
+      {
+        "n": 13,
+        "B1_SPECIAL_TEXT": "Canyon Park Drive Spec Suites"
+      },
+      {
+        "n": 13,
+        "B1_SPECIAL_TEXT": "install partners"
+      },
+      {
+        "n": 13,
+        "B1_SPECIAL_TEXT": "James Johnson"
+      },
+      {
+        "n": 13,
+        "B1_SPECIAL_TEXT": "Korrect General Contracting"
+      },
+      {
+        "n": 13,
+        "B1_SPECIAL_TEXT": "LARRY AUSTIN PLUMBING"
+      },
+      {
+        "n": 13,
+        "B1_SPECIAL_TEXT": "Lennar at Eagle's Crossing PH 2 - Plan 1916 C-L"
+      },
+      {
+        "n": 13,
+        "B1_SPECIAL_TEXT": "Lennar at Eagle's Crossing PH 2 - Plan 1926 D-R"
+      }
+    ]
+  },
+  "log": [
+    {
+      "label": "ghcnd-stations",
+      "status": 200,
+      "bytes": 11441354
+    },
+    {
+      "label": "normals-USW00093904",
+      "status": 200,
+      "bytes": 1935
+    },
+    {
+      "label": "normals-USW00013961",
+      "status": 200,
+      "bytes": 1935
+    },
+    {
+      "label": "normals-USW00013911",
+      "status": 200,
+      "bytes": 1935
+    },
+    {
+      "label": "normals-USW00003985",
+      "status": 200,
+      "bytes": 4
+    },
+    {
+      "label": "normals-USW00053907",
+      "status": 200,
+      "bytes": 1935
+    },
+    {
+      "label": "normals-USW00053909",
+      "status": 200,
+      "bytes": 1935
+    },
+    {
+      "label": "normals-USW00013958",
+      "status": 200,
+      "bytes": 1935
+    },
+    {
+      "label": "normals-USW00013904",
+      "status": 200,
+      "bytes": 1935
+    },
+    {
+      "label": "normals-USW00000230",
+      "status": 200,
+      "bytes": 4
+    },
+    {
+      "label": "normals-USW00000166",
+      "status": 200,
+      "bytes": 4
+    },
+    {
+      "label": "normals-USW00063904",
+      "status": 200,
+      "bytes": 4
+    },
+    {
+      "label": "normals-USW00012931",
+      "status": 200,
+      "bytes": 4
+    },
+    {
+      "label": "normals-USW00012970",
+      "status": 200,
+      "bytes": 1935
+    },
+    {
+      "label": "normals-USW00012909",
+      "status": 200,
+      "bytes": 1935
+    },
+    {
+      "label": "normals-USW00012921",
+      "status": 200,
+      "bytes": 1935
+    },
+    {
+      "label": "normals-USW00012911",
+      "status": 200,
+      "bytes": 1935
+    },
+    {
+      "label": "normals-USW00000263",
+      "status": 200,
+      "bytes": 4
+    },
+    {
+      "label": "counts-both",
+      "status": 200,
+      "bytes": 430
+    },
+    {
+      "label": "distinct-permitno-0",
+      "status": 200,
+      "bytes": 48778
+    },
+    {
+      "label": "shippable-total",
+      "status": 200,
+      "bytes": 15
+    },
+    {
+      "label": "shippable-recall",
+      "status": 404,
+      "bytes": 25
+    },
+    {
+      "label": "excluded-count",
+      "status": 200,
+      "bytes": 14
+    },
+    {
+      "label": "sm-202509",
+      "status": 200,
+      "bytes": 14
+    },
+    {
+      "label": "so-202509",
+      "status": 200,
+      "bytes": 13
+    },
+    {
+      "label": "sm-202510",
+      "status": 200,
+      "bytes": 14
+    },
+    {
+      "label": "so-202510",
+      "status": 200,
+      "bytes": 13
+    },
+    {
+      "label": "sm-202511",
+      "status": 200,
+      "bytes": 14
+    },
+    {
+      "label": "so-202511",
+      "status": 200,
+      "bytes": 13
+    },
+    {
+      "label": "sm-202512",
+      "status": 200,
+      "bytes": 14
+    },
+    {
+      "label": "so-202512",
+      "status": 200,
+      "bytes": 13
+    },
+    {
+      "label": "sm-202601",
+      "status": 200,
+      "bytes": 14
+    },
+    {
+      "label": "so-202601",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "label": "sm-202602",
+      "status": 200,
+      "bytes": 14
+    },
+    {
+      "label": "so-202602",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "label": "sm-202603",
+      "status": 200,
+      "bytes": 14
+    },
+    {
+      "label": "so-202603",
+      "status": 200,
+      "bytes": 13
+    },
+    {
+      "label": "sm-202604",
+      "status": 200,
+      "bytes": 14
+    },
+    {
+      "label": "so-202604",
+      "status": 200,
+      "bytes": 13
+    },
+    {
+      "label": "sm-202605",
+      "status": 200,
+      "bytes": 14
+    },
+    {
+      "label": "so-202605",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "label": "sm-202606",
+      "status": 200,
+      "bytes": 14
+    },
+    {
+      "label": "so-202606",
+      "status": 200,
+      "bytes": 13
+    },
+    {
+      "label": "sm-202607",
+      "status": 200,
+      "bytes": 14
+    },
+    {
+      "label": "so-202607",
+      "status": 200,
+      "bytes": 13
+    },
+    {
+      "label": "sm-202608",
+      "status": 200,
+      "bytes": 14
+    },
+    {
+      "label": "so-202608",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "label": "sm-202609",
+      "status": 200,
+      "bytes": 14
+    },
+    {
+      "label": "so-202609",
+      "status": 200,
+      "bytes": 12
+    },
+    {
+      "label": "sample-shippable",
+      "status": 404,
+      "bytes": 25
+    },
+    {
+      "label": "special-text-vocab",
+      "status": 200,
+      "bytes": 8962
+    }
+  ]
+}
