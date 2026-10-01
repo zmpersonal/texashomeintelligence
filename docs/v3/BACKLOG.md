@@ -861,3 +861,92 @@ ingested (Comal, Hays, Williamson and Guadalupe all are), falling back to the me
 county otherwise — and what that does to the 52 of 231 crosswalk rows where the two differ.
 
 **Scope → unscheduled, medium.**
+
+---
+
+### 26 · ✅ CLOSED by Round 43 — fabricated seed rows survived retirement
+
+*Note on numbering: items 26 and 27 are logged on the unmerged Round 42 branch and arrive with
+it. This is an append so the two merge side by side rather than conflicting. Read this as the
+closure record for that item 26 whichever order they land in.*
+
+Round 43 removed them. **The count was ten, not nine** — `airnow/san-antonio.json` was seeded on
+2026-08-24 and Round 42's scan anchored on 2026-08-23, so its inventory missed one. Seven rows
+deleted from live datasets, three tagged and kept as marked placeholders in sample datasets, one
+(`fema-nfhl`) already correct.
+
+Detection no longer describes `seed.ts`, it executes it: `seedObservationsFor()` regenerates a
+generator's exact output for any run date, and a row is seed output iff some run date reproduces
+its key and its value. `scripts/replays/seedunit.ts` asserts it on every sweep, with a positive
+control over every generator and a §5 that re-runs the dead fingerprint test to prove it still
+misses 22 of 71 rows. Full inventory and the page-by-page before/after in
+`docs/audits/round-43-seed-contamination.md`.
+
+**Two things from this item remain open, and both are the owner's — see item 29.**
+
+---
+
+### 28 · The ledger's `data` tier means "traces to the dataset file", not "traces to the source"
+
+Round 43. The claim ledger is sound as a mechanism and it worked exactly as specified — the
+specification is the gap.
+
+`data` is defined in each ledger's header as *"traces to the feed."* The electricity article's
+C1 ("13.88¢/kWh in August 2026") did trace to the feed: the fabricated row was in
+`eia-electricity/texas.json`. **A seed row satisfies the `data` tier by construction**, because
+the tier verifies provenance to the THI dataset file rather than to the upstream agency.
+
+Three `derived` claims then inherited it with arithmetic that is all exactly correct —
+13.88/15.46, 13.88/16.99 and 13.58/16.44 each give the stated percentage to one decimal. Correct
+arithmetic on a fabricated input is still a published falsehood, and `derived` has no way to
+notice.
+
+The verification method cannot catch it either: Round 38 established figure checking by **string
+match against the ledger** ("32 distinct figures, 0 missing"). A figure that is in the ledger and
+in the dataset passes every check that exists.
+
+`seedunit` now stops a fabricated row reaching a dataset file at all, which closes this route in
+practice. It does not close the definition — anything else that gets into a dataset file wrongly
+would still clear the `data` tier.
+
+**Options, not chosen:** have the ledger tooling call `reproducibleFromSeed()` so `data` requires
+a row that is not reproducible from `seed.ts` (cheap, and already implemented); or carry the
+row's `ingestedAt` and the feed's `status` into the ledger entry so a reader can see what was
+verified; or simply state the tier's real meaning in the header so nobody reads more into it.
+
+**Scope → small, wants a decision first.**
+
+---
+
+### 29 · 🔴 OPEN — the electricity article, and the Facebook post that carried it
+
+Round 43, and the only published surface it was not permitted to fix. Both decisions are the
+owner's; the recomputation is done and is in §5 of
+`docs/audits/round-43-seed-contamination.md`.
+
+**The article.** `/analysis/are-texas-electricity-prices-still-going-up/` answers its own title
+**"No"** on figures that no longer exist in any dataset. Recomputed on the real ten-month series:
+C1's month (August 2026) is not in the data at all; **C2 — "down 10.2% year over year", which is
+both the headline answer and the social card's subhead — is not computable in any form**, because
+a ten-month series has no year-earlier counterpart for any month; C3 becomes −3.2% rather than
+−18.3%; C4's "17.4% fall in one month" describes a month that does not exist. The cooling
+degree-day claims (C5, C8 and companions) are unaffected — `noaa-climate` is in `NEVER_SEED`.
+
+It cannot be fixed by swapping numbers, and **the answer flips**:
+`/data/texas/electricity-prices/` now renders *"the price rose 0.98¢ — 6.3% higher than August
+2025"* from the same feed, so leaving the article up puts two THI pages in contradiction. A
+rewritten article could not answer the title either — the real series ends May 2026 and now
+carries an OUT OF DATE badge.
+
+Recommendation: **withdraw** (`published: false`, a one-line frontmatter change), and treat any
+replacement as a new article about the window that does exist, with a dated correction note. It
+is the last place any of the ten fabricated values still renders — three grep hits in `dist/`,
+all in this article and its card on `/analysis/`.
+
+**The Facebook post.** `autoposter/data/published-posts.json` records a verified post on
+**2026-09-11** at `facebook.com/1335273942995805_122106384285466373`, carrying the OG card whose
+alt text reads *"13.88¢/kWh, down 10.2% year over year. Source: U.S. Energy Information
+Administration, Aug 2026."* The figure has left the site. Nothing has been done about it —
+outward-facing and not Claude's to decide.
+
+**Scope → owner decision, urgent.**
