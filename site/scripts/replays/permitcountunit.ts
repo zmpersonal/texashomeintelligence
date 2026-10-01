@@ -24,10 +24,11 @@
  *
  * Run: npx tsx scripts/replays/permitcountunit.ts
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { bump, toObservations, type Bucket } from "../../src/ingest/fetchers/permitTradeActivity";
+import { redactPersonalShapes, hasPersonalShape } from "../../src/ingest/redactPersonalShapes";
 import type { TradeCategory } from "../../src/ingest/tradeCategories";
 
 const SITE_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -142,6 +143,79 @@ function main() {
     );
     const bumpCalls = [...src.matchAll(/bump\(\s*buckets,/g)].length;
     assert(`both loops call bump() (${bumpCalls} call sites)`, bumpCalls === 2, String(bumpCalls));
+  }
+
+  // ── 6 · THE SOURCE-VALUE BREAKDOWN, HONESTLY ────────────────────────────
+  // Measured, not assumed: 1,810 San Antonio permits carry MORE THAN ONE permit
+  // type, and 968 of them are electrical, 2,007 plumbing. So a distinct-permit
+  // breakdown by type CANNOT sum to a distinct-permit total — the same permit is
+  // genuinely a Plumbing General and a Plumbing Gas permit. §3 asserts the sum
+  // for the non-spanning case; this asserts the spanning case behaves the way the
+  // page will have to describe, rather than quietly double-counting into the
+  // total.
+  console.log("\n══ 6 · a permit with two types is one permit ══\n");
+  {
+    const buckets = new Map<string, Bucket>();
+    bump(buckets, "plumbing", "2026-07", "permit-type", "Plumbing General Permit", "SA-1");
+    bump(buckets, "plumbing", "2026-07", "permit-type", "Plumbing Gas Permit", "SA-1");
+    const v = toObservations(buckets, "2026-10-01T00:00:00.000Z")[0].value;
+    assert("the total counts it once", v.permitCount === 1, String(v.permitCount));
+    assert(
+      "but it appears under both of its types",
+      v.sourceValues.length === 2 && v.sourceValues.every((x) => x.count === 1),
+      JSON.stringify(v.sourceValues),
+    );
+    assert(
+      "so the breakdown exceeds the total, and that is the honest answer",
+      v.sourceValues.reduce((t, x) => t + x.count, 0) > v.permitCount,
+    );
+  }
+
+  // ── 7 · NO PERSONAL SHAPE REACHES DISK ──────────────────────────────────
+  console.log("\n══ 7 · address and phone shapes are redacted at ingest ══\n");
+  {
+    const real = [
+      "Installation of a solar system on existing single-family residence at 15621 Belfin Dr Austin TX 78717.",
+      "Reroof at 5520 Burnet Rd",
+      "5717 Louise Ln Austin TX",
+      "CONTACT INSPECTOR WITH QUESTIONS. 512-552-8540--SLC***",
+    ];
+    for (const t of real) {
+      const r = redactPersonalShapes(t);
+      assert(`redacted: ${t.slice(0, 44)}…`, r.removed.length > 0 && !hasPersonalShape(r.text));
+    }
+    // Over-redaction is the failure that matters: these must survive untouched.
+    const decoys = [
+      "Erie to remove and replace 26s of shingles and 2s of sheathing on thehome",
+      "Install 1,134sqft (7 Parking spaces) of Single Post Gable Style Carports",
+      "Remove and replace 16 roofing squares of asphalt shingles, and 160SF of roof decking",
+      "Re-roof 3 kick out sections from main building.",
+      "Install 69 OSB boards on decking",
+    ];
+    for (const t of decoys) {
+      const r = redactPersonalShapes(t);
+      assert(`untouched: ${t.slice(0, 44)}…`, r.removed.length === 0 && r.text === t, JSON.stringify(r.removed));
+    }
+    // And the committed tree itself.
+    const GEN = path.join(SITE_DIR, "src", "data", "generated", "municipal-permits");
+    let scanned = 0;
+    const dirty: string[] = [];
+    for (const f of readdirSync(GEN)) {
+      if (!f.endsWith(".json")) continue;
+      const data = JSON.parse(readFileSync(path.join(GEN, f), "utf8")) as {
+        observations: { key: string; value: { workDescription?: string } }[];
+      };
+      for (const o of data.observations) {
+        if (!o.value?.workDescription) continue;
+        scanned += 1;
+        if (hasPersonalShape(o.value.workDescription)) dirty.push(`${f}:${o.key}`);
+      }
+    }
+    assert(
+      `no address or phone shape in ${scanned} committed work description(s)`,
+      dirty.length === 0,
+      dirty.slice(0, 6).join(", "),
+    );
   }
 
   console.log(

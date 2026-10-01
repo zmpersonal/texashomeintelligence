@@ -83,6 +83,39 @@ export interface TradeActivityValue {
  * distinct-counted total, and the shares beneath it would be wrong in a way
  * nothing on the page would reveal.
  */
+/**
+ * The window this dataset must recount, regardless of what `computeFetchWindow`
+ * handed in.
+ *
+ * ── WHY THIS OVERRIDES THE INCREMENTAL WINDOW ─────────────────────────────
+ * Round 45, found by running the fix and reading the result rather than
+ * assuming it. `computeFetchWindow` dates `since` from the last observation for
+ * a dataset with live history, which is right for an append-only event log: a
+ * past storm does not change. It is wrong for this dataset, which is a MONTHLY
+ * AGGREGATE RECOMPUTED FROM A WHOLE FILE on every run. With an incremental
+ * window the first run after the counting fix re-counted exactly one month —
+ * 2026-09 — and `mergeObservations` replaced only that key. The committed file
+ * became twelve months of row counts plus one month of permit counts, under one
+ * `trades-v1` prefix, with nothing marking the seam. San Antonio's electrical
+ * total moved 11,162 → 11,115, which looks like a −0.42% correction and is
+ * actually a −6.5% correction to one month and none at all to twelve.
+ *
+ * A mixture is worse than either basis, so the window is the dataset's own:
+ * thirteen complete months back from `until`. Neither feed costs more for it —
+ * San Antonio downloads the entire CSV and filters in memory either way, and
+ * Austin pages the same server-side query. What it buys is that every month in
+ * the file was computed by the same code on the same day.
+ */
+const RECOUNT_MONTHS = 13;
+
+function recountWindow(until: string): { since: string; until: string } {
+  const end = new Date(until);
+  const start = new Date(
+    Date.UTC(end.getUTCFullYear(), end.getUTCMonth() - RECOUNT_MONTHS, 1, 0, 0, 0, 0),
+  );
+  return { since: start.toISOString(), until };
+}
+
 export interface Bucket {
   /** Distinct permit ids seen in this category-month. */
   permits: Set<string>;
@@ -229,7 +262,10 @@ export const permitTradeActivitySanAntonio: FetcherModule<TradeActivityValue> = 
   source: { name: "City of San Antonio Permits Open Data", url: "https://data.sanantonio.gov/" },
   requiredEnvVars: [],
   async fetchRaw(ctx): Promise<Observation<TradeActivityValue>[]> {
-    const { since, until } = ctx.window;
+    // Not ctx.window — see `recountWindow`. A monthly aggregate recomputed from
+    // a whole file cannot be updated incrementally without freezing old months
+    // on whatever code computed them.
+    const { since, until } = recountWindow(ctx.window.until);
     const res = await fetch(await sanAntonioCsvUrl());
     if (!res.ok) throw new Error(`San Antonio permits CSV fetch failed: HTTP ${res.status}`);
     const records = rowsToRecords(parseCsv(await res.text()));
@@ -406,7 +442,10 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
   },
   requiredEnvVars: [],
   async fetchRaw(ctx): Promise<Observation<TradeActivityValue>[]> {
-    const where = austinTradeWhere(ctx.window.since, ctx.window.until);
+    // Same reason as San Antonio: this is a recomputed aggregate, not an
+    // append-only log, so it recounts its whole window every run.
+    const austinWindow = recountWindow(ctx.window.until);
+    const where = austinTradeWhere(austinWindow.since, austinWindow.until);
     const headers: Record<string, string> = {};
     if (ctx.env.SOCRATA_APP_TOKEN) headers["X-App-Token"] = ctx.env.SOCRATA_APP_TOKEN;
 

@@ -1,4 +1,5 @@
 import type { FetcherModule, Observation } from "../types";
+import { redactPersonalShapes } from "../redactPersonalShapes";
 
 export interface PermitValue {
   permitType: string;
@@ -76,6 +77,11 @@ export const austinPermits: FetcherModule<PermitValue> = {
     if (ctx.env.SOCRATA_APP_TOKEN) headers["X-App-Token"] = ctx.env.SOCRATA_APP_TOKEN;
 
     const observations: Observation<PermitValue>[] = [];
+    /** Every redaction, reported at the end of the run. Over-redaction is the
+     * failure mode that matters here — a mangled description silently removes
+     * the evidence the roofing composition figures rest on — so the count and
+     * the matched text are logged rather than applied quietly. */
+    const redactions: { permit: string; kind: "address" | "phone"; matched: string }[] = [];
     for (let page = 0; page < MAX_PAGES; page++) {
       const url = new URL(RESOURCE_URL);
       url.searchParams.set("$where", where);
@@ -99,13 +105,25 @@ export const austinPermits: FetcherModule<PermitValue> = {
         if (!isRoofingRelated(row)) continue; // belt-and-suspenders vs. the $where clause
         if (!row.permit_number || !row.issue_date) continue;
         const observedAt = new Date(row.issue_date).toISOString();
+        // Round 45. The city's free text sometimes carries the thing this
+        // fetcher deliberately does not ingest: a street address. Nine of 2,078
+        // committed descriptions did, and three reached the published CSV. Also
+        // catches a phone shape — the one found was a city inspector's line, but
+        // the pass is about the shape, not about whose number it turns out to be.
+        // Redacted BEFORE the value is built, so the repository never carries it
+        // either: the generated JSON is public, so "not on the site" is not
+        // "not public".
+        const redacted = redactPersonalShapes(row.description?.slice(0, 300));
+        for (const r of redacted.removed) {
+          redactions.push({ permit: row.permit_number, ...r });
+        }
         observations.push({
           observedAt,
           ingestedAt: new Date().toISOString(),
           key: row.permit_number,
           value: {
             permitType: row.work_class || row.permit_type_desc || "Roofing",
-            workDescription: row.description?.slice(0, 300),
+            workDescription: redacted.text || undefined,
             status: row.status_current || "Unknown",
             valuationUsd: parseValuation(row),
           },
@@ -113,6 +131,13 @@ export const austinPermits: FetcherModule<PermitValue> = {
       }
       if (rows.length < PAGE_SIZE) break;
     }
+    console.log(
+      `[municipal-permits/austin] ${observations.length.toLocaleString("en-US")} observation(s); ` +
+        `${redactions.length} redaction(s) in work descriptions` +
+        (redactions.length > 0
+          ? `: ${redactions.map((r) => `${r.permit} ${r.kind} ${JSON.stringify(r.matched)}`).join(" · ")}`
+          : ""),
+    );
     return observations;
   },
 };

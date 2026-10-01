@@ -47,7 +47,18 @@ export const TRADE_CATEGORIES = [
 export type TradeCategory = (typeof TRADE_CATEGORIES)[number];
 
 /**
- * Bump when any mapping below changes.
+ * Bump when any mapping below changes, or when the COUNTING BASIS changes.
+ *
+ * Round 45 bumped it to `trades-v2` for the second reason: `permitCount` was a
+ * row count and is now a count of distinct permits. The mappings are untouched.
+ * A count computed under one basis must never be compared against one computed
+ * under another, which is the same rule this constant already existed to
+ * enforce — a trend line spanning the boundary would have compared two
+ * different questions, and in San Antonio's electrical series that boundary
+ * would have invented a 9% fall.
+ *
+ * `tradeActivity()` publishes only the newest version present. Older rows stay
+ * on disk as history and stop being read.
  *
  * Recorded on every aggregate observation, for the same reason
  * `METHODOLOGY_VERSION` is recorded on derived indices: a count produced
@@ -55,7 +66,7 @@ export type TradeCategory = (typeof TRADE_CATEGORIES)[number];
  * produced under another. A page or a trend line that spans a version
  * boundary is comparing two different questions.
  */
-export const CATEGORY_MAPPING_VERSION = "trades-v1";
+export const CATEGORY_MAPPING_VERSION = "trades-v2";
 
 /** How a row was assigned to a category — the provenance that lets a page
  * say what its number actually is. */
