@@ -50,6 +50,7 @@ const UNITS = [
   ['citationcheckunit', ['npx', 'tsx', 'scripts/replays/citationcheckunit.ts']],
   ['thirdmetrounit', ['npx', 'tsx', 'scripts/replays/thirdmetrounit.ts']],
   ['datascopeunit', ['npx', 'tsx', 'scripts/replays/datascopeunit.ts']],
+  ['datasetintegrityunit', ['npx', 'tsx', 'scripts/replays/datasetintegrityunit.ts']],
   ['permitcountunit', ['npx', 'tsx', 'scripts/replays/permitcountunit.ts']],
   ['seedunit', ['npx', 'tsx', 'scripts/replays/seedunit.ts']],
   ['verify-trade-mapping', ['npx', 'tsx', 'scripts/verify-trade-mapping.ts']],
