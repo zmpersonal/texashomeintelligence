@@ -133,15 +133,16 @@ it is the right outcome: the old Austin figures were missing permits.
 **No published trend verdict changed, and no published direction reversed.** The reversal is
 electrical's, and electrical has no `belowHero` entry and no data page.
 
-**I had this wrong when I drafted the correction note, and the note shipped with the error before
-I caught it.** The draft said plumbing "read as a 0.5% fall … and is in fact a 1.6% rise". Both
+**I had this wrong when I drafted the correction note.** The draft said plumbing "read as a 0.5% fall … and is in fact a 1.6% rise". Both
 figures are rises: on disk `trades-v1` plumbing ran 12,122 → 12,186 half over half, i.e. +0.53%.
 The *fall* is what the row basis gives on a fresh read (12,333 → 12,166, −1.4%) — true of the
 counting basis, not of anything a reader saw. The note now says what is actually the case: the
 error was *capable* of reversing a published direction, and did reverse a verdict in a category we
 publish no page for, but no page's claim flipped. **The owner's second stated reason for the entry
-("a published trend's direction reversed") does not hold as stated.** The other two — a figure 7%
-wrong for 27 days, and numbers nobody outside could verify — do.
+("a published trend's direction reversed") does not hold as stated, and they withdrew it.** The
+other two — a figure 7% wrong for 27 days, and numbers nobody outside could verify — stand, and the
+entry rests on those. The note speaks only of what was published: the row-basis figures are in this
+audit and not in the note, because they were never on a page.
 
 ---
 
@@ -264,7 +265,12 @@ differences neutralised.
 | 7 | redaction both directions, plus a scan of the committed tree |
 | 8 | one mapping version at a time: summing all versions would overstate; one row per category-month within the newest; both replays select a version and pin none |
 
-**Sweep repairs made on the way, both pre-existing:**
+**Sweep repairs made on the way — both pre-existing, both outside this round's scope, kept on the
+owner's call.** The reason for keeping them: the sweep is this project's gate, and neither of these
+was a flaky test. `weeklyunit`'s eleven assertions had not executed on a fresh container since
+Round 9 — Round 43 recorded the step as red and "pre-existing", which is where a dead guard goes to
+be tolerated. A guard that cannot run is worth more than scope discipline, and a sweep reported as
+"28/30, both known" is a sweep that has stopped being a gate for two of its steps.
 
 - `weeklyunit` read `/tmp/austin.bak.json`, a snapshot dropped there by hand in Round 9. Any fresh
   container died at that line, taking **eleven assertions** with it — they had not run in this
