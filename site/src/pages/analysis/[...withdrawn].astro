@@ -1,0 +1,82 @@
+---
+/**
+ * 410 Gone for a withdrawn article; 404 for anything else under /analysis/.
+ *
+ * ── WHY THIS ROUTE EXISTS
+ *
+ * `published: false` removes an article's route, so the URL falls through to
+ * the asset handler and returns **404** — measured, and byte-identical to a
+ * slug that never existed. For a page that WAS published and indexed and then
+ * retracted, 404 is the wrong answer: it tells a crawler the resource might
+ * come back. **410 Gone** says it is deliberately and permanently removed.
+ *
+ * ── WHY IT IS SSR, ON AN OTHERWISE STATIC SITE
+ *
+ * A status code is a response header, and a prerendered page is a file on disk
+ * with no say in how it is served. 410 therefore needs a rendered response, so
+ * this is the second `prerender = false` family in the repo after `/api/*`.
+ *
+ * The serving cost is one render of a page with no data reads, on URLs nobody
+ * links to — it never touches a dataset, a binding or the network, so COST.md's
+ * "no work on the serving path" rule is satisfied in substance: the work is
+ * nil, it simply is not pre-done.
+ *
+ * ── WHY IT DOES NOT SWALLOW EVERY UNKNOWN SLUG
+ *
+ * A rest route under `/analysis/` is the last thing tried: the hub and the five
+ * prerendered articles are more specific and still win (asserted in
+ * `scripts/replays/withdrawnrender.mjs`). What reaches here is a slug nothing
+ * else matched — and only a slug in `WITHDRAWN_ARTICLES` gets a 410. A typo
+ * still gets a 404, because a typo is not a retraction.
+ */
+import Base from "../../layouts/Base.astro";
+import { withdrawnArticle } from "../../data/withdrawnArticles";
+import { formatDate } from "../../lib/format";
+
+export const prerender = false;
+
+const slug = (Astro.params.withdrawn ?? "").replace(/\/+$/, "");
+const entry = withdrawnArticle(slug);
+
+Astro.response.status = entry ? 410 : 404;
+// Neither state should be indexed. A 410 is already an instruction to drop the
+// URL; the noindex is for anything that renders the body without reading the
+// status, and for the 404 branch, which has no such instruction.
+---
+
+<Base
+  title={entry ? `Withdrawn: ${entry.title} | Texas Home Intelligence` : "Not found | Texas Home Intelligence"}
+  description={entry
+    ? "This analysis article was withdrawn. What it said, why it was removed, and where the correction is recorded."
+    : "No page at this address."}
+  noindex={true}
+>
+  <main class="mx-auto max-w-2xl px-4 py-16">
+    {entry ? (
+      <>
+        <p class="eyebrow">WITHDRAWN ARTICLE</p>
+        <h1 class="mt-2">{entry.title}</h1>
+        <p class="mt-6">
+          This article was published on <time datetime={entry.publishedAt}>{formatDate(entry.publishedAt)}</time>
+          and withdrawn on <time datetime={entry.withdrawnAt}>{formatDate(entry.withdrawnAt)}</time>.
+          It is gone for good rather than moved, so this address returns
+          <code>410 Gone</code>.
+        </p>
+        <p class="mt-4">{entry.reason}</p>
+        <p class="mt-8">
+          <a href="/methodology/">How we handle an error like this</a> ·
+          <a href="/data/texas/electricity-prices/">The electricity series itself, with its sources</a> ·
+          <a href="/analysis/">All analysis</a>
+        </p>
+      </>
+    ) : (
+      <>
+        <h1>No page at this address</h1>
+        <p class="mt-6">
+          Nothing is published here. If you followed a link, it may have been mistyped.
+        </p>
+        <p class="mt-8"><a href="/analysis/">All analysis</a> · <a href="/">Home</a></p>
+      </>
+    )}
+  </main>
+</Base>

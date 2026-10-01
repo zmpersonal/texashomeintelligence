@@ -336,10 +336,89 @@ Fixed the way 41e fixed the station bar: the replay now **reads the class names 
 
 ---
 
+## 8 · The withdrawal (added after owner approval)
+
+`published: false` is set on `are-texas-electricity-prices-still-going-up`.
+
+### What that alone does to the URL — measured on the built worker
+
+| URL | Status | Note |
+|---|---|---|
+| `/analysis/are-texas-electricity-prices-still-going-up/` | **404** | 4,347 bytes, Astro's generic fallback |
+| `/analysis/this-never-existed/` | **404** | 4,322 bytes — **the same answer** |
+| `…-still-going-up` (no trailing slash) | 301 → slash form | then 404 |
+| `/analysis/` | 200 | the article is gone from the hub list |
+
+`getStaticPaths` filters on `published === true`, so the route, the sitemap entry, the hub
+listing and every related-reading link all disappear together. But the URL's answer is
+indistinguishable from one that never existed — a 404 tells a crawler "this may come back."
+It was published on 2026-09-11, indexed, and linked.
+
+### 410 is available, and is now what it returns
+
+A status code is a response header, and a prerendered file has no say in how it is served, so
+410 needs a rendered response. Two files:
+
+- **`src/data/withdrawnArticles.ts`** — the registry: slug, title, both dates, and the reason in
+  one sentence. Entries are permanent; removing one turns the 410 back into a 404 and loses the
+  record. A withdrawal is a retraction, not a relocation — a page that *moved* is still a 301.
+- **`src/pages/analysis/[...withdrawn].astro`** — `prerender = false`, the second such family in
+  the repo after `/api/*`. It renders a brand page and sets **410** for a registry hit, **404**
+  for anything else. It reads no dataset, no binding and no network, so the serving work is nil;
+  it simply is not pre-done.
+
+Measured after the change:
+
+| URL | Status |
+|---|---|
+| the withdrawn article | **410 Gone** |
+| all five published articles | 200 |
+| `/analysis/`, `/`, `/data/texas/electricity-prices/`, `/methodology/` | 200 |
+| `/analysis/this-never-existed/` | **404** — a typo is not a retraction |
+
+A rest route under `/analysis/` is exactly the kind of thing that can silently swallow its
+siblings, so **`scripts/replays/withdrawnrender.mjs`** asserts all three properties together —
+the 410 and its body, that nothing else was shadowed, and that an unknown slug still 404s. It
+reads the published list and the registry out of source rather than restating them, so adding or
+withdrawing an article updates its coverage automatically. **24 checks, 0 failures**, registered
+in the sweep.
+
+### The grep, with the article gone
+
+All ten fabricated values plus the three derived percentages, over 330 text files in
+`dist/client`: **0 hits.** Not "0 except the article" — zero.
+
+### ⚠️ One fabricated figure is still publicly served, and the grep cannot see it
+
+`/images/og/are-texas-electricity-prices-still-going-up.png` is a **static asset in `public/`**,
+unaffected by `published: false`. It returns **200**, 62 KB, and it is the 1200×630 card reading
+*"13.88¢/kWh · down 10.2% year over year · Source: EIA, Aug 2026."*
+
+A text grep of `dist/` reports zero hits because the figure is pixels. Deleting the file is a
+one-line change — **but it is the image the live Facebook post of 2026-09-11 embeds**, so
+removing it and leaving the post up replaces a wrong figure with a broken image on a page we do
+not control. The two are one decision, and both are the owner's (BACKLOG 29).
+
+### Copy status
+
+The 410 page's body and the registry's `reason` string are **copy, drafted not approved** —
+shipped only because a status code needs a body. The public correction note for `/methodology/`
+is drafted in `docs/drafts/round-43-methodology-correction-note.md` and **is not in the site**.
+That draft also notes that `/methodology/`'s existing answer to *"Do you ever publish placeholder
+numbers?"* currently claims bootstrap rows "are retired automatically the first time a real fetch
+succeeds" — the clause this incident disproves — so the note is two changes, not one.
+
+---
+
 ## 7 · What is still open
 
-1. **The article** (§5) — withdraw or rewrite. Owner's call. One-line change either way.
-2. **The Facebook post of 2026-09-11** carrying the fabricated card. Outward-facing, owner's.
+1. ~~**The article** (§5) — withdraw or rewrite.~~ **Withdrawn** on owner approval; see §8. The
+   URL returns 410.
+2. **The Facebook post of 2026-09-11** carrying the fabricated card — and with it
+   `/images/og/are-texas-electricity-prices-still-going-up.png`, which still returns 200 and
+   still shows 13.88¢. One decision, outward-facing, owner's. See §8.
+5. **The public correction note** for `/methodology/` — drafted in `docs/drafts/`, not applied.
+   Copy is the owner's.
 3. **The ledger's `data` tier** means "traces to the THI dataset file," not "traces to the
    upstream source," and nothing in the verification method distinguishes them. Logged as
    BACKLOG 28.
