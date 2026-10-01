@@ -1,0 +1,43 @@
+# TEMPORARY — Round 44, ruling 5, pass 3. DELETE BEFORE THE ROUND ENDS.
+#
+# Three python attempts at San Antonio's CKAN CSV returned 403 — no custom
+# headers, Accept only, and a browser User-Agent — while the live fetcher reads
+# the same resource daily. Rather than guess at a fourth header, this runs the
+# repo's OWN code path under the repo's OWN toolchain: same resource-selection
+# rule, same global fetch, same parseCsv/rowsToRecords. If it 403s here too,
+# that is a finding about the feed, not about my request.
+name: TEMPORARY San Antonio duplicate audit via the repo's own code (Round 44)
+
+on:
+  push:
+    branches: [claude/thi-v3-round44-fort-worth]
+    paths: ['.github/workflows/tmp-dup-audit3.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    defaults:
+      run:
+        working-directory: site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+      - name: Audit
+        run: npx tsx scripts/audits/sa-duplicate-permits.ts
+      - name: Commit findings
+        if: always()
+        working-directory: .
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A site/tmp/dup3 tmp/dup3 2>/dev/null || true
+          git commit -m "TEMPORARY: Round 44 San Antonio duplicate audit (repo code path)" || echo "nothing to commit"
+          git push
