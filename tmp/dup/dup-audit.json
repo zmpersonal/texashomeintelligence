@@ -1,0 +1,143 @@
+{
+  "findings": {
+    "austin_rows": 59811,
+    "austin_distinct_permit_number": 59811,
+    "austin_distinct_method": "count(distinct)",
+    "austin_top_repeats": [
+      {
+        "permit_number": "1985-017232 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "1986-019898 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "1987-015484 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "1988-009064 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "1990-008490 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "1993-004012 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "1994-011146 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "1995-007195 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "1995-014830 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "1996-011143 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "1998-011550 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "1999-001374 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "1999-004108 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "2000-006843 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "2000-012522 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "2000-012522 EP",
+        "n": "1"
+      },
+      {
+        "permit_number": "2000-012522 PP",
+        "n": "1"
+      },
+      {
+        "permit_number": "2000-018086 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "2001-003301 BP",
+        "n": "1"
+      },
+      {
+        "permit_number": "1981-006025 BP",
+        "n": "1"
+      }
+    ],
+    "austin_roof_rows": 2037,
+    "austin_roof_distinct": 2037,
+    "sa_resource_candidates": [
+      {
+        "name": "PERMITS ISSUED 2020-2024",
+        "last_modified": null,
+        "created": "2025-09-04T20:49:24.746537",
+        "format": "CSV"
+      },
+      {
+        "name": "PERMITS ISSUED",
+        "last_modified": "2026-09-27T04:01:50.057586",
+        "created": "2018-05-08T14:26:31.292143",
+        "format": "CSV"
+      }
+    ],
+    "sa_resource_chosen": "PERMITS ISSUED"
+  },
+  "log": [
+    {
+      "label": "austin-rows",
+      "status": 200,
+      "bytes": 16
+    },
+    {
+      "label": "austin-distinct",
+      "status": 200,
+      "bytes": 16
+    },
+    {
+      "label": "austin-top-repeats",
+      "status": 200,
+      "bytes": 881
+    },
+    {
+      "label": "austin-roof-rows",
+      "status": 200,
+      "bytes": 15
+    },
+    {
+      "label": "austin-roof-distinct",
+      "status": 200,
+      "bytes": 15
+    },
+    {
+      "label": "sa-package",
+      "status": 200,
+      "bytes": 9341
+    },
+    {
+      "label": "sa-csv",
+      "status": 403,
+      "bytes": 25
+    }
+  ]
+}
