@@ -1,0 +1,1794 @@
+{
+  "findings": {
+    "rows_in_window": 81701,
+    "distinct_permit_no": 73342,
+    "distinct_unique_id": 81701,
+    "most_repeated_permit_nos": [
+      {
+        "n": 1024,
+        "Permit_No": "PE26-01700"
+      },
+      {
+        "n": 560,
+        "Permit_No": "PB26-04226"
+      },
+      {
+        "n": 280,
+        "Permit_No": "PB26-04700"
+      },
+      {
+        "n": 278,
+        "Permit_No": "PB26-04400"
+      },
+      {
+        "n": 179,
+        "Permit_No": "PE26-09776"
+      },
+      {
+        "n": 165,
+        "Permit_No": "PE26-05268"
+      },
+      {
+        "n": 102,
+        "Permit_No": "PE26-05740"
+      },
+      {
+        "n": 81,
+        "Permit_No": "PB26-05282"
+      },
+      {
+        "n": 48,
+        "Permit_No": "PP26-03308"
+      },
+      {
+        "n": 36,
+        "Permit_No": "PM26-07493"
+      },
+      {
+        "n": 34,
+        "Permit_No": "PB26-00955"
+      },
+      {
+        "n": 32,
+        "Permit_No": "PB25-16077"
+      },
+      {
+        "n": 28,
+        "Permit_No": "PB25-16064"
+      },
+      {
+        "n": 28,
+        "Permit_No": "PB25-16066"
+      },
+      {
+        "n": 28,
+        "Permit_No": "PB25-16067"
+      },
+      {
+        "n": 28,
+        "Permit_No": "PB25-16069"
+      },
+      {
+        "n": 28,
+        "Permit_No": "PB25-16071"
+      },
+      {
+        "n": 28,
+        "Permit_No": "PB25-16073"
+      },
+      {
+        "n": 28,
+        "Permit_No": "PB25-16074"
+      },
+      {
+        "n": 28,
+        "Permit_No": "PB25-16075"
+      },
+      {
+        "n": 28,
+        "Permit_No": "PB25-16076"
+      },
+      {
+        "n": 28,
+        "Permit_No": "PB26-09970"
+      },
+      {
+        "n": 25,
+        "Permit_No": "PB25-17113"
+      },
+      {
+        "n": 24,
+        "Permit_No": "PE26-02873"
+      },
+      {
+        "n": 18,
+        "Permit_No": "PE26-06558"
+      }
+    ],
+    "shippable_total": 504,
+    "shippable_distinct_permit_no": 429,
+    "recall_on_category": 260,
+    "category_total": 260,
+    "shippable_minus_category": 244,
+    "sample_newest": [
+      {
+        "Permit_No": "PB26-13214",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "R&R Roofing System. Shingles ONLY"
+      },
+      {
+        "Permit_No": "PB26-13173",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "REPLACE THE SHINGLES AND THE DECKING ID DAMAGED AND REPLACE ALL SIDING ON THE HOUSE TO CEMENT SIDING."
+      },
+      {
+        "Permit_No": "PB26-13044",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Erie to remove old shingles and install new roofing with new accessories as necessary. Install vent roof properly, underlayment and decking where applicable."
+      },
+      {
+        "Permit_No": "PB26-13043",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Remove and replace all underlayment and shingles"
+      },
+      {
+        "Permit_No": "PB26-13042",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "remove and replace all underlayment and shingles"
+      },
+      {
+        "Permit_No": "PB26-13030",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "FULL ROOF REPLACEMENT INCLUDING DECKING"
+      },
+      {
+        "Permit_No": "PB26-13030",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "FULL ROOF REPLACEMENT INCLUDING DECKING"
+      },
+      {
+        "Permit_No": "PB26-13026",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "A) TEAR OFF EXISTING ROOFING SYSTEM TOP TO BOTTOM LAYER\r\n1. MODIFIED BITUMEN HOT MOPPED\r\n2. BASE SHEET HOT MOPPED\r\n3. 1\" FIBERBOARD\r\n4. HOT MOOPPED PEA GRAVEL ON TOP OF 3\" CONCRETE\r\n\r\n-REMOVE EXISTING ROOFING SYSTEM DOWN TO THE CONCRETE DECK AND HAUL DEBRIS TO THE DUMPSTER. CLEAN AREA REMOVED TOENSURE A CLEAN SUBSTRATE. INSTALL WOOD BLOCKER ON PARAPETS IN FIELD TO MATCH THE HEIGHT OF THE NEW ROOFING SYSTEM.\r\n\r\nB) INSTALL\r\nPRIME EXISTING CONCRETE DECK"
+      },
+      {
+        "Permit_No": "PB26-13007",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Re-Roof asphalt shingle"
+      },
+      {
+        "Permit_No": "PB26-12939",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "RE-DECK & RE-ROOF"
+      },
+      {
+        "Permit_No": "PB26-12939",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "RE-DECK & RE-ROOF"
+      },
+      {
+        "Permit_No": "PB26-13585",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Erie to remove and replace 26s of shingles and 2s of sheathing on thehome"
+      },
+      {
+        "Permit_No": "PB26-13574",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Re-Roof"
+      },
+      {
+        "Permit_No": "PB26-13510",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Replace the Roof"
+      },
+      {
+        "Permit_No": "PB26-13466",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Remove the existing roofing system and prepare the roof deck for installation of a new **FORTIFIED Roof\u2122 system**. Inspect roof decking and replace damaged or deteriorated decking as required. Install and secure roof decking, seal roof deck seams, and provide enhanced roof deck attachment in accordance with applicable **IBHS FORTIFIED Roof\u2122 requirements**.\n\nInstall approved underlayment, drip edge, starter shingles, field shingles, hip and ridge shingles, and all required flashing components in accordance with manufacturer specifications and FORTIFIED requirements. Install or properly flash all roof penetrations, valleys, walls, chimneys, and roof-to-wall transitions.\n\nComplete all required high-wind fastening and edge protection details. Document the installation with required photographs and inspections throughout construction for verification by the designated FORTIFIED Evaluator.\n\nAll work will be completed in accordance with applicable building codes, manufacturer installation requirements, and current **IBHS FORTIFIED Roof\u2122 standards**, with the goal of obtaining a FORTIFIED Roof designation upon successful evaluation and approval."
+      },
+      {
+        "Permit_No": "PB26-13426",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "RE ROOF"
+      },
+      {
+        "Permit_No": "PB26-13397",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Remove roof down to decking, replace with synthetic felt, self-adhering valley liner, and architectural shingles"
+      },
+      {
+        "Permit_No": "PB26-12869",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Replacing the existing 1x6 decking to OSB 7/16"
+      },
+      {
+        "Permit_No": "PB26-12868",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Convert detached garage to studio apartment. Add plumbing, replace siding, finish interior."
+      },
+      {
+        "Permit_No": "PB26-12849",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "Re-roof, replace 14 windows rebuild back wall framing and siding"
+      },
+      {
+        "Permit_No": "PB26-12847",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "residential re-roof - decking needed per code (need to verify that)"
+      },
+      {
+        "Permit_No": "PB26-12844",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "R&R roof w/ TEK SCS (Terracotta) w/ Redeck"
+      },
+      {
+        "Permit_No": "PB26-12813",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Insurance restoration reroof"
+      },
+      {
+        "Permit_No": "PB26-12811",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Re-roof with stone coated steal"
+      },
+      {
+        "Permit_No": "PB26-12802",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "remove existing shingles and components replace damaged decking install new architectural and shingles"
+      },
+      {
+        "Permit_No": "PB26-12793",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Remove north facing and south facing shingle roof and replace with standing seam metal over sancary replace mod bitumen roof over walk way"
+      },
+      {
+        "Permit_No": "PB26-12793",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Remove north facing and south facing shingle roof and replace with standing seam metal over sancary replace mod bitumen roof over walk way"
+      },
+      {
+        "Permit_No": "PB26-12759",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "reroof main house"
+      },
+      {
+        "Permit_No": "PB26-12737",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "R&R roof w/ like and kind with full redeck."
+      },
+      {
+        "Permit_No": "PB26-12722",
+        "Permit_Type": "Residential Accessory Struct",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "I'm paying Quality Sotrage Buildings to construct a 8 by 12 foot storage shed. The HOA has approved the design and locaton. It is located outside the easements of the backyard. 10 feet from the back fence and 5 feet from the southern fence. It will be constructed on 4 inches of concrete slab reinforced with rebar. The shed will secured to the slab with wedge bolts. Roof will be a shingle roof. No electric or plumbing."
+      },
+      {
+        "Permit_No": "PB26-12543",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Remove all roof coverings down to the decking. Install synthetic Ice & Water materials in all roof valleys. Install synthetic underlayment on entire roof area. Install starter strip on entire perimeter of roof. Install asphalt shingle on roof. Remove and replace all roof vents with like kind. No roof openings will be added or removed."
+      },
+      {
+        "Permit_No": "PB26-12517",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Remove existing roofing materials down to the appropriate substrate and install a new roofing system in accordance with applicable building codes and manufacturer specifications. All required underlayment, flashing, and roofing components will be installed as part of the replacement."
+      },
+      {
+        "Permit_No": "PB26-11061",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "- Install 25-year 3-tab shingles (21 SQ) incl. felt paper - Replace roof decking with \u00be\u201d plywood decking (21 SQ) - Provide code-approved exhaust venting - Maintain proper slope, ridge, and valley coverage (NEZ NON QUALIFY NZ26-00787)"
+      },
+      {
+        "Permit_No": "PB26-11055",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Remove and replace all underlayment and shingles"
+      },
+      {
+        "Permit_No": "PB26-11000",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "reroofing"
+      },
+      {
+        "Permit_No": "PB26-11000",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "reroofing"
+      },
+      {
+        "Permit_No": "PB26-10965",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Tear down roof to bare deck. Install underlayment and shingle to code requirements."
+      },
+      {
+        "Permit_No": "PB26-10950",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "RE ROOF"
+      },
+      {
+        "Permit_No": "PB26-10939",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Reroof"
+      },
+      {
+        "Permit_No": "PB26-11736",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Shingle and TPO roof replacement and repair with possible re-deck in areas as needed."
+      },
+      {
+        "Permit_No": "PB26-12395",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Commercial Roof Replacement - Tear off existing roofing down to the existing metal deck. Mechanically attach 2 layers of (R-25 value) 2.2\" insulation. Mechanically fasten 1 layer of 60 mil TPO membrane \n*No Structural Changes* Building is occupied."
+      },
+      {
+        "Permit_No": "PB26-12361",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Removing & Replacing 24.67 squares of comp shingles. Detaching & Resettling 34.67 squares of clay tile, with 2-3 squares of additional waste (ludowici). New Decking & High Temp Ice+Water Shield."
+      },
+      {
+        "Permit_No": "PB26-12352",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Remove existing asphalt shingles and install new asphalt shingles. Installing Certainteed Landmark Weathered Wood. Replace existing decking with 5/8\"x4'x8' OSB"
+      },
+      {
+        "Permit_No": "PB26-12339",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "FHA 203(k) residential rehabilitation including roof replacement and roof sheathing repairs; siding, fascia, soffit and exterior trim repairs; gutters/downspouts; exterior and interior painting and caulking; masonry repairs; window and exterior door repairs; bathroom repairs including damaged floor framing/subfloor, shower components and tile; kitchen cabinet repairs; plumbing and electrical repairs/upgrades; HVAC service; crawl-space insulation; attic ladder replacement; finished flooring; fence repairs; and other required repairs per approved FHA 203(k) scope of work. No structural wall removal, LVL beam work, temporary shoring, or structural modifications."
+      },
+      {
+        "Permit_No": "PB26-12297",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "REDECK DUE TO CURRENT ROOF SURFACE IS SPACED DECKING.  REMOVE EXISTING ROOF REPLACE WITH ASPHALT SHINGLES."
+      },
+      {
+        "Permit_No": "PB26-12231",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "reroof main house"
+      },
+      {
+        "Permit_No": "PB26-12187",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "re-roof"
+      },
+      {
+        "Permit_No": "PB26-11704",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Erie to remove existing roofing and properly dispose. Erie to furnish and install\nice and water shield where applicable.\nErie to furnish and install fiberglass dimensional shingle.\nErie to furnish and install all accessories that may include drip edge, pipe boots,\nand flashing.\nErie to vent roof properly.\nErie to furnish and install Premium Synthetic Underlayment."
+      },
+      {
+        "Permit_No": "PB26-11634",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Remove all roof coverings down to the decking. Install synthetic Ice & Water materials in all roof valleys. Install synthetic underlayment on entire roof area. Install starter strip on entire perimeter of roof. Install asphalt shingle on roof. Remove and replace all roof vents with like kind. No roof openings will be added or removed."
+      },
+      {
+        "Permit_No": "PB26-11626",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "re-roof"
+      },
+      {
+        "Permit_No": "PB26-11607",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "FIRE DAMAGE REMODEL (NEZ NON QUALIFY NZ26-00873)"
+      },
+      {
+        "Permit_No": "PB26-11576",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Replace asphalt shingle roof."
+      },
+      {
+        "Permit_No": "PB26-11541",
+        "Permit_Type": "Residential Accessory Struct",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Shingles, 7 windows, siding, 2doors, repair wal that was damaged (NO INTERIOR WORK)"
+      },
+      {
+        "Permit_No": "PB26-11539",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "remove and replace damed decking, shingles, double underlayment. replace siding, replace 5 windows, replace 2 exterior doors (NO INTERIOR WORK)"
+      },
+      {
+        "Permit_No": "PB26-11539",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "remove and replace damed decking, shingles, double underlayment. replace siding, replace 5 windows, replace 2 exterior doors (NO INTERIOR WORK)"
+      },
+      {
+        "Permit_No": "PB26-11539",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "remove and replace damed decking, shingles, double underlayment. replace siding, replace 5 windows, replace 2 exterior doors (NO INTERIOR WORK)"
+      },
+      {
+        "Permit_No": "PB26-11539",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "remove and replace damed decking, shingles, double underlayment. replace siding, replace 5 windows, replace 2 exterior doors (NO INTERIOR WORK)"
+      },
+      {
+        "Permit_No": "PB26-11539",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "remove and replace damed decking, shingles, double underlayment. replace siding, replace 5 windows, replace 2 exterior doors (NO INTERIOR WORK)"
+      },
+      {
+        "Permit_No": "PB26-11539",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "remove and replace damed decking, shingles, double underlayment. replace siding, replace 5 windows, replace 2 exterior doors (NO INTERIOR WORK)"
+      },
+      {
+        "Permit_No": "PB26-11539",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "remove and replace damed decking, shingles, double underlayment. replace siding, replace 5 windows, replace 2 exterior doors (NO INTERIOR WORK)"
+      },
+      {
+        "Permit_No": "PB26-11539",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "remove and replace damed decking, shingles, double underlayment. replace siding, replace 5 windows, replace 2 exterior doors (NO INTERIOR WORK)"
+      },
+      {
+        "Permit_No": "PB26-11479",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Residential reroofing. Remove existing shingles. Replace existing decking. Add new decking and new 30 year laminated shingles. Add gutters. Add solar window screens. Paint full exterior of home."
+      },
+      {
+        "Permit_No": "PB26-11422",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Tear off existing roofing down to the existing metal deck. Mechanically attach 1 layer of (R-25 value) 4.3\" insulation. Mechanically fasten 1 layer of 60 mil TPO membrane \n*No Structural Changes* Building is occupied."
+      },
+      {
+        "Permit_No": "PB26-11420",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "REROOF ONLY OVER EXISTING ROOF"
+      },
+      {
+        "Permit_No": "PB26-11420",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "REROOF ONLY OVER EXISTING ROOF"
+      },
+      {
+        "Permit_No": "PB26-11396",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "residential re roof, replacing asphalt shingles with asphalt shingles, removing all current existing layers"
+      },
+      {
+        "Permit_No": "PB26-11376",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "RE ROOF"
+      },
+      {
+        "Permit_No": "PB26-11369",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "REDECK/RESHEET MAIN DWELLING. REMOVE OLD PLANK DECKING AND REPLACE WITH 7/16 OF OSB SHEATHING."
+      },
+      {
+        "Permit_No": "PB26-11314",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Tear off and replace 210 squares of TPO roof."
+      },
+      {
+        "Permit_No": "PB26-11190",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "REMODEL INTERIOR, PER PLANS, RESHINGLE ROOF, REPAINT / RECAULK,MEP WORK"
+      },
+      {
+        "Permit_No": "PB26-12161",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "We are doing a large repair on the tile roofs (replacing the broken tiles) and re-roofing some of the flat roofs meaning tear off to deck and go back with ISO and TPO."
+      },
+      {
+        "Permit_No": "PB26-12102",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Plank decking needs to be replaced, 5/8\" OSB."
+      },
+      {
+        "Permit_No": "PB26-12075",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "REROOF: The current decking is not compliant with the 2021 IRC software solely sheathed manageable surface.  Appropriate measures comply with the code must be taken and the roof must have new decking added."
+      },
+      {
+        "Permit_No": "PB26-11991",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "Fire-damage restoration of the existing approximately 1,840-square-foot, two-story residence. Work includes replacement of damaged roofing and roof decking; repair of damaged load-bearing and non-load-bearing wall framing, attic flooring, and second-floor subfloor; replacement of electrical wiring, HVAC equipment and ductwork, plumbing rough-ins, water heater, insulation, drywall, windows, doors, flooring, cabinetry, countertops, bathroom fixtures, trim, and interior finishes. Exterior work includes stucco repairs and painting of the stucco, fascia, and soffits. All work is intended to restore the residence to its pre-loss condition with no addition or change to the building footprint or residential use."
+      },
+      {
+        "Permit_No": "PB26-11973",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "remove existing roof and build new roof raising pitch to 7 instead of 2"
+      },
+      {
+        "Permit_No": "PB26-11861",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "reroof main house"
+      },
+      {
+        "Permit_No": "PB26-11850",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "Reroof/Remove and replace decking system"
+      },
+      {
+        "Permit_No": "PB26-09585",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "RE-ROOF USING DECRA TILE, SYNTHETIC FELT, 2X2 BATTENS, 1X4 COUNTER BATTENS, AND REDECKING WITH 5/8\" OSB"
+      },
+      {
+        "Permit_No": "PB26-09515",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "REROOF ENTIRE BUILDING"
+      },
+      {
+        "Permit_No": "PB26-09515",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "REROOF ENTIRE BUILDING"
+      },
+      {
+        "Permit_No": "PB26-09514",
+        "Permit_Type": "Residential Accessory Struct",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "REMODEL EXSISTING SHED TO MIL SUITE WITH NO PERMIT / ADDED NEW DOORS AND WINDOWS, REPLACED SHINGLES ONLY AND SIDING ON WHOLE SHED / REPLACED ELECTRICAL OUTLETS AND SWITCHES / PLUMBING WORK / HVAC MINI SPLIT"
+      },
+      {
+        "Permit_No": "PB26-09511",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Remove and replace 3500 square feet of composite roofing shingles"
+      },
+      {
+        "Permit_No": "PB26-09481",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Remove roof down to decking, replace with synthetic felt, self-adhering valley liner, and architectural shingles"
+      },
+      {
+        "Permit_No": "PB26-09419",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "28X14 CONCRETE PATIO 6' THICK 3 POST FITTINGS 28X14 COVER, 3 POSTS, SHINGLED ROOF. 10 FEET OF ROOF LINE IS A GABLE, POINT IS 12FT HIGH, ROOF LINE IS 9FT. STAND ALONE PRIVACY WALL ON THE END. 2 CEILING FANS, 6 CAN LIGHTS, 2 OUTLETS & 2 TV PLUGS\r\n\r\nSTRUCTURE ALREADY BUILT W/O PERMIT"
+      },
+      {
+        "Permit_No": "PB26-09386",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "reroof"
+      },
+      {
+        "Permit_No": "PB26-09374",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Residential Re-roof using IKO Dynasty shingles in color Glacier"
+      },
+      {
+        "Permit_No": "PB26-09343",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Reroof"
+      },
+      {
+        "Permit_No": "PB26-09331",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Complete Re-roof"
+      },
+      {
+        "Permit_No": "PB26-09319",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "RESIDENTIAL REMODEL CONSISTING OF ROOF REPLACEMENT, WINDOW REPLACEMENT, FLOORING REPLACEMENT, AND INTERIOR PAINTING OF AN EXISTING SINGLE-FAMILY RESIDENCE. NO STRUCTURAL CHANGES, NO ADDITION OF SQUARE FOOTAGE, AND NO CHANGES TO THE FLOOR PLAN. ALL EXISTING WINDOWS TO BE REPLACED."
+      },
+      {
+        "Permit_No": "PB26-09319",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "RESIDENTIAL REMODEL CONSISTING OF ROOF REPLACEMENT, WINDOW REPLACEMENT, FLOORING REPLACEMENT, AND INTERIOR PAINTING OF AN EXISTING SINGLE-FAMILY RESIDENCE. NO STRUCTURAL CHANGES, NO ADDITION OF SQUARE FOOTAGE, AND NO CHANGES TO THE FLOOR PLAN. ALL EXISTING WINDOWS TO BE REPLACED."
+      }
+    ],
+    "sample_oldest": [
+      {
+        "Permit_No": "HCLC-25-242",
+        "Permit_Type": "Design Review",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "PORCH: Repair/replace porch stairs with brick. \nReintroduce brick plinths on porch with appropriately proportioned posts and balustrades. \n \nGARAGE: Repair/replace siding on existing garage building. Replace garage doors with carriage stye doors. Add four feet in height to existing building and replace roof with a 8/12 pitch to allow for a storage loft/platform above the existing 8' top plate."
+      },
+      {
+        "Permit_No": "HCLC-25-314",
+        "Permit_Type": "Design Review",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Re-Roof Low Roof Sections ONLY\na. Clean and prepare existing Mod-Bit roofing system for new TPO membrane overlay.\nRemove compromised, saturated, and damaged system components.\nb. Provide and install 1 layer of Versico 1/2\u201d 4x4\u2019 SecurShield HD board, fully adhered to\nexisting Mod-Bit system with Flexible Dash low-rise VOC-free adhesive.\nc. Provide and install 60 mil Versico TPO roofing membrane fully adhered to SecurShield\nHD board with Cav-Grip 3v Low-VOC TPO adhesive/primer. TPO will be standard color\nwhite, tan, or gray with matching accessories.\nd. Provide and install 60 Mill TPO fully adhered up walls with manufacturers approved\nadhesive.\ne. Remove and replace penetration pockets and flashing around all penetration pipes and\nvents.\nf. Remove and replace existing pitch pans at condenser units.\ng. Provide and install all termination points to comply with TPC-1.1, TPC-9.2, and TPC-12.1\nmanufactures specifications. Where clearance for TPC-9.2 detail is not sufficient,\nLiquiSeal will be utilized in accordance with manufacturer\u2019s instructions.\nh. Provide and install TPO walkway pads around roof top units.\ni. Provide and install TPO equipment pads as needed around exhaust fans and other rooftop\nequipment.\nj. Remove and replace 24ga pre-finished gutters and downspouts at North and South walls.\nk. Remove and replace 2pc counter flashing at parapet wall where existing EPDM is flashed\nin.\nl. Detach, reflash, and reset roof grates as needed at the Roof Drains.\nm. Provide and install new 3\u2019x3\u2019 Bilco Roof Hatch, Safety Rail, and Post Up"
+      },
+      {
+        "Permit_No": "HCLC-26-002",
+        "Permit_Type": "Design Review",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "The roof will be gable and framing will be constructed of steel. Vertical columns will be no less than 6\"x6\". Steel beams will be w-12 x 19. C-Purlin will be no less than 6\" spaced no more than 4\" on center. All connections will be welded. Metal roof covering will be galvalume R-Panel and fastened with galvanized self tapping screws. The existing brick walls will bear no load from the roof."
+      },
+      {
+        "Permit_No": "HCLC-26-071",
+        "Permit_Type": "Design Review",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "ADD FRONT ELEVATION WALL ILLUMINATED SIGN AND SHINGLE SIGN"
+      },
+      {
+        "Permit_No": "HCLC-26-093",
+        "Permit_Type": "Design Review",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Project consists of renovation of an existing residential property located within a historic district. Work will include roof replacement due to wear, maintaining the existing roofline, pitch, and overall exterior appearance.\n\nInterior renovations will include updates to plumbing and electrical systems, along with minor reconfiguration of interior spaces to accommodate bathroom and laundry improvements.\n\nNo changes will be made to the building footprint. Exterior will remain consistent with the existing structure, and all work will comply with historic district guidelines."
+      },
+      {
+        "Permit_No": "HCLC-26-138",
+        "Permit_Type": "Design Review",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Our goal is to refurbish existing building. Work to be done: Fix and repair roof, power wash the entire exterior walls. Re-install windows & & storefront to existing openings. No demolition and no alterations. In conclusion make the structure presentable."
+      },
+      {
+        "Permit_No": "HCLC-26-163",
+        "Permit_Type": "Design Review",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "General interior remodel of the existing single-family residence. Exterior work consists of: (1) replacing one existing aluminum window in the primary bedroom with a salvaged historic wood window, matching the existing size and rough opening; (2) reroof \u2014 removing and replacing the roof covering in kind, matching the existing material, profile, and similar color; (3) new wood picket fence at the front, less than 4 feet tall and at least 50% open (see-through); (4) new wood privacy fence at the rear, capped, less than 8 feet tall. No changes to the building footprint, height, or exterior wall cladding."
+      },
+      {
+        "Permit_No": "HCLC-26-170",
+        "Permit_Type": "Design Review",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "We need to replace the shingles on our Art Studio. We would like to do that with Hardie-Board cement shingles. Currently there are cedar shake shingles. The Hardie ones will be far more fire resistant and will last longer. They will be painted to match what is there."
+      },
+      {
+        "Permit_No": "HCLC-26-188",
+        "Permit_Type": "Design Review",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Remove and dispose of the existing roofing system down to the roof deck. Inspect the roof decking for deterioration or damage and replace any compromised decking as needed. Install new underlayment, ice and water barrier in required areas, drip edge, flashing, ventilation components, and a complete new roofing system in accordance with the manufacturer's installation specifications and current local building codes.\n\nExisting roof profile, rooflines, and architectural features will remain unchanged. The replacement roofing material will be selected to match the existing appearance and maintain the historic character of the home, subject to Historic District design requirements and approval. All existing flashing, pipe boots, ridge vents, and related roofing accessories will be replaced as necessary to provide a complete, watertight roofing system.\n\nThe project is limited to replacement of the existing roof and does not include structural modifications, changes to the building footprint, roof pitch, or architectural design. All work will be performed in compliance with applicable Historic District guidelines, local building codes, and manufacturer specifications."
+      },
+      {
+        "Permit_No": "HCLC-26-191",
+        "Permit_Type": "Design Review",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Re roof layover"
+      },
+      {
+        "Permit_No": "HCLC-26-232",
+        "Permit_Type": "Design Review",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Remove existing TPO and Shingles Roof Systems. \nReplacing the approved roof system from 10-1-2020 with same manufacturer and material types.\nSection 2.4.3(E) The proposed work uses a compatible new roof material that will not be visible from the street. \nStandard 6 : The proposed work is considered an in-kind replacement of non-original roof material."
+      },
+      {
+        "Permit_No": "PB25-12288",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Removing existing decking replacing with OSB\nRemoving existing shingles replacing with asphalt shingles"
+      },
+      {
+        "Permit_No": "PB25-12333",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Residential Re-roof"
+      },
+      {
+        "Permit_No": "PB25-12430",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Remove old damaged shingles and decking and replace with new decking and shingles"
+      },
+      {
+        "Permit_No": "PB25-12520",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "- Install 25-year 3-tab shingles (26 SQ) incl. felt paper \n- Replace roof decking with \u00be\u201d plywood decking (26 SQ) \n- Provide code-approved exhaust venting - Maintain proper slope, ridge, and valley coverage"
+      },
+      {
+        "Permit_No": "PB25-12542",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "FOUNDATION REPAIR / ELECTRICAL / PLUMBING / REROOF"
+      },
+      {
+        "Permit_No": "PB25-12546",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Residential asphalt tear off and reroof"
+      },
+      {
+        "Permit_No": "PB25-12984",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Remove and replace 16 roofing squares of asphalt shingles, underlayment, and 160SF of roof decking"
+      },
+      {
+        "Permit_No": "PB25-12993",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Re-Roof. No structural changes. Tear off existing system down to deck. Install 1 layer of 1.6\" ISO (unconditioned space). Install GAF 45-Mil white TPO roof system, MF"
+      },
+      {
+        "Permit_No": "PB25-13001",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Re-Roof. No structural changes. Tear off existing system down to deck. Install 1 layer of 1.6\" ISO (unconditioned space). Install GAF 45-Mil, white TPO roof system, MF"
+      },
+      {
+        "Permit_No": "PB25-13026",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Reroof building with new .060 TPO"
+      },
+      {
+        "Permit_No": "PB25-13123",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Full tear off and reroof of laminated asphalt shingles"
+      },
+      {
+        "Permit_No": "PB25-13133",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "roof replacement for insurance"
+      },
+      {
+        "Permit_No": "PB25-13263",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Reroof"
+      },
+      {
+        "Permit_No": "PB25-12676",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Complete Roof Installation, remove shingles & install nee shingles & underlayment"
+      },
+      {
+        "Permit_No": "PB25-12882",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "REPLACE FULL ROOF, ASPHALT SHINGLES"
+      },
+      {
+        "Permit_No": "PB25-14371",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Demo chimney and repair roof"
+      },
+      {
+        "Permit_No": "PB25-14943",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "COMMERICAL REROOF"
+      },
+      {
+        "Permit_No": "PB25-15005",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "Conversion to 3 bed/2 bath .Interior remodel with larger bedrooms, new electrical, new doors, cabinets/countertops, tile in bathrooms,\r\nwindows, and paint interior/exterior. New roof shingles, front/side doors gutters, removal of existing closed\r\nin patio on front and going back to open front porch."
+      },
+      {
+        "Permit_No": "PB25-15023",
+        "Permit_Type": "Residential Accessory Struct",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "I would like to request a permit to add a pergola to my backyard, which will measure 26 * 11 with the roof matching existing shingles on the house. This structure won't obstruct or be visible to neighbors or cause any impediments. Thank you"
+      },
+      {
+        "Permit_No": "PB25-14404",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Re-roof"
+      },
+      {
+        "Permit_No": "PB25-14535",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "re-roof"
+      },
+      {
+        "Permit_No": "PB25-14604",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Replace existing decking with new 5/8 inch decking and install new 30-year asphalt shingles."
+      },
+      {
+        "Permit_No": "PB25-14621",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Create patio tied into the roofline on customers back porch, over existing concrete pad. Patio with 2 sides with  pine ceiling, included 6X6 cedar post w/ metal plates attache to the existing concrete with anchor bolts; includes ceiling fan and light over posts; shingles to match."
+      },
+      {
+        "Permit_No": "PB25-14626",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Remove existing roof and remove existing decking, replace with OSB and asphalt shingles"
+      },
+      {
+        "Permit_No": "PB25-14632",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Removing existing roof and removing existing decking, being replaced with OSB"
+      },
+      {
+        "Permit_No": "PB25-13724",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Tear off old shingles and repair decking where damaged then add new underlayment and re-shingle with new shingles. We will also replace drip edge and repair facia where needed."
+      },
+      {
+        "Permit_No": "PB25-13374",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "REBUILD TO ORIGINAL FORM FROM FIRE PLS 1 OUTLET ELECTRICAL DRY WALL ROOF DECKING AND SHINGLES"
+      },
+      {
+        "Permit_No": "PB25-14109",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "Remodel siding and roof repair no plans- just app- auto issue approved by Don"
+      },
+      {
+        "Permit_No": "PB25-13413",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "RE-ROOF"
+      },
+      {
+        "Permit_No": "PB25-13440",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Removing and replacing 1 layer of asphalt shingles."
+      },
+      {
+        "Permit_No": "PB25-13441",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "CHANGING THE PITCH OF THE ROOF"
+      },
+      {
+        "Permit_No": "PB25-13479",
+        "Permit_Type": "Commercial Accessory Structure",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Re-roof 3 kick out sections from main building."
+      },
+      {
+        "Permit_No": "PB25-13806",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Remove existing roof shingles and remove existing decking, replace with OSB."
+      },
+      {
+        "Permit_No": "PB25-13498",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Dwelling Roof 27 Squares\nRemove 3 tab - 25 yr. - composition shingle \nRemove/Install new Decking, damaged from Hail (96 Sheets)\nRemove/Install Roofing felt - 30 lb\nRemove/Install Valley Metal\nInstall Starter Strip\nInstall 30 Year Architectural Shingle\nInstall cap/ridge\nR&R Continuous ridge vent - shingle-over \nInstall Drip edge \nR&R Rain cap \nRemove/Install/Paint Roof vent - turtle type\nRemove/Install/Paint Flashing pipe jack\nDigital satellite system - Detach \nRemove/ Replace fiberglass roofing with decking and Shingle\nRemove Gutters to Replace Drip Edge\nDumpster, 100% Clean up, Miscellaneous Equipment"
+      },
+      {
+        "Permit_No": "PB25-14204",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Commercial Re-Roof"
+      },
+      {
+        "Permit_No": "PB25-14276",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "REPLACING SHINGLES AND DECKING NO CHANGES TO PITCH / REPLACING 6 WINDOWS AND SIDING ON ENTIRE HOME"
+      },
+      {
+        "Permit_No": "PB25-13590",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Re-roof 3 kick out sections from main building."
+      },
+      {
+        "Permit_No": "PB25-14290",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "ADDITION 576 SF\r\nEXTERIOR & INTERIOR: SEAL, PRIME & PAINT.\r\nNEW FLOORING\r\nRE-ROOF"
+      },
+      {
+        "Permit_No": "PB25-13632",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Re-roof, includes tear off down to decking and new installation from the underlayment up.\nInstalling GAF Timberline HDZ 30-YR Dimensional Shingle"
+      },
+      {
+        "Permit_No": "PB25-13662",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Reroof"
+      },
+      {
+        "Permit_No": "PB25-13664",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Re-roof of TPO Membrane"
+      },
+      {
+        "Permit_No": "PB25-13664",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Re-roof of TPO Membrane"
+      },
+      {
+        "Permit_No": "PB25-13664",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Re-roof of TPO Membrane"
+      },
+      {
+        "Permit_No": "PB25-14364",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Removing existing roof deck and replace with OSB"
+      },
+      {
+        "Permit_No": "PB25-15831",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "REMOVING EXISTING MEMBRANE, INSULATION WILL REMAIN IN PLACE / INSTALL 1/2 HD BOARD AND NEW TPO MECHANICALLY ATTACHED / COMM REROOF"
+      },
+      {
+        "Permit_No": "PB25-15834",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "REMOVE EXSISTING MEMBRANE INSULATION WILL REMAIN IN PLACE / INSTALL A 1/2 HD BOARD AND NEW TPO MECHANICALLY ATTACHED / COMM REROOF"
+      },
+      {
+        "Permit_No": "PB25-15834",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "REMOVE EXSISTING MEMBRANE INSULATION WILL REMAIN IN PLACE / INSTALL A 1/2 HD BOARD AND NEW TPO MECHANICALLY ATTACHED / COMM REROOF"
+      },
+      {
+        "Permit_No": "PB25-15837",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "REMOVING EXISTING MEMBRANE, INSULATION WILL REMAIN IN PLACE / INSTALL 1/2 HD BOARD AND NEW TPO MECHANICALLY ATTACHED / COMM REROOF"
+      },
+      {
+        "Permit_No": "PB25-15844",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "RE-ROOF WITH DECKING"
+      },
+      {
+        "Permit_No": "PB25-15855",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "RE-ROOF USING MALARKEY SHINGLES, SYNTHETIC FELT, ICE AND WATER SHIELD, AND REDECKING USING 1/2\" CDX DECKING"
+      },
+      {
+        "Permit_No": "PB25-15951",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "ROOF REPLACEMENT AND REDECK ROOF. REROOF WITH OWENS CORNING DURATION SHINGLES. REDECK WITH 7/16 OSB SHEATHING RB"
+      },
+      {
+        "Permit_No": "PB25-15978",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "NEW AC UNIT / MECH WORK / REPLACING 2 WINDOWS / REPLACING 5 DOORS / REPLACE SOME SIDING WHOLE HOUSE / REPLACING SHINGLES / REPLACING COLUMNS ON FRONT PORCH WITH 6X6 POST"
+      },
+      {
+        "Permit_No": "PB25-16007",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Replacing shingles and adding 1 new gable in the front of building"
+      },
+      {
+        "Permit_No": "PB25-16031",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "Remodel of master bedroom. 457 sf . Reroof and new electrical panel . Fiber cement lap siding, drywall, and composition shingles"
+      },
+      {
+        "Permit_No": "PB25-16031",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "Remodel of master bedroom. 457 sf . Reroof and new electrical panel . Fiber cement lap siding, drywall, and composition shingles"
+      },
+      {
+        "Permit_No": "PB25-16047",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Roof Replacement"
+      },
+      {
+        "Permit_No": "PB25-16090",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "COMMERCIAL RE-ROOF"
+      },
+      {
+        "Permit_No": "PB25-16133",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Replacing shingles and adding 1 new gable in the front of building"
+      },
+      {
+        "Permit_No": "PB25-16198",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "Siding repair // Roof repair // Replacing some plywood on roof// replacing 10 windows"
+      },
+      {
+        "Permit_No": "PB25-15458",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Tear off and re-roof residence"
+      },
+      {
+        "Permit_No": "PB25-15138",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Detach of solar modules, tear off existing asphalt shingle roof. Installation of new Standing Seam metal roof. Reset of existing solar modules"
+      },
+      {
+        "Permit_No": "PB25-15459",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Commercial re-roof"
+      },
+      {
+        "Permit_No": "PB25-15491",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Roof replacement over lobby area- install new PCV system-roof overlay PCV system on City tower roof"
+      },
+      {
+        "Permit_No": "PB25-15184",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Roof Repairing"
+      },
+      {
+        "Permit_No": "PB25-15538",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Install 69 OSB boards on decking"
+      },
+      {
+        "Permit_No": "PB25-15543",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "REMODEL TO ACCOMPANY ADDITION (PB25-14290)  EXTERIOR & INTERIOR: SEAL, PRIME & PAINT. \r\nNEW FLOORING\r\nRE-ROOF"
+      },
+      {
+        "Permit_No": "PB25-15243",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "RE-ROOF INCLUDING REDECKING WITH 7/16\" OSB"
+      },
+      {
+        "Permit_No": "PB25-15244",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "SCOPE OF WORK: Dwelling \n\nRemove (1) layer of existing roofing shingles and (2) layers of underlayment to decking \nInstall new prefinished metal drip edge where applicable \nInstall new valley protection ice and water shield \nInstall synthetic felt underlayment \nInstall new starter course on all eaves and rake edges \nInstall a new dimensional fiberglass shingle roof, Complimentary Upgrade to Class 3: Owens Corning Duration\nInstall new hip and ridge shingles \nReplace all existing vent boots with new vent flashing \nRemove & replace existing ventilation \nPaint vent flashing to match new roof \nSeal all penetrations \nClean up roof related debris outside of house and magnetically roll yard and haul off all debris to a proper disposal site \n\nGutters per scope \nFlat Roof per scope\nChimney Cap per scope"
+      },
+      {
+        "Permit_No": "PB25-15245",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Re-roof including 7/16\" OSB decking"
+      },
+      {
+        "Permit_No": "PB25-15253",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "MasterQuip- RE-ROOF"
+      },
+      {
+        "Permit_No": "PB25-15255",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Bldg # 9 Reroof - Antigua Village Apartments"
+      },
+      {
+        "Permit_No": "PB25-15255",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Bldg # 9 Reroof - Antigua Village Apartments"
+      },
+      {
+        "Permit_No": "PB25-15256",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Bldg # 7 Reroof - Antigua Village Apartments"
+      },
+      {
+        "Permit_No": "PB25-15256",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Bldg # 7 Reroof - Antigua Village Apartments"
+      },
+      {
+        "Permit_No": "PB25-15257",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Bldg # 10 Reroof - Antigua Village Apartments"
+      },
+      {
+        "Permit_No": "PB25-15257",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Bldg # 10 Reroof - Antigua Village Apartments"
+      },
+      {
+        "Permit_No": "PB25-15258",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Bldg #5 reroof - Antigua Village Apartments"
+      },
+      {
+        "Permit_No": "PB25-16403",
+        "Permit_Type": "Residential Building Permit",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "WE ARE CHANGING THE SHINGLES AND A REDECK. IT'S ABOUT 75 SHEETS OF DECKING."
+      },
+      {
+        "Permit_No": "PB25-15258",
+        "Permit_Type": "Commercial Building Permit",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Bldg #5 reroof - Antigua Village Apartments"
+      }
+    ],
+    "sample_excluded": [
+      {
+        "Permit_No": "HCLC-26-205",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "I would like to request a Certificate of Appropriateness and a special zoning exception (as necessary) for the front yard carport I built at my private residence located at 5525 Alexander Dr 76112.\n\nBelow are the carport construction details -\n8ft height carport\u00a0\nMaterials used:\n(6)- Yellow Pine Wood posts (4x4)\nRoof frame is 12 x 20: made of double (2x8) Yellow Pine Wood posts\u00a0\nRoof gable: 2x4x8\nRoof: Double deck; roof face is made of 1x8 Cedar Wood boards; Timberline Lifetime Roof Shingles."
+      },
+      {
+        "Permit_No": "PB25-12515",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Build Patio cover in back yard area 1,150 Sq.Ft. with Yellow Pine lumber and finish roof cover with 3 tab shingles and 6\" x 6\" Post lumber.// Remodel permit PB25-09415"
+      },
+      {
+        "Permit_No": "PB25-12981",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "12x18 attached patio cover built 100% from southern pine, burned and stained. Patio will consist of 2 posts, Sandwiching those posts are your 2x12 Main support beams. 2x8 rafters spaced every 2ft will run directly into roof ledger and over hang front beams. T1-11 and osb will be used for your ceiling with shingles to match existing."
+      },
+      {
+        "Permit_No": "PB25-14758",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "This project includes the installation of a 40\u2019x15\u2019 concrete patio extension, complete with a 2\u201d compacted gravel base, 3/8\u201d rebar reinforcement every 16\u201d for added strength, and a broom finish to match the existing patio. A 55\u2019 linear foot expansion board will be installed along the foundation/patio, and a downspout will be routed under the new slab into a pop-up outside the patio. All construction debris and forms will be removed from the site upon completion.\r\nOptional work includes the installation of a 15\u2019x15\u2019 gable or sloped patio cover, featuring tongue-and-groove cedar ceiling boards, 2\u201dx10\u201d cedar beams, and three 8\u201dx8\u201d cedar posts set in reinforced concrete footings. The roof will be finished with shingles matching the existing home, and electrical wiring will be installed for ceiling fans, recessed lights, and outlets as specified by the client. Cedar knee braces will be installed on all posts, and all wood surfaces will be stained to the client\u2019s preference. All debris from the patio cover installation will also be removed from the site."
+      },
+      {
+        "Permit_No": "PB25-15056",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "I would like to request a permit to add a patio cover my backyard, which will measure 26 * 11 with the roof matching existing shingles on the house. This structure won't obstruct or be visible to neighbors or cause any impediments. Thank you"
+      },
+      {
+        "Permit_No": "PB25-14563",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "This project includes the installation of a 40\u2019x15\u2019 concrete patio extension, complete with a 2\u201d compacted gravel base, 3/8\u201d rebar reinforcement every 16\u201d for added strength, and a broom finish to match the existing patio. A 55\u2019 linear foot expansion board will be installed along the foundation/patio, and a downspout will be routed under the new slab into a pop-up outside the patio. All construction debris and forms will be removed from the site upon completion.\r\nOptional work includes the installation of a 15\u2019x15\u2019 gable or sloped patio cover, featuring tongue-and-groove cedar ceiling boards, 2\u201dx10\u201d cedar beams, and three 8\u201dx8\u201d cedar posts set in reinforced concrete footings. The roof will be finished with shingles matching the existing home, and electrical wiring will be installed for ceiling fans, recessed lights, and outlets as specified by the client. Cedar knee braces will be installed on all posts, and all wood surfaces will be stained to the client\u2019s preference. All debris from the patio cover installation will also be removed from the site."
+      },
+      {
+        "Permit_No": "PB25-14611",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Gabel patio cover with shingles\r\n16x14\r\nWestern red cedar prestained medium brown framing\r\n- 6x6 posts at each corner\r\n- 4x12\u201d header\r\n- 2x6 rafters\r\n- 1x6 decking\r\n- Asphalt shingles"
+      },
+      {
+        "Permit_No": "PB25-13696",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "13x20 Attached Shed Roof w/shingles to match existing structure"
+      },
+      {
+        "Permit_No": "PB25-14105",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Furnish material and labor for the reroof project\n- Over the existing roof system install a \u00bd\u201d insulation mechanically attached to the decking\n- Over the fanfold install a 50 mil PVC roof system fastened to the decking (Duro-Last)\n- Install the proper termination according to the manufacture specs\n- Install new penetration and base flashings\n- Install new Duro-Last scuppers\n- Install new 24 GA P/F two piece compression edge metal\n- Install new 24 GA P/F bib flashing around the HVAC curbs\n- Install new walkway pads\n- Install new Duro-Last roof vents\nQualifications/Clarifications:\n\u2022 Includes tax, permit, dumpsters and hoisting\n\u2022 Includes all OSHA requirements for fall protection.\n\u2022 Includes a 15 yearDuro-Last warranty\n\u2022 All metal is quoted to the manufactures standard colors.\n\u2022 The cost to raise the HVAC and gas lines is NOT included in needed (To be done by\nothers)\n\u2022 All electrical disconnects and reconnects is NOT included (To be done by others)"
+      },
+      {
+        "Permit_No": "PB25-14136",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Construction of a new house. Brick , stone, fiber cement board, and composition shingles . Total = 4048 sf"
+      },
+      {
+        "Permit_No": "PB25-13793",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Gabel patio cover with shingles\r\n16x14\r\nWestern red cedar prestained medium brown framing\r\n- 6x6 posts at each corner\r\n- 4x12\u201d header\r\n- 2x6 rafters\r\n- 1x6 decking\r\n- Asphalt shingles"
+      },
+      {
+        "Permit_No": "PB25-13551",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "REPLACE DAMAGE FRAME IN ROOF AND WALLS AND REPLACE DECK\u00a0\r\nREPLACE ROOF SHINGLES\u00a0\r\nREPLACE ALL ELECTRICAL WIRE ,OUTLES ,SWITCH ,METER BOX,POST ,LIGHTS,CEILING FANS\u00a0\r\nINSTALL HVAC SYSTEM WITH DUCTS TO ROOMS\u00a0\r\nINSTALL INSULATION ON ATTIC\u00a0\r\nREPLACE ALL PLUMING UNDER HOUSE TO PVC AND RUN ALL WATER LINE PEX ,WITH \u00a0ONE BATHROOM ,LAUNDRY STACKBLE ,WATER HEATER ,AND KITCHEN CONECTIONS ,WATER VALVES ON EXTERIOR\r\nSHEETROCK MOST OF HOUSE TAPE BED AND TEXTURE\u00a0\r\nREPLACE DAMAGE SUBFLOOR\u00a0\r\nPAINT ALL INTERIOR\u00a0\r\nFLOORING VINYL PLANK\r\nTILE BATHTUB\u00a0\r\nREPLACE ALL WINDOWS\u00a0\r\nREPLACE EXTERIOR DOORS 6 PANELS METAL\r\nINSTALL INTERIOR DOOR ,BASEBOARD AND TRIM\u00a0\r\nINSTALL EXAHUST FAN IN BATHROOM AND LAUNDRY\r\nREPLACE CEILING FANS EACH ROOM AND LIVING ROOM\u00a0\r\nREPLACE ALL SIDING ON EXTERIOR WITH SMART SIDING 4X8\u00a0\r\nAND INSTALL BARRIER UNDER\u00a0\r\nPAINT EXTERIOR"
+      },
+      {
+        "Permit_No": "PB25-14295",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "attached patio cover built from southern pine stained and sealed. 2 structural posts with code approved piers. posts will be sandwiched by 2x12 main support beams with architectural cuts at both ends. 2x8 rafters. t1-11, osb and shingles to match."
+      },
+      {
+        "Permit_No": "PB25-15877",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "13x13 free standing patio cover built 100% from southern pine, burned and stained. Patio will consist of 2 front posts and 2 back posts. Sandwiching those pair of posts are our 2x12 Support beams , cut with architectural designs on the ends. 2 x8 rafters will run from right over your gutter to 1ft past your slab , spaced every 2ft. Last rafter will rest right up over your ridge/gutter on the inside of patio. T1\u201311 and osb will be used for your ceiling/decking with shingles to match existing."
+      },
+      {
+        "Permit_No": "PB25-15949",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "13x13 free standing patio cover built 100% from southern pine, burned and stained. Patio will consist of 2 front posts and 2 back posts. Sandwiching those pair of posts are our 2x12 Support beams , cut with architectural designs on the ends. 2 x8 rafters will run from right over your gutter to 1ft past your slab , spaced every 2ft. Last rafter will rest right up over your ridge/gutter on the inside of patio. T1\u201311 and osb will be used for your ceiling/decking with shingles to match existing."
+      },
+      {
+        "Permit_No": "PB25-15138",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Detach of solar modules, tear off existing asphalt shingle roof. Installation of new Standing Seam metal roof. Reset of existing solar modules"
+      },
+      {
+        "Permit_No": "PB25-15189",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "Installation of roof-mounted utility interactive PV System 8.1 KW DC & 5.80 KW AC.\n\n\nPV Modules-20 Runergy Sol Pnl 405W HYDH108P8B405\nInverter(s)-20 Enphase IQ8PLUS-72-2-US\n\nRoof type-Asphalt Shingles\n\nRacking-Ironridge XR10\nAttachment-Iron Ridge Hug"
+      },
+      {
+        "Permit_No": "PB25-15292",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "REPLACING 9 WINDOWS, SIDING, SHINGLES ON ROOF, AND REPAIRING BREACHES IN WALLS AND REPAIRING WARPED PORCH COVER"
+      },
+      {
+        "Permit_No": "PB25-15309",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "attached patio cover 100% from pine, 3 posts, sandwiched by 2x12 main support beams and 2x8 rafters every 24 inches with a clean over hang. t1-11 and osb for roof then shingled seamlessly to match. Stained and sealed. no electric per homeowner request."
+      },
+      {
+        "Permit_No": "PB25-16446",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Construction of new house . 1 level . Fiber cement siding. Composition shingles. Total = 1167 sq ft"
+      },
+      {
+        "Permit_No": "PB25-16447",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Construction of new house. Fiber cement siding. Composition shingles. Slab on grade . Total = 1256 sf . 1 level"
+      },
+      {
+        "Permit_No": "PB25-17157",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "26x11 attached patio cover built 100% from southern pine, burned and stained. Patio will consist of 3 posts, sandwiching those posts are your 2x12 Main support beams. 2x8 rafters will be screwed to roof ledger and overhang front beams. With roof fully enclosed underneath. T1-11 and osb will be sed for your ceiling with shingles to match existing. stained and sealed with spar urethane"
+      },
+      {
+        "Permit_No": "PB26-00539",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "35x12 (post to post) patio cover- 4 posts built from 2x8s spaced 10ft- sandwiching posts 2x12 beams- 2x12 plate bolted to subfloor/frame. 2x8 rafters- T1-11 sheets, shingles to match."
+      },
+      {
+        "Permit_No": "PB25-16978",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Reroof. Removal of solar system, replacement of room and then reinstallation of solar system as originally permitted"
+      },
+      {
+        "Permit_No": "PB26-01325",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "17x30 Shingled patio cover and wooden deck with electrical and concrete footings"
+      },
+      {
+        "Permit_No": "PB26-01370",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "17x30 Shingled patio cover and wooden deck with electrical and concrete footings"
+      },
+      {
+        "Permit_No": "PB26-01080",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "15x23 shingled patio cover with electrical and concrete and fireplace"
+      },
+      {
+        "Permit_No": "PB26-03740",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Construction of a new house . Brick and stucco . Composition shingles . 1 level . Total = 3467 sf"
+      },
+      {
+        "Permit_No": "PB26-02941",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "Replace roof top solar panel\n8.20 kW\n20 - Hanwha - QCells 410W\n1 solaredge SE7600\n1 Tesla Powerwall 3 11.5 kW"
+      },
+      {
+        "Permit_No": "PB26-04362",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "REPLACE ROOF IN KIND / INSTALL NEW PLYWOOD SHEATHING AND EXTERIOR WATERPROOF MEMBRANE / REPLACE CEDAR SHINGLES IN KIND / REMOVE DETERIORATED TIN FLOORING ON FRONT BALCONY AND REPLACE WITH 3 1/2\" TONGUE-AND-GROOVE WOOD PORCH DECKING / REINSTATE FRONT PORCH CEILING WITH WOOD BEADBOARD / ADD RECESSED LIGHT FIXTURES IN PORCH CEILING / REPAIR DAMAGED FASCIA BOARDS THROUGHOUT"
+      },
+      {
+        "Permit_No": "PB26-03895",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "will built a 16'x16'3\" patio cover detached from the house ,structure will be frame out of douglas firand yellow pine, with shingles top roof that will match existing roof on the house"
+      },
+      {
+        "Permit_No": "PB26-03916",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "RE-ROOF OF CARPORT TO INCLUDE DECKING. PREVIOUS PERMIT PB26-03761"
+      },
+      {
+        "Permit_No": "PB26-05278",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "This project includes the construction of a 474 SQFT broom-finish concrete patio extension paired with a fully engineered cedar gable patio cover. The patio extension will be poured using 3500 PSI concrete over a properly prepared and compacted 2\" gravel sub-base, reinforced with 3/8\" rebar at 18\" centers and a vapor barrier to control moisture. Expansion joints will be installed against the home to protect the foundation, and all work will be completed with care to preserve existing landscaping. The patio cover will feature structurally engineered components including 8\"x8\" cedar posts anchored into 18\"x18\"x2' deep footings with rebar stirrups, 2\"x12\" beams, 2\"x6\" rafters spaced at 24\" centers with a 1:12 slope, and a 2\"x10\" ridge board. The roofing system will consist of plywood decking, underlayment, and shingles for full weather protection, while the ceiling will be finished with painted Hardie board to match the home. Electrical will be installed for can lighting, outlets, and heaters (client-provided), with all work inspected and approved."
+      },
+      {
+        "Permit_No": "PB26-05873",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "216 sf patio cover extension\nmatching existing material and architecture. Wood framing, composition shingles. 12'x18', 11' peak elevation."
+      },
+      {
+        "Permit_No": "PB26-05928",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "98 sq ft patio cover Incl. posts \nBeams \nRafters \nOSB roof \nMatching shingles"
+      },
+      {
+        "Permit_No": "PB26-05022",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "369 sqft Attached Patio Cover w/shingles to match existing Structure per plans"
+      },
+      {
+        "Permit_No": "PB26-06478",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Pour new 6\u201dx10\u2019x12\u2019 concrete slab in the backyard (aligned with and doweled into the existing back patio slab.)\r\n- Remove ~10 LF of the existing gutter and fascia where the new patio cover will be installed.\r\n- Set 2, 6\u201dx6 Western Red Cedar posts on the front corners of the new patio cover w/ Simpson post bases anchored into new slab.\r\n(Post height to match the existing fascia height on the home.)\r\n- Frame the patio cover roof structure using Western Red Cedar (WRC) lumber.\r\n- Valley Beams (2\u201dx12\u201d PT S.Y.P.) \r\n- Rafters (2\u201dx8\u201d WRC)\r\n- Support Beams (4\u201dx6\u201d WRC) \r\n- Ridge Beam (2\u201dx8\u201d WRC)\r\n- Collar Ties (2\u201dx6\u201d WRC\u201d) \r\n- Fascia (2\u201dx6\u201d WRC) \r\n(New patio cover to tie into the existing roof structure)\r\n(Install Simpson joist hangers, hurricane ties, plates, and brackets in respective locations) \r\n- Install new Western Red Cedar tongue and grove roof decking over all rafters.\r\n- Install new roofing system on top of the new patio cover.\r\n* Synthetic roof underlayment installed over all new roof decking.\r\n* Ice and Water shield installed in both new roof valleys where the new patio cover connects to the existing roof structure. \r\n* Starter strip and new aluminum drip edge flashing installed around the full perimeter of the new patio cover roof line. \r\n* 3-Tab composition shingles and ridge caps installed on the new patio roof cover (new shingles to match the existing shingle color.)\r\n- Install one new electrical outlet. (Outlet location TBD by homeowner)\r\n- Install new 5\u201d aluminum seamless gutters on the left and right side of the patio cover.\r\n(New gutters to match the existing gutter size, profile and color.) \r\n(Includes installing one new 3\u201dx4\u201d downspout on the left and right side of the patio cover.) \r\n- Clean and haul away all job related debris."
+      },
+      {
+        "Permit_No": "PB26-06507",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Patio cover attached to back side of the house, frame out of yellow pine and dressed with smart siding to match house\u00a0\ngable shape structure will be 16\u20196\u201d wide and 13\u2019 feet deep with a shingles top roof that will match existing roof on the house"
+      },
+      {
+        "Permit_No": "PB26-07152",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Completing re-roofing\nOnly Shingles will be replaced. No redecking. \n\n34 solar panels will be removed and reinstalled."
+      },
+      {
+        "Permit_No": "PB26-07184",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Construction of a 423 sq. ft. attached patio cover addition including concrete work, cedar posts, LVL beams, roof framing, roofing shingles to match existing residence, and associated electrical work."
+      },
+      {
+        "Permit_No": "PB26-07324",
+        "Permit_Category": "Construction",
+        "B1_WORK_DESC": "34 solar panels will be removed and reinstalled in order to replace roof shingles only. no decking"
+      },
+      {
+        "Permit_No": "PB26-06883",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Patio cover attached to back side of the house, frame out of yellow pine and dressed with smart siding to match house\u00a0\r\ngable shape structure will be 16\u20196\u201d wide and 13\u2019 feet deep with a shingles top roof that will match existing roof on the house"
+      },
+      {
+        "Permit_No": "PB26-08636",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Full Tear Off (by others) Mechanically attach Duro-Last 50 mil PVC membrane. See attached scope of work."
+      },
+      {
+        "Permit_No": "PB26-08014",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Install an attached A-Frame patio cover 11x20.5. \u00a0259 square feet tied into existing house. Shingles to match house. \u00a0Demo existing concrete pad and install a new concrete pad. 226 square feet. \u00a0There is NO electrical work being done."
+      },
+      {
+        "Permit_No": "PB26-07667",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Build 23ft x 13ft gabled shingled patio cover attached to house"
+      },
+      {
+        "Permit_No": "PB26-10368",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "I'd like to get a permit to build a 12x20 Hip-Roof style patio cover using 8x8 PT Posts, 4x12 LVL Built-Up beam for the front, 4x12 SYP for the sides, 2x12 Ridge beam, 2x8 rafters, 1/2 OSB Decking, Synthetic underlayment, ICE & Water shield for valleys, architectural shingles to match existing home shingles. Ceiling will be LP Smart soffit and there will be 4 lights and 1 fan. The structure will be painted using Sherwin Williams paint to match exterior paint of house."
+      },
+      {
+        "Permit_No": "PB26-09788",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "10' x 25' 6/12 Gable patio cover, shingled. Includes a side Shed Style patio cover 13.5'x19' shingled 2/12 Pitch; Concrete Piers size 16\"x16\"x3': Electrical (9) Recessed lights, (2) possible outlets and (2) Fans\nSeamless Gutters to match"
+      },
+      {
+        "Permit_No": "PB26-09858",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "I'd like to get a permit for a 14L x 24W Patio cover using three 6x6 DF Posts spaced at 12' from each other, 4x10 DF beams, 2x6 rafters, 1/2 Decking, synthetic underlayment and ICE & Water for valleys. Architectural shingles to match the home shingles, tongue and groove ceiling, No electrical work."
+      },
+      {
+        "Permit_No": "PB26-09953",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Remove existing roofing down to decking and inspect. Replace with new PVC roof."
+      },
+      {
+        "Permit_No": "PB26-10703",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Construct a 11.4' x 40' attached patio cover (11.4' x 30' shingle-roofed section at 4:12 pitch and 11.4' x 10' open pergola section). Structured is supported by (5) 6x6 PT posts resting on (5) 12\" diameter x 18\" deep core-drilled concrete piers with Simpson Strong-Tie post anchors. Roof framing consist of, to span 40', a double 2x10 header beam, a 2x8 house ledger with Z-bar flashing secured to the house band joist with code approved fasteners, and 2x6 rafters spaced at 16\" O.C. secured with Simpson H2.5A hurricane ties on every rafter."
+      },
+      {
+        "Permit_No": "PB26-10703",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Construct a 11.4' x 40' attached patio cover (11.4' x 30' shingle-roofed section at 4:12 pitch and 11.4' x 10' open pergola section). Structured is supported by (5) 6x6 PT posts resting on (5) 12\" diameter x 18\" deep core-drilled concrete piers with Simpson Strong-Tie post anchors. Roof framing consist of, to span 40', a double 2x10 header beam, a 2x8 house ledger with Z-bar flashing secured to the house band joist with code approved fasteners, and 2x6 rafters spaced at 16\" O.C. secured with Simpson H2.5A hurricane ties on every rafter."
+      },
+      {
+        "Permit_No": "PB26-09345",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "New patio cover framing will integrate with the home on one side utilizing roof tie in / pony wall connected to wall studs. At connection to 2 story ledger board to be used for tie in.\nHouse Tie-In (Roofline Interface \u2013 22 Linear Feet)\nAt the attachment lines, carefully prepare roofline interface where new patio cover ties into existing home and structure.\nInstall proper flashing and weatherproofing at all pony wall tie-in points to create water-tight transitions.\nSeal all attachment lines to prevent water intrusion and ensure long-term durability.\nNew Patio cover Framing (242ft2 ft\u00b2 - 11' x 22' Roofline) (2' pony wall extension)\nAll new framing custom-built.\nPrimary beams, joists, and support posts sized per span requirements and engineered for structural integrity.\nFraming layout designed to integrate seamlessly with patio structure and home attachment points.\nExposed faces trimmed, stained per homeowners selection, and finished for clean, professional appearance.\nSupport Posts & Structural Elements\nInstall two (2) new 8\"\u00d78\" cedar support posts at front perimeter for structural integrity and span requirements. Attatched with new independant footings.\nPosts anchored to new footings using commercial grade simpson brackets. New footings minimum 24\" x 24\" and 3' deep.\nAll structural connections properly fastened and braced for long-term stability.\nRoofing\nRoof to be finished with shingles to match home.\nOSB Plywood included with full synthetic waterproofing underlayment.\nRafters 16\" O.C\nFinish\nFraming to be finish-ready upon completion.\nHardy ceiling to match existing awning throughout roof and overhang\nStain/sealer color for posts and beams selected by homeowner (applied after installation for uniform coverage and optimal protection). Homeowner to select from available ready seal colors.\nGutters included, homeowner to select color.\nElectrical\nIncludes six (6) recessed can lights accross structure\nIncludes one (1) ceiling fan install. Homeowner to purchase fan\nIncludes one (1) dedicated circuit ran to breaker through attic up to 125' run - this circuit is for the lights and fan"
+      },
+      {
+        "Permit_No": "PB26-09412",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Attached 19x 41 Gable Style patio Cover w/shingles to match existing roof"
+      },
+      {
+        "Permit_No": "PB26-11479",
+        "Permit_Category": "ReRoof",
+        "B1_WORK_DESC": "Residential reroofing. Remove existing shingles. Replace existing decking. Add new decking and new 30 year laminated shingles. Add gutters. Add solar window screens. Paint full exterior of home."
+      },
+      {
+        "Permit_No": "PB26-11496",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Back Patio cover.\nAddition of a 38' x 11' roof covering over existing porch area in back of house. \nSloped, composite roof off of house using five (5) 4' x 4' posts installed on support piers; they are not attached to the existing slab. See typical details for roof connection specifications. \nNew posts and beams to be wrapped in smart siding and painted to match house color.\n(See attached drawings for further details.)"
+      },
+      {
+        "Permit_No": "PB26-11774",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "I'd like to get a permit to build a 14L x 18W Gable style patio cover.  COncrete slab will consist of: #3 Rebar spaced at 18\" OC, using 3,500psi Concrete and broom finish. We will have two concrete piers measuring 12' perimeter by 24\" depth for post placement. We will use 8x8 pressure treated posts which will be anchored to the concrete using Simpson Strong-Tie ABU ZMAX post base We will use 4x12 LVL Built-Up beam for the front and 4x12 Built-Up beams for the side. 4x6 king post, 2x12 ridge beam, 2x6 rafters, 1/2 decking, synthetic underlayment, architectural shingles to match home shingles grade and color. Ceiling will consist of cedar tongue and groove. Posts and beams will be wrapped with James Hardie."
+      },
+      {
+        "Permit_No": "PB26-10862",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "New patio cover framing will integrate with the home on one side utilizing roof tie in / pony wall connected to wall studs. At connection to 2 story ledger board to be used for tie in.\r\nHouse Tie-In (Roofline Interface \u2013 22 Linear Feet)\r\nAt the attachment lines, carefully prepare roofline interface where new patio cover ties into existing home and structure.\r\nInstall proper flashing and weatherproofing at all pony wall tie-in points to create water-tight transitions.\r\nSeal all attachment lines to prevent water intrusion and ensure long-term durability.\r\nNew Patio cover Framing (242ft2 ft\u00b2 - 11' x 22' Roofline) (2' pony wall extension)\r\nAll new framing custom-built.\r\nPrimary beams, joists, and support posts sized per span requirements and engineered for structural integrity.\r\nFraming layout designed to integrate seamlessly with patio structure and home attachment points.\r\nExposed faces trimmed, stained per homeowners selection, and finished for clean, professional appearance.\r\nSupport Posts & Structural Elements\r\nInstall two (2) new 8\"\u00d78\" cedar support posts at front perimeter for structural integrity and span requirements. Attatched with new independant footings.\r\nPosts anchored to new footings using commercial grade simpson brackets. New footings minimum 24\" x 24\" and 3' deep.\r\nAll structural connections properly fastened and braced for long-term stability.\r\nRoofing\r\nRoof to be finished with shingles to match home.\r\nOSB Plywood included with full synthetic waterproofing underlayment.\r\nRafters 16\" O.C\r\nFinish\r\nFraming to be finish-ready upon completion.\r\nHardy ceiling to match existing awning throughout roof and overhang\r\nStain/sealer color for posts and beams selected by homeowner (applied after installation for uniform coverage and optimal protection). Homeowner to select from available ready seal colors.\r\nGutters included, homeowner to select color.\r\nElectrical\r\nIncludes six (6) recessed can lights accross structure\r\nIncludes one (1) ceiling fan install. Homeowner to purchase fan\r\nIncludes one (1) dedicated circuit ran to breaker through attic up to 125' run - this circuit is for the lights and fan"
+      },
+      {
+        "Permit_No": "PB26-13111",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Patio cover attached to the back side of the house 475 square foot ,framed out of yellow pine and Douglas fir , dress with siding , with four columns and shingles top roof"
+      },
+      {
+        "Permit_No": "PB26-13166",
+        "Permit_Category": "NA",
+        "B1_WORK_DESC": "Patio cover attached to the back side of the house 475 square foot ,framed out of yellow pine and Douglas fir , dress with siding , with four columns and shingles top roof"
+      }
+    ],
+    "sample_category_missed_by_text": [
+      {
+        "Permit_No": "PB25-14632",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Removing existing roof and removing existing decking, being replaced with OSB"
+      },
+      {
+        "Permit_No": "PB25-13441",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "CHANGING THE PITCH OF THE ROOF"
+      },
+      {
+        "Permit_No": "PB25-14364",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Removing existing roof deck and replace with OSB"
+      },
+      {
+        "Permit_No": "PB25-15538",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Install 69 OSB boards on decking"
+      },
+      {
+        "Permit_No": "PB25-16999",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Remodel interior. Remove 1 wall to expand dining room. Remove/relocate kitchen island; add electric outlets and new lighting fixtures. Repurpose existing open space to convert into kitchen pantry. Replace 11 windows, 2 exterior doors and 3 interior doors. Add 1 interior door. Replace outdated breaker box."
+      },
+      {
+        "Permit_No": "PB26-00496",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "replacing roof due to hail damage."
+      },
+      {
+        "Permit_No": "PB25-17479",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Adding new cabinets, fixing plywood and installation of windows. New sheetrock as needed for renovation"
+      },
+      {
+        "Permit_No": "PB25-17505",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "a non load bearing wall with a 60 x 80 french door will be installed to close off a section of my home to have it as a study room. no water lines or electrical will be installed. nor will existing plumbing or electrical will be moved or altered. the wall is 115.375\" in length and 9' in height and 4.5\" in width with 1/2\" inch dry wall on either side. for the bottom plates they will be fastened with 1/4\" \u00d7 2\u00be\" Tapcon screws into slab. and the framing will be done with 16d common nails (3\u00bd?)."
+      },
+      {
+        "Permit_No": "PB25-16842",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Remove existing decking, replace with OSB,"
+      },
+      {
+        "Permit_No": "PB26-00030",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Remove existing tile roof and replace with new tile roofing system."
+      },
+      {
+        "Permit_No": "PB26-01886",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Continue interior remodel of residential home including insulation installation, Sheetrock walls, bathroom tiles, kitchen cabinets/counter, flooring. (Initial remodel was started by family member who passed away, home stayed within the family) no exterior remodel needed"
+      },
+      {
+        "Permit_No": "PB26-01967",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Remove existing deck, replace with OSB"
+      },
+      {
+        "Permit_No": "PB26-00899",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Remove existing roofing system down to deck and replace with new roofing system"
+      },
+      {
+        "Permit_No": "PB26-03722",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Erie to remove existing roofing and properly dispose. Erie to furnish and install\r\nice and water shield where applicable.\r\nErie to furnish and install stone-coated metal roofing.\r\nErie to furnish and install all accessories that may include drip edge, pipe boots,\r\nand flashing.\r\nErie to furnish and install Premium Synthetic Underlayment.\r\nErie to vent roof properly.\r\nErie to furnish and install decking with OSB where applicable."
+      },
+      {
+        "Permit_No": "PB26-03408",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Build a 24'9\"x14'8\" freestanding pergola with a hardscape patio"
+      },
+      {
+        "Permit_No": "PB26-04038",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "ROOF ALTERATIONS"
+      },
+      {
+        "Permit_No": "PB26-04670",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Full roof and decking replacement"
+      },
+      {
+        "Permit_No": "PB26-05301",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Remove existing roof and replace with IKO Cambridge (Dual Black) Also, replacing 11 sheets of decking (5/8\")"
+      },
+      {
+        "Permit_No": "PB26-05054",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "REPLACE THE PORCH COVER WITH GABLE ROOF STYLE"
+      },
+      {
+        "Permit_No": "PB26-05054",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "REPLACE THE PORCH COVER WITH GABLE ROOF STYLE"
+      },
+      {
+        "Permit_No": "PB26-04826",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Partial Re Deck"
+      },
+      {
+        "Permit_No": "PB26-05566",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Interior remodel after slight fire, demo and replace affected framing, replace all new electrical, demo & replace HVAC System, ALL MEPS IN KIND REPLACEMENTS"
+      },
+      {
+        "Permit_No": "PB26-06347",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Remove and repair/replace decking, flashing and underlayment around chimney. Remove and re-install existing metal roofing panels."
+      },
+      {
+        "Permit_No": "PB26-07144",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Structural Framing, Roofing Remodel"
+      },
+      {
+        "Permit_No": "PB26-06287",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Roofing/sheating"
+      },
+      {
+        "Permit_No": "PB26-08632",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "REPLACEMENT OF ROOF & DECKING"
+      },
+      {
+        "Permit_No": "PB26-07884",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Remove existing roofing system and decking.\n\nInstall 7/16 OSB\n\nInstall new 30YR roofing system."
+      },
+      {
+        "Permit_No": "PB26-09172",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Baxter Recon & Rebuild Alpha Team\n\nFocus: the post-fire salvage, rebuild, remodel of the home, paying extra attention to the structural integrity the building."
+      },
+      {
+        "Permit_No": "PB26-09251",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Insurance Claim, replacing roof and add chimney cricket.  Need permit to show cricket is needed per new"
+      },
+      {
+        "Permit_No": "PB26-08069",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Roof, Gutters, and Windows replacement through insurance claim"
+      },
+      {
+        "Permit_No": "PB26-08106",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Roofing"
+      },
+      {
+        "Permit_No": "PB26-07755",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Re  Roof see plans for scope of work"
+      },
+      {
+        "Permit_No": "PB26-07767",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Remolding the interior of my home. Replacing the kitchen cabinets,sink, appliances,stove, refrigerator,wall oven, dishwasher,trash compactor,all the flooring, bathroom vanity,tubs,sink,shower heads ,toilets, bedroom doors, closet to doors,drywall to the ceiling because of the previous popcorn ceilings,light fixtures,door handles,locks, garage drywall due to holes,painting the entire house,removing all the carpet"
+      },
+      {
+        "Permit_No": "PB26-09742",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Roof will be repaired and replaced"
+      },
+      {
+        "Permit_No": "PB26-10616",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Tearing off and replacing roof"
+      },
+      {
+        "Permit_No": "PB26-10095",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Roof and gutter replacement"
+      },
+      {
+        "Permit_No": "PB26-11973",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "remove existing roof and build new roof raising pitch to 7 instead of 2"
+      },
+      {
+        "Permit_No": "PB26-12102",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Plank decking needs to be replaced, 5/8\" OSB."
+      },
+      {
+        "Permit_No": "PB26-11369",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "REDECK/RESHEET MAIN DWELLING. REMOVE OLD PLANK DECKING AND REPLACE WITH 7/16 OF OSB SHEATHING."
+      },
+      {
+        "Permit_No": "PB26-11607",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "FIRE DAMAGE REMODEL (NEZ NON QUALIFY NZ26-00873)"
+      },
+      {
+        "Permit_No": "PB26-12517",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Remove existing roofing materials down to the appropriate substrate and install a new roofing system in accordance with applicable building codes and manufacturer specifications. All required underlayment, flashing, and roofing components will be installed as part of the replacement."
+      },
+      {
+        "Permit_No": "PB26-12737",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "R&R roof w/ like and kind with full redeck."
+      },
+      {
+        "Permit_No": "PB26-12844",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "R&R roof w/ TEK SCS (Terracotta) w/ Redeck"
+      },
+      {
+        "Permit_No": "PB26-12868",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Convert detached garage to studio apartment. Add plumbing, replace siding, finish interior."
+      },
+      {
+        "Permit_No": "PB26-12869",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Replacing the existing 1x6 decking to OSB 7/16"
+      },
+      {
+        "Permit_No": "PB26-13510",
+        "Permit_Type": "Residential Building Permit",
+        "B1_WORK_DESC": "Replace the Roof"
+      }
+    ]
+  },
+  "log": [
+    {
+      "label": "rows",
+      "status": 200,
+      "bytes": 15
+    },
+    {
+      "label": "distinct-permit-no",
+      "status": 200,
+      "bytes": 17
+    },
+    {
+      "label": "distinct-unique-id",
+      "status": 200,
+      "bytes": 17
+    },
+    {
+      "label": "top-repeated",
+      "status": 200,
+      "bytes": 1667
+    },
+    {
+      "label": "shippable-total",
+      "status": 200,
+      "bytes": 13
+    },
+    {
+      "label": "shippable-distinct",
+      "status": 200,
+      "bytes": 15
+    },
+    {
+      "label": "recall",
+      "status": 200,
+      "bytes": 15
+    },
+    {
+      "label": "category-total",
+      "status": 200,
+      "bytes": 13
+    },
+    {
+      "label": "shippable-not-cat",
+      "status": 200,
+      "bytes": 15
+    },
+    {
+      "label": "sample-newest",
+      "status": 200,
+      "bytes": 24225
+    },
+    {
+      "label": "sample-oldest",
+      "status": 200,
+      "bytes": 25226
+    },
+    {
+      "label": "sample-excluded",
+      "status": 200,
+      "bytes": 28237
+    },
+    {
+      "label": "sample-cat-missed",
+      "status": 200,
+      "bytes": 9895
+    }
+  ]
+}
