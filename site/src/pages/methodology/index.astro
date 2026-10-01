@@ -188,8 +188,51 @@ const dateModified = sourceRows
         <strong>Not yet connected</strong> and carry no figures at all. Published data pages
         contain no placeholder rows: a page is only built once its feed has returned real
         records, and the fabricated rows used to bootstrap a dataset during development are
-        retired from it automatically the first time a real fetch succeeds.
+        retired from it the first time a real fetch succeeds. That retirement failed once, in
+        August 2026, and we published a figure that had never been measured &mdash; see below.
       </p>
+
+      <h2>Have you ever published a number that was wrong?</h2>
+      <p>Yes. Once, and this is the record of it.</p>
+      <p>
+        From 28 August to 1 October 2026, the Texas residential electricity price shown on this
+        site &mdash; 13.88&cent; per kilowatt-hour, labelled August 2026 and sourced to the U.S.
+        Energy Information Administration &mdash; was not a measured figure. It was a placeholder
+        written while the dataset was being set up, which should have been discarded the first time
+        the real feed succeeded and was not. The real series had stopped at 16.44&cent; in May
+        2026, and the placeholder sat on top of it, so the page also showed a LIVE badge over a
+        feed that was four months stale.
+      </p>
+      <p>
+        It first appeared on 28 August, on the Texas electricity price page and its downloadable
+        CSV, the day that page was published. From there it reached the homepage, both HVAC pages,
+        the AC lifespan tool, and one analysis article. Because the placeholder values ran about
+        2.5&cent; below the real ones, the published series read as a sharp recent fall in prices.
+        It was not one. <strong>Texas residential electricity prices rose 6.3% over the ten months
+        the real data covers, from 15.46&cent; in August 2025 to 16.44&cent; in May 2026.</strong>
+      </p>
+      <p>What we have done about it:</p>
+      <ul class="key-findings">
+        <li>
+          <strong>The placeholder rows are gone</strong> &mdash; ten of them, across seven
+          datasets. Every page listed above now shows the real figure, and the electricity feed
+          carries an <strong>Out of date</strong> badge, because that is what it is.
+        </li>
+        <li>
+          <strong>The article built on the figure has been withdrawn</strong>, not corrected. Its
+          central claim could not be restated: the month it reported on does not exist in the data,
+          and a ten-month series cannot support the year-over-year comparison it led with. Its URL
+          returns 410 Gone.
+        </li>
+        <li>
+          <strong>The detection is now a test that runs on every build.</strong> The old check
+          tried to recognise a placeholder by what it looked like, and these rows did not look like
+          one. The new one regenerates what the placeholder generator would have written and
+          matches it exactly, so a placeholder cannot reach a published page without failing the
+          build. The test also proves itself each run, by re-running the old check and confirming
+          it still misses rows the new one catches.
+        </li>
+      </ul>
 
       <h2>How is the Home Stress Index calculated?</h2>
       <p>

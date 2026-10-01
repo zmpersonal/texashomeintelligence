@@ -918,35 +918,48 @@ verified; or simply state the tier's real meaning in the header so nobody reads 
 
 ---
 
-### 29 · 🔴 OPEN — the electricity article, and the Facebook post that carried it
+### 29 · ✅ CLOSED on the site side — withdrawn, card deleted, correction published
 
-Round 43, and the only published surface it was not permitted to fix. Both decisions are the
-owner's; the recomputation is done and is in §5 of
-`docs/audits/round-43-seed-contamination.md`.
+Round 43 plus its follow-up. Everything on THI itself is done; the only thing left is the
+Facebook post, which the owner is correcting directly.
 
-**The article.** `/analysis/are-texas-electricity-prices-still-going-up/` answers its own title
-**"No"** on figures that no longer exist in any dataset. Recomputed on the real ten-month series:
-C1's month (August 2026) is not in the data at all; **C2 — "down 10.2% year over year", which is
-both the headline answer and the social card's subhead — is not computable in any form**, because
-a ten-month series has no year-earlier counterpart for any month; C3 becomes −3.2% rather than
-−18.3%; C4's "17.4% fall in one month" describes a month that does not exist. The cooling
-degree-day claims (C5, C8 and companions) are unaffected — `noaa-climate` is in `NEVER_SEED`.
+**The article is withdrawn.** `published: false` removes its route, sitemap entry, hub listing
+and every internal link. Its URL returns **410 Gone** rather than 404 — it was published and
+indexed, and 404 would tell a crawler it might come back. Implemented as
+`src/data/withdrawnArticles.ts` plus an SSR rest route under `/analysis/`, asserted by
+`scripts/replays/withdrawnrender.mjs` (31 checks): the 410 and its body, that all five published
+articles and the hub still return 200, and that an unknown slug still gets 404 — a typo is not a
+retraction.
 
-It cannot be fixed by swapping numbers, and **the answer flips**:
-`/data/texas/electricity-prices/` now renders *"the price rose 0.98¢ — 6.3% higher than August
-2025"* from the same feed, so leaving the article up puts two THI pages in contradiction. A
-rewritten article could not answer the title either — the real series ends May 2026 and now
-carries an OUT OF DATE badge.
+**The OG card is deleted**, with its sidecar. `/images/og/are-texas-electricity-prices-still-going-up.png`
+was a static asset in `public/`, unaffected by `published: false`, and served **200** with the
+figure as pixels — which a text grep structurally cannot see. `withdrawnrender` now asserts its
+absence by path. Owner's call and owner's reasoning: *"a fabricated figure on a 200-serving URL
+is worse than a broken image on a post I'm about to correct anyway."*
 
-Recommendation: **withdraw** (`published: false`, a one-line frontmatter change), and treat any
-replacement as a new article about the window that does exist, with a dated correction note. It
-is the last place any of the ten fabricated values still renders — three grep hits in `dist/`,
-all in this article and its card on `/analysis/`.
+**The public correction note is published** at `/methodology/`, extending its own
+*"Do you ever publish placeholder numbers?"* answer — which until now claimed bootstrap rows
+"are retired automatically the first time a real fetch succeeds", the clause this incident
+disproves. Both changes shipped together.
 
-**The Facebook post.** `autoposter/data/published-posts.json` records a verified post on
-**2026-09-11** at `facebook.com/1335273942995805_122106384285466373`, carrying the OG card whose
-alt text reads *"13.88¢/kWh, down 10.2% year over year. Source: U.S. Energy Information
-Administration, Aug 2026."* The figure has left the site. Nothing has been done about it —
-outward-facing and not Claude's to decide.
+**The window in the note is 28 August to 1 October 2026**, verified from the deploy history
+rather than from when the row was written. On 23 August nothing rendered: the dataset was
+`status: sample`, and both `publishable()` and `latest()` withhold a sample dataset, so the data
+page did not exist and no page carried a reading. The first published surface was
+`/data/texas/electricity-prices/` and its CSV, the day that page shipped. §9 of
+`docs/audits/round-43-seed-contamination.md` has the commit-by-commit derivation — and corrects
+a premise of Round 42's §5 along the way: the claim that this repo's history begins 2026-09-11
+was an artefact of a **shallow clone**, not a fact about the repo.
 
-**Scope → owner decision, urgent.**
+**The retracted figure now appears in exactly one built file — `/methodology/` — and that is
+deliberate.** A correction that will not name the number it retracts is not a correction.
+`withdrawnrender` §5 asserts precisely that: 13.88¢ appears once, on that page, in retraction
+framing, beside the corrected figure; and the three derived percentages appear nowhere at all. A
+later round reading a bare grep hit as a regression would delete the record, so the invariant is
+encoded rather than remembered.
+
+**Deliberately left:** `autoposter/tests/test_card.py` holds the figure in an inline fixture and
+`autoposter/articles/…/facebook-promo.json` records the post. Neither is served; the second is
+the audit trail of the post itself.
+
+**Scope → done, except the Facebook post, which is the owner's and in hand.**
