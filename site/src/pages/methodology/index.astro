@@ -210,21 +210,28 @@ const dateModified = sourceRows
         CSV, the day that page was published. From there it reached the homepage, both HVAC pages,
         the AC lifespan tool, and one analysis article. Because the placeholder values ran about
         2.5&cent; below the real ones, the published series read as a sharp recent fall in prices.
-        It was not one. <strong>Texas residential electricity prices rose 6.3% over the ten months
-        the real data covers, from 15.46&cent; in August 2025 to 16.44&cent; in May 2026.</strong>
+        It was not one &mdash; the drop a reader saw was the 2.5&cent; gap between the placeholder
+        and the real series, not a movement in the price, and nothing in this record is a claim
+        about how the price has moved since. <strong>Texas residential electricity prices did not fall as the
+        published series suggested. Over the ten months the real data covered at the time of this
+        correction, they rose 6.3%, from 15.46&cent; in August 2025 to 16.44&cent; in May
+        2026.</strong> The current series is on the{" "}
+        <a href="/data/texas/electricity-prices/">Texas electricity prices page</a>.
       </p>
       <p>What we have done about it:</p>
       <ul class="key-findings">
         <li>
-          <strong>The placeholder rows are gone</strong> &mdash; ten of them, across seven
-          datasets. Every page listed above now shows the real figure, and the electricity feed
-          carries an <strong>Out of date</strong> badge, because that is what it is.
+          <strong>The placeholder rows no longer publish a figure</strong> &mdash; seven removed
+          and three relabelled as placeholders, across seven datasets. Every page that carried the
+          figure was rebuilt from the real series, and the electricity feed's badge is resolved from
+          the age of the data rather than from whether the fetch succeeded, which at the time of
+          this correction made it <strong>Out of date</strong>.
         </li>
         <li>
           <strong>The article built on the figure has been withdrawn</strong>, not corrected. Its
           central claim could not be restated: the month it reported on does not exist in the data,
-          and a ten-month series cannot support the year-over-year comparison it led with. Its URL
-          returns 410 Gone.
+          and the ten-month series it had could not support the year-over-year comparison it led
+          with. Its URL returns 410 Gone.
         </li>
         <li>
           <strong>The detection is now a test that runs on every build.</strong> The old check
