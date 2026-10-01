@@ -109,6 +109,8 @@ export interface TradeActivity {
   /** How rows were classified: permit-type / work-class / description-text. */
   mechanisms: string[];
   mappingVersion: string;
+  /** Every mapping version present on disk for this series, newest last. */
+  mappingVersionsOnDisk: string[];
   windowStart: string;
   windowEnd: string;
   /** Permit types the mapping assigns to this category, whether or not any
@@ -158,9 +160,32 @@ export function tradeActivity(location: string, category: string): TradeActivity
    * merely sparse stays in.
    */
   const currentMonth = buildNow().toISOString().slice(0, 7);
-  const all = dataset.observations
+  /**
+   * ── ONE METHODOLOGY VERSION, NOT A MIXTURE ────────────────────────────
+   * Round 45. `toObservations` keys every row `${mappingVersion}/${category}/
+   * ${month}` and its comment promises that "a mapping change writes new keys
+   * instead of overwriting counts computed under the old rules". The writing
+   * half of that was true. The reading half did not exist: this function took
+   * every observation for the category regardless of version, and reported
+   * `rows[0].mappingVersion` as though one row could speak for all of them.
+   *
+   * So the first bump of that constant would have SUMMED the old and new rows
+   * for every recounted month — a silent doubling, presented under whichever
+   * version happened to sort first. The mechanism that was supposed to protect
+   * a methodology change was the thing that would have broken it.
+   *
+   * Round 45 is that first bump (`trades-v1` → `trades-v2`, row counts → distinct
+   * permit counts), so the reading half is built here: take the newest version
+   * present and nothing else. Older rows stay on disk as history — "store
+   * history, never overwrite" — and stop being published.
+   */
+  const forCategory = dataset.observations
     .filter((o) => !o.seed && o.value.category === category)
-    .map((o) => o.value)
+    .map((o) => o.value);
+  const versions = [...new Set(forCategory.map((v) => v.mappingVersion))].sort();
+  const newest = versions.at(-1);
+  const all = forCategory
+    .filter((v) => v.mappingVersion === newest)
     .sort((a, b) => a.month.localeCompare(b.month));
   const droppedIncompleteMonths = all.filter((r) => r.month >= currentMonth).map((r) => r.month);
   const rows = all.filter((r) => r.month < currentMonth);
@@ -220,7 +245,14 @@ export function tradeActivity(location: string, category: string): TradeActivity
     })(),
     sourceTypes,
     mechanisms: [...new Set(rows.flatMap((r) => r.mechanisms))],
-    mappingVersion: rows[0].mappingVersion,
+    // Safe now that `all` is filtered to one version — and asserted, because
+    // "rows[0] speaks for all of them" is exactly the assumption that made the
+    // version mechanism decorative.
+    mappingVersion: newest ?? rows[0].mappingVersion,
+    /** Every version on disk for this series, newest last. More than one is
+     * normal after a methodology change and means the older ones are retained
+     * but not published. */
+    mappingVersionsOnDisk: versions,
     windowStart: months[0].month,
     windowEnd: months[n - 1].month,
     mappedTypeCount: mappedTypeCount(location, category),

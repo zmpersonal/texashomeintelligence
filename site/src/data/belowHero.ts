@@ -71,7 +71,7 @@ export interface BelowHeroSpec {
   answerHeading: string;
   dataHeading: string;
   methodHeading: string;
-  /** How the metro's source classifies these rows, in plain words. */
+  /** How the metro's source classifies these permits, in plain words. */
   methodBody: string;
   /**
    * Why NO cost figure is published from this metro's permit feed.
@@ -212,7 +212,13 @@ export const AUSTIN_DATASET_URL = austinDatasetUrl();
 
 const AUSTIN_PERMIT_SOURCE: SourceRef = {
   name: "City of Austin Issued Construction Permits (Socrata)",
-  used: "Every issued construction permit in the window, by permit type, work class, description and issue date. Counted and grouped by month; no valuation field is read.",
+  // Round 45 added `permit_number` to the $select and the count-once clause. The
+  // field list has to stay complete for the same reason San Antonio's did, even
+  // though Austin's feed carries no duplicate rows and its counting basis did
+  // not move: 0.00% change on all five categories.
+  used:
+    "Every issued construction permit in the window, read by permit number, permit type, work " +
+    "class, description and issue date. Each permit is counted once; no valuation field is read.",
   url: AUSTIN_DATASET_URL,
   // Round 15b. The owner opened it 2026-09-04 and confirmed it resolves and is
   // the dataset this page cites it for. Round 15 left this unset on purpose —
@@ -252,7 +258,14 @@ const AUSTIN_COST_OMISSION =
 
 const SA_PERMIT_SOURCE: SourceRef = {
   name: "City of San Antonio Permits Open Data",
-  used: "Every residential trade permit issued in the window, by permit type and issue date. Counted and grouped by month; no other field is read.",
+  // Round 45. The sentence this replaces ended "no other field is read", which
+  // was true and was the defect: not reading PERMIT # is exactly why a permit
+  // spanning several rows was counted several times.
+  used:
+    "Every residential trade permit issued in the window, read by permit number, permit type and " +
+    "issue date. Each permit is counted once: the city's file lists a permit on several rows when " +
+    "it covers more than one type or stage, and counting rows instead overstated the two busiest " +
+    "trades here by about 7%.",
   url: SA_DATASET_URL,
   // Owner opened it 2026-09-04: title "Building Permits", organization "Land
   // and Building Development", four resources including PERMITS ISSUED and the
@@ -284,7 +297,7 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
     dataHeading: "San Antonio HVAC permits, month by month",
     methodHeading: "How this count is put together",
     methodBody:
-      "San Antonio issues a dedicated Mechanical Permit type, so these rows are identified by the city's own " +
+      "San Antonio issues a dedicated Mechanical Permit type, so these permits are identified by the city's own " +
       "permit-type field — not by searching descriptions for the word “HVAC”. That matters: a type match either " +
       "holds or it does not, while a text match quietly inherits whatever a clerk happened to type. Every permit " +
       "type that rolled into this count is named below, with its share.",
@@ -531,9 +544,9 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
     methodHeading: "How this count is put together",
     methodBody:
       "Plumbing is not one permit type in San Antonio — the city issues several, and a count that read only " +
-      "“Plumbing General Permit” would miss most of the work. These rows are identified by the city's own " +
-      "permit-type field across every plumbing type the mapping covers, and every one that issued a permit in " +
-      "this window is named below with its share.",
+      "“Plumbing General Permit” would miss most of the work. Each permit is identified by the city's own " +
+      "permit-type field across every plumbing type the mapping covers, and counted once however many rows " +
+      "the city's file gives it.",
     contextHeading: "What else bears on a San Antonio plumbing decision",
     context: [
       {
@@ -780,7 +793,7 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
       "class \u2014 Repair, Remodel, Addition and Remodel \u2014 and the only thing distinguishing it from " +
       "any other repair is the wording of the description. So the count is a text match: a permit " +
       "enters this category when its work class, permit type or description contains the word " +
-      "\u201croof\u201d. One row in the whole window arrives by work class instead, from a Roof class the " +
+      "\u201croof\u201d. One permit in the whole window arrives by work class instead, from a Roof class the " +
       "city has used almost never. A text match either over-collects or under-collects and usually " +
       "does both, and the table below names every source value so the composition is visible " +
       "rather than asserted.",
@@ -918,7 +931,7 @@ export const BELOW_HERO: Record<string, BelowHeroSpec> = {
     methodHeading: "How this count is put together",
     methodBody:
       "Austin issues one Plumbing Permit type and it is the only type that rolls into this " +
-      "category, so these rows are identified by the city's own permit-type field rather than by " +
+      "category, so these permits are identified by the city's own permit-type field rather than by " +
       "searching descriptions. A type match either holds or it does not; a text match quietly " +
       "inherits whatever a clerk happened to type. Note that this is one undifferentiated type \u2014 " +
       "Austin does not separate a sewer job from an irrigation job from a gas line in the permit " +

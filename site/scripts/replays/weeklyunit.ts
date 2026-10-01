@@ -30,8 +30,25 @@ for (const [sig, bands] of Object.entries(SIGNAL_ACTIONS)) {
   ok(`no action on Normal: ${sig}`, !("normal" in bands));
 }
 
-// 4. Content assembly against the real artifact.
-const artifact = JSON.parse(fs.readFileSync("/tmp/austin.bak.json", "utf8"));
+/* 4. Content assembly against the real artifact.
+ *
+ * Round 45. This read `/tmp/austin.bak.json` — a snapshot dropped there by hand
+ * during Round 9. A container that never had that file cannot run the section,
+ * and since the sweep runs on fresh containers the step has been dying at this
+ * line, taking eleven assertions with it, for long enough that nobody saw them
+ * pass. It now reads the artifact the BUILD emits, which is the same computation
+ * the dashboard serves, so the assertions run wherever `npm run build` has run.
+ * (Importing `computeStressIndex` directly is not an option here: `zipAreas.ts`
+ * imports a CSV through Astro's loader, which tsx cannot resolve.)
+ *
+ * The score and band are read off that artifact rather than pinned, for the
+ * ordinary reason — a figure pinned in a test is a second source of truth. */
+const ARTIFACT = "dist/client/data/stress-index/austin.json";
+if (!fs.existsSync(ARTIFACT)) {
+  console.log(`FAIL  ${ARTIFACT} is missing — run \`npm run build\` before this unit.`);
+  process.exit(1);
+}
+const artifact = JSON.parse(fs.readFileSync(ARTIFACT, "utf8"));
 const home = { zip: "78704", countyName: "Travis" };
 const now = new Date(artifact.referenceDate);
 
@@ -41,7 +58,9 @@ ok("fresh: delta present", fresh.delta !== null);
 ok("fresh: score is the artifact's", fresh.score === artifact.composite.score);
 ok("fresh: driver is the top-scoring signal", fresh.driver?.label === "Roof & Storm");
 ok("fresh: check comes from the action table", bannedPhrasesIn(fresh.check?.text ?? "").length === 0);
-ok("fresh: subject carries score + band", weeklySubject(fresh).includes("50 of 100, Elevated"));
+ok("fresh: subject carries score + band",
+   weeklySubject(fresh).includes(`${artifact.composite.score} of 100, ${artifact.composite.bandLabel}`),
+   weeklySubject(fresh));
 
 const stale = buildWeeklyContent(artifact, home, [], new Date(now.getTime() + 41 * 86400000));
 ok("stale: flagged", stale.stale?.ageDays === 41);
