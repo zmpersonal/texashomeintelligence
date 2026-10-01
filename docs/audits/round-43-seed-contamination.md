@@ -388,25 +388,81 @@ in the sweep.
 All ten fabricated values plus the three derived percentages, over 330 text files in
 `dist/client`: **0 hits.** Not "0 except the article" — zero.
 
-### ⚠️ One fabricated figure is still publicly served, and the grep cannot see it
+### The OG card — deleted on owner instruction
 
-`/images/og/are-texas-electricity-prices-still-going-up.png` is a **static asset in `public/`**,
-unaffected by `published: false`. It returns **200**, 62 KB, and it is the 1200×630 card reading
-*"13.88¢/kWh · down 10.2% year over year · Source: EIA, Aug 2026."*
+`/images/og/are-texas-electricity-prices-still-going-up.png` was a **static asset in `public/`**,
+unaffected by `published: false`. It returned **200**, 62 KB, and was the 1200×630 card reading
+*"13.88¢/kWh · down 10.2% year over year · Source: EIA, Aug 2026."* A text grep of `dist/`
+reported zero hits because the figure was pixels.
 
-A text grep of `dist/` reports zero hits because the figure is pixels. Deleting the file is a
-one-line change — **but it is the image the live Facebook post of 2026-09-11 embeds**, so
-removing it and leaving the post up replaces a wrong figure with a broken image on a page we do
-not control. The two are one decision, and both are the owner's (BACKLOG 29).
+It is now deleted, together with its sidecar `src/data/og-cards/…json`, which held the same
+figure as text in its `alt` and `rendered` fields and which nothing reads once the article is
+unpublished. The owner's reasoning, recorded because it is the trade-off they made: *"a
+fabricated figure on a 200-serving URL is worse than a broken image on a post I'm about to
+correct anyway."* The Facebook side is being handled by the owner directly.
 
-### Copy status
+`withdrawnrender` now asserts the file's absence **by path**, because a text grep structurally
+cannot see it.
 
-The 410 page's body and the registry's `reason` string are **copy, drafted not approved** —
-shipped only because a status code needs a body. The public correction note for `/methodology/`
-is drafted in `docs/drafts/round-43-methodology-correction-note.md` and **is not in the site**.
-That draft also notes that `/methodology/`'s existing answer to *"Do you ever publish placeholder
-numbers?"* currently claims bootstrap rows "are retired automatically the first time a real fetch
-succeeds" — the clause this incident disproves — so the note is two changes, not one.
+**Not changed:** `autoposter/tests/test_card.py` carries the figure in an inline fixture dict and
+`autoposter/articles/…/facebook-promo.json` records what was posted. Neither is served, and the
+second is the audit trail of the post itself. That test guards on `_sidecar_exists()` and
+self-skips now that the sidecar is gone — stated rather than verified, because `pytest` is not
+installed in this container.
+
+### The public correction note — shipped
+
+`/methodology/` now carries it, with the owner's two changes applied (§9). The 410 page's body
+and the registry's `reason` string remain **copy shipped on draft approval** — they exist only
+because a status code needs a body.
+
+## 9 · The window, verified — and a premise of §5 that was wrong
+
+The note's first draft said the figure was live "from 23 August 2026", the date the row was
+written. **The owner asked whether it actually rendered from then. It did not.**
+
+### 23 August: nothing rendered, and the guard worked
+
+The dataset was `status: "sample"` all day, and two independent gates held:
+
+- `publishable()` (`dataPages/types.ts`) requires `live` or `stale`, so
+  `/data/texas/electricity-prices/` **was not built at all** — no route, no CSV.
+- `belowHeroReadings.latest()` returns `undefined` for a sample dataset, so no page carried an
+  electricity reading.
+
+### 24 August 10:03 UTC — the single successful EIA fetch
+
+Commit `a42a3ef`, *"Data ingestion: update generated datasets **[skip ci]**"*. It flipped the
+dataset to `live`, which both made it publishable and left the three unretired rows with
+`2026-08` newest. `[skip ci]` means no deploy — and at that point **no surface consumed the
+series yet**: `belowHeroReadings.ts` did not exist, and neither did the data-page spec.
+
+### 28 August 21:20 UTC — the first published surface
+
+Commit `af8b62f4`, *"Publish six more data pages from the registry"*, with no `[skip ci]`, so it
+deployed. Verified at that commit: `texasElectricity.ts` present, dataset `live`, newest row
+`2026-08` at **13.88¢**. **`/data/texas/electricity-prices/` and its CSV are where the figure
+first reached a reader.**
+
+### 4 September — it spreads
+
+Commit `2d26af42`, Round 10b, whose own message records it verbatim: *"THE EIA RATE IS BACK on
+`/san-antonio/hvac/` … **13.88¢ per kWh, LIVE, Data through Aug 1 2026** · Updated Sep 3 2026."*
+Round 10, seven hours earlier, had deliberately withheld the rate.
+
+**So the window is 28 August to 1 October 2026 — 34 days, not 39 — and the note says so.**
+
+### ⚠️ The premise this corrects
+
+Round 42's §5 and this document's §5 both state that *"this repo's history begins at `a220599`
+(2026-09-11)"*, and conclude that when the `seed: true` stamp was added "cannot be established
+from here."
+
+**That was wrong, and it was my error.** This session's clone is **shallow** (`clone_depth` 50).
+`origin/main` carries **461** commits, not 212, and the history runs well before 28 August.
+Nothing about the fix depends on it — Round 43 identifies seed rows by reproduction, not by
+history — but the stated reason for not chasing the stamp's origin rested on a false premise, and
+the history is readable now (`git fetch --unshallow`) if it is ever worth chasing.
 
 ---
 
@@ -414,11 +470,10 @@ succeeds" — the clause this incident disproves — so the note is two changes,
 
 1. ~~**The article** (§5) — withdraw or rewrite.~~ **Withdrawn** on owner approval; see §8. The
    URL returns 410.
-2. **The Facebook post of 2026-09-11** carrying the fabricated card — and with it
-   `/images/og/are-texas-electricity-prices-still-going-up.png`, which still returns 200 and
-   still shows 13.88¢. One decision, outward-facing, owner's. See §8.
-5. **The public correction note** for `/methodology/` — drafted in `docs/drafts/`, not applied.
-   Copy is the owner's.
+2. **The Facebook post of 2026-09-11.** The card it embedded is deleted from the site (§8); the
+   post itself is being corrected by the owner directly. Nothing outstanding here for Claude.
+5. ~~**The public correction note**~~ — **shipped** to `/methodology/`, with the owner's two
+   changes: the verified window (§9) and the closing paragraph cut.
 3. **The ledger's `data` tier** means "traces to the THI dataset file," not "traces to the
    upstream source," and nothing in the verification method distinguishes them. Logged as
    BACKLOG 28.

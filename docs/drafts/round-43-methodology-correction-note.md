@@ -1,7 +1,21 @@
 # Draft copy — the public correction note · Round 43
 
-**Status: DRAFT. Not applied.** Copy is the owner's. Nothing in this file is in the site; when
-approved it goes into `site/src/pages/methodology/index.astro`.
+**Status: SHIPPED.** Approved by the owner with two changes, both applied, and now live in
+`site/src/pages/methodology/index.astro`. Kept as the drafting record.
+
+**The two changes:**
+
+1. **The window was wrong.** This draft said *"23 August to 1 October 2026"* — the date the row
+   was written. It did not render that day: the dataset was `status: sample`, and both
+   `publishable()` and `latest()` withhold a sample dataset, so the data page did not exist and
+   no page carried a reading. Verified window: **28 August to 1 October 2026**, first surface
+   `/data/texas/electricity-prices/` and its CSV, on the day that page shipped (commit
+   `af8b62f4`). The published note names both. Derivation in §9 of
+   `docs/audits/round-43-seed-contamination.md`.
+2. **The closing paragraph is cut**, with no replacement. The owner's reasoning, which is right:
+   it reached for effect and it overclaimed — this was not found by the source-and-date
+   discipline, it was found by a vintage probe noticing an odd row. The section ends on the test
+   paragraph.
 
 ---
 

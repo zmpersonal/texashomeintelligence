@@ -22,7 +22,7 @@
  *
  * Needs `npm run build` and `npm run worker` (port 9400).
  */
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -105,6 +105,48 @@ console.log('\n══ 4 · THE HUB NO LONGER LINKS OR CITES IT ══\n');
   }
   A('hub carries none of the retracted figures',
     !/13\.88|down 10\.2%/.test(r.body));
+}
+
+console.log('\n══ 5 · THE FIGURE SURVIVES ONLY AS A RETRACTION ══\n');
+/*
+ * Round 43's verification was "the fabricated values appear nowhere in the
+ * built site." The correction note deliberately breaks that, because a
+ * correction that will not name the number it is retracting is not a
+ * correction. So the invariant is narrower and has to be asserted as such,
+ * or a later round reads a bare grep hit as a regression and deletes the
+ * record — or, worse, restores 13.88¢ somewhere as fact and nothing notices.
+ */
+{
+  const DIST = join(SITE, 'dist', 'client');
+  const walk = (dir, out = []) => {
+    for (const name of readdirSync(dir)) {
+      const full = join(dir, name);
+      if (statSync(full).isDirectory()) walk(full, out);
+      else if (/\.(html|csv|json|xml|txt)$/.test(name)) out.push(full);
+    }
+    return out;
+  };
+  const carriers = walk(DIST).filter((f) => /13\.88/.test(readFileSync(f, 'utf8')));
+  const rel = carriers.map((f) => f.slice(DIST.length + 1));
+  A('13.88¢ appears in exactly one built file', carriers.length === 1, rel.join(', '));
+  A('…and that file is /methodology/', rel[0] === 'methodology/index.html', rel[0]);
+
+  const meth = readFileSync(join(DIST, 'methodology', 'index.html'), 'utf8');
+  A('the correction names the retraction, not a reading',
+    /was not a measured figure/.test(meth));
+  A('…and states the corrected figure beside it',
+    /16\.44/.test(meth) && /rose 6\.3%/.test(meth));
+  A('…and names the window that ends, not an open one',
+    /28 August to 1 October 2026/.test(meth));
+  // The two derived percentages must NOT come back even as quotation: they are
+  // not needed to state what was wrong, and each is a second wrong figure.
+  A('the retracted derived percentages are not restated anywhere',
+    !walk(DIST).some((f) => /down 10\.2%|18\.3% from the peak|17\.4% fall/.test(readFileSync(f, 'utf8'))));
+  // The card asset is gone, and a text grep cannot see a PNG — so assert the file.
+  A('the OG card carrying the figure is not in the build',
+    !walk(DIST).concat(
+      readdirSync(join(DIST, 'images', 'og')).map((n) => join(DIST, 'images', 'og', n)),
+    ).some((f) => f.includes('are-texas-electricity-prices-still-going-up')));
 }
 
 console.log(`\n═══ ${pass} passed, ${fail} failed ═══`);
