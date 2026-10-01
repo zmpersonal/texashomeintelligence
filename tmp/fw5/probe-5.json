@@ -1,0 +1,662 @@
+{
+  "findings": {
+    "predicates": {
+      "all": "1=1",
+      "electrical": "Permit_Type = 'Electrical'",
+      "plumbing": "Permit_Type = 'Plumbing'",
+      "mechanical": "Permit_Type = 'Mechanical'",
+      "plumbing_backflow": "Permit_Type = 'Plumbing Backflow'",
+      "residential_building": "Permit_Type = 'Residential Building Permit'",
+      "roofing": "(((UPPER(B1_WORK_DESC) LIKE '%REROOF%' OR UPPER(B1_WORK_DESC) LIKE '%RE-ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%RE ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%ROOF REPLACEMENT%' OR UPPER(B1_WORK_DESC) LIKE '%REPLACE ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%ROOF REPAIR%' OR UPPER(B1_WORK_DESC) LIKE '%REPAIR ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%ROOF COVERING%' OR UPPER(B1_WORK_DESC) LIKE '%ROOF DECKING%' OR UPPER(B1_WORK_DESC) LIKE '%DOWN TO DECKING%' OR UPPER(B1_WORK_DESC) LIKE '%TEAR OFF%' OR UPPER(B1_WORK_DESC) LIKE '%SHINGLE%') AND NOT (UPPER(B1_WORK_DESC) LIKE '%SOLAR%' OR UPPER(B1_WORK_DESC) LIKE '%PHOTOVOLTAIC%' OR UPPER(B1_WORK_DESC) LIKE '%PV %' OR UPPER(B1_WORK_DESC) LIKE '% PV%') AND NOT (UPPER(B1_WORK_DESC) LIKE '%WATERPROOF%' OR UPPER(B1_WORK_DESC) LIKE '%CARPORT%' OR UPPER(B1_WORK_DESC) LIKE '%PATIO COVER%' OR UPPER(B1_WORK_DESC) LIKE '%PORCH COVER%' OR UPPER(B1_WORK_DESC) LIKE '%SHED ROOF%' OR UPPER(B1_WORK_DESC) LIKE '%PERGOLA%' OR UPPER(B1_WORK_DESC) LIKE '%ROOFTOP UNIT%' OR UPPER(B1_WORK_DESC) LIKE '%RTU%' OR UPPER(B1_WORK_DESC) LIKE '%HOOD%' OR UPPER(B1_WORK_DESC) LIKE '%CONSTRUCTION OF NEW%' OR UPPER(B1_WORK_DESC) LIKE '%NEW HOUSE%' OR UPPER(B1_WORK_DESC) LIKE '%NEW SINGLE FAMILY%' OR UPPER(B1_WORK_DESC) LIKE '%GROUND UP%')) OR Permit_Category = 'ReRoof')",
+      "solar": "(UPPER(B1_WORK_DESC) LIKE '%SOLAR%' OR UPPER(B1_WORK_DESC) LIKE '%PHOTOVOLTAIC%' OR UPPER(B1_WORK_DESC) LIKE '%PV %' OR UPPER(B1_WORK_DESC) LIKE '% PV%')"
+    },
+    "window_totals": {
+      "all": {
+        "rows": 81701,
+        "permits": 73342
+      },
+      "electrical": {
+        "rows": 17524,
+        "permits": 15607
+      },
+      "plumbing": {
+        "rows": 17238,
+        "permits": 16850
+      },
+      "mechanical": {
+        "rows": 12905,
+        "permits": 12617
+      },
+      "plumbing_backflow": {
+        "rows": 8644,
+        "permits": 8414
+      },
+      "residential_building": {
+        "rows": 15015,
+        "permits": 13057
+      },
+      "roofing": {
+        "rows": 502,
+        "permits": 427
+      },
+      "solar": {
+        "rows": 1469,
+        "permits": 1464
+      }
+    },
+    "monthly_permits": {
+      "all": {
+        "2025-09": 5356,
+        "2025-10": 5698,
+        "2025-11": 4486,
+        "2025-12": 4931,
+        "2026-01": 5051,
+        "2026-02": 5377,
+        "2026-03": 6649,
+        "2026-04": 6476,
+        "2026-05": 5719,
+        "2026-06": 6411,
+        "2026-07": 6194,
+        "2026-08": 5627,
+        "2026-09": 5367
+      },
+      "electrical": {
+        "2025-09": 1209,
+        "2025-10": 1307,
+        "2025-11": 1090,
+        "2025-12": 1077,
+        "2026-01": 959,
+        "2026-02": 1117,
+        "2026-03": 1492,
+        "2026-04": 1399,
+        "2026-05": 1189,
+        "2026-06": 1262,
+        "2026-07": 1216,
+        "2026-08": 1112,
+        "2026-09": 1178
+      },
+      "plumbing": {
+        "2025-09": 1149,
+        "2025-10": 1208,
+        "2025-11": 1118,
+        "2025-12": 1243,
+        "2026-01": 1223,
+        "2026-02": 1370,
+        "2026-03": 1581,
+        "2026-04": 1427,
+        "2026-05": 1289,
+        "2026-06": 1418,
+        "2026-07": 1335,
+        "2026-08": 1196,
+        "2026-09": 1293
+      },
+      "mechanical": {
+        "2025-09": 896,
+        "2025-10": 773,
+        "2025-11": 581,
+        "2025-12": 875,
+        "2026-01": 828,
+        "2026-02": 699,
+        "2026-03": 1146,
+        "2026-04": 1170,
+        "2026-05": 1086,
+        "2026-06": 1223,
+        "2026-07": 1219,
+        "2026-08": 1113,
+        "2026-09": 1008
+      },
+      "plumbing_backflow": {
+        "2025-09": 618,
+        "2025-10": 714,
+        "2025-11": 484,
+        "2025-12": 502,
+        "2026-01": 552,
+        "2026-02": 629,
+        "2026-03": 656,
+        "2026-04": 640,
+        "2026-05": 649,
+        "2026-06": 809,
+        "2026-07": 759,
+        "2026-08": 742,
+        "2026-09": 660
+      },
+      "residential_building": {
+        "2025-09": 916,
+        "2025-10": 1092,
+        "2025-11": 753,
+        "2025-12": 884,
+        "2026-01": 922,
+        "2026-02": 1054,
+        "2026-03": 1199,
+        "2026-04": 1292,
+        "2026-05": 1050,
+        "2026-06": 1140,
+        "2026-07": 1045,
+        "2026-08": 915,
+        "2026-09": 795
+      },
+      "roofing": {
+        "2025-09": 26,
+        "2025-10": 29,
+        "2025-11": 22,
+        "2025-12": 19,
+        "2026-01": 21,
+        "2026-02": 22,
+        "2026-03": 47,
+        "2026-04": 38,
+        "2026-05": 40,
+        "2026-06": 62,
+        "2026-07": 39,
+        "2026-08": 33,
+        "2026-09": 29
+      },
+      "solar": {
+        "2025-09": 218,
+        "2025-10": 169,
+        "2025-11": 111,
+        "2025-12": 107,
+        "2026-01": 59,
+        "2026-02": 76,
+        "2026-03": 137,
+        "2026-04": 133,
+        "2026-05": 76,
+        "2026-06": 101,
+        "2026-07": 117,
+        "2026-08": 94,
+        "2026-09": 66
+      }
+    },
+    "earliest_file_date_epoch_ms": 993859200000,
+    "rows_all_time": 1616666
+  },
+  "log": [
+    {
+      "label": "rows-all",
+      "status": 200
+    },
+    {
+      "label": "permits-all",
+      "status": 200
+    },
+    {
+      "label": "rows-electrical",
+      "status": 200
+    },
+    {
+      "label": "permits-electrical",
+      "status": 200
+    },
+    {
+      "label": "rows-plumbing",
+      "status": 200
+    },
+    {
+      "label": "permits-plumbing",
+      "status": 200
+    },
+    {
+      "label": "rows-mechanical",
+      "status": 200
+    },
+    {
+      "label": "permits-mechanical",
+      "status": 200
+    },
+    {
+      "label": "rows-plumbing_backflow",
+      "status": 200
+    },
+    {
+      "label": "permits-plumbing_backflow",
+      "status": 200
+    },
+    {
+      "label": "rows-residential_building",
+      "status": 200
+    },
+    {
+      "label": "permits-residential_building",
+      "status": 200
+    },
+    {
+      "label": "rows-roofing",
+      "status": 200
+    },
+    {
+      "label": "permits-roofing",
+      "status": 200
+    },
+    {
+      "label": "rows-solar",
+      "status": 200
+    },
+    {
+      "label": "permits-solar",
+      "status": 200
+    },
+    {
+      "label": "mp-all-202509",
+      "status": 200
+    },
+    {
+      "label": "mp-all-202510",
+      "status": 200
+    },
+    {
+      "label": "mp-all-202511",
+      "status": 200
+    },
+    {
+      "label": "mp-all-202512",
+      "status": 200
+    },
+    {
+      "label": "mp-all-202601",
+      "status": 200
+    },
+    {
+      "label": "mp-all-202602",
+      "status": 200
+    },
+    {
+      "label": "mp-all-202603",
+      "status": 200
+    },
+    {
+      "label": "mp-all-202604",
+      "status": 200
+    },
+    {
+      "label": "mp-all-202605",
+      "status": 200
+    },
+    {
+      "label": "mp-all-202606",
+      "status": 200
+    },
+    {
+      "label": "mp-all-202607",
+      "status": 200
+    },
+    {
+      "label": "mp-all-202608",
+      "status": 200
+    },
+    {
+      "label": "mp-all-202609",
+      "status": 200
+    },
+    {
+      "label": "mp-electrical-202509",
+      "status": 200
+    },
+    {
+      "label": "mp-electrical-202510",
+      "status": 200
+    },
+    {
+      "label": "mp-electrical-202511",
+      "status": 200
+    },
+    {
+      "label": "mp-electrical-202512",
+      "status": 200
+    },
+    {
+      "label": "mp-electrical-202601",
+      "status": 200
+    },
+    {
+      "label": "mp-electrical-202602",
+      "status": 200
+    },
+    {
+      "label": "mp-electrical-202603",
+      "status": 200
+    },
+    {
+      "label": "mp-electrical-202604",
+      "status": 200
+    },
+    {
+      "label": "mp-electrical-202605",
+      "status": 200
+    },
+    {
+      "label": "mp-electrical-202606",
+      "status": 200
+    },
+    {
+      "label": "mp-electrical-202607",
+      "status": 200
+    },
+    {
+      "label": "mp-electrical-202608",
+      "status": 200
+    },
+    {
+      "label": "mp-electrical-202609",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing-202509",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing-202510",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing-202511",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing-202512",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing-202601",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing-202602",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing-202603",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing-202604",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing-202605",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing-202606",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing-202607",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing-202608",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing-202609",
+      "status": 200
+    },
+    {
+      "label": "mp-mechanical-202509",
+      "status": 200
+    },
+    {
+      "label": "mp-mechanical-202510",
+      "status": 200
+    },
+    {
+      "label": "mp-mechanical-202511",
+      "status": 200
+    },
+    {
+      "label": "mp-mechanical-202512",
+      "status": 200
+    },
+    {
+      "label": "mp-mechanical-202601",
+      "status": 200
+    },
+    {
+      "label": "mp-mechanical-202602",
+      "status": 200
+    },
+    {
+      "label": "mp-mechanical-202603",
+      "status": 200
+    },
+    {
+      "label": "mp-mechanical-202604",
+      "status": 200
+    },
+    {
+      "label": "mp-mechanical-202605",
+      "status": 200
+    },
+    {
+      "label": "mp-mechanical-202606",
+      "status": 200
+    },
+    {
+      "label": "mp-mechanical-202607",
+      "status": 200
+    },
+    {
+      "label": "mp-mechanical-202608",
+      "status": 200
+    },
+    {
+      "label": "mp-mechanical-202609",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing_backflow-202509",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing_backflow-202510",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing_backflow-202511",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing_backflow-202512",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing_backflow-202601",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing_backflow-202602",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing_backflow-202603",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing_backflow-202604",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing_backflow-202605",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing_backflow-202606",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing_backflow-202607",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing_backflow-202608",
+      "status": 200
+    },
+    {
+      "label": "mp-plumbing_backflow-202609",
+      "status": 200
+    },
+    {
+      "label": "mp-residential_building-202509",
+      "status": 200
+    },
+    {
+      "label": "mp-residential_building-202510",
+      "status": 200
+    },
+    {
+      "label": "mp-residential_building-202511",
+      "status": 200
+    },
+    {
+      "label": "mp-residential_building-202512",
+      "status": 200
+    },
+    {
+      "label": "mp-residential_building-202601",
+      "status": 200
+    },
+    {
+      "label": "mp-residential_building-202602",
+      "status": 200
+    },
+    {
+      "label": "mp-residential_building-202603",
+      "status": 200
+    },
+    {
+      "label": "mp-residential_building-202604",
+      "status": 200
+    },
+    {
+      "label": "mp-residential_building-202605",
+      "status": 200
+    },
+    {
+      "label": "mp-residential_building-202606",
+      "status": 200
+    },
+    {
+      "label": "mp-residential_building-202607",
+      "status": 200
+    },
+    {
+      "label": "mp-residential_building-202608",
+      "status": 200
+    },
+    {
+      "label": "mp-residential_building-202609",
+      "status": 200
+    },
+    {
+      "label": "mp-roofing-202509",
+      "status": 200
+    },
+    {
+      "label": "mp-roofing-202510",
+      "status": 200
+    },
+    {
+      "label": "mp-roofing-202511",
+      "status": 200
+    },
+    {
+      "label": "mp-roofing-202512",
+      "status": 200
+    },
+    {
+      "label": "mp-roofing-202601",
+      "status": 200
+    },
+    {
+      "label": "mp-roofing-202602",
+      "status": 200
+    },
+    {
+      "label": "mp-roofing-202603",
+      "status": 200
+    },
+    {
+      "label": "mp-roofing-202604",
+      "status": 200
+    },
+    {
+      "label": "mp-roofing-202605",
+      "status": 200
+    },
+    {
+      "label": "mp-roofing-202606",
+      "status": 200
+    },
+    {
+      "label": "mp-roofing-202607",
+      "status": 200
+    },
+    {
+      "label": "mp-roofing-202608",
+      "status": 200
+    },
+    {
+      "label": "mp-roofing-202609",
+      "status": 200
+    },
+    {
+      "label": "mp-solar-202509",
+      "status": 200
+    },
+    {
+      "label": "mp-solar-202510",
+      "status": 200
+    },
+    {
+      "label": "mp-solar-202511",
+      "status": 200
+    },
+    {
+      "label": "mp-solar-202512",
+      "status": 200
+    },
+    {
+      "label": "mp-solar-202601",
+      "status": 200
+    },
+    {
+      "label": "mp-solar-202602",
+      "status": 200
+    },
+    {
+      "label": "mp-solar-202603",
+      "status": 200
+    },
+    {
+      "label": "mp-solar-202604",
+      "status": 200
+    },
+    {
+      "label": "mp-solar-202605",
+      "status": 200
+    },
+    {
+      "label": "mp-solar-202606",
+      "status": 200
+    },
+    {
+      "label": "mp-solar-202607",
+      "status": 200
+    },
+    {
+      "label": "mp-solar-202608",
+      "status": 200
+    },
+    {
+      "label": "mp-solar-202609",
+      "status": 200
+    },
+    {
+      "label": "earliest-filedate",
+      "status": 200
+    },
+    {
+      "label": "rows-alltime",
+      "status": 200
+    }
+  ]
+}
