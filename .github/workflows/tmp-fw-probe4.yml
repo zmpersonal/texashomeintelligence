@@ -1,0 +1,187 @@
+# TEMPORARY — Round 44 pass 4. DELETE BEFORE THE ROUND ENDS.
+#
+# Two of pass 3's answers were mine to get wrong, and both are blocking.
+#
+#   A · IS Permit_No UNIQUE? Pass 3 reported "1000 distinct" — which is exactly
+#       the layer's maxRecordCount, so the paging loop never paged: it asked for
+#       2000 rows, got the 1000 the server allows, and `len(page) < 2000` ended
+#       the loop on the first iteration. The question is still open, and it
+#       decides whether every monthly count in this round is a permit count or
+#       a row count. Answered here with returnDistinctValues + returnCountOnly,
+#       which makes the server do the counting.
+#
+#   B · the SHIPPABLE predicate's recall and a readable sample both 404'd,
+#       because the predicate is long enough to blow the URL length limit.
+#       GeoServices /query accepts POST; these go by POST.
+#
+# Pass 3's other answers stand and are not re-asked: the station resolution
+# reproduced Austin's Camp Mabry (3.8 mi, 3,289.8 annual CDD) and San Antonio's
+# Stinson (6.0 mi, 3,474.0) exactly, with Kelly AFB rejected at years=2 /
+# comp_flag=E, so the bar being applied is the shipped one.
+name: TEMPORARY Fort Worth probe pass 4 (Round 44)
+
+on:
+  push:
+    branches: [claude/thi-v3-round44-fort-worth]
+    paths: ['.github/workflows/tmp-fw-probe4.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe pass 4
+        run: |
+          mkdir -p tmp/fw4
+          python3 - <<'PY'
+          import json, urllib.parse, urllib.request, collections
+
+          UA = 'TexasHomeIntelligence-probe/1.0 (one-off research; texashomeintelligence.com)'
+          OUT = 'tmp/fw4'
+          LAYER = ('https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/'
+                   'CFW_Open_Data_Development_Permits_View/FeatureServer/0')
+          WINDOW = "File_Date >= DATE '2025-09-01' AND File_Date < DATE '2026-10-01'"
+          log = []
+
+          def post(params, label, timeout=240):
+              """POST to /query. The SHIPPABLE predicate is far past what a URL
+              will carry, and pass 3 learned that as a 404 rather than a 414."""
+              body = urllib.parse.urlencode(params).encode()
+              req = urllib.request.Request(f'{LAYER}/query', data=body, headers={
+                  'User-Agent': UA, 'Content-Type': 'application/x-www-form-urlencoded',
+                  'Accept': 'application/json'})
+              try:
+                  with urllib.request.urlopen(req, timeout=timeout) as r:
+                      st, raw = r.status, r.read()
+              except Exception as e:
+                  st, raw = getattr(e, 'code', 0), str(e).encode()
+              log.append({'label': label, 'status': st, 'bytes': len(raw)})
+              if st != 200: return None
+              try:
+                  d = json.loads(raw)
+              except Exception as e:
+                  log.append({'label': label, 'parse_error': str(e),
+                              'prefix': raw[:200].decode('utf-8', 'replace')})
+                  return None
+              if isinstance(d, dict) and 'error' in d:
+                  log.append({'label': label, 'arcgis_error': d['error']})
+                  return None
+              return d
+
+          def count(where, label, distinct_field=None):
+              p = {'where': where, 'returnCountOnly': 'true', 'f': 'json'}
+              if distinct_field:
+                  p['outFields'] = distinct_field
+                  p['returnDistinctValues'] = 'true'
+              d = post(p, label)
+              return (d or {}).get('count')
+
+          F = {}
+
+          # ══ A · uniqueness, counted by the server ═══════════════════════════
+          F['rows_in_window'] = count(WINDOW, 'rows')
+          F['distinct_permit_no'] = count(WINDOW, 'distinct-permit-no', 'Permit_No')
+          F['distinct_unique_id'] = count(WINDOW, 'distinct-unique-id', 'Unique_ID')
+          # If Permit_No repeats, what does a repeated permit look like? Pull the
+          # worst offenders so the shape is visible rather than inferred.
+          stats = json.dumps([{'statisticType': 'count', 'onStatisticField': 'Unique_ID',
+                               'outStatisticFieldName': 'n'}])
+          d = post({'where': WINDOW, 'groupByFieldsForStatistics': 'Permit_No',
+                    'outStatistics': stats, 'orderByFields': 'n DESC',
+                    'resultRecordCount': '25', 'f': 'json'}, 'top-repeated')
+          F['most_repeated_permit_nos'] = [f.get('attributes', {})
+                                           for f in ((d or {}).get('features') or [])]
+
+          # ══ B · the shippable predicate, by POST ════════════════════════════
+          SOLAR = ("(UPPER(B1_WORK_DESC) LIKE '%SOLAR%'"
+                   " OR UPPER(B1_WORK_DESC) LIKE '%PHOTOVOLTAIC%'"
+                   " OR UPPER(B1_WORK_DESC) LIKE '%PV %' OR UPPER(B1_WORK_DESC) LIKE '% PV%')")
+          EXCLUDE = ("(UPPER(B1_WORK_DESC) LIKE '%WATERPROOF%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%CARPORT%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%PATIO COVER%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%PORCH COVER%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%SHED ROOF%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%ROOFTOP UNIT%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%RTU%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%HOOD%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%CONSTRUCTION OF NEW%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%NEW HOUSE%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%NEW SINGLE FAMILY%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%GROUND UP%')")
+          REROOF_TEXT = ("(UPPER(B1_WORK_DESC) LIKE '%REROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%RE-ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%RE ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF REPLACEMENT%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%REPLACE ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF REPAIR%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%REPAIR ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF COVERING%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF DECKING%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%DOWN TO DECKING%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%TEAR OFF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%SHINGLE%')")
+          CAT = "Permit_Category = 'ReRoof'"
+          SHIPPABLE = f"(({REROOF_TEXT} AND NOT {SOLAR} AND NOT {EXCLUDE}) OR {CAT})"
+
+          F['shippable_total'] = count(f'{WINDOW} AND {SHIPPABLE}', 'shippable-total')
+          F['shippable_distinct_permit_no'] = count(
+              f'{WINDOW} AND {SHIPPABLE}', 'shippable-distinct', 'Permit_No')
+          F['recall_on_category'] = count(f'{WINDOW} AND {CAT} AND {SHIPPABLE}', 'recall')
+          F['category_total'] = count(f'{WINDOW} AND {CAT}', 'category-total')
+          F['shippable_minus_category'] = count(
+              f'{WINDOW} AND {SHIPPABLE} AND Permit_Category <> \'ReRoof\'', 'shippable-not-cat')
+
+          # Two samples to READ — different slices, so precision is not measured
+          # on one end of the list. ObjectId ascending and descending.
+          for order, tag in [('ObjectId DESC', 'newest'), ('ObjectId ASC', 'oldest')]:
+              d = post({'where': f'{WINDOW} AND {SHIPPABLE}',
+                        'outFields': 'Permit_No,Permit_Type,Permit_Category,B1_WORK_DESC',
+                        'orderByFields': order, 'resultRecordCount': '90', 'f': 'json'},
+                       f'sample-{tag}')
+              F[f'sample_{tag}'] = [f.get('attributes', {}) for f in ((d or {}).get('features') or [])]
+
+          # What the exclusions actually removed — read them, do not assume they
+          # were all false positives.
+          d = post({'where': f'{WINDOW} AND {REROOF_TEXT} AND ({SOLAR} OR {EXCLUDE})',
+                    'outFields': 'Permit_No,Permit_Category,B1_WORK_DESC',
+                    'orderByFields': 'ObjectId ASC', 'resultRecordCount': '60', 'f': 'json'},
+                   'sample-excluded')
+          F['sample_excluded'] = [f.get('attributes', {}) for f in ((d or {}).get('features') or [])]
+
+          # And the 43 ReRoof rows no description predicate can reach.
+          d = post({'where': f"{WINDOW} AND {CAT} AND NOT {REROOF_TEXT}",
+                    'outFields': 'Permit_No,Permit_Type,B1_WORK_DESC',
+                    'resultRecordCount': '50', 'f': 'json'}, 'sample-cat-missed')
+          F['sample_category_missed_by_text'] = [f.get('attributes', {})
+                                                 for f in ((d or {}).get('features') or [])]
+
+          json.dump({'findings': F, 'log': log}, open(f'{OUT}/probe-4.json', 'w'), indent=2)
+
+          print('── uniqueness ──')
+          print('  rows in window      ', F.get('rows_in_window'))
+          print('  distinct Permit_No  ', F.get('distinct_permit_no'))
+          print('  distinct Unique_ID  ', F.get('distinct_unique_id'))
+          print('  most repeated:')
+          for r in (F.get('most_repeated_permit_nos') or [])[:8]: print('   ', r)
+          print('\n── shippable roofing ──')
+          for k in ['shippable_total', 'shippable_distinct_permit_no', 'category_total',
+                    'recall_on_category', 'shippable_minus_category']:
+              print(f'  {k:32s} {F.get(k)}')
+          print('\n  samples:', len(F.get('sample_newest') or []), 'newest /',
+                len(F.get('sample_oldest') or []), 'oldest /',
+                len(F.get('sample_excluded') or []), 'excluded /',
+                len(F.get('sample_category_missed_by_text') or []), 'cat-missed')
+          print(f"\n{len(log)} requests; non-200/error: "
+                f"{[(x['label'], x.get('status'), x.get('arcgis_error', {}).get('message')) for x in log if x.get('status') != 200 or 'arcgis_error' in x][:6]}")
+          PY
+      - name: Commit findings
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A tmp/fw4
+          git commit -m "TEMPORARY: Round 44 Fort Worth probe pass 4" || echo "nothing to commit"
+          git push
