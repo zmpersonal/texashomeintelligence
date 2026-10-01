@@ -1,0 +1,177 @@
+# TEMPORARY — Round 44 pass 5. DELETE BEFORE THE ROUND ENDS.
+#
+# Pass 4 found the thing that invalidates every count taken so far, including
+# Round 39's: Permit_No is NOT unique. 81,701 rows in the 13-month window carry
+# 73,342 distinct Permit_No — 10.2% duplication — and one umbrella permit,
+# PE26-01700, spans 1,024 rows on its own. Unique_ID is unique (81,701 of
+# 81,701), so it is the row key, but the PERMIT key is Permit_No, and
+# Permit_SubType = 'Umbrella' on 23,900 rows is the mechanism.
+#
+# So every monthly figure in passes 1-3 is a row count presented as a permit
+# count. This pass recounts every trade monthly on DISTINCT Permit_No, which is
+# the only denominator a "permits issued" reading can honestly use.
+#
+# It also recounts the whole-window totals on the same basis so the trade mix
+# the checkpoint reports is permits, not rows.
+name: TEMPORARY Fort Worth probe pass 5 (Round 44)
+
+on:
+  push:
+    branches: [claude/thi-v3-round44-fort-worth]
+    paths: ['.github/workflows/tmp-fw-probe5.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe pass 5
+        run: |
+          mkdir -p tmp/fw5
+          python3 - <<'PY'
+          import json, urllib.parse, urllib.request, collections, math, statistics
+
+          UA = 'TexasHomeIntelligence-probe/1.0 (one-off research; texashomeintelligence.com)'
+          OUT = 'tmp/fw5'
+          LAYER = ('https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/'
+                   'CFW_Open_Data_Development_Permits_View/FeatureServer/0')
+          log = []
+
+          def post(params, label, timeout=240):
+              body = urllib.parse.urlencode(params).encode()
+              req = urllib.request.Request(f'{LAYER}/query', data=body, headers={
+                  'User-Agent': UA, 'Content-Type': 'application/x-www-form-urlencoded',
+                  'Accept': 'application/json'})
+              try:
+                  with urllib.request.urlopen(req, timeout=timeout) as r:
+                      st, raw = r.status, r.read()
+              except Exception as e:
+                  st, raw = getattr(e, 'code', 0), str(e).encode()
+              log.append({'label': label, 'status': st})
+              if st != 200: return None
+              try: d = json.loads(raw)
+              except Exception: return None
+              if isinstance(d, dict) and 'error' in d:
+                  log.append({'label': label, 'arcgis_error': d['error'].get('message')})
+                  return None
+              return d
+
+          def permits(where, label):
+              """DISTINCT Permit_No, counted by the server. The only denominator a
+              'permits issued' figure can use."""
+              d = post({'where': where, 'outFields': 'Permit_No',
+                        'returnDistinctValues': 'true', 'returnCountOnly': 'true',
+                        'f': 'json'}, label)
+              return (d or {}).get('count')
+
+          def rows(where, label):
+              d = post({'where': where, 'returnCountOnly': 'true', 'f': 'json'}, label)
+              return (d or {}).get('count')
+
+          SOLAR = ("(UPPER(B1_WORK_DESC) LIKE '%SOLAR%'"
+                   " OR UPPER(B1_WORK_DESC) LIKE '%PHOTOVOLTAIC%'"
+                   " OR UPPER(B1_WORK_DESC) LIKE '%PV %' OR UPPER(B1_WORK_DESC) LIKE '% PV%')")
+          EXCLUDE = ("(UPPER(B1_WORK_DESC) LIKE '%WATERPROOF%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%CARPORT%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%PATIO COVER%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%PORCH COVER%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%SHED ROOF%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%PERGOLA%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%ROOFTOP UNIT%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%RTU%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%HOOD%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%CONSTRUCTION OF NEW%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%NEW HOUSE%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%NEW SINGLE FAMILY%'"
+                     " OR UPPER(B1_WORK_DESC) LIKE '%GROUND UP%')")
+          REROOF_TEXT = ("(UPPER(B1_WORK_DESC) LIKE '%REROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%RE-ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%RE ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF REPLACEMENT%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%REPLACE ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF REPAIR%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%REPAIR ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF COVERING%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF DECKING%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%DOWN TO DECKING%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%TEAR OFF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%SHINGLE%')")
+          CAT = "Permit_Category = 'ReRoof'"
+          # PERGOLA added from pass 4's hand read: a pergola "with the roof
+          # matching existing" was one of the two false positives found.
+          ROOFING = f"(({REROOF_TEXT} AND NOT {SOLAR} AND NOT {EXCLUDE}) OR {CAT})"
+
+          TRADES = {
+              'all': '1=1',
+              'electrical': "Permit_Type = 'Electrical'",
+              'plumbing': "Permit_Type = 'Plumbing'",
+              'mechanical': "Permit_Type = 'Mechanical'",
+              'plumbing_backflow': "Permit_Type = 'Plumbing Backflow'",
+              'residential_building': "Permit_Type = 'Residential Building Permit'",
+              'roofing': ROOFING,
+              'solar': SOLAR,
+          }
+          F = {'predicates': TRADES}
+
+          WINDOW = "File_Date >= DATE '2025-09-01' AND File_Date < DATE '2026-10-01'"
+          F['window_totals'] = {}
+          for name, pred in TRADES.items():
+              F['window_totals'][name] = {
+                  'rows': rows(f'{WINDOW} AND ({pred})', f'rows-{name}'),
+                  'permits': permits(f'{WINDOW} AND ({pred})', f'permits-{name}'),
+              }
+
+          MONTHS = [(2025, m) for m in range(9, 13)] + [(2026, m) for m in range(1, 10)]
+          def bounds(y, m):
+              ny, nm = (y + 1, 1) if m == 12 else (y, m + 1)
+              return f'{y:04d}-{m:02d}-01', f'{ny:04d}-{nm:02d}-01'
+          F['monthly_permits'] = collections.defaultdict(dict)
+          for name, pred in TRADES.items():
+              for (y, m) in MONTHS:
+                  a, b = bounds(y, m)
+                  w = f"File_Date >= DATE '{a}' AND File_Date < DATE '{b}' AND ({pred})"
+                  F['monthly_permits'][name][f'{y:04d}-{m:02d}'] = permits(w, f'mp-{name}-{y}{m:02d}')
+
+          # How deep does the history go? A new metro starts with less, and the
+          # copy must not imply a trend the data does not have.
+          for label, w in [('earliest', "File_Date >= DATE '2000-01-01'")]:
+              d = post({'where': w, 'outFields': 'File_Date',
+                        'orderByFields': 'File_Date ASC', 'resultRecordCount': '1',
+                        'f': 'json'}, 'earliest-filedate')
+              feats = (d or {}).get('features') or []
+              F['earliest_file_date_epoch_ms'] = (feats[0].get('attributes', {}).get('File_Date')
+                                                  if feats else None)
+          F['rows_all_time'] = rows('1=1', 'rows-alltime')
+
+          json.dump({'findings': F, 'log': log}, open(f'{OUT}/probe-5.json', 'w'), indent=2)
+
+          print(f"{'trade':22s} {'rows':>8s} {'permits':>8s} {'dup%':>6s}   monthly permits")
+          for name, t in F['window_totals'].items():
+              r, p = t['rows'], t['permits']
+              dup = (1 - p / r) * 100 if (r and p) else 0
+              series = [v for v in F['monthly_permits'][name].values()]
+              print(f'{name:22s} {r:>8} {p:>8} {dup:5.1f}%   {series}')
+          print()
+          for name in F['monthly_permits']:
+              v = [x for x in F['monthly_permits'][name].values() if x is not None]
+              if len(v) != 13: continue
+              mean = statistics.mean(v)
+              noise = 100 / math.sqrt(mean) if mean > 0 else float('inf')
+              h1, h2 = sum(v[:6]), sum(v[-6:])
+              hh = (h2 / h1 - 1) * 100 if h1 else 0
+              print(f'{name:22s} mean {mean:8.1f}  noise {noise:6.2f}%  H/H {hh:+7.1f}%  '
+                    f'{"clears" if abs(hh) > noise else "does NOT clear"}')
+          print(f"\n{len(log)} requests; errors: "
+                f"{[(x['label'], x.get('arcgis_error')) for x in log if 'arcgis_error' in x][:4]}")
+          PY
+      - name: Commit findings
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A tmp/fw5
+          git commit -m "TEMPORARY: Round 44 Fort Worth probe pass 5" || echo "nothing to commit"
+          git push
