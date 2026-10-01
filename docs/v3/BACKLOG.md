@@ -30,6 +30,16 @@ owner outside the repo and is deliberately absent here.
 
 Probes (P1, P2) can run in any gap; they write an audit and change no served page.
 
+**Sequence set by the owner after Round 46** (2026-10-01), ahead of the items above:
+
+| Round | Objective | Source |
+|---|---|---|
+| 47 | The fetch window. Starts with an Actions drift probe — re-request a wider window per live dataset, diff against disk. A drift means we are publishing a stale figure and it jumps the queue. Then fix the window so the revision mechanism reaches what the copy says it reaches. | Round 46 F2 |
+| 48 | The dormant mechanisms, as one round because they are one shape: `badgeunit` (assertions + a failure path, and call `freshnessOf` rather than re-implement it), `METHODOLOGY_VERSION` (into the merge key or removed — written-and-never-read is worse than absent), `swdiHail`'s promotion (act on the condition that fired 13/14 September), and `analysis/[slug].astro:130` before a new article embeds a dataset. | Round 46 F3, F5, F4, F6 |
+| 49 | Mutation testing on the replays. Round 46 answered "can it fail" for all 28 and "would it fail" for 4. Break each guarded behaviour deliberately, confirm the matching replay goes red, fix or flag the ones that do not. | Round 46 class D |
+| 28 | The ledger tier (item 28 below). Sequenced after 49. | owner |
+| — | Stale-prose cleanup: ROADMAP's "do not re-add or link", `CLAUDE.md:97`'s "No Tools, no Services", `types.ts`'s `observedAt` and `FeedStatus` claims, with class B's unswept half folded in. | Round 46 F7, F8, F12, F14 |
+
 ---
 
 ## Standing rule — a replay that reports a value is not a check
@@ -45,7 +55,15 @@ note is documentation; only an assertion fails a round. Two drifts survived prec
   assertion that cannot fail is not a check — it now loads a session, requires the label to be
   **present** as well as correct, and separately asserts the page did not redirect (Round 34).
 
-The pattern in both: the replay was looking at the right thing and declined to hold it to
+- **`badgeunit`, found by Round 46 and still open as part of Round 48.** The purest violation of
+  this rule in the repo, and the oldest: it prints a table of every dataset's resolved badge and
+  contains **zero assertions and no failure path**. It has reported `ok` as a registered sweep
+  step since Round 1. It is the only one of 18 steps that cannot fail — and it is the only test of
+  the badge mechanism, which is what both of Round 46's live findings were about. The standing rule
+  was written after the eyebrow and the `/home/` label; nothing went back and applied it to the
+  step that needed it most.
+
+The pattern in all three: the replay was looking at the right thing and declined to hold it to
 anything. If a number is worth printing, decide what it must be.
 
 ---
@@ -1029,3 +1047,29 @@ encoded rather than remembered.
 the audit trail of the post itself.
 
 **Scope → done, except the Facebook post, which is the owner's and in hand.**
+
+---
+
+### 30 · San Antonio's seven service pages get no footer link while Austin's do
+
+Round 46, logged by the owner as a separate decision rather than a fix: it changes the site's
+internal linking on **KPI #1**, so it is a direction call, not a cleanup.
+
+`Footer.astro:115` renders a `Services` column by mapping `orderedServices` over
+`/austin/${svc.id}/` — **Austin only, seven links.** Both metros have all seven service pages
+built (verified in `dist/`), so San Antonio's seven are reachable from no footer at all.
+
+The column's own Round 10b comment justifies keeping it on the grounds that "the individual
+location x service links STAY: those are **the fourteen** indexed content pages, and dropping them
+would cut a third of the site's internal linking to nothing (KPI #1)." The rationale invokes
+fourteen pages; the column links seven. Either the comment overstates the column or the links are
+missing — and since the rationale is explicitly about internal linking for citation, Round 46's
+reading is that **the links are missing and the comment is right about intent**.
+
+**The decision this needs:** whether a fourteen-link footer column is the right shape, or whether
+San Antonio's seven belong somewhere else — the metro hub already links its own services, and a
+fourteen-item column is a different piece of chrome from a seven-item one. Not whether the pages
+deserve links.
+
+**Scope → small, wants a decision first.** Related: Round 46 F12 (ROADMAP's "do not re-add or
+link" forbids exactly what this column does, and the prose is what should change).

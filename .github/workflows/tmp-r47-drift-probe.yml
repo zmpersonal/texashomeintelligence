@@ -1,0 +1,65 @@
+name: tmp · Round 47 revision-drift probe
+
+# TEMPORARY. Delete at the end of Round 47.
+#
+# Answers one question that cannot be answered from a Claude Code session: has
+# any figure we publish already drifted from its source, because the incremental
+# fetch window never re-requests an older record? (Round 46 F2.)
+#
+# READ-ONLY. It calls each fetcher's own `fetchRaw` with a widened window and
+# diffs the result against what is committed. It writes one report, uploads it as
+# an artifact, and commits nothing — `permissions: contents: read` makes that
+# structural rather than a promise.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tmp-r47-drift-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - run: npm ci
+
+      - name: Probe every live dataset for revision drift
+        run: npx tsx scripts/audits/revision-drift-probe.ts --out ../tmp/r47/revision-drift.json
+        env:
+          # Same set as data-ingestion.yml. Four of these are OPTIONAL tokens
+          # that only raise an anonymous rate limit (Round 46 F9) — the probe
+          # works without them and is politer with them.
+          SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+          AIRNOW_API_KEY: ${{ secrets.AIRNOW_API_KEY }}
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
+
+      - name: Confirm the probe wrote nothing under src/data/generated
+        run: |
+          if ! git diff --quiet -- src/data/generated; then
+            echo "PROBE WROTE TO THE DATA IT IS AUDITING — failing."
+            git diff --stat -- src/data/generated
+            exit 1
+          fi
+          echo "clean: src/data/generated untouched"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: r47-revision-drift
+          path: tmp/r47/revision-drift.json
+          if-no-files-found: error
