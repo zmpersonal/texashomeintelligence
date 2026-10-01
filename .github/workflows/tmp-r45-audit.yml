@@ -1,0 +1,67 @@
+# TEMPORARY — Round 45. DELETE BEFORE THE ROUND ENDS.
+#
+# Two steps, in this order and for this reason:
+#
+#   1 · THE AUDIT reads each feed ONCE and tallies it on both bases at the same
+#       time — rows (what the site published) and distinct permits (what it
+#       should have). Two ingestion runs would measure before and after minutes
+#       apart against feeds that change daily, and any drift would be
+#       indistinguishable from the defect. It writes no dataset.
+#
+#   2 · THE REAL INGESTION then runs the fixed fetchers, so the committed
+#       figures can be checked against the audit's "permits" column. If they
+#       disagree, the fix and the measurement disagree, and that is a finding.
+#
+# San Antonio's CSV 403s from python/urllib but 200s through the repo's own
+# fetch — Round 44's reproducibility finding — so both steps run under the
+# repo's toolchain rather than as standalone probes.
+name: TEMPORARY Round 45 permit-count audit + ingestion
+
+on:
+  push:
+    branches: [claude/thi-v3-round45-permit-counts]
+    paths: ['.github/workflows/tmp-r45-audit.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    defaults:
+      run:
+        working-directory: site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+
+      - name: Audit — both bases, one read
+        env:
+          SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
+        run: npx tsx scripts/audits/permit-count-bases.ts
+
+      - name: Ingestion — the fixed fetchers
+        env:
+          SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+          AIRNOW_API_KEY: ${{ secrets.AIRNOW_API_KEY }}
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
+        run: npm run ingest
+
+      - name: Commit the audit report and the re-ingested data
+        if: always()
+        working-directory: .
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p tmp/r45
+          cp -f site/tmp/r45/*.json tmp/r45/ 2>/dev/null || true
+          git add -A tmp/r45 site/src/data/generated
+          git commit -m "Round 45: audit report + re-ingested data under distinct-permit counting" || echo "nothing to commit"
+          git push

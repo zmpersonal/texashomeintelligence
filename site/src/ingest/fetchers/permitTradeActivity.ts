@@ -60,30 +60,72 @@ export interface TradeActivityValue {
   sourceValues: { value: string; count: number }[];
 }
 
-interface Bucket {
-  count: number;
+/**
+ * One category-month's tally.
+ *
+ * ── ROUND 45: SETS, NOT COUNTERS ──────────────────────────────────────────
+ * `count: number` and `sources: Map<string, number>` were plain counters
+ * incremented once per ROW, and `permitCount` was published from the first of
+ * them. San Antonio's feed carries multiple rows per permit — 87,998 rows in the
+ * 13-month window are 77,825 distinct `PERMIT #`, 11.56% duplication, with one
+ * commercial site permit spanning 105 rows — so every San Antonio figure on the
+ * site was a row count labelled a permit count.
+ *
+ * Austin's feed happens to be 1:1 (59,811 rows, 59,811 distinct
+ * `permit_number`, 0.00%), so its numbers were right. They were right by the
+ * shape of the feed, not by anything in this file, and a feed can change shape
+ * without telling us. Both metros now count distinctly.
+ *
+ * The dedupe key is the permit id WITHIN a category-month, not globally: a
+ * permit that is genuinely both roofing and solar belongs in both categories,
+ * and Austin's classifier returns exactly that. `sources` holds a Set per source
+ * value for the same reason — a row-counted breakdown would not sum to a
+ * distinct-counted total, and the shares beneath it would be wrong in a way
+ * nothing on the page would reveal.
+ */
+export interface Bucket {
+  /** Distinct permit ids seen in this category-month. */
+  permits: Set<string>;
   mechanisms: Set<ClassificationMechanism>;
-  sources: Map<string, number>;
+  /** Source value → the distinct permit ids attributed to it. */
+  sources: Map<string, Set<string>>;
 }
 
 const MECHANISM_ORDER: ClassificationMechanism[] = ["permit-type", "work-class", "description-text"];
 
-function bump(
+/**
+ * Record one permit in one category-month.
+ *
+ * `permitId` is REQUIRED and must be the source's own permit identifier. A
+ * caller with no identifier to pass has no business counting permits, which is
+ * why this is a parameter rather than an optional field: the type makes the
+ * omission impossible instead of silent. San Antonio's loop did not read its
+ * `PERMIT #` column at all before this round, so it could not have deduped even
+ * if someone had thought to.
+ */
+export function bump(
   buckets: Map<string, Bucket>,
   category: TradeCategory,
   month: string,
   mechanism: ClassificationMechanism,
   sourceValue: string,
+  permitId: string,
 ): void {
   const key = `${category} ${month}`;
-  const b = buckets.get(key) ?? { count: 0, mechanisms: new Set(), sources: new Map() };
-  b.count++;
+  const b = buckets.get(key) ?? {
+    permits: new Set<string>(),
+    mechanisms: new Set<ClassificationMechanism>(),
+    sources: new Map<string, Set<string>>(),
+  };
+  b.permits.add(permitId);
   b.mechanisms.add(mechanism);
-  b.sources.set(sourceValue, (b.sources.get(sourceValue) ?? 0) + 1);
+  const forSource = b.sources.get(sourceValue) ?? new Set<string>();
+  forSource.add(permitId);
+  b.sources.set(sourceValue, forSource);
   buckets.set(key, b);
 }
 
-function toObservations(
+export function toObservations(
   buckets: Map<string, Bucket>,
   ingestedAt: string,
 ): Observation<TradeActivityValue>[] {
@@ -102,11 +144,11 @@ function toObservations(
       value: {
         category,
         month,
-        permitCount: b.count,
+        permitCount: b.permits.size,
         mappingVersion: CATEGORY_MAPPING_VERSION,
         mechanisms: MECHANISM_ORDER.filter((m) => b.mechanisms.has(m)),
         sourceValues: [...b.sources.entries()]
-          .map(([value, count]) => ({ value, count }))
+          .map(([value, ids]) => ({ value, count: ids.size }))
           .sort((a, b2) => b2.count - a.count || a.value.localeCompare(b2.value)),
       },
     });
@@ -209,10 +251,39 @@ export const permitTradeActivitySanAntonio: FetcherModule<TradeActivityValue> = 
       );
     }
 
+    // Round 45. The identifier column this loop never read. `PERMIT #` is the
+    // real header; the alternates are kept because the city has renamed columns
+    // before (the "DATE ISSUED" vs "ISSUE DATE" fix of 2026-08-24).
+    const idCol = resolveHeader(records[0], [
+      "PERMIT #",
+      "PERMIT NUMBER",
+      "PERMIT NO",
+      "PERMIT_NO",
+      "PERMITNUMBER",
+      "RECORD NUMBER",
+    ]);
+    if (!idCol) {
+      // Not defensive padding. Without an identifier every row is its own
+      // permit, which is the defect this round exists to fix — so a feed that
+      // loses the column fails loudly rather than silently reverting to row
+      // counts under a field still named `permitCount`.
+      throw new Error(
+        `San Antonio permits CSV: no permit-identifier column among: ${Object.keys(records[0]).join(", ")}. ` +
+          `Counting rows instead would publish a row count as a permit count — the Round 45 defect.`,
+      );
+    }
+
     const buckets = new Map<string, Bucket>();
     const unknown = new Map<string, number>();
     let retained = 0;
     let dropped = 0;
+    let rowsWithoutId = 0;
+    // Diagnostics for the two ways a repeated permit could land in more than one
+    // bucket. Both are reported rather than assumed away: a permit whose rows
+    // carry different issue months, or different permit types, is deduped within
+    // each category-month but still appears in each one it genuinely belongs to.
+    const monthsPerPermit = new Map<string, Set<string>>();
+    const typesPerPermit = new Map<string, Set<string>>();
     for (const row of records) {
       const raw = row[dateCol];
       if (!raw) continue;
@@ -232,8 +303,33 @@ export const permitTradeActivitySanAntonio: FetcherModule<TradeActivityValue> = 
       }
       retained++;
       const month = observedAt.slice(0, 7);
-      for (const c of classifications) bump(buckets, c.category, month, c.mechanism, c.sourceValue);
+      // A row with a blank identifier cannot be deduped against anything. It is
+      // counted as its own permit — the only choice that neither invents a
+      // duplicate nor discards a real permit — and the count is reported.
+      const rawId = (row[idCol] ?? "").trim();
+      const permitId = rawId || `__no-id__${observedAt}#${retained}`;
+      if (!rawId) rowsWithoutId++;
+      else {
+        const m = monthsPerPermit.get(rawId) ?? new Set<string>();
+        m.add(month);
+        monthsPerPermit.set(rawId, m);
+        const t = typesPerPermit.get(rawId) ?? new Set<string>();
+        t.add(permitType.trim());
+        typesPerPermit.set(rawId, t);
+      }
+      for (const c of classifications) {
+        bump(buckets, c.category, month, c.mechanism, c.sourceValue, permitId);
+      }
     }
+    const spanningMonths = [...monthsPerPermit.values()].filter((v) => v.size > 1).length;
+    const spanningTypes = [...typesPerPermit.values()].filter((v) => v.size > 1).length;
+    console.log(
+      `[permit-trade-activity/san-antonio] ${retained.toLocaleString("en-US")} classified row(s) ` +
+        `→ ${monthsPerPermit.size.toLocaleString("en-US")} distinct ${idCol}; ` +
+        `${rowsWithoutId} row(s) with no identifier; ` +
+        `${spanningMonths} permit(s) span more than one issue month; ` +
+        `${spanningTypes} permit(s) span more than one permit type.`,
+    );
     reportCounts("san-antonio", retained, dropped, unknown);
     return toObservations(buckets, new Date().toISOString());
   },
@@ -291,6 +387,10 @@ export function austinTradeWhere(since: string, until: string): string {
 }
 
 interface AustinRow {
+  /** Round 45: the identifier, newly selected. Austin's feed is 1:1 today, so
+   * this changes no published figure — it is what makes that a measured
+   * property of our counting rather than an inherited property of the feed. */
+  permit_number?: string;
   permit_type_desc?: string;
   work_class?: string;
   description?: string;
@@ -334,7 +434,9 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
     for (let page = 0; page < AUSTIN_MAX_PAGES; page++) {
       const batch = (await get({
         $where: where,
-        $select: "permit_type_desc,work_class,description,issue_date",
+        // `permit_number` added in Round 45. It was never requested before, so
+        // the identifier needed to deduplicate was not even on the wire.
+        $select: "permit_number,permit_type_desc,work_class,description,issue_date",
         $order: ":id",
         $limit: String(AUSTIN_PAGE_SIZE),
         $offset: String(page * AUSTIN_PAGE_SIZE),
@@ -353,6 +455,8 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
     const unknown = new Map<string, number>();
     let retained = 0;
     let dropped = 0;
+    let rowsWithoutId = 0;
+    const seenPermits = new Set<string>();
     for (const row of rows) {
       if (!row.issue_date) continue;
       const observedAt = new Date(row.issue_date).toISOString();
@@ -368,8 +472,24 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
       }
       retained++;
       const month = observedAt.slice(0, 7);
-      for (const c of classifications) bump(buckets, c.category, month, c.mechanism, c.sourceValue);
+      // Round 45. Austin's feed measures 1:1 — 59,811 rows, 59,811 distinct
+      // `permit_number`, 0.00% duplication — so this changes none of its
+      // published figures, and the round asserts that it doesn't. It is here
+      // because being right by the shape of someone else's feed is not the same
+      // as being right, and the feed can change shape without telling us.
+      const rawId = (row.permit_number ?? "").trim();
+      const permitId = rawId || `__no-id__${observedAt}#${retained}`;
+      if (!rawId) rowsWithoutId++;
+      else seenPermits.add(rawId);
+      for (const c of classifications) {
+        bump(buckets, c.category, month, c.mechanism, c.sourceValue, permitId);
+      }
     }
+    console.log(
+      `[permit-trade-activity/austin] ${retained.toLocaleString("en-US")} classified row(s) → ` +
+        `${seenPermits.size.toLocaleString("en-US")} distinct permit_number; ` +
+        `${rowsWithoutId} row(s) with no identifier.`,
+    );
     console.log(
       `[permit-trade-activity/austin] server-side $where returned ${rows.length.toLocaleString("en-US")} ` +
         `row(s); count(1) agreed exactly.`,
