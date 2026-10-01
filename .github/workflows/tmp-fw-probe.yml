@@ -1,0 +1,270 @@
+# TEMPORARY — Round 44 Stage-1 grounding probe. DELETE BEFORE THE ROUND ENDS.
+#
+# Re-verifies Fort Worth's permit feed rather than trusting Round 39's numbers,
+# and answers the three things Stage 1 cannot be built without:
+#
+#   A · the feed as it stands TODAY — row count, licence, last modified, the
+#       date field's real type, the trade mix.
+#   B · the FULL field inventory. Owner_Full_Name is known to be there; the
+#       question is what ELSE is personal data, and that cannot be answered by
+#       assuming the one field Round 39 happened to notice is the only one.
+#   C · the %ROOF% / "waterproof" disambiguation, as DATA — every distinct
+#       work description matching ROOF with its count, so a classifier can be
+#       built against the real strings and its precision measured rather than
+#       asserted.
+#   D · monthly counts per candidate trade, for tradeActivity.ts's own
+#       100/sqrt(mean) floor.
+#
+# Robots guard carried from Round 39 with both Round 41c corrections, plus the
+# Crawl-delay handling Round 39 flagged for this host family.
+name: TEMPORARY Fort Worth permits probe (Round 44)
+
+on:
+  push:
+    branches: [claude/thi-v3-round44-fort-worth]
+    paths: ['.github/workflows/tmp-fw-probe.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe the Fort Worth permits feed
+        run: |
+          mkdir -p tmp/fw/robots
+          python3 - <<'PY'
+          import json, os, re, time, urllib.parse, urllib.request, collections
+
+          UA = 'TexasHomeIntelligence-probe/1.0 (one-off research; texashomeintelligence.com)'
+          OUT = 'tmp/fw'
+          LAYER = ('https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/'
+                   'CFW_Open_Data_Development_Permits_View/FeatureServer/0')
+          log = []
+
+          def get(url, timeout=120):
+              req = urllib.request.Request(url, headers={'User-Agent': UA, 'Accept': 'application/json'})
+              try:
+                  with urllib.request.urlopen(req, timeout=timeout) as r:
+                      return r.status, r.read()
+              except Exception as e:
+                  return getattr(e, 'code', 0), str(e).encode()
+
+          # ---- robots: parse the User-agent: * group, and read Crawl-delay ----
+          robots_cache = {}
+          def star_rules(host):
+              if host in robots_cache: return robots_cache[host]
+              st, body = get(f'https://{host}/robots.txt', timeout=30)
+              txt = body.decode('utf-8', 'replace') if st == 200 else ''
+              open(f'{OUT}/robots/{host}.txt', 'w').write(txt if st == 200 else f'(HTTP {st})')
+              groups, cur = [], None
+              for line in txt.splitlines():
+                  l = line.split('#')[0].strip()
+                  # A BLANK LINE ENDS A GROUP, unconditionally (RFC 9309 §2.2.1).
+                  # Round 41c pass 1 skipped blank lines and merged `*` with a
+                  # later `Disallow: /` group; pass 2's guard `and cur['rules']`
+                  # here changed nothing. That guard belongs only on the
+                  # user-agent branch, where consecutive agent lines share a group.
+                  if not l:
+                      if cur is not None:
+                          groups.append(cur); cur = None
+                      continue
+                  k, _, v = l.partition(':')
+                  k, v = k.strip().lower(), v.strip()
+                  if k == 'user-agent':
+                      if cur is not None and cur['rules']:
+                          groups.append(cur); cur = None
+                      if cur is None: cur = {'agents': [], 'rules': [], 'delay': None}
+                      cur['agents'].append(v)
+                  elif cur is not None and k in ('allow', 'disallow'):
+                      cur['rules'].append((k, v))
+                  elif cur is not None and k == 'crawl-delay':
+                      try: cur['delay'] = float(v)
+                      except ValueError: pass
+              if cur is not None: groups.append(cur)
+              star = [g for g in groups if '*' in g['agents']]
+              dis = [v for g in star for k, v in g['rules'] if k == 'disallow' and v]
+              allow = [v for g in star for k, v in g['rules'] if k == 'allow' and v]
+              delay = next((g['delay'] for g in star if g['delay'] is not None), None)
+              robots_cache[host] = (st, dis, allow, delay)
+              return robots_cache[host]
+
+          def match(rule, path):
+              pat = re.escape(rule).replace(r'\*', '.*')
+              if pat.endswith(r'\$'): return re.match('^' + pat[:-2] + '$', path) is not None
+              return re.match('^' + pat, path) is not None
+
+          def allowed(url):
+              u = urllib.parse.urlparse(url)
+              st, dis, allow, delay = star_rules(u.netloc)
+              # Path AND query — Round 39 pass 4: Dallas' rules were query-scoped.
+              path = (u.path or '/') + (f'?{u.query}' if u.query else '')
+              d = [r for r in dis if match(r, path)]
+              a = [r for r in allow if match(r, path)]
+              if d and (not a or max(len(x) for x in a) < max(len(x) for x in d)):
+                  return False, d, delay
+              return True, [], delay
+
+          LAST = {'t': 0.0}
+          def fetch(url, label):
+              ok, why, delay = allowed(url)
+              if not ok:
+                  log.append({'label': label, 'status': 'SKIPPED_BY_ROBOTS', 'disallowed_by': why, 'url': url})
+                  return None
+              # Honour Crawl-delay. Round 39 flagged 60s on this host family; if
+              # it really is 60 this probe must be a handful of requests, which is
+              # why every question below is answered by a server-side aggregate
+              # rather than by paging rows.
+              if delay:
+                  wait = max(0.0, delay - (time.time() - LAST['t']))
+                  if wait: time.sleep(wait)
+              st, body = get(url)
+              LAST['t'] = time.time()
+              log.append({'label': label, 'status': st, 'bytes': len(body), 'url': url,
+                          'crawl_delay': delay})
+              return body if st == 200 else None
+
+          def jget(url, label):
+              b = fetch(url, label)
+              if b is None: return None
+              try: return json.loads(b)
+              except Exception as e:
+                  log.append({'label': label, 'parse_error': str(e), 'prefix': b[:200].decode('utf-8','replace')})
+                  return None
+
+          F = {}
+
+          # ── A · the layer itself ────────────────────────────────────────────
+          meta = jget(f'{LAYER}?f=json', 'layer-metadata')
+          if meta:
+              F['layer'] = {
+                  'name': meta.get('name'), 'type': meta.get('type'),
+                  'maxRecordCount': meta.get('maxRecordCount'),
+                  'supportsPagination': meta.get('advancedQueryCapabilities', {}).get('supportsPagination'),
+                  'copyrightText': meta.get('copyrightText'),
+                  'description': (meta.get('description') or '')[:600],
+                  'editingInfo': meta.get('editingInfo'),
+                  'capabilities': meta.get('capabilities'),
+              }
+              # ── B · EVERY field, with type. The PII question is answered over
+              #        the whole inventory, not over the one field we remembered.
+              F['fields'] = [{'name': f.get('name'), 'type': f.get('type'),
+                              'alias': f.get('alias'), 'length': f.get('length')}
+                             for f in (meta.get('fields') or [])]
+              PII = re.compile(r'owner|name|phone|email|applicant|contact|tenant|occupant'
+                               r'|address|street|contractor|licen[sc]e|dba|company', re.I)
+              F['fields_pii_suspect'] = [f['name'] for f in F['fields']
+                                         if PII.search(f['name'] or '') or PII.search(f['alias'] or '')]
+
+          def count(where, label):
+              u = (f'{LAYER}/query?where={urllib.parse.quote(where)}'
+                   f'&returnCountOnly=true&f=json')
+              d = jget(u, label)
+              return (d or {}).get('count')
+
+          F['total_rows'] = count('1=1', 'count-all')
+
+          WINDOW = "File_Date >= DATE '2025-09-01' AND File_Date < DATE '2026-10-01'"
+          F['window_rows'] = count(WINDOW, 'count-window')
+
+          # ── group-by aggregates: one request each, no row paging ────────────
+          def group(field, where, label, extra=''):
+              stats = json.dumps([{'statisticType': 'count', 'onStatisticField': 'Permit_No',
+                                   'outStatisticFieldName': 'n'}])
+              u = (f'{LAYER}/query?where={urllib.parse.quote(where)}'
+                   f'&groupByFieldsForStatistics={urllib.parse.quote(field)}'
+                   f'&outStatistics={urllib.parse.quote(stats)}'
+                   f'&orderByFields={urllib.parse.quote("n DESC")}'
+                   f'&resultRecordCount=200&f=json{extra}')
+              d = jget(u, label)
+              if not d: return None
+              rows = [f.get('attributes', {}) for f in (d.get('features') or [])]
+              return rows
+
+          F['by_permit_type'] = group('Permit_Type', WINDOW, 'group-permit-type')
+          F['by_permit_subtype'] = group('Permit_SubType', WINDOW, 'group-permit-subtype')
+          F['by_permit_category'] = group('Permit_Category', WINDOW, 'group-permit-category')
+          F['by_status'] = group('Current_Status', WINDOW, 'group-status')
+
+          # ── C · the ROOF disambiguation, as data ────────────────────────────
+          # Every distinct work description containing ROOF, with its count. This
+          # is the whole point: Round 39 left %ROOF% as an upper bound because
+          # it also matches "waterproof". The strings settle it, not a guess.
+          ROOFW = WINDOW + " AND UPPER(B1_WORK_DESC) LIKE '%ROOF%'"
+          F['roof_like_rows'] = count(ROOFW, 'count-rooflike')
+          F['roof_desc_values'] = group('B1_WORK_DESC', ROOFW, 'group-roof-desc')
+          F['roof_by_type'] = group('Permit_Type', ROOFW, 'group-roof-type')
+          F['roof_by_subtype'] = group('Permit_SubType', ROOFW, 'group-roof-subtype')
+          # The complement: WATERPROOF specifically, so the overlap is measured.
+          F['waterproof_rows'] = count(
+              WINDOW + " AND UPPER(B1_WORK_DESC) LIKE '%WATERPROOF%'", 'count-waterproof')
+          F['roof_not_waterproof_rows'] = count(
+              ROOFW + " AND UPPER(B1_WORK_DESC) NOT LIKE '%WATERPROOF%'", 'count-roof-not-wp')
+
+          # ── D · monthly counts for the candidate trades ─────────────────────
+          # Server-side: one grouped request per trade over the 13 months.
+          MONTHS = [(2025, m) for m in range(9, 13)] + [(2026, m) for m in range(1, 10)]
+          def month_bounds(y, m):
+              ny, nm = (y + 1, 1) if m == 12 else (y, m + 1)
+              return f"{y:04d}-{m:02d}-01", f"{ny:04d}-{nm:02d}-01"
+
+          TRADES = {
+              'all': '1=1',
+              'electrical': "Permit_Type = 'Electrical'",
+              'plumbing': "Permit_Type = 'Plumbing'",
+              'mechanical': "Permit_Type = 'Mechanical'",
+              'residential_building': "Permit_Type = 'Residential Building'",
+              'roof_like': "UPPER(B1_WORK_DESC) LIKE '%ROOF%'",
+              'roof_strict': ("UPPER(B1_WORK_DESC) LIKE '%ROOF%'"
+                              " AND UPPER(B1_WORK_DESC) NOT LIKE '%WATERPROOF%'"),
+          }
+          monthly = collections.defaultdict(dict)
+          for name, pred in TRADES.items():
+              for (y, m) in MONTHS:
+                  a, b = month_bounds(y, m)
+                  w = f"File_Date >= DATE '{a}' AND File_Date < DATE '{b}' AND ({pred})"
+                  monthly[name][f'{y:04d}-{m:02d}'] = count(w, f'month-{name}-{y}-{m:02d}')
+          F['monthly'] = monthly
+
+          # ── licence + modified, from the Hub's own metadata ─────────────────
+          for u, label in [
+              ('https://data.fortworthtexas.gov/api/feed/dcat-us/1.1.json', 'dcat'),
+              (f'{LAYER}?f=json', 'layer-again'),
+          ]:
+              b = fetch(u, label)
+              if b and label == 'dcat':
+                  try:
+                      d = json.loads(b)
+                      hits = [x for x in d.get('dataset', [])
+                              if 'permit' in (x.get('title') or '').lower()]
+                      F['dcat_permit_datasets'] = [{
+                          'title': x.get('title'), 'modified': x.get('modified'),
+                          'license': x.get('license'), 'publisher': (x.get('publisher') or {}).get('name'),
+                          'identifier': x.get('identifier'),
+                          'rights': x.get('rights'),
+                      } for x in hits]
+                  except Exception as e:
+                      F['dcat_error'] = str(e)
+
+          json.dump({'findings': F, 'log': log}, open(f'{OUT}/probe-1.json', 'w'), indent=2)
+
+          print('── layer ──');            print(json.dumps(F.get('layer'), indent=1)[:900])
+          print('\n── rows ──', F.get('total_rows'), 'total /', F.get('window_rows'), 'in window')
+          print('\n── PII-suspect fields ──', F.get('fields_pii_suspect'))
+          print('\n── roof ──', F.get('roof_like_rows'), 'LIKE %ROOF% /',
+                F.get('waterproof_rows'), 'waterproof /', F.get('roof_not_waterproof_rows'), 'roof-not-wp')
+          print('\n── permit types ──')
+          for r in (F.get('by_permit_type') or [])[:12]: print('   ', r)
+          print(f"\n{len(log)} requests; robots-skipped: "
+                f"{sum(1 for x in log if x.get('status') == 'SKIPPED_BY_ROBOTS')}")
+          PY
+      - name: Commit findings
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A tmp/fw
+          git commit -m "TEMPORARY: Round 44 Fort Worth probe findings" || echo "nothing to commit"
+          git push
