@@ -50,6 +50,7 @@ const UNITS = [
   ['citationcheckunit', ['npx', 'tsx', 'scripts/replays/citationcheckunit.ts']],
   ['thirdmetrounit', ['npx', 'tsx', 'scripts/replays/thirdmetrounit.ts']],
   ['datascopeunit', ['npx', 'tsx', 'scripts/replays/datascopeunit.ts']],
+  ['seedunit', ['npx', 'tsx', 'scripts/replays/seedunit.ts']],
   ['verify-trade-mapping', ['npx', 'tsx', 'scripts/verify-trade-mapping.ts']],
   ['verify-content', ['node', 'scripts/verify-content.mjs']],
   ['check-links', ['node', 'scripts/check-links.mjs']],
@@ -60,7 +61,7 @@ const UNITS = [
 const RENDERS = [
   'toolshubrender', 'roofscanrender', 'dashmobile', 'aclifespanrender', 'triagerender',
   'signinrender', 'r9render', 'saservicerender', 'footerchrome', 'analysisrender',
-  'datalinksrender', 'eyebrowrender', 'r7replay',
+  'datalinksrender', 'eyebrowrender', 'withdrawnrender', 'r7replay',
 ].map((n) => [n, ['node', `scripts/replays/${n}.mjs`]]);
 
 const wanted = ([name]) => !ONLY || ONLY.includes(name);

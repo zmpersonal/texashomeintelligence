@@ -18,7 +18,8 @@
       "value": {
         "lossType": "Wind/Hail",
         "claimsPaidUsd": 482000
-      }
+      },
+      "seed": true
     }
   ]
 }

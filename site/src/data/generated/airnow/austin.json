@@ -12,15 +12,6 @@
   },
   "observations": [
     {
-      "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.617Z",
-      "key": "2026-07",
-      "value": {
-        "aqi": 42,
-        "category": "Good"
-      }
-    },
-    {
       "observedAt": "2026-08-24T03:00:00.000Z",
       "ingestedAt": "2026-08-24T10:03:07.484Z",
       "key": "Austin-2026-08-24-3",

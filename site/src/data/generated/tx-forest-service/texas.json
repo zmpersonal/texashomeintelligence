@@ -17,7 +17,8 @@
       "key": "2026-07",
       "value": {
         "fireDangerLevel": "Moderate"
-      }
+      },
+      "seed": true
     }
   ]
 }

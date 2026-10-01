@@ -90,30 +90,6 @@
       "value": {
         "pricePerKwhCents": 16.44
       }
-    },
-    {
-      "observedAt": "2026-06-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.614Z",
-      "key": "2026-06",
-      "value": {
-        "pricePerKwhCents": 13.58
-      }
-    },
-    {
-      "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.614Z",
-      "key": "2026-07",
-      "value": {
-        "pricePerKwhCents": 13.73
-      }
-    },
-    {
-      "observedAt": "2026-08-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.614Z",
-      "key": "2026-08",
-      "value": {
-        "pricePerKwhCents": 13.88
-      }
     }
   ]
 }

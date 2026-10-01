@@ -2,7 +2,7 @@
 title: "Are Texas electricity prices still going up?"
 description: "Texas residential electricity is cheaper than a year ago, not dearer. The sourced series, and why a mild summer is not the explanation."
 publishedAt: "2026-09-11"
-published: true
+published: false
 metrics:
   - energy_price_cents_kwh
   - cooling_degree_days

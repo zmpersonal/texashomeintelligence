@@ -12,15 +12,6 @@
   },
   "observations": [
     {
-      "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-24T07:24:14.941Z",
-      "key": "2026-07",
-      "value": {
-        "aqi": 42,
-        "category": "Good"
-      }
-    },
-    {
       "observedAt": "2026-08-24T03:00:00.000Z",
       "ingestedAt": "2026-08-24T10:03:07.870Z",
       "key": "San Antonio-2026-08-24-3",

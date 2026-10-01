@@ -40,6 +40,32 @@ function eiaRate() {
     .sort((a, b) => b.observedAt.localeCompare(a.observedAt))[0].value.pricePerKwhCents.toFixed(2);
 }
 
+/**
+ * The badge classes, READ OUT OF THE COMPONENT rather than copied.
+ *
+ * Round 43: this replay named four classes by hand —
+ * `live/sample/stale/unavailable-badge` — and `DataStatus.astro` has FIVE,
+ * two of which the list got wrong: there is no `unavailable-badge` (it is
+ * `error-badge`), and `aged-badge` was missing entirely. The assertion passed
+ * anyway for as long as the electricity badge happened to read LIVE. The
+ * moment Round 43 removed the fabricated row that was masking a four-month-old
+ * feed, the badge became OUT OF DATE (`aged-badge`), the selector stopped
+ * seeing it, and a correct page failed a stale test.
+ *
+ * Same discipline as the rest of this file: derive the bar from the source of
+ * truth so it cannot drift from it.
+ */
+function badgeClasses() {
+  const src = readFileSync(join(SITE, 'src', 'components', 'DataStatus.astro'), 'utf8');
+  const block = src.match(/const badgeClass = \{([\s\S]*?)\}/);
+  if (!block) throw new Error('aclifespanrender: could not read badgeClass from DataStatus.astro');
+  const names = [...block[1].matchAll(/"([a-z-]+-badge)"/g)].map((m) => m[1]);
+  if (names.length === 0) throw new Error('aclifespanrender: badgeClass map parsed to zero classes');
+  return names;
+}
+const BADGE_CLASSES = badgeClasses();
+const BADGE_SELECTOR = BADGE_CLASSES.map((c) => `.${c}`).join(',');
+
 const b = await launchChromium();
 
 // ══ 1. STRUCTURE AND THE PUBLISHED FIGURES ════════════════════════════════
@@ -48,12 +74,11 @@ console.log('\n══ AC LIFESPAN — structure and figures ══');
   const c = await b.newContext({ viewport: { width: 1440, height: 1200 } });
   const p = await c.newPage();
   await p.goto(B + URL_PATH, { waitUntil: 'networkidle' });
-  const r = await p.evaluate(() => ({
+  const r = await p.evaluate((sel) => ({
     h1: document.querySelector('h1')?.innerText.trim(),
     sections: [...document.querySelectorAll('section[id]')].map(s => s.id),
     main: document.querySelector('main').innerText,
-    badges: [...document.querySelectorAll('.live-badge,.sample-badge,.stale-badge,.unavailable-badge')]
-      .map(x => x.innerText.trim()),
+    badges: [...document.querySelectorAll(sel)].map(x => x.innerText.trim()),
     dataMeta: [...document.querySelectorAll('.data-meta')].map(x => x.innerText.replace(/\s+/g, ' ')),
     sourceLinks: [...document.querySelectorAll('#sources a')].map(a => a.href),
     // The counterpart of section 5: with scripts running the no-JS explanation
@@ -63,7 +88,7 @@ console.log('\n══ AC LIFESPAN — structure and figures ══');
       return !!e && getComputedStyle(e).display === 'none';
     })(),
     jsFlag: document.documentElement.getAttribute('data-acl-js'),
-  }));
+  }), BADGE_SELECTOR);
 
   A('the page renders', !!r.h1, r.h1);
   for (const id of ['your-system', 'cooling-load', 'running-cost', 'tax-credit', 'limits', 'sources'])
@@ -76,7 +101,8 @@ console.log('\n══ AC LIFESPAN — structure and figures ══');
     /CAMP MABRY.*3\.8 miles/is.test(r.main) && /STINSON.*6 miles/is.test(r.main));
   A('years of record are stated', /29-30 years of record/.test(r.main) && /19-20 years/.test(r.main));
   A('the EIA rate is the published one', r.main.includes(eiaRate()), `${eiaRate()}¢`);
-  A('four-bucket badges render', r.badges.length >= 3, r.badges.join(', '));
+  A(`all ${BADGE_CLASSES.length} DataStatus classes are selectable, and 3 badges render`,
+    r.badges.length >= 3, `${r.badges.join(', ')} via ${BADGE_SELECTOR}`);
   A('dual dates render', r.dataMeta.some(m => /Data through/.test(m) && /Updated/.test(m)),
     r.dataMeta[0]?.slice(0, 80));
   A('the 25C credit is named as expired', /25C credit for HVAC equipment expired/.test(r.main));
