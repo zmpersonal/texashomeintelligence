@@ -1,0 +1,2135 @@
+{
+  "findings": {
+    "layer": {
+      "name": "Development Permits",
+      "type": "Table",
+      "maxRecordCount": 1000,
+      "supportsPagination": true,
+      "copyrightText": "",
+      "description": "",
+      "editingInfo": {
+        "lastEditDate": 1790864726555,
+        "schemaLastEditDate": 1790856528257,
+        "dataLastEditDate": 1790864726555
+      },
+      "capabilities": "Query,Extract"
+    },
+    "fields": [
+      {
+        "name": "Unique_ID",
+        "type": "esriFieldTypeString",
+        "alias": "Unique_ID",
+        "length": 4000
+      },
+      {
+        "name": "Count_",
+        "type": "esriFieldTypeInteger",
+        "alias": "Count",
+        "length": null
+      },
+      {
+        "name": "Permit_No",
+        "type": "esriFieldTypeString",
+        "alias": "Permit_No",
+        "length": 4000
+      },
+      {
+        "name": "Permit_Type",
+        "type": "esriFieldTypeString",
+        "alias": "Permit_Type",
+        "length": 4000
+      },
+      {
+        "name": "Permit_SubType",
+        "type": "esriFieldTypeString",
+        "alias": "Permit_SubType",
+        "length": 4000
+      },
+      {
+        "name": "Permit_Category",
+        "type": "esriFieldTypeString",
+        "alias": "Permit_Category",
+        "length": 4000
+      },
+      {
+        "name": "B1_SPECIAL_TEXT",
+        "type": "esriFieldTypeString",
+        "alias": "B1_SPECIAL_TEXT",
+        "length": 4000
+      },
+      {
+        "name": "B1_WORK_DESC",
+        "type": "esriFieldTypeString",
+        "alias": "B1_WORK_DESC",
+        "length": 4000
+      },
+      {
+        "name": "Addr_No",
+        "type": "esriFieldTypeInteger",
+        "alias": "Addr_No",
+        "length": null
+      },
+      {
+        "name": "Direction",
+        "type": "esriFieldTypeString",
+        "alias": "Direction",
+        "length": 4000
+      },
+      {
+        "name": "Street_Name",
+        "type": "esriFieldTypeString",
+        "alias": "Street_Name",
+        "length": 4000
+      },
+      {
+        "name": "Street_Suffix",
+        "type": "esriFieldTypeString",
+        "alias": "Street_Suffix",
+        "length": 4000
+      },
+      {
+        "name": "Street_Suffix_Dir",
+        "type": "esriFieldTypeString",
+        "alias": "Street_Suffix_Dir",
+        "length": 4000
+      },
+      {
+        "name": "Full_Street_Address",
+        "type": "esriFieldTypeString",
+        "alias": "Full_Street_Address",
+        "length": 4000
+      },
+      {
+        "name": "Zip_Code",
+        "type": "esriFieldTypeInteger",
+        "alias": "Zip_Code",
+        "length": null
+      },
+      {
+        "name": "B1_LOT",
+        "type": "esriFieldTypeString",
+        "alias": "B1_LOT",
+        "length": 4000
+      },
+      {
+        "name": "B1_BLOCK",
+        "type": "esriFieldTypeString",
+        "alias": "B1_BLOCK",
+        "length": 256
+      },
+      {
+        "name": "B1_TRACT",
+        "type": "esriFieldTypeString",
+        "alias": "B1_TRACT",
+        "length": 4000
+      },
+      {
+        "name": "B1_LEGAL_DESC",
+        "type": "esriFieldTypeString",
+        "alias": "B1_LEGAL_DESC",
+        "length": 4000
+      },
+      {
+        "name": "Owner_Full_Name",
+        "type": "esriFieldTypeString",
+        "alias": "Owner_Full_Name",
+        "length": 4000
+      },
+      {
+        "name": "File_Date",
+        "type": "esriFieldTypeDate",
+        "alias": "File_Date",
+        "length": 8
+      },
+      {
+        "name": "Current_Status",
+        "type": "esriFieldTypeString",
+        "alias": "Current_Status",
+        "length": 4000
+      },
+      {
+        "name": "Status_Date",
+        "type": "esriFieldTypeDate",
+        "alias": "Status_Date",
+        "length": 8
+      },
+      {
+        "name": "Location_1",
+        "type": "esriFieldTypeString",
+        "alias": "Location_1",
+        "length": 4000
+      },
+      {
+        "name": "JobValue",
+        "type": "esriFieldTypeString",
+        "alias": "JobValue",
+        "length": 4000
+      },
+      {
+        "name": "Use_Type",
+        "type": "esriFieldTypeString",
+        "alias": "Use_Type",
+        "length": 4000
+      },
+      {
+        "name": "Specific_Use",
+        "type": "esriFieldTypeString",
+        "alias": "Specific_Use",
+        "length": 4000
+      },
+      {
+        "name": "Units",
+        "type": "esriFieldTypeString",
+        "alias": "Units",
+        "length": 4000
+      },
+      {
+        "name": "SqFt",
+        "type": "esriFieldTypeString",
+        "alias": "SqFt",
+        "length": 4000
+      },
+      {
+        "name": "ObjectId",
+        "type": "esriFieldTypeOID",
+        "alias": "ObjectId",
+        "length": null
+      }
+    ],
+    "fields_pii_suspect": [
+      "Street_Name",
+      "Street_Suffix",
+      "Street_Suffix_Dir",
+      "Full_Street_Address",
+      "Owner_Full_Name"
+    ],
+    "total_rows": 1616666,
+    "window_rows": 81701,
+    "by_permit_type": [
+      {
+        "n": 17524,
+        "Permit_Type": "Electrical"
+      },
+      {
+        "n": 17238,
+        "Permit_Type": "Plumbing"
+      },
+      {
+        "n": 15015,
+        "Permit_Type": "Residential Building Permit"
+      },
+      {
+        "n": 12905,
+        "Permit_Type": "Mechanical"
+      },
+      {
+        "n": 8644,
+        "Permit_Type": "Plumbing Backflow"
+      },
+      {
+        "n": 4977,
+        "Permit_Type": "Commercial Building Permit"
+      },
+      {
+        "n": 2212,
+        "Permit_Type": "Residential Accessory Struct"
+      },
+      {
+        "n": 2189,
+        "Permit_Type": "Commercial Accessory Structure"
+      },
+      {
+        "n": 363,
+        "Permit_Type": "Design Review"
+      },
+      {
+        "n": 321,
+        "Permit_Type": "Commercial Grading Permit"
+      },
+      {
+        "n": 313,
+        "Permit_Type": "Urban Forestry"
+      }
+    ],
+    "by_permit_subtype": [
+      {
+        "n": 32411,
+        "Permit_SubType": "Standalone"
+      },
+      {
+        "n": 23900,
+        "Permit_SubType": "Umbrella"
+      },
+      {
+        "n": 15215,
+        "Permit_SubType": "New"
+      },
+      {
+        "n": 7884,
+        "Permit_SubType": "Remodel"
+      },
+      {
+        "n": 1294,
+        "Permit_SubType": "Addition"
+      },
+      {
+        "n": 634,
+        "Permit_SubType": "NA"
+      },
+      {
+        "n": 363,
+        "Permit_SubType": "HCLC"
+      }
+    ],
+    "by_permit_category": [
+      {
+        "n": 76299,
+        "Permit_Category": "NA"
+      },
+      {
+        "n": 5142,
+        "Permit_Category": "Construction"
+      },
+      {
+        "n": 260,
+        "Permit_Category": "ReRoof"
+      }
+    ],
+    "by_status": [
+      {
+        "n": 50213,
+        "Current_Status": "Finaled"
+      },
+      {
+        "n": 20242,
+        "Current_Status": "Issued"
+      },
+      {
+        "n": 4657,
+        "Current_Status": "Expired"
+      },
+      {
+        "n": 1543,
+        "Current_Status": "Awaiting Client Reply"
+      },
+      {
+        "n": 994,
+        "Current_Status": "Pending"
+      },
+      {
+        "n": 921,
+        "Current_Status": "Plan Review"
+      },
+      {
+        "n": 897,
+        "Current_Status": "Void"
+      },
+      {
+        "n": 783,
+        "Current_Status": "Closed"
+      },
+      {
+        "n": 639,
+        "Current_Status": "Approved"
+      },
+      {
+        "n": 433,
+        "Current_Status": "Withdrawn"
+      },
+      {
+        "n": 298,
+        "Current_Status": "Incomplete Submittal"
+      },
+      {
+        "n": 61,
+        "Current_Status": "Accepted"
+      },
+      {
+        "n": 9,
+        "Current_Status": "Pending HCLC Review"
+      },
+      {
+        "n": 5,
+        "Current_Status": "Administrative Approval"
+      },
+      {
+        "n": 3,
+        "Current_Status": "Hold"
+      },
+      {
+        "n": 2,
+        "Current_Status": "Pending Fees"
+      },
+      {
+        "n": 1,
+        "Current_Status": "Denied"
+      }
+    ],
+    "roof_like_rows": 2071,
+    "roof_desc_values": [
+      {
+        "n": 190,
+        "B1_WORK_DESC": "Solar Rooftop, Backup Battery, MPU"
+      },
+      {
+        "n": 167,
+        "B1_WORK_DESC": "SOLAR ROOFTOP, BACKUP BATTERY"
+      },
+      {
+        "n": 80,
+        "B1_WORK_DESC": "SOLAR ROOFTOP, BACKUP BATTERY, MAIN PANEL UPGRADE"
+      },
+      {
+        "n": 31,
+        "B1_WORK_DESC": "rooftop solar system"
+      },
+      {
+        "n": 26,
+        "B1_WORK_DESC": "Remove roof down to decking, replace with synthetic felt, self-adhering valley liner, and architectural shingles"
+      },
+      {
+        "n": 18,
+        "B1_WORK_DESC": "Includes reorganization of existing kitchen equipment and addition of new fryer units.  The existing type 1 hood and wrapped ducts will be replaced with Type 1 new equipment. Rooftop equipment will remain existing."
+      },
+      {
+        "n": 17,
+        "B1_WORK_DESC": "Re roof layover"
+      },
+      {
+        "n": 12,
+        "B1_WORK_DESC": "Installing a PV interactive solar system roof mounted"
+      },
+      {
+        "n": 12,
+        "B1_WORK_DESC": "Reroof"
+      },
+      {
+        "n": 12,
+        "B1_WORK_DESC": "To install a roof mounted solar pv system"
+      },
+      {
+        "n": 11,
+        "B1_WORK_DESC": "reroof main house"
+      },
+      {
+        "n": 10,
+        "B1_WORK_DESC": "Re-roof"
+      },
+      {
+        "n": 8,
+        "B1_WORK_DESC": "Install roof mounted PV solar system and energy storage system"
+      },
+      {
+        "n": 8,
+        "B1_WORK_DESC": "Installing solar panels on the roof"
+      },
+      {
+        "n": 7,
+        "B1_WORK_DESC": "Roof Replacement"
+      },
+      {
+        "n": 7,
+        "B1_WORK_DESC": "SOLAR ROOFTOP"
+      },
+      {
+        "n": 6,
+        "B1_WORK_DESC": "Install 1,134sqft (7 Parking spaces) of Single Post Gable Style Carports. Will include, drilling pier foundations, setting columns in concrete, welding all connections. Painting structure with direct to metal paint and installing a metal roof and fascia trim."
+      },
+      {
+        "n": 6,
+        "B1_WORK_DESC": "REROOF\r\nTEAR OFF"
+      },
+      {
+        "n": 5,
+        "B1_WORK_DESC": "Commercial Re-roof"
+      },
+      {
+        "n": 5,
+        "B1_WORK_DESC": "Fabricating a carport in clients backyard behind a gated driveway. Fully welded and anchored to existing concrete on driveway in back of house. Size will be 20'x16' (320sq/ft). Roof and trim will match clients home"
+      },
+      {
+        "n": 5,
+        "B1_WORK_DESC": "Installation of a Grid Tied, Roof Mounted, Solar PV System"
+      },
+      {
+        "n": 5,
+        "B1_WORK_DESC": "Installation of a Grid Tied, Roof Mounted, Solar PV system."
+      },
+      {
+        "n": 5,
+        "B1_WORK_DESC": "Installation of a Grid Tied, Roof Mounted, Solar PV systems with a 3rd party reviewed plan set."
+      },
+      {
+        "n": 5,
+        "B1_WORK_DESC": "Installation of a Grid Tied, Roof Mounted, Solar PV systems."
+      },
+      {
+        "n": 5,
+        "B1_WORK_DESC": "Installation of solar panels (Roof Mounted)"
+      },
+      {
+        "n": 5,
+        "B1_WORK_DESC": "Roof Mounted Solar and battery backup"
+      },
+      {
+        "n": 5,
+        "B1_WORK_DESC": "We will Be constructing a 12' x 20' Steel porch cover with a poly carbonate Roof."
+      },
+      {
+        "n": 5,
+        "B1_WORK_DESC": "X TEAM /// Renovation of existing warehouse for new owner. New exterior dock doors, storefront glazing, and person-doors cut into existing tilt-panel walls. New interior build out of business, storage, hazardous and assembly uses including new HVAC, electrical, plumbing, fire suppression and fire alarm work. Structural and re-roofing under separate permit."
+      },
+      {
+        "n": 4,
+        "B1_WORK_DESC": "Fixed roof-mounted solar installation"
+      },
+      {
+        "n": 4,
+        "B1_WORK_DESC": "Ground up construction of a Family Entertainment Center. As a concept, Dave & Buster\u2019s offers the combination of EAT DRINK PLAY WATCH all under one roof.  It has a full-service menu and drink offering throughout the location along with state-of-the-art arcade with 120-180 games of skill per location. It\u2019s the best attributes of entertainment and casual dining in one location."
+      },
+      {
+        "n": 4,
+        "B1_WORK_DESC": "Installation of a grid-tied, roof-mounted solar PV and battery system."
+      },
+      {
+        "n": 4,
+        "B1_WORK_DESC": "installation of solar panels on existing roof"
+      },
+      {
+        "n": 4,
+        "B1_WORK_DESC": "re roofing new floors new kitchen cabinets exterior paint electrical mechanical"
+      },
+      {
+        "n": 4,
+        "B1_WORK_DESC": "repair, replace fire damage portion of roof"
+      },
+      {
+        "n": 4,
+        "B1_WORK_DESC": "Reroof (NEZ NON QUALIFY NZ26-00317)"
+      },
+      {
+        "n": 4,
+        "B1_WORK_DESC": "Residential Add on of Battery to the Residents Existing Roof Mounted Solar System"
+      },
+      {
+        "n": 4,
+        "B1_WORK_DESC": "rooftop solar install"
+      },
+      {
+        "n": 4,
+        "B1_WORK_DESC": "SOLAR ROOFTOP, BACKUP BATTERY, MAIN PANEL DERATE"
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "Bldg #5: Replacing Sheetrock with exterior wood siding on breezeway ceiling, Replacing rotten/broken Fascia Board, Siding and Soffit, Replacing Interior door unit #8, unit #9 and unit #10, Replacing partial roof sagging if needed upon inspection, and Replacing rotten rafters if needed upon inspection."
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "Existing concrete porch slab and concrete steps shall be demolished and replaced in kind. The existing porch structure, including roof, columns, beams, framing, and all structural supports, shall remain in place and shall not be altered. The new concrete slab and steps shall match the existing dimensions, elevations, and configuration unless otherwise noted."
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "Install roof mounted PV solar system"
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "Install roof mounted solar pv system"
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "Installation of 2.46kw roof-mounted PV system with 6 modules, 1 inverter & 1 battery."
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "Installation of a 16 MODULES - ROOFMOUNTED - 6.560 kW DC, 5.760 kW AC"
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "Installation of a Grid Tied, Roof Mounted, Solar PV System with MPU"
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "Installation of roof mounted solar panels."
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "Installation of solar panels on the roof of the home."
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "PHOTOVOLTAIC ROOF MOUNT SYSTEM WITH ENERGY STORAGE SYSTEM"
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "RE ROOF"
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "Re-roof of TPO Membrane"
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "Residential roof mounted solar - removal of defective system and install of new system"
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "Roof Mounted solar PV system"
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "SOLAR ROOFTOP, BACKUP BATTERY, MAIN PANEL UPGRADE, 2021 IBC in PE Letter good per Ms. Tammy Lewis"
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "SOLAR ROOFTOP, BACKUP BATTERY, SPAN MAIN PANEL"
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "SOLAR ROOFTOP, BACKUP\nBATTERY"
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "X TEAM /// A new 388,858 SF speculative facility constructed with Tilt-Wall Panels, traditional steel joist/girders, slab on grade and TPO Roof over metal decking"
+      },
+      {
+        "n": 3,
+        "B1_WORK_DESC": "X TEAM /// A new Shell 170,870 SF speculative facility constructed with Tilt-Wall Panels, \r\ntraditional steel joist/girders, slab on grade and TPO Roof over metal decking"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "\u201cProposed construction of a new wood-framed patio cover attached to the rear of the existing single-family residence. The patio cover will include posts and beams with a 2\u2019-0\u201d roof overhang, matching the existing home in scale and style. The structure will be finished with roofing materials consistent with the house and will comply with zoning setbacks and all applicable building code requirements.\u201d"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "11.07 - Residential roof top solar panel installation"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "13x15 Gardening Porch that has a Polycarbonate Roof and slide windows."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "14X14 DOUGLAS FIR FLAT PATIO COVER/ BLACK METAL R PANEL ROOF/ PINE T & G CEILING"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "3. Re-Roof Low Roof Sections ONLY\na. Clean and prepare existing Mod-Bit roofing system for new TPO membrane overlay.\nRemove compromised, saturated, and damaged system components.\nb. Provide and install 1 layer of Versico 1/2\u201d 4x4\u2019 SecurShield HD board, fully adhered to\nexisting Mod-Bit system with Flexible Dash low-rise VOC-free adhesive.\nc. Provide and install 60 mil Versico TPO roofing membrane fully adhered to SecurShield\nHD board with Cav-Grip 3v Low-VOC TPO adhesive/primer. TPO will be standard color\nwhite, tan, or gray with matching accessories.\nd. Provide and install 60 Mill TPO fully adhered up walls with manufacturers approved\nadhesive.\ne. Remove and replace penetration pockets and flashing around all penetration pipes and\nvents.\nf. Remove and replace existing pitch pans at condenser units.\ng. Provide and install all termination points to comply with TPC-1.1, TPC-9.2, and TPC-12.1\nmanufactures specifications. Where clearance for TPC-9.2 detail is not sufficient,\nLiquiSeal will be utilized in accordance with manufacturer\u2019s instructions.\nh. Provide and install TPO walkway pads around roof top units.\ni. Provide and install TPO equipment pads as needed around exhaust fans and other rooftop\nequipment.\nj. Remove and replace 24ga pre-finished gutters and downspouts at North and South walls.\nk. Remove and replace 2pc counter flashing at parapet wall where existing EPDM is flashed\nin.\nl. Detach, reflash, and reset roof grates as needed at the Roof Drains.\nm. Provide and install new 3\u2019x3\u2019 Bilco Roof Hatch, Safety Rail, and Post Up"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Add on roof top solar 4.05KW"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Add on roof top solar 8.8 KW with battery"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "addition tied to remodel PB26-07509 - HOMESTEAD// RAISING THE ROOF AND ADDING A 309 SQFT PORCH TO THE BACK OF THE HOUSE"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Antenna Mod - adding/replacing antennas and RRUS. No changes to ground space, tower height, or electrical work. Rooftop site"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Applying a fluid applied coating to existing roof surface"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Bldg # 10 Reroof - Antigua Village Apartments"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Bldg # 7 Reroof - Antigua Village Apartments"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Bldg # 9 Reroof - Antigua Village Apartments"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Bldg #4: Replacing Sheetrock with exterior wood siding on breezeway ceiling, Replacing rotten Fascia Board, Siding and Soffit, Replacing Interior door unit #11, Replacing Sheetrock & Exterior Siding in Garage B, Replacing rotten rafters if needed upon inspection, Replacing partial roof sagging if needed upon inspection."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Bldg #5 reroof - Antigua Village Apartments"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Bldg. 200 Landing Rebuild\nUnity Construction & Painting, Inc. will furnish all labor, materials, and equipment to perform the following:\n\u2022\nLocation: Bldgs. 200\n\u2022\nDescription: (includes permit/does not include engineer drawings if required.)\no\nDemo existing shared second floor landing and walkway.\no\nRebuild new 4 \u00bd\u2019x16 \u00bd\u2019 shared unit concrete walkway.\no\nRebuild new 4 \u00bd\u2019x24\u2019 shared unit landing.\no\nRebuild new 4 1/2\u2019x12\u2019 2x6\u201d plank walkway and step.\no\nReinstall existing metal walkway posts.\no\nReplace existing (1) 6\u201dx6\u201dx8\u2019 and (1) 4\u201dx4\u201dx8\u2019 wood posts\n\u2022\nConcrete Landing/Walkway Scope:\no\nRemove concrete, existing waterproofing, flashing, and decking\no\nInstall new \u00be\u201d plywood decking\no\nInstall TWP primer for 60mil balcony waterproofing membrane\no\nInstall 60mil balcony waterproofing membrane (mastic all seams)\no\nInstall Masterseal HLM5000 at any voids\no\nInstall new aluminum T-bar\no\nPour concrete to brushed finish\no\nRemove and reinstall landing and walkway railing\no\nRemove and replace landing beams and framing\no\nPrime and paint with Sherwin Williams to match existing fa\u00e7ade\no\nClean and haul away work-related debris"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Bldg. 204 Landing Rebuild\r\nUnity Construction & Painting, Inc. will furnish all labor, materials, and equipment to perform the following:\r\n\u2022\r\nLocation: Bldgs. 204\r\n\u2022\r\nDescription: (includes permit/does not include engineer drawings if required.)\r\no\r\nDemo existing shared second floor landing and walkway.\r\no\r\nRebuild new 4 \u00bd\u2019x16 \u00bd\u2019 shared unit concrete walkway.\r\no\r\nRebuild new 4 \u00bd\u2019x24\u2019 shared unit landing.\r\no\r\nRebuild new 4 1/2\u2019x12\u2019 2x6\u201d plank walkway and step.\r\no\r\nReinstall existing metal walkway posts.\r\no\r\nReplace existing (1) 6\u201dx6\u201dx8\u2019 and (1) 4\u201dx4\u201dx8\u2019 wood posts\r\n\u2022\r\nConcrete Landing/Walkway Scope:\r\no\r\nRemove concrete, existing waterproofing, flashing, and decking\r\no\r\nInstall new \u00be\u201d plywood decking\r\no\r\nInstall TWP primer for 60mil balcony waterproofing membrane\r\no\r\nInstall 60mil balcony waterproofing membrane (mastic all seams)\r\no\r\nInstall Masterseal HLM5000 at any voids\r\no\r\nInstall new aluminum T-bar\r\no\r\nPour concrete to brushed finish\r\no\r\nRemove and reinstall landing and walkway railing\r\no\r\nRemove and replace landing beams and framing\r\no\r\nPrime and paint with Sherwin Williams to match existing fa\u00e7ade\r\no\r\nClean and haul away work-related debris"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Build an attached shed roof porch cover over an existing concrete pad \r\n9'10\" x 12'1\""
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Building a 8x10 f Resin storage shed \n, dark grey in color, matte roof ROOF SLOPE DESIGN & LOCKABLE DOOR, WOOD LOOK design,\nItem Dimensions D x W x H85.8\"D x 128.3\"W x 88.9\"H\nFloor Area\t80 Square Feet\n\nThe shed will be located at least 5\" away from all easements and fences."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Building an additional bedroom and bathroom and laundry room w/closets. existing sunroom will be romved to make room for. New electrical, plumbing, concrete will be added 3-4 ducts will be added for heating and cooling 265ft. woll be added new 120ft will be modified where existing sunroof is elec panel will be replaced to upgrade to code(south wall) paorch will also be built on existing sunroom concrete paad. Plumbing will need to be replaced at the front all the way to the back add on to ensure proper fall."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Commercial Remodel - Install of a 32.64 kW roof mounted Solar PV system. Install includes modules, inverters, racking and other necessary equipment."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "COMMERICAL RE-ROOF BLDG 1 OFFICE/ Siliconized Spray on Roof Flat and Asphalt Shingle Vertical"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "COMMERICAL RE-ROOF BLDG 2 Siliconized Spray on Roof Flat and Asphalt Shingle Vertical"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "COMMERICAL RE-ROOF BLDG 3 Siliconized Spray on Roof Flat and Asphalt Shingle Vertical"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "COMMERICAL RE-ROOF BLDG 4 Siliconized Spray on Roof Flat and Asphalt Shingle Vertical"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "COMMERICAL RE-ROOF BLDG 5 Siliconized Spray on Roof Flat and Asphalt Shingle Vertical"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "COMMERICAL RE-ROOF BLDG 6 Siliconized Spray on Roof Flat and Asphalt Shingle Vertical"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "COMMERICAL RE-ROOF BLDG 7 Siliconized Spray on Roof Flat and Asphalt Shingle Vertical"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "COMMERICAL RE-ROOF BLDG 8 Siliconized Spray on Roof Flat and Asphalt Shingle Vertical"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "COMMERICAL RE-ROOF BLDG 9 Siliconized Spray on Roof Flat and Asphalt Shingle Vertical"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "COMPOSITE RE ROOF"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Construct a 11.4' x 40' attached patio cover (11.4' x 30' shingle-roofed section at 4:12 pitch and 11.4' x 10' open pergola section). Structured is supported by (5) 6x6 PT posts resting on (5) 12\" diameter x 18\" deep core-drilled concrete piers with Simpson Strong-Tie post anchors. Roof framing consist of, to span 40', a double 2x10 header beam, a 2x8 house ledger with Z-bar flashing secured to the house band joist with code approved fasteners, and 2x6 rafters spaced at 16\" O.C. secured with Simpson H2.5A hurricane ties on every rafter."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Construct a 20\u2019 x 13\u2019 covered patio (260 sq ft)  tying into the roof line. An LVL beam will be attached to the existing structure at the exterior wall. The LVL will be fastened through the top plate of the wall framing supported by the stud pack.  Frame and rafters will be constructed using 2 x 6 yellow pine.  Pressure treated pine (8 x 8) will be used for corner posts. Posts will be anchored using Simpson Strong Tie ABU Series ZMAX Galvanized Standoff Posts. Bases installed in accordance with manufacturer\u2019s specifications. Composition roof installed to match existing shingles.  Installed decking will use 7/16th sheathing"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Construct a new attached insulated aluminum patio cover over the existing rear concrete patio. The project includes installation of structural support beams, and insulated roof panels with two ceiling fans and four light fixtures. A portion of the existing patio will remain uncovered."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Construction of a new single-family residential dwelling per submitted architectural and engineering plans. Work includes site preparation, foundation, structural framing, roofing, installation of windows and exterior doors, exterior finishes, rough-in and final plumbing, mechanical, and electrical systems, insulation, drywall, interior finishes, and final grading. All work will comply with current local building codes, energy code requirements, and manufacturer specifications."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Construction of a new, approximately 15,507 sf, shell retail building including related site work and amenities.  The shell building will include the building slab and foundation, fully enclosed exterior walls and roof, site lighting, interior lighting and utility stubs, fire suppression system, and storm water and sanitary sewer extensions to the underground civil storm on site."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Construction of a new, attached covered rear patio. The project includes structurally tying into the existing home, extending the current roofline, and matching existing soffits and fascia. 2 ceiling fans, 6 recess can lights and cedar ceiling (lid) inside. Open sides. Similar to neighbors."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Contemporary/industrial cathedral \r\nroof patio cover attached 500sqft"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Convert two existing screened walls to framed, insulated, finished walls under existing house roof. Two other sides remain existing exterior brick."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "duplex: creating two distinct residential units under one roof that share a common wall or floor/ceiling structure. Each unit operates as a complete home with its own entrance, kitchen, bathrooms, and living spaces"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Enclosing the existing covered porch under the existing roof/header. Walls only project"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Erie to remove existing roofing and properly dispose. Erie to furnish and install\nice and water shield where applicable.\nErie to furnish and install fiberglass dimensional shingle.\nErie to furnish and install all accessories that may include drip edge, pipe boots,\nand flashing.\nErie to vent roof properly.\nErie to furnish and install Premium Synthetic Underlayment.\nErie to furnish and install decking with OSB where applicable."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Extend roof line to cover entire existing concrete porch."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Extenden Attached Patio 14'x15', open gables, wood frame and shingle roof as indicated in plans file."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Exterior Remodel - Extend Awning & Roof"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Fixed roof mounted solar installation"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Full Roof replacement"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "FULL ROOF REPLACEMENT INCLUDING DECKING"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Full tear off and reroof of laminated asphalt shingles"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "GABLE ROOF AT THE REAR OF THE HOUSE USING WOOD AND CEDAR. DIMENSIONS: 9' X 14'. THE MATERIAL WILL MATH THE COLOR AND EXISTING MATERIALS OF THE HOUSE."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Garage remodel to allow for 96 SF addition. Making\r\nstructural repairs to the foundation. Adding onto slab foundation with perimeter concrete beam on 3 sides to support original wall plate position. Repair garage wall & roof framing.  Rework south facing window size & position & install new 3410 Marvin Ultimate Awning window. Install new Marvin Ultimate \u00be lite patio door. Reduce overhead door width from 14\u2019 to 10\u2019.\r\n3rd party plan review & inspections\r\nNorth Texas Inspection Services"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "GENERAL REMODELING OF INTERIOR OF HOME,  RE-ROOFING WITH 30 YEAR COMPOSITION SHINGLE ROOF, INSTALLING EXTERIOR SIDING, INSTALLING NEW WINDOWS TO FIT EXISTING OPENINGS, UPDATING PLUMBING AND UPDATING ELECTRICAL PLUS INSTALLING NEW CENTRAL HEATING AND AIR SYSTEM."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Install 20 panels roof mounted PV solar system"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Install 22 panels roof mounted PV solar system"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Install a roof mounted 28 panel PV solar system with ESS"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Install a roof mounted 31 panel PV solar system with ESS"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Install free-standing carton storage racks, 6 ft high, on existing slab in warehouse area. Racks anchored to slab only; not attached to walls, roof or building structure. No structural, mechanical, electrical or plumbing work. No change to exits, occupancy classification or occupant load. Storage does not exceed 6 ft \u2014 not high-piled storage. Per direction of Mr. Don Guy, Building Official's Office, filed separately from C.O. permit PO26-02425."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "INSTALL RESIDENTIAL ROOF MOUNTED SOLAR PV SYSTEM WITH BATTERY"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of (2) cooling RTUs with dehumidification, and installation of ceiling insulation on the roof of an existing warehouse space."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of (2) make-up air units and (2) exhaust fans on the roof of an existing warehouse space."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of 9.43kw roof-mounted PV system with 23 modules, 1 Tesla inverter & 1 Tesla battery."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of a 10 MODULES - ROOFMOUNTED - 4.100 kW DC, 3.800 kW AC with 1 TESLA POWERWALL 3 battery"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of a 12 MODULES - ROOFMOUNTED - 4.920 kW DC, 3.800 kW AC"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of a 12 MODULES - ROOFMOUNTED - 4.920 kW DC, 3.800 kW AC with a 200A MPU"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of a 14 MODULES - ROOFMOUNTED - 5.600 kW DC, 11.500 kW AC with 1 TESLA POWERWALL 3 Battery and a 200A MPU"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of a 20 MODULES - ROOFMOUNTED - 8.200 kW DC, 7.600 kW AC"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of a Grid Tied, Roof Mounted, Solar PV System with DURA 5 Battery"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of new concealed/stealthed cellular antenna and equipment lease site on existing rooftop."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of new concealed/stealthed T-Mobile cellular antennas and an equipment lease site on the existing rooftop at 3700 Camp Bowie Boulevard."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of Roof mounted solar 11 KW with battery"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of Roof mounted solar 8.8 KW with battery"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of solar panels on existing residential roof. 4.4 kW. Addition of 1 0-30A circuits. 10 panels."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of solar panels on existing residential roof. 6.6 kW. Addition of 1 0-30A circuits. 15 panels."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of solar panels on existing residential roof. 6.6 kW. Addition of 1 0-60A circuits. 15 panels."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "installation of solar panels on the roof"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installation of solar panels on the roof."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installing a PV interactive solar system roof mounted with an MDU"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installing a PV interactive solar system roof mounted with batteries"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installing a PV interactive solar system roof mounted with batteries and FSU Relocation."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installing a PV interactive solar system roof mounted with batteries."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installing a PV interactive solar system roof mounted with ESS"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installing a PV interactive solar system roof mounted, plans went through third-party inspection (TPI)"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Installing rooftop solar panels on existing commercial building."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "NEW 482 SQ. FT. ATTACHED ROOF STRUCTURE ADDITION w/ ELECTRICAL."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "patio &roof extension"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "patio attached cover, add attached patio w/ covered roof"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Patio cover attached to the back side of the house 475 square foot ,framed out of yellow pine and Douglas fir , dress with siding , with four columns and shingles top roof"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Pergola Style Lean to Roof"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Porch roof addition"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Prep existing flat roof and install 137 squares of Carlisle 60 mil TPO as a roof overlay on existing roof including replacement of existing roof accessories."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Prep existing flat roof and install 278 squares of Carlisle 60 mil TPO as a roof overlay on existing roof including replacement of existing roof accessories."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "PROPOSED ADDITION FOR LIVING SPACE AND COVERED CONCRETE SLAB WITH NEW ROOF"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "raising pitch of roof 2ft as well as remodeling the carport, converting it into a garage 7 WINDOWS REPLACED LIKE FOR LIKE"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "RE-DECK & RE-ROOF"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Relocate existing Verizon equipment to roof on new steel platform."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Remodel of existing tenant space to include additional plumbing and one new roof top unit.  Electrical service and panels are existing."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Remodel of master bedroom. 457 sf . Reroof and new electrical panel . Fiber cement lap siding, drywall, and composition shingles"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "remodel tied to addition PB26-07506 - HOMESTEAD// RAISING THE ROOF AND ADDING A 309 SQFT PORCH TO THE BACK OF THE HOUSE"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Remodeling of an existing one-story single-family residence located at 4452 Kingsdale St, Fort Worth, TX 76119. The project includes replacement of exterior siding, installation of new doors and windows, updates to interior finishes, and minor electrical, mechanical, and roof framing improvements. No change to the building footprint or overall square footage (approx. 2,485 sq. ft)."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Remove all roof coverings down to the decking. Install synthetic Ice & Water materials in all roof valleys. Install synthetic underlayment on entire roof area. Install starter strip on entire perimeter of roof. Install asphalt shingle on roof. Remove and replace all roof vents with like kind. No roof openings will be added or removed."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Remove and dispose of existing roofing down to decking and install new 35 SQ Owens Corning TruDefinition\u00ae Storm impact-resistant laminated shingle system (Desert Tan) with manufacturer-required underlayment, ice & water barrier, drip edge, flashings, pipe boots, ventilation, and 7 bundles of ImpactRidge\u00ae hip & ridge shingles. Decking to be inspected and replaced as needed (quantity TBD). Install 215 LF of 6\" K-style seamless aluminum gutters and 40 LF of 4\" aluminum downspouts (Antique Ivory). No structural changes."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Remove bathroom wall/utility wall to extend further out add new exterior wall. Plumbing lavatory, shower and toilet will be altered/moved 5ft. \r\nthis is a porch area that we are expanding adding wall to. No need for roofing just remove a wall and add a wall for expansion."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "REMOVE EXSISTING MEMBRANE INSULATION WILL REMAIN IN PLACE / INSTALL A 1/2 HD BOARD AND NEW TPO MECHANICALLY ATTACHED / COMM REROOF"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Remove north facing and south facing shingle roof and replace with standing seam metal over sancary replace mod bitumen roof over walk way"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "-Remove spa and associated framing per plans\n-Remove corrosion of all exposed steel within pool crawl space\n- Provide supplemental reinforcing to pool perimeter framing\n- Provide supplemental bracing per plan\n- Replace framing at spa location for installation of new spa\n- Repair waterproofing at locations identified on plan and at any location discovered to be deficient during repairs\n- Provide rust0inhibiting paint to all required framing, at owner option provide corrosion resistant coating to susceptible beams"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Removing and replacing shingle on roof, and will be replaceing decking"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "REMOVING EXISTING MEMBRANE, INSULATION WILL REMAIN IN PLACE / INSTALL 1/2 HD BOARD AND NEW TPO MECHANICALLY ATTACHED / COMM REROOF"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Repair patios at units #930 (3rd flr), #919 (2nd flr), and #907 (1st flr), 76.5 SF each. \nReplace deteriorated wood framing, decking, posts, brackets, flashing, and waterproofing as needed. Prime and paint all\u00a0new\u00a0materials."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Replace existing Roof with new Fibertite Singleply Membrane System"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "REPLACE THE PORCH COVER WITH GABLE ROOF STYLE"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Re-roof 3 kick out sections from main building."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "REROOF AND DECKING"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Reroof due to weather related damages"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "REROOF ENTIRE BUILDING"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "REROOF ONLY OVER EXISTING ROOF"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "REROOF SEE SPECS"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "reroofing"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Residential addition to existing single-family residence. Remove and rebuild existing rear storage area and extend the structure to create a new Bedroom #3 with closet and utility room. Addition will increase living area by approximately 253 SF, from 1,293 SF to 1,546 SF. Work includes new foundation, framing, roofing, exterior siding, windows/doors, insulation, drywall and finishes, with associated electrical, plumbing, and mechanical work tied into existing systems. All work to be completed per approved plans and applicable City of Fort Worth codes."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "RESIDENTIAL REMODEL CONSISTING OF ROOF REPLACEMENT, WINDOW REPLACEMENT, FLOORING REPLACEMENT, AND INTERIOR PAINTING OF AN EXISTING SINGLE-FAMILY RESIDENCE. NO STRUCTURAL CHANGES, NO ADDITION OF SQUARE FOOTAGE, AND NO CHANGES TO THE FLOOR PLAN. ALL EXISTING WINDOWS TO BE REPLACED."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Residential roof mounted solar"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Residential roof mounted solar - add on of new system with 1 home battery"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Residential roof mounted solar - removal of existing system and install of new system"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "ROOF MOUNT SOLAR PANEL INSTALLATION"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "ROOF TOP UNIT GAS REPAIR ON LENNOX BUILDING"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "rooftop solar system with battery"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "SCOPE OF WORK EXISTING HOUSE TO BE REMODELED: -EXISTING INTERIOR WALLS TO BE REPAIRED. [INSULATION TO BE REPLACED, SHEETROCK TO BE REPLACED, DRY WALL AND PAINTING TO BE DONE.] -ALL EXISTING WINDOWS TO BE REPLACED FOR THE SAME SIZES -EXISTING BATH FIXTURES TO BE REPLACED -EXISTING ELECTRICITY TO BE REPLACED -EXISTING SHEETROCK TO BE REPLACED -HVAC SYSTEM DUCTS TO BE REPLACED -PLUMBING TO BE REPLACED -EXISTING ROOF TO BE REPAIRED"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Sofit, Facia board, partial roof sagging replacement. door replacement (unit 1, 2, & 5) rafter upgrade being done only if inspection requires"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Solar Rooftop, Main Panel Upgrade"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Tear-off existing roofing materials down to decking. Inspect roof deck and replace any damaged or deteriorated decking as needed. Install new underlayment, flashing, and roofing system in accordance with local building codes. Re-roof structure with new materials."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "This project includes the installation of a 40\u2019x15\u2019 concrete patio extension, complete with a 2\u201d compacted gravel base, 3/8\u201d rebar reinforcement every 16\u201d for added strength, and a broom finish to match the existing patio. A 55\u2019 linear foot expansion board will be installed along the foundation/patio, and a downspout will be routed under the new slab into a pop-up outside the patio. All construction debris and forms will be removed from the site upon completion.\r\nOptional work includes the installation of a 15\u2019x15\u2019 gable or sloped patio cover, featuring tongue-and-groove cedar ceiling boards, 2\u201dx10\u201d cedar beams, and three 8\u201dx8\u201d cedar posts set in reinforced concrete footings. The roof will be finished with shingles matching the existing home, and electrical wiring will be installed for ceiling fans, recessed lights, and outlets as specified by the client. Cedar knee braces will be installed on all posts, and all wood surfaces will be stained to the client\u2019s preference. All debris from the patio cover installation will also be removed from the site."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "Two tenant signs identifying as \u201cMadrone\u201d and \u201cPublic Market Cafe & Goods\u201d. Fabricated out of steel rolled tube structural supports with specified finishes, aluminum fabricated open channel letters with baffle backs, GE Contour LED faux neon tubing with remote power supplies. Steel truss supports and welded mounting plates, Through-roof steel supports and pitch pans by General Contractor"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "X TEAM /// A new 601,539 SF speculative facility constructed with Tilt-Wall Panels, traditional steel joist/girders, slab on grade and TPO Roof over metal decking"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "X TEAM /// one-story pre-engineered metal building with metal wall and roof panels.  Interior scope shall be drywall"
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "X TEAM /// PERMIT DRAWINGS INCLUDE EXTERIOR WORK \r\nONLY. THIS WORK INCLUDES NEW EXTERIOR \r\nSTAIR AS WELL AS A NEW WALL MOUNTED ROOF \r\nLADDER."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "X TEAM /// This will be a single story, Warehouse / Office shell (no finish-out).  It is designed as a pre-engineered metal building with 15,473 square feet and all metal walls and roof."
+      },
+      {
+        "n": 2,
+        "B1_WORK_DESC": "X TEAM /// This will be a single story, Warehouse / Office shell (no finish-out).  It is designed as a pre-engineered metal building with 20,280 square feet and all metal walls and roof."
+      },
+      {
+        "n": 1,
+        "B1_WORK_DESC": "- Install 25-year 3-tab shingles (16 SQ) incl. felt paper \n- Replace roof decking with \u00be\u201d plywood decking (16 SQ) \n- Provide code-approved exhaust venting - Maintain proper slope, ridge, and valley coverage"
+      },
+      {
+        "n": 1,
+        "B1_WORK_DESC": "- Install 25-year 3-tab shingles (21 SQ) incl. felt paper - Replace roof decking with \u00be\u201d plywood decking (21 SQ) - Provide code-approved exhaust venting - Maintain proper slope, ridge, and valley coverage (NEZ NON QUALIFY NZ26-00787)"
+      },
+      {
+        "n": 1,
+        "B1_WORK_DESC": "- Install 25-year 3-tab shingles (22 SQ) incl. felt paper \r\n- Replace roof decking with \u00be\u201d plywood decking (22 SQ) \r\n- Provide code-approved exhaust venting - Maintain proper slope, ridge, and valley coverage"
+      },
+      {
+        "n": 1,
+        "B1_WORK_DESC": "- Install 25-year 3-tab shingles (26 SQ) incl. felt paper \n- Replace roof decking with \u00be\u201d plywood decking (26 SQ) \n- Provide code-approved exhaust venting - Maintain proper slope, ridge, and valley coverage"
+      },
+      {
+        "n": 1,
+        "B1_WORK_DESC": "- Remove existing systems (Roof and Electrical)\n- Replace Tesla Gateway 3 with Service Disconnect. \n- Standard Enphase Installation"
+      },
+      {
+        "n": 1,
+        "B1_WORK_DESC": "(INCORRECT PERMIT TYPE. NEW PERMIT PB26-09971)  After-the-fact permit for an existing 20'x16' attached covered pergola located at the rear of the residence. Structure is constructed on existing concrete patio and includes 8x8 wood posts with Simpson ABU88z post base, 2x8 ledger fastened to the residence, 2x6 rafters, 2x2 purlins, and Ameri lux Coverlite polycarbonate roofing panels."
+      },
+      {
+        "n": 1,
+        "B1_WORK_DESC": "(N) 10.560kW DC ROOF MOUNT SOLAR PV SYSTEM WITH (N) 24 SILFAB SIL-440-QD 16PBM4F-DCA2 440W PV MODULES WITH (N) 24 ENPHASE IQ8HC-72-M-DOM-US (240V) MICROINVERTERS (COMPLIANT WITH RAPID SHUTDOWN) UPGRADE MAIN SERVICE PANEL TO 225A RATED BUS WITH 200A MAIN BREAKE"
+      }
+    ],
+    "roof_by_type": [
+      {
+        "n": 1588,
+        "Permit_Type": "Residential Building Permit"
+      },
+      {
+        "n": 315,
+        "Permit_Type": "Commercial Building Permit"
+      },
+      {
+        "n": 87,
+        "Permit_Type": "Residential Accessory Struct"
+      },
+      {
+        "n": 47,
+        "Permit_Type": "Design Review"
+      },
+      {
+        "n": 30,
+        "Permit_Type": "Commercial Accessory Structure"
+      },
+      {
+        "n": 2,
+        "Permit_Type": "Plumbing"
+      },
+      {
+        "n": 1,
+        "Permit_Type": "Electrical"
+      },
+      {
+        "n": 1,
+        "Permit_Type": "Urban Forestry"
+      }
+    ],
+    "roof_by_subtype": [
+      {
+        "n": 1810,
+        "Permit_SubType": "Remodel"
+      },
+      {
+        "n": 117,
+        "Permit_SubType": "Addition"
+      },
+      {
+        "n": 93,
+        "Permit_SubType": "New"
+      },
+      {
+        "n": 47,
+        "Permit_SubType": "HCLC"
+      },
+      {
+        "n": 3,
+        "Permit_SubType": "Standalone"
+      },
+      {
+        "n": 1,
+        "Permit_SubType": "NA"
+      }
+    ],
+    "waterproof_rows": 16,
+    "roof_not_waterproof_rows": 2055,
+    "monthly": {
+      "all": {
+        "2025-09": 5586,
+        "2025-10": 6018,
+        "2025-11": 4957,
+        "2025-12": 5145,
+        "2026-01": 5317,
+        "2026-02": 7066,
+        "2026-03": 8201,
+        "2026-04": 7440,
+        "2026-05": 6531,
+        "2026-06": 6759,
+        "2026-07": 6814,
+        "2026-08": 6226,
+        "2026-09": 5641
+      },
+      "electrical": {
+        "2025-09": 1239,
+        "2025-10": 1349,
+        "2025-11": 1114,
+        "2025-12": 1086,
+        "2026-01": 983,
+        "2026-02": 2179,
+        "2026-03": 1553,
+        "2026-04": 1423,
+        "2026-05": 1491,
+        "2026-06": 1309,
+        "2026-07": 1259,
+        "2026-08": 1337,
+        "2026-09": 1202
+      },
+      "plumbing": {
+        "2025-09": 1159,
+        "2025-10": 1230,
+        "2025-11": 1130,
+        "2025-12": 1264,
+        "2026-01": 1258,
+        "2026-02": 1400,
+        "2026-03": 1597,
+        "2026-04": 1475,
+        "2026-05": 1320,
+        "2026-06": 1482,
+        "2026-07": 1371,
+        "2026-08": 1222,
+        "2026-09": 1330
+      },
+      "mechanical": {
+        "2025-09": 910,
+        "2025-10": 783,
+        "2025-11": 586,
+        "2025-12": 891,
+        "2026-01": 846,
+        "2026-02": 746,
+        "2026-03": 1160,
+        "2026-04": 1193,
+        "2026-05": 1095,
+        "2026-06": 1247,
+        "2026-07": 1254,
+        "2026-08": 1177,
+        "2026-09": 1017
+      },
+      "residential_building": {
+        "2025-09": 0,
+        "2025-10": 0,
+        "2025-11": 0,
+        "2025-12": 0,
+        "2026-01": 0,
+        "2026-02": 0,
+        "2026-03": 0,
+        "2026-04": 0,
+        "2026-05": 0,
+        "2026-06": 0,
+        "2026-07": 0,
+        "2026-08": 0,
+        "2026-09": 0
+      },
+      "roof_like": {
+        "2025-09": 175,
+        "2025-10": 162,
+        "2025-11": 135,
+        "2025-12": 122,
+        "2026-01": 88,
+        "2026-02": 135,
+        "2026-03": 229,
+        "2026-04": 207,
+        "2026-05": 142,
+        "2026-06": 201,
+        "2026-07": 198,
+        "2026-08": 158,
+        "2026-09": 119
+      },
+      "roof_strict": {
+        "2025-09": 175,
+        "2025-10": 159,
+        "2025-11": 131,
+        "2025-12": 120,
+        "2026-01": 85,
+        "2026-02": 135,
+        "2026-03": 228,
+        "2026-04": 207,
+        "2026-05": 142,
+        "2026-06": 200,
+        "2026-07": 196,
+        "2026-08": 158,
+        "2026-09": 119
+      }
+    },
+    "dcat_permit_datasets": [
+      {
+        "title": "CFW Development Permits Table",
+        "modified": "2026-10-01T09:25:12.607Z",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "publisher": "City of Fort Worth",
+        "identifier": "https://www.arcgis.com/home/item.html?id=d2740f4d746b4bfaa03e25de0376238b&sublayer=0",
+        "rights": null
+      },
+      {
+        "title": "CFW Development Permits Points",
+        "modified": "2026-10-01T07:09:24.665Z",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "publisher": "City of Fort Worth",
+        "identifier": "https://www.arcgis.com/home/item.html?id=12ca73741a5545bf87ead3f9a1c8c0e7&sublayer=0",
+        "rights": null
+      },
+      {
+        "title": "Permit Location App",
+        "modified": "2026-07-30T22:23:16.000Z",
+        "license": "Public",
+        "publisher": "City of Fort Worth",
+        "identifier": "https://www.arcgis.com/home/item.html?id=921c2fd93f2c439c9fd2c053c3f3482f",
+        "rights": null
+      },
+      {
+        "title": "Average Time to Approve Permit ",
+        "modified": "2026-05-26T00:00:00.000Z",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "publisher": "City of Fort Worth",
+        "identifier": "https://www.arcgis.com/home/item.html?id=442c597094b74ae494b3df478bb5f494",
+        "rights": null
+      },
+      {
+        "title": "Permit Locations Map",
+        "modified": "2026-05-04T21:45:34.000Z",
+        "license": "",
+        "publisher": "City of Fort Worth",
+        "identifier": "https://www.arcgis.com/home/item.html?id=b2a2e9487cbf4d0ba3d992160ae74c9a",
+        "rights": null
+      },
+      {
+        "title": "Building Permits: Time to First City Comment Dashboard",
+        "modified": "2026-02-04T14:36:28.000Z",
+        "license": "",
+        "publisher": "City of Fort Worth",
+        "identifier": "https://www.arcgis.com/home/item.html?id=933017882e8d4602a6119a5ee2251f82",
+        "rights": null
+      }
+    ]
+  },
+  "log": [
+    {
+      "label": "layer-metadata",
+      "status": 200,
+      "bytes": 11662,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0?f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "count-all",
+      "status": 200,
+      "bytes": 19,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "count-window",
+      "status": 200,
+      "bytes": 17,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "group-permit-type",
+      "status": 200,
+      "bytes": 1091,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27&groupByFieldsForStatistics=Permit_Type&outStatistics=%5B%7B%22statisticType%22%3A%20%22count%22%2C%20%22onStatisticField%22%3A%20%22Permit_No%22%2C%20%22outStatisticFieldName%22%3A%20%22n%22%7D%5D&orderByFields=n%20DESC&resultRecordCount=200&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "group-permit-subtype",
+      "status": 200,
+      "bytes": 780,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27&groupByFieldsForStatistics=Permit_SubType&outStatistics=%5B%7B%22statisticType%22%3A%20%22count%22%2C%20%22onStatisticField%22%3A%20%22Permit_No%22%2C%20%22outStatisticFieldName%22%3A%20%22n%22%7D%5D&orderByFields=n%20DESC&resultRecordCount=200&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "group-permit-category",
+      "status": 200,
+      "bytes": 578,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27&groupByFieldsForStatistics=Permit_Category&outStatistics=%5B%7B%22statisticType%22%3A%20%22count%22%2C%20%22onStatisticField%22%3A%20%22Permit_No%22%2C%20%22outStatisticFieldName%22%3A%20%22n%22%7D%5D&orderByFields=n%20DESC&resultRecordCount=200&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "group-status",
+      "status": 200,
+      "bytes": 1353,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27&groupByFieldsForStatistics=Current_Status&outStatistics=%5B%7B%22statisticType%22%3A%20%22count%22%2C%20%22onStatisticField%22%3A%20%22Permit_No%22%2C%20%22outStatisticFieldName%22%3A%20%22n%22%7D%5D&orderByFields=n%20DESC&resultRecordCount=200&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "count-rooflike",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27%20AND%20UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "group-roof-desc",
+      "status": 200,
+      "bytes": 38635,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27%20AND%20UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27&groupByFieldsForStatistics=B1_WORK_DESC&outStatistics=%5B%7B%22statisticType%22%3A%20%22count%22%2C%20%22onStatisticField%22%3A%20%22Permit_No%22%2C%20%22outStatisticFieldName%22%3A%20%22n%22%7D%5D&orderByFields=n%20DESC&resultRecordCount=200&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "group-roof-type",
+      "status": 200,
+      "bytes": 893,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27%20AND%20UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27&groupByFieldsForStatistics=Permit_Type&outStatistics=%5B%7B%22statisticType%22%3A%20%22count%22%2C%20%22onStatisticField%22%3A%20%22Permit_No%22%2C%20%22outStatisticFieldName%22%3A%20%22n%22%7D%5D&orderByFields=n%20DESC&resultRecordCount=200&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "group-roof-subtype",
+      "status": 200,
+      "bytes": 714,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27%20AND%20UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27&groupByFieldsForStatistics=Permit_SubType&outStatistics=%5B%7B%22statisticType%22%3A%20%22count%22%2C%20%22onStatisticField%22%3A%20%22Permit_No%22%2C%20%22outStatisticFieldName%22%3A%20%22n%22%7D%5D&orderByFields=n%20DESC&resultRecordCount=200&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "count-waterproof",
+      "status": 200,
+      "bytes": 14,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27%20AND%20UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25WATERPROOF%25%27&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "count-roof-not-wp",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27%20AND%20UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%20AND%20UPPER%28B1_WORK_DESC%29%20NOT%20LIKE%20%27%25WATERPROOF%25%27&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-all-2025-09",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-10-01%27%20AND%20%281%3D1%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-all-2025-10",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-10-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-11-01%27%20AND%20%281%3D1%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-all-2025-11",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-11-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-12-01%27%20AND%20%281%3D1%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-all-2025-12",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-12-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-01-01%27%20AND%20%281%3D1%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-all-2026-01",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-01-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-02-01%27%20AND%20%281%3D1%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-all-2026-02",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-02-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-03-01%27%20AND%20%281%3D1%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-all-2026-03",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-03-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-04-01%27%20AND%20%281%3D1%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-all-2026-04",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-04-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-05-01%27%20AND%20%281%3D1%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-all-2026-05",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-05-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-06-01%27%20AND%20%281%3D1%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-all-2026-06",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-06-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-07-01%27%20AND%20%281%3D1%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-all-2026-07",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-07-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-08-01%27%20AND%20%281%3D1%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-all-2026-08",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-08-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-09-01%27%20AND%20%281%3D1%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-all-2026-09",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27%20AND%20%281%3D1%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-electrical-2025-09",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-10-01%27%20AND%20%28Permit_Type%20%3D%20%27Electrical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-electrical-2025-10",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-10-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-11-01%27%20AND%20%28Permit_Type%20%3D%20%27Electrical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-electrical-2025-11",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-11-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-12-01%27%20AND%20%28Permit_Type%20%3D%20%27Electrical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-electrical-2025-12",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-12-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-01-01%27%20AND%20%28Permit_Type%20%3D%20%27Electrical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-electrical-2026-01",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-01-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-02-01%27%20AND%20%28Permit_Type%20%3D%20%27Electrical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-electrical-2026-02",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-02-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-03-01%27%20AND%20%28Permit_Type%20%3D%20%27Electrical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-electrical-2026-03",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-03-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-04-01%27%20AND%20%28Permit_Type%20%3D%20%27Electrical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-electrical-2026-04",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-04-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-05-01%27%20AND%20%28Permit_Type%20%3D%20%27Electrical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-electrical-2026-05",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-05-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-06-01%27%20AND%20%28Permit_Type%20%3D%20%27Electrical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-electrical-2026-06",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-06-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-07-01%27%20AND%20%28Permit_Type%20%3D%20%27Electrical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-electrical-2026-07",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-07-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-08-01%27%20AND%20%28Permit_Type%20%3D%20%27Electrical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-electrical-2026-08",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-08-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-09-01%27%20AND%20%28Permit_Type%20%3D%20%27Electrical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-electrical-2026-09",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27%20AND%20%28Permit_Type%20%3D%20%27Electrical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-plumbing-2025-09",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-10-01%27%20AND%20%28Permit_Type%20%3D%20%27Plumbing%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-plumbing-2025-10",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-10-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-11-01%27%20AND%20%28Permit_Type%20%3D%20%27Plumbing%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-plumbing-2025-11",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-11-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-12-01%27%20AND%20%28Permit_Type%20%3D%20%27Plumbing%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-plumbing-2025-12",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-12-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-01-01%27%20AND%20%28Permit_Type%20%3D%20%27Plumbing%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-plumbing-2026-01",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-01-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-02-01%27%20AND%20%28Permit_Type%20%3D%20%27Plumbing%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-plumbing-2026-02",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-02-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-03-01%27%20AND%20%28Permit_Type%20%3D%20%27Plumbing%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-plumbing-2026-03",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-03-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-04-01%27%20AND%20%28Permit_Type%20%3D%20%27Plumbing%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-plumbing-2026-04",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-04-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-05-01%27%20AND%20%28Permit_Type%20%3D%20%27Plumbing%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-plumbing-2026-05",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-05-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-06-01%27%20AND%20%28Permit_Type%20%3D%20%27Plumbing%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-plumbing-2026-06",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-06-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-07-01%27%20AND%20%28Permit_Type%20%3D%20%27Plumbing%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-plumbing-2026-07",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-07-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-08-01%27%20AND%20%28Permit_Type%20%3D%20%27Plumbing%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-plumbing-2026-08",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-08-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-09-01%27%20AND%20%28Permit_Type%20%3D%20%27Plumbing%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-plumbing-2026-09",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27%20AND%20%28Permit_Type%20%3D%20%27Plumbing%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-mechanical-2025-09",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-10-01%27%20AND%20%28Permit_Type%20%3D%20%27Mechanical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-mechanical-2025-10",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-10-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-11-01%27%20AND%20%28Permit_Type%20%3D%20%27Mechanical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-mechanical-2025-11",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-11-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-12-01%27%20AND%20%28Permit_Type%20%3D%20%27Mechanical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-mechanical-2025-12",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-12-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-01-01%27%20AND%20%28Permit_Type%20%3D%20%27Mechanical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-mechanical-2026-01",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-01-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-02-01%27%20AND%20%28Permit_Type%20%3D%20%27Mechanical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-mechanical-2026-02",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-02-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-03-01%27%20AND%20%28Permit_Type%20%3D%20%27Mechanical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-mechanical-2026-03",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-03-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-04-01%27%20AND%20%28Permit_Type%20%3D%20%27Mechanical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-mechanical-2026-04",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-04-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-05-01%27%20AND%20%28Permit_Type%20%3D%20%27Mechanical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-mechanical-2026-05",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-05-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-06-01%27%20AND%20%28Permit_Type%20%3D%20%27Mechanical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-mechanical-2026-06",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-06-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-07-01%27%20AND%20%28Permit_Type%20%3D%20%27Mechanical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-mechanical-2026-07",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-07-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-08-01%27%20AND%20%28Permit_Type%20%3D%20%27Mechanical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-mechanical-2026-08",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-08-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-09-01%27%20AND%20%28Permit_Type%20%3D%20%27Mechanical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-mechanical-2026-09",
+      "status": 200,
+      "bytes": 16,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27%20AND%20%28Permit_Type%20%3D%20%27Mechanical%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-residential_building-2025-09",
+      "status": 200,
+      "bytes": 13,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-10-01%27%20AND%20%28Permit_Type%20%3D%20%27Residential%20Building%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-residential_building-2025-10",
+      "status": 200,
+      "bytes": 13,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-10-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-11-01%27%20AND%20%28Permit_Type%20%3D%20%27Residential%20Building%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-residential_building-2025-11",
+      "status": 200,
+      "bytes": 13,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-11-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-12-01%27%20AND%20%28Permit_Type%20%3D%20%27Residential%20Building%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-residential_building-2025-12",
+      "status": 200,
+      "bytes": 13,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-12-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-01-01%27%20AND%20%28Permit_Type%20%3D%20%27Residential%20Building%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-residential_building-2026-01",
+      "status": 200,
+      "bytes": 13,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-01-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-02-01%27%20AND%20%28Permit_Type%20%3D%20%27Residential%20Building%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-residential_building-2026-02",
+      "status": 200,
+      "bytes": 13,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-02-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-03-01%27%20AND%20%28Permit_Type%20%3D%20%27Residential%20Building%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-residential_building-2026-03",
+      "status": 200,
+      "bytes": 13,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-03-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-04-01%27%20AND%20%28Permit_Type%20%3D%20%27Residential%20Building%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-residential_building-2026-04",
+      "status": 200,
+      "bytes": 13,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-04-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-05-01%27%20AND%20%28Permit_Type%20%3D%20%27Residential%20Building%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-residential_building-2026-05",
+      "status": 200,
+      "bytes": 13,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-05-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-06-01%27%20AND%20%28Permit_Type%20%3D%20%27Residential%20Building%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-residential_building-2026-06",
+      "status": 200,
+      "bytes": 13,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-06-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-07-01%27%20AND%20%28Permit_Type%20%3D%20%27Residential%20Building%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-residential_building-2026-07",
+      "status": 200,
+      "bytes": 13,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-07-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-08-01%27%20AND%20%28Permit_Type%20%3D%20%27Residential%20Building%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-residential_building-2026-08",
+      "status": 200,
+      "bytes": 13,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-08-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-09-01%27%20AND%20%28Permit_Type%20%3D%20%27Residential%20Building%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-residential_building-2026-09",
+      "status": 200,
+      "bytes": 13,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27%20AND%20%28Permit_Type%20%3D%20%27Residential%20Building%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_like-2025-09",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-10-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_like-2025-10",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-10-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-11-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_like-2025-11",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-11-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-12-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_like-2025-12",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-12-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-01-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_like-2026-01",
+      "status": 200,
+      "bytes": 14,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-01-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-02-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_like-2026-02",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-02-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-03-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_like-2026-03",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-03-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-04-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_like-2026-04",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-04-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-05-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_like-2026-05",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-05-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-06-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_like-2026-06",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-06-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-07-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_like-2026-07",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-07-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-08-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_like-2026-08",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-08-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-09-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_like-2026-09",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_strict-2025-09",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-10-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%20AND%20UPPER%28B1_WORK_DESC%29%20NOT%20LIKE%20%27%25WATERPROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_strict-2025-10",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-10-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-11-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%20AND%20UPPER%28B1_WORK_DESC%29%20NOT%20LIKE%20%27%25WATERPROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_strict-2025-11",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-11-01%27%20AND%20File_Date%20%3C%20DATE%20%272025-12-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%20AND%20UPPER%28B1_WORK_DESC%29%20NOT%20LIKE%20%27%25WATERPROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_strict-2025-12",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272025-12-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-01-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%20AND%20UPPER%28B1_WORK_DESC%29%20NOT%20LIKE%20%27%25WATERPROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_strict-2026-01",
+      "status": 200,
+      "bytes": 14,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-01-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-02-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%20AND%20UPPER%28B1_WORK_DESC%29%20NOT%20LIKE%20%27%25WATERPROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_strict-2026-02",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-02-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-03-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%20AND%20UPPER%28B1_WORK_DESC%29%20NOT%20LIKE%20%27%25WATERPROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_strict-2026-03",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-03-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-04-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%20AND%20UPPER%28B1_WORK_DESC%29%20NOT%20LIKE%20%27%25WATERPROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_strict-2026-04",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-04-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-05-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%20AND%20UPPER%28B1_WORK_DESC%29%20NOT%20LIKE%20%27%25WATERPROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_strict-2026-05",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-05-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-06-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%20AND%20UPPER%28B1_WORK_DESC%29%20NOT%20LIKE%20%27%25WATERPROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_strict-2026-06",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-06-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-07-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%20AND%20UPPER%28B1_WORK_DESC%29%20NOT%20LIKE%20%27%25WATERPROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_strict-2026-07",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-07-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-08-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%20AND%20UPPER%28B1_WORK_DESC%29%20NOT%20LIKE%20%27%25WATERPROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_strict-2026-08",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-08-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-09-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%20AND%20UPPER%28B1_WORK_DESC%29%20NOT%20LIKE%20%27%25WATERPROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "month-roof_strict-2026-09",
+      "status": 200,
+      "bytes": 15,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0/query?where=File_Date%20%3E%3D%20DATE%20%272026-09-01%27%20AND%20File_Date%20%3C%20DATE%20%272026-10-01%27%20AND%20%28UPPER%28B1_WORK_DESC%29%20LIKE%20%27%25ROOF%25%27%20AND%20UPPER%28B1_WORK_DESC%29%20NOT%20LIKE%20%27%25WATERPROOF%25%27%29&returnCountOnly=true&f=json",
+      "crawl_delay": null
+    },
+    {
+      "label": "dcat",
+      "status": 200,
+      "bytes": 259655,
+      "url": "https://data.fortworthtexas.gov/api/feed/dcat-us/1.1.json",
+      "crawl_delay": 60.0
+    },
+    {
+      "label": "layer-again",
+      "status": 200,
+      "bytes": 11662,
+      "url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0?f=json",
+      "crawl_delay": null
+    }
+  ]
+}
