@@ -29,19 +29,34 @@ export interface HousingStockValue {
  * FIPS come from `src/data/zip-areas.ts` (Travis 48453, Bexar 48029) —
  * read out of the repo's own crosswalk rather than typed from memory.
  *
- * VINTAGE is pinned to a year confidently already released as of this
- * writing rather than computed from "now" — ACS 5-year vintages lag
- * ~1-2 years and bumping this needs a human to confirm the new vintage
- * is actually published before flipping it (a too-new guess 404s and
- * this stays "sample" rather than fabricating anything, but a stale
- * pin just means slightly older housing-stock data, which is fine for
- * an annual series). TODO(owner): bump yearly once the next vintage is out.
+ * VINTAGE is pinned to a year confirmed released rather than computed from
+ * "now" — ACS 5-year vintages lag, and a too-new guess 404s.
+ *
+ * Round 42 measured it instead of guessing. 2024 is served for all six
+ * geographies this file reads — Travis, Bexar, Comal and Hays counties, and the
+ * New Braunfels and San Marcos places — and 2025 returns 404 everywhere, so it
+ * is not out. All three variables below carry an IDENTICAL label, concept,
+ * group and predicateType in 2024 and 2023, which is the check that matters: a
+ * variable redefined without being renamed would have moved published figures
+ * silently.
+ *
+ * ⚠️ BUMPING THIS DOES NOT CLEAR THE "OUT OF DATE" BADGE, and nothing can.
+ * `observedAt` is 1 January of the vintage year, and `dataFreshness.ts` gives
+ * `census-acs` a 400-day window; the 2024 vintage is already 1,004 days old by
+ * that reckoning on the day it was pinned. ACS 5-year can never satisfy a
+ * 400-day window, because the vintage year is the FIRST year of a five-year
+ * window and the release follows it by about a year. That is a freshness-rule
+ * question, not a vintage one — see docs/audits/round-42-acs-vintage.md.
+ *
+ * TODO(owner): bump yearly once the next vintage is out. Round 42's probe is
+ * the shape to re-run — confirm the vintage is served for ALL SIX geographies,
+ * not just the counties, and re-check the three variables before flipping.
  *
  * B25035_001E = median year structure built; B25003_001E/002E = total /
  * owner-occupied housing units (all standard, well-documented ACS
  * detailed-table variable codes).
  */
-const VINTAGE = 2023;
+const VINTAGE = 2024;
 const STATE_FIPS = "48";
 
 /** County part of the FIPS in `src/data/zip-areas.ts` — 48453 / 48029. */
