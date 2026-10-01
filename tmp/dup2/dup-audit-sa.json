@@ -1,0 +1,57 @@
+{
+  "findings": {
+    "resources": [
+      {
+        "name": "PERMITS ISSUED",
+        "last_modified": "2026-09-27T04:01:50.057586",
+        "url": "https://data.sanantonio.gov/dataset/05012dcb-ba1b-4ade-b5f3-7403bc7f52eb/resource/c21106f9-3ef5-4f3a-8604-f992b4db7512/download/permits_issued.csv"
+      },
+      {
+        "name": "PERMITS ISSUED 2020-2024",
+        "last_modified": null,
+        "url": "https://data.sanantonio.gov/dataset/05012dcb-ba1b-4ade-b5f3-7403bc7f52eb/resource/c22b1ef2-dcf8-4d77-be1a-ee3638092aab/download/permits_issued_ending_12312024.csv"
+      }
+    ],
+    "chosen": "PERMITS ISSUED",
+    "chosen_url": "https://data.sanantonio.gov/dataset/05012dcb-ba1b-4ade-b5f3-7403bc7f52eb/resource/c21106f9-3ef5-4f3a-8604-f992b4db7512/download/permits_issued.csv",
+    "attempts": [
+      {
+        "shape": "no-custom-headers",
+        "status": 403,
+        "bytes": 0
+      },
+      {
+        "shape": "accept-only",
+        "status": 403,
+        "bytes": 0
+      },
+      {
+        "shape": "browserish",
+        "status": 403,
+        "bytes": 0
+      }
+    ]
+  },
+  "log": [
+    {
+      "label": "package-show",
+      "status": 200,
+      "bytes": 9341
+    },
+    {
+      "label": "csv-no-custom-headers",
+      "status": 403,
+      "err": "HTTP Error 403: Forbidden"
+    },
+    {
+      "label": "csv-accept-only",
+      "status": 403,
+      "err": "HTTP Error 403: Forbidden"
+    },
+    {
+      "label": "csv-browserish",
+      "status": 403,
+      "err": "HTTP Error 403: Forbidden"
+    }
+  ]
+}
