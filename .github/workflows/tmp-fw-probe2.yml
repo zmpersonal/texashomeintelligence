@@ -1,0 +1,278 @@
+# TEMPORARY — Round 44 Stage-1 pass 2. DELETE BEFORE THE ROUND ENDS.
+#
+# Pass 1 settled the feed and found the real problem: %ROOF% is dominated by
+# SOLAR, not roofing. Its top descriptions are "Solar Rooftop, Backup Battery,
+# MPU" (190), "SOLAR ROOFTOP, BACKUP BATTERY" (167), "...MAIN PANEL UPGRADE"
+# (80), "rooftop solar system" (31) — while actual re-roofing appears as
+# "Reroof", "Re-roof", "Roof Replacement" at much lower counts. Waterproofing,
+# the thing Round 39 flagged, is only 16 rows of 2,071: a rounding error next to
+# the solar contamination it did not notice.
+#
+# So this pass does the Round 6 job properly:
+#
+#   A · the COMPLETE distinct work-description vocabulary matching ROOF, paged
+#       past pass 1's 200-row cap (which covered only 1,054 of 2,071 rows).
+#   B · GROUND TRUTH. Permit_Category = 'ReRoof' is the city's own roofing
+#       label on 260 rows. Recall of any text predicate can be MEASURED against
+#       it instead of asserted.
+#   C · candidate predicates counted monthly, plus every pairwise intersection
+#       needed to compute precision rather than guess it.
+#   D · a 150-row sample of the strict predicate's output, descriptions
+#       included, so precision is measured by reading real rows — Round 6's
+#       method, not a new one.
+#   E · B1_SPECIAL_TEXT's vocabulary. It is free text we have not looked at and
+#       the PII question cannot be closed without it.
+#   F · the NOAA climate station for Fort Worth's centroid, against the SHIPPED
+#       quality bar — Round 41e's precedent is that the bar can reject, so
+#       "widening the union is sufficient" has to be measured, not assumed.
+#
+# Pass 1 also corrected a Round 39 premise: the Crawl-delay: 60 belongs to
+# data.fortworthtexas.gov (the Hub portal), NOT to services5.arcgis.com (the
+# feature service a fetcher would read). services5's robots.txt is HTTP 403,
+# which RFC 9309 §2.3.1.3 says a crawler may treat as unrestricted.
+name: TEMPORARY Fort Worth probe pass 2 (Round 44)
+
+on:
+  push:
+    branches: [claude/thi-v3-round44-fort-worth]
+    paths: ['.github/workflows/tmp-fw-probe2.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe pass 2
+        run: |
+          mkdir -p tmp/fw2
+          python3 - <<'PY'
+          import json, re, time, urllib.parse, urllib.request, collections, math, statistics
+
+          UA = 'TexasHomeIntelligence-probe/1.0 (one-off research; texashomeintelligence.com)'
+          OUT = 'tmp/fw2'
+          LAYER = ('https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/'
+                   'CFW_Open_Data_Development_Permits_View/FeatureServer/0')
+          WINDOW = "File_Date >= DATE '2025-09-01' AND File_Date < DATE '2026-10-01'"
+          log = []
+
+          def get(url, timeout=180):
+              req = urllib.request.Request(url, headers={'User-Agent': UA, 'Accept': 'application/json'})
+              try:
+                  with urllib.request.urlopen(req, timeout=timeout) as r:
+                      return r.status, r.read()
+              except Exception as e:
+                  return getattr(e, 'code', 0), str(e).encode()
+
+          def jget(url, label):
+              st, body = get(url)
+              log.append({'label': label, 'status': st, 'bytes': len(body)})
+              if st != 200: return None
+              try: return json.loads(body)
+              except Exception as e:
+                  log.append({'label': label, 'parse_error': str(e),
+                              'prefix': body[:200].decode('utf-8', 'replace')})
+                  return None
+
+          def count(where, label):
+              d = jget(f'{LAYER}/query?where={urllib.parse.quote(where)}'
+                       f'&returnCountOnly=true&f=json', label)
+              return (d or {}).get('count')
+
+          def group(field, where, label, limit=1000, offset=0):
+              stats = json.dumps([{'statisticType': 'count', 'onStatisticField': 'Permit_No',
+                                   'outStatisticFieldName': 'n'}])
+              d = jget(f'{LAYER}/query?where={urllib.parse.quote(where)}'
+                       f'&groupByFieldsForStatistics={urllib.parse.quote(field)}'
+                       f'&outStatistics={urllib.parse.quote(stats)}'
+                       f'&orderByFields={urllib.parse.quote("n DESC")}'
+                       f'&resultRecordCount={limit}&resultOffset={offset}&f=json', label)
+              if not d: return None
+              return [f.get('attributes', {}) for f in (d.get('features') or [])]
+
+          F = {}
+          ROOFW = WINDOW + " AND UPPER(B1_WORK_DESC) LIKE '%ROOF%'"
+
+          # ── A · the complete ROOF vocabulary, paged ─────────────────────────
+          vocab, off = [], 0
+          while True:
+              page = group('B1_WORK_DESC', ROOFW, f'vocab-{off}', limit=1000, offset=off)
+              if not page: break
+              vocab += page
+              if len(page) < 1000: break
+              off += 1000
+              if off > 6000: break
+          F['roof_vocab'] = vocab
+          F['roof_vocab_distinct'] = len(vocab)
+          F['roof_vocab_rows'] = sum(r.get('n', 0) for r in vocab)
+
+          # ── the predicates, as SQL, kept in one place ──────────────────────
+          SOLAR = ("(UPPER(B1_WORK_DESC) LIKE '%SOLAR%'"
+                   " OR UPPER(B1_WORK_DESC) LIKE '%PHOTOVOLTAIC%'"
+                   " OR UPPER(B1_WORK_DESC) LIKE '%PV %'"
+                   " OR UPPER(B1_WORK_DESC) LIKE '% PV%')")
+          # Everything observed in pass 1 that says ROOF and is not a roof job.
+          NOT_ROOFING = ("(UPPER(B1_WORK_DESC) LIKE '%WATERPROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%CARPORT%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%PORCH%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%PATIO COVER%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOFTOP UNIT%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%RTU%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%HOOD%')")
+          # The narrow, high-precision roofing wording, all of it observed.
+          REROOF_TEXT = ("(UPPER(B1_WORK_DESC) LIKE '%REROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%RE-ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%RE ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF REPLACEMENT%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%REPLACE ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%NEW ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF REPAIR%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%REPAIR ROOF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%SHINGLE%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF COVERING%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%TEAR OFF%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%ROOF DECKING%'"
+                         " OR UPPER(B1_WORK_DESC) LIKE '%DOWN TO DECKING%')")
+          CATEGORY_REROOF = "Permit_Category = 'ReRoof'"
+
+          PREDS = {
+              'category_reroof': CATEGORY_REROOF,
+              'roof_like': "UPPER(B1_WORK_DESC) LIKE '%ROOF%'",
+              'roof_minus_solar': f"UPPER(B1_WORK_DESC) LIKE '%ROOF%' AND NOT {SOLAR}",
+              'roof_minus_solar_minus_other':
+                  f"UPPER(B1_WORK_DESC) LIKE '%ROOF%' AND NOT {SOLAR} AND NOT {NOT_ROOFING}",
+              'reroof_text': REROOF_TEXT,
+              'reroof_text_or_category': f"({REROOF_TEXT} OR {CATEGORY_REROOF})",
+              'solar_text': SOLAR,
+              'electrical': "Permit_Type = 'Electrical'",
+              'plumbing': "Permit_Type = 'Plumbing'",
+              'mechanical': "Permit_Type = 'Mechanical'",
+              # PASS 1 BUG, FIXED: the real value is 'Residential Building Permit'.
+              # Pass 1 asked for 'Residential Building' and got 13 zeros with no
+              # error — a wrong predicate reads as "no activity", which is the
+              # Round 39 lesson restated.
+              'residential_building': "Permit_Type = 'Residential Building Permit'",
+          }
+          F['predicates_sql'] = PREDS
+
+          # ── B/C · ground truth, intersections, and monthly counts ──────────
+          F['totals'] = {k: count(f'{WINDOW} AND ({v})', f'total-{k}') for k, v in PREDS.items()}
+
+          # Recall and precision against the city's own ReRoof label.
+          F['truth'] = {
+              'reroof_category_rows': count(f'{WINDOW} AND {CATEGORY_REROOF}', 'truth-cat'),
+              'reroof_category_with_desc': count(
+                  f"{WINDOW} AND {CATEGORY_REROOF} AND B1_WORK_DESC IS NOT NULL"
+                  " AND B1_WORK_DESC <> ''", 'truth-cat-desc'),
+              'reroof_category_caught_by_text': count(
+                  f'{WINDOW} AND {CATEGORY_REROOF} AND {REROOF_TEXT}', 'truth-cat-and-text'),
+              'reroof_category_caught_by_rooflike': count(
+                  f"{WINDOW} AND {CATEGORY_REROOF} AND UPPER(B1_WORK_DESC) LIKE '%ROOF%'",
+                  'truth-cat-and-rooflike'),
+              'text_but_category_not_reroof': count(
+                  f"{WINDOW} AND {REROOF_TEXT} AND Permit_Category <> 'ReRoof'", 'truth-text-not-cat'),
+              'text_and_solar': count(f'{WINDOW} AND {REROOF_TEXT} AND {SOLAR}', 'truth-text-solar'),
+          }
+
+          MONTHS = [(2025, m) for m in range(9, 13)] + [(2026, m) for m in range(1, 10)]
+          def bounds(y, m):
+              ny, nm = (y + 1, 1) if m == 12 else (y, m + 1)
+              return f'{y:04d}-{m:02d}-01', f'{ny:04d}-{nm:02d}-01'
+          monthly = collections.defaultdict(dict)
+          for name, pred in PREDS.items():
+              for (y, m) in MONTHS:
+                  a, b = bounds(y, m)
+                  w = f"File_Date >= DATE '{a}' AND File_Date < DATE '{b}' AND ({pred})"
+                  monthly[name][f'{y:04d}-{m:02d}'] = count(w, f'm-{name}-{y}{m:02d}')
+          F['monthly'] = monthly
+
+          # ── D · a sample to read, for precision ────────────────────────────
+          for name, pred in [('reroof_text', REROOF_TEXT),
+                             ('roof_minus_solar_minus_other',
+                              f"UPPER(B1_WORK_DESC) LIKE '%ROOF%' AND NOT {SOLAR} AND NOT {NOT_ROOFING}")]:
+              d = jget(f'{LAYER}/query?where={urllib.parse.quote(f"{WINDOW} AND ({pred})")}'
+                       f'&outFields={urllib.parse.quote("Permit_No,Permit_Type,Permit_SubType,Permit_Category,B1_WORK_DESC")}'
+                       f'&orderByFields={urllib.parse.quote("Permit_No ASC")}'
+                       f'&resultRecordCount=150&f=json', f'sample-{name}')
+              F[f'sample_{name}'] = [f.get('attributes', {}) for f in ((d or {}).get('features') or [])]
+
+          # ── E · B1_SPECIAL_TEXT, the unexamined free-text field ────────────
+          F['special_text_vocab'] = group('B1_SPECIAL_TEXT', WINDOW, 'special-text', limit=200)
+          F['special_text_nonempty'] = count(
+              f"{WINDOW} AND B1_SPECIAL_TEXT IS NOT NULL AND B1_SPECIAL_TEXT <> ''", 'special-nonempty')
+
+          # ── F · the climate station, against the SHIPPED bar ───────────────
+          # Fort Worth centroid 32.7555,-97.3308. Constants copied from
+          # noaaClimate.ts, not restated: BOX_PAD 0.35, MIN_YEARS 10, reject any
+          # month flagged E, USW prefix, 12/12 months usable.
+          FW = (32.7555, -97.3308)
+          PAD = 0.35
+          NCEI = 'https://www.ncei.noaa.gov/access/services/data/v1'
+          box = (f'&bbox={FW[0]+PAD:.4f},{FW[1]-PAD:.4f},{FW[0]-PAD:.4f},{FW[1]+PAD:.4f}')
+          u = (f'{NCEI}?dataset=normals-monthly-1991-2020'
+               f'&dataTypes=MLY-CLDD-NORMAL&format=json&includeAttributes=true'
+               f'&startDate=2010-01-01&endDate=2010-12-31{box}')
+          d = jget(u, 'ncei-normals-bbox')
+          F['station_candidates_raw_count'] = len(d) if isinstance(d, list) else None
+          if isinstance(d, list):
+              by_station = collections.defaultdict(list)
+              for r in d:
+                  by_station[r.get('STATION')].append(r)
+              out = {}
+              for sid, rows in by_station.items():
+                  yrs = [r.get('years_MLY-CLDD-NORMAL') for r in rows]
+                  flags = [r.get('comp_flag_MLY-CLDD-NORMAL') for r in rows]
+                  meas = [r.get('meas_flag_MLY-CLDD-NORMAL') for r in rows]
+                  def num(x):
+                      try: return float(x)
+                      except (TypeError, ValueError): return None
+                  ynum = [num(y) for y in yrs]
+                  out[sid] = {
+                      'name': rows[0].get('NAME'), 'months': len(rows),
+                      'lat': rows[0].get('LATITUDE'), 'lon': rows[0].get('LONGITUDE'),
+                      'years_min': min([y for y in ynum if y is not None], default=None),
+                      'years_max': max([y for y in ynum if y is not None], default=None),
+                      'comp_flags': sorted(set(f for f in flags if f)),
+                      'meas_flags': sorted(set(f for f in meas if f)),
+                      'usw': str(sid).startswith('USW'),
+                      'cdd_sum': sum(num(r.get('MLY-CLDD-NORMAL')) or 0 for r in rows),
+                  }
+              for sid, s in out.items():
+                  lat, lon = num(s['lat']), num(s['lon'])
+                  if lat is not None and lon is not None:
+                      dlat = (lat - FW[0]) * 69.0
+                      dlon = (lon - FW[1]) * 69.0 * math.cos(math.radians(FW[0]))
+                      s['distance_miles'] = round(math.sqrt(dlat*dlat + dlon*dlon), 1)
+                  s['passes_bar'] = bool(
+                      s['usw'] and s['months'] == 12 and 'E' not in s['comp_flags']
+                      and s['years_min'] is not None and s['years_min'] >= 10)
+              F['station_candidates'] = out
+
+          json.dump({'findings': F, 'log': log}, open(f'{OUT}/probe-2.json', 'w'), indent=2)
+
+          print('── totals ──')
+          for k, v in F['totals'].items(): print(f'  {k:34s} {v}')
+          print('\n── ground truth vs text predicate ──')
+          for k, v in F['truth'].items(): print(f'  {k:34s} {v}')
+          print('\n── ROOF vocabulary ──', F['roof_vocab_distinct'], 'distinct /',
+                F['roof_vocab_rows'], 'rows')
+          print('\n── B1_SPECIAL_TEXT ──', F.get('special_text_nonempty'), 'non-empty;',
+                len(F.get('special_text_vocab') or []), 'distinct')
+          print('\n── station candidates ──')
+          for sid, s in (F.get('station_candidates') or {}).items():
+              print(f"  {sid} {str(s.get('name'))[:34]:36s} {s.get('distance_miles')} mi "
+                    f"yrs {s.get('years_min')}-{s.get('years_max')} comp{s.get('comp_flags')} "
+                    f"{'PASS' if s.get('passes_bar') else 'reject'}")
+          print(f"\n{len(log)} requests; non-200: "
+                f"{[(x['label'], x['status']) for x in log if x.get('status') != 200][:6]}")
+          PY
+      - name: Commit findings
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A tmp/fw2
+          git commit -m "TEMPORARY: Round 44 Fort Worth probe pass 2" || echo "nothing to commit"
+          git push
