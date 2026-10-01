@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-01T12:18:36.044Z",
-  "lastSuccessAt": "2026-10-01T12:18:36.044Z",
+  "lastAttemptAt": "2026-10-01T16:26:14.155Z",
+  "lastSuccessAt": "2026-10-01T16:26:14.155Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -21271,7 +21271,7 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T12:18:36.620Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
       "key": "2026-123620 BP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21282,7 +21282,7 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T12:18:36.620Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
       "key": "2026-126536 BP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21293,7 +21293,7 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T12:18:36.620Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
       "key": "2026-127493 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21303,7 +21303,7 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T12:18:36.620Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
       "key": "2026-045630 EP",
       "value": {
         "permitType": "Remodel",
@@ -21313,7 +21313,7 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T12:18:36.620Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
       "key": "2026-124275 BP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21324,7 +21324,7 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T12:18:36.620Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
       "key": "2026-126346 MP",
       "value": {
         "permitType": "Change Out",
@@ -21334,11 +21334,125 @@
     },
     {
       "observedAt": "2026-09-28T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T12:18:36.621Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
       "key": "2026-008710 PP",
       "value": {
         "permitType": "New",
         "workDescription": "New 1-story detached stand-alone bathroom 8x10 single slope roof containing plumbing/electrical.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-29T00:00:00.000Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
+      "key": "2026-126597 BP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "additionof attached screened porch. Composite Deck 19x16 and a screen enclosed covering lean-to style roof cover",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-29T00:00:00.000Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
+      "key": "2026-052311 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "ePlan: Residential Expedited Review - Remodel to Existing 2-Story Single Family Res. Work to include interior remodel Replace Deck. all new doors and windows replace roof",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-29T00:00:00.000Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
+      "key": "2026-106434 PP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "New construction 2-unit use single-family residential 3-story 3 bedroom 3 bath with covered front porch covered side patio uncovered wood deck 2nd floor covered balcony covered 3rd floor balcony and uncovered roof-top deck.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-29T00:00:00.000Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
+      "key": "2026-128365 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express - Re-roof replace siding and replacing 9 windows.",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-09-29T00:00:00.000Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
+      "key": "2026-127253 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Simple re-roof. Existing Austin Water offices.",
+        "status": "Active",
+        "valuationUsd": 973515
+      }
+    },
+    {
+      "observedAt": "2026-09-29T00:00:00.000Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
+      "key": "2026-126353 PP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Our scope of work includes performing a direct-access drain repair beneath the master bathroom shower. To gain access to the damaged drain piping we will carefully demolish the existing shower tile and shower pan. Once the shower pan has been removed we will saw-cut and remove approximately a 2 x 2 ",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-29T00:00:00.000Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
+      "key": "2026-127560 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Reroof of  TAMKO Titan XT Class 3  - Weathered Wood dimensional asphalt shingles. Existing multifamily.",
+        "status": "Active",
+        "valuationUsd": 92270
+      }
+    },
+    {
+      "observedAt": "2026-09-30T00:00:00.000Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
+      "key": "2026-126776 EP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Install new 5.72kwdc rooftop solar system servicing new resi only. Bluebonnet",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-30T00:00:00.000Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
+      "key": "2026-126616 EP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Installing a 10kW SolarEdge Battery backup to the homes existing rooftop solar.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-30T00:00:00.000Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
+      "key": "2026-119907 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "ETJ. 16 kW roof mounted solar with energy storage",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-09-30T00:00:00.000Z",
+      "ingestedAt": "2026-10-01T16:26:16.320Z",
+      "key": "2026-123728 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Install new rooftop 4.5 kW solar and 11.5 kW energy storage system w/ meter socket mounted backup switch to existing residential. PV & ESS Supply side connection.",
         "status": "Active"
       }
     }

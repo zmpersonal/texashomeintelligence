@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-01T12:19:02.896Z",
-  "lastSuccessAt": "2026-10-01T12:19:02.896Z",
+  "lastAttemptAt": "2026-10-01T16:26:31.635Z",
+  "lastSuccessAt": "2026-10-01T16:26:31.635Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -1278,12 +1278,12 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T12:19:03.770Z",
+      "ingestedAt": "2026-10-01T16:26:34.455Z",
       "key": "trades-v1/electrical/2026-09",
       "value": {
         "category": "electrical",
         "month": "2026-09",
-        "permitCount": 1473,
+        "permitCount": 1635,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -1291,19 +1291,19 @@
         "sourceValues": [
           {
             "value": "Electrical Permit",
-            "count": 1473
+            "count": 1635
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T12:19:03.770Z",
+      "ingestedAt": "2026-10-01T16:26:34.455Z",
       "key": "trades-v1/hvac/2026-09",
       "value": {
         "category": "hvac",
         "month": "2026-09",
-        "permitCount": 1005,
+        "permitCount": 1097,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -1311,19 +1311,19 @@
         "sourceValues": [
           {
             "value": "Mechanical Permit",
-            "count": 1005
+            "count": 1097
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T12:19:03.770Z",
+      "ingestedAt": "2026-10-01T16:26:34.455Z",
       "key": "trades-v1/plumbing/2026-09",
       "value": {
         "category": "plumbing",
         "month": "2026-09",
-        "permitCount": 1184,
+        "permitCount": 1297,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "permit-type"
@@ -1331,19 +1331,19 @@
         "sourceValues": [
           {
             "value": "Plumbing Permit",
-            "count": 1184
+            "count": 1297
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T12:19:03.770Z",
+      "ingestedAt": "2026-10-01T16:26:34.455Z",
       "key": "trades-v1/roofing/2026-09",
       "value": {
         "category": "roofing",
         "month": "2026-09",
-        "permitCount": 156,
+        "permitCount": 167,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "description-text"
@@ -1351,19 +1351,19 @@
         "sourceValues": [
           {
             "value": "description contains \"roof\"",
-            "count": 156
+            "count": 167
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T12:19:03.770Z",
+      "ingestedAt": "2026-10-01T16:26:34.455Z",
       "key": "trades-v1/solar/2026-09",
       "value": {
         "category": "solar",
         "month": "2026-09",
-        "permitCount": 213,
+        "permitCount": 240,
         "mappingVersion": "trades-v1",
         "mechanisms": [
           "work-class",
@@ -1372,11 +1372,31 @@
         "sourceValues": [
           {
             "value": "Auxiliary Power",
-            "count": 195
+            "count": 219
           },
           {
             "value": "description mentions solar/photovoltaic/PV",
-            "count": 18
+            "count": 21
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-01T16:26:34.455Z",
+      "key": "trades-v1/plumbing/2026-10",
+      "value": {
+        "category": "plumbing",
+        "month": "2026-10",
+        "permitCount": 1,
+        "mappingVersion": "trades-v1",
+        "mechanisms": [
+          "permit-type"
+        ],
+        "sourceValues": [
+          {
+            "value": "Plumbing Permit",
+            "count": 1
           }
         ]
       }
