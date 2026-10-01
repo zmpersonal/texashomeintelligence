@@ -48,10 +48,20 @@ function confirmed(loc) {
  * incomplete current month, which is the Round 15 defect this guards.
  */
 function permitTotalOver(loc, firstMonth, lastMonth) {
-  return gen('permit-trade-activity', loc).observations
+  const rows = gen('permit-trade-activity', loc).observations
     .filter((o) => !o.seed && o.value.category === 'roofing')
-    .filter((o) => o.value.month >= firstMonth && o.value.month <= lastMonth)
-    .reduce((t, o) => t + o.value.permitCount, 0);
+    .map((o) => o.value);
+  /* Round 45. The archive holds one set of rows PER MAPPING VERSION — a bump
+   * adds a basis beside the old one rather than replacing it — so a sum that
+   * does not select a version counts every month twice. That is what the
+   * trades-v1 → trades-v2 bump exposed here: 10,512 expected against a page
+   * saying 5,293, with the page right. The version is read out of the data, not
+   * pinned, so the next bump needs no edit here. */
+  const newest = [...new Set(rows.map((v) => v.mappingVersion))].sort().at(-1);
+  return rows
+    .filter((v) => v.mappingVersion === newest)
+    .filter((v) => v.month >= firstMonth && v.month <= lastMonth)
+    .reduce((t, v) => t + v.permitCount, 0);
 }
 const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july',
   'august', 'september', 'october', 'november', 'december'];

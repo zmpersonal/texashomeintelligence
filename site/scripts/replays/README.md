@@ -22,6 +22,12 @@ step fails, or when you need to drive one by hand.
 The worker keeps local D1 **in memory** and flushes its own state back over anything
 written underneath it, so the fixture must be applied while the worker is **stopped**.
 
+> ⚠️ **`.dev.vars` is gitignored, so a fresh clone does not have it.** Without it the worker
+> serves no `/api/email/weekly-run/` and `r9render`'s eight unsubscribe assertions cannot run —
+> the replay says so rather than passing quietly. Neither value is a secret: they are local test
+> strings, and the only requirement is that `WEEKLY_RUN_TOKEN` matches the Bearer token the
+> replay sends. (Round 45: a fresh container had never had the file.)
+
 > ⚠️ **`npm run fixture:check` can say PRESENT while the render fixture is gone.** It tests one
 > D1 row, and D1 state survives in `.wrangler/state` across builds — but `npm run build`
 > **deletes** `dist/client/data/stress-index/fixture-condition.json`, which is what r7replay's
@@ -34,6 +40,10 @@ written underneath it, so the fixture must be applied while the worker is **stop
 ```bash
 npm ci
 npx playwright install chromium     # browser binary — npm ci does NOT do this
+cat > .dev.vars <<'EOF'
+EMAIL_LINK_SIGNING_KEY=local-test-signing-key
+WEEKLY_RUN_TOKEN=local-test-run-token
+EOF
 npm run build
 npm run fixture                     # worker must be stopped
 npm run worker                      # leave running, separate terminal

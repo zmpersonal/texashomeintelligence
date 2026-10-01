@@ -36,10 +36,20 @@ const STREET_TYPE =
   "st|street|rd|road|dr|drive|ln|lane|ave|avenue|blvd|boulevard|cir|circle|ct|court|way|trl|trail|" +
   "pkwy|parkway|cv|cove|ter|terrace|pass|bnd|bend|run|path|pl|place|hwy|highway|loop|row|walk|xing|crossing";
 
+/* Words that never appear inside a street name. Without this guard the pattern
+ * reads "Finish-Outs for Units on Level 55 with Roof Terrace" as an address and
+ * redacts "55 with Roof Terrace" — eating the word "Roof" out of a work
+ * description. That is not a cosmetic over-reach: `textMatchComposition.ts` and
+ * `dataPages/permits.ts` classify published composition figures by testing this
+ * very text, so a redaction that removes a classifying word moves a number.
+ * Measured on the committed tree, this was the one false positive in ten
+ * matches. */
+const NOT_IN_A_STREET_NAME = "with|and|of|the|at|on|for|to|in|from|by|per|a|an|sqft|sf";
+
 /** House number, up to four intervening words, then a street-type token —
  * optionally trailed by a city, state and ZIP. */
 const ADDRESS = new RegExp(
-  String.raw`\b\d{2,6}\s+(?:[A-Za-z0-9.'\-]+\s+){0,4}(?:${STREET_TYPE})\b\.?` +
+  String.raw`\b\d{2,6}\s+(?:(?!(?:${NOT_IN_A_STREET_NAME})\b)[A-Za-z0-9.'\-]+\s+){0,4}(?:${STREET_TYPE})\b\.?` +
     String.raw`(?:\s*,?\s*[A-Z][a-z]+)?(?:\s*,?\s*(?:TX|Texas))?(?:\s*,?\s*\d{5}(?:-\d{4})?)?`,
   "gi",
 );

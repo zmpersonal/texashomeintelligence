@@ -218,6 +218,69 @@ function main() {
     );
   }
 
+  // ── 8 · A VERSION BUMP MUST NOT DOUBLE-COUNT ────────────────────────────
+  //
+  // `toObservations` keys every row `${mappingVersion}/${category}/${month}`, so
+  // bumping trades-v1 → trades-v2 ADDS a basis beside the old one; the archive
+  // keeps both, by design, because the old readings are history. Every reader
+  // therefore has to select a version, and until Round 45 none of them did:
+  // `tradeActivity()` summed the file and reported `rows[0].mappingVersion`, and
+  // both render replays recomputed their expected totals the same way — which is
+  // why they expected 51,003 San Antonio plumbing permits against a page saying
+  // 24,587. The mechanism existed and was decorative.
+  //
+  // These assertions are about the reading side, so they are deliberately about
+  // DATA ON DISK plus the two replay sources, not about `bump()`.
+  console.log("\n══ 8 · one mapping version at a time ══\n");
+  {
+    const GEN = path.join(SITE_DIR, "src", "data", "generated", "permit-trade-activity");
+    for (const f of readdirSync(GEN).filter((x) => x.endsWith(".json"))) {
+      const data = JSON.parse(readFileSync(path.join(GEN, f), "utf8")) as {
+        observations: { seed?: boolean; value: { category: string; month: string; mappingVersion: string; permitCount: number } }[];
+      };
+      const rows = data.observations.filter((o) => !o.seed).map((o) => o.value);
+      const versions = [...new Set(rows.map((r) => r.mappingVersion))].sort();
+      const newest = versions.at(-1);
+      const all = rows.reduce((t, r) => t + r.permitCount, 0);
+      const current = rows.filter((r) => r.mappingVersion === newest).reduce((t, r) => t + r.permitCount, 0);
+      assert(
+        `${f}: more than one mapping version is on disk (${versions.join(", ")})`,
+        versions.length > 1,
+        "if this ever fails, the fixture has stopped exercising the bug this section guards",
+      );
+      assert(
+        `${f}: summing every version would overstate the total (${all.toLocaleString()} vs ${current.toLocaleString()})`,
+        all > current,
+      );
+      // And no month may appear twice within the version a page renders.
+      const seen = new Set<string>();
+      const dupes = rows
+        .filter((r) => r.mappingVersion === newest)
+        .filter((r) => {
+          const k = `${r.category}/${r.month}`;
+          if (seen.has(k)) return true;
+          seen.add(k);
+          return false;
+        });
+      assert(`${f}: one row per category-month within ${newest}`, dupes.length === 0,
+        dupes.map((d) => `${d.category}/${d.month}`).join(", "));
+    }
+    // The replays re-derive the page's arithmetic on purpose. Re-deriving it from
+    // the wrong rows is the failure this catches, so each one is read for the
+    // selection rather than trusted to have it.
+    for (const replay of ["saservicerender.mjs", "roofscanrender.mjs"]) {
+      const src = readFileSync(path.join(SITE_DIR, "scripts", "replays", replay), "utf8");
+      assert(
+        `${replay} selects a mapping version before summing permitCount`,
+        /mappingVersion/.test(src) && /\.sort\(\)\.at\(-1\)/.test(src),
+      );
+      assert(
+        `${replay} does not pin a version as a literal`,
+        !/["'`]trades-v\d/.test(src),
+      );
+    }
+  }
+
   console.log(
     `\nPERMIT_COUNT_UNIT_STATUS=${failures === 0 ? "ok" : "fail"} checks=${checks} failures=${failures}`,
   );

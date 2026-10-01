@@ -152,11 +152,58 @@ const textMatchRules = a.sourceTypes
   .map((t) => t.value)
   .join("; ");
 const textMatchPct = a.total > 0 ? (textMatched / a.total) * 100 : 0;
+// `textMatched` sums per-source-value PERMIT counts, so on a category whose
+// text-matched values overlap it could exceed `a.total` and print "N of M
+// permits" with N > M. No rendered category does today (every text-matched
+// category measures +0 overlap), which is exactly why it is asserted rather
+// than assumed: the next mapping change is where this would break.
+if (textMatched > a.total) {
+  throw new Error(
+    `BelowHero: ${location}/${spec.category} text-matched ${textMatched} permits out of a total ` +
+      `of ${a.total}. The text-matched source values overlap, so this cannot be stated as a ` +
+      `share of the total — refusing to render it.`,
+  );
+}
 
 // A table of "permit types" whose rows are text-match rules is mislabelled.
 // San Antonio keeps both strings exactly as they were.
-const sourceValueNoun = usesTextMatch ? "source values" : "permit types";
+const sourceValueNoun = usesTextMatch ? "source value" : "permit type";
 const sourceValueHeader = usesTextMatch ? "Source value" : "City permit type";
+
+/* ROUND 45 — THE BREAKDOWN IS NOT A PARTITION.
+ *
+ * Each row of the method table counts DISTINCT PERMITS carrying that source
+ * value. Since Round 45 the headline total also counts distinct permits, and a
+ * permit that carries two types in one category is one permit in the total and
+ * one permit in each of two rows — so the rows sum to MORE than the total.
+ * Measured on this window: San Antonio plumbing +2,007 records over 24,587
+ * permits, electrical +968 over 10,249, every other category and all of Austin
+ * +0.
+ *
+ * Two things follow, and both are in the markup below.
+ *
+ * 1. `Share` is a share OF THE RECORDS, not of the permits. Dividing by
+ *    `a.total` would have produced a column summing to 108% on the plumbing
+ *    page with no row for the difference — a table that visibly fails to add up
+ *    and does not say why. So the denominator is the record sum, the footer
+ *    states it, and the caption says what the shares are shares of.
+ *
+ * 2. The excess is NOT a count of permits carrying more than one type. A permit
+ *    with three types in one category contributes two extra records. The feed
+ *    says so: 2,975 extra records within categories against at most 1,810
+ *    permits spanning types across the whole city, so three-type permits are
+ *    common. The sentence therefore puts the number where the arithmetic puts
+ *    it — on the records — and says "some of these permits" for the permits.
+ */
+const recordTotal = a.sourceTypes.reduce((sum, t) => sum + t.count, 0);
+const overlapRecords = recordTotal - a.total;
+if (overlapRecords < 0) {
+  throw new Error(
+    `BelowHero: ${location}/${spec.category} has ${recordTotal} records across source values but ` +
+      `${a.total} permits in total. A permit cannot appear under fewer source values than once, ` +
+      `so the breakdown is missing permits the total counts — refusing to render it.`,
+  );
+}
 
 // The composition paragraph for a text-matched count: what the match sweeps
 // in, measured. Returns undefined for every page that does not declare one,
@@ -267,20 +314,38 @@ if (spec.answerCompositionTopic && !composition) {
   <div class="wrap" style="max-width:820px;">
     <h2>{spec.methodHeading}</h2>
     <p>{spec.methodBody}</p>
+    {overlapRecords > 0 && (
+      <p class="metric-note">
+        Some of these permits carry more than one type — one job can be filed as both a general
+        and a gas permit — so the rows below add up to {overlapRecords.toLocaleString()} more than
+        the {a.total.toLocaleString()} permits counted. Each row counts permits; the shares are of
+        records.
+      </p>
+    )}
     <table class="data-table">
-      <caption>{cityName} {sourceValueNoun} counted in this category, {windowLabel}.</caption>
+      <caption>
+        {cityName} permit records by {sourceValueNoun} in this category, {windowLabel}.{" "}
+        Each row counts permits; shares are of the {recordTotal.toLocaleString()} records.
+      </caption>
       <thead>
-        <tr><th scope="col">{sourceValueHeader}</th><th scope="col">Permits</th><th scope="col">Share</th></tr>
+        <tr><th scope="col">{sourceValueHeader}</th><th scope="col">Permits</th><th scope="col">Share of records</th></tr>
       </thead>
       <tbody>
         {a.sourceTypes.map((t) => (
           <tr>
             <th scope="row">{t.value}</th>
             <td class="num">{t.count.toLocaleString()}</td>
-            <td class="num">{((t.count / a.total) * 100).toFixed(1)}%</td>
+            <td class="num">{((t.count / recordTotal) * 100).toFixed(1)}%</td>
           </tr>
         ))}
       </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row">All permit records</th>
+          <td class="num">{recordTotal.toLocaleString()}</td>
+          <td class="num">100.0%</td>
+        </tr>
+      </tfoot>
     </table>
     <ul class="key-findings">
       <li>

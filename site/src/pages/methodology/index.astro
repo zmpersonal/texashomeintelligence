@@ -193,7 +193,9 @@ const dateModified = sourceRows
       </p>
 
       <h2>Have you ever published a number that was wrong?</h2>
-      <p>Yes. Once, and this is the record of it.</p>
+      <p>Yes. Twice, and these are the records of them.</p>
+
+      <h3>28 August &ndash; 1 October 2026 &mdash; a placeholder electricity price published as a measurement</h3>
       <p>
         From 28 August to 1 October 2026, the Texas residential electricity price shown on this
         site &mdash; 13.88&cent; per kilowatt-hour, labelled August 2026 and sourced to the U.S.
@@ -233,6 +235,46 @@ const dateModified = sourceRows
           it still misses rows the new one catches.
         </li>
       </ul>
+
+      <h3>September &ndash; October 2026 &mdash; San Antonio permit counts counted records, not permits</h3>
+      <p>
+        Until 1 October 2026, the San Antonio permit figures on this site counted rows in the
+        city's file rather than permits. The city lists one permit on several rows when it covers
+        more than one type or stage, so the counts were too high. The figures were real and
+        sourced; the arithmetic over them was wrong.
+      </p>
+      <p>
+        The page it mattered on is <a href="/san-antonio/plumbing/">San Antonio plumbing</a>, which
+        from 4 September to 1 October 2026 said the city issued about <strong>2,040</strong>
+        plumbing permits a month and <strong>26,515</strong> over the thirteen months to September
+        2026. The correct figures are <strong>1,891 a month and 24,587</strong> &mdash; about 7%
+        lower. The same page described activity as flat, and still does: it read as a 0.5% rise between
+        the two halves of the window and reads as a 1.6% rise now. The error was capable of
+        reversing a published direction &mdash; on the same data, counting rows gives a 1.4% fall
+        where counting permits gives that 1.6% rise, and in electrical, a trade we publish no page
+        for, it turned a 4% fall into no trend at all &mdash; but on the pages that do publish, no
+        trend claim changed.
+      </p>
+      <p>
+        San Antonio's HVAC and re-roof pages moved by about 1% in the other direction.
+        Austin's counting was never wrong &mdash; its records are one row per permit &mdash; but its
+        figures moved by under 1% too, from a second fix shipped alongside this one: the whole
+        window is now recounted on every run, so permits the city adds to a month we have already
+        counted are no longer missed.
+      </p>
+      <p>
+        We are recording this rather than quietly correcting it for one reason in particular.
+        <strong>The city's file cannot be downloaded by an ordinary script</strong> &mdash; it
+        refuses the request &mdash; so nobody outside could have checked these numbers against the
+        source. A site that asks to be trusted on its sourcing does not get to fix a figure nobody
+        could have verified without saying so.
+      </p>
+      <p>
+        What has changed: both cities' permit counts now read the permit number and count each
+        permit once; the method note on every permit page says so; a test fails the build if the
+        counting reverts; and the whole thirteen-month window is recomputed on every run, so no
+        month can be left on an older method.
+      </p>
 
       <h2>How is the Home Stress Index calculated?</h2>
       <p>

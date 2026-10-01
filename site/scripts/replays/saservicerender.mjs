@@ -59,8 +59,25 @@ const CURRENT_MONTH = new Date().toISOString().slice(0, 7);
 function expected(location, category) {
   const j = JSON.parse(readFileSync(
     join(SITE, 'src', 'data', 'generated', 'permit-trade-activity', `${location}.json`), 'utf8'));
-  const all = j.observations.filter(o => !o.seed && o.value.category === category)
-    .map(o => o.value).sort((a, b) => a.month.localeCompare(b.month));
+  const forCategory = j.observations.filter(o => !o.seed && o.value.category === category)
+    .map(o => o.value);
+  /* ROUND 45. ONE MAPPING VERSION AT A TIME.
+   *
+   * The archive keeps every version it has ever written — `mergeObservations`
+   * keys on `${version}/${category}/${month}`, so a version bump adds rows
+   * beside the old ones rather than replacing them. Summing the file without
+   * selecting a version counts September 2025 twice, once per basis, which is
+   * what this check did until the trades-v1 → trades-v2 bump made the double
+   * visible: it expected 51,003 San Antonio plumbing permits where the page
+   * said 24,587, and the PAGE was right.
+   *
+   * `tradeActivity.ts` does the same selection, and the newest version is read
+   * out of the data rather than pinned here, so the next bump needs no edit to
+   * this file. Re-deriving the arithmetic instead of importing it is the point
+   * of this replay; re-deriving it from the wrong rows is not. */
+  const newestVersion = [...new Set(forCategory.map(v => v.mappingVersion))].sort().at(-1);
+  const all = forCategory.filter(v => v.mappingVersion === newestVersion)
+    .sort((a, b) => a.month.localeCompare(b.month));
   const dropped = all.filter(r => r.month >= CURRENT_MONTH).map(r => r.month);
   const rows = all.filter(r => r.month < CURRENT_MONTH);
   const total = rows.reduce((s, r) => s + r.permitCount, 0);
@@ -356,9 +373,14 @@ for (const page of PAGES) {
       A('the caveat is in #answer, not only in #method',
         /on a text match/.test(answer),
         'asserted against #answer text only');
+      // Round 45 re-captioned this table — "permit records by …", because the
+      // rows count permits and a permit can carry more than one source value,
+      // so they sum to more than the total. The assertion's point is unchanged
+      // and is the reason it is not simply deleted: a table whose rows are
+      // text-match rules must not be labelled with the city's permit types.
       A('the source-value table is not mislabelled as permit types',
-        /Austin source values counted in this category/.test(bodyOnly) &&
-        !/Austin permit types counted in this category/.test(bodyOnly));
+        /Austin permit records by source value in this category/.test(bodyOnly) &&
+        !/by permit type in this category/.test(bodyOnly));
       A('does not claim a mapped permit type it does not have',
         /Austin has no permit type for this category at all/.test(bodyOnly) &&
         !/\b0 permit types? (is|are) mapped/.test(bodyOnly));
