@@ -159,6 +159,24 @@ function generatedFiles(dir) {
   return out;
 }
 
+/**
+ * A CHEAP, DELIBERATELY INCOMPLETE check — not the authoritative one.
+ *
+ * Round 43: this test used to be the last word on whether a row was a seed, and
+ * it was wrong. It recognises a seed by fingerprint — the flag, a `sample-` key
+ * prefix, or the literal SAMPLE in the value — and eight of `seed.ts`'s
+ * thirteen generators write none of those. Ten fabricated rows passed it for
+ * six weeks; one reached the homepage under a LIVE badge.
+ *
+ * It is kept because it is genuinely useful for what it CAN see: the word
+ * SAMPLE reaching an indexed page is a citation liability whatever wrote it,
+ * including a real upstream record that happens to contain it.
+ *
+ * The authoritative check is `scripts/replays/seedunit.ts`, which regenerates
+ * each generator's output and matches on (key, value) instead of describing
+ * what generators write. It runs in the sweep. This passing is NOT evidence
+ * that a dataset is free of fabricated rows — that was exactly the mistake.
+ */
 function looksSeeded(obs) {
   if (obs.seed === true) return true;
   if (typeof obs.key === "string" && obs.key.startsWith("sample-")) return true;
@@ -173,7 +191,7 @@ for (const filePath of generatedFiles(generatedRoot)) {
   if (seeded.length > 0) {
     fail(
       `generated/${rel}: status is "${data.status}" but ${seeded.length} observation(s) are seeded placeholders ` +
-        `— run \`node scripts/purge-seed-observations.mjs\``,
+        `— run \`npx tsx scripts/purge-seed-observations.ts\``,
     );
   }
   if (data.status !== "error" && data.observations.length === 0) {

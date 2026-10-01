@@ -24,15 +24,6 @@
           "fips": "453"
         }
       }
-    },
-    {
-      "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-08-23T07:05:17.617Z",
-      "key": "2026-07",
-      "value": {
-        "medianHomeAgeYears": 34,
-        "ownerOccupiedPct": 58
-      }
     }
   ]
 }

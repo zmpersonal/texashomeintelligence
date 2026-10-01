@@ -18,7 +18,8 @@
       "value": {
         "conditionLabel": "Normal",
         "demandMw": 61500
-      }
+      },
+      "seed": true
     }
   ]
 }

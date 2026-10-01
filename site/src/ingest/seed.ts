@@ -32,8 +32,8 @@ function seedFromString(s: string): number {
   return h;
 }
 
-function monthsAgo(n: number): Date {
-  const d = new Date();
+function monthsAgo(n: number, now: Date): Date {
+  const d = new Date(now.getTime());
   d.setUTCDate(1);
   d.setUTCHours(0, 0, 0, 0);
   d.setUTCMonth(d.getUTCMonth() - n);
@@ -44,16 +44,24 @@ function monthKey(d: Date): string {
   return d.toISOString().slice(0, 7);
 }
 
-type Generator = (rand: () => number, ingestedAt: string) => Observation<unknown>[];
+/**
+ * A generator is a PURE function of `(rand, ingestedAt, now)`. Round 43 made
+ * `now` explicit rather than reading the wall clock inside `monthsAgo`, so the
+ * exact rows a generator wrote on some past date can be regenerated and matched
+ * — which is what `seedDetection.ts` does, and the only way to identify a seed
+ * row that was written before the `seed: true` stamp existed. Nothing here may
+ * read `new Date()`, `Math.random()` or any other ambient state.
+ */
+type Generator = (rand: () => number, ingestedAt: string, now: Date) => Observation<unknown>[];
 
 // --- deep feeds: 12-month sample history ---
 
-const noaaStormEvents: Generator = (rand, ingestedAt) => {
+const noaaStormEvents: Generator = (rand, ingestedAt, now) => {
   const types = ["Hail", "Wind", "Hail", "Wind", "Tornado"] as const;
   const out: Observation<unknown>[] = [];
   for (let i = 11; i >= 0; i--) {
     if (rand() < 0.4) continue; // not every month has a reportable event
-    const date = monthsAgo(i);
+    const date = monthsAgo(i, now);
     const type = types[Math.floor(rand() * types.length)];
     out.push({
       observedAt: date.toISOString(),
@@ -75,11 +83,11 @@ const noaaStormEvents: Generator = (rand, ingestedAt) => {
   return out;
 };
 
-const municipalPermits: Generator = (rand, ingestedAt) => {
+const municipalPermits: Generator = (rand, ingestedAt, now) => {
   const types = ["Mechanical (HVAC)", "Plumbing", "Electrical", "Roofing", "Building"];
   const out: Observation<unknown>[] = [];
   for (let i = 11; i >= 0; i--) {
-    const date = monthsAgo(i);
+    const date = monthsAgo(i, now);
     const count = 20 + Math.floor(rand() * 40);
     out.push({
       observedAt: date.toISOString(),
@@ -95,12 +103,12 @@ const municipalPermits: Generator = (rand, ingestedAt) => {
   return out;
 };
 
-const eiaElectricityPrice: Generator = (rand, ingestedAt) => {
+const eiaElectricityPrice: Generator = (rand, ingestedAt, now) => {
   const out: Observation<unknown>[] = [];
   let price = 14.5;
   for (let i = 11; i >= 0; i--) {
     price += (rand() - 0.5) * 0.6;
-    const date = monthsAgo(i);
+    const date = monthsAgo(i, now);
     out.push({
       observedAt: date.toISOString(),
       ingestedAt,
@@ -115,12 +123,12 @@ const eiaElectricityPrice: Generator = (rand, ingestedAt) => {
 
 const single =
   (value: unknown): Generator =>
-  (_rand, ingestedAt) => {
-    const date = monthsAgo(1);
+  (_rand, ingestedAt, now) => {
+    const date = monthsAgo(1, now);
     return [{ observedAt: date.toISOString(), ingestedAt, key: monthKey(date), value }];
   };
 
-const GENERATORS: Record<string, Generator> = {
+export const GENERATORS: Record<string, Generator> = {
   "noaa-storm-events": noaaStormEvents,
   "municipal-permits": municipalPermits,
   "eia-electricity": eiaElectricityPrice,
@@ -187,6 +195,36 @@ const NEVER_SEED = new Set([
   "swdi-nx3hail",
 ]);
 
+/**
+ * Regenerate exactly what `seed.ts` would write for one dataset at one moment.
+ *
+ * This is the whole basis of seed detection (`seedDetection.ts`) and it is why
+ * `Generator` had to become a pure function of `now`. Given a datasetId, a
+ * location and a date, the output is fully determined: `mulberry32` is seeded
+ * from `${datasetId}/${location}` and nothing else, and every observed date
+ * comes from `monthsAgo(n, now)`. So a row on disk is seed output if and only
+ * if some run date reproduces its key AND its value exactly.
+ *
+ * Returns null for a datasetId with no generator (a NEVER_SEED feed, or one
+ * that has never been seeded) — which is not an error, just "nothing to
+ * compare against."
+ *
+ * `ingestedAt` is accepted so `seedIfMissing` can stamp the real time; a
+ * detector passes anything, because `ingestedAt` is the one field that is NOT
+ * reproducible and is therefore never matched on.
+ */
+export function seedObservationsFor(
+  datasetId: string,
+  location: string,
+  now: Date,
+  ingestedAt = "",
+): Observation<unknown>[] | null {
+  const generator = GENERATORS[datasetId];
+  if (!generator) return null;
+  const rand = mulberry32(seedFromString(`${datasetId}/${location}`));
+  return generator(rand, ingestedAt, now).map((o) => ({ ...o, seed: true as const }));
+}
+
 /** Skips any file that already exists — seeding is a one-time bootstrap,
  * never a way to reset real accumulated history. */
 export function seedIfMissing(entry: RegistryEntry): "seeded" | "already-exists" {
@@ -194,16 +232,22 @@ export function seedIfMissing(entry: RegistryEntry): "seeded" | "already-exists"
 
   if (NEVER_SEED.has(entry.fetcher.datasetId)) return "already-exists";
 
-  const generator = GENERATORS[entry.fetcher.datasetId];
-  if (!generator) {
-    throw new Error(`seed.ts: no sample generator registered for datasetId "${entry.fetcher.datasetId}"`);
-  }
-
-  const rand = mulberry32(seedFromString(`${entry.fetcher.datasetId}/${entry.fetcher.location}`));
-  const ingestedAt = new Date().toISOString();
+  const now = new Date();
   // Tag every generated row so it stays identifiable as fabricated once it's
   // on disk — `runIngestion` drops these the moment a real fetch succeeds.
-  const observations = generator(rand, ingestedAt).map((o) => ({ ...o, seed: true as const }));
+  //
+  // Round 43: this goes through `seedObservationsFor` rather than calling the
+  // generator directly, so the rows written here and the rows
+  // `seedDetection.ts` regenerates come out of ONE code path. The previous
+  // arrangement had the writer call the generator and the guards describe what
+  // the generator "always" wrote; the description was wrong for eight of the
+  // thirteen generators and nine fabricated rows survived in production for
+  // six weeks because of it. A guard that executes the generator cannot drift
+  // from it; a guard that describes it can.
+  const observations = seedObservationsFor(entry.fetcher.datasetId, entry.fetcher.location, now, now.toISOString());
+  if (!observations) {
+    throw new Error(`seed.ts: no sample generator registered for datasetId "${entry.fetcher.datasetId}"`);
+  }
 
   const file: DatasetFile<unknown> = {
     datasetId: entry.fetcher.datasetId,
