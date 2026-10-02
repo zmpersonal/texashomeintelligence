@@ -3,7 +3,7 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "stale",
-  "lastAttemptAt": "2026-10-01T17:01:38.589Z",
+  "lastAttemptAt": "2026-10-02T15:48:04.610Z",
   "lastSuccessAt": "2026-10-01T12:19:00.426Z",
   "lastError": "AirNow fetch failed: HTTP 410 from https://www.airnowapi.org/aq/observation/zipCode/current/?format=application%2Fjson&zipCode=78205&distance=25&API_KEY=268D3CB0-045A-4E5E-8322-4BAC530E1A3A",
   "source": {

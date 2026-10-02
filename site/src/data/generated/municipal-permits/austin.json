@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-01T17:01:13.354Z",
-  "lastSuccessAt": "2026-10-01T17:01:13.354Z",
+  "lastAttemptAt": "2026-10-02T15:47:34.882Z",
+  "lastSuccessAt": "2026-10-02T15:47:34.882Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -7535,16 +7535,6 @@
         "permitType": "Repair",
         "workDescription": "Repair gas line on roof to restore gas service.",
         "status": "Final"
-      }
-    },
-    {
-      "observedAt": "2025-12-17T00:00:00.000Z",
-      "ingestedAt": "2026-08-24T15:57:40.356Z",
-      "key": "2025-148128 PP",
-      "value": {
-        "permitType": "Repair",
-        "workDescription": "Express: roof repair electrical repair drywall/insulation repair exempt work (cabinets/flooring)\n\nREVISION: Add Mechanical and Plumbing Permits",
-        "status": "Active"
       }
     },
     {
@@ -21418,7 +21408,7 @@
     },
     {
       "observedAt": "2026-09-30T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T17:01:17.492Z",
+      "ingestedAt": "2026-10-02T15:47:35.315Z",
       "key": "2026-126776 EP",
       "value": {
         "permitType": "Repair",
@@ -21428,7 +21418,7 @@
     },
     {
       "observedAt": "2026-09-30T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T17:01:17.492Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
       "key": "2026-126616 EP",
       "value": {
         "permitType": "Repair",
@@ -21438,7 +21428,7 @@
     },
     {
       "observedAt": "2026-09-30T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T17:01:17.492Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
       "key": "2026-119907 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -21448,11 +21438,171 @@
     },
     {
       "observedAt": "2026-09-30T00:00:00.000Z",
-      "ingestedAt": "2026-10-01T17:01:17.492Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
       "key": "2026-123728 EP",
       "value": {
         "permitType": "Auxiliary Power",
         "workDescription": "Install new rooftop 4.5 kW solar and 11.5 kW energy storage system w/ meter socket mounted backup switch to existing residential. PV & ESS Supply side connection.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2025-148128 PP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express: roof repair electrical repair drywall/insulation repair exempt work (cabinets/flooring)\n\nREVISION: Add Mechanical and Plumbing Permits",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-114236 PP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "SMALL PROJECT - interior remodel. replace all missing fireproofing and fire stopping. affected by new construction with fireproofing to match base building existing standards. all construction shall be non-combustible. 4 all wood and wood blocking shall be fire retardant treated.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-123387 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "INTERIOR REMODEL -AMENITIES CENTER. REPLACE ALL MISSING FIREPROOFING AND FIRESTOPPING. AFFECTED BY NEW CONSTRUCTION WITH FIREPROOFING TO MATCH BASE BUILDING EXISTING STANARDS.ALL CONSTRUCTION SHALL BE NON-COMBUSTIBLE. 4. ALL WOOD AND WOOD BLOCKING SHALL BE FIRE RETARDANT TREATED",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-114745 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "INTERIOR REMODEL -REPLACE ALL MISSING FIREPROOFING AND FIRESTOPPING. AFFECTED BY NEW CONSTRUCTION WITH FIREPROOFING TO MATCH BASE BUILDING EXISTING STANARDS.ALL CONSTRUCTION SHALL BE NON-COMBUSTIBLE. 4. ALL WOOD AND WOOD BLOCKING SHALL BE FIRE RETARDANT TREATED",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-114715 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "INTERIOR REMODEL -REPLACE ALL MISSING FIREPROOFING AND FIRESTOPPING. AFFECTED BY NEW CONSTRUCTION WITH FIREPROOFING TO MATCH BASE BUILDING EXISTING STANARDS.ALL CONSTRUCTION SHALL BE NON-COMBUSTIBLE. 4. ALL WOOD AND WOOD BLOCKING SHALL BE FIRE RETARDANT TREATED",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-114745 PP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "INTERIOR REMODEL -REPLACE ALL MISSING FIREPROOFING AND FIRESTOPPING. AFFECTED BY NEW CONSTRUCTION WITH FIREPROOFING TO MATCH BASE BUILDING EXISTING STANARDS.ALL CONSTRUCTION SHALL BE NON-COMBUSTIBLE. 4. ALL WOOD AND WOOD BLOCKING SHALL BE FIRE RETARDANT TREATED",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-100337 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Blau - 39-99733 - Install new 3.8 kW rooftop solar system to existing residential only using backfed breaker only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-114236 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "SMALL PROJECT - interior remodel. replace all missing fireproofing and fire stopping. affected by new construction with fireproofing to match base building existing standards. all construction shall be non-combustible. 4 all wood and wood blocking shall be fire retardant treated.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-114736 PP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "INTERIOR REMODEL -REPLACE ALL MISSING FIREPROOFING AND FIRESTOPPING. AFFECTED BY NEW CONSTRUCTION WITH FIREPROOFING TO MATCH BASE BUILDING EXISTING STANARDS.ALL CONSTRUCTION SHALL BE NON-COMBUSTIBLE. 4. ALL WOOD AND WOOD BLOCKING SHALL BE FIRE RETARDANT TREATED",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-114736 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "INTERIOR REMODEL -REPLACE ALL MISSING FIREPROOFING AND FIRESTOPPING. AFFECTED BY NEW CONSTRUCTION WITH FIREPROOFING TO MATCH BASE BUILDING EXISTING STANARDS.ALL CONSTRUCTION SHALL BE NON-COMBUSTIBLE. 4. ALL WOOD AND WOOD BLOCKING SHALL BE FIRE RETARDANT TREATED",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-123387 PP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "INTERIOR REMODEL -AMENITIES CENTER. REPLACE ALL MISSING FIREPROOFING AND FIRESTOPPING. AFFECTED BY NEW CONSTRUCTION WITH FIREPROOFING TO MATCH BASE BUILDING EXISTING STANARDS.ALL CONSTRUCTION SHALL BE NON-COMBUSTIBLE. 4. ALL WOOD AND WOOD BLOCKING SHALL BE FIRE RETARDANT TREATED",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-114715 PP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "INTERIOR REMODEL -REPLACE ALL MISSING FIREPROOFING AND FIRESTOPPING. AFFECTED BY NEW CONSTRUCTION WITH FIREPROOFING TO MATCH BASE BUILDING EXISTING STANARDS.ALL CONSTRUCTION SHALL BE NON-COMBUSTIBLE. 4. ALL WOOD AND WOOD BLOCKING SHALL BE FIRE RETARDANT TREATED",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-114745 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "INTERIOR REMODEL -REPLACE ALL MISSING FIREPROOFING AND FIRESTOPPING. AFFECTED BY NEW CONSTRUCTION WITH FIREPROOFING TO MATCH BASE BUILDING EXISTING STANARDS.ALL CONSTRUCTION SHALL BE NON-COMBUSTIBLE. 4. ALL WOOD AND WOOD BLOCKING SHALL BE FIRE RETARDANT TREATED",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-114236 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "SMALL PROJECT - interior remodel. replace all missing fireproofing and fire stopping. affected by new construction with fireproofing to match base building existing standards. all construction shall be non-combustible. 4 all wood and wood blocking shall be fire retardant treated.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-114715 EP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "INTERIOR REMODEL -REPLACE ALL MISSING FIREPROOFING AND FIRESTOPPING. AFFECTED BY NEW CONSTRUCTION WITH FIREPROOFING TO MATCH BASE BUILDING EXISTING STANARDS.ALL CONSTRUCTION SHALL BE NON-COMBUSTIBLE. 4. ALL WOOD AND WOOD BLOCKING SHALL BE FIRE RETARDANT TREATED",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-01T00:00:00.000Z",
+      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "key": "2026-121791 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Hart - 40-15951 - Install new 7.6 kW rooftop solar system to existing residential only using line side tap only.",
         "status": "Active"
       }
     }
