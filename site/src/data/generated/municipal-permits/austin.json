@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-02T15:47:34.882Z",
-  "lastSuccessAt": "2026-10-02T15:47:34.882Z",
+  "lastAttemptAt": "2026-10-03T14:18:35.562Z",
+  "lastSuccessAt": "2026-10-03T14:18:35.562Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -16092,16 +16092,6 @@
     {
       "observedAt": "2026-06-23T00:00:00.000Z",
       "ingestedAt": "2026-08-24T15:57:40.360Z",
-      "key": "2026-002058 PP",
-      "value": {
-        "permitType": "Addition and Remodel",
-        "workDescription": "Addition/ remodel to include: Converting existing 4-plex to 2-Unit use duplex. Unit A: 3 bedroom 2 bath with front covered porch rear covered balcony and addition of foyer & HVAC closet. EXISTING 4-PLEX TO BE RENOVATED AND TURNED INTO A DUPLEX. TOTAL INTERIOR REMODEL PLUS SOME ADDED CONDITIONED SPAC",
-        "status": "Active"
-      }
-    },
-    {
-      "observedAt": "2026-06-23T00:00:00.000Z",
-      "ingestedAt": "2026-08-24T15:57:40.360Z",
       "key": "2026-002059 PP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21448,7 +21438,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
       "key": "2025-148128 PP",
       "value": {
         "permitType": "Repair",
@@ -21458,7 +21448,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
       "key": "2026-114236 PP",
       "value": {
         "permitType": "Remodel",
@@ -21468,7 +21458,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.227Z",
       "key": "2026-123387 EP",
       "value": {
         "permitType": "Remodel",
@@ -21478,7 +21468,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
       "key": "2026-114745 EP",
       "value": {
         "permitType": "Remodel",
@@ -21488,7 +21478,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
       "key": "2026-114715 BP",
       "value": {
         "permitType": "Remodel",
@@ -21498,7 +21488,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
       "key": "2026-114745 PP",
       "value": {
         "permitType": "Remodel",
@@ -21508,7 +21498,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.227Z",
       "key": "2026-100337 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -21518,7 +21508,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.227Z",
       "key": "2026-114236 EP",
       "value": {
         "permitType": "Remodel",
@@ -21528,7 +21518,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
       "key": "2026-114736 PP",
       "value": {
         "permitType": "Remodel",
@@ -21538,7 +21528,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
       "key": "2026-114736 EP",
       "value": {
         "permitType": "Remodel",
@@ -21548,7 +21538,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
       "key": "2026-123387 PP",
       "value": {
         "permitType": "Remodel",
@@ -21558,7 +21548,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
       "key": "2026-114715 PP",
       "value": {
         "permitType": "Remodel",
@@ -21568,7 +21558,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
       "key": "2026-114745 BP",
       "value": {
         "permitType": "Remodel",
@@ -21578,7 +21568,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
       "key": "2026-114236 BP",
       "value": {
         "permitType": "Remodel",
@@ -21588,7 +21578,7 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.227Z",
       "key": "2026-114715 EP",
       "value": {
         "permitType": "Remodel",
@@ -21598,12 +21588,43 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:35.316Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
       "key": "2026-121791 EP",
       "value": {
         "permitType": "Auxiliary Power",
         "workDescription": "Hart - 40-15951 - Install new 7.6 kW rooftop solar system to existing residential only using line side tap only.",
         "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-02T00:00:00.000Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
+      "key": "2026-002058 PP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition/ remodel to include: Converting existing 4-plex to 2-Unit use duplex. Unit A: 3 bedroom 2 bath with front covered porch rear covered balcony and addition of foyer & HVAC closet. EXISTING 4-PLEX TO BE RENOVATED AND TURNED INTO A DUPLEX. TOTAL INTERIOR REMODEL PLUS SOME ADDED CONDITIONED SPAC",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-02T00:00:00.000Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
+      "key": "2026-082387 EP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "New 1-story detached accessory structure (pool side cabana) 1 bath with stone veneer flat TPO roof wood frame on drilled concrete caissons. Cabana includes bathroom (shower + WC). Reconnect to existing underground electrical conduit previously servicing pergola. Install new 60 amp subpanel in cabana",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-02T00:00:00.000Z",
+      "ingestedAt": "2026-10-03T14:18:36.228Z",
+      "key": "2026-129389 BP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Remove interior wall between kitchen and laundry.  Kitchen: relocate sink dishwasher stove & vent; and remove oven. Remove garage wing and exterior door; and frame in to enclose garage. Remove outside storage (roof framing door). Remove screen porch and cover. Remove interior wall between great room",
+        "status": "Active",
+        "valuationUsd": 1
       }
     }
   ]

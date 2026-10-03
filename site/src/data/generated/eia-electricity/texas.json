@@ -3,8 +3,8 @@
   "location": "texas",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-02T15:47:38.016Z",
-  "lastSuccessAt": "2026-10-02T15:47:38.016Z",
+  "lastAttemptAt": "2026-10-03T14:18:40.232Z",
+  "lastSuccessAt": "2026-10-03T14:18:40.232Z",
   "lastError": null,
   "source": {
     "name": "EIA Electricity Data (Texas, residential)",
@@ -101,7 +101,7 @@
     },
     {
       "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:59.737Z",
+      "ingestedAt": "2026-10-03T14:18:40.682Z",
       "key": "2026-07",
       "value": {
         "pricePerKwhCents": 15.88

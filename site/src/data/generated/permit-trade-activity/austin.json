@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-02T15:48:08.262Z",
-  "lastSuccessAt": "2026-10-02T15:48:08.262Z",
+  "lastAttemptAt": "2026-10-03T14:18:50.138Z",
+  "lastSuccessAt": "2026-10-03T14:18:50.138Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -118,7 +118,7 @@
     },
     {
       "observedAt": "2025-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/electrical/2025-09",
       "value": {
         "category": "electrical",
@@ -138,7 +138,7 @@
     },
     {
       "observedAt": "2025-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/hvac/2025-09",
       "value": {
         "category": "hvac",
@@ -158,7 +158,7 @@
     },
     {
       "observedAt": "2025-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/plumbing/2025-09",
       "value": {
         "category": "plumbing",
@@ -178,7 +178,7 @@
     },
     {
       "observedAt": "2025-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/roofing/2025-09",
       "value": {
         "category": "roofing",
@@ -198,7 +198,7 @@
     },
     {
       "observedAt": "2025-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/solar/2025-09",
       "value": {
         "category": "solar",
@@ -328,7 +328,7 @@
     },
     {
       "observedAt": "2025-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/electrical/2025-10",
       "value": {
         "category": "electrical",
@@ -348,7 +348,7 @@
     },
     {
       "observedAt": "2025-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/hvac/2025-10",
       "value": {
         "category": "hvac",
@@ -368,7 +368,7 @@
     },
     {
       "observedAt": "2025-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/plumbing/2025-10",
       "value": {
         "category": "plumbing",
@@ -388,7 +388,7 @@
     },
     {
       "observedAt": "2025-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/roofing/2025-10",
       "value": {
         "category": "roofing",
@@ -408,7 +408,7 @@
     },
     {
       "observedAt": "2025-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/solar/2025-10",
       "value": {
         "category": "solar",
@@ -538,7 +538,7 @@
     },
     {
       "observedAt": "2025-11-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/electrical/2025-11",
       "value": {
         "category": "electrical",
@@ -558,7 +558,7 @@
     },
     {
       "observedAt": "2025-11-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/hvac/2025-11",
       "value": {
         "category": "hvac",
@@ -578,7 +578,7 @@
     },
     {
       "observedAt": "2025-11-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/plumbing/2025-11",
       "value": {
         "category": "plumbing",
@@ -598,7 +598,7 @@
     },
     {
       "observedAt": "2025-11-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/roofing/2025-11",
       "value": {
         "category": "roofing",
@@ -618,7 +618,7 @@
     },
     {
       "observedAt": "2025-11-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/solar/2025-11",
       "value": {
         "category": "solar",
@@ -748,7 +748,7 @@
     },
     {
       "observedAt": "2025-12-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/electrical/2025-12",
       "value": {
         "category": "electrical",
@@ -768,7 +768,7 @@
     },
     {
       "observedAt": "2025-12-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/hvac/2025-12",
       "value": {
         "category": "hvac",
@@ -788,7 +788,7 @@
     },
     {
       "observedAt": "2025-12-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/plumbing/2025-12",
       "value": {
         "category": "plumbing",
@@ -808,7 +808,7 @@
     },
     {
       "observedAt": "2025-12-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/roofing/2025-12",
       "value": {
         "category": "roofing",
@@ -828,7 +828,7 @@
     },
     {
       "observedAt": "2025-12-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/solar/2025-12",
       "value": {
         "category": "solar",
@@ -958,7 +958,7 @@
     },
     {
       "observedAt": "2026-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/electrical/2026-01",
       "value": {
         "category": "electrical",
@@ -978,7 +978,7 @@
     },
     {
       "observedAt": "2026-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/hvac/2026-01",
       "value": {
         "category": "hvac",
@@ -998,7 +998,7 @@
     },
     {
       "observedAt": "2026-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/plumbing/2026-01",
       "value": {
         "category": "plumbing",
@@ -1018,7 +1018,7 @@
     },
     {
       "observedAt": "2026-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/roofing/2026-01",
       "value": {
         "category": "roofing",
@@ -1038,7 +1038,7 @@
     },
     {
       "observedAt": "2026-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/solar/2026-01",
       "value": {
         "category": "solar",
@@ -1168,7 +1168,7 @@
     },
     {
       "observedAt": "2026-02-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/electrical/2026-02",
       "value": {
         "category": "electrical",
@@ -1188,7 +1188,7 @@
     },
     {
       "observedAt": "2026-02-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/hvac/2026-02",
       "value": {
         "category": "hvac",
@@ -1208,7 +1208,7 @@
     },
     {
       "observedAt": "2026-02-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/plumbing/2026-02",
       "value": {
         "category": "plumbing",
@@ -1228,7 +1228,7 @@
     },
     {
       "observedAt": "2026-02-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/roofing/2026-02",
       "value": {
         "category": "roofing",
@@ -1248,7 +1248,7 @@
     },
     {
       "observedAt": "2026-02-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/solar/2026-02",
       "value": {
         "category": "solar",
@@ -1378,7 +1378,7 @@
     },
     {
       "observedAt": "2026-03-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/electrical/2026-03",
       "value": {
         "category": "electrical",
@@ -1398,7 +1398,7 @@
     },
     {
       "observedAt": "2026-03-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/hvac/2026-03",
       "value": {
         "category": "hvac",
@@ -1418,7 +1418,7 @@
     },
     {
       "observedAt": "2026-03-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/plumbing/2026-03",
       "value": {
         "category": "plumbing",
@@ -1438,7 +1438,7 @@
     },
     {
       "observedAt": "2026-03-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/roofing/2026-03",
       "value": {
         "category": "roofing",
@@ -1458,7 +1458,7 @@
     },
     {
       "observedAt": "2026-03-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/solar/2026-03",
       "value": {
         "category": "solar",
@@ -1588,7 +1588,7 @@
     },
     {
       "observedAt": "2026-04-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/electrical/2026-04",
       "value": {
         "category": "electrical",
@@ -1608,7 +1608,7 @@
     },
     {
       "observedAt": "2026-04-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/hvac/2026-04",
       "value": {
         "category": "hvac",
@@ -1628,7 +1628,7 @@
     },
     {
       "observedAt": "2026-04-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/plumbing/2026-04",
       "value": {
         "category": "plumbing",
@@ -1648,7 +1648,7 @@
     },
     {
       "observedAt": "2026-04-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/roofing/2026-04",
       "value": {
         "category": "roofing",
@@ -1668,7 +1668,7 @@
     },
     {
       "observedAt": "2026-04-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/solar/2026-04",
       "value": {
         "category": "solar",
@@ -1798,7 +1798,7 @@
     },
     {
       "observedAt": "2026-05-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/electrical/2026-05",
       "value": {
         "category": "electrical",
@@ -1818,7 +1818,7 @@
     },
     {
       "observedAt": "2026-05-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/hvac/2026-05",
       "value": {
         "category": "hvac",
@@ -1838,7 +1838,7 @@
     },
     {
       "observedAt": "2026-05-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/plumbing/2026-05",
       "value": {
         "category": "plumbing",
@@ -1858,7 +1858,7 @@
     },
     {
       "observedAt": "2026-05-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/roofing/2026-05",
       "value": {
         "category": "roofing",
@@ -1878,7 +1878,7 @@
     },
     {
       "observedAt": "2026-05-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/solar/2026-05",
       "value": {
         "category": "solar",
@@ -2008,7 +2008,7 @@
     },
     {
       "observedAt": "2026-06-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/electrical/2026-06",
       "value": {
         "category": "electrical",
@@ -2028,7 +2028,7 @@
     },
     {
       "observedAt": "2026-06-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/hvac/2026-06",
       "value": {
         "category": "hvac",
@@ -2048,12 +2048,12 @@
     },
     {
       "observedAt": "2026-06-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/plumbing/2026-06",
       "value": {
         "category": "plumbing",
         "month": "2026-06",
-        "permitCount": 1382,
+        "permitCount": 1381,
         "mappingVersion": "trades-v2",
         "mechanisms": [
           "permit-type"
@@ -2061,19 +2061,19 @@
         "sourceValues": [
           {
             "value": "Plumbing Permit",
-            "count": 1382
+            "count": 1381
           }
         ]
       }
     },
     {
       "observedAt": "2026-06-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/roofing/2026-06",
       "value": {
         "category": "roofing",
         "month": "2026-06",
-        "permitCount": 192,
+        "permitCount": 191,
         "mappingVersion": "trades-v2",
         "mechanisms": [
           "description-text"
@@ -2081,14 +2081,14 @@
         "sourceValues": [
           {
             "value": "description contains \"roof\"",
-            "count": 192
+            "count": 191
           }
         ]
       }
     },
     {
       "observedAt": "2026-06-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/solar/2026-06",
       "value": {
         "category": "solar",
@@ -2218,7 +2218,7 @@
     },
     {
       "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/electrical/2026-07",
       "value": {
         "category": "electrical",
@@ -2238,7 +2238,7 @@
     },
     {
       "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/hvac/2026-07",
       "value": {
         "category": "hvac",
@@ -2258,7 +2258,7 @@
     },
     {
       "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/plumbing/2026-07",
       "value": {
         "category": "plumbing",
@@ -2278,7 +2278,7 @@
     },
     {
       "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/roofing/2026-07",
       "value": {
         "category": "roofing",
@@ -2298,7 +2298,7 @@
     },
     {
       "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/solar/2026-07",
       "value": {
         "category": "solar",
@@ -2433,7 +2433,7 @@
     },
     {
       "observedAt": "2026-08-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/electrical/2026-08",
       "value": {
         "category": "electrical",
@@ -2453,7 +2453,7 @@
     },
     {
       "observedAt": "2026-08-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/hvac/2026-08",
       "value": {
         "category": "hvac",
@@ -2473,7 +2473,7 @@
     },
     {
       "observedAt": "2026-08-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/plumbing/2026-08",
       "value": {
         "category": "plumbing",
@@ -2493,7 +2493,7 @@
     },
     {
       "observedAt": "2026-08-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/roofing/2026-08",
       "value": {
         "category": "roofing",
@@ -2518,7 +2518,7 @@
     },
     {
       "observedAt": "2026-08-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/solar/2026-08",
       "value": {
         "category": "solar",
@@ -2648,12 +2648,12 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/electrical/2026-09",
       "value": {
         "category": "electrical",
         "month": "2026-09",
-        "permitCount": 1635,
+        "permitCount": 1634,
         "mappingVersion": "trades-v2",
         "mechanisms": [
           "permit-type"
@@ -2661,14 +2661,14 @@
         "sourceValues": [
           {
             "value": "Electrical Permit",
-            "count": 1635
+            "count": 1634
           }
         ]
       }
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/hvac/2026-09",
       "value": {
         "category": "hvac",
@@ -2688,7 +2688,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/plumbing/2026-09",
       "value": {
         "category": "plumbing",
@@ -2708,7 +2708,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/roofing/2026-09",
       "value": {
         "category": "roofing",
@@ -2728,7 +2728,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/solar/2026-09",
       "value": {
         "category": "solar",
@@ -2773,12 +2773,12 @@
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/plumbing/2026-10",
       "value": {
         "category": "plumbing",
         "month": "2026-10",
-        "permitCount": 40,
+        "permitCount": 76,
         "mappingVersion": "trades-v2",
         "mechanisms": [
           "permit-type"
@@ -2786,19 +2786,19 @@
         "sourceValues": [
           {
             "value": "Plumbing Permit",
-            "count": 40
+            "count": 76
           }
         ]
       }
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/electrical/2026-10",
       "value": {
         "category": "electrical",
         "month": "2026-10",
-        "permitCount": 62,
+        "permitCount": 106,
         "mappingVersion": "trades-v2",
         "mechanisms": [
           "permit-type"
@@ -2806,19 +2806,19 @@
         "sourceValues": [
           {
             "value": "Electrical Permit",
-            "count": 62
+            "count": 106
           }
         ]
       }
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/hvac/2026-10",
       "value": {
         "category": "hvac",
         "month": "2026-10",
-        "permitCount": 38,
+        "permitCount": 88,
         "mappingVersion": "trades-v2",
         "mechanisms": [
           "permit-type"
@@ -2826,19 +2826,19 @@
         "sourceValues": [
           {
             "value": "Mechanical Permit",
-            "count": 38
+            "count": 88
           }
         ]
       }
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/roofing/2026-10",
       "value": {
         "category": "roofing",
         "month": "2026-10",
-        "permitCount": 16,
+        "permitCount": 19,
         "mappingVersion": "trades-v2",
         "mechanisms": [
           "description-text"
@@ -2846,19 +2846,19 @@
         "sourceValues": [
           {
             "value": "description contains \"roof\"",
-            "count": 16
+            "count": 19
           }
         ]
       }
     },
     {
       "observedAt": "2026-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:48:11.161Z",
+      "ingestedAt": "2026-10-03T14:18:59.141Z",
       "key": "trades-v2/solar/2026-10",
       "value": {
         "category": "solar",
         "month": "2026-10",
-        "permitCount": 8,
+        "permitCount": 21,
         "mappingVersion": "trades-v2",
         "mechanisms": [
           "work-class"
@@ -2866,7 +2866,7 @@
         "sourceValues": [
           {
             "value": "Auxiliary Power",
-            "count": 8
+            "count": 21
           }
         ]
       }

@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-02T15:48:01.143Z",
-  "lastSuccessAt": "2026-10-02T15:48:01.143Z",
+  "lastAttemptAt": "2026-10-03T14:18:43.214Z",
+  "lastSuccessAt": "2026-10-03T14:18:43.214Z",
   "lastError": null,
   "source": {
     "name": "NOAA Severe Weather Data Inventory — nx3hail (NEXRAD radar-derived hail signatures, not confirmed hail reports)",
@@ -5007,7 +5007,7 @@
     },
     {
       "observedAt": "2026-09-27T22:13:30.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:13:30Z-KFWS-D2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5027,7 +5027,7 @@
     },
     {
       "observedAt": "2026-09-27T22:17:13.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:17:13Z-KFWS-D2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5047,7 +5047,7 @@
     },
     {
       "observedAt": "2026-09-27T22:20:55.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:20:55Z-KFWS-D2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5067,7 +5067,7 @@
     },
     {
       "observedAt": "2026-09-27T22:23:14.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:23:14Z-KEWX-Z1",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5087,7 +5087,7 @@
     },
     {
       "observedAt": "2026-09-27T22:24:38.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:24:38Z-KFWS-D2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5107,7 +5107,7 @@
     },
     {
       "observedAt": "2026-09-27T22:25:18.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:25:18Z-KGRK-E1",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5127,7 +5127,7 @@
     },
     {
       "observedAt": "2026-09-27T22:28:20.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:28:20Z-KFWS-D2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5147,7 +5147,7 @@
     },
     {
       "observedAt": "2026-09-27T22:28:49.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:28:49Z-KEWX-Z1",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5167,7 +5167,7 @@
     },
     {
       "observedAt": "2026-09-27T22:29:26.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:29:26Z-KGRK-E1",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5187,7 +5187,7 @@
     },
     {
       "observedAt": "2026-09-27T22:32:03.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:32:03Z-KFWS-D2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5207,7 +5207,7 @@
     },
     {
       "observedAt": "2026-09-27T22:33:34.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:33:34Z-KGRK-E1",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5227,7 +5227,7 @@
     },
     {
       "observedAt": "2026-09-27T22:34:54.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:34:54Z-KEWX-Z1",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5247,7 +5247,7 @@
     },
     {
       "observedAt": "2026-09-27T22:35:59.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:35:59Z-KFWS-D2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5267,7 +5267,7 @@
     },
     {
       "observedAt": "2026-09-27T22:37:41.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:37:41Z-KGRK-E1",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5287,7 +5287,7 @@
     },
     {
       "observedAt": "2026-09-27T22:39:41.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:39:41Z-KFWS-D2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5307,7 +5307,7 @@
     },
     {
       "observedAt": "2026-09-27T22:40:44.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:40:44Z-KEWX-Z1",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5327,7 +5327,7 @@
     },
     {
       "observedAt": "2026-09-27T22:41:50.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:41:50Z-KGRK-E1",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5347,7 +5347,7 @@
     },
     {
       "observedAt": "2026-09-27T22:43:37.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:43:37Z-KFWS-D2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5367,7 +5367,7 @@
     },
     {
       "observedAt": "2026-09-27T22:47:47.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:47:47Z-KFWS-D2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5387,7 +5387,7 @@
     },
     {
       "observedAt": "2026-09-27T22:52:54.000Z",
-      "ingestedAt": "2026-10-02T15:48:01.315Z",
+      "ingestedAt": "2026-10-03T14:18:43.452Z",
       "key": "2026-09-27T22:52:54Z-KEWX-Z1",
       "value": {
         "observationType": "radar-derived-hail-signature",

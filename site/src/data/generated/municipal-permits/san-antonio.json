@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-02T15:47:35.361Z",
-  "lastSuccessAt": "2026-10-02T15:47:35.361Z",
+  "lastAttemptAt": "2026-10-03T14:18:36.243Z",
+  "lastSuccessAt": "2026-10-03T14:18:36.243Z",
   "lastError": null,
   "source": {
     "name": "City of San Antonio Permits Open Data",
@@ -54873,7 +54873,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:38.009Z",
+      "ingestedAt": "2026-10-03T14:18:40.223Z",
       "key": "REP-ROF-PMT26-35203377",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -54883,7 +54883,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:38.010Z",
+      "ingestedAt": "2026-10-03T14:18:40.223Z",
       "key": "REP-ROF-PMT26-35203378",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -54893,7 +54893,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:38.010Z",
+      "ingestedAt": "2026-10-03T14:18:40.223Z",
       "key": "REP-ROF-PMT26-35203379",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -54903,7 +54903,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:38.010Z",
+      "ingestedAt": "2026-10-03T14:18:40.223Z",
       "key": "REP-ROF-PMT26-35203380",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -54913,7 +54913,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:38.010Z",
+      "ingestedAt": "2026-10-03T14:18:40.223Z",
       "key": "REP-ROF-PMT26-35203381",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -54923,7 +54923,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:38.010Z",
+      "ingestedAt": "2026-10-03T14:18:40.223Z",
       "key": "REP-ROF-PMT26-35203382",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -54933,7 +54933,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:38.010Z",
+      "ingestedAt": "2026-10-03T14:18:40.223Z",
       "key": "REP-ROF-PMT26-35203383",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -54943,7 +54943,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:38.010Z",
+      "ingestedAt": "2026-10-03T14:18:40.223Z",
       "key": "REP-ROF-PMT26-35203384",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -54953,7 +54953,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:38.010Z",
+      "ingestedAt": "2026-10-03T14:18:40.223Z",
       "key": "REP-ROF-PMT26-35203385",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -54963,7 +54963,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:38.010Z",
+      "ingestedAt": "2026-10-03T14:18:40.223Z",
       "key": "REP-ROF-PMT26-35203386",
       "value": {
         "permitType": "Re-Roof Permit",
@@ -54973,7 +54973,7 @@
     },
     {
       "observedAt": "2026-09-25T00:00:00.000Z",
-      "ingestedAt": "2026-10-02T15:47:38.010Z",
+      "ingestedAt": "2026-10-03T14:18:40.223Z",
       "key": "REP-ROF-PMT26-35203387",
       "value": {
         "permitType": "Re-Roof Permit",
