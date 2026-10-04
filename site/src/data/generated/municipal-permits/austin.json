@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-03T14:18:35.562Z",
-  "lastSuccessAt": "2026-10-03T14:18:35.562Z",
+  "lastAttemptAt": "2026-10-04T14:47:14.308Z",
+  "lastSuccessAt": "2026-10-04T14:47:14.308Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -21598,7 +21598,7 @@
     },
     {
       "observedAt": "2026-10-02T00:00:00.000Z",
-      "ingestedAt": "2026-10-03T14:18:36.228Z",
+      "ingestedAt": "2026-10-04T14:47:14.842Z",
       "key": "2026-002058 PP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21608,7 +21608,7 @@
     },
     {
       "observedAt": "2026-10-02T00:00:00.000Z",
-      "ingestedAt": "2026-10-03T14:18:36.228Z",
+      "ingestedAt": "2026-10-04T14:47:14.842Z",
       "key": "2026-082387 EP",
       "value": {
         "permitType": "New",
@@ -21618,7 +21618,7 @@
     },
     {
       "observedAt": "2026-10-02T00:00:00.000Z",
-      "ingestedAt": "2026-10-03T14:18:36.228Z",
+      "ingestedAt": "2026-10-04T14:47:14.842Z",
       "key": "2026-129389 BP",
       "value": {
         "permitType": "Addition and Remodel",
