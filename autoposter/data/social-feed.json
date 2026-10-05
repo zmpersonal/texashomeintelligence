@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-04T14:48:00+00:00",
+  "generated_at": "2026-10-05T18:26:39+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -155,7 +155,7 @@
       "county": "Bexar",
       "metric": "drought_stage",
       "angle": "warning",
-      "surprise_score": 0.696,
+      "surprise_score": 0.691,
       "why": "crossed into Severe Drought (D2); a large move against its own history",
       "figure": "crossed into Severe Drought (D2) — now D2",
       "source": "U.S. Drought Monitor",
@@ -179,7 +179,7 @@
       "area_id": "austin_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.362,
+      "surprise_score": 0.361,
       "why": "at a level well outside this area's own range",
       "figure": "755 cooling degree-days in 2026-08, +17% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
