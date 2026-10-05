@@ -3,9 +3,9 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-10-04T14:47:20.009Z",
+  "lastAttemptAt": "2026-10-05T18:26:00.480Z",
   "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"tdi-losses/austin\" is not implemented yet. Requested window 2025-10-04T14:47:20.009Z .. 2026-10-04T14:47:20.009Z.",
+  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"tdi-losses/austin\" is not implemented yet. Requested window 2025-10-05T18:26:00.480Z .. 2026-10-05T18:26:00.480Z.",
   "source": {
     "name": "Texas Department of Insurance",
     "url": "https://www.tdi.texas.gov/"
