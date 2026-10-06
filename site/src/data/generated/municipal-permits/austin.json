@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-05T18:25:46.158Z",
-  "lastSuccessAt": "2026-10-05T18:25:46.158Z",
+  "lastAttemptAt": "2026-10-06T15:55:56.838Z",
+  "lastSuccessAt": "2026-10-06T15:55:56.838Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -21598,7 +21598,7 @@
     },
     {
       "observedAt": "2026-10-02T00:00:00.000Z",
-      "ingestedAt": "2026-10-05T18:25:51.271Z",
+      "ingestedAt": "2026-10-06T15:55:57.248Z",
       "key": "2026-002058 PP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21608,7 +21608,7 @@
     },
     {
       "observedAt": "2026-10-02T00:00:00.000Z",
-      "ingestedAt": "2026-10-05T18:25:51.271Z",
+      "ingestedAt": "2026-10-06T15:55:57.248Z",
       "key": "2026-082387 EP",
       "value": {
         "permitType": "New",
@@ -21618,13 +21618,77 @@
     },
     {
       "observedAt": "2026-10-02T00:00:00.000Z",
-      "ingestedAt": "2026-10-05T18:25:51.271Z",
+      "ingestedAt": "2026-10-06T15:55:57.248Z",
       "key": "2026-129389 BP",
       "value": {
         "permitType": "Addition and Remodel",
         "workDescription": "Remove interior wall between kitchen and laundry.  Kitchen: relocate sink dishwasher stove & vent; and remove oven. Remove garage wing and exterior door; and frame in to enclose garage. Remove outside storage (roof framing door). Remove screen porch and cover. Remove interior wall between great room",
         "status": "Active",
         "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-10-05T00:00:00.000Z",
+      "ingestedAt": "2026-10-06T15:55:57.248Z",
+      "key": "2026-082387 MP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "New 1-story detached accessory structure (pool side cabana) 1 bath with stone veneer flat TPO roof wood frame on drilled concrete caissons. Cabana includes bathroom (shower + WC). Reconnect to existing underground electrical conduit previously servicing pergola. Install new 60 amp subpanel in cabana",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-05T00:00:00.000Z",
+      "ingestedAt": "2026-10-06T15:55:57.248Z",
+      "key": "2026-113172 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "simple re-roof - remove and replace shingles on existing roof. BLDG 13",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-10-05T00:00:00.000Z",
+      "ingestedAt": "2026-10-06T15:55:57.248Z",
+      "key": "2026-113160 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "simple re-roof - remove and replace shingles on existing roof. BLDG 12",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-10-05T00:00:00.000Z",
+      "ingestedAt": "2026-10-06T15:55:57.248Z",
+      "key": "2026-130723 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Re-Roof Layover (Removing gravel Leaving EPDM than laying over with TPO). Existing telecommunications building.",
+        "status": "Active",
+        "valuationUsd": 99461
+      }
+    },
+    {
+      "observedAt": "2026-10-05T00:00:00.000Z",
+      "ingestedAt": "2026-10-06T15:55:57.248Z",
+      "key": "2026-113121 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "simple re-roof - remove and replace shingles on existing roof.",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-10-05T00:00:00.000Z",
+      "ingestedAt": "2026-10-06T15:55:57.248Z",
+      "key": "2023-136495 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition/ remodel to existing single family residential to include: convert existing screened porch to an accessory apartment (25-2-901); new attached 1-car carport covered porch outdoor circular stair; 2nd story addition to include: walk-in closest studio space balcony roof deck office and 3rd stor",
+        "status": "Active"
       }
     }
   ]
