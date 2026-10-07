@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-06T15:55:56.838Z",
-  "lastSuccessAt": "2026-10-06T15:55:56.838Z",
+  "lastAttemptAt": "2026-10-07T16:27:06.672Z",
+  "lastSuccessAt": "2026-10-07T16:27:06.672Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -21629,7 +21629,7 @@
     },
     {
       "observedAt": "2026-10-05T00:00:00.000Z",
-      "ingestedAt": "2026-10-06T15:55:57.248Z",
+      "ingestedAt": "2026-10-07T16:27:07.166Z",
       "key": "2026-082387 MP",
       "value": {
         "permitType": "New",
@@ -21639,7 +21639,7 @@
     },
     {
       "observedAt": "2026-10-05T00:00:00.000Z",
-      "ingestedAt": "2026-10-06T15:55:57.248Z",
+      "ingestedAt": "2026-10-07T16:27:07.166Z",
       "key": "2026-113172 BP",
       "value": {
         "permitType": "Remodel",
@@ -21650,7 +21650,7 @@
     },
     {
       "observedAt": "2026-10-05T00:00:00.000Z",
-      "ingestedAt": "2026-10-06T15:55:57.248Z",
+      "ingestedAt": "2026-10-07T16:27:07.166Z",
       "key": "2026-113160 BP",
       "value": {
         "permitType": "Remodel",
@@ -21661,7 +21661,7 @@
     },
     {
       "observedAt": "2026-10-05T00:00:00.000Z",
-      "ingestedAt": "2026-10-06T15:55:57.248Z",
+      "ingestedAt": "2026-10-07T16:27:07.166Z",
       "key": "2026-130723 BP",
       "value": {
         "permitType": "Remodel",
@@ -21672,7 +21672,7 @@
     },
     {
       "observedAt": "2026-10-05T00:00:00.000Z",
-      "ingestedAt": "2026-10-06T15:55:57.248Z",
+      "ingestedAt": "2026-10-07T16:27:07.166Z",
       "key": "2026-113121 BP",
       "value": {
         "permitType": "Remodel",
@@ -21683,11 +21683,82 @@
     },
     {
       "observedAt": "2026-10-05T00:00:00.000Z",
-      "ingestedAt": "2026-10-06T15:55:57.248Z",
+      "ingestedAt": "2026-10-07T16:27:07.166Z",
       "key": "2023-136495 EP",
       "value": {
         "permitType": "Addition and Remodel",
         "workDescription": "Addition/ remodel to existing single family residential to include: convert existing screened porch to an accessory apartment (25-2-901); new attached 1-car carport covered porch outdoor circular stair; 2nd story addition to include: walk-in closest studio space balcony roof deck office and 3rd stor",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-06T00:00:00.000Z",
+      "ingestedAt": "2026-10-07T16:27:07.166Z",
+      "key": "2026-125478 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Install new 7.37kw rooftop solar system and 13.5kw energy storage system for existing residential only",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-06T00:00:00.000Z",
+      "ingestedAt": "2026-10-07T16:27:07.166Z",
+      "key": "2026-092155 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Addition\n\nPrimary suite and laundry addition raising the roof line on the entire house to increase the pitch and extending the front covered patio.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-06T00:00:00.000Z",
+      "ingestedAt": "2026-10-07T16:27:07.166Z",
+      "key": "2026-128019 PP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Run new gas line drop off left side of building roof for new Texas Gas Meter Set. Connected into existing rooftop gas line with tee and isolation valves.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-06T00:00:00.000Z",
+      "ingestedAt": "2026-10-07T16:27:07.166Z",
+      "key": "2026-116479 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Installation of a new roof top solar PV system 44.625 Kw DC and interconnection to the existing service",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-06T00:00:00.000Z",
+      "ingestedAt": "2026-10-07T16:27:07.166Z",
+      "key": "2026-131274 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Installing a 84.96 kW DC solar array on an existing Commercial roof.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-06T00:00:00.000Z",
+      "ingestedAt": "2026-10-07T16:27:07.166Z",
+      "key": "2026-129944 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "EXPRESS: Demo and remodel the shower stall area convert from shower to tub. Redo floor tile. Re use base port trim toilet vanity Includes waterproofing shower valve piping Tub trim.",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-10-06T00:00:00.000Z",
+      "ingestedAt": "2026-10-07T16:27:07.166Z",
+      "key": "2026-129364 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Avery - 40-23269 - Install new 11.4kW rooftop solar system to existing residential only using backfed breaker only.",
         "status": "Active"
       }
     }
