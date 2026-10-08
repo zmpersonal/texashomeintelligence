@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-07T16:27:06.672Z",
-  "lastSuccessAt": "2026-10-07T16:27:06.672Z",
+  "lastAttemptAt": "2026-10-08T16:27:21.995Z",
+  "lastSuccessAt": "2026-10-08T16:27:21.995Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -21693,7 +21693,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-10-07T16:27:07.166Z",
+      "ingestedAt": "2026-10-08T16:27:22.415Z",
       "key": "2026-125478 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -21703,7 +21703,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-10-07T16:27:07.166Z",
+      "ingestedAt": "2026-10-08T16:27:22.415Z",
       "key": "2026-092155 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21713,7 +21713,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-10-07T16:27:07.166Z",
+      "ingestedAt": "2026-10-08T16:27:22.415Z",
       "key": "2026-128019 PP",
       "value": {
         "permitType": "Repair",
@@ -21723,7 +21723,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-10-07T16:27:07.166Z",
+      "ingestedAt": "2026-10-08T16:27:22.415Z",
       "key": "2026-116479 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -21733,7 +21733,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-10-07T16:27:07.166Z",
+      "ingestedAt": "2026-10-08T16:27:22.415Z",
       "key": "2026-131274 BP",
       "value": {
         "permitType": "Remodel",
@@ -21743,7 +21743,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-10-07T16:27:07.166Z",
+      "ingestedAt": "2026-10-08T16:27:22.415Z",
       "key": "2026-129944 BP",
       "value": {
         "permitType": "Repair",
@@ -21754,11 +21754,31 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-10-07T16:27:07.166Z",
+      "ingestedAt": "2026-10-08T16:27:22.415Z",
       "key": "2026-129364 EP",
       "value": {
         "permitType": "Auxiliary Power",
         "workDescription": "Avery - 40-23269 - Install new 11.4kW rooftop solar system to existing residential only using backfed breaker only.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-07T00:00:00.000Z",
+      "ingestedAt": "2026-10-08T16:27:22.415Z",
+      "key": "2026-126580 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Metal roof repairs for existing office.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-07T00:00:00.000Z",
+      "ingestedAt": "2026-10-08T16:27:22.415Z",
+      "key": "2025-113752 MP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "ePlan: Residential Expedited Review - BLDG 1: New 2-story single family  residence w/ 1-car carport  3 bed 3.5 bath balcony covered patio roof deck above 2nd floor.  Part of 3-unit use.",
         "status": "Active"
       }
     }
