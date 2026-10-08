@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-07T16:27:48+00:00",
+  "generated_at": "2026-10-08T16:28:13+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -12,11 +12,14 @@
       "type": "metro",
       "metrics": {
         "drought_stage": {
-          "value": 3.0,
+          "value": 2.0,
           "source": "U.S. Drought Monitor",
-          "as_of": "2026-09-29",
-          "vs_baseline": 0.6552,
-          "wow": 0.0
+          "as_of": "2026-10-06",
+          "vs_baseline": -0.3559,
+          "wow": -1.0,
+          "crossed": [
+            "fell back out of Extreme Drought (D3)"
+          ]
         },
         "cooling_degree_days": {
           "value": 755.0,
@@ -29,22 +32,22 @@
           "value": 1634.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 302.12,
+          "vs_baseline": 302.16,
           "mom": -1.0
         },
         "permit_activity_hvac": {
           "value": 1097.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 201.48,
+          "vs_baseline": 201.52,
           "mom": 0.0
         },
         "permit_activity_plumbing": {
-          "value": 1297.0,
+          "value": 1296.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 67.2,
-          "mom": 0.0
+          "vs_baseline": 66.24,
+          "mom": -1.0
         },
         "permit_activity_roofing": {
           "value": 167.0,
@@ -69,12 +72,9 @@
         "drought_stage": {
           "value": 2.0,
           "source": "U.S. Drought Monitor",
-          "as_of": "2026-09-29",
-          "vs_baseline": -0.6552,
-          "wow": 1.0,
-          "crossed": [
-            "crossed into Severe Drought (D2)"
-          ]
+          "as_of": "2026-10-06",
+          "vs_baseline": -0.6441,
+          "wow": 0.0
         },
         "cooling_degree_days": {
           "value": 700.0,
@@ -151,15 +151,15 @@
   "stories": [
     {
       "rank": 1,
-      "area_id": "san_antonio_metro",
-      "county": "Bexar",
+      "area_id": "austin_metro",
+      "county": "Travis",
       "metric": "drought_stage",
       "angle": "warning",
-      "surprise_score": 0.681,
-      "why": "crossed into Severe Drought (D2); a large move against its own history",
-      "figure": "crossed into Severe Drought (D2) — now D2",
+      "surprise_score": 0.692,
+      "why": "fell back out of Extreme Drought (D3); a large move against its own history",
+      "figure": "fell back out of Extreme Drought (D3) — now D2",
       "source": "U.S. Drought Monitor",
-      "as_of": "2026-09-29",
+      "as_of": "2026-10-06",
       "suppressed": false
     },
     {
@@ -179,7 +179,7 @@
       "area_id": "austin_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.359,
+      "surprise_score": 0.358,
       "why": "at a level well outside this area's own range",
       "figure": "755 cooling degree-days in 2026-08, +17% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -191,7 +191,7 @@
       "area_id": "san_antonio_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.333,
+      "surprise_score": 0.332,
       "why": "at a level well outside this area's own range",
       "figure": "700 cooling degree-days in 2026-08, +15% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -292,6 +292,18 @@
       "figure": "15.88¢ per kWh (2026-07), -0.4% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
       "as_of": "2026-07-01",
+      "suppressed": false
+    },
+    {
+      "rank": 13,
+      "area_id": "austin_metro",
+      "metric": "permit_activity_plumbing",
+      "angle": "reveal",
+      "surprise_score": 0.131,
+      "why": "a modest move against its own history",
+      "figure": "1,296 plumbing permits in 2026-09, -0% month over month",
+      "source": "City of Austin Issued Construction Permits (Socrata)",
+      "as_of": "2026-09-01",
       "suppressed": false
     }
   ]
