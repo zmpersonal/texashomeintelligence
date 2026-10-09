@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-08T16:27:21.995Z",
-  "lastSuccessAt": "2026-10-08T16:27:21.995Z",
+  "lastAttemptAt": "2026-10-09T16:10:52.276Z",
+  "lastSuccessAt": "2026-10-09T16:10:52.276Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -21764,7 +21764,7 @@
     },
     {
       "observedAt": "2026-10-07T00:00:00.000Z",
-      "ingestedAt": "2026-10-08T16:27:22.415Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
       "key": "2026-126580 BP",
       "value": {
         "permitType": "Remodel",
@@ -21774,11 +21774,148 @@
     },
     {
       "observedAt": "2026-10-07T00:00:00.000Z",
-      "ingestedAt": "2026-10-08T16:27:22.415Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
       "key": "2025-113752 MP",
       "value": {
         "permitType": "New",
         "workDescription": "ePlan: Residential Expedited Review - BLDG 1: New 2-story single family  residence w/ 1-car carport  3 bed 3.5 bath balcony covered patio roof deck above 2nd floor.  Part of 3-unit use.",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-08T00:00:00.000Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "key": "2026-112798 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Remove and replace shingles on existing roof shingle replacement only.",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-10-08T00:00:00.000Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "key": "2026-121151 BP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "Interior Remodel - Remodel 3 bathrooms remodel laundry room\nrolling in expired permit 2025-035956 BP scope - roof replacement new metal roof",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-10-08T00:00:00.000Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "key": "2026-112781 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Remove and replace shingles on existing roof shingle replacement only.",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-10-08T00:00:00.000Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "key": "2026-132351 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Full tear-off of existing roofing to structural deck (like-for-like reroof). Install fully adhered 60-mil TPO membrane over two layers 2.2 polyiso insulation (4.4 R-25.2 min). Flash RTU curbs/penetrations; ES-1 perimeter metal. No structural MEP or footprint changes.",
+        "status": "Active",
+        "valuationUsd": 61000
+      }
+    },
+    {
+      "observedAt": "2026-10-08T00:00:00.000Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "key": "2026-112751 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Remove and replace shingles on existing roof shingle replacement only.",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-10-08T00:00:00.000Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "key": "2026-132711 BP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "[address removed]: Bldg 1 New 3-story SF Res [3bed 2.5bath] with attached garage and rooftop deck",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-08T00:00:00.000Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "key": "2026-131734 BP",
+      "value": {
+        "permitType": "Repair",
+        "workDescription": "Express - Reroof: tear off and replace existing shingle roof 50 squares with Malarkey Vista Class 4 impact-resistant shingles. Replace damaged roof decking as needed not to exceed 128 sq ft. No structural changes.",
+        "status": "Active",
+        "valuationUsd": 1
+      }
+    },
+    {
+      "observedAt": "2026-10-08T00:00:00.000Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "key": "2026-112764 BP",
+      "value": {
+        "permitType": "Remodel",
+        "workDescription": "Remove and replace shingles on existing roof shingle replacement only.",
+        "status": "Active",
+        "valuationUsd": 5000
+      }
+    },
+    {
+      "observedAt": "2026-10-08T00:00:00.000Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "key": "2026-132709 BP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "ePlan: Residential Expedited Review - FOUR UNITS: New Construction of 4 MODULAR  3-Story Single Family Res;\n[address removed]: New 3-story SF Res [3bed 2.5bath] with attached garage and roof deck",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-08T00:00:00.000Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "key": "2026-132710 BP",
+      "value": {
+        "permitType": "New",
+        "workDescription": "[address removed]: New 3-story SF Res [3bed 2.5bath] with attached garage and rooftop deck",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-08T00:00:00.000Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "key": "2026-091124 EP",
+      "value": {
+        "permitType": "Addition and Remodel",
+        "workDescription": "ePlan: Residential Expedited Review - Addition and Remodel to Existing Single Family Res. work to include 2nd floor addition to existing 1-story Sf res (all within existing roofline) remodel of kitchen/living space & laundry",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-08T00:00:00.000Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "key": "2026-126814 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "7.36 kW roof mounted solar PV system with energy storage",
+        "status": "Active"
+      }
+    },
+    {
+      "observedAt": "2026-10-08T00:00:00.000Z",
+      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "key": "2026-129003 EP",
+      "value": {
+        "permitType": "Auxiliary Power",
+        "workDescription": "Install new 6.525kW rooftop solar system for existing residential only.",
         "status": "Active"
       }
     }

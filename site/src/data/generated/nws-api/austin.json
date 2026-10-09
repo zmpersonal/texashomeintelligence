@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-08T16:27:40.567Z",
-  "lastSuccessAt": "2026-10-08T16:27:40.567Z",
+  "lastAttemptAt": "2026-10-09T16:11:04.117Z",
+  "lastSuccessAt": "2026-10-09T16:11:04.117Z",
   "lastError": null,
   "source": {
     "name": "National Weather Service API",
@@ -587,6 +587,16 @@
       "value": {
         "forecastHighF": 91,
         "forecastLowF": 68
+      }
+    },
+    {
+      "observedAt": "2026-10-09T15:00:00.000Z",
+      "ingestedAt": "2026-10-09T16:11:04.636Z",
+      "key": "2026-10-09T10:00:00-05:00",
+      "value": {
+        "forecastHighF": 94,
+        "forecastLowF": 67,
+        "activeAlert": "Air Quality Alert issued October 9 at 8:05AM CDT by NWS Austin/San Antonio TX"
       }
     }
   ]

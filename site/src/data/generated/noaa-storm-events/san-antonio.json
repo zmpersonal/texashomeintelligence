@@ -2,10 +2,10 @@
   "datasetId": "noaa-storm-events",
   "location": "san-antonio",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-10-08T16:27:19.270Z",
+  "status": "stale",
+  "lastAttemptAt": "2026-10-09T16:10:51.905Z",
   "lastSuccessAt": "2026-10-08T16:27:19.270Z",
-  "lastError": null,
+  "lastError": "fetch failed",
   "source": {
     "name": "NOAA Storm Events Database",
     "url": "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/"

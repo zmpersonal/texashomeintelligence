@@ -3,9 +3,9 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "stale",
-  "lastAttemptAt": "2026-10-08T16:27:42.889Z",
+  "lastAttemptAt": "2026-10-09T16:11:09.888Z",
   "lastSuccessAt": "2026-09-30T22:31:22.621Z",
-  "lastError": "AirNow fetch failed: HTTP 410 from https://www.airnowapi.org/aq/observation/zipCode/current/?format=application%2Fjson&zipCode=78701&distance=25&API_KEY=268D3CB0-045A-4E5E-8322-4BAC530E1A3A",
+  "lastError": "AirNow fetch failed: HTTP 503 from https://www.airnowapi.org/aq/observation/zipCode/current/?format=application%2Fjson&zipCode=78701&distance=25&API_KEY=268D3CB0-045A-4E5E-8322-4BAC530E1A3A",
   "source": {
     "name": "AirNow",
     "url": "https://www.airnow.gov"
