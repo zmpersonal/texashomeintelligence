@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-09T16:12:04+00:00",
+  "generated_at": "2026-10-10T15:22:59+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -155,7 +155,7 @@
       "county": "Travis",
       "metric": "drought_stage",
       "angle": "warning",
-      "surprise_score": 0.687,
+      "surprise_score": 0.682,
       "why": "fell back out of Extreme Drought (D3); a large move against its own history",
       "figure": "fell back out of Extreme Drought (D3) — now D2",
       "source": "U.S. Drought Monitor",
@@ -239,7 +239,7 @@
       "area_id": "san_antonio_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.263,
+      "surprise_score": 0.262,
       "why": "a modest move against its own history",
       "figure": "689 cooling degree-days in 2026-09, -2% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
