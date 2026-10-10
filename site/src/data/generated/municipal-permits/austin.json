@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-09T16:10:52.276Z",
-  "lastSuccessAt": "2026-10-09T16:10:52.276Z",
+  "lastAttemptAt": "2026-10-10T15:22:19.209Z",
+  "lastSuccessAt": "2026-10-10T15:22:19.209Z",
   "lastError": null,
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
@@ -21784,7 +21784,7 @@
     },
     {
       "observedAt": "2026-10-08T00:00:00.000Z",
-      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "ingestedAt": "2026-10-10T15:22:19.681Z",
       "key": "2026-112798 BP",
       "value": {
         "permitType": "Remodel",
@@ -21795,7 +21795,7 @@
     },
     {
       "observedAt": "2026-10-08T00:00:00.000Z",
-      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "ingestedAt": "2026-10-10T15:22:19.681Z",
       "key": "2026-121151 BP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21806,7 +21806,7 @@
     },
     {
       "observedAt": "2026-10-08T00:00:00.000Z",
-      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "ingestedAt": "2026-10-10T15:22:19.681Z",
       "key": "2026-112781 BP",
       "value": {
         "permitType": "Remodel",
@@ -21817,7 +21817,7 @@
     },
     {
       "observedAt": "2026-10-08T00:00:00.000Z",
-      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "ingestedAt": "2026-10-10T15:22:19.681Z",
       "key": "2026-132351 BP",
       "value": {
         "permitType": "Remodel",
@@ -21828,7 +21828,7 @@
     },
     {
       "observedAt": "2026-10-08T00:00:00.000Z",
-      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "ingestedAt": "2026-10-10T15:22:19.681Z",
       "key": "2026-112751 BP",
       "value": {
         "permitType": "Remodel",
@@ -21839,7 +21839,7 @@
     },
     {
       "observedAt": "2026-10-08T00:00:00.000Z",
-      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "ingestedAt": "2026-10-10T15:22:19.681Z",
       "key": "2026-132711 BP",
       "value": {
         "permitType": "New",
@@ -21849,7 +21849,7 @@
     },
     {
       "observedAt": "2026-10-08T00:00:00.000Z",
-      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "ingestedAt": "2026-10-10T15:22:19.681Z",
       "key": "2026-131734 BP",
       "value": {
         "permitType": "Repair",
@@ -21860,7 +21860,7 @@
     },
     {
       "observedAt": "2026-10-08T00:00:00.000Z",
-      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "ingestedAt": "2026-10-10T15:22:19.681Z",
       "key": "2026-112764 BP",
       "value": {
         "permitType": "Remodel",
@@ -21871,7 +21871,7 @@
     },
     {
       "observedAt": "2026-10-08T00:00:00.000Z",
-      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "ingestedAt": "2026-10-10T15:22:19.681Z",
       "key": "2026-132709 BP",
       "value": {
         "permitType": "New",
@@ -21881,7 +21881,7 @@
     },
     {
       "observedAt": "2026-10-08T00:00:00.000Z",
-      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "ingestedAt": "2026-10-10T15:22:19.681Z",
       "key": "2026-132710 BP",
       "value": {
         "permitType": "New",
@@ -21891,7 +21891,7 @@
     },
     {
       "observedAt": "2026-10-08T00:00:00.000Z",
-      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "ingestedAt": "2026-10-10T15:22:19.681Z",
       "key": "2026-091124 EP",
       "value": {
         "permitType": "Addition and Remodel",
@@ -21901,7 +21901,7 @@
     },
     {
       "observedAt": "2026-10-08T00:00:00.000Z",
-      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "ingestedAt": "2026-10-10T15:22:19.681Z",
       "key": "2026-126814 EP",
       "value": {
         "permitType": "Auxiliary Power",
@@ -21911,7 +21911,7 @@
     },
     {
       "observedAt": "2026-10-08T00:00:00.000Z",
-      "ingestedAt": "2026-10-09T16:10:52.752Z",
+      "ingestedAt": "2026-10-10T15:22:19.681Z",
       "key": "2026-129003 EP",
       "value": {
         "permitType": "Auxiliary Power",
