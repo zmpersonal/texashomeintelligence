@@ -145,6 +145,10 @@ async function main(): Promise<void> {
       // Pull the sentences that mention the two quantities by name, so the
       // definitions arrive in the publisher's words rather than paraphrased.
       const plain = text.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+      // The retired service's own page is the one that settles what the OLD
+      // `AQI` field was, so its opening is printed whether or not a search term
+      // matched — a page that says nothing about NowCast is itself an answer.
+      if (u.endsWith("/retired")) console.log(`   OPENS: ${plain.slice(0, 1200)}`);
       for (const term of ["NowCast", "nowcast", "nowcastAQI", "current AQI", "hourly"]) {
         const idx: number[] = [];
         let at = plain.indexOf(term);
@@ -196,17 +200,27 @@ async function main(): Promise<void> {
   /** siteID → {lat, lon, name} from the pipe-delimited table. The column order
    * is discovered from the data rather than assumed: find the field that equals
    * the site id, then the first plausible lat/lon pair in the row. */
-  function locate(siteId: string): { lat: number; lon: number } | undefined {
+  // MATCHED ON A WHOLE FIELD, not a substring. Pass 1 used
+  // `line.includes(siteId)` and reported "San Antonio Northwest C23" — a Bexar
+  // County monitor — as 178.1 miles from downtown San Antonio. A nine-digit AQS
+  // id occurs inside other fields of a 3.2 MB table, so the first matching LINE
+  // was not the right site's line. The figure was absurd on its face, which is
+  // the only reason it was caught; a wrong-but-plausible distance would have
+  // been reported as fact.
+  function locate(siteId: string): { lat: number; lon: number; name: string } | undefined {
     for (const line of sites.split("\n")) {
-      if (!line.includes(siteId)) continue;
-      const f = line.split("|");
-      const nums = f
-        .map((x) => Number(x))
-        .map((n, i) => ({ n, i }))
-        .filter((x) => Number.isFinite(x.n));
-      const lat = nums.find((x) => x.n > 25 && x.n < 37);
-      const lon = nums.find((x) => x.n < -93 && x.n > -107);
-      if (lat && lon) return { lat: lat.n, lon: lon.n };
+      const f = line.split("|").map((x) => x.trim());
+      if (!f.some((field) => field === siteId)) continue;
+      // Latitude and longitude are adjacent, in that order, and Texas pins
+      // them tightly enough to identify the pair unambiguously.
+      for (let i = 0; i < f.length - 1; i += 1) {
+        const lat = Number(f[i]);
+        const lon = Number(f[i + 1]);
+        if (Number.isFinite(lat) && Number.isFinite(lon) &&
+            lat > 25 && lat < 37 && lon < -93 && lon > -107) {
+          return { lat, lon, name: f.find((x) => /[A-Za-z]{4}/.test(x)) ?? "" };
+        }
+      }
     }
     return undefined;
   }
