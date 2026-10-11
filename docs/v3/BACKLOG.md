@@ -68,6 +68,24 @@ anything. If a number is worth printing, decide what it must be.
 
 ---
 
+## Standing rule — redact before you shorten
+
+**Masking matches the whole value, so any truncation of a string that might hold a secret
+defeats it.** Round 47: the revision-drift probe printed `error.slice(0, 160)`, which cut a
+36-character API key in half; the fragment no longer matched the secret, so GitHub's mask did not
+fire. The scheduled ingestion logs — same key, same error text, untruncated — rendered it `***`
+correctly. The probe was the only thing that leaked it, and the probe was mine.
+
+This governs every probe and audit workflow, not just that one. Redact first, then shorten.
+`src/ingest/redactSecrets.ts` is the shared pass; `SECURITY.md` carries the rule.
+
+The wider lesson is about where a guarantee can live: a helper protects the call sites that
+remember it, and the **sink** protects the ones that don't. `lastError` is the single field
+through which arbitrary error text reaches a committed file, so that is where the redaction has
+to be, and that is where the assertion points.
+
+---
+
 ## Standing test — does the number change the action?
 
 **Before any new data domain is proposed, it has to pass this: does the reading's VALUE change

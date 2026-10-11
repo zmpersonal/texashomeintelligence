@@ -1,4 +1,5 @@
 import type { FetcherModule, Observation } from "../types";
+import { SWDI_MAX_WINDOW_DAYS } from "../fetchWindows";
 import { parseCsv } from "../csv";
 import { ZIP_AREAS, type AreaId } from "../../data/zip-areas";
 
@@ -145,7 +146,12 @@ const PRODUCT = "nx3hail";
  * against that log, never against the documentation alone** — the
  * documentation is what the 744-hour error already contradicted.
  */
-const MAX_WINDOW_DAYS = 31;
+// Round 47: ONE number, three readers. This was a private constant here while
+// `fetchWindows.ts` set the request width and the drift probe carried its own
+// copy of the cap — three places that had to agree by memory. It now lives
+// beside the revisit table, and `REVISIT_DAYS["swdi-nx3hail"]` IS this value,
+// so the window asks for exactly what the clamp allows.
+const MAX_WINDOW_DAYS = SWDI_MAX_WINDOW_DAYS;
 
 /**
  * Half-width of the query box around each metro's representative point from

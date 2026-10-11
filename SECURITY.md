@@ -97,6 +97,28 @@ proposed here on purpose; the decision is the owner's to frame.
 - If a task seems to require a secret you don't have, **stop and stub** with a documented
   TODO in `HANDOFF.md` — never hardcode or fake it.
 
+### Anything that writes an error, a URL or a response down can leak a key
+
+Round 47. Four fetchers put an API key in a query string and then embedded the URL in a thrown
+error. `runIngestion`'s `failAttempt` writes that text into `lastError`, which is **committed**,
+so a 410 from AirNow re-committed the full key into this public repo on every scheduled run for
+37 days. Two rules came out of it, and the second is the non-obvious one:
+
+- **Redact at the sink, not only at the call site.** `src/ingest/redactSecrets.ts` is applied
+  both in the fetchers (`redactUrl`) and in `failAttempt` (`redactSecretsInText`). A shared
+  helper only protects the places that remember to call it; the sink protects the ones that
+  don't. `datasetintegrityunit` asserts no committed `lastError` carries a credential-shaped
+  parameter.
+
+- **Truncation defeats GitHub's secret masking.** Masking replaces a secret in a log by matching
+  the **whole value**. A probe that printed `error.slice(0, 160)` cut a 36-character key in half,
+  and the half no longer matched, so the mask never fired — the scheduled ingestion logs showed
+  `API_KEY=***` correctly and the probe published a fragment. **Never truncate, trim, wrap,
+  hex-dump, re-encode or diff a string that may contain a secret before redacting it**, and that
+  applies to every probe and audit workflow (`.github/workflows/*probe*.yml`,
+  `site/scripts/audits/**`): redact first, then shorten. The mask is not a backstop you can rely
+  on — it is defeated by ordinary string handling.
+
 ---
 
 ## PII & consent (the dashboard capture flow)
