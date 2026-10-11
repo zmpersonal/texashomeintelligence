@@ -71,5 +71,11 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "Round 47: re-ingest under per-dataset REVISIT_DAYS"
+            # Pull before pushing. The first attempt lost a whole ingestion to a
+            # non-fast-forward: a commit landed on this branch from the session
+            # while the job was running, so the push was rejected and the data
+            # it had just fetched was discarded with the runner. Rebase keeps
+            # the data commit on top of whatever arrived meanwhile.
+            git pull --rebase origin claude/thi-plan-review-m40n0x
             git push
           fi
