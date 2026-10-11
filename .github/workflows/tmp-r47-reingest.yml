@@ -17,6 +17,7 @@ on:
       - claude/thi-plan-review-m40n0x
     paths:
       - ".github/workflows/tmp-r47-reingest.yml"
+      - "site/src/ingest/fetchWindows.ts"
   workflow_dispatch: {}
 
 permissions:

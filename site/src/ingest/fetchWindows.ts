@@ -56,10 +56,21 @@ export const REVISIT_DAYS: Record<string, number> = {
   // ── Sources that revise what they have already published ────────────────
 
   // The EIA revises recent months as utilities report, which the data page
-  // states in rendered copy. 400 days also carries the series past thirteen
-  // months, which is what a year-over-year comparison on the newest month
-  // needs and what twelve months can never give.
-  "eia-electricity": 400 * DAY,
+  // states in rendered copy.
+  //
+  // 800 days, and the first attempt at 400 is why the number is this large.
+  // MEASURED: 400 days before 2026-10-11 is 2025-09-06, so the fetcher's
+  // `start=2025-09` was LATER than the 2025-08 row already on disk — the series
+  // did not grow at all, and only kept 2025-08 because merging never deletes.
+  //
+  // Thirteen months is not the requirement. The requirement is thirteen months
+  // BEFORE THE NEWEST PUBLISHED MONTH, and this series runs about three months
+  // behind real time (newest 2026-07 on 2026-10-11), so a year-over-year
+  // comparison on it reaches fifteen months back from today — and that gap
+  // widens whenever the EIA's publication lag does. 800 days ≈ 26 months
+  // absorbs the lag instead of tracking it, and matches the annual series
+  // below rather than inventing a third value.
+  "eia-electricity": 800 * DAY,
 
   // NCEI revises storm reports, and `types.ts` uses exactly that as its
   // example of why keys replace in place. Cheap at any width: the fetcher
