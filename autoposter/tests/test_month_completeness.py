@@ -227,3 +227,15 @@ if __name__ == "__main__":
         except Exception as e:                      # noqa: BLE001
             print("ERROR", f.__name__, f"{type(e).__name__}: {e}"[:250])
     print(f"{ok}/{len(fns)} passed")
+
+    # Round 47b. THIS LINE WAS MISSING, and its absence made the file's own
+    # verdict unreadable to the thing that runs it. `autoposter-cadence.yml`
+    # drives the suite with `python3 "$t" || failed=1`, so a file that prints
+    # "9/10 passed" and exits 0 reports success to the workflow. Three files
+    # were in this state; two were actively failing.
+    #
+    # Same shape as `badgeunit` on the site side (Round 46 F3): a check that
+    # reports a value without asserting it. The standing rule is "a replay that
+    # reports a value is not a check" -- and the reporting half was here all
+    # along.
+    sys.exit(0 if ok == len(fns) else 1)
