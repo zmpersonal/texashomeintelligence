@@ -1,4 +1,5 @@
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
+import { redactSecretsInText } from "./redactSecrets";
 import path from "node:path";
 import type { DatasetFile, FetcherModule } from "./types";
 import { computeFetchWindow, mergeObservations } from "./merge";
@@ -149,7 +150,13 @@ function failAttempt<T>(
     source: fetcher.source,
     status: wasLive ? "stale" : existing.status,
     lastAttemptAt: now,
-    lastError: reason,
+    // Round 47. Redacted AT THE SINK, not only at the four call sites that
+    // built a keyed URL. This is the single place arbitrary error text reaches
+    // a committed file, so it is the only place the guarantee can live: a
+    // fetcher that forgets `redactUrl` still cannot write a credential to disk.
+    // The vector was a 410 from AirNow re-committing the full API key into a
+    // public repository on every scheduled run for 37 days.
+    lastError: redactSecretsInText(reason),
   };
   writeDatasetFile(filePath, updated);
   return {
@@ -157,6 +164,8 @@ function failAttempt<T>(
     location: fetcher.location,
     outcome: wasLive ? "stale" : existing.observations.length > 0 ? "sample-unchanged" : "error",
     observationCount: existing.observations.length,
-    message: reason,
+    // The result's `message` is what the ingest run PRINTS, so it is the log
+    // channel the same key leaked through. Same treatment.
+    message: redactSecretsInText(reason),
   };
 }

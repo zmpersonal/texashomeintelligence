@@ -1,4 +1,5 @@
 import type { FetcherModule, Observation } from "../types";
+import { redactUrl } from "../redactSecrets";
 import type { AreaId } from "../../data/zip-areas";
 
 export interface TradeWageValue {
@@ -83,7 +84,7 @@ function makeFetcher(location: AreaId): FetcherModule<TradeWageValue> {
 
     const res = await fetch(url);
     if (!res.ok) {
-      throw new Error(`BLS OEWS fetch failed: HTTP ${res.status} from ${url.toString()}`);
+      throw new Error(`BLS OEWS fetch failed: HTTP ${res.status} from ${redactUrl(url)}`);
     }
     const body = (await res.json()) as BlsResponse;
     if (body.status !== "REQUEST_SUCCEEDED") {

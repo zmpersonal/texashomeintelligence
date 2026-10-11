@@ -23,6 +23,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { hasSecretShape, redactSecretsInText } from "../../src/ingest/redactSecrets";
 
 const SITE_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const GENERATED = path.join(SITE_DIR, "src", "data", "generated");
@@ -46,6 +47,7 @@ interface File {
   datasetId: string;
   location: string;
   status: string;
+  lastError: string | null;
   observations: Row[];
 }
 
@@ -134,6 +136,19 @@ function forbiddenValues(f: File): string[] {
   return out;
 }
 
+/** Round 47. `lastError` is the ONE field through which arbitrary error text
+ * reaches a committed file, and a 410 from AirNow used it to re-commit the full
+ * API key into a public repository on every scheduled run for 37 days. The
+ * redaction now happens at that sink, and this refuses to commit a credential
+ * whatever route it took to get there.
+ *
+ * The predicate is imported from the same module that does the redaction, so
+ * this and the fix cannot drift apart — the Round 45 lesson that a bar is
+ * copied, not restated. */
+function secretShapedLastError(f: File): string[] {
+  return hasSecretShape(f.lastError) ? [String(f.lastError).slice(0, 120)] : [];
+}
+
 function main(): void {
   const tree = readTree();
   const rows = tree.reduce((n, t) => n + t.file.observations.length, 0);
@@ -166,6 +181,14 @@ function main(): void {
     forbidden.slice(0, 5).join(", "),
   );
 
+  const leaked = tree.flatMap((t) => secretShapedLastError(t.file).map((e) => `${t.path}: ${e}`));
+  const withError = tree.filter((t) => t.file.lastError).length;
+  assert(
+    `no credential-shaped parameter in any committed lastError (${withError} file(s) carry one)`,
+    leaked.length === 0,
+    leaked.slice(0, 3).join(" · "),
+  );
+
   // ── POSITIVE CONTROLS ────────────────────────────────────────────────────
   // Each predicate run against a row built to trip it. If one of these passes
   // silently, the matching scan above is decoration.
@@ -174,7 +197,7 @@ function main(): void {
   const row = (over: Partial<Row> = {}): Row =>
     ({ key: "k1", observedAt: "2026-01-01T00:00:00.000Z", ingestedAt: "2026-01-01T00:00:00.000Z", value: {}, ...over });
   const file = (over: Partial<File> = {}): File =>
-    ({ datasetId: "x", location: "austin", status: "live", observations: [row()], ...over });
+    ({ datasetId: "x", location: "austin", status: "live", lastError: null, observations: [row()], ...over });
 
   assert("a seed row in a live file is caught",
     seedRowsInRealFile(file({ observations: [row({ seed: true })] })).length === 1);
@@ -196,6 +219,19 @@ function main(): void {
     forbiddenValues(file({ datasetId: "noaa-climate", observations: [row({ value: { completenessFlag: "S" } })] })).length === 0);
   assert("a forbidden value in the WRONG dataset is ignored",
     forbiddenValues(file({ datasetId: "airnow", observations: [row({ value: { countCheck: "disagrees" } })] })).length === 0);
+
+  // The real leak, verbatim in shape but with a synthetic value: a 36-character
+  // token on an `API_KEY` param, which is exactly what was committed.
+  const planted = "AirNow fetch failed: HTTP 410 from https://x.test/aq/?zipCode=78701&API_KEY=AAAA1111BBBB2222CCCC3333DDDD4444EEEE";
+  assert("a key-shaped lastError is caught", secretShapedLastError(file({ lastError: planted })).length === 1);
+  assert("and the redaction removes what the check objects to",
+    !hasSecretShape(redactSecretsInText(planted)) && redactSecretsInText(planted).includes("zipCode=78701"));
+  assert("a token-shaped value under an INNOCENT param name is still caught",
+    secretShapedLastError(file({ lastError: "failed from https://x.test/?t=AAAA1111BBBB2222CCCC3333" })).length === 1);
+  assert("an ordinary error with no parameters is not",
+    secretShapedLastError(file({ lastError: "AirNow fetch failed: HTTP 410" })).length === 0);
+  assert("and a diagnostic Socrata clause survives the redaction",
+    secretShapedLastError(file({ lastError: "failed: $where=issue_date between '2025-09-01' and '2026-10-01'" })).length === 0);
 
   console.log(
     `\nDATASET_INTEGRITY_UNIT_STATUS=${failures === 0 ? "ok" : "fail"} checks=${checks} failures=${failures}`,

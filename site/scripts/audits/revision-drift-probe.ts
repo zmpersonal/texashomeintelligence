@@ -76,6 +76,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { REGISTRY } from "../../src/ingest/registry";
 import type { Observation } from "../../src/ingest/types";
+import { redactSecretsInText } from "../../src/ingest/redactSecrets";
 
 /** Why a dataset's outcomes mean what they mean. Stated before the run. */
 type Expectation = "revisable" | "current-conditions" | "digest-keyed" | "reference" | "stub";
@@ -179,7 +180,9 @@ async function probeOne(entry: typeof REGISTRY[number]): Promise<DatasetReport> 
   try {
     fresh = await fetcher.fetchRaw({ env: process.env, window: { since, until } });
   } catch (e) {
-    return { ...base, error: e instanceof Error ? e.message : String(e) };
+    // Redacted before it reaches the report file as well as the log.
+    const raw = e instanceof Error ? e.message : String(e);
+    return { ...base, error: redactSecretsInText(raw) };
   }
   base.rowsFromSource = fresh.length;
 
@@ -234,7 +237,13 @@ async function main(): Promise<void> {
     const tail = r.skipped
       ? `skipped: ${r.skipped}`
       : r.error
-        ? `ERROR: ${r.error.slice(0, 160)}`
+        // Round 47: REDACT BEFORE TRUNCATING. This printed `r.error.slice(0,
+        // 160)` and cut a 36-character API key in half. GitHub masks a secret
+        // in a log by matching the WHOLE value, so a truncated key no longer
+        // matches and the mask never fires — this probe published a fragment of
+        // a key that the ingestion logs had correctly rendered as `***`.
+        // Truncation defeats masking.
+        ? `ERROR: ${redactSecretsInText(r.error).slice(0, 200)}`
         : `${r.same} same · ${changed} CHANGED · ${absent} absent · ${added} new` +
           (unassessable ? ` · ${unassessable} unassessable (capped to ${r.cappedToDays}d)` : "");
     console.log(`${r.datasetId}/${r.location}  [${r.expectation}]  ${r.rowsOnDisk} on disk → ${tail}`);

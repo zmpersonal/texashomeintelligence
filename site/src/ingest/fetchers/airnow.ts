@@ -1,4 +1,5 @@
 import type { FetcherModule, Observation } from "../types";
+import { redactUrl } from "../redactSecrets";
 import type { AreaId } from "../../data/zip-areas";
 
 export interface AirQualityValue {
@@ -45,7 +46,7 @@ function makeFetcher(location: AreaId): FetcherModule<AirQualityValue> {
 
       const res = await fetch(url);
       if (!res.ok) {
-        throw new Error(`AirNow fetch failed: HTTP ${res.status} from ${url.toString()}`);
+        throw new Error(`AirNow fetch failed: HTTP ${res.status} from ${redactUrl(url)}`);
       }
       const rows = (await res.json()) as AirNowObservation[];
       if (rows.length === 0) return [];
