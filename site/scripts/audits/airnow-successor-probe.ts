@@ -79,14 +79,17 @@ function haversineMiles(a: { lat: number; lon: number }, b: { lat: number; lon: 
 
 /** Pages that should carry the definition of AQI and of NowCast. */
 const DOC_URLS = [
-  // Round 47b: the retired service's OWN page, named by the 410 body. This is
-  // the call that settles whether the old `AQI` field was already a NowCast
-  // value rather than leaving it an inference.
-  "https://docs.airnowapi.org/webservices/retired",
   "https://docs.airnowapi.org/webservices",
   "https://docs.airnowapi.org/aq101",
   "https://www.airnow.gov/aqi/aqi-basics/",
   "https://document.airnow.gov/airnow-technical-documentation.pdf",
+  // LAST ON PURPOSE. The retired service's own page — named by the 410 body —
+  // is the call that settles whether the old `AQI` field was already a NowCast
+  // value. It was first in the list and its output sat too far up a 250-line
+  // log to retrieve: three attempts to page back to it timed out or returned
+  // the wrong window. Printing the thing the decision rests on LAST, where the
+  // tail always reaches, is cheaper than fighting the log API.
+  "https://docs.airnowapi.org/webservices/retired",
 ];
 
 async function show(label: string, url: URL): Promise<void> {
