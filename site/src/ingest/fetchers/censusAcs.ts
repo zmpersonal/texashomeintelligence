@@ -1,4 +1,5 @@
 import type { FetcherModule, Observation } from "../types";
+import { redactUrl } from "../redactSecrets";
 import type { AreaId } from "../../data/zip-areas";
 import { locationDef } from "../../data/locations";
 
@@ -115,7 +116,7 @@ function makeFetcher(location: string, geo: AcsGeography): FetcherModule<Housing
 
     const res = await fetch(url);
     if (!res.ok) {
-      throw new Error(`Census ACS fetch failed: HTTP ${res.status} from ${url.toString()}`);
+      throw new Error(`Census ACS fetch failed: HTTP ${res.status} from ${redactUrl(url)}`);
     }
     const rows = (await res.json()) as AcsResponse;
     const [header, data] = rows;

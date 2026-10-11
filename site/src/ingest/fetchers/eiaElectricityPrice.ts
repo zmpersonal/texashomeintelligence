@@ -1,4 +1,5 @@
 import type { FetcherModule, Observation } from "../types";
+import { redactUrl } from "../redactSecrets";
 
 export interface ElectricityPriceValue {
   pricePerKwhCents: number;
@@ -53,7 +54,7 @@ export const eiaElectricityPrice: FetcherModule<ElectricityPriceValue> = {
 
     const res = await fetch(url);
     if (!res.ok) {
-      throw new Error(`EIA electricity price fetch failed: HTTP ${res.status} from ${url.toString()}`);
+      throw new Error(`EIA electricity price fetch failed: HTTP ${res.status} from ${redactUrl(url)}`);
     }
     const body = (await res.json()) as EiaResponse;
     const rows = body.response?.data ?? [];
