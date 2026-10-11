@@ -68,6 +68,29 @@ anything. If a number is worth printing, decide what it must be.
 
 ---
 
+## Standing rule — a tuned number says what it is compensating for
+
+Round 47. `REVISIT_DAYS["eia-electricity"]` was set to 400 days on the reasoning
+"a year-over-year comparison needs thirteen months". It did nothing: 400 days before
+2026-10-11 is 2025-09-06, so the request started at 2025-09 — **later than the 2025-08 row
+already on disk**, which survived only because merging never deletes. The series did not grow
+by a single month.
+
+The requirement was never thirteen months. It is **thirteen months before the newest PUBLISHED
+month**, and the EIA runs about three months behind real time, so the reach is fifteen months
+from today — and it widens whenever their lag does. 800 days absorbs the lag instead of tracking
+it.
+
+**So: any entry that encodes a requirement relative to a moving upstream lag states the
+arithmetic in its comment** — the requirement, the lag, and the product — rather than leaving a
+number someone later reads as arbitrary and trims. A tuned constant with no derivation beside it
+is a number nobody can safely change.
+
+It also generalises past this table: the same applies to a noise floor, a window, a threshold, or
+any constant chosen against something that moves upstream.
+
+---
+
 ## Standing rule — redact before you shorten
 
 **Masking matches the whole value, so any truncation of a string that might hold a secret
