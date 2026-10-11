@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-10T15:22:59+00:00",
+  "generated_at": "2026-10-11T15:39:32+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -84,31 +84,31 @@
           "mom": -11.0
         },
         "permit_activity_electrical": {
-          "value": 820.0,
+          "value": 818.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-09-01",
-          "vs_baseline": -7.56,
-          "mom": 144.0
+          "vs_baseline": -9.48,
+          "mom": 142.0
         },
         "permit_activity_foundation": {
-          "value": 231.0,
+          "value": 230.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-09-01",
-          "vs_baseline": -36.4,
-          "mom": 26.0
+          "vs_baseline": -37.12,
+          "mom": 25.0
         },
         "permit_activity_hvac": {
-          "value": 1069.0,
+          "value": 1067.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-09-01",
-          "vs_baseline": 163.92,
-          "mom": 159.0
+          "vs_baseline": 162.08,
+          "mom": 157.0
         },
         "permit_activity_plumbing": {
           "value": 1731.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-09-01",
-          "vs_baseline": -248.88,
+          "vs_baseline": -248.84,
           "mom": 245.0
         },
         "permit_activity_roofing": {
@@ -155,7 +155,7 @@
       "county": "Travis",
       "metric": "drought_stage",
       "angle": "warning",
-      "surprise_score": 0.682,
+      "surprise_score": 0.677,
       "why": "fell back out of Extreme Drought (D3); a large move against its own history",
       "figure": "fell back out of Extreme Drought (D3) — now D2",
       "source": "U.S. Drought Monitor",
@@ -203,9 +203,9 @@
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_foundation",
       "angle": "reveal",
-      "surprise_score": 0.293,
+      "surprise_score": 0.291,
       "why": "a modest move against its own history",
-      "figure": "231 foundation permits in 2026-09, +13% month over month",
+      "figure": "230 foundation permits in 2026-09, +12% month over month",
       "source": "City of San Antonio Permits Open Data",
       "as_of": "2026-09-01",
       "suppressed": false
@@ -215,9 +215,9 @@
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
-      "surprise_score": 0.281,
+      "surprise_score": 0.279,
       "why": "a modest move against its own history",
-      "figure": "1,069 hvac permits in 2026-09, +17% month over month",
+      "figure": "1,067 hvac permits in 2026-09, +17% month over month",
       "source": "City of San Antonio Permits Open Data",
       "as_of": "2026-09-01",
       "suppressed": false
@@ -227,7 +227,7 @@
       "area_id": "austin_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.279,
+      "surprise_score": 0.278,
       "why": "a modest move against its own history",
       "figure": "695 cooling degree-days in 2026-09, -8% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -239,7 +239,7 @@
       "area_id": "san_antonio_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.262,
+      "surprise_score": 0.261,
       "why": "a modest move against its own history",
       "figure": "689 cooling degree-days in 2026-09, -2% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -253,7 +253,7 @@
       "angle": "reveal",
       "surprise_score": 0.23,
       "why": "a modest move against its own history",
-      "figure": "820 electrical permits in 2026-09, +21% month over month",
+      "figure": "818 electrical permits in 2026-09, +21% month over month",
       "source": "City of San Antonio Permits Open Data",
       "as_of": "2026-09-01",
       "suppressed": false
