@@ -49,8 +49,40 @@ const METROS = [
 const OLD_PATH = "/aq/observation/zipCode/current/";
 const NEW_PATH = "/aq/observation/current/ziplatlong/";
 
+/** The metro points every other fetcher in this repo measures from, so a
+ * distance here is comparable with New Braunfels' "5.2 mi" station label. */
+const METRO_POINTS: Record<string, { lat: number; lon: number }> = {
+  austin: { lat: 30.2672, lon: -97.7431 },
+  "san-antonio": { lat: 29.4241, lon: -98.4936 },
+};
+
+/** AirNow's own monitoring-site table, pipe-delimited, carrying site coords.
+ * The observation response names a site but gives no position, so the distance
+ * the owner asked for has to be joined from here. */
+const SITE_TABLE = "https://files.airnowtech.org/airnow/today/monitoring_site_locations.dat";
+
+/** Candidate parameters that might constrain the lookup radius. The response
+ * reports `lookupBoundary: "50 Miles"` while our request sent `distance=25`, so
+ * the question is whether ANY parameter moves it — if none does, we do not
+ * control the geography and a reading can come from 50 miles away. */
+const RADIUS_PARAMS = ["distance", "radius", "maxDistance", "lookupBoundary", "miles"];
+
+function haversineMiles(a: { lat: number; lon: number }, b: { lat: number; lon: number }): number {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(b.lat - a.lat);
+  const dLon = toRad(b.lon - a.lon);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLon / 2) ** 2;
+  return 2 * 3958.7613 * Math.asin(Math.sqrt(h));
+}
+
 /** Pages that should carry the definition of AQI and of NowCast. */
 const DOC_URLS = [
+  // Round 47b: the retired service's OWN page, named by the 410 body. This is
+  // the call that settles whether the old `AQI` field was already a NowCast
+  // value rather than leaving it an inference.
+  "https://docs.airnowapi.org/webservices/retired",
   "https://docs.airnowapi.org/webservices",
   "https://docs.airnowapi.org/aq101",
   "https://www.airnow.gov/aqi/aqi-basics/",
@@ -126,6 +158,76 @@ async function main(): Promise<void> {
       }
     } catch (e) {
       console.log(`   FETCH FAILED: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+
+  // ── 4 · Does ANY parameter constrain the radius? ────────────────────────
+  console.log("\n\n══ CAN THE LOOKUP RADIUS BE CONSTRAINED? ══");
+  console.log("   Each request sends one candidate parameter at 5 miles and reports the");
+  console.log("   lookupBoundary that comes back. A boundary that stays at 50 Miles means");
+  console.log("   that parameter does not control it.");
+  for (const param of RADIUS_PARAMS) {
+    const u = new URL(`https://www.airnowapi.org${NEW_PATH}`);
+    u.searchParams.set("format", "application/json");
+    u.searchParams.set("zipCode", METROS[0].zip);
+    u.searchParams.set(param, "5");
+    if (KEY) u.searchParams.set("API_KEY", KEY);
+    try {
+      const res = await fetch(u, { headers: { Accept: "application/json" } });
+      const text = await res.text();
+      const boundary = [...text.matchAll(/"lookupBoundary":"([^"]+)"/g)].map((m) => m[1]);
+      console.log(`   ${param}=5 → HTTP ${res.status}, lookupBoundary ${[...new Set(boundary)].join("/") || "(absent)"}`);
+    } catch (e) {
+      console.log(`   ${param}=5 → FAILED: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+
+  // ── 5 · How far away is each reading, really? ───────────────────────────
+  console.log("\n\n══ MEASURED DISTANCE FROM THE METRO POINT TO EACH REPORTING SITE ══");
+  let sites = "";
+  try {
+    const res = await fetch(SITE_TABLE);
+    sites = await res.text();
+    console.log(`   site table: HTTP ${res.status}, ${sites.length} bytes`);
+  } catch (e) {
+    console.log(`   site table FAILED: ${e instanceof Error ? e.message : String(e)}`);
+  }
+
+  /** siteID → {lat, lon, name} from the pipe-delimited table. The column order
+   * is discovered from the data rather than assumed: find the field that equals
+   * the site id, then the first plausible lat/lon pair in the row. */
+  function locate(siteId: string): { lat: number; lon: number } | undefined {
+    for (const line of sites.split("\n")) {
+      if (!line.includes(siteId)) continue;
+      const f = line.split("|");
+      const nums = f
+        .map((x) => Number(x))
+        .map((n, i) => ({ n, i }))
+        .filter((x) => Number.isFinite(x.n));
+      const lat = nums.find((x) => x.n > 25 && x.n < 37);
+      const lon = nums.find((x) => x.n < -93 && x.n > -107);
+      if (lat && lon) return { lat: lat.n, lon: lon.n };
+    }
+    return undefined;
+  }
+
+  for (const m of METROS) {
+    const u = new URL(`https://www.airnowapi.org${NEW_PATH}`);
+    u.searchParams.set("format", "application/json");
+    u.searchParams.set("zipCode", m.zip);
+    if (KEY) u.searchParams.set("API_KEY", KEY);
+    try {
+      const rows = (await (await fetch(u)).json()) as {
+        parameterName: string; siteID: string; siteName: string; nowcastAQI: number;
+      }[];
+      console.log(`\n   ${m.location} (from ${METRO_POINTS[m.location].lat}, ${METRO_POINTS[m.location].lon}):`);
+      for (const r of rows) {
+        const at = locate(r.siteID);
+        const d = at ? `${haversineMiles(METRO_POINTS[m.location], at).toFixed(1)} mi` : "NOT FOUND in site table";
+        console.log(`     ${r.parameterName.padEnd(6)} AQI ${String(r.nowcastAQI).padStart(3)}  ${d.padStart(22)}  ${r.siteName} (${r.siteID})`);
+      }
+    } catch (e) {
+      console.log(`   ${m.location} FAILED: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 

@@ -77,6 +77,7 @@ import path from "node:path";
 import { REGISTRY } from "../../src/ingest/registry";
 import type { Observation } from "../../src/ingest/types";
 import { redactSecretsInText } from "../../src/ingest/redactSecrets";
+import { SWDI_MAX_WINDOW_DAYS } from "../../src/ingest/fetchWindows";
 
 /** Why a dataset's outcomes mean what they mean. Stated before the run. */
 type Expectation = "revisable" | "current-conditions" | "digest-keyed" | "reference" | "stub";
@@ -105,7 +106,13 @@ const EXPECTATION: Record<string, { tag: Expectation; why: string }> = {
 /** Fetchers that cannot be asked for more than N days however wide the window.
  * The value is the fetcher's own constant, not a guess. */
 const WINDOW_CAPPED_DAYS: Record<string, { days: number; why: string }> = {
-  "swdi-nx3hail": { days: 31, why: "swdiHail MAX_WINDOW_DAYS — SWDI's documented 744-hour ceiling" },
+  // Round 47: imported, not restated. This held a literal 31 while the fetcher
+  // held its own `MAX_WINDOW_DAYS` — two copies of one fact, which is the shape
+  // of defect this round exists to remove.
+  "swdi-nx3hail": {
+    days: SWDI_MAX_WINDOW_DAYS,
+    why: "swdiHail clamps to SWDI's documented 744-hour ceiling; REVISIT_DAYS matches it",
+  },
 };
 
 const DAY_MS = 86_400_000;

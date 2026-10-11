@@ -1,0 +1,74 @@
+name: tmp · Round 47 re-ingest under REVISIT_DAYS
+
+# TEMPORARY. Delete at the end of Round 47.
+#
+# Runs the real pipeline with the new per-dataset revisit window and commits the
+# result TO THE ROUND'S BRANCH ONLY. The question it answers: does
+# eia-electricity now reach thirteen or more months, which is what the
+# autoposter's year-over-year article needs and what twelve months can never
+# give?
+#
+# It commits, so it needs write. Scoped so it can only ever write to this
+# branch: `ref` is the branch, and the push is bare (no refspec), so there is no
+# path by which it reaches `main`.
+on:
+  push:
+    branches:
+      - claude/thi-plan-review-m40n0x
+    paths:
+      - ".github/workflows/tmp-r47-reingest.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tmp-r47-reingest
+  cancel-in-progress: false
+
+jobs:
+  reingest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/thi-plan-review-m40n0x
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - run: npm ci
+
+      - name: Record the window each dataset will ask for
+        run: npx tsx scripts/audits/report-fetch-windows.ts
+
+      - name: Ingest under the new windows
+        run: npm run ingest
+        env:
+          SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+          AIRNOW_API_KEY: ${{ secrets.AIRNOW_API_KEY }}
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
+
+      - name: What each series now spans
+        run: npx tsx scripts/audits/report-fetch-windows.ts --spans
+
+      - name: Commit to the round's branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/generated/
+          if [ -d public/data/arr-schedule ]; then git add public/data/arr-schedule/; fi
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Round 47: re-ingest under per-dataset REVISIT_DAYS"
+            git push
+          fi
