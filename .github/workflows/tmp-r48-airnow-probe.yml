@@ -1,0 +1,44 @@
+name: tmp · AQI round airnow successor probe
+
+# TEMPORARY. Delete once the AQI round has its decision.
+#
+# `airnowapi.org` and `docs.airnowapi.org` do not resolve from a Claude Code
+# session, so neither the replacement endpoint's response shape nor AirNow's own
+# definition of NowCast is checkable from one. The runner has open egress.
+#
+# READ-ONLY: two requests per metro and four documentation fetches. Writes no
+# dataset file and no artifact; the log IS the report, because the whole point is
+# to see the raw field names rather than a summary of them.
+on:
+  push:
+    branches:
+      - claude/thi-plan-review-m40n0x
+    paths:
+      - "site/scripts/audits/airnow-successor-probe.ts"
+      - ".github/workflows/tmp-r48-airnow-probe.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+      - name: Probe the AirNow replacement endpoint and its documentation
+        run: npx tsx scripts/audits/airnow-successor-probe.ts
+        env:
+          # The ROTATED key. The probe reports whether it is present, because a
+          # 410 and a 401 mean different things and only one of them is a
+          # retirement.
+          AIRNOW_API_KEY: ${{ secrets.AIRNOW_API_KEY }}
