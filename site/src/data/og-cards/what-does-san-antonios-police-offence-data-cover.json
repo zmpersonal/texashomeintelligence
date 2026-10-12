@@ -1,0 +1,14 @@
+{
+  "path": "/images/og/what-does-san-antonios-police-offence-data-cover.png",
+  "width": 1200,
+  "height": 630,
+  "alt": "What does San Antonio's police data cover? 538,978 records, 44 months, 8 columns, no address. Source: City of San Antonio Permits Open Data, Aug 2026.",
+  "rendered": {
+    "question": "What does San Antonio's police data cover?",
+    "headline": "538,978 records",
+    "subhead": "44 months, 8 columns, no address",
+    "source": "City of San Antonio",
+    "asOf": "Aug 2026"
+  },
+  "generator": "scripts/generate-og-cards.mjs"
+}

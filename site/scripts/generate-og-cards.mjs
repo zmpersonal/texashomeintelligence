@@ -21,13 +21,37 @@
  * second implementation of the article's own arithmetic, and the first time the two disagreed
  * the card would contradict the page it links to.
  *
- * FAIL CLOSED
- * Every failure exits non-zero having written nothing. A missing field, a font that did not
- * load, content that overflows the card: no PNG, no sidecar, no half-written file. The site
- * then has no sidecar for that article and falls back to the sitewide card — which is exactly
- * today's behaviour, so the worst case of this whole feature is the status quo.
+ * FAIL CLOSED, PER ARTICLE
+ * A failure writes NOTHING for that article. A missing field, a font that did not load,
+ * content that overflows the card: no PNG, no sidecar, no half-written file. The site then has
+ * no sidecar for it and falls back to the sitewide card — exactly the pre-feature behaviour, so
+ * the worst case for one article is the status quo.
  *
- * Run: npm run og-cards
+ * That refusal is unchanged. WHAT CHANGED (2026-10-12) is its blast radius. This script used to
+ * call `die()` — `process.exit(1)` — on the first article that failed, which meant:
+ *
+ *   1. one article's card copy made the exit code non-zero forever, and the autoposter's card
+ *      gate runs `npm run og-cards` with check=True, so a single overflowing card made EVERY
+ *      future article unpublishable, whichever article was being published; and
+ *   2. everything sorting after the failure was never attempted at all, so the log showed one
+ *      failure and an unknown number of untried articles. The one that failed here sorted last
+ *      by luck.
+ *
+ * That is the same shape as a test runner that stops at the first raise: one failure masking an
+ * unknown number of others. So: every article is attempted, every failure is reported with its
+ * reason, and the exit code answers only the question the caller asked.
+ *
+ * Run: npm run og-cards                      — render everything renderable; exit 0, and report
+ *      npm run og-cards -- <slug> [<slug>...] — those slugs MUST render, or exit 1
+ *
+ * A caller that needs a specific card (the autoposter, before its card gate) names it and gets
+ * a non-zero exit if it did not appear. A human regenerating the set gets every card that can
+ * be drawn plus a list of the ones that cannot, and fixing an unrelated article is not a
+ * precondition for either.
+ *
+ * Global failures — no collection, a missing font file, no browser — still exit non-zero
+ * immediately. Nothing can be rendered in those cases, so there is no partial result to report.
+ *
  * Outputs (both committed):
  *   public/images/og/<slug>.png        the card, 1200x630
  *   src/data/og-cards/<slug>.json      what was rendered, for the page and for verification
@@ -100,9 +124,21 @@ const SOURCE_FULL = {
   "City of San Antonio": "City of San Antonio Permits Open Data",
 };
 
+/**
+ * A GLOBAL failure: nothing can be rendered, so there is no partial result worth reporting.
+ * A single article's problem is NOT this — it is a `refuse()` below, which lets the other
+ * articles render and still fails the exit code if the caller asked for that one.
+ */
 function die(message) {
   console.error(`[x] ${message}`);
   process.exit(1);
+}
+
+/** One article's refusal. Thrown, caught per article, and collected. */
+class CardRefused extends Error {}
+
+function refuse(message) {
+  throw new CardRefused(message);
 }
 
 function dataUri(file, mime) {
@@ -163,128 +199,198 @@ function escapeHtml(value) {
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 }
 
+/** Render one article, or throw `CardRefused` having written nothing for it. */
+async function renderOne(browser, slug, card, fonts) {
+  const missing = REQUIRED.filter((k) => !String(card[k] ?? "").trim());
+  if (missing.length) {
+    refuse(`card is missing ${missing.join(", ")} — refusing to render a partial card`);
+  }
+  if (!SOURCE_FULL[card.source]) {
+    refuse(`card source "${card.source}" has no full name in SOURCE_FULL — an abbreviation on `
+           + `the card must resolve to the source the article declares`);
+  }
+
+  const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 });
+  try {
+    await page.setContent(html(card, fonts), { waitUntil: "load" });
+
+    // The check that makes this worth doing at all. A face that failed to decode leaves the
+    // text set in a fallback — a silently wrong card that renders, uploads and posts fine.
+    // FIT TO THE CARD. The first version of this template held exactly one article, and its
+    // two font sizes were tuned to that article's strings. "13.88¢/kWh" fits at 150px;
+    // "224 solar permits" does not, and wraps — which stops it reading as a single figure.
+    // Questions vary in length too. So both scale, in the order that protects the hierarchy:
+    // the hero is the card's reason to exist and gets the room it needs first, then the
+    // question gives way. The overflow check below is UNCHANGED and still refuses anything this
+    // pass cannot resolve — it is what caught the second article in the first place.
+    const fitted = await page.evaluate(() => {
+      const root = document.documentElement;
+      const hero = document.querySelector(".hero");
+      const avail = document.body.clientWidth
+        - parseFloat(getComputedStyle(document.body).paddingLeft) * 2;
+      root.style.setProperty("--h", "150px");
+      const natural = hero.scrollWidth;
+      // Floor 84px: below that it is no longer a hero, and the article needs a shorter figure
+      // rather than a card that whispers its own headline.
+      if (natural > avail) {
+        root.style.setProperty("--h", Math.max(84, Math.floor(150 * (avail / natural))) + "px");
+      }
+      for (const size of [52, 48, 44, 40, 36, 32]) {
+        root.style.setProperty("--q", size + "px");
+        if (document.body.scrollHeight <= window.innerHeight
+            && document.body.scrollWidth <= window.innerWidth) {
+          return { hero: root.style.getPropertyValue("--h"), question: size + "px" };
+        }
+      }
+      return null;
+    });
+
+    const fontReport = await page.evaluate(async (faces) => {
+      // A face that cannot decode makes document.fonts.load() REJECT. Swallowing the
+      // rejection here is not leniency — it is what lets the checks below report WHICH face
+      // failed. Left unhandled it surfaces as a bare "NetworkError" stack, which is still
+      // fail-closed but tells whoever is on the other end nothing about what to fix.
+      await Promise.all(
+        faces.map((f) => document.fonts.load(`${f.weight} 100px "${f.family}"`).catch(() => null)),
+      );
+      await document.fonts.ready.catch(() => null);
+      const loaded = [...document.fonts].map((f) => ({ family: f.family, status: f.status }));
+      return {
+        loaded,
+        failures: faces
+          .filter((f) => !document.fonts.check(`${f.weight} 100px "${f.family}"`))
+          .map((f) => `${f.family} ${f.weight}`),
+        overflowX: document.body.scrollWidth > window.innerWidth,
+        overflowY: document.body.scrollHeight > window.innerHeight,
+      };
+    }, FACES);
+
+    if (fontReport.failures.length) {
+      refuse(`these faces did not load — ${fontReport.failures.join(", ")}. `
+             + `Refusing to screenshot a card set in a fallback typeface. `
+             + `(font status: ${JSON.stringify(fontReport.loaded)})`);
+    }
+    if (fontReport.loaded.some((f) => f.status !== "loaded")) {
+      refuse(`a font face reported status != loaded — ${JSON.stringify(fontReport.loaded)}`);
+    }
+    if (fontReport.overflowX || fontReport.overflowY) {
+      refuse(`content overflows the ${WIDTH}x${HEIGHT} card — shorten the question or the `
+             + `figure rather than letting it crop`);
+    }
+
+    // Rendered to a buffer FIRST. Nothing touches the filesystem until every check above has
+    // passed and the bytes exist, so a crash cannot leave a partial card behind.
+    const png = await page.screenshot({ type: "png", clip: { x: 0, y: 0, width: WIDTH, height: HEIGHT } });
+
+    const sidecar = {
+      path: `/images/og/${slug}.png`,
+      width: WIDTH,
+      height: HEIGHT,
+      // Full source name, not the card's short label: the alt text serves crawlers and
+      // screen readers, where there is room to be precise and every reason to be.
+      alt: `${card.question} ${card.headline}, ${card.subhead}. Source: ${SOURCE_FULL[card.source]}, ${card.asOf}.`,
+      rendered: { ...card },
+      generator: "scripts/generate-og-cards.mjs",
+    };
+
+    fs.mkdirSync(PNG_DIR, { recursive: true });
+    fs.mkdirSync(SIDECAR_DIR, { recursive: true });
+    fs.writeFileSync(path.join(PNG_DIR, `${slug}.png`), png);
+    fs.writeFileSync(path.join(SIDECAR_DIR, `${slug}.json`), JSON.stringify(sidecar, null, 2) + "\n");
+    return `${(png.length / 1024).toFixed(1)} KB  hero ${fitted?.hero ?? "150px"} / `
+           + `question ${fitted?.question ?? "52px"}`;
+  } finally {
+    // Closed on the refusal path too. While a failure meant `process.exit`, leaking a page
+    // could not matter; now that the run continues, it can.
+    await page.close().catch(() => null);
+  }
+}
+
 async function main() {
   if (!fs.existsSync(ARTICLES)) die(`no article collection at ${ARTICLES}`);
 
-  const articles = fs
+  // The slugs the CALLER needs. Only these decide the exit code — see the header.
+  const requested = process.argv.slice(2).filter((a) => a && !a.startsWith("-"))
+    .map((a) => a.replace(/\.md$/, ""));
+
+  const declared = fs
     .readdirSync(ARTICLES)
     .filter((f) => f.endsWith(".md"))
     .map((f) => ({ slug: f.replace(/\.md$/, ""), data: frontmatter(fs.readFileSync(path.join(ARTICLES, f), "utf8")) }))
     .filter((a) => a.data?.card);
 
+  // PUBLISHED ONLY. A card exists to be a PAGE's OG image, and `content.config.ts` builds no
+  // route for `published: false` — so an unpublished article has no page for a card to serve.
+  //
+  // Found 2026-10-12: the withdrawn electricity article still declares its `card:` block, so
+  // every run re-created the PNG and sidecar that Round 43 deliberately DELETED when it
+  // withdrew the piece. Nothing referenced them, but a generator that keeps resurrecting a
+  // deleted artifact makes "do not commit that file" a hand-step someone has to remember on
+  // every cycle, and hand-steps rot. The default matches the site's schema: absent is false.
+  const unpublished = declared.filter((a) => a.data.published !== true).map((a) => a.slug);
+  const articles = declared.filter((a) => a.data.published === true);
+
   if (articles.length === 0) {
     console.log("[ ] no article declares a `card:` block — nothing to render");
+    // A caller that NAMED a slug still gets an answer: it is not here.
+    if (requested.length) die(`asked for ${requested.join(", ")} but no article declares a card`);
     return;
-  }
-
-  for (const { slug, data } of articles) {
-    const missing = REQUIRED.filter((k) => !String(data.card[k] ?? "").trim());
-    if (missing.length) die(`${slug}: card is missing ${missing.join(", ")} — refusing to render a partial card`);
-    if (!SOURCE_FULL[data.card.source]) {
-      die(`${slug}: card source "${data.card.source}" has no full name in SOURCE_FULL — ` +
-          `an abbreviation on the card must resolve to the source the article declares`);
-    }
   }
 
   const fonts = FACES.map((f) => dataUri(path.join(FONTS, f.file), "font/woff2"));
 
+  const rendered = [];
+  const refused = [];
   const browser = await launchChromium();
   try {
     for (const { slug, data } of articles) {
-      const card = data.card;
-      const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 });
-      await page.setContent(html(card, fonts), { waitUntil: "load" });
-
-      // The check that makes this worth doing at all. A face that failed to decode leaves the
-      // text set in a fallback — a silently wrong card that renders, uploads and posts fine.
-      // FIT TO THE CARD. The first version of this template held exactly one article, and its
-      // two font sizes were tuned to that article's strings. "13.88¢/kWh" fits at 150px;
-      // "224 solar permits" does not, and wraps — which stops it reading as a single figure.
-      // Questions vary in length too. So both scale, in the order that protects the hierarchy:
-      // the hero is the card's reason to exist and gets the room it needs first, then the
-      // question gives way. The overflow check below is UNCHANGED and still fails anything this
-      // pass cannot resolve — it is what caught the second article in the first place.
-      const fitted = await page.evaluate(() => {
-        const root = document.documentElement;
-        const hero = document.querySelector(".hero");
-        const avail = document.body.clientWidth
-          - parseFloat(getComputedStyle(document.body).paddingLeft) * 2;
-        root.style.setProperty("--h", "150px");
-        const natural = hero.scrollWidth;
-        // Floor 84px: below that it is no longer a hero, and the article needs a shorter figure
-        // rather than a card that whispers its own headline.
-        if (natural > avail) {
-          root.style.setProperty("--h", Math.max(84, Math.floor(150 * (avail / natural))) + "px");
-        }
-        for (const size of [52, 48, 44, 40, 36, 32]) {
-          root.style.setProperty("--q", size + "px");
-          if (document.body.scrollHeight <= window.innerHeight
-              && document.body.scrollWidth <= window.innerWidth) {
-            return { hero: root.style.getPropertyValue("--h"), question: size + "px" };
-          }
-        }
-        return null;
-      });
-
-      const fontReport = await page.evaluate(async (faces) => {
-        // A face that cannot decode makes document.fonts.load() REJECT. Swallowing the
-        // rejection here is not leniency — it is what lets the checks below report WHICH face
-        // failed. Left unhandled it surfaces as a bare "NetworkError" stack, which is still
-        // fail-closed but tells whoever is on the other end nothing about what to fix.
-        await Promise.all(
-          faces.map((f) => document.fonts.load(`${f.weight} 100px "${f.family}"`).catch(() => null)),
-        );
-        await document.fonts.ready.catch(() => null);
-        const loaded = [...document.fonts].map((f) => ({ family: f.family, status: f.status }));
-        return {
-          loaded,
-          failures: faces
-            .filter((f) => !document.fonts.check(`${f.weight} 100px "${f.family}"`))
-            .map((f) => `${f.family} ${f.weight}`),
-          overflowX: document.body.scrollWidth > window.innerWidth,
-          overflowY: document.body.scrollHeight > window.innerHeight,
-        };
-      }, FACES);
-
-      if (fontReport.failures.length) {
-        die(`${slug}: these faces did not load — ${fontReport.failures.join(", ")}. ` +
-            `Refusing to screenshot a card set in a fallback typeface. ` +
-            `(font status: ${JSON.stringify(fontReport.loaded)})`);
+      try {
+        const detail = await renderOne(browser, slug, data.card, fonts);
+        rendered.push(slug);
+        console.log(`[ok] ${slug}.png  ${detail}`);
+      } catch (error) {
+        if (!(error instanceof CardRefused)) throw error;
+        refused.push({ slug, reason: error.message });
+        console.error(`[x] ${slug}: ${error.message}`);
       }
-      if (fontReport.loaded.some((f) => f.status !== "loaded")) {
-        die(`${slug}: a font face reported status != loaded — ${JSON.stringify(fontReport.loaded)}`);
-      }
-      if (fontReport.overflowX || fontReport.overflowY) {
-        die(`${slug}: content overflows the ${WIDTH}x${HEIGHT} card — shorten the question or the ` +
-            `figure rather than letting it crop`);
-      }
-
-      // Rendered to a buffer FIRST. Nothing touches the filesystem until every check above has
-      // passed and the bytes exist, so a crash cannot leave a partial card behind.
-      const png = await page.screenshot({ type: "png", clip: { x: 0, y: 0, width: WIDTH, height: HEIGHT } });
-      await page.close();
-
-      const sidecar = {
-        path: `/images/og/${slug}.png`,
-        width: WIDTH,
-        height: HEIGHT,
-        // Full source name, not the card's short label: the alt text serves crawlers and
-        // screen readers, where there is room to be precise and every reason to be.
-        alt: `${card.question} ${card.headline}, ${card.subhead}. Source: ${SOURCE_FULL[card.source]}, ${card.asOf}.`,
-        rendered: { ...card },
-        generator: "scripts/generate-og-cards.mjs",
-      };
-
-      fs.mkdirSync(PNG_DIR, { recursive: true });
-      fs.mkdirSync(SIDECAR_DIR, { recursive: true });
-      fs.writeFileSync(path.join(PNG_DIR, `${slug}.png`), png);
-      fs.writeFileSync(path.join(SIDECAR_DIR, `${slug}.json`), JSON.stringify(sidecar, null, 2) + "\n");
-      console.log(`[ok] ${slug}.png  ${(png.length / 1024).toFixed(1)} KB  `
-                  + `hero ${fitted?.hero ?? "150px"} / question ${fitted?.question ?? "52px"}`);
     }
   } finally {
     await browser.close();
   }
+
+  // ONE SUMMARY LINE, always. A bare run now exits 0 with failures in it, so the count has to
+  // be impossible to miss in a log somebody skims.
+  console.log(`[summary] ${rendered.length} rendered, ${refused.length} refused, `
+              + `${articles.length} published articles declare a card`
+              + (unpublished.length ? `, ${unpublished.length} skipped as unpublished` : "")
+              + (requested.length ? ` — asked for: ${requested.join(", ")}` : ""));
+
+  if (!requested.length) {
+    // Nobody named a slug, so nobody is blocked. The refusals are reported above and each
+    // affected page keeps falling back to the sitewide card, which is the documented worst case.
+    if (refused.length) {
+      console.log("[note] those cards were not written. Each of those pages falls back to the "
+                  + "sitewide card. Nothing else is affected, and no caller is blocked.");
+    }
+    return;
+  }
+
+  const known = new Set(articles.map((a) => a.slug));
+  // An unpublished slug gets its own message. "No article with a card block" would be false
+  // and would send whoever asked looking for a missing file.
+  const withheld = requested.filter((slug) => unpublished.includes(slug));
+  const absent = requested.filter((slug) => !known.has(slug) && !unpublished.includes(slug));
+  if (withheld.length) {
+    console.error(`[x] not published, so no page needs a card: ${withheld.join(", ")}`);
+  }
+  const blocked = refused.filter((r) => requested.includes(r.slug));
+  if (absent.length) {
+    console.error(`[x] no article with a card block for: ${absent.join(", ")}`);
+  }
+  for (const { slug, reason } of blocked) {
+    console.error(`[x] ${slug} was asked for and could not be rendered: ${reason}`);
+  }
+  if (absent.length || blocked.length || withheld.length) process.exit(1);
 }
 
 await main();

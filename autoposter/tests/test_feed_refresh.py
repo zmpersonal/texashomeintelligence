@@ -181,27 +181,54 @@ def test_a_TITLE_may_only_name_a_MONTH_THE_DATA_HAS():
     assert checked, "no recurring builder named a month; this test proved nothing"
 
 
-def test_a_REFRESH_ALONE_does_not_unstick_the_builders_that_are_stuck_TODAY():
-    """The honest limit of this change, recorded so nobody later assumes otherwise.
+def test_a_REFRESH_ALONE_does_not_move_eligibility___PUBLISHING_DOES():
+    """The honest limit of this change, as a PROPERTY rather than as today's eligible list.
 
-    Rebuilding the feed from the same month yields the same titles, so every builder stays
-    retired and the cycle keeps skipping — correctly. What unsticks a permit builder is the
-    calendar completing a month the datasets already hold; what unsticks the climate builder is
-    NOAA publishing one. Neither is something this workflow can cause.
+    Rebuilding the feed from the same data yields the same titles, so it cannot unstick a
+    builder. What does: the calendar completing a month the datasets already hold, an upstream
+    publishing one, or the article going live. None of those is something this workflow causes.
+
+    It used to assert `eligible == []` on 2026-09-18 — a snapshot of production on the day it
+    was written, with its own failure message admitting as much ("if that is now true, this test
+    is stale"). It went red the moment Round 47 widened the electricity series, which made that
+    builder eligible for a period it had never published: correct behaviour, red test. A test
+    whose failure message explains how to dismiss it is a test that gets dismissed.
+
+    So the two legs are the two directions. Invariance under a re-read, and movement under the
+    one lever that is supposed to move it — and it must move by EXACTLY the topic published,
+    which is what rules out an exclusion keyed on something coarser than the current title.
     """
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+    import copy as _copy
     import article_engine as engine, run_article, topic_scorer
     from datetime import date
 
     today = date(2026, 9, 18)
-    cfg, feed = engine.load_config(), engine.load_feed()
-    ranked = [t for t in topic_scorer.score_topics(feed, cfg) if t["buildable"]]
-    already = engine.published_questions(cfg)
-    eligible = [t["id"] for t in ranked
+    cfg = _copy.deepcopy(engine.load_config())
+    # Its own premise: an empty site, so the test does not read whatever production published
+    # this week. That is the same lesson `test_card` and `test_autopilot` already learned.
+    cfg["publish"] = dict(cfg["publish"], analysis_dir=tempfile.mkdtemp())
+
+    def eligible():
+        ranked = [t for t in topic_scorer.score_topics(engine.load_feed(), cfg)
+                  if t["buildable"]]
+        already = engine.published_questions(cfg)
+        return [t["id"] for t in ranked
                 if engine._current_title(t, run_article.TOPIC_ARTICLES, today) not in already]
-    assert eligible == [], (
-        f"{eligible} is eligible today — if that is now true, this test is stale and the "
-        f"machine is no longer waiting on new periods")
+
+    first = eligible()
+    assert first, "nothing is eligible even against an empty site — this test would prove nothing"
+    assert eligible() == first, "re-reading the same feed changed which builders are eligible"
+
+    topic = next(t for t in topic_scorer.score_topics(engine.load_feed(), cfg)
+                 if t["id"] == first[0])
+    title = engine._current_title(topic, run_article.TOPIC_ARTICLES, today)
+    Path(cfg["publish"]["analysis_dir"], "live.md").write_text(
+        f'---\ntitle: "{title}"\npublishedAt: "2026-09-18"\npublished: true\n---\n')
+    after = eligible()
+    assert first[0] not in after, f"publishing {title!r} did not retire {first[0]}"
+    assert after == first[1:], (
+        f"publishing one title moved more than one topic: {first} -> {after}")
 
 
 if __name__ == "__main__":
@@ -217,3 +244,15 @@ if __name__ == "__main__":
         finally:
             _restore()
     print(f"{ok}/{len(fns)} passed")
+
+    # Round 47b. THIS LINE WAS MISSING, and its absence made the file's own
+    # verdict unreadable to the thing that runs it. `autoposter-cadence.yml`
+    # drives the suite with `python3 "$t" || failed=1`, so a file that prints
+    # "9/10 passed" and exits 0 reports success to the workflow. Three files
+    # were in this state; two were actively failing.
+    #
+    # Same shape as `badgeunit` on the site side (Round 46 F3): a check that
+    # reports a value without asserting it. The standing rule is "a replay that
+    # reports a value is not a check" -- and the reporting half was here all
+    # along.
+    sys.exit(0 if ok == len(fns) else 1)

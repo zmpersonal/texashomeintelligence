@@ -42,6 +42,7 @@ import article_engine as engine
 import card as card_mod
 import channel_guard
 import claim_ledger as ledger_mod
+import gates
 import publish_gate
 import publish_target
 
@@ -65,7 +66,7 @@ class GateVerdict:
 
 @dataclass
 class CycleDecision:
-    action: str                       # publish | skip | paused | too_soon
+    action: str   # publish | withheld | skip | halted | paused | too_soon | nothing_to_say
     reason: str = ""
     verdicts: list[GateVerdict] = field(default_factory=list)
     article: dict | None = None
@@ -88,6 +89,10 @@ class CycleDecision:
     post_url: str = ""
     # The post-deploy verdicts. Empty until the deploy has happened and they have actually run.
     live_verdicts: list[GateVerdict] = field(default_factory=list)
+    # Every topic whose gates refused this cycle, one line each with its reason. Populated on
+    # EVERY outcome, including a successful publish — a cycle that published the runner-up while
+    # the top-ranked topic silently halted is exactly the state this exists to make visible.
+    skipped: list[str] = field(default_factory=list)
 
     @property
     def clean(self) -> bool:
@@ -102,10 +107,14 @@ class CycleDecision:
     def is_broken(self) -> bool:
         """Is this outcome a BROKEN PIPELINE rather than a normal quiet one?
 
-        A skip, a pause, a too-soon and a post withheld because a live URL did not resolve are
-        all normal and stay green — a quiet week must not look like a fault or the red stops
-        meaning anything. A crash in the publisher, or a post that went out without being
-        recorded, are faults and must be red.
+        A skip, a pause, a too-soon, a WITHHOLD and a post withheld because a live URL did not
+        resolve are all normal and stay green — a quiet week must not look like a fault or the
+        red stops meaning anything. A crash in the publisher, or a post that went out without
+        being recorded, are faults and must be red.
+
+        `withheld` is the outcome Round 48 added, and it is green ON PURPOSE: a gate refusing is
+        the machine working. What was wrong before was not the colour, it was that the refusal
+        arrived wearing the word "cleanly" and naming no gate.
         """
         if self.action in ("halted", "posted_unconfirmed"):
             return True
@@ -132,11 +141,33 @@ class CycleDecision:
             return False
         return all(v.ok for v in self.live_verdicts)
 
+    def _skipped_line(self) -> str:
+        """The topics this cycle stepped over, for the notices that are about something else.
+
+        A cycle can publish the runner-up while the top-ranked topic halts, and that is a fact
+        about the machine's own ranking that has to leave the run log. Empty string when nothing
+        was skipped, so the notices stay clean on a normal day.
+        """
+        if not self.skipped:
+            return ""
+        return ("Stepped over on the way here:\n" +
+                "\n".join(f"  • {line}" for line in self.skipped) + "\n")
+
     def notice(self) -> str:
         """The Slack message for this outcome. Every path produces one except the two quiet
         ones — `too_soon` and `nothing_to_say`, which are the machine waiting, not acting."""
         if self.action in ("too_soon", "nothing_to_say"):
             return ""
+        if self.action == "withheld":
+            body = "\n".join(f"  • {line}" for line in self.skipped)
+            return (f"🔸 THI autoposter WITHHELD this cycle — nothing published, nothing "
+                    f"broken.\n"
+                    f"{body}\n"
+                    f"Every eligible topic was offered to its own builder and its own ledger, "
+                    f"and each refused for the reason above. The run is GREEN: this is a gate "
+                    f"doing its job, not a pipeline that failed. If a reason here is about data "
+                    f"age or a missing period, it clears when the upstream publishes; if it is "
+                    f"about anything else, it is worth a look now.")
         if self.action == "paused":
             return (f"⏸ THI autoposter is PAUSED — nothing published.\n"
                     f"{self.reason}\n"
@@ -198,7 +229,7 @@ class CycleDecision:
             failed = [v for v in self.verdicts if not v.ok]
             body = "\n".join(f"  • {v.name} — {v.detail}" for v in failed)
             return (f"⚠️ THI autoposter SKIPPED this cycle — nothing published.\n"
-                    f"{self.reason}\n{body}\n"
+                    f"{self.reason}\n{body}\n{self._skipped_line()}"
                     f"No post goes out on an unclear gate. Nothing is broken; this cycle waits.")
         return "✅ published"                     # the real FYI is built by `published_notice`
 
@@ -208,6 +239,7 @@ def published_notice(decision: CycleDecision, article_url: str, post_url: str,
     """The after-the-fact FYI. Telling, not asking — so a bad post is caught in minutes."""
     card = decision.card or {}
     return (f"📣 THI posted (auto)\n"
+            f"{decision._skipped_line()}"
             f"{card.get('question', '')}\n"
             f"{card.get('headline', '')} · {card.get('subhead', '')} · "
             f"{card.get('source', '')}, {card.get('asOf', '')}\n"
@@ -524,7 +556,21 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
         # the expected state for days at a time. Reported as its own outcome so the driver can
         # stay quiet about it without also staying quiet about a gate that broke.
         return CycleDecision(action="nothing_to_say", reason=str(exc))
+    except gates.GateHalt as exc:
+        # A GATE REFUSED — the designed outcome, told apart from a fault by TYPE and not by any
+        # reading of the message (see `gates.py`). Before Round 48 this fell into the clause
+        # below and came out as "the article could not be produced cleanly", so eighteen days of
+        # a staleness refusal that named its own numbers precisely read as an unexplained
+        # breakage. The cycle is green and the reason is on the record.
+        return CycleDecision(
+            action="withheld",
+            reason=f"{type(exc).__name__}: a gate refused and nothing was published",
+            skipped=list(getattr(exc, "skipped", None) or [str(exc)]),
+            verdicts=[GateVerdict(f"{type(exc).__name__}", False, str(exc))])
     except Exception as exc:                       # noqa: BLE001
+        # Anything NOT recognised as a designed refusal. Unknown means fault, deliberately: a
+        # buggy builder can produce claims that legitimately fail the ledger, so widening this
+        # on a hunch would turn real defects green.
         decision.reason = "the article could not be produced cleanly"
         decision.verdicts = [GateVerdict("article-engine", False,
                                          f"{type(exc).__name__}: {exc}")]
@@ -535,6 +581,7 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
         article, claims, result["card_frontmatter"], today))
     decision.article, decision.card, decision.claims = article, card, claims
     decision.reason = f"topic: {result['topic']['id']}"
+    decision.skipped = list(result.get("skipped") or [])
 
     verdicts = [
         GateVerdict("topic-selection", True, result["topic"]["id"]),
@@ -648,7 +695,10 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
         # that matters is the one that says something WAS published. The run still exits 0 and
         # the reason is in the job log for anyone who goes looking.
         return decision
-    if decision.action in ("skip", "paused"):
+    if decision.action in ("skip", "paused", "withheld"):
+        # `withheld` belongs here and NOT with the two silent outcomes above: a designed refusal
+        # is reported, which is the entire point of separating it from a fault. It also must
+        # never fall past this line — everything below publishes.
         _safe_notify(notify_fn, decision.notice(), decision)
         return decision
 

@@ -30,6 +30,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timezone
 
 import validator as social_validator
+import gates
 
 STATEABLE = ("data", "official", "derived")
 TIERS = STATEABLE + ("external",)
@@ -37,7 +38,7 @@ HEDGE_MARKERS = ("we cannot", "not established", "unverified", "we do not know",
                  "no data we hold", "cannot say", "does not explain", "unexplained")
 
 
-class LedgerHalt(Exception):
+class LedgerHalt(gates.GateHalt):
     gate = "LEDGER"
 
     def __init__(self, reasons: list[str]):

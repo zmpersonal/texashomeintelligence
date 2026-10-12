@@ -240,13 +240,50 @@ def _permit_trades(location: str, today: date) -> list[Series]:
     # So a month is complete only if ingestion actually reached its last day. Fail closed —
     # an incomplete month is a silent skip, and a few days' wait beats a false crash story.
     coverage = permit_coverage_through(location)
+
+    # ── ONE METHODOLOGY VERSION, NOT A MIXTURE ───────────────────────────────
+    # Round 48. `permit-trade-activity` keys every row
+    # `${mappingVersion}/${category}/${month}`, so a methodology change writes NEW keys rather
+    # than overwriting counts computed under the old rules — and `mergeObservations` therefore
+    # keeps both, correctly, because this project stores history and never overwrites.
+    #
+    # The reading half did not exist here. The site built it in Round 45
+    # (`site/src/lib/tradeActivity.ts`: take the newest version present and nothing else); this
+    # reader took every row regardless. Round 45 WAS the first bump of that constant
+    # (`trades-v1` -> `trades-v2`), so on disk today 66 of Austin's 70 (category, month) pairs
+    # and 91 of San Antonio's 98 carry two rows, and every permit series came out with 26 points
+    # for 13 months.
+    #
+    # MEASURED CONSEQUENCE, which is why this is not a tidying change: `pts.sort(key=period)`
+    # puts a month's two rows side by side, so `points[-1]` and `points[-2]` — "latest" and
+    # "prior" to every builder — were THE SAME MONTH. Every month-over-month claim read
+    # "up 0% month over month" with a derivation comparing September to September, and every
+    # "N-month average" claim said 25 months of a 13-month series. The next article the machine
+    # would have published answered its own headline question wrongly on the strength of it.
+    #
+    # Newest version PER CATEGORY, matching the site rather than inventing a second rule: a
+    # future bump could land one trade at a time. A dataset whose rows carry no version at all
+    # keeps all of them, which is what the site does too.
+    versions: dict[str, str] = {}
+    for obs in doc["observations"]:
+        value = obs.get("value") or {}
+        trade = value.get("category")
+        if trade:
+            version = value.get("mappingVersion") or ""
+            if version > versions.get(trade, ""):
+                versions[trade] = version
+
     by_trade: dict[str, list[Point]] = {}
     dropped: list[str] = []
     incomplete: list[str] = []
+    superseded: list[str] = []
     for obs in doc["observations"]:
         value = obs.get("value") or {}
         trade, month, count = value.get("category"), value.get("month"), value.get("permitCount")
         if not trade or not month or count is None:
+            continue
+        if (value.get("mappingVersion") or "") != versions.get(trade, ""):
+            superseded.append(f"{value.get('mappingVersion') or '(unversioned)'}/{trade}")
             continue
         if month >= current:             # trap 1
             dropped.append(month)
@@ -266,11 +303,17 @@ def _permit_trades(location: str, today: date) -> list[Series]:
             unit="permits/month", cadence="monthly",
             note="permit activity is a COUNT — an activity instrument, never a price "
                  "instrument (THI CLAUDE.md)",
+            # A silent drop is indistinguishable from a feed that never had the rows, which
+            # is the same argument the completeness guard already makes for itself. The
+            # superseded-version rows are listed for the same reason: "the series got shorter"
+            # and "a mapping version was retired" need different responses.
             dropped=([f"incomplete current month {m}" for m in sorted(set(dropped))] +
                      [f"{m}: ingestion reached "
                       f"{coverage.isoformat() if coverage else 'nowhere (dataset unusable)'}, "
                       f"month ends {_last_day_of(m).isoformat()}"
-                      for m in sorted(set(incomplete))]),
+                      for m in sorted(set(incomplete))] +
+                     [f"superseded mapping version {v}"
+                      for v in sorted(set(superseded)) if v.endswith(f"/{trade}")]),
         ))
     return out
 

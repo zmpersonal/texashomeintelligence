@@ -19,10 +19,12 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+import gates
+
 SPECS = Path(__file__).resolve().parents[1] / "specs"
 
 
-class PublishHalt(Exception):
+class PublishHalt(gates.GateHalt):
     """Raised instead of writing. Carries every reason found."""
     gate = "TWO-LOCK"
 

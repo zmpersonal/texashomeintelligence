@@ -69,7 +69,8 @@ def test_lookalike_host_halts():
 
 def test_full_run_halts_before_writing_anything():
     e = _halts(engine.run, "thi", write_fn=run_article.write,
-               build_claims_fn=run_article.build_claims, today=TODAY, specs_dir=MISMATCH)
+               build_claims_fn=run_article.build_claims, today=TODAY,
+               articles=run_article.TOPIC_ARTICLES, specs_dir=MISMATCH)
     assert "two locks disagree" in str(e)
 
 
@@ -87,8 +88,87 @@ def test_second_model_call_raises():
 
 def test_a_real_run_spends_exactly_one():
     r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY)
+                   build_claims_fn=run_article.build_claims, today=TODAY,
+                   articles=run_article.TOPIC_ARTICLES)
     assert r["model_calls"] == 1
+
+
+# ------------------------------------------------- fall-through over a halted topic (R48)
+
+def _refusing(reason="this topic's data is not there yet"):
+    def build(feed, config, today):
+        raise cl.LedgerHalt([reason])
+    return build
+
+
+def _registry_with(topic_id, build):
+    out = {}
+    for tid in run_article.TOPIC_ARTICLES:
+        existing_build, write = run_article.TOPIC_ARTICLES[tid]
+        out[tid] = (build, write) if tid == topic_id else (existing_build, write)
+    return out
+
+
+def test_a_HALTED_topic_is_STEPPED_OVER_and_the_SKIP_IS_RECORDED():
+    """One dead topic must not block the rest of the ranking.
+
+    MEASURED, 2026-10-12: `electricity-still-rising` ranked 0 of five eligible topics with its
+    claims 2472h old against a 2160h bound, the engine took `buildable[0]` with no fall-through,
+    and four publishable articles sat behind it for eighteen days.
+
+    The old comment defending that said stepping over a topic is "how a machine drifts off its
+    own ranking" — true of a topic with NO BUILDER, which still halts (see below). A gate
+    refusing is a statement about the data, not about the ranking.
+    """
+    ranked = [t for t in topic_scorer.score_topics(engine.load_feed(), CFG) if t["buildable"]]
+    top, runner_up = ranked[0]["id"], ranked[1]["id"]
+    r = engine.run("thi", write_fn=run_article.write,
+                   build_claims_fn=run_article.build_claims, today=TODAY,
+                   articles=_registry_with(top, _refusing()))
+    assert r["topic"]["id"] == runner_up, r["topic"]["id"]
+    assert r["skipped"] == [f"{top}: LEDGER: this topic's data is not there yet"], r["skipped"]
+
+
+def test_EVERY_topic_halting_raises_ONE_refusal_carrying_EVERY_reason():
+    """Nothing publishable and nothing broken. The reasons are the deliverable — a refusal that
+    names no gate is what eighteen days of "could not be produced cleanly" was."""
+    articles = {tid: (_refusing(f"{tid} says no"), w)
+                for tid, (_, w) in ((t, tuple(b)) for t, b in run_article.TOPIC_ARTICLES.items())}
+    try:
+        engine.run("thi", write_fn=run_article.write,
+                   build_claims_fn=run_article.build_claims, today=TODAY, articles=articles)
+    except engine.AllTopicsHalted as exc:
+        assert len(exc.skipped) >= 4, exc.skipped
+        assert all("says no" in line for line in exc.skipped), exc.skipped
+        import gates
+        assert isinstance(exc, gates.GateHalt), "a refusal must classify as a halt, not a fault"
+        return
+    raise AssertionError("every topic refusing must raise")
+
+
+def test_FALL_THROUGH_STOPS_AT_THE_MODEL_CALL():
+    """The budget is one model call per cycle, so a second candidate cannot be written.
+
+    A refusal BEFORE the prose exists costs nothing and falls through; a refusal AFTER it halts
+    the cycle, because trying the next topic would mean a second model call and
+    `ModelBudgetExceeded`. Asserted rather than described: the boundary is the whole reason
+    fall-through is safe here.
+    """
+    class Failing:
+        ok = False
+        failures = ["every numeral is wrong"]
+
+    real = engine.ledger_mod.verify_prose
+    engine.ledger_mod.verify_prose = lambda *a, **kw: Failing()
+    try:
+        e = _halts(engine.run, "thi", write_fn=run_article.write,
+                   build_claims_fn=run_article.build_claims, today=TODAY,
+                   articles=run_article.TOPIC_ARTICLES)
+        assert "every numeral is wrong" in str(e), str(e)
+        assert not isinstance(e, engine.AllTopicsHalted), (
+            "a post-model refusal fell through to another topic, which cannot be paid for")
+    finally:
+        engine.ledger_mod.verify_prose = real
 
 
 # ---------------------------------------------------------------- claim ledger
@@ -119,26 +199,37 @@ def test_timeless_claim_must_say_why_it_skips_freshness():
     assert not cl.verify_ledger(claims, CFG, TODAY).ok
 
 
-def test_the_real_ledger_verifies():
+def _real_claims_and_body(topic_id="electricity-still-rising", today=None):
+    """A real builder's claims and prose, taken FROM THE REGISTRY.
+
+    These three tests exercise the ledger and the prose gates against real output, so the
+    builder has to be the one actually wired to the topic. They used to call
+    `run_article.build_claims` by name — the August-2026 one-off, retired on 2026-09-19 and
+    overridden in `TOPIC_ARTICLES` ever since, which Round 45's purge of the fabricated rows
+    finally made unbuildable. Reading the registry means a builder being replaced cannot leave
+    a test pointed at the previous one.
+    """
     feed = engine.load_feed()
-    claims = run_article.build_claims(feed, CFG, TODAY)
+    build, write = run_article.TOPIC_ARTICLES[topic_id]
+    claims = build(feed, CFG, today or TODAY)
+    return feed, claims, write({"question": "q"}, claims, feed)["body"]
+
+
+def test_the_real_ledger_verifies():
+    _, claims, _ = _real_claims_and_body()
     r = cl.verify_ledger(claims, CFG, TODAY)
     assert r.ok, r.failures
     assert r.checked >= 10
 
 
 def test_prose_with_an_unbacked_numeral_is_refused():
-    feed = engine.load_feed()
-    claims = run_article.build_claims(feed, CFG, TODAY)
-    body = run_article.write({"question": "q"}, claims, feed)["body"]
+    _, claims, body = _real_claims_and_body()
     assert cl.verify_prose(body, claims, CFG).ok
     assert not cl.verify_prose(body + " Prices fell 42% in Bexar.", claims, CFG).ok
 
 
 def test_prose_stripped_of_a_source_is_refused():
-    feed = engine.load_feed()
-    claims = run_article.build_claims(feed, CFG, TODAY)
-    body = run_article.write({"question": "q"}, claims, feed)["body"]
+    _, claims, body = _real_claims_and_body()
     assert not cl.verify_prose(body.replace("NOAA NCEI Global Summary of the Month", "NOAA"),
                                claims, CFG).ok
 
@@ -211,7 +302,8 @@ def test_facebook_promo_passes_the_full_social_suite():
     if not _card_rendered():
         return
     r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY)
+                   build_claims_fn=run_article.build_claims, today=TODAY,
+                   articles=run_article.TOPIC_ARTICLES)
     post, gate = engine.build_facebook_promo(r["article"], r["claims"], _cfg_unposted(), TODAY,
                                              link_opener=OK_LINK, media_opener=OK_LINK)
     assert gate.ok, gate.failures
@@ -224,7 +316,8 @@ def test_promo_is_REJECTED_when_the_OG_card_does_not_resolve():
     if not _card_rendered():
         return
     r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY)
+                   build_claims_fn=run_article.build_claims, today=TODAY,
+                   articles=run_article.TOPIC_ARTICLES)
     _, gate = engine.build_facebook_promo(r["article"], r["claims"], _cfg_unposted(), TODAY,
                                           link_opener=OK_LINK,
                                           media_opener=lambda url: (False, "HTTP 404"))
@@ -239,7 +332,8 @@ def test_promo_is_REJECTED_when_its_destination_does_not_resolve():
     if not _card_rendered():
         return
     r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY)
+                   build_claims_fn=run_article.build_claims, today=TODAY,
+                   articles=run_article.TOPIC_ARTICLES)
     _, gate = engine.build_facebook_promo(r["article"], r["claims"], _cfg_unposted(), TODAY,
                                           link_opener=lambda url: (False, "HTTP 404"))
     assert not gate.ok
@@ -252,7 +346,8 @@ def test_promo_is_REJECTED_when_the_destination_is_merely_UNREACHABLE():
     if not _card_rendered():
         return
     r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY)
+                   build_claims_fn=run_article.build_claims, today=TODAY,
+                   articles=run_article.TOPIC_ARTICLES)
     _, gate = engine.build_facebook_promo(
         r["article"], r["claims"], _cfg_unposted(), TODAY,
         link_opener=lambda url: (False, "unreachable: URLError: refused"))
@@ -273,5 +368,13 @@ if __name__ == "__main__":
             f(); ok += 1; print("PASS", f.__name__)
         except AssertionError as e:
             print("FAIL", f.__name__, str(e)[:300])
+        # Round 48. WITHOUT THIS CLAUSE a raised exception aborted the whole file: every test
+        # after the first raise never ran, and the `N/M passed` line never printed at all. The
+        # exit code was still non-zero, so the workflow saw red — but it saw red with no verdict
+        # list, which is why "9 tests failing" was the reported shape of a file where 20-odd
+        # tests had not been attempted. Same family as the missing `sys.exit` (Round 47b): the
+        # reporting half of a check, missing, so the file could not say what it knew.
+        except Exception as e:                      # noqa: BLE001
+            print("ERROR", f.__name__, f"{type(e).__name__}: {e}"[:300])
     print(f"{ok}/{len(fns)} passed")
     sys.exit(0 if ok == len(fns) else 1)

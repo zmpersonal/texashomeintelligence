@@ -79,14 +79,17 @@ function haversineMiles(a: { lat: number; lon: number }, b: { lat: number; lon: 
 
 /** Pages that should carry the definition of AQI and of NowCast. */
 const DOC_URLS = [
-  // Round 47b: the retired service's OWN page, named by the 410 body. This is
-  // the call that settles whether the old `AQI` field was already a NowCast
-  // value rather than leaving it an inference.
-  "https://docs.airnowapi.org/webservices/retired",
   "https://docs.airnowapi.org/webservices",
   "https://docs.airnowapi.org/aq101",
   "https://www.airnow.gov/aqi/aqi-basics/",
   "https://document.airnow.gov/airnow-technical-documentation.pdf",
+  // LAST ON PURPOSE. The retired service's own page — named by the 410 body —
+  // is the call that settles whether the old `AQI` field was already a NowCast
+  // value. It was first in the list and its output sat too far up a 250-line
+  // log to retrieve: three attempts to page back to it timed out or returned
+  // the wrong window. Printing the thing the decision rests on LAST, where the
+  // tail always reaches, is cheaper than fighting the log API.
+  "https://docs.airnowapi.org/webservices/retired",
 ];
 
 async function show(label: string, url: URL): Promise<void> {
@@ -131,38 +134,6 @@ async function main(): Promise<void> {
     newUrl.searchParams.set("distance", "25");
     if (KEY) newUrl.searchParams.set("API_KEY", KEY);
     await show(`${m.location} · REPLACEMENT path`, newUrl);
-  }
-
-  // 3 · The publisher's own definitions. This is the half the decision rests
-  //     on, and it is the half no GitHub PR can settle.
-  console.log("\n\n══ AIRNOW'S OWN DOCUMENTATION ══");
-  for (const u of DOC_URLS) {
-    console.log(`\n── ${u}`);
-    try {
-      const res = await fetch(u);
-      const text = await res.text();
-      console.log(`   HTTP ${res.status}, ${text.length} bytes, ${res.headers.get("content-type") ?? "?"}`);
-      // Pull the sentences that mention the two quantities by name, so the
-      // definitions arrive in the publisher's words rather than paraphrased.
-      const plain = text.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
-      // The retired service's own page is the one that settles what the OLD
-      // `AQI` field was, so its opening is printed whether or not a search term
-      // matched — a page that says nothing about NowCast is itself an answer.
-      if (u.endsWith("/retired")) console.log(`   OPENS: ${plain.slice(0, 1200)}`);
-      for (const term of ["NowCast", "nowcast", "nowcastAQI", "current AQI", "hourly"]) {
-        const idx: number[] = [];
-        let at = plain.indexOf(term);
-        while (at > -1 && idx.length < 3) {
-          idx.push(at);
-          at = plain.indexOf(term, at + 1);
-        }
-        for (const i of idx) {
-          console.log(`   [${term}] …${plain.slice(Math.max(0, i - 220), i + 320)}…`);
-        }
-      }
-    } catch (e) {
-      console.log(`   FETCH FAILED: ${e instanceof Error ? e.message : String(e)}`);
-    }
   }
 
   // ── 4 · Does ANY parameter constrain the radius? ────────────────────────
@@ -242,6 +213,44 @@ async function main(): Promise<void> {
       }
     } catch (e) {
       console.log(`   ${m.location} FAILED: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+
+  // ── 6 · The publisher's own definitions. This is the half the decision
+  //        rests on, and it is the half no GitHub PR can settle.
+  //
+  // LAST IN THE RUN, not third. Moving the retired-docs URL to the end of
+  // DOC_URLS did not help, because this whole SECTION printed before the radius
+  // sweep and the distances — four attempts to page back to it through the logs
+  // API timed out or returned the wrong window. The thing the decision rests on
+  // now prints where the tail always reaches.
+  console.log("\n\n══ AIRNOW'S OWN DOCUMENTATION ══");
+  for (const u of DOC_URLS) {
+    console.log(`\n── ${u}`);
+    try {
+      const res = await fetch(u);
+      const text = await res.text();
+      console.log(`   HTTP ${res.status}, ${text.length} bytes, ${res.headers.get("content-type") ?? "?"}`);
+      // Pull the sentences that mention the two quantities by name, so the
+      // definitions arrive in the publisher's words rather than paraphrased.
+      const plain = text.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+      // The retired service's own page is the one that settles what the OLD
+      // `AQI` field was, so its opening is printed whether or not a search term
+      // matched — a page that says nothing about NowCast is itself an answer.
+      if (u.endsWith("/retired")) console.log(`   OPENS: ${plain.slice(0, 1200)}`);
+      for (const term of ["NowCast", "nowcast", "nowcastAQI", "current AQI", "hourly"]) {
+        const idx: number[] = [];
+        let at = plain.indexOf(term);
+        while (at > -1 && idx.length < 3) {
+          idx.push(at);
+          at = plain.indexOf(term, at + 1);
+        }
+        for (const i of idx) {
+          console.log(`   [${term}] …${plain.slice(Math.max(0, i - 220), i + 320)}…`);
+        }
+      }
+    } catch (e) {
+      console.log(`   FETCH FAILED: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 

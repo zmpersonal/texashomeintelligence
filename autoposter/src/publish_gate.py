@@ -21,14 +21,16 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+import gates
+
 LEDGER = Path(__file__).resolve().parents[1] / "data" / "published-posts.json"
 
 
-class DuplicateDestinationHalt(Exception):
+class DuplicateDestinationHalt(gates.GateHalt):
     """This link has already been posted. An unattended machine must never re-post one."""
 
 
-class PostPublishHalt(Exception):
+class PostPublishHalt(gates.GateHalt):
     """Published, but the destination no longer resolves. Loud, recorded, and not swallowed."""
 
     def __init__(self, reason: str, record: dict):

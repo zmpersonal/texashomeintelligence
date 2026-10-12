@@ -27,8 +27,10 @@ without a network, a key, or a Blotato session.
 
 from __future__ import annotations
 
+import gates
 
-class ChannelGuardHalt(Exception):
+
+class ChannelGuardHalt(gates.GateHalt):
     """Raised instead of posting. Carries every reason found, not just the first."""
 
     gate = "PIN"
