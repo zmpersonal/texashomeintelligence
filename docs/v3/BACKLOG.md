@@ -132,6 +132,36 @@ it.
 
 ---
 
+## Standing rule — a pipe discards the exit code you were checking
+
+Round 48, and logged with a correction attached: I reported this to the owner as a third
+codebase instance of "a step that cannot do its job reporting success", alongside the
+autoposter's `sys.exit` gap and the OG generator's first-failure exit. **It is not.**
+`scripts/run-sweep.mjs:141` handles a worker that never answers exactly right:
+
+```js
+console.error(`no worker answered on ${BASE} within 60s`);
+process.exit(1);
+```
+
+The sweep exited 1. What reported 0 was **my own invocation**:
+
+```bash
+npm run check 2>&1 | tail -4; echo "=== sweep ==="; npm run sweep 2>&1 | tail -4
+```
+
+A pipeline's status is its LAST command's, so `| tail` returns 0 whatever came before it, and
+`A; B` reports B's. The sweep's refusal to run its render replays against no worker was correctly
+loud and I piped it into silence, then read the 0 as a pass.
+
+**So: never read a pass off a command whose output you piped.** Where the exit code is the thing
+being checked — a build, a sweep, a test run, a generator — run it bare, or capture the status
+before the pipe (`set -o pipefail`, or `cmd > out; code=$?; tail out`). Same family as the two
+real defects this round fixed, with the same shape (a verdict that cannot reach the thing reading
+it) and a different culprit: a check can be sound and still be read wrong by whoever runs it.
+
+---
+
 ## Standing rule — redact before you shorten
 
 **Masking matches the whole value, so any truncation of a string that might hold a secret

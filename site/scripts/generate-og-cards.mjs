@@ -313,11 +313,22 @@ async function main() {
   const requested = process.argv.slice(2).filter((a) => a && !a.startsWith("-"))
     .map((a) => a.replace(/\.md$/, ""));
 
-  const articles = fs
+  const declared = fs
     .readdirSync(ARTICLES)
     .filter((f) => f.endsWith(".md"))
     .map((f) => ({ slug: f.replace(/\.md$/, ""), data: frontmatter(fs.readFileSync(path.join(ARTICLES, f), "utf8")) }))
     .filter((a) => a.data?.card);
+
+  // PUBLISHED ONLY. A card exists to be a PAGE's OG image, and `content.config.ts` builds no
+  // route for `published: false` — so an unpublished article has no page for a card to serve.
+  //
+  // Found 2026-10-12: the withdrawn electricity article still declares its `card:` block, so
+  // every run re-created the PNG and sidecar that Round 43 deliberately DELETED when it
+  // withdrew the piece. Nothing referenced them, but a generator that keeps resurrecting a
+  // deleted artifact makes "do not commit that file" a hand-step someone has to remember on
+  // every cycle, and hand-steps rot. The default matches the site's schema: absent is false.
+  const unpublished = declared.filter((a) => a.data.published !== true).map((a) => a.slug);
+  const articles = declared.filter((a) => a.data.published === true);
 
   if (articles.length === 0) {
     console.log("[ ] no article declares a `card:` block — nothing to render");
@@ -350,7 +361,8 @@ async function main() {
   // ONE SUMMARY LINE, always. A bare run now exits 0 with failures in it, so the count has to
   // be impossible to miss in a log somebody skims.
   console.log(`[summary] ${rendered.length} rendered, ${refused.length} refused, `
-              + `${articles.length} articles declare a card`
+              + `${articles.length} published articles declare a card`
+              + (unpublished.length ? `, ${unpublished.length} skipped as unpublished` : "")
               + (requested.length ? ` — asked for: ${requested.join(", ")}` : ""));
 
   if (!requested.length) {
@@ -364,7 +376,13 @@ async function main() {
   }
 
   const known = new Set(articles.map((a) => a.slug));
-  const absent = requested.filter((slug) => !known.has(slug));
+  // An unpublished slug gets its own message. "No article with a card block" would be false
+  // and would send whoever asked looking for a missing file.
+  const withheld = requested.filter((slug) => unpublished.includes(slug));
+  const absent = requested.filter((slug) => !known.has(slug) && !unpublished.includes(slug));
+  if (withheld.length) {
+    console.error(`[x] not published, so no page needs a card: ${withheld.join(", ")}`);
+  }
   const blocked = refused.filter((r) => requested.includes(r.slug));
   if (absent.length) {
     console.error(`[x] no article with a card block for: ${absent.join(", ")}`);
@@ -372,7 +390,7 @@ async function main() {
   for (const { slug, reason } of blocked) {
     console.error(`[x] ${slug} was asked for and could not be rendered: ${reason}`);
   }
-  if (absent.length || blocked.length) process.exit(1);
+  if (absent.length || blocked.length || withheld.length) process.exit(1);
 }
 
 await main();

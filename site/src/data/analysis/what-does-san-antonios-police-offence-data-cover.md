@@ -9,7 +9,7 @@ sources:
   - name: "City of San Antonio — SAPD Offenses"
     asOf: "2026-08-31"
 card:
-  question: "What does San Antonio's police offence data actually cover?"
+  question: "What does San Antonio's police data cover?"
   headline: "538,978 records"
   subhead: "44 months, 8 columns, no address"
   source: "City of San Antonio"
