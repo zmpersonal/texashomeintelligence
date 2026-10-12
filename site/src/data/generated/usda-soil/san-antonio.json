@@ -2,10 +2,10 @@
   "datasetId": "usda-soil",
   "location": "san-antonio",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-10-11T23:04:55.643Z",
+  "status": "stale",
+  "lastAttemptAt": "2026-10-12T19:01:57.231Z",
   "lastSuccessAt": "2026-10-11T23:04:55.643Z",
-  "lastError": null,
+  "lastError": "fetch failed",
   "source": {
     "name": "USDA Soil Data Access",
     "url": "https://sdmdataaccess.nrcs.usda.gov"

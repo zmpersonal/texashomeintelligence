@@ -2,10 +2,10 @@
   "datasetId": "usda-soil",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-10-11T23:04:55.252Z",
+  "status": "stale",
+  "lastAttemptAt": "2026-10-12T19:01:47.199Z",
   "lastSuccessAt": "2026-10-11T23:04:55.252Z",
-  "lastError": null,
+  "lastError": "fetch failed",
   "source": {
     "name": "USDA Soil Data Access",
     "url": "https://sdmdataaccess.nrcs.usda.gov"
