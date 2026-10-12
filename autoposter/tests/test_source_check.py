@@ -20,6 +20,8 @@ THE SHAPE OF THE GATE, and every branch of it is asserted below:
 Run: python3 tests/test_source_check.py
 """
 import os
+import re
+import pathlib
 import sys
 from datetime import date
 
@@ -231,6 +233,38 @@ def test_the_DEAD_FEED_GUARD_is_gone_not_merely_unused():
     assert not hasattr(engine, "_metric"), (
         "the dead feed guard is back; wire it or delete it, do not leave it describing a "
         "guarantee it does not provide")
+
+
+def test_the_WORKFLOW_THAT_RUNS_THE_CYCLE_supplies_every_env_var_the_verifier_reads():
+    """The check fails open, so a missing credential is SILENT: every cycle would record
+    `unverified` for the EIA claim and the ledger would look like a working gate was running.
+
+    Measured, not hypothetical — Round 49 shipped the source check onto the publishing path
+    while `autoposter-cadence.yml` had no `EIA_API_KEY`, and the suite was green. Fail-open
+    turns a missing secret into a permanent non-result, which is why this is asserted here
+    rather than left to be noticed in a ledger months later.
+
+    Derived from the verifier's own source, so a new keyed source cannot be added without
+    either wiring its secret through or failing this test.
+    """
+    verifier = (pathlib.Path(source_check.__file__).resolve().parents[2]
+                / "site" / "scripts" / "verify-claim.ts")
+    needed = set(re.findall(r"process\.env\.([A-Z][A-Z0-9_]+)", verifier.read_text()))
+    assert needed, "no process.env reads found in verify-claim.ts; this check has gone blind"
+
+    wf = (pathlib.Path(source_check.__file__).resolve().parents[2]
+          / ".github" / "workflows" / "autoposter-cadence.yml").read_text()
+    # The step that actually runs a cycle, not the whole file: a secret wired into the
+    # preflight jobs is not wired into the cycle.
+    step = wf.split("name: Run the cycle", 1)
+    assert len(step) == 2, "the cycle step was renamed; this check no longer reads it"
+    cycle_env = step[1].split("run:", 1)[0]
+
+    missing = sorted(v for v in needed if v not in cycle_env)
+    assert not missing, (
+        f"the cycle step does not supply {missing}, which verify-claim.ts reads. The source "
+        f"check fails open, so this does not fail a run — it silently records `unverified` "
+        f"forever. Wire the secret or drop the source.")
 
 
 if __name__ == "__main__":
