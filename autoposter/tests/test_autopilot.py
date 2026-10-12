@@ -13,7 +13,7 @@ import os
 import re
 import sys
 import tempfile
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -162,6 +162,50 @@ def test_a_card_that_was_never_rendered_SKIPS():
     d = _fails(_evaluate(cfg), "card")
     assert "does not exist" in d.notice()
     assert "nothing published" in d.notice()
+
+
+def test_TOO_SOON_stays_SILENT_for_the_clock_and_SPEAKS_to_a_person():
+    """A dispatch that cannot act must say so and name what it would have done.
+
+    On 2026-10-12 an approval naming a specific article was dispatched twenty minutes after a
+    publish. The floor is checked BEFORE an article is chosen, so the cycle returned `too_soon`,
+    the run went green, and only the ledger's unchanged row count showed that nothing had
+    happened — the approval was never consulted.
+
+    The floor itself is unchanged and stays unoverridable: a floor a flag can lift is not a
+    floor. What changed is the silence. A scheduled run that is too soon still says nothing,
+    because nobody is waiting for it.
+    """
+    cfg = _cfg()
+    just_published = {"last_article_at": TODAY.isoformat(), "cycles": 1}
+
+    quiet = autopilot.evaluate(cfg, today=TODAY, state=just_published, **_kwargs(cfg, env={}))
+    assert quiet.action == "too_soon"
+    assert quiet.notice() == "", "a scheduled run that is too soon should stay silent"
+
+    dispatched = autopilot.evaluate(
+        cfg, today=TODAY, state=just_published,
+        **_kwargs(cfg, env={"AUTOPOSTER_APPROVED_SLUG": "some-article"}))
+    assert dispatched.action == "too_soon", dispatched.action
+    notice = dispatched.notice()
+    assert notice, "a dispatched approval that could not be used went out silently"
+    assert "some-article" in notice, "the notice does not name what was approved"
+    assert "not used" in notice.lower()
+    # And it names the DATE the floor clears, not a day count a reader has to add up.
+    floor = cfg["cadence"]["article_days_min"]
+    assert (TODAY + timedelta(days=floor)).isoformat() in notice, notice
+
+
+def test_the_FLOOR_IS_NOT_OVERRIDABLE_by_a_sign_off():
+    """The sign-off authorises an ARTICLE; it does not authorise ignoring the cadence. Both have
+    to be satisfied, and neither substitutes for the other."""
+    cfg = _cfg()
+    just_published = {"last_article_at": TODAY.isoformat(), "cycles": 1}
+    d = autopilot.evaluate(cfg, today=TODAY, state=just_published,
+                           **_kwargs(cfg, env=_approving_env()))
+    assert d.action == "too_soon", (
+        f"a sign-off lifted the cadence floor: {d.action}")
+    assert d.article is None, "it built an article the floor should have stopped"
 
 
 def test_a_CLEAN_cycle_HOLDS_for_SIGN_OFF_and_merges_nothing():
@@ -543,8 +587,10 @@ def test_too_soon_does_nothing_and_stays_QUIET():
     """The one silent path. A daily driver that reports 'nothing to do' six days a week trains
     you to ignore it, which is how the seventh message gets missed."""
     cfg = _cfg()
+    # No approval in the environment: the clock asked, not a person.
     d = autopilot.evaluate(cfg, today=TODAY,
-                           state={"last_article_at": "2026-09-10", "cycles": 1}, **_kwargs(cfg))
+                           state={"last_article_at": "2026-09-10", "cycles": 1},
+                           **_kwargs(cfg, env={}))
     assert d.action == "too_soon" and d.notice() == ""
 
 
@@ -698,8 +744,11 @@ def test_a_too_soon_run_cycle_sends_NO_notice_at_all():
     notices = []
     state = Path(tempfile.mkdtemp()) / "s.json"
     autopilot.save_state({"last_article_at": "2026-09-10", "cycles": 1}, state)
+    # `env={}` is the other half of the premise: NO approval was dispatched, which is what a
+    # scheduled run looks like. A too-soon run that was given one does speak, and says so — see
+    # `test_TOO_SOON_stays_SILENT_for_the_clock_and_SPEAKS_to_a_person`.
     d = autopilot.run_cycle(cfg, today=TODAY, notify_fn=notices.append,
-                            state_path=state, sleep_fn=_NO_SLEEP, **_kwargs(cfg))
+                            state_path=state, sleep_fn=_NO_SLEEP, **_kwargs(cfg, env={}))
     assert d.action == "too_soon"
     assert notices == []
 

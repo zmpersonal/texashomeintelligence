@@ -90,6 +90,11 @@ class CycleDecision:
     post_url: str = ""
     # The post-deploy verdicts. Empty until the deploy has happened and they have actually run.
     live_verdicts: list[GateVerdict] = field(default_factory=list)
+    # A sign-off that was supplied and could NOT be used, with the reason. Set only on
+    # `too_soon`: the cadence floor is checked before an article is chosen, so a dispatch that
+    # names a slug can be answered by the clock before anything is built. Empty on a scheduled
+    # run, which is what keeps the quiet outcome quiet.
+    unused_signoff: str = ""
     # Every topic whose gates refused this cycle, one line each with its reason. Populated on
     # EVERY outcome, including a successful publish — a cycle that published the runner-up while
     # the top-ranked topic silently halted is exactly the state this exists to make visible.
@@ -160,6 +165,15 @@ class CycleDecision:
     def notice(self) -> str:
         """The Slack message for this outcome. Every path produces one except the two quiet
         ones — `too_soon` and `nothing_to_say`, which are the machine waiting, not acting."""
+        if self.action == "too_soon" and self.unused_signoff:
+            # SILENCE FOR THE CLOCK, SPEECH FOR A PERSON. A daily scheduled run that is too soon
+            # says nothing, and should. A human who dispatched an approval is waiting for an
+            # answer, and giving them a green run and no message is the defect this fixes.
+            return (f"⏳ THI autoposter did NOT act — too soon, and your approval was not used.\n"
+                    f"{self.reason}\n"
+                    f"{self.unused_signoff}\n"
+                    f"Nothing is wrong and nothing changed. The floor is not overridable: a "
+                    f"floor a flag can lift is not a floor.")
         if self.action in ("too_soon", "nothing_to_say"):
             return ""
         if self.action == "withheld":
@@ -358,6 +372,19 @@ def due(state: dict, config: dict, today: date) -> tuple[bool, str]:
     if elapsed < minimum:
         return False, f"{elapsed}d since the last article; the floor is {minimum}d"
     return True, f"{elapsed}d since the last article"
+
+
+def _floor_clears(state: dict, config: dict) -> str:
+    """The first date the cadence floor allows another article, as a date rather than a count.
+
+    "2d since the last article; the floor is 7d" makes a reader do the arithmetic. The date is
+    what they actually want, and it is the thing a re-dispatch has to wait for.
+    """
+    last = state.get("last_article_at")
+    minimum = (config.get("cadence") or {}).get("article_days_min", 3)
+    if not last:
+        return "immediately — no article is recorded yet"
+    return (date.fromisoformat(last) + timedelta(days=minimum)).isoformat()
 
 
 # --------------------------------------------------------------------------- the sweep
@@ -597,7 +624,20 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
 
     ready, why = due(state, config, today)
     if not ready:
-        return CycleDecision(action="too_soon", reason=why)
+        # THE FLOOR IS NOT OVERRIDABLE, and a sign-off does not make it conditional — a floor
+        # that a flag can lift is not a floor. But a dispatch that cannot act must SAY so: on
+        # 2026-10-12 an approval naming a specific article was dispatched twenty minutes after
+        # a publish, the run went green, and only the ledger's unchanged row count showed that
+        # nothing had happened. The approval was never even consulted.
+        approved = str((env or {}).get(SIGNOFF_ENV, "")).strip()
+        unused = ""
+        if approved:
+            unused = (f"An approval naming {approved!r} was supplied and NOT used. The cadence "
+                      f"floor is checked before an article is chosen, so nothing was built, "
+                      f"merged or posted — the approval was not consulted at all. Re-dispatch "
+                      f"the same slug once the floor clears "
+                      f"({_floor_clears(state, config)}).")
+        return CycleDecision(action="too_soon", reason=why, unused_signoff=unused)
 
     # ---- the engine's own run carries topic choice, ledger, prose gates, card and two-lock.
     # It RAISES on any of them, which is exactly right here: a halt is a skip with a reason.
@@ -752,6 +792,12 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
         decision = evaluate(config, today=today, state=state, **evaluate_kwargs)
 
     if decision.action in ("too_soon", "nothing_to_say"):
+        # ...unless the outcome has something a PERSON is waiting for. `notice()` returns "" for
+        # the ordinary quiet cases and a message for the one case where a human dispatched an
+        # approval the floor would not let the cycle use.
+        if decision.notice():
+            _safe_notify(notify_fn, decision.notice(), decision)
+            return decision
         # SILENT, deliberately. A daily "nothing to publish" for the ten days between one
         # period and the next trains the reader to ignore the channel, and the one message
         # that matters is the one that says something WAS published. The run still exits 0 and

@@ -5,6 +5,8 @@
 # Phase 0 decisions. Every amendment is marked `# PHASE 0:` with its reason, so a later
 # reader can tell a measured decision from an inherited assumption.
 
+# NOT-READ-BY-CODE — a header describing the project to a reader. No code reads
+# any of it; it is here so somebody opening this file knows what they opened.
 project:
   name: thi-autoposter
   site_key: thi                      # selects ARTICLE-ENGINE.thi.md + PUBLISH-TARGET.thi.md
@@ -14,9 +16,12 @@ project:
   repo_visibility: public                  # PHASE 0: measured. Nothing secret may be committed.
 
 coverage:
+  # NOT-READ-BY-CODE — the metros and grain are stated for a reader; the code
+  # learns both from the feed and the crosswalk, not from here.
   metros: [austin_metro, san_antonio_metro]
   # PHASE 0: these map to the site's two areas, `austin` and `san_antonio`
   # (site/src/data/zip-area-crosswalk.csv: 231 ZIPs, 13 counties, 2 areas).
+  # NOT-READ-BY-CODE — stated for a reader; the grain comes from the feed.
   grain: metro                       # PHASE 0 decision 1(a) — see `movers` below.
 
 # ---- Channels: role + cadence + autonomy state + PINNED TARGET ----
@@ -31,44 +36,66 @@ coverage:
 # Only the owner adds a pin. channel_guard halts on anything unpinned or mismatched.
 channels:
   facebook:
+    # NOT-READ-BY-CODE — what this channel is FOR, in words. Nothing branches on it.
     role: reach_and_community
     status: live
     enabled: true            # second, independent switch (owner's config revision). A channel
                              # must be BOTH enabled AND pinned to receive a post.
+    # NOT-READ-BY-CODE, and this is the one that mattered. It read as the switch
+    # governing whether articles publish unsupervised, and nothing has ever read it.
+    # The real switch is `autopilot.requires_signoff`.
     autonomy: review
     # Post #1 of 4, published 2026-09-11, zero human edits (RUNLOG §71). Three to go, each
     # human-approved. The gate also needs >=2 distinct weekly cycles, so this cannot graduate on
     # volume alone — only the owner advances this, never a run.
+    # NOT-READ-BY-CODE — an owner-kept tally. `publish_gate.clean_streak` counts
+    # from the ledger instead, which is the list of posts and cannot drift from it.
     clean_streak: 1
     pinned:
       account_id: "49743"
       page_id: "1335273942995805"
       name: "Texas Home Intelligence"    # asserted against the live listing each preflight
       requires_page_id: true             # several pages share this account
+      # NOT-READ-BY-CODE — provenance for the pin: who set it and when.
       pinned_by: owner
+      # NOT-READ-BY-CODE — provenance for the pin, like `pinned_by` above.
       pinned_at: "2026-09-06"
   youtube:
+    # NOT-READ-BY-CODE — what this channel is FOR, in words. Nothing branches on it.
     role: authority_anchor_and_search
     status: not_configured
     enabled: false
+    # NOT-READ-BY-CODE, and this is the one that mattered. It read as the switch
+    # governing whether articles publish unsupervised, and nothing has ever read it.
+    # The real switch is `autopilot.requires_signoff`.
     autonomy: review
+    # NOT-READ-BY-CODE — an owner-kept tally. `publish_gate.clean_streak` counts
+    # from the ledger instead, which is the list of posts and cannot drift from it.
     clean_streak: 0
     pinned: null   # PHASE 0: an account IS connected, but it is "Support Team (In A Universe
                    # Where)" — an unrelated property. Un-postable until the owner pins a real
                    # THI channel.
   instagram:
+    # NOT-READ-BY-CODE — what this channel is FOR, in words. Nothing branches on it.
     role: amplifier
     status: not_configured
     enabled: false
+    # NOT-READ-BY-CODE, and this is the one that mattered. It read as the switch
+    # governing whether articles publish unsupervised, and nothing has ever read it.
+    # The real switch is `autopilot.requires_signoff`.
     autonomy: review
+    # NOT-READ-BY-CODE — an owner-kept tally. `publish_gate.clean_streak` counts
+    # from the ledger instead, which is the list of posts and cannot drift from it.
     clean_streak: 0
     pinned: null   # PHASE 0: connected account is `inhouse.wellness` — a different brand.
   pinterest:
+    # NOT-READ-BY-CODE — what this channel is FOR, in words. Nothing branches on it.
     role: opportunistic_evergreen
     status: not_configured
     enabled: false
     pinned: null   # PHASE 0: the connected account belongs to a different brand.
   x:
+    # NOT-READ-BY-CODE — what this channel is FOR, in words. Nothing branches on it.
     role: opportunistic_realtime
     status: not_configured
     enabled: false
@@ -82,6 +109,8 @@ channels:
 #
 # THE REAL SWITCH IS `autopilot.requires_signoff` BELOW. Kept here because the thresholds record
 # what the owner originally wanted, and deleting them would lose that; read them as a note.
+# NOT-READ-BY-CODE — see the note above. Thresholds kept as a record of what was
+# originally wanted; they gate nothing.
 autonomy_gate:
   # PHASE 0 decision 4: package default taken unchanged.
   clean_posts_required: 4               # per channel, zero human edits
@@ -111,6 +140,7 @@ autopilot:
   # fast one (a GitHub Actions repository variable, flipped in the UI, no commit); this flag is
   # the durable one. Paused still builds and still notifies — it just never publishes.
   paused: false
+  # NOT-READ-BY-CODE — the Slack channel is resolved from the webhook secret.
   notify_channel: "#thi-autoposter"
 
 # ---- Cadence (two streams, own clocks) ----
@@ -133,21 +163,30 @@ cadence:
   # NOTHING READS THESE TWO. They are notes, and they were misleading: with monthly sources the
   # normal gap between bursts is about three weeks, so a 7-day "maximum" described a state the
   # machine is correctly in most of the time. Kept as documentation of intent only.
+  # NOT-READ-BY-CODE — everything below `article_days_min` is a note. There is no
+  # quota in this system: nothing says "it has been N days, publish something".
   article_days_max: 7
+  # NOT-READ-BY-CODE — a target, not a rule. Only `article_days_min` is read.
   article_days: 10        # deep myth-buster every 1-2 weeks — THE near-term stream
+  # NOT-READ-BY-CODE — reels are parked (Phase 5); nothing reads this yet.
   reels_days: 14
+  # NOT-READ-BY-CODE — parked with reels.
   pieces_per_reel_batch: 15
   # PHASE 0 decision 1(a): the reels stream is PARKED, not cancelled. A ranking format needs
   # ~10-15 comparable areas; THI resolves at metro grain (n=2). Revisit after 2026-09-22,
   # when Hays/Williamson/Comal/Guadalupe clear 4 weeks of county-grain drought history —
   # and evaluate ranking permit TRADES rather than places (counts/timing/seasonality only,
   # never price: CLAUDE.md forbids any cost reading of permit data in either metro).
+  # NOT-READ-BY-CODE — parked with reels. The live switches are `autopilot.*`.
   reels_enabled: false
+  # NOT-READ-BY-CODE — parked with reels.
   reels_review_after: "2026-09-22"
 
 # ---- Movers engine ----
 movers:
   history_min_weeks: 4          # HARD requirement; deltas impossible below this
+  # NOT-READ-BY-CODE — targets recorded for a reader; the movers engine takes its
+  # thresholds from its own constants.
   history_ideal_weeks: 12
 
   # PHASE 0 decision 1(a) — REWEIGHTED FOR METRO GRAIN.
@@ -179,8 +218,10 @@ movers:
   # which would send a genuine +20% mover to evergreen. 0.55 sits just under the p20-p25 band
   # and flags only the two genuinely weak cycles.
   quiet_week_threshold: 0.55
+  # NOT-READ-BY-CODE — recorded; the movers engine holds its own thresholds.
   quiet_week_threshold_status: proposed   # APPROVED 2026-09-06 but deliberately NOT final:
   # revisit after 2026-09-22, when county-grain rankings exist and the distribution changes.
+  # NOT-READ-BY-CODE — recorded; see above.
   quiet_week_threshold_prior: 0.45        # inherited from the package, never calibrated
   # Honest caveat (owner-agreed): taking the max of ~15 series makes the weekly top score high
   # almost by construction, so this threshold does little work at metro grain. The live risk is
@@ -211,6 +252,9 @@ topic_score_weights:
 # in `_` matches by longest prefix, so one entry covers every permit trade.
 # The bounds below are set to each source's own publication rhythm plus its lag, not to a
 # round number: a monthly series cannot be fresher than monthly.
+# READ-BY-LOOKUP — every key below is a METRIC ID, fetched as
+# `staleness_hours[metric]` at runtime. Grepping src/ for one would never find it;
+# `validator.staleness_bound_hours` is what reads them, and it reads them all.
 staleness_hours:
   # --- metrics the generator actually emits today (Phase 2) ---
   # 2026-10-12 (Round 48): 2160 -> 2880, i.e. 90 -> 120 days. THE ARITHMETIC, per the
@@ -270,6 +314,8 @@ staleness_hours:
 
 # ---- Gated metrics: absent from the feed until their ingest lands; angles needing them
 #      do not generate (VALIDATOR G6) ----
+# READ-BY-LOOKUP — keyed by metric id, read by `topic_scorer`, `build_feed` and
+# `validator` as a lookup rather than by name.
 gated_metrics:
   appraisal_change:
     available: false
@@ -286,12 +332,18 @@ gated_metrics:
 
 # ---- Cost (README decision H: Claude usage only; subscriptions separate) ----
 cost:
+  # NOT-READ-BY-CODE — the cost ceiling is enforced by the owner and by
+  # `model_calls_per_cycle_expected` above, not by these two numbers.
   monthly_claude_ceiling_usd: 20
+  # NOT-READ-BY-CODE — the 80% flag is the owner's to watch, not a code path.
   flag_at_pct: 80
+  # NOT-READ-BY-CODE — the ceiling is enforced by the one-model-call budget.
   stop_at_pct: 100
   model_calls_per_cycle_expected: 1   # caption/write step only; alert if exceeded
 
 # ---- Data source (PHASE 0 decision 2: autoposter-local generator) ----
+# NOT-READ-BY-CODE — a record of WHERE the feed comes from, for a reader. The paths
+# the code actually uses are in `thi_source.py`, resolved from __file__.
 data_source:
   mode: local_generated
   # A generator inside autoposter/ reads the THI site's committed datasets READ-ONLY and
@@ -306,6 +358,8 @@ data_source:
   committed_json_url: null
 
 # ---- Tooling ----
+# NOT-READ-BY-CODE — which external tools this project assumes and on what plan. No
+# code reads it; the credentials and endpoints live in the environment.
 tools:
   blotato:
     enabled: true
@@ -332,6 +386,8 @@ publish:
   # A text-with-link post carries no uploaded card: Facebook renders the DESTINATION's own OG
   # image in the preview, so that image is the post's media and is what the media gate must
   # resolve. Derived from the destination in build_facebook_promo — never hand-set at post time.
+  # NOT-READ-BY-CODE — the sitewide fallback card's path, for a reader. The site
+  # resolves it itself; `card.sidecar_path` is what the gates read.
   og_image_path: /images/og-card.jpg
   # Where the site's card renderer writes its sidecars. Read-only from here (Rule 0), and the
   # source of the media path for a link post: reading the file the renderer wrote is what makes
@@ -344,6 +400,8 @@ publish:
 # ---- Egress the runner needs for its own gates to be performable (LEARNINGS L13) ----
 # A fail-closed gate on a surface that cannot reach the host it checks blocks every post.
 # These are the hosts resolution actually hits. Until they are reachable, DO NOT POST.
+# NOT-READ-BY-CODE — the hosts this project needs to reach, listed so a network
+# policy can be written from it. Nothing enforces it from here.
 required_egress:
   - texashomeintelligence.com      # destination + canonical (destination-resolution gate)
   - database.blotato.io            # Blotato media storage, measured from real post payloads
@@ -351,7 +409,10 @@ required_egress:
 # GitHub Actions (.github/workflows/autoposter-verify-url.yml) and the session reads the run's
 # conclusion by id. Proven on main: run 34638465141 SUCCESS on the live article URL (http 200,
 # echoed url == posted url), run 34638472822 FAILURE on a deliberately bad URL.
+# NOT-READ-BY-CODE — the date the egress list above was last checked, by hand.
 egress_verified: true
+# NOT-READ-BY-CODE — how URL verification was PROVEN, recorded with the run ids. The
+# live path is `run_autopilot.http_opener`.
 verification:
   mode: github_actions            # the session cannot resolve URLs itself; this is not a stopgap
   workflow: autoposter-verify-url.yml
@@ -368,6 +429,7 @@ verification:
     positive: 34638465141
     negative: 34638472822
 
+# NOT-READ-BY-CODE — the channel name for a reader. Delivery uses the webhook secret.
 slack:
   channel: "#thi-autoposter"             # PHASE 0: does not exist yet (searched). 🔴 owner.
   webhook_secret_name: SLACK_WEBHOOK_URL
