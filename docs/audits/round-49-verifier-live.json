@@ -1,0 +1,136 @@
+{
+  "power": {
+    "counts": {
+      "source": 2,
+      "file": 7,
+      "unverified": 1
+    },
+    "unverified": [
+      "C1 (energy_price_cents_kwh): unverified: unreachable: Error: EIA electricity price fetch failed: HTTP 500 from https://api.eia.gov/v2/electricity/retail-sales/data/?api_key=% at 2026-10-12T16:43:02+00:00"
+    ],
+    "claims": [
+      {
+        "id": "C1",
+        "tier": "data",
+        "metric": "energy_price_cents_kwh",
+        "figure": "15.88 cents per kilowatt-hour",
+        "verified": "unverified: unreachable: Error: EIA electricity price fetch failed: HTTP 500 from https://api.eia.gov/v2/electricity/retail-sales/data/?api_key=% at 2026-10-12T16:43:02+00:00"
+      },
+      {
+        "id": "C2",
+        "tier": "derived",
+        "metric": "energy_price_cents_kwh",
+        "figure": "up 3.4% year over year",
+        "verified": "file"
+      },
+      {
+        "id": "C3",
+        "tier": "derived",
+        "metric": "energy_price_cents_kwh",
+        "figure": "down 6.5% from the peak",
+        "verified": "file"
+      },
+      {
+        "id": "C4",
+        "tier": "derived",
+        "metric": "energy_price_cents_kwh",
+        "figure": "a 6.4% rise in one month",
+        "verified": "file"
+      },
+      {
+        "id": "C5",
+        "tier": "data",
+        "metric": "cooling_degree_days",
+        "figure": "644 cooling degree-days",
+        "verified": "source"
+      },
+      {
+        "id": "C5n",
+        "tier": "official",
+        "metric": "cooling_degree_days",
+        "figure": "644.8 cooling degree-days",
+        "verified": "file"
+      },
+      {
+        "id": "C5d",
+        "tier": "derived",
+        "metric": "cooling_degree_days",
+        "figure": "-0.1% against the normal",
+        "verified": "file"
+      },
+      {
+        "id": "C8",
+        "tier": "data",
+        "metric": "cooling_degree_days",
+        "figure": "607 cooling degree-days",
+        "verified": "source"
+      },
+      {
+        "id": "C8n",
+        "tier": "official",
+        "metric": "cooling_degree_days",
+        "figure": "643.3 cooling degree-days",
+        "verified": "file"
+      },
+      {
+        "id": "C8d",
+        "tier": "derived",
+        "metric": "cooling_degree_days",
+        "figure": "-5.6% against the normal",
+        "verified": "file"
+      }
+    ]
+  },
+  "ac-rush": {
+    "counts": {
+      "source": 1,
+      "file": 5,
+      "unverified": 0
+    },
+    "unverified": [],
+    "claims": [
+      {
+        "id": "H1",
+        "tier": "data",
+        "metric": "permit_activity_hvac",
+        "figure": "1,097 HVAC permits",
+        "verified": "file"
+      },
+      {
+        "id": "H2",
+        "tier": "derived",
+        "metric": "permit_activity_hvac",
+        "figure": "up 6% month over month",
+        "verified": "file"
+      },
+      {
+        "id": "C1",
+        "tier": "data",
+        "metric": "cooling_degree_days",
+        "figure": "695 cooling degree-days",
+        "verified": "source"
+      },
+      {
+        "id": "C2",
+        "tier": "derived",
+        "metric": "cooling_degree_days",
+        "figure": "the second-highest of the last 13 months",
+        "verified": "file"
+      },
+      {
+        "id": "C3",
+        "tier": "derived",
+        "metric": "cooling_degree_days",
+        "figure": "down 8% month over month",
+        "verified": "file"
+      },
+      {
+        "id": "H3",
+        "tier": "data",
+        "metric": "permit_activity_hvac",
+        "figure": "1,035 HVAC permits",
+        "verified": "file"
+      }
+    ]
+  }
+}
