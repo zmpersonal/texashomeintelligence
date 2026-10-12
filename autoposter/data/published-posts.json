@@ -70,5 +70,17 @@
     "post_publish_verified": true,
     "post_publish_detail": "resolved 200",
     "streak_after": 5
+  },
+  {
+    "published_at": "2026-10-12T13:38:18+00:00",
+    "platform": "facebook",
+    "page_id": "1335273942995805",
+    "post_url": "blotato:a4b3ac6b-a7e9-4176-9293-449eb7bbdb81",
+    "submission_id": "a4b3ac6b-a7e9-4176-9293-449eb7bbdb81",
+    "article_url": "https://texashomeintelligence.com/analysis/are-texas-power-prices-still-going-up-jul-2026/",
+    "article_slug": "are-texas-power-prices-still-going-up-jul-2026",
+    "post_publish_verified": true,
+    "post_publish_detail": "resolved 200",
+    "streak_after": 6
   }
 ]
