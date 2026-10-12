@@ -1,20 +1,18 @@
 {
   "power": {
     "counts": {
-      "source": 2,
+      "source": 3,
       "file": 7,
-      "unverified": 1
+      "unverified": 0
     },
-    "unverified": [
-      "C1 (energy_price_cents_kwh): unverified: unreachable: Error: EIA electricity price fetch failed: HTTP 500 from https://api.eia.gov/v2/electricity/retail-sales/data/?api_key=% at 2026-10-12T16:44:30+00:00"
-    ],
+    "unverified": [],
     "claims": [
       {
         "id": "C1",
         "tier": "data",
         "metric": "energy_price_cents_kwh",
         "figure": "15.88 cents per kilowatt-hour",
-        "verified": "unverified: unreachable: Error: EIA electricity price fetch failed: HTTP 500 from https://api.eia.gov/v2/electricity/retail-sales/data/?api_key=% at 2026-10-12T16:44:30+00:00"
+        "verified": "source"
       },
       {
         "id": "C2",
