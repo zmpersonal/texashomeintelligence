@@ -1113,9 +1113,46 @@ def test_FROZEN_acrush_CLOSING_follows_it_too():
     real = run_article.write_acrush({}, claims, feed)["body"]
     flipped = run_article.write_acrush({}, _flip(claims, "H2", "up 15% month over month"),
                                        feed)["body"]
-    assert "is not the month the filings peak" in real
-    assert "is not the month the filings peak" not in flipped
+    assert "a gap between the two series" in real
+    assert "a gap between the two series" not in flipped
     assert "tracked the weather" in flipped
+    # AND NEITHER BRANCH MAKES A CLAIM NOTHING MEASURES (owner, 2026-10-12). The diverged
+    # closing used to assert "the month everyone expects installers to be busiest is not the
+    # month the filings peak" — a statement about public expectation, which this project does
+    # not measure and no gate can trace, because it carries no numeral. The converged branch
+    # had a milder version ("the intuitive answer"). Both are banned by name, in both branches,
+    # because a phrase like this comes back as a rewrite nobody re-reads.
+    for body in (real, flipped):
+        for banned in ("everyone expects", "the intuitive answer", "people expect"):
+            assert banned not in body, f"{banned!r} is back: {body[-400:]}"
+
+
+def test_FROZEN_acrush_the_LESSON_is_bounded_to_the_month_it_came_from():
+    """A computed verdict with an uncomputed lesson drawn from it.
+
+    The divergence branch concluded "cooling demand is not a live indicator of HVAC work being
+    started" — a standing claim about the relationship, from ONE month in which the two series
+    happened to diverge. The verdict was computed; the thing the article told the reader to take
+    away from it was not, and it is the sentence a reader actually remembers.
+
+    One month of divergence shows that the relationship did not hold in that month. This asserts
+    the article says that and not the other thing.
+    """
+    feed = engine.load_feed()
+    claims = run_article.build_acrush_claims(feed, CFG, AUG_CYCLE)
+    diverged = run_article.write_acrush({}, claims, feed)
+    converged = run_article.write_acrush(
+        {}, _flip(claims, "H2", "up 15% month over month"), feed)
+    label = run_article.month_label(
+        next(c for c in claims if c.id == "H1").as_of[:7])
+
+    assert "is not a live indicator" not in diverged["body"], (
+        "the one-month lesson is a standing claim again")
+    assert "One month is not a relationship" in diverged["body"]
+    assert f"it did not in {label}" in diverged["body"], (
+        "the divergence is not bounded to the month it was measured in")
+    assert "moved apart" not in converged["body"], (
+        "the converged month claimed a divergence")
 
 
 def _power_claims(today=None):

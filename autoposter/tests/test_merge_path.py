@@ -753,6 +753,130 @@ def test_REAL_git_confirmation_raises_when_the_merge_silently_does_nothing():
         ra.REPO, ra.open_and_merge_pr = real_repo, real_pr
 
 
+# ============================= the publisher resolves what it actually posted (Round 48)
+
+class _FakeResponse:
+    def __init__(self, payload):
+        self._payload = json.dumps(payload).encode()
+
+    def read(self):
+        return self._payload
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+
+def _with_statuses(*payloads):
+    """Patch urlopen so each poll returns the next scripted status. Returns (restore, calls)."""
+    scripted = list(payloads)
+    calls = []
+    real = ra.urllib.request.urlopen
+
+    def fake(request, timeout=None):
+        calls.append(request.full_url)
+        return _FakeResponse(scripted[min(len(calls) - 1, len(scripted) - 1)])
+
+    ra.urllib.request.urlopen = fake
+    return (lambda: setattr(ra.urllib.request, "urlopen", real)), calls
+
+
+def test_the_PUBLISHER_RECORDS_THE_REAL_URL_not_a_submission_id():
+    """Blotato's create response carries no postUrl — publishing is ASYNCHRONOUS, so the post
+    does not exist at that moment. The old code fell back to `blotato:<id>`, and three of six
+    ledger rows ended up with no openable link to what had been posted."""
+    restore, calls = _with_statuses(
+        {"postSubmissionId": "sub-1", "status": "in-progress"},
+        {"postSubmissionId": "sub-1", "status": "published",
+         "publicUrl": "https://facebook.com/123_456"})
+    try:
+        result = ra._resolve_submission("key", "sub-1", sleep_fn=lambda _s: None)
+    finally:
+        restore()
+    assert result["post_url"] == "https://facebook.com/123_456", result
+    assert result["submission_id"] == "sub-1"
+    assert len(calls) == 2, f"it stopped polling before the terminal state: {calls}"
+    assert calls[0].endswith("/v2/posts/sub-1"), calls[0]
+
+
+def test_a_submission_Blotato_LATER_FAILS_is_not_recorded_as_a_post():
+    """THE ONE THAT WAS INVISIBLE. The create call returns 200 whether or not the post ever goes
+    out, so a submission Blotato then failed — unsupported media, an expired page token — was
+    written to the ledger as published, the streak advanced, and the duplicate gate would have
+    refused to retry that article forever.
+
+    It raises, so no ledger row is written and the article stays eligible.
+    """
+    restore, _ = _with_statuses(
+        {"postSubmissionId": "sub-2", "status": "failed", "errorMessage": "Unsupported media type"})
+    try:
+        ra._resolve_submission("key", "sub-2", sleep_fn=lambda _s: None)
+        raise AssertionError("a failed publish was reported as a successful one")
+    except RuntimeError as exc:
+        assert "Unsupported media type" in str(exc), str(exc)
+        assert "Nothing is live" in str(exc)
+    finally:
+        restore()
+
+
+def test_an_UNRESOLVED_submission_still_returns_a_row_and_SAYS_SO_in_words():
+    """A post that is still in-progress may publish a second after we stop looking, so raising
+    would leave NO ledger row and invite a double post on the next cycle. The row is written and
+    the field says, in words, that the URL was not resolved — never a string that reads like
+    data."""
+    restore, calls = _with_statuses({"postSubmissionId": "sub-3", "status": "in-progress"})
+    try:
+        result = ra._resolve_submission("key", "sub-3", sleep_fn=lambda _s: None)
+    finally:
+        restore()
+    assert len(calls) == ra.BLOTATO_POLL_ATTEMPTS, calls
+    assert result["post_url"].startswith("UNRESOLVED"), result
+    assert not result["post_url"].startswith("blotato:")
+    assert "sub-3" in result["post_url"]
+
+
+def test_a_SCHEDULED_submission_records_a_row_without_inventing_a_url():
+    restore, _ = _with_statuses({"postSubmissionId": "sub-4", "status": "scheduled",
+                                 "scheduledTime": "2026-12-25T15:00:00Z"})
+    try:
+        result = ra._resolve_submission("key", "sub-4", sleep_fn=lambda _s: None)
+    finally:
+        restore()
+    assert result["post_url"].startswith("SCHEDULED for 2026-12-25"), result
+
+
+def test_a_POLL_THAT_CANNOT_REACH_BLOTATO_says_nothing_about_whether_it_posted():
+    """An unreachable status endpoint is not evidence either way, so it must not be read as a
+    failure (which would raise and invite a retry of a post that may be live) or as a success."""
+    real = ra.urllib.request.urlopen
+
+    def exploding(request, timeout=None):
+        raise OSError("connection reset")
+
+    ra.urllib.request.urlopen = exploding
+    try:
+        result = ra._resolve_submission("key", "sub-5", sleep_fn=lambda _s: None)
+    finally:
+        ra.urllib.request.urlopen = real
+    assert result["post_url"].startswith("UNRESOLVED"), result
+
+
+def test_EVERY_LEDGER_ROW_carries_an_openable_url_and_a_title():
+    """The committed ledger, as an assertion. Half of it used to be `blotato:` placeholders."""
+    rows = json.loads((Path(__file__).resolve().parents[1]
+                       / "data" / "published-posts.json").read_text())
+    assert rows, "no ledger rows to check"
+    for i, row in enumerate(rows, 1):
+        url = row.get("post_url", "")
+        assert not url.startswith("blotato:"), (
+            f"row {i} still carries a submission id where a URL belongs: {url}")
+        assert url.startswith("https://") or url.startswith(("UNRESOLVED", "SCHEDULED")), (
+            f"row {i} post_url is neither a URL nor a stated reason: {url!r}")
+        assert row.get("article_title"), f"row {i} has no article_title"
+
+
 def test_the_RENDERER_NAMES_THE_SLUG_it_needs():
     """So `check=True` means "this article's card failed", not "some article's did".
 

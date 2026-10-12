@@ -72,16 +72,36 @@ def _real_post():
 
 
 class FakeHTTP:
-    """Stands in for the socket, and ONLY the socket."""
+    """Stands in for the socket, and ONLY the socket.
 
-    def __init__(self, body=None, boom=None):
+    TWO CALLS NOW, not one. Round 48: the publisher submits the post and then POLLS
+    `GET /v2/posts/{id}` for the real public URL, because Blotato's create response carries none
+    — publishing is asynchronous. The create call has a JSON body and the poll does not, which
+    is how they are told apart here. `status_body` defaults to a published status carrying the
+    same URL, so a test that only cares about the submission reads exactly as it did before.
+    """
+
+    def __init__(self, body=None, boom=None, status_body=None):
         self.body = body or {"postSubmissionId": "sub-1", "postUrl": "https://facebook.com/p/1"}
+        self.status_body = status_body or {"postSubmissionId": "sub-1", "status": "published",
+                                           "publicUrl": "https://facebook.com/p/1"}
         self.boom, self.seen = boom, []
 
     def __call__(self, request, timeout=None):
         self.seen.append({"url": request.full_url,
                           "headers": {k.lower(): v for k, v in request.header_items()},
-                          "payload": json.loads(request.data.decode())})
+                          "payload": (json.loads(request.data.decode())
+                                      if request.data is not None else None)})
+        if request.data is None:                   # the status poll
+            if self.boom:
+                raise self.boom
+            outer = self
+
+            class S:
+                def read(self): return json.dumps(outer.status_body).encode()
+                def __enter__(self): return self
+                def __exit__(self, *a): return False
+            return S()
         if self.boom:
             raise self.boom
         outer = self

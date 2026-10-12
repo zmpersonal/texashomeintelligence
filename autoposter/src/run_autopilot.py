@@ -504,9 +504,89 @@ def blotato_publisher(api_key: str | None, config: dict):
         if not submission:
             raise RuntimeError(f"Blotato accepted the request but returned no submission id: "
                                f"{body}")
-        return {"post_url": body.get("postUrl") or f"blotato:{submission}",
-                "submission_id": submission}
+        # THE CREATE CALL RETURNS NO URL, because publishing is ASYNCHRONOUS: the post does not
+        # exist yet at this moment, so `postUrl` is never in this response. The old fallback
+        # recorded `blotato:<submission-id>` and three of six ledger rows ended up with no
+        # openable link to what had been posted — an audit trail that cannot be audited.
+        #
+        # Worse, and invisible until it was looked for: a submission that Blotato later FAILS
+        # (unsupported media, an expired page token) was recorded as a successful post. The
+        # create call returns 200 either way. The ledger said published, the streak advanced,
+        # and the duplicate gate would then refuse to ever retry that article.
+        #
+        # So the status is polled, and the four terminal states are told apart. See
+        # `_resolve_submission`.
+        return _resolve_submission(api_key, submission)
     return publish
+
+
+# Blotato's own guidance: wait at least 10 seconds between polls. Six attempts is a minute,
+# which is far longer than any post this project has made has taken, and the in-progress branch
+# below is what makes a slower one safe rather than wrong.
+BLOTATO_POLL_ATTEMPTS = 6
+BLOTATO_POLL_DELAY = 10
+
+
+def _resolve_submission(api_key: str, submission: str, *, sleep_fn=None) -> dict:
+    """Poll `GET /v2/posts/{id}` until the submission reaches a terminal state.
+
+    THE ASYMMETRY HERE IS DELIBERATE, and it is about what a missing ledger row means.
+
+    * `published` — the post is live. Record its real `publicUrl`.
+    * `failed`    — NOTHING WAS POSTED, so this RAISES. The caller never gets a return value,
+                    no ledger row is written, the run goes red naming the publish stage, and the
+                    article stays eligible for promotion on a later cycle. That is the correct
+                    outcome and it is the one the old code could not produce.
+    * `scheduled` — accepted for later. A row IS written, because the duplicate gate reads the
+                    ledger and a post that will go out must not be queued twice. No URL exists
+                    yet, and the row says so rather than inventing one.
+    * still `in-progress` after the last attempt — a row IS written, for the same reason: the
+                    post may well publish a second after we stop looking, and raising here would
+                    leave no record and invite a double post. The row records that the URL was
+                    not resolved, in words, rather than a `blotato:` string that reads like data.
+    """
+    sleep = sleep_fn or time.sleep
+    url = f"https://backend.blotato.com/v2/posts/{submission}"
+    request = urllib.request.Request(url, headers={"blotato-api-key": api_key})
+    status, body = "in-progress", {}
+    for attempt in range(BLOTATO_POLL_ATTEMPTS):
+        if attempt:
+            sleep(BLOTATO_POLL_DELAY)
+        try:
+            with urllib.request.urlopen(request, timeout=30) as response:
+                body = json.loads(response.read())
+        except Exception as exc:                   # noqa: BLE001
+            # A poll that cannot reach Blotato says nothing about whether the post went out,
+            # so it must not be read as either answer. Keep trying; fall through to the
+            # unresolved row if it never answers.
+            print(f"[warn] Blotato status poll {attempt + 1} failed: {type(exc).__name__}: {exc}")
+            continue
+        status = body.get("status", "in-progress")
+        if status in ("published", "failed", "scheduled"):
+            break
+
+    if status == "failed":
+        raise RuntimeError(
+            f"Blotato accepted the submission and then FAILED to publish it: "
+            f"{body.get('errorMessage') or body}. Nothing is live on the page. The article "
+            f"stays eligible for a promotion on a later cycle, and no ledger row is written — "
+            f"so the duplicate gate will not block the retry.")
+    if status == "published":
+        public = body.get("publicUrl")
+        if public:
+            return {"post_url": public, "submission_id": submission}
+        return {"post_url": f"UNRESOLVED — Blotato reported published but returned no publicUrl "
+                            f"for submission {submission}",
+                "submission_id": submission}
+    if status == "scheduled":
+        return {"post_url": f"SCHEDULED for {body.get('scheduledTime', 'an unstated time')} — "
+                            f"no public URL exists until it goes out (submission {submission})",
+                "submission_id": submission}
+    return {"post_url": f"UNRESOLVED — still in-progress after "
+                        f"{BLOTATO_POLL_ATTEMPTS} polls over "
+                        f"{BLOTATO_POLL_DELAY * (BLOTATO_POLL_ATTEMPTS - 1)}s "
+                        f"(submission {submission}); ask Blotato for its status",
+            "submission_id": submission}
 
 
 # --------------------------------------------------------------------------- main

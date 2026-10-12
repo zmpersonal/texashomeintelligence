@@ -92,10 +92,30 @@ def _stale_card():
     return dict(card, headline=moved)
 
 
+_APPROVED_SLUG = []
+
+
+def _approving_env(cfg=None):
+    """An environment carrying the sign-off for whatever article the engine picks.
+
+    Round 48 made the sign-off a real gate, so "this cycle is cleared to publish" became a
+    PREMISE a test has to state rather than the default. Every test below that drives a publish
+    states it through this; the handful that test the gate itself pass `env={}` explicitly.
+
+    It is resolved against a CLEAN `_cfg()` and cached, deliberately ignoring the caller's
+    config: `_everything_published` builds one where nothing is eligible at all, so asking it
+    what the engine would pick raises. Every test that actually drives a publish uses the clean
+    config, so one slug serves them all, and `_picked` runs a whole cycle to find it.
+    """
+    if not _APPROVED_SLUG:
+        _APPROVED_SLUG.append(_picked()[0]["slug"])
+    return {"AUTOPOSTER_APPROVED_SLUG": _APPROVED_SLUG[0]}
+
+
 def _kwargs(cfg, **over):
     base = dict(write_fn=run_article.write, build_claims_fn=run_article.build_claims,
                 articles=run_article.TOPIC_ARTICLES, link_opener=OK, media_opener=OK,
-                captions=run_article.TOPIC_CAPTIONS, env={})
+                captions=run_article.TOPIC_CAPTIONS, env=_approving_env(cfg))
     base.update(over)
     return base
 
@@ -142,6 +162,102 @@ def test_a_card_that_was_never_rendered_SKIPS():
     d = _fails(_evaluate(cfg), "card")
     assert "does not exist" in d.notice()
     assert "nothing published" in d.notice()
+
+
+def test_a_CLEAN_cycle_HOLDS_for_SIGN_OFF_and_merges_nothing():
+    """The supervised gate, which until Round 48 did not exist in the code at all.
+
+    config.yaml carried `autonomy: review`, `autonomy_gate.clean_posts_required: 4` and a
+    per-channel `clean_streak` — and NO CODE READ ANY OF THEM. What governed posting was
+    `is_paused` and the channel pin, so the machine had been in full auto since the owner's
+    2026-09-11 decision and the ledger reached six posts against a "4 required" line with
+    nothing to announce. Nothing promoted itself; there was no promotion to make.
+
+    The sign-off is checked BEFORE the merge, not just before the post: a merge to main deploys
+    the live site, so an article nobody reviewed must not reach it either.
+    """
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    d = autopilot.evaluate(cfg, today=TODAY, state=_ready_state(), **_kwargs(cfg, env={}))
+    assert d.action == "awaiting_signoff", d.action
+    assert d.article, "it held nothing"
+    assert d.clean, "it held an article that had NOT passed its gates"
+    assert not d.is_broken, "a supervised hold must not turn the run red"
+    assert "AUTOPOSTER_APPROVED_SLUG" in d.reason
+    assert d.article["slug"] in d.reason, "the notice does not say what to approve"
+    assert "nothing merged, nothing posted" in d.notice().lower()
+
+
+def test_the_SIGN_OFF_must_NAME_THE_ARTICLE_so_it_cannot_carry_forward():
+    """A boolean would be satisfied once and then forever; a count by volume. Both are how a
+    standing permission becomes an autonomy nobody granted. An approval that names the article
+    cannot carry: the next cycle chooses a different slug and needs a different approval."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    chosen = _evaluate(cfg, env={}).article["slug"]
+
+    for env, why in (({}, "absent"),
+                     ({"AUTOPOSTER_APPROVED_SLUG": ""}, "empty"),
+                     ({"AUTOPOSTER_APPROVED_SLUG": "   "}, "whitespace"),
+                     ({"AUTOPOSTER_APPROVED_SLUG": "true"}, "a boolean-ish string"),
+                     ({"AUTOPOSTER_APPROVED_SLUG": "some-other-article"}, "another article"),
+                     ({"AUTOPOSTER_APPROVED_SLUG": chosen + "-x"}, "a near miss")):
+        d = autopilot.evaluate(cfg, today=TODAY, state=_ready_state(), **_kwargs(cfg, env=env))
+        assert d.action == "awaiting_signoff", f"{why} was accepted as a sign-off"
+
+    approved = autopilot.evaluate(
+        cfg, today=TODAY, state=_ready_state(),
+        **_kwargs(cfg, env={"AUTOPOSTER_APPROVED_SLUG": chosen}))
+    assert approved.action == "publish", approved.action
+
+
+def test_SUPERVISION_IS_TURNED_OFF_DELIBERATELY_never_by_passing_a_check():
+    """The owner sets `requires_signoff: false`. Nothing else clears it — not a streak, not a
+    post count, not a run of clean cycles."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    cfg["autopilot"] = dict(cfg["autopilot"], requires_signoff=False)
+    d = autopilot.evaluate(cfg, today=TODAY, state=_ready_state(), **_kwargs(cfg, env={}))
+    assert d.action == "publish", d.action
+    # ...and the config ships supervised.
+    import yaml as _yaml
+    shipped = _yaml.safe_load(
+        open(os.path.join(os.path.dirname(__file__), "..", "config.yaml")))
+    assert shipped["autopilot"]["requires_signoff"] is True, (
+        "the committed config is not supervised")
+
+
+def test_the_PAUSE_and_the_SIGN_OFF_are_INDEPENDENT():
+    """Either one stops a publish, and the pause is reported as a pause rather than as a hold —
+    two different things a reader has to tell apart at 2am."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    chosen = _evaluate(cfg, env={}).article["slug"]
+    paused_and_approved = autopilot.evaluate(
+        cfg, today=TODAY, state=_ready_state(),
+        **_kwargs(cfg, env={"AUTOPOSTER_PAUSED": "true",
+                            "AUTOPOSTER_APPROVED_SLUG": chosen}))
+    assert paused_and_approved.action == "paused", paused_and_approved.action
+
+
+def test_a_HELD_cycle_NEVER_reaches_the_merge_or_the_publisher():
+    """The structural half: `run_cycle` must return on the hold, not fall through."""
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    touched = []
+    notices = []
+    d = autopilot.run_cycle(
+        cfg, today=TODAY, notify_fn=notices.append,
+        merge_fn=lambda dec: touched.append("merge"),
+        deploy_wait_fn=lambda url: touched.append("deploy"),
+        verify_opener=lambda url: (True, "ok"),
+        publish_fn=lambda post: touched.append("publish") or {"post_url": "x"},
+        state_path=Path(tempfile.mkdtemp()) / "s.json",
+        ledger_path=Path(tempfile.mkdtemp()) / "l.json", sleep_fn=_NO_SLEEP,
+        **_kwargs(cfg, env={}))
+    assert d.action == "awaiting_signoff", d.action
+    assert touched == [], f"a held cycle reached {touched}"
+    assert notices and "sign-off" in notices[0].lower()
 
 
 def test_a_STALE_claim_WITHHOLDS_and_NAMES_EVERY_TOPIC_it_refused():
@@ -467,11 +583,17 @@ def test_PAUSED_by_config_flag_does_the_same():
 
 
 def test_RESUMING_publishes_again():
-    """Pause is reversible and leaves nothing to clean up."""
+    """Pause is reversible and leaves nothing to clean up.
+
+    Both halves carry the sign-off, because this test is about the PAUSE. Clearing a pause
+    cannot by itself authorise a publish — that is the sign-off's job, and the two are proved
+    independent in `test_the_PAUSE_and_the_SIGN_OFF_are_INDEPENDENT`.
+    """
     cfg = _cfg()
     cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
-    assert _evaluate(cfg, env={"AUTOPOSTER_PAUSED": "1"}).action == "paused"
-    assert _evaluate(cfg, env={}).action == "publish"
+    paused = dict(_approving_env(), AUTOPOSTER_PAUSED="1")
+    assert _evaluate(cfg, env=paused).action == "paused"
+    assert _evaluate(cfg, env=_approving_env()).action == "publish"
 
 
 def test_the_pause_is_checked_AFTER_the_gates_so_a_paused_notice_is_still_honest():

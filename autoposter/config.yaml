@@ -74,6 +74,14 @@ channels:
     enabled: false
     pinned: null   # no account
 
+# ⚠️ NOT A MECHANISM. Round 48 checked: no code has ever read `autonomy_gate`,
+# `clean_posts_required`, `min_review_cycles`, `reset_on`, or any channel's `autonomy:` /
+# `clean_streak:` field. They describe an intention and gate nothing — which is why the ledger
+# reached six posts against a "4 required" line without anything announcing it. Nothing
+# promoted itself; there was no promotion to make.
+#
+# THE REAL SWITCH IS `autopilot.requires_signoff` BELOW. Kept here because the thresholds record
+# what the owner originally wanted, and deleting them would lose that; read them as a note.
 autonomy_gate:
   # PHASE 0 decision 4: package default taken unchanged.
   clean_posts_required: 4               # per channel, zero human edits
@@ -90,6 +98,15 @@ autonomy_gate:
 # requires a clean sweep; anything else skips the cycle and notifies. A quiet week is fine.
 autopilot:
   enabled: true
+  # THE SUPERVISED GATE (owner, 2026-10-12). While true, a cycle that passes every gate stops
+  # BEFORE the merge and holds the article for sign-off: `AUTOPOSTER_APPROVED_SLUG` in the
+  # environment must name the article the cycle chose. The cadence workflow takes it as a
+  # dispatch input, so the daily scheduled run never posts on its own.
+  #
+  # It names the ARTICLE on purpose. A boolean would be satisfied once and then forever, and a
+  # count would be satisfied by volume — which is the shape this replaces. Only the owner turns
+  # this off, by setting it false; nothing passes it.
+  requires_signoff: true
   # THE KILL SWITCH. Either source pauses; both must be clear to publish. The env var is the
   # fast one (a GitHub Actions repository variable, flipped in the UI, no commit); this flag is
   # the durable one. Paused still builds and still notifies — it just never publishes.

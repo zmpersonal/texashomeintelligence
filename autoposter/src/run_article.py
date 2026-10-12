@@ -1315,9 +1315,18 @@ def write_acrush(topic: dict, claims: list[Claim], feed: dict) -> dict:
                    f"{c['C2'].figure} ({GSOM_SOURCE}, as of {label}). ") +
                   f"HVAC permits went the other way: {c['H1'].figure}, {c['H2'].figure} "
                   f"({AUSTIN_HVAC_SOURCE}, as of {label}).")
-        reading = ("**cooling demand is not a live indicator of HVAC work being started.** If "
-                   "you are timing a replacement and assuming the rush follows the thermometer, "
-                   "the filing record does not support that.")
+        # BOUNDED TO THIS MONTH (owner, 2026-10-12). This read "cooling demand is not a live
+        # indicator of HVAC work being started" — a standing claim about the relationship,
+        # drawn from ONE month in which the two series happened to diverge. One month of
+        # divergence does not establish that the relationship fails; it establishes that it did
+        # not hold in this month, which is the only thing a two-row table can say. Same class as
+        # the frozen verdict, one level up: the verdict was computed and the lesson drawn from
+        # it was not.
+        reading = (f"**in {label} the two moved apart.** Permits went "
+                   f"{'up' if permits_up else 'down'} while cooling demand went "
+                   f"{'up' if heat_up else 'down'}. One month is not a relationship, so this "
+                   f"does not show that the rush never follows the heat — it shows that it did "
+                   f"not in {label}.")
     else:
         verdict = "**This month, yes — both moved the same way.**"
         opener = (f"Cooling demand in {label} came to {c['C1'].figure} ({GSOM_SOURCE}, as of "
@@ -1332,14 +1341,20 @@ def write_acrush(topic: dict, claims: list[Claim], feed: dict) -> dict:
     # busiest is not the month the filings peak". True when the series diverge, false when they
     # do not — the same frozen-conclusion bug as the verdict, hiding in the part of the article
     # nobody re-reads.
+    # A CLAIM ABOUT THE DATA, NOT ABOUT WHAT PEOPLE EXPECT (owner, 2026-10-12). The diverged
+    # closing asserted "the month everyone expects installers to be busiest is not the month the
+    # filings peak" — a statement about public expectation, which nothing in this project
+    # measures and no gate can trace, because it carries no numeral. Same class as the
+    # mild-summer denial the power caption used to make. The converged branch had a milder
+    # version of it ("which is the intuitive answer") and goes with it.
     closing = (
-        "The month everyone expects installers to be busiest is not the month the filings "
-        "peak. If you are getting quotes, that gap is the part worth knowing — and it is "
-        "measurable, which is more than can be said for most advice about when to call someone."
+        f"What {label} shows is a gap between the two series — and a gap is something you can "
+        f"look up, which is more than can be said for most advice about when to call someone. "
+        f"If you are getting quotes, the filing record is the part you can check yourself."
         if diverged else
-        "This month the filings tracked the weather, which is the intuitive answer and is not "
-        "always the right one. Worth knowing either way: the relationship is measurable, which "
-        "is more than can be said for most advice about when to call someone."
+        f"In {label} the filings tracked the weather. That does not happen every month, which "
+        f"is why it is worth recording when it does — and either way the two series are "
+        f"published, which is more than can be said for most advice about when to call someone."
     )
 
     body = f"""

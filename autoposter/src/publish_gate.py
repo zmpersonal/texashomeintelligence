@@ -140,8 +140,8 @@ def clean_streak(ledger_path: Path | None = None, *, platform: str = "facebook",
 
 
 def publish_with_verification(post: dict, *, publish_fn, verify_opener, streak_after: int,
-                              article_slug: str = "", ledger_path: Path | None = None,
-                              now=None) -> dict:
+                              article_slug: str = "", article_title: str = "",
+                              ledger_path: Path | None = None, now=None) -> dict:
     """Publish, then verify the destination still resolves. Both, always, in that order.
 
     `publish_fn(post) -> {"post_url": str, "submission_id": str}`.
@@ -164,6 +164,9 @@ def publish_with_verification(post: dict, *, publish_fn, verify_opener, streak_a
         "submission_id": published.get("submission_id"),
         "article_url": destination,
         "article_slug": article_slug,
+        # The title, so a reader of the ledger can tell what went out without opening the site.
+        # Three rows were written without it and had to be recovered from the article files.
+        "article_title": article_title,
         "post_publish_verified": bool(ok),
         "post_publish_detail": reason,
         "streak_after": streak_after,

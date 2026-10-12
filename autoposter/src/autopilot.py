@@ -66,7 +66,8 @@ class GateVerdict:
 
 @dataclass
 class CycleDecision:
-    action: str   # publish | withheld | skip | halted | paused | too_soon | nothing_to_say
+    action: str   # publish | awaiting_signoff | withheld | skip | halted | paused |
+                  # too_soon | nothing_to_say
     reason: str = ""
     verdicts: list[GateVerdict] = field(default_factory=list)
     article: dict | None = None
@@ -111,6 +112,9 @@ class CycleDecision:
         resolve are all normal and stay green — a quiet week must not look like a fault or the
         red stops meaning anything. A crash in the publisher, or a post that went out without
         being recorded, are faults and must be red.
+
+        `awaiting_signoff` is green too: a clean article waiting on a person is the supervised
+        phase doing exactly what it says.
 
         `withheld` is the outcome Round 48 added, and it is green ON PURPOSE: a gate refusing is
         the machine working. What was wrong before was not the colour, it was that the refusal
@@ -168,6 +172,16 @@ class CycleDecision:
                     f"doing its job, not a pipeline that failed. If a reason here is about data "
                     f"age or a missing period, it clears when the upstream publishes; if it is "
                     f"about anything else, it is worth a look now.")
+        if self.action == "awaiting_signoff":
+            card = self.card or {}
+            return (f"🧾 THI autoposter is HOLDING a clean article for sign-off — nothing "
+                    f"merged, nothing posted.\n"
+                    f"{(self.article or {}).get('title', '—')}\n"
+                    f"Card: {card.get('headline', '')} · {card.get('subhead', '')} · "
+                    f"{card.get('source', '')}, {card.get('asOf', '')}\n"
+                    f"{self.reason}\n"
+                    f"Every content gate passed. This is the supervised phase working, not a "
+                    f"failure: the article is ready and waiting on a person.")
         if self.action == "paused":
             return (f"⏸ THI autoposter is PAUSED — nothing published.\n"
                     f"{self.reason}\n"
@@ -252,6 +266,46 @@ def published_notice(decision: CycleDecision, article_url: str, post_url: str,
 
 
 # --------------------------------------------------------------------------- kill switch
+
+SIGNOFF_ENV = "AUTOPOSTER_APPROVED_SLUG"
+
+
+def signoff_withheld(config: dict, slug: str, env: dict | None = None) -> tuple[bool, str]:
+    """(withheld, why) — does THIS article carry the owner's explicit sign-off?
+
+    ── WHY THIS EXISTS, AND WHAT IT IS NOT REPLACING ─────────────────────────
+    Round 48. config.yaml carries `channels.facebook.autonomy: review`, an `autonomy_gate` block
+    with `clean_posts_required: 4`, and a per-channel `clean_streak`. **No code has ever read any
+    of them.** They are a description of an intention, not a mechanism — the Round 46 class of a
+    stated guarantee with nothing behind it. What actually governed posting was
+    `autopilot.enabled` plus `is_paused`, so the machine has been in full auto since the owner's
+    2026-09-11 decision, and the ledger's `streak_after: 6` is a tally of posts, not a promotion.
+
+    So nothing promoted itself. The gate simply was not there, and this is it.
+
+    ── WHY IT NAMES THE SLUG ─────────────────────────────────────────────────
+    A boolean "approved" would be satisfied once and then satisfied forever, which is how a
+    standing permission turns into an autonomy nobody granted. A count would be satisfied by
+    volume, which is the shape being replaced. An approval that must name the ARTICLE cannot
+    carry forward: the next cycle chooses a different slug and needs a different approval.
+
+    It fails CLOSED in the ways that matter — absent, empty, or naming a different article all
+    withhold — and the owner turns supervision off deliberately by setting
+    `autopilot.requires_signoff: false`, never by passing a check.
+    """
+    env = {} if env is None else env
+    if (config.get("autopilot") or {}).get("requires_signoff") is False:
+        return False, ""
+    approved = str(env.get(SIGNOFF_ENV, "")).strip()
+    if not approved:
+        return True, (f"supervised: no {SIGNOFF_ENV} in the environment, so nothing posts. "
+                      f"Dispatch the cadence with approved_slug={slug!r} to publish this one.")
+    if approved != slug:
+        return True, (f"supervised: {SIGNOFF_ENV}={approved!r} does not name the article this "
+                      f"cycle chose ({slug!r}), so nothing posts. An approval names one article "
+                      f"and cannot carry to another.")
+    return False, ""
+
 
 def is_paused(config: dict, env: dict | None = None) -> tuple[bool, str]:
     """(paused, why). Checked before ANY publish, on every run.
@@ -641,6 +695,14 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
                              article=article, card=card, post=decision.post,
                              resolution_pending=defer_resolution)
 
+    # THE SIGN-OFF, checked BEFORE the merge and not just before the post. An article the owner
+    # has not reviewed must not reach the live site either — a merge to main is a deploy.
+    withheld, why = signoff_withheld(config, article["slug"], env)
+    if withheld:
+        return CycleDecision(action="awaiting_signoff", reason=why, verdicts=verdicts,
+                             article=article, card=card, post=decision.post,
+                             skipped=decision.skipped, resolution_pending=defer_resolution)
+
     decision.action = "publish"
     return decision
 
@@ -695,7 +757,7 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
         # that matters is the one that says something WAS published. The run still exits 0 and
         # the reason is in the job log for anyone who goes looking.
         return decision
-    if decision.action in ("skip", "paused", "withheld"):
+    if decision.action in ("skip", "paused", "withheld", "awaiting_signoff"):
         # `withheld` belongs here and NOT with the two silent outcomes above: a designed refusal
         # is reported, which is the entire point of separating it from a fault. It also must
         # never fall past this line — everything below publishes.
@@ -803,7 +865,7 @@ def run_cycle(config: dict, *, today: date, notify_fn, merge_fn=None, deploy_wai
         record = publish_gate.publish_with_verification(
             decision.post, publish_fn=_recording_publish, verify_opener=verify_opener,
             streak_after=streak, article_slug=decision.article["slug"],
-            ledger_path=ledger_path)
+            article_title=decision.article.get("title", ""), ledger_path=ledger_path)
     except Exception as exc:                       # noqa: BLE001 — deliberate: see above
         return _post_stage_failure(decision, exc, posted, notify_fn)
 

@@ -50,37 +50,42 @@
     "published_at": "2026-09-18T20:50:58+00:00",
     "platform": "facebook",
     "page_id": "1335273942995805",
-    "post_url": "blotato:adc96968-16b5-4181-aeb1-e535b282853c",
+    "post_url": "https://facebook.com/1335273942995805_122111633715466373",
     "submission_id": "adc96968-16b5-4181-aeb1-e535b282853c",
     "article_url": "https://texashomeintelligence.com/analysis/was-august-2026-hotter-than-normal-in-texas/",
     "article_slug": "was-august-2026-hotter-than-normal-in-texas",
+    "article_title": "Was August 2026 hotter than normal in Texas?",
     "post_publish_verified": true,
     "post_publish_detail": "resolved 200",
     "streak_after": 4,
-    "note": "streak_after corrected from 2 to 4: it had been read from config.yaml's hand-maintained clean_streak, a number no code ever advanced. It is now counted from this ledger, which is the list of posts and therefore the only thing that cannot drift from it."
+    "note": "streak_after corrected from 2 to 4: it had been read from config.yaml's hand-maintained clean_streak, a number no code ever advanced. It is now counted from this ledger, which is the list of posts and therefore the only thing that cannot drift from it. post_url and article_title BACKFILLED 2026-10-12. The publisher recorded `blotato:<submission-id>` because Blotato's create-post response carries no postUrl \u2014 posting is asynchronous, so the URL does not exist yet at that moment. Recovered by asking Blotato for this submission's status, which returned status=published and its publicUrl. The title was read from the article's own frontmatter by slug. The publisher now polls for the real URL, so no later row needs this."
   },
   {
     "published_at": "2026-09-19T17:13:44+00:00",
     "platform": "facebook",
     "page_id": "1335273942995805",
-    "post_url": "blotato:306c6615-f119-49a6-af7d-b1b057da2f08",
+    "post_url": "https://facebook.com/1335273942995805_122112090231466373",
     "submission_id": "306c6615-f119-49a6-af7d-b1b057da2f08",
     "article_url": "https://texashomeintelligence.com/analysis/is-austins-home-improvement-boom-cooling-off/",
     "article_slug": "is-austins-home-improvement-boom-cooling-off",
+    "article_title": "Is Austin's home-improvement boom actually cooling off?",
     "post_publish_verified": true,
     "post_publish_detail": "resolved 200",
-    "streak_after": 5
+    "streak_after": 5,
+    "note": "post_url and article_title BACKFILLED 2026-10-12. The publisher recorded `blotato:<submission-id>` because Blotato's create-post response carries no postUrl \u2014 posting is asynchronous, so the URL does not exist yet at that moment. Recovered by asking Blotato for this submission's status, which returned status=published and its publicUrl. The title was read from the article's own frontmatter by slug. The publisher now polls for the real URL, so no later row needs this."
   },
   {
     "published_at": "2026-10-12T13:38:18+00:00",
     "platform": "facebook",
     "page_id": "1335273942995805",
-    "post_url": "blotato:a4b3ac6b-a7e9-4176-9293-449eb7bbdb81",
+    "post_url": "https://facebook.com/1335273942995805_122122241349466373",
     "submission_id": "a4b3ac6b-a7e9-4176-9293-449eb7bbdb81",
     "article_url": "https://texashomeintelligence.com/analysis/are-texas-power-prices-still-going-up-jul-2026/",
     "article_slug": "are-texas-power-prices-still-going-up-jul-2026",
+    "article_title": "Are Texas power prices still going up? (Jul 2026)",
     "post_publish_verified": true,
     "post_publish_detail": "resolved 200",
-    "streak_after": 6
+    "streak_after": 6,
+    "note": "post_url and article_title BACKFILLED 2026-10-12. The publisher recorded `blotato:<submission-id>` because Blotato's create-post response carries no postUrl \u2014 posting is asynchronous, so the URL does not exist yet at that moment. Recovered by asking Blotato for this submission's status, which returned status=published and its publicUrl. The title was read from the article's own frontmatter by slug. The publisher now polls for the real URL, so no later row needs this."
   }
 ]
