@@ -91,6 +91,47 @@ any constant chosen against something that moves upstream.
 
 ---
 
+## Standing rule — a test whose base case is live data is pinned to the world
+
+Round 48, logged beside the tuned-number rule because it is the same failure wearing different
+clothes: a constant that encodes something moving upstream, and an assertion that encodes
+something moving upstream.
+
+The autoposter's L16 flip tests prove a verdict is computed rather than typed, by inverting the
+controlling figure and showing the conclusion moves. Three of them used the **real** claims as
+one of the two branches and forced only the other:
+
+```python
+falling = write_power({}, claims, feed)["body"]          # the REAL data, assumed to fall
+rising  = write_power({}, _rising(claims), feed)["body"] # forced
+assert "**No.**" in falling
+```
+
+That works for exactly as long as Texas power keeps getting cheaper. It stopped: July 2026 is
+15.88¢ against July 2025's 15.36¢, **+3.4%**, so the builder correctly answered "**Yes.**" and
+the flip test went red for the one reason a flip test must never go red — *the world moved, and
+the code was right*. A fourth test had the same shape through the weather branch ("neither metro
+had a mild month"), and a fifth asserted a tally of 4 of 7 trades.
+
+**So: force BOTH branches, and tie the real data to its own sign rather than to a direction.**
+
+```python
+falling = write_power({}, _falling(claims), feed)["body"]
+rising  = write_power({}, _rising(claims),  feed)["body"]
+assert "**No.**" in falling and "**Yes.**" in rising
+# the tie to reality, with no direction written down:
+assert ("**Yes.**" in write_power({}, claims, feed)["body"]) is c["C2"].figure.startswith("up")
+```
+
+The last line is the part worth copying. It keeps the test honest against real output — which is
+why these tests read real data in the first place — while asserting a *relation* instead of a
+value. Same family as the date-pinned assertions Round 48 rewrote: an assertion pinned to a
+market condition, a month name, or whatever the newest ingestion happened to reach is an
+assertion with an expiry date nobody wrote down, and the third time it fires somebody silences
+it.
+
+---
+
 ## Standing rule — redact before you shorten
 
 **Masking matches the whole value, so any truncation of a string that might hold a secret
@@ -1114,3 +1155,38 @@ deserve links.
 
 **Scope → small, wants a decision first.** Related: Round 46 F12 (ROADMAP's "do not re-add or
 link" forbids exactly what this column does, and the prose is what should change).
+
+---
+
+### 31 · An article is governed by its tightest metric, not by its subject
+
+Round 48, logged by the owner rather than decided by a one-line widening — because the widening
+that prompted it is a workaround and the rule underneath is a design question.
+
+`claim_ledger` applies a per-metric staleness bound to **every claim in a piece, independently**.
+The electricity article deliberately pins both of its series to one period, so every claim ages
+together and "the staleness gate judges the article the reader actually gets". The consequence:
+its cooling-degree-day **cross-check** claims carry the EIA's ~3-month-old month and are judged
+against a bound set for NOAA's ~1-month lag. The article's own subject was inside its bound and
+four supporting claims were not, so the whole piece halted — which is how `electricity-still-rising`
+came to sit at rank 0, eligible and unbuildable, blocking four publishable articles.
+
+The workaround applied in Round 48: `cooling_degree_days` widened 90 → 120 days to match the
+price bound, so the oldest claim any article legitimately carries on that metric fits. It is
+honest about *that* metric's own lag and it is not the rule.
+
+**The rule this wants:** bound an article by its **primary** metric — the thing it is about, the
+one its card and title name — and judge a cross-check against the lag of **its own** source,
+flagged as supporting rather than load-bearing. A cross-check exists to answer an objection
+("was it just a mild summer?"); an answer from a month that is three months old is still an
+answer to that objection, because the objection is about the same month the price is from.
+
+**Why it needs a decision and not a patch:** the alternative reading is that a piece is only as
+current as its oldest claim, full stop, and that pinning two series to one period was the right
+call precisely so a reader is never shown a July price beside a September temperature. Both
+positions are defensible, and the widening above quietly chose neither. Whichever wins, the
+losing argument should be written down in `claim_ledger` rather than inferred from a number in
+`config.yaml`.
+
+**Scope → medium, wants a decision first.** Touches `claim_ledger.verify_ledger`, the
+`staleness_hours` table, and the two builders that carry cross-checks (power, AC-rush).
