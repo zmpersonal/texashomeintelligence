@@ -180,6 +180,53 @@ owner's card-copy change with it. Caught immediately because the next `git statu
 than it should have been. A cleanup scoped to a directory rather than to the files it created is
 a cleanup that can delete work it never made.
 
+## 9 · After the first live post: two things the ledger was not recording
+
+The round's first supervised post went out on 2026-10-12 (article, card and Facebook post all
+verified). Reading the row it wrote found two problems, neither introduced by this round.
+
+**Half the ledger had no openable link to what was posted.** `blotato_publisher` recorded
+`body.get("postUrl") or f"blotato:{submission}"`, and Blotato's create-post response never
+carries `postUrl` — publishing is asynchronous, so the post does not exist at that moment. The
+fallback fired every time, and rows 4, 5 and 6 carried a submission id where a URL belongs.
+All three were recovered by asking Blotato for each submission's status, which returned
+`status: published` and its `publicUrl`; titles came from the articles' own frontmatter.
+**Nothing was unrecoverable.** The ledger now asserts, as a test, that every row carries a URL
+or a stated reason — never a `blotato:` string that reads like data.
+
+**A submission Blotato later FAILED was recorded as a successful post.** The create call returns
+200 whether or not the post ever goes out. A later failure — unsupported media, an expired page
+token — never reached the ledger, so the row said published, the streak advanced, and the
+duplicate gate would then have refused to retry that article forever. The publisher now polls
+`GET /v2/posts/{id}` and tells the four terminal states apart, with the asymmetry stated: a
+`failed` raises so no row is written and the article stays eligible, while `in-progress` after
+the last poll writes a row anyway, because the post may publish a second later and raising
+would invite a double post.
+
+## 10 · There was no autonomy gate
+
+The ledger's `streak_after` reached **6** against an `autonomy_gate.clean_posts_required: 4`,
+and the owner's first reading was that a counter had promoted the machine without announcing it.
+It had not. Checked across `src/` and `tools/`: **no code has ever read `autonomy_gate`,
+`clean_posts_required`, `min_review_cycles`, `reset_on`, or any channel's `autonomy:` or
+`clean_streak:` field.** What governed posting was `is_paused` plus the channel pin, so the
+machine had been in full auto since the owner's 2026-09-11 decision and `streak_after` is a
+tally of posts, not a promotion mechanism. `autonomy: review` is a label nobody reads — the
+Round 46 class of a stated guarantee with nothing behind it, and the comment next to it
+("only the owner advances this, never a run") was true only because nothing advanced it at all.
+
+So nothing promoted itself; the gate simply was not there. `autopilot.requires_signoff` is it,
+and it **names the article**: `AUTOPOSTER_APPROVED_SLUG` in the environment must equal the slug
+the cycle chose. A boolean would be satisfied once and then forever; a count would be satisfied
+by volume, which is the shape being replaced. An approval that names one article cannot carry to
+the next.
+
+It is checked **before the merge**, not just before the post, because a merge to `main` deploys
+the live site — an article nobody reviewed must not reach it either. The cadence workflow takes
+the slug as a dispatch input, so the daily scheduled run holds every clean article and posts
+nothing. Supervision ends when the owner sets `requires_signoff: false`, never by passing a
+check.
+
 ---
 
 ## Verification

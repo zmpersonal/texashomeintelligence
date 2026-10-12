@@ -25,6 +25,10 @@ on:
         description: "Run every gate and report, but never merge or post"
         type: boolean
         default: true
+      approved_slug:
+        description: "THE SIGN-OFF. The exact article slug you are approving; nothing merges or posts without it"
+        type: string
+        default: ""
       prove_secret_scope:
         description: "Prove the secrets are Environment-scoped, not repo-scoped. Runs NO cycle."
         type: boolean
@@ -236,6 +240,11 @@ jobs:
           # publishing immediately; the cycle still builds and still notifies.
           AUTOPOSTER_PAUSED: ${{ vars.AUTOPOSTER_PAUSED }}
           DRY_RUN: ${{ inputs.dry_run }}
+          # THE SIGN-OFF. Empty on every scheduled run, so the daily clock can never publish on
+          # its own: a cycle that passes every gate stops before the merge and holds the article.
+          # To publish, dispatch with approved_slug set to the exact slug being approved — an
+          # approval that names one article cannot carry to the next one.
+          AUTOPOSTER_APPROVED_SLUG: ${{ inputs.approved_slug }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           BLOTATO_API_KEY: ${{ secrets.BLOTATO_API_KEY }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
