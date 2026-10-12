@@ -1220,3 +1220,71 @@ losing argument should be written down in `claim_ledger` rather than inferred fr
 
 **Scope → medium, wants a decision first.** Touches `claim_ledger.verify_ledger`, the
 `staleness_hours` table, and the two builders that carry cross-checks (power, AC-rush).
+
+---
+
+### 32 · Inline source-and-as-of is doing two jobs at once
+
+Round 48, logged by the owner as a question rather than a fix. The trade it names is currently
+the right one; what is not settled is whether it is the only available one.
+
+G2 requires every claim's source and `as_of` to be visible on the artifact the reader gets, and
+the article builders satisfy that by interpolating both into the prose at the point of use. On a
+piece that cites three datasets about two metros, that produces a paragraph like:
+
+> Austin recorded 644 cooling degree-days in July 2026 (NOAA NCEI Global Summary of the Month, as
+> of July 2026), against a July normal of 644.8 cooling degree-days (NOAA NCEI U.S. Climate
+> Normals 1991-2020) — -0.1% against the normal. San Antonio recorded 607 cooling degree-days
+> (NOAA NCEI Global Summary of the Month, as of July 2026) against 643.3 cooling degree-days
+> (NOAA NCEI U.S. Climate Normals 1991-2020) — -5.6% against the normal.
+
+Four sentences, four parentheticals, the same two source names four times. **Owner reading
+2026-10-12: leave it. Density is the price of inline sourcing and it is worth paying** — a
+citable page is KPI #1, and a figure whose source is a footnote away is a figure a crawler may
+lift without it.
+
+**The question for later:** inline sourcing is carrying provenance AND readability, and those
+pull against each other as a piece cites more datasets. There may be a presentation that serves
+both — the source named once per paragraph with the repeats dropped, a sourced-figure component
+that renders the attribution as markup rather than as prose, a per-article source block the
+figures reference. Any of those has to keep G2 literally satisfied on the rendered HTML, not just
+in the author's intention, which is the part that makes it a design question and not a styling
+one.
+
+**Scope → wants a decision first, then medium.** Touches every `write_*` builder, G2 in
+`validator.py`, and the analysis route's rendering.
+
+---
+
+### 33 · C4 should say it governs machine-built articles only
+
+Round 48, logged by the owner rather than changed, because the rule it would narrow is a real one
+and narrowing it is a decision about what a card is allowed to be.
+
+`autoposter/src/card.py` C4: *"the question is the article's H1, verbatim. A card that asks a
+different question than the page answers is a bait card, however true both are."*
+
+On 2026-10-12 a hand-authored article's card was given a shorter question than its H1 — the
+59-character original overflowed the 1200x630 card, and the measured ceiling was 54 with that
+subhead (at 59, no subhead length fits at all, down to 21). The card now asks "What does San
+Antonio's police data cover?" while the page's H1 remains "What does San Antonio's police offence
+data actually cover?".
+
+C4 never saw it, because it only ever judges articles the ENGINE builds. **So the divergence is
+permitted today by accident of scope rather than by design**, and the comment states a rule
+broader than the code enforces — exactly the class Round 46 inventoried.
+
+**The consequence, which is the reason this matters beyond tidiness:** the autoposter cannot do
+what was done here. A generated title that will not fit has no escape but a shorter title,
+because C4 forbids shortening the card question and the card gate then refuses. Measured headroom
+on the tightest machine-built card today — the power article, question 49 characters, rendering
+at 36px against a 32px floor — is **15 characters**, and its length is stable across months, so
+this is headroom rather than a countdown.
+
+**The decision:** either C4's comment says it governs machine-built articles only and names the
+hand-authored case as the exception, or the rule holds everywhere and hand-authored cards must
+shorten the H1 too. The owner's position as logged is the first, taken deliberately rather than
+by amending a comment to match what the code happens to do.
+
+**Scope → small, wants a decision first.** Related: Round 48 audit §7.
+
