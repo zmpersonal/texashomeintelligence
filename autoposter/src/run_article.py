@@ -930,10 +930,18 @@ def power_caption(article: dict, claims: list[Claim]) -> str:
     c = {claim.id: claim for claim in claims}
     rising = c["C2"].figure.startswith("up")
     label = month_label(c["C1"].as_of[:7])
-    hook = ("\"Everything's going up.\" Texas power, for once, is going up too — and here is "
-            "the number."
+    month = label[:-5]
+    # "for once" is gone from the RISING branch (owner, 2026-10-12). It implied a reversal the
+    # article never states, and the only thing it was a reversal of is the August piece withdrawn
+    # for resting on fabricated rows. A hook may not carry a claim the body does not support.
+    #
+    # It stays in the FALLING branch, where it is a different construction: "everything's going
+    # up... power, for once, is not" contrasts with the sentence it sits in, not with an article
+    # nobody can read any more.
+    hook = ("\"Everything's going up.\" Texas power is going up too — and here is the number."
             if rising else
             "\"Everything's going up.\" Texas residential power, for once, is not.")
+
     # THE WEATHER SENTENCE FOLLOWS THE SAME TEST THE ARTICLE'S DOES. It asserted "And no, it
     # was not just a mild summer" unconditionally while the body beneath it branches — so on a
     # month where a metro DID run below normal, the post said the explanation was ruled out and
@@ -943,18 +951,45 @@ def power_caption(article: dict, claims: list[Claim]) -> str:
     # `mild` is computed exactly as `write_power` computes it, off the same claims, rather than
     # by a second rule that could drift from it.
     mild = [t for t in ("C5", "C8") if "cooler than" in c[f"{t}d"].text]
-    where = " and ".join("Austin" if t == "C5" else "San Antonio" for t in mild)
-    # The figures already read "-0.1% against the normal", so the sentence must not add
-    # "against its 1991-2020 normal" on top — that produced "ran -0.1% against the normal
-    # against its 1991-2020 normal". The reference period is named once, where it belongs.
-    # The source string already carries "1991-2020", which is what satisfies G2's as_of
-    # requirement here, so naming the period again just stutters.
-    readings = (f"Austin ran {c['C5d'].figure}, San Antonio {c['C8d'].figure} "
-                f"(source: {c['C5n'].source}).")
-    weather = (f"And no, it was not just a mild summer — {readings}"
-               if not mild else
-               f"A mild month is at least available this time — {where} ran below normal — but "
-               f"nothing we hold measures the link. {readings}")
+    others = [t for t in ("C5", "C8") if t not in mild]
+
+    def _name(tag):
+        return "Austin" if tag == "C5" else "San Antonio"
+
+    def _below(tag):
+        """`-5.6% against the normal` -> `San Antonio ran 5.6% below its July normal`.
+
+        The sign becomes a word because that is how the sentence reads. The numeral is
+        untouched, and `_extract_numerals` drops a leading minus either way, so G1 sees the same
+        token it would in the claim's own figure.
+        """
+        magnitude = c[f"{tag}d"].figure.lstrip("-+").split("%")[0]
+        return f"{_name(tag)} ran {magnitude}% below its {month} normal"
+
+    def _flat(tag):
+        """A metro that is NOT below normal, described by the claim's own classification rather
+        than by a figure — the builder has already decided whether a gap is a departure."""
+        text = c[f"{tag}d"].text
+        return (f"{_name(tag)} was at normal" if "close to" in text
+                else f"{_name(tag)} ran above normal")
+
+    # NO FIGURE FOR A METRO THAT IS AT NORMAL (owner, 2026-10-12). This read "Austin ran -0.1%
+    # against the normal, San Antonio -5.6% against the normal", which gives a NON-FINDING equal
+    # billing with a finding: at -0.1% Austin is at its normal, and quoting that beside a real
+    # 5.6% departure invites a reader to weigh two numbers that are not the same kind of thing.
+    # Both figures stay in the BODY, where there is room to show the arithmetic.
+    #
+    # When NEITHER metro is below normal, both figures ARE the evidence for the denial and there
+    # is no finding being crowded out, so both are quoted.
+    if not mild:
+        weather = (f"And no, it was not just a mild summer — Austin ran {c['C5d'].figure}, "
+                   f"San Antonio {c['C8d'].figure} (source: {c['C5n'].source}).")
+    else:
+        below = " and ".join(_below(t) for t in mild)
+        rest = f", while {' and '.join(_flat(t) for t in others)}" if others else ""
+        weather = (f"A mild month is at least available this time — {below}{rest} "
+                   f"(source: {c['C5n'].source}) — but nothing we hold measures the link.")
+
     return (
         f"{hook} {label}: {c['C1'].figure}, {c['C2'].figure}, {c['C3'].figure} "
         f"(source: {EIA_SOURCE}, as of {c['C1'].as_of}). "

@@ -1172,6 +1172,77 @@ def test_FROZEN_power_verdict_is_the_SIGN_of_the_year_over_year_move():
         f"C2 reads {dict((c.id, c.figure) for c in claims)['C2']!r} and the verdict disagrees")
 
 
+def test_power_CAPTION_hook_claims_no_reversal_the_body_does_not_state():
+    """The rising hook read "Texas power, for once, is going up too".
+
+    "for once" asserts a reversal, and the only thing it was a reversal of is the August 2026
+    piece withdrawn for resting on fabricated rows — a claim the article does not make and a
+    reader cannot check, since the page is gone. Owner ruling 2026-10-12.
+
+    It survives in the FALLING branch, where it contrasts with the sentence it sits in
+    ("everything's going up... power, for once, is not") rather than with a past article, so
+    this asserts the two branches separately instead of banning the phrase.
+    """
+    feed = engine.load_feed()
+    caption = run_article.TOPIC_CAPTIONS["electricity-still-rising"]
+    claims = _power_claims()
+    article = run_article.write_power({}, claims, feed)
+    article["canonical_url"] = "https://texashomeintelligence.com/analysis/x/"
+    rising = caption(article, _rising(claims))
+    falling = caption(article, _falling(claims))
+    assert "for once" not in rising, rising[:160]
+    assert "Texas power is going up too" in rising
+    assert "for once, is not" in falling
+
+
+def test_power_CAPTION_gives_no_FIGURE_to_a_metro_that_is_AT_normal():
+    """A non-finding must not get equal billing with a finding.
+
+    The caption quoted both metros' gaps — "Austin ran -0.1% against the normal, San Antonio
+    -5.6%" — which invites a reader to weigh two numbers that are not the same kind of thing: at
+    -0.1% Austin is AT its normal, and only San Antonio departed from one. Owner ruling
+    2026-10-12: name the departure with its figure, describe the other by its classification,
+    and keep both figures in the body where the arithmetic is shown.
+
+    Both arrangements are asserted, because the rule is conditional: when NEITHER metro is below
+    normal the two figures are the evidence for the denial and both belong.
+    """
+    feed = engine.load_feed()
+    claims = _power_claims()
+    article = run_article.write_power({}, claims, feed)
+    article["canonical_url"] = "https://texashomeintelligence.com/analysis/x/"
+
+    def forced(austin, san_antonio):
+        out = _copy.deepcopy(claims)
+        for c in out:
+            if c.id in ("C5d", "C8d"):
+                name = "Austin" if c.id == "C5d" else "San Antonio"
+                gap = austin if c.id == "C5d" else san_antonio
+                word = ("cooler than" if gap < -5 else "hotter than" if gap > 5 else "close to")
+                month = c.text.split("'s ", 1)[1].split(" was", 1)[0]
+                c.text = f"{name}'s {month} was {word} its normal."
+                c.figure = f"{gap:+.1f}% against the normal"
+        return out
+
+    # One departure, one metro at normal: the departure is named with its magnitude, unsigned,
+    # and the flat metro carries no figure at all.
+    one = run_article.power_caption(article, forced(-0.1, -5.6))
+    assert "San Antonio ran 5.6% below its" in one, one
+    assert "Austin was at normal" in one, one
+    assert "0.1" not in one, f"the at-normal metro's figure reached the caption: {one}"
+    assert "-5.6" not in one, "the sign should read as a word in the caption"
+
+    # Neither below normal: both figures ARE the evidence for the denial, so both belong.
+    neither = run_article.power_caption(article, forced(3.0, 4.0))
+    assert "not just a mild summer" in neither
+    assert "+3.0% against the normal" in neither and "+4.0% against the normal" in neither
+
+    # Both below: both are findings, both named.
+    both = run_article.power_caption(article, forced(-9.0, -7.0))
+    assert "Austin ran 9.0% below its" in both and "San Antonio ran 7.0% below its" in both
+    assert "at normal" not in both
+
+
 def test_FROZEN_power_CAPTION_weather_sentence_follows_the_SAME_test_the_body_does():
     """The caption is the half most readers see, and it was the half still asserting.
 
