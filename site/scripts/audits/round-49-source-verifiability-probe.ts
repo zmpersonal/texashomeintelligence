@@ -118,6 +118,12 @@ async function probeGsom() {
     url.searchParams.set("startDate", `${month}-01`);
     url.searchParams.set("endDate", last.toISOString().slice(0, 10));
     url.searchParams.set("format", "json");
+    // `units=standard`, which THIS PROBE ORIGINALLY OMITTED. NCEI then answered in degC-days:
+    // 386.3 against our 695, a 1.8x ratio that looks exactly like a wrong figure and is a unit.
+    // `noaaClimate.ts:527` has always set it. The probe rebuilt the request by hand instead of
+    // calling the fetcher's own path — the Round 44 lesson, in the same file where
+    // `austinTradeWhere` is imported for precisely that reason.
+    url.searchParams.set("units", "standard");
 
     const r = await timed(url.toString());
     let theirs = "(unparsed)";
@@ -149,7 +155,11 @@ async function probeAustin() {
   const newestVersion = disk.observations
     .map((o: any) => o.value.mappingVersion).sort().at(-1);
   const rows = disk.observations.filter((o: any) => o.value.mappingVersion === newestVersion);
-  const month = rows.map((o: any) => o.value.month).sort().at(-2);  // newest COMPLETE month
+  // DEDUPED. `rows` holds one record per (category, month), so taking `.at(-2)` of the raw
+  // month list returned the CURRENT, incomplete month — the probe compared against a month the
+  // series deliberately does not publish.
+  const months = [...new Set(rows.map((o: any) => o.value.month as string))].sort();
+  const month = months.at(-2);
   const ourCategorySum = rows.filter((o: any) => o.value.month === month)
     .reduce((s: number, o: any) => s + o.value.permitCount, 0);
 
@@ -176,14 +186,23 @@ async function probeAustin() {
       url: redactUrl(url), status: r.status, ms: r.ms, bytes: r.bytes,
       needs: token ? "token optional (present)" : "token optional (absent; anonymous limit)",
       addressable: "server-side aggregate over our own $where",
-      ours: label === "distinct permits"
-        ? `${ourCategorySum} (sum of our per-category counts; a permit in two trades is in both)`
-        : "(we publish no row count)",
+      // NOT a like-for-like comparison, and saying so is the point. We publish a count PER
+      // TRADE, and a permit in two trades is in both, so the per-category sum is not the
+      // distinct-permit total. The quantity the city WILL answer for is one we do not store —
+      // which is the finding, not a discrepancy.
+      ours: `${ourCategorySum} = sum of our per-category counts for ${month} (double-counts a `
+            + `permit in two trades; we store no distinct-permit total to compare)`,
       theirs,
       verdict: r.status === 200 ? "ANSWERED" : "REFUSED",
     });
   }
 }
+
+// The comparison that needs nothing from us: rows vs distinct permits, both asked of the CITY,
+// over our own predicate. That ratio IS the Round 45 defect's signature — a count of rows
+// wearing the word "permits" — and it is visible from outside without reimplementing anything.
+// San Antonio cannot be asked the same question at all, which is the asymmetry this round turns
+// on.
 
 // ── 4 · SAN ANTONIO CKAN — AGGREGATED, and no server-side aggregate exists. ─
 async function probeSanAntonio() {
