@@ -136,38 +136,6 @@ async function main(): Promise<void> {
     await show(`${m.location} · REPLACEMENT path`, newUrl);
   }
 
-  // 3 · The publisher's own definitions. This is the half the decision rests
-  //     on, and it is the half no GitHub PR can settle.
-  console.log("\n\n══ AIRNOW'S OWN DOCUMENTATION ══");
-  for (const u of DOC_URLS) {
-    console.log(`\n── ${u}`);
-    try {
-      const res = await fetch(u);
-      const text = await res.text();
-      console.log(`   HTTP ${res.status}, ${text.length} bytes, ${res.headers.get("content-type") ?? "?"}`);
-      // Pull the sentences that mention the two quantities by name, so the
-      // definitions arrive in the publisher's words rather than paraphrased.
-      const plain = text.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
-      // The retired service's own page is the one that settles what the OLD
-      // `AQI` field was, so its opening is printed whether or not a search term
-      // matched — a page that says nothing about NowCast is itself an answer.
-      if (u.endsWith("/retired")) console.log(`   OPENS: ${plain.slice(0, 1200)}`);
-      for (const term of ["NowCast", "nowcast", "nowcastAQI", "current AQI", "hourly"]) {
-        const idx: number[] = [];
-        let at = plain.indexOf(term);
-        while (at > -1 && idx.length < 3) {
-          idx.push(at);
-          at = plain.indexOf(term, at + 1);
-        }
-        for (const i of idx) {
-          console.log(`   [${term}] …${plain.slice(Math.max(0, i - 220), i + 320)}…`);
-        }
-      }
-    } catch (e) {
-      console.log(`   FETCH FAILED: ${e instanceof Error ? e.message : String(e)}`);
-    }
-  }
-
   // ── 4 · Does ANY parameter constrain the radius? ────────────────────────
   console.log("\n\n══ CAN THE LOOKUP RADIUS BE CONSTRAINED? ══");
   console.log("   Each request sends one candidate parameter at 5 miles and reports the");
@@ -245,6 +213,44 @@ async function main(): Promise<void> {
       }
     } catch (e) {
       console.log(`   ${m.location} FAILED: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+
+  // ── 6 · The publisher's own definitions. This is the half the decision
+  //        rests on, and it is the half no GitHub PR can settle.
+  //
+  // LAST IN THE RUN, not third. Moving the retired-docs URL to the end of
+  // DOC_URLS did not help, because this whole SECTION printed before the radius
+  // sweep and the distances — four attempts to page back to it through the logs
+  // API timed out or returned the wrong window. The thing the decision rests on
+  // now prints where the tail always reaches.
+  console.log("\n\n══ AIRNOW'S OWN DOCUMENTATION ══");
+  for (const u of DOC_URLS) {
+    console.log(`\n── ${u}`);
+    try {
+      const res = await fetch(u);
+      const text = await res.text();
+      console.log(`   HTTP ${res.status}, ${text.length} bytes, ${res.headers.get("content-type") ?? "?"}`);
+      // Pull the sentences that mention the two quantities by name, so the
+      // definitions arrive in the publisher's words rather than paraphrased.
+      const plain = text.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+      // The retired service's own page is the one that settles what the OLD
+      // `AQI` field was, so its opening is printed whether or not a search term
+      // matched — a page that says nothing about NowCast is itself an answer.
+      if (u.endsWith("/retired")) console.log(`   OPENS: ${plain.slice(0, 1200)}`);
+      for (const term of ["NowCast", "nowcast", "nowcastAQI", "current AQI", "hourly"]) {
+        const idx: number[] = [];
+        let at = plain.indexOf(term);
+        while (at > -1 && idx.length < 3) {
+          idx.push(at);
+          at = plain.indexOf(term, at + 1);
+        }
+        for (const i of idx) {
+          console.log(`   [${term}] …${plain.slice(Math.max(0, i - 220), i + 320)}…`);
+        }
+      }
+    } catch (e) {
+      console.log(`   FETCH FAILED: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 
