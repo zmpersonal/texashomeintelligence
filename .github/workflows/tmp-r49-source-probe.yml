@@ -13,6 +13,9 @@ on:
       - ".github/workflows/tmp-r49-source-probe.yml"
   workflow_dispatch:
 
+permissions:
+  contents: write   # the probe commits its own measurement back to the branch
+
 jobs:
   probe:
     runs-on: ubuntu-latest
@@ -27,7 +30,7 @@ jobs:
         working-directory: site
       - name: Probe the five sources behind every published claim
         working-directory: site
-        run: npx tsx scripts/audits/round-49-source-verifiability-probe.ts
+        run: npx tsx scripts/audits/round-49-source-verifiability-probe.ts --out ../docs/audits/round-49-probe.json
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
           SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
@@ -40,3 +43,15 @@ jobs:
             exit 1
           fi
           echo "clean"
+
+      - name: Commit the measurement, so it can be read back
+        run: |
+          git config user.name "thi-autoposter"
+          git config user.email "noreply@anthropic.com"
+          git add docs/audits/round-49-probe.json
+          git diff --cached --quiet && { echo "nothing to commit"; exit 0; }
+          git commit -m "Round 49 probe result: measured source verifiability"
+          # Rebase first. Round 47 lost a complete ingestion to a push race when a commit
+          # landed on the branch from the session while the job ran.
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

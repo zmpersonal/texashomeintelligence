@@ -243,3 +243,18 @@ for (const r of results) {
 }
 const total = results.reduce((s, r) => s + r.ms, 0);
 console.log(`TOTAL ${results.length} requests, ${total}ms wall time.`);
+
+// WRITTEN, not just printed. Actions logs are served from a host this project's tooling cannot
+// follow a redirect to, so a probe whose only output is stdout cannot be read back — and a
+// measurement nobody can read is an assertion. Round 47 settled this by committing the result.
+const out = process.argv.includes("--out")
+  ? process.argv[process.argv.indexOf("--out") + 1]
+  : "";
+if (out) {
+  const { mkdirSync, writeFileSync } = await import("node:fs");
+  const { dirname } = await import("node:path");
+  mkdirSync(dirname(out), { recursive: true });
+  writeFileSync(out, JSON.stringify(
+    { probedAt: new Date().toISOString(), totalMs: total, results }, null, 2) + "\n");
+  console.log(`wrote ${out}`);
+}
