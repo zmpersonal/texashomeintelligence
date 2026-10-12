@@ -132,6 +132,35 @@ it.
 
 ---
 
+## Standing rule — a check that fails open needs a separate assertion that it can RUN
+
+Round 49. The source check was deliberately built to fail open: an unreachable source records
+`unverified` and the cycle proceeds, because refusing to publish a correct article over a federal
+API outage is the wrong trade. That reasoning is sound and the first live run vindicated it — EIA
+returned HTTP 500 twice in ninety seconds and the articles were unaffected.
+
+The cost of that trade is what this rule is about. **Failing open converts every cause of
+non-execution into a result indistinguishable from a healthy quiet.** It shipped onto the
+publishing path with no `EIA_API_KEY` in `autoposter-cadence.yml` — present in the temporary
+probe workflow, absent from the cycle. Nothing would have failed. Every cycle would have
+authenticated against nothing, failed open, and written `unverified` for the electricity claim
+forever, while the ledger showed a verification step faithfully executing. The suite was green
+throughout.
+
+This is the mirror of Round 48's pattern. There it was **a config key with no consumer**
+(`autonomy_gate`, with a comment describing a safety property nothing read). Here it is **a
+consumer with no config** — and fail-open is the thing that makes it silent rather than loud.
+
+**So: wherever a check is allowed to not-run, something else must assert that it can.** Not that
+it passed — that it was capable of running. For this one the assertion reads the env vars
+`verify-claim.ts` actually references and requires the cycle step to supply each, so a new keyed
+source cannot be added without wiring its secret through. It was proven by deleting the line and
+watching the test fail, per the flip-test rule.
+
+A corollary worth stating because it nearly bit: **a secret wired into a probe workflow is not
+wired into the thing the probe was measuring.** Probes run in their own file with their own env;
+the measurement they produce says nothing about the production path's credentials.
+
 ## Standing rule — a verifier calls the project's own request builder, PER REQUEST
 
 Round 49, and the qualifier is the whole lesson. The source-verifiability probe **did** import

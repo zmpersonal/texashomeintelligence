@@ -69,9 +69,10 @@ Of the six live `data` claims, **four are transcribed and two are aggregated.**
 
 Measured in GitHub Actions on 2026-10-12 — run `38271357755`, result committed at
 `docs/audits/round-49-probe.json` — because no external host is reachable from a Claude Code
-session. Seven requests, **6.9 s** total. The probe is
-`site/scripts/audits/round-49-source-verifiability-probe.ts` and its workflow is
-`tmp-r49-source-probe.yml`, both temporary: they go when this round is decided.
+session. Seven requests, **6.9 s** total. The probe and its workflow were temporary and have
+been **deleted with this round** — their measurement is the committed JSON and the tables below,
+which is the durable part. The live verification they stood in for now happens on the real
+publishing path, every cycle, and records itself in each article's ledger.
 
 | source | kind | reachable, and by whom | addressable to the one value a claim cites? | ours | theirs | cost |
 |---|---|---|---|---|---|---|
@@ -298,7 +299,65 @@ published figure and deserves its own round.
 
 | Check | Result |
 |---|---|
-| autoposter suite | **392/392** |
+| autoposter suite | **394/394** |
 | `npm run check` | 0 errors, 0 warnings, 0 hints |
 | the five branches of the source check | asserted individually: agrees → `source`; contradicts → raises; period absent → raises; unreachable → fails open; subprocess dies → fails open |
 | against the REAL sources, in Actions | see below |
+
+### Against the real sources, three live runs
+
+Run on the branch head via a temporary workflow, because no external host is reachable from an
+agent session. The verifier ran over both live articles' ledgers — 16 claims — and the outcome
+was committed to `round-49-verifier-live.json` rather than left in an Actions log, which this
+session cannot read.
+
+| Run | EIA (`C1`, power) | NOAA (`C5`, `C8`, ac-rush `C1`) | Everything else |
+|---|---|---|---|
+| 1 · 16:42:35 | `unverified: unreachable` — HTTP 500 | `source` ×3 | `file` |
+| 2 · 16:44:02 | `unverified: unreachable` — HTTP 500 | `source` ×3 | `file` |
+| 3 · 16:48:39 | **`source`** | `source` ×3 | `file` |
+
+Final state, both articles: **4 claims `source`, 12 claims `file`, 0 unverified.**
+
+**The 500 was upstream and transient, and that is a measurement, not an assumption.** The only
+change between run 2 and run 3 was the truncation length in the error path — 160/120 characters
+to 400 — which cannot alter a request. The request that got two 500s and the request that
+succeeded are byte-identical. So the verifier's EIA call is correct, and the gate will not sit at
+"unverified" forever, which was the failure mode worth ruling out: a check that can never run is
+not a check.
+
+Two things this bought on the first live run:
+
+1. **Fail-open earned its keep immediately.** A federal API returned 500 twice in ninety seconds.
+   Built closed, that would have withheld two correct articles over an outage with nothing wrong
+   in them — which is the trade the recommendation argued against, demonstrated inside two
+   minutes of the code existing.
+2. **The loud record was half-built, and only a real failure showed it.** The first unverified
+   reason read `HTTP 500 from https://api.eia.gov/v2/electricity/retail-sales/data/?api_key=%`
+   — truncated mid-escape, so the record said a check had failed and nothing about why. The
+   redaction was already correct (the key was `[redacted]` before the cut); the *length* was
+   not. This is the inverse of Round 47's "redact before you shorten": shortening after
+   redacting is safe but can still destroy the record. Fixed at both call sites.
+
+3. **Fail-open hid a missing credential, and the live run is what exposed it.** The source
+   check shipped onto the publishing path while `autoposter-cadence.yml` supplied no
+   `EIA_API_KEY` — the probe workflow had one, the cycle did not. The suite was green and
+   nothing would have failed: the check would have run on every cycle, failed to authenticate,
+   failed open, and recorded `unverified` for the electricity claim **forever**, while the
+   ledger showed a verification step executing. That is precisely the "gate that never runs"
+   this section set out to rule out, arriving by a different door than the one being watched.
+   Fixed by wiring the secret, and held by a test that reads the env vars
+   `verify-claim.ts` actually references and asserts the cycle step supplies each one —
+   proven by deleting the line and watching it fail.
+
+   The general rule, now in the backlog: **a check that fails open needs a separate assertion
+   that it can run at all.** Failing open is the right trade — §6 argues it — but it converts
+   every cause of non-execution, including a missing secret, a renamed step and a deleted
+   dependency, into a result that is indistinguishable from a healthy quiet. Round 48's
+   pattern was a config key with no consumer; this is its mirror, a consumer with no config,
+   and fail-open is what makes it silent.
+
+The `file` rows are not a weaker result — they are the design. `derived` claims have no upstream
+value to re-ask for (we computed them), `official` claims are fixed constants carrying the
+document a reader can open, and the permit claims are aggregates the city never publishes as a
+figure. §5 is why no provenance tier is claimed over them.
