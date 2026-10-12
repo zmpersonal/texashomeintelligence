@@ -135,6 +135,38 @@ eyebrow on `/methodology/home-stress-index/`, so a bump is at least visible.
 
 ---
 
+### F18 · The autonomy gate — a config block that described the publishing policy, with no consumer
+
+*Added 2026-10-12, found in Round 48 and belonging here: it is the fifth instance of this class
+and the most consequential one, because what it governed was whether articles publish without a
+human.*
+
+| | |
+|---|---|
+| **The claim** | `config.yaml`: `channels.facebook.autonomy: review`, `autonomy_gate.clean_posts_required: 4`, `min_review_cycles: 2`, a per-channel `clean_streak`, and beside them the comment **"only the owner advances this, never a run"** |
+| **Where** | `autoposter/config.yaml` |
+| **What actually happens** | **No code has ever read any of them.** Checked across `src/` and `tools/`: `autonomy_gate`, `clean_posts_required`, `min_review_cycles`, `reset_on`, `autonomy`, and the per-channel `clean_streak` have no reader. What governed posting was `is_paused` plus the channel pin. |
+| **Consequence** | The ledger reached **six** posts against a stated threshold of four and **nothing announced it**, because there was no mechanism to trip. The owner read `streak_after: 6` and reasonably concluded a counter had promoted the machine. It had not — the machine had been in full auto since the 2026-09-11 decision, and `streak_after` is a tally of posts, not a promotion. |
+
+**Why this one is worse than F5 or F17.** A provenance field with no consumer is a missing
+feature. This was a **safety property stated in the place a reader looks for safety properties**,
+and the comment next to it described an enforcement that did not exist. "Only the owner advances
+this, never a run" was true — vacuously, because nothing advanced it at all. A reader checking
+whether the machine could promote itself would have read that line and been reassured by it.
+
+**The pattern, now specific enough to name: a config key that describes a policy, with no
+consumer.** Distinct from the version-constant shape (F4, F5) because the reader of a config file
+is not reading code — there is no call site to notice the absence of.
+
+**Closed, two ways.** `autopilot.requires_signoff` is a real gate that names the article
+(`AUTOPOSTER_APPROVED_SLUG` must equal the slug the cycle chose) and is checked before the merge,
+not just before the post. And `autoposter/tests/test_config_coverage.py` now fails the suite when
+any key in `config.yaml` is read by no code and is not marked, in the config itself, as
+`NOT-READ-BY-CODE` or `READ-BY-LOOKUP`. The admission lives beside the key rather than in an
+allowlist in a test file — writing those words next to `clean_posts_required: 4` is the moment
+somebody notices they meant it to be a gate. Proved to bite by adding an unread
+`new_safety_gate.max_posts_per_week` and watching the suite go red.
+
 ## Tier 3 · Would break on a future change
 
 ### F6 · `analysis/[slug].astro:130` badges a real-but-stale series as a **sample**
