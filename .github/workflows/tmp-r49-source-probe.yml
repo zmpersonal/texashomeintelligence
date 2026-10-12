@@ -1,0 +1,42 @@
+# TEMPORARY — Round 49. Delete when the round lands.
+#
+# No external host is reachable from a Claude Code session, so every reachability claim in the
+# round's audit is measured here or stated as unmeasured. Read-only: a step below fails the run
+# if the probe wrote anything under src/data/generated.
+name: tmp r49 source-verifiability probe
+
+on:
+  push:
+    branches: [claude/thi-plan-review-m40n0x]
+    paths:
+      - "site/scripts/audits/round-49-source-verifiability-probe.ts"
+      - ".github/workflows/tmp-r49-source-probe.yml"
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+        working-directory: site
+      - name: Probe the five sources behind every published claim
+        working-directory: site
+        run: npx tsx scripts/audits/round-49-source-verifiability-probe.ts
+        env:
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+          SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
+      - name: The probe must not have written to the data it audits
+        working-directory: site
+        run: |
+          if ! git diff --quiet -- src/data/generated; then
+            echo "PROBE WROTE TO THE DATA IT IS AUDITING — failing."
+            git diff --stat -- src/data/generated
+            exit 1
+          fi
+          echo "clean"
