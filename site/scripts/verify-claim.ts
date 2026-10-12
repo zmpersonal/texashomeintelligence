@@ -107,5 +107,9 @@ try {
 } catch (error) {
   // FAIL OPEN, LOUDLY. The caller turns this into a visible "upstream unverified" on the claim.
   say({ ...base, status: "unreachable", value: null,
-        detail: `${(error as Error).name}: ${(error as Error).message.slice(0, 160)}` });
+        // 400, not 160. The first live failure recorded
+        // "HTTP 500 from https://api.eia.gov/...?api_key=%" — cut mid-token, so the record said
+        // a check had failed and nothing about why. An unverified state whose reason is
+        // unreadable is half a record. The URL is already redacted by the fetcher that threw.
+        detail: `${(error as Error).name}: ${(error as Error).message.slice(0, 400)}` });
 }

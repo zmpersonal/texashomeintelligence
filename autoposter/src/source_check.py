@@ -87,13 +87,14 @@ def check(claim, *, runner=None) -> str:
     try:
         run = (runner or _run)(argv)
     except Exception as exc:                        # noqa: BLE001
-        return _unverified(f"{type(exc).__name__}: {str(exc)[:120]}")
+        return _unverified(f"{type(exc).__name__}: {str(exc)[:400]}")
     if run is None:
         return _unverified("the verifier produced no verdict")
 
     status, value = run.get("status"), run.get("value")
     if status in ("unreachable", "unsupported"):
-        return _unverified(f"{status}: {str(run.get('detail'))[:120]}")
+        # 400, not 120: see the note in verify-claim.ts. The reason has to survive to be read.
+        return _unverified(f"{status}: {str(run.get('detail'))[:400]}")
     if status == "absent":
         # THE ROUND 43 CASE. The source answered and has no such period — which is exactly what
         # a fabricated month looks like. Not a fail-open.
