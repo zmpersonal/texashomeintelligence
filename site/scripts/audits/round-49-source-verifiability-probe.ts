@@ -158,8 +158,8 @@ async function probeAustin() {
   // DEDUPED. `rows` holds one record per (category, month), so taking `.at(-2)` of the raw
   // month list returned the CURRENT, incomplete month — the probe compared against a month the
   // series deliberately does not publish.
-  const months = [...new Set(rows.map((o: any) => o.value.month as string))].sort();
-  const month = months.at(-2);
+  const months: string[] = [...new Set<string>(rows.map((o: any) => String(o.value.month)))].sort();
+  const month: string = months.at(-2) ?? months.at(-1) ?? "";
   const ourCategorySum = rows.filter((o: any) => o.value.month === month)
     .reduce((s: number, o: any) => s + o.value.permitCount, 0);
 

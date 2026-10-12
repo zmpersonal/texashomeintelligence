@@ -28,6 +28,30 @@ jobs:
           cache-dependency-path: site/package-lock.json
       - run: npm ci
         working-directory: site
+      - name: The autoposter's dependencies
+        run: pip install pyyaml
+
+      - name: The verifier, against the real sources, for every live transcribed claim
+        working-directory: autoposter
+        run: |
+          python3 - <<'EOF'
+          import sys; sys.path.insert(0, "src")
+          from datetime import date
+          import article_engine as engine, run_article, source_check
+          cfg, feed = engine.load_config(), engine.load_feed()
+          for name, fn in (("power", run_article.build_power_claims),
+                           ("ac-rush", run_article.build_acrush_claims)):
+              claims = fn(feed, cfg, date(2026, 10, 12))
+              summary = source_check.check_all(claims)
+              print(f"--- {name}: {summary['counts']}")
+              for c in claims:
+                  if c.verified:
+                      print(f"    {c.id:<5} {c.tier:<9} {c.figure!r:<34} {c.verified}")
+              assert not summary["unverified"], summary["unverified"]
+          EOF
+        env:
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+
       - name: Probe the five sources behind every published claim
         working-directory: site
         run: npx tsx scripts/audits/round-49-source-verifiability-probe.ts --out ../docs/audits/round-49-probe.json

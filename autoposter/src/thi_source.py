@@ -105,8 +105,12 @@ def _current_month(today: date) -> str:
     return f"{today.year:04d}-{today.month:02d}"
 
 
-def climate_normals(location: str) -> tuple[dict[int, float], str]:
-    """The 1991-2020 monthly cooling-degree-day normals, by month number, and their source.
+def climate_normals(location: str) -> tuple[dict[int, float], str, str]:
+    """The 1991-2020 monthly cooling-degree-day normals, by month, their source, and its URL.
+
+    THE URL IS RETURNED because Round 49 gave the `official` tier a mechanical meaning it did
+    not have: an `official` claim must carry a document a reader can open. These normals are the
+    tier's only members, so they are the only caller that needs it.
 
     `_climate()` filters these OUT of the movers series on purpose — a 30-year normal is a
     different record type from a monthly actual, and blending them would produce a series that
@@ -116,7 +120,7 @@ def climate_normals(location: str) -> tuple[dict[int, float], str]:
     """
     doc = _load("noaa-climate", location)
     if not _live(doc):
-        return {}, ""
+        return {}, "", ""
     normals = {}
     for obs in doc["observations"]:
         value = obs.get("value") or {}
@@ -124,7 +128,8 @@ def climate_normals(location: str) -> tuple[dict[int, float], str]:
         # Normals are dated to 2020 in this feed; actuals carry their real period.
         if month and cdd is not None and obs["observedAt"].startswith("2020-"):
             normals[int(month)] = float(cdd)
-    return normals, "NOAA NCEI U.S. Climate Normals 1991-2020"
+    return (normals, "NOAA NCEI U.S. Climate Normals 1991-2020",
+            (doc.get("source") or {}).get("url", ""))
 
 
 # ---------------------------------------------------------------- metric extractors

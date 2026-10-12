@@ -112,10 +112,25 @@ def _approving_env(cfg=None):
     return {"AUTOPOSTER_APPROVED_SLUG": _APPROVED_SLUG[0]}
 
 
+def _no_source_check(claims):
+    """The source check, stubbed — every claim comes back `file`-verified.
+
+    Injected for the same reason `link_opener` and `publish_fn` are: the real one opens a socket
+    and spawns a node process per claim, and a unit suite that does that is measuring the
+    network. The branches of the real check are proved in `test_source_check.py`, against stubs
+    that CAN represent each outcome.
+    """
+    for claim in claims:
+        if claim.tier != "external":
+            claim.verified = "file"
+    return {"counts": {"source": 0, "file": len(claims), "unverified": 0}, "unverified": []}
+
+
 def _kwargs(cfg, **over):
     base = dict(write_fn=run_article.write, build_claims_fn=run_article.build_claims,
                 articles=run_article.TOPIC_ARTICLES, link_opener=OK, media_opener=OK,
-                captions=run_article.TOPIC_CAPTIONS, env=_approving_env(cfg))
+                captions=run_article.TOPIC_CAPTIONS, env=_approving_env(cfg),
+                verify_fn=_no_source_check)
     base.update(over)
     return base
 

@@ -5,15 +5,46 @@ claim_ledger.py — the unit of verification is the CLAIM, not the article
 The dangerous failure is a wrong article published with authority that a journalist or an AI
 answer engine then repeats. Prose review does not catch that; a claim-by-claim ledger does.
 
-EVIDENCE TIERS, and what each is allowed to do:
-  `data`     — traces to a figure in social-feed.json. May be STATED plainly.
-  `official` — an official published source with a date, outside our feed. May be STATED,
-               attributed to that source.
+EVIDENCE TIERS, and what each one actually asserts (Round 49 rewrote this; the previous
+version described a mechanism that did not exist):
+
+  `data`     — a reading from a series THIS PROJECT INGESTS, computed by a builder from a
+               generated dataset file. May be STATED plainly.
+               It does NOT mean "the agency published this number". Where a source check exists
+               for the metric, `verified` below records whether it was re-asked and agreed.
+  `official` — a FIXED REFERENCE CONSTANT from a published authority: a 1991-2020 climate
+               normal, not a reading. Asserts two things `data` does not — `timeless=True`,
+               because a reference period cannot go stale, and `source_url`, a document a
+               reader can open. Before Round 49 this tier ran the identical checks to `data`
+               and was two names for one thing.
   `derived`  — arithmetic this code performed on `data` figures (a YoY change from two
                readings). May be STATED, and the derivation is recorded so a reader can redo it.
+               Nothing re-executes the arithmetic: correct arithmetic over a bad input passes,
+               which is how Round 43's three perfect percentages carried a fabricated price.
   `external` — research leads (Manus / Perplexity / general reading) with no underlying data.
                **May never be stated as fact.** Cut, or downgraded to explicitly-hedged
                language that attributes the uncertainty. Enforced, not advised.
+
+WHAT `verified` RECORDS, and why it is a field and not a tier. A tier says what a claim may
+SAY; verification says how well we know it, and the two are independent. It is set by the
+engine from what actually happened, never by a builder — a field a builder fills in is
+`autonomy: review` again (Round 46 F18).
+
+  `source`              — re-asked at the source and it agreed.
+  `file`                — no source check exists for this metric. Every AGGREGATED figure is
+                          here: the upstream publishes rows and WE compute the number, so there
+                          is no upstream value to compare against. Round 49 did not give those
+                          a provenance tier they cannot earn; they are guarded by property
+                          assertions on the aggregation instead (`permitcountunit`).
+  `unverified: <why>`   — the check could not RUN. Fails OPEN, loudly: a verification that
+                          could not run is not a verification that failed, and refusing to
+                          publish a correct article because a federal API is down is the wrong
+                          trade (owner, 2026-10-12). It is visible on the claim, in the ledger
+                          and in the cycle notice, and it never reads as verified.
+
+A check that RAN and disagreed — a mismatch, or a period the source does not have — is not a
+`verified` value at all. It raises, because that is the Round 43 case: the seed row claimed a
+month the EIA has never published.
 
 `external` is where most published wrongness comes from: a plausible causal explanation that
 nobody measured. The ledger's job is to make stating one impossible without it being visible.
@@ -60,11 +91,15 @@ class Claim:
                               # time-series reading — G5 does not apply and the reason is stated
     hedged: bool = False      # set on `external` claims that survived as explicitly-uncertain
     notes: str = ""
+    source_url: str = ""      # required on `official`: the document a reader can open
+    # Set by the ENGINE, never by a builder. See the header for the three values.
+    verified: str = ""
 
     def to_row(self) -> dict:
         return {"id": self.id, "tier": self.tier, "claim": self.text, "figure": self.figure,
-                "source": self.source, "as_of": self.as_of, "derivation": self.derivation,
-                "hedged": self.hedged, "notes": self.notes}
+                "source": self.source, "source_url": self.source_url, "as_of": self.as_of,
+                "derivation": self.derivation, "hedged": self.hedged, "notes": self.notes,
+                "verified": self.verified}
 
 
 @dataclass
@@ -113,6 +148,19 @@ def verify_ledger(claims: list[Claim], config: dict, now: date | None = None) ->
         if not claim.as_of:
             result.ok = False
             result.failures.append(f"{where}: tier {claim.tier!r} with no as_of")
+        # `official` ASSERTS WHAT `data` DOES NOT. Until Round 49 the two ran identical checks,
+        # which made the methodology page describe a distinction the code did not draw.
+        if claim.tier == "official":
+            if not claim.timeless:
+                result.ok = False
+                result.failures.append(
+                    f"{where}: tier `official` is for a FIXED REFERENCE CONSTANT (a 1991-2020 "
+                    f"normal), so it must set timeless=True. A current reading is `data`")
+            if not claim.source_url:
+                result.ok = False
+                result.failures.append(
+                    f"{where}: tier `official` must carry `source_url` — the document a reader "
+                    f"can open. 'Attributed to that source' is what the tier promises")
         if claim.tier == "derived" and not claim.derivation:
             result.ok = False
             result.failures.append(

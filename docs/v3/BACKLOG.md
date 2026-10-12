@@ -132,6 +132,36 @@ it.
 
 ---
 
+## Standing rule — a verifier calls the project's own request builder, PER REQUEST
+
+Round 49, and the qualifier is the whole lesson. The source-verifiability probe **did** import
+`austinTradeWhere` rather than retyping the Socrata predicate, with a comment explaining why that
+mattered — and then, in the same file, rebuilt the NOAA request by hand. It omitted
+`units=standard`, NCEI answered in °C-days, and the probe reported a correct **695 °F-days as
+386.3**. A 1.8× ratio looks exactly like a published figure being wrong.
+
+A second bug in the same pass: the Austin month list was not deduped (one record per
+(category, month)), so `.at(-2)` returned the incomplete current month, and the comparison ran
+against a month the series deliberately does not publish.
+
+**So the rule is not "use the repo's code in your probe". It is: every outbound request a
+verifier makes is built by the code that built it for ingestion — each one, individually.** A
+file that gets it right once has proved nothing about its next request. Where no such builder is
+exported, export one (`noaaClimate.verifyMonthlyCdd`) rather than writing a second copy of the
+URL.
+
+This is the strongest argument the project has against verifying figures with an *independent*
+reimplementation of each source request. That design buys unit and parse errors — which calling
+our own fetcher cannot catch — at the price of false alarms about correct figures, and two of
+those happened within an hour of writing one. **A gate that cries wolf about correct figures gets
+switched off**, which is worse than the hole it was closing.
+
+Both bugs were caught by the numbers being implausible, which is not a defence — it is the
+178-mile distance of Round 47 again. A control with a known answer would have caught both
+immediately: run the check first against a value already on disk and require agreement.
+
+---
+
 ## Standing rule — a pipe discards the exit code you were checking
 
 Round 48, and logged with a correction attached: I reported this to the owner as a third
@@ -1110,7 +1140,19 @@ a row that is not reproducible from `seed.ts` (cheap, and already implemented); 
 row's `ingestedAt` and the feed's `status` into the ledger entry so a reader can see what was
 verified; or simply state the tier's real meaning in the header so nobody reads more into it.
 
-**Scope → small, wants a decision first.**
+**✅ CLOSED by Round 49** — and the premise needed correcting first: `data` did not assert
+"traces to the dataset file" either. `verify_ledger` checked a known tier string, a non-empty
+source, and an `as_of` that parsed and was in bounds. Nothing in `claim_ledger.py` ever opened a
+dataset file, and `article_engine._metric` — the one function that would have tied a claim to the
+feed — had no caller.
+
+What landed: the tier docstring and `/methodology/` say what `data` means; transcribed claims are
+re-asked at their source at publish time through the project's own fetcher, raising on a
+disagreement and failing open with a loud record on an unreachable source; a `verified` field
+records which of the three happened, set by the engine and never by a builder; `official` was
+given a mechanical meaning it did not have (`timeless` plus a document a reader can open), having
+run checks identical to `data` until then; and aggregated figures were deliberately NOT given a
+provenance tier they cannot earn. See `docs/audits/round-49-ledger-tier.md`.
 
 ---
 
@@ -1288,3 +1330,43 @@ by amending a comment to match what the code happens to do.
 
 **Scope → small, wants a decision first.** Related: Round 48 audit §7.
 
+---
+
+### 34 · Our per-category permit counts sum to more than the city's distinct permits
+
+Round 49 measured it and did not chase it; the owner scoped it as the next round rather than a
+backlog line, because **it is a measured discrepancy on a published figure.**
+
+Asked of the City of Austin, over the ingestion fetcher's own `$where` predicate, for 2026-09:
+
+| | |
+|---|--:|
+| `count(1)` — rows | 4,233 |
+| `count(distinct permit_number)` — permits | **4,233** |
+| our per-category counts, summed | **4,434** |
+
+The city's two numbers being equal confirms Round 45's finding from the source: Austin has
+**0.00% duplication**. Ours is 201 higher.
+
+**The likely cause is our own classifier**, not the city: `permitTradeActivity.ts` assigns a
+trade from `permit_type_desc`, `work_class` AND description text, so one permit whose description
+mentions both roofing and solar is counted in both categories. Round 45 measured *the city's*
+`permit_type_desc` as spanning one type for every Austin permit — a different question from
+whether OUR mapping assigns one category.
+
+**Unverified.** That is the hypothesis, not the finding. The finding is the 201.
+
+**Why it matters enough to be a round.** Nothing in the project states that the per-category
+counts are not additive, and nothing measures the overlap. A reader adding up the trade table on
+a data page — or an answer engine doing the same — gets a number the city would not recognise,
+and we would have no way to explain it. The same question applies to San Antonio, which cannot be
+asked at the source at all (a 27.9 MB CSV with no server-side aggregate), so there it is only ever
+answerable on our side.
+
+**What the round should settle:** whether the overlap is what we think, how large it is per month
+and per metro, whether any rendered page or article sums the categories, and whether the fix is a
+stated caveat, a deduplicated total alongside the per-trade counts, or a classifier that assigns
+one trade per permit.
+
+**Scope → medium. Measurement first, then a decision.** The Socrata cross-check is one request
+and ~230 ms (`docs/audits/round-49-probe.json`).

@@ -68,11 +68,11 @@ def load_feed() -> dict:
     return json.loads((ROOT / "data" / "social-feed.json").read_text())
 
 
-def _metric(feed: dict, area: str, metric: str) -> dict:
-    for entry in feed["areas"]:
-        if entry["id"] == area and metric in entry["metrics"]:
-            return entry["metrics"][metric]
-    raise KeyError(f"{area}/{metric} absent from the feed — the engine will not invent it")
+# `_metric(feed, area, metric)` lived here until Round 49. It raised "absent from the feed — the
+# engine will not invent it", which read as the mechanism tying a claim to the feed — and it had
+# NO CALLER, so it tied nothing. Round 46 F18's shape exactly: a comment describing a guarantee
+# with nothing behind it. Deleted rather than wired, because what it gestured at is now real and
+# stronger: `source_check` re-asks the SOURCE for the figures a claim cites.
 
 
 def frontmatter(article: dict, claims: list[Claim], card_block: str, published_at: date,
