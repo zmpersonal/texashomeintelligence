@@ -1,0 +1,14 @@
+{
+  "path": "/images/og/are-texas-power-prices-still-going-up-jul-2026.png",
+  "width": 1200,
+  "height": 630,
+  "alt": "Are Texas power prices still going up? (Jul 2026) 15.88¢/kWh, up 3.4% year over year. Source: U.S. Energy Information Administration, Jul 2026.",
+  "rendered": {
+    "question": "Are Texas power prices still going up? (Jul 2026)",
+    "headline": "15.88¢/kWh",
+    "subhead": "up 3.4% year over year",
+    "source": "EIA",
+    "asOf": "Jul 2026"
+  },
+  "generator": "scripts/generate-og-cards.mjs"
+}
