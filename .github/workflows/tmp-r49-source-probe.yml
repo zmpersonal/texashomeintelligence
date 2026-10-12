@@ -33,21 +33,36 @@ jobs:
 
       - name: The verifier, against the real sources, for every live transcribed claim
         working-directory: autoposter
+        # RECORDS, never asserts. A step that only fails tells me a verification did not pass and
+        # not whether the cause was the data, the network or my own plumbing — and Actions logs
+        # are served from a host this session cannot follow a redirect to. So it writes the
+        # outcome and commits it, the same way the probe does.
         run: |
           python3 - <<'EOF'
-          import sys; sys.path.insert(0, "src")
+          import json, sys, traceback
+          sys.path.insert(0, "src")
           from datetime import date
           import article_engine as engine, run_article, source_check
           cfg, feed = engine.load_config(), engine.load_feed()
+          out = {}
           for name, fn in (("power", run_article.build_power_claims),
                            ("ac-rush", run_article.build_acrush_claims)):
-              claims = fn(feed, cfg, date(2026, 10, 12))
-              summary = source_check.check_all(claims)
-              print(f"--- {name}: {summary['counts']}")
-              for c in claims:
-                  if c.verified:
-                      print(f"    {c.id:<5} {c.tier:<9} {c.figure!r:<34} {c.verified}")
-              assert not summary["unverified"], summary["unverified"]
+              try:
+                  claims = fn(feed, cfg, date(2026, 10, 12))
+                  summary = source_check.check_all(claims)
+                  out[name] = {
+                      "counts": summary["counts"], "unverified": summary["unverified"],
+                      "claims": [{"id": c.id, "tier": c.tier, "metric": c.metric,
+                                  "figure": c.figure, "verified": c.verified}
+                                 for c in claims if c.verified],
+                  }
+              except Exception as exc:
+                  out[name] = {"raised": f"{type(exc).__name__}: {exc}",
+                               "traceback": traceback.format_exc()[-1500:]}
+              print(name, json.dumps(out[name])[:400])
+          with open("../docs/audits/round-49-verifier-live.json", "w") as f:
+              json.dump(out, f, indent=2)
+              f.write("\n")
           EOF
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
@@ -72,7 +87,7 @@ jobs:
         run: |
           git config user.name "thi-autoposter"
           git config user.email "noreply@anthropic.com"
-          git add docs/audits/round-49-probe.json
+          git add docs/audits/round-49-probe.json docs/audits/round-49-verifier-live.json
           git diff --cached --quiet && { echo "nothing to commit"; exit 0; }
           git commit -m "Round 49 probe result: measured source verifiability"
           # Rebase first. Round 47 lost a complete ingestion to a push race when a commit

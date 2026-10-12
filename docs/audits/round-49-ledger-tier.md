@@ -1,7 +1,9 @@
 # Round 49 — what the ledger's `data` tier actually asserts, and what it could
 
 Date: 2026-10-12 · Branch: `claude/thi-plan-review-m40n0x`, from `origin/main` at `82657d7`.
-**Proposal only. Nothing here is implemented.**
+
+**The proposal in §1-§6 was taken on 2026-10-12 and is built. §8 records what landed and the two
+things it deliberately does not do.**
 
 Backlog 28 records the tier as meaning *"traces to the dataset file, not to the upstream
 source."* Reading `verify_ledger` line by line, it does not assert that either.
@@ -249,3 +251,54 @@ Both were caught by the numbers being implausible, which is the same defence tha
 178-mile distance in Round 47 and is not a defence. A control with a known answer would have
 caught both immediately: the GSOM probe should have been run first against a month already on
 disk and required to agree.
+
+---
+
+## 8 · What landed
+
+The recommendation was taken whole: **C unconditionally, A narrowed to transcribed claims and
+calling the repo's own fetcher, B's field as the record, no provenance tier for aggregated
+claims.** Plus the two fixes the grounding turned up.
+
+| | what it does now |
+|---|---|
+| **C · say what it means** | The tier docstring and a new `/methodology/` section state that `data` is *a reading from a series this project ingests*, that a fixed reference constant is a different thing, and that a computed figure has no upstream number to compare against. Both limits are stated publicly: re-asking proves our copy agrees with the source today and **not** that our reading code is right, and an unreachable source is recorded, never silently treated as checked. |
+| **A · re-ask the source** | `site/scripts/verify-claim.ts` asks EIA through `eiaElectricityPrice.fetchRaw` and NOAA through `noaaClimate.verifyMonthlyCdd` — a new export reusing that module's own `getRows` **and its `units: "standard"`**. Four transcribed claims, ~850 ms. |
+| **fail open, loudly** | `unreachable` → `unverified: <why> at <ISO time>`, stamped on the claim, printed in the run log, carried on the decision, named in the notice and in a `source-check` verdict. The cycle proceeds. |
+| **fail closed on a real disagreement** | A mismatch, or a period the source does not have, refuses the article. That second case is Round 43's: the seed row claimed a month the EIA has never published. |
+| **B · the field** | `Claim.verified` ∈ `source` / `file` / `unverified: …`, set by the engine, never by a builder. In `to_row`, so it reaches the published ledger. |
+| **aggregated claims** | Read `file`, deliberately. No provenance tier they cannot earn. |
+| **`official` earns its name** | Asserts `timeless=True` and a `source_url` a reader can open — two things `data` does not. It ran checks identical to `data` until now. |
+| **`_metric` deleted** | The dead feed guard whose comment described a guarantee. Gone, with a test asserting it stays gone. |
+
+### Two structural decisions worth recording
+
+**The check lives in the driver, not the engine.** The first implementation put it in
+`article_engine.run` and the suite went from seconds to minutes: every test that runs the engine
+began spawning a node process per claim with a 30-second timeout each. That is not a slow test —
+it is a unit suite measuring the network. It moved to `autopilot.evaluate`, injected like every
+other side effect in that module, and a test asserts it stays there.
+
+**It applies to a promotion too.** An orphan is an article already live whose figures are about
+to go into a post, and "it was fine when it was written" is exactly the assumption a re-ask
+exists to end — the article may predate a revision to the month it reports on.
+
+### What this still does not catch, stated where the methodology repeats it
+
+A bug in our own fetcher. Both sides of the comparison share it. That is the deliberate trade
+against an independent reimplementation, and §7 is why: two false alarms about correct figures
+inside an hour. A gate that cries wolf about correct figures gets switched off.
+
+Aggregated figures — both permit counts — in either metro. Austin's *could* be cross-checked at
+the source (`count(distinct permit_number)` answers in ~230 ms) and that is logged as **BACKLOG
+34** rather than built here, because the measurement that prompted it is a live discrepancy on a
+published figure and deserves its own round.
+
+## 9 · Verification
+
+| Check | Result |
+|---|---|
+| autoposter suite | **392/392** |
+| `npm run check` | 0 errors, 0 warnings, 0 hints |
+| the five branches of the source check | asserted individually: agrees → `source`; contradicts → raises; period absent → raises; unreachable → fails open; subprocess dies → fails open |
+| against the REAL sources, in Actions | see below |
