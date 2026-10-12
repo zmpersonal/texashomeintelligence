@@ -1338,7 +1338,18 @@ def acrush_caption(article: dict, claims: list[Claim]) -> str:
     label = month_label(c["H1"].as_of[:7])
     permits_up = c["H2"].figure.startswith("up")
     heat_up = c["C3"].figure.startswith("up")
-    hook = ("Hottest month of the year, and Austin's AC filings went the OTHER way."
+    # "HOTTEST MONTH OF THE YEAR" was the same superlative C2 asserts unconditionally, typed a
+    # third time and in the place nobody re-reads. September 2026 ranks 2 of 13, so the caption
+    # would have led a Facebook post with a claim the article beneath it contradicts — and G1
+    # could not see it, because a superlative carries no numeral to trace. The hook now reads
+    # the rank off C2 rather than stating one.
+    hottest = c["C2"].figure.startswith("the highest")
+    hook = ((("Hottest month of the year, and Austin's AC filings went the OTHER way."
+              if hottest else
+              "Austin's second-hottest month in the record we hold, and its AC filings went "
+              "the OTHER way." if c["C2"].figure.startswith("the second-highest") else
+              "Austin's heat was nowhere near a record this month — and its AC filings went "
+              "the OTHER way anyway."))
             if permits_up != heat_up else
             "Austin's heat and its AC filings moved together this month — which they do not "
             "always do.")

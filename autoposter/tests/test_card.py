@@ -72,10 +72,23 @@ def _card():
 # ============================================ the card is BUILT, not typed
 
 def test_the_engine_emits_the_card_block():
+    """Every field of the emitted card traces to the article's own claims.
+
+    It used to assert the four values of one August 2026 article. Those were right the day they
+    were typed and are a different article's values now, so the test measured which topic ranked
+    first rather than whether the card is emitted from the ledger.
+    """
     r = _run()
-    assert r["card"]["headline"] == "13.88¢/kWh"
-    assert r["card"]["subhead"] == "down 10.2% year over year"
-    assert r["card"]["source"] == "EIA" and r["card"]["asOf"] == "Aug 2026"
+    card, claims, article = r["card"], r["claims"], r["article"]
+    # BACKED, by the gate's own judgement — which is the property. (That this gate bites is
+    # proved separately, by the four mutation tests above and below it.)
+    assert card_mod.verify_card(card, claims, slug=article["slug"], article=article).ok
+    assert card["question"] == article["title"], (card["question"], article["title"])
+    assert card["source"] and card["asOf"], card
+    # Every field filled, and no placeholder left in one.
+    assert all(card.get(field) for field in card_mod.CARD_FIELDS), card
+    # And the block the engine hands the site is this card, not a second rendering of it.
+    assert r["card_frontmatter"] == card_mod.frontmatter_block(card)
 
 
 def test_the_built_block_matches_the_card_the_owner_APPROVED():
@@ -100,11 +113,23 @@ def test_the_built_block_matches_the_card_the_owner_APPROVED():
 
 
 def test_the_hero_figure_is_a_MEASURED_claim_not_a_derived_one():
-    """A card that leads on arithmetic leads on the weakest thing it has."""
-    card, claims, _ = _card()
-    lead = next(c for c in claims if c.tier == "data" and c.figure in
-                (card["headline"], "13.88 cents per kilowatt-hour"))
-    assert lead.tier == "data"
+    """A card that leads on arithmetic leads on the weakest thing it has.
+
+    Stated as the property. It used to accept the headline OR the literal string
+    "13.88 cents per kilowatt-hour" — one article's August 2026 figure, carried as a fallback
+    so the `next()` would find something. When the engine stopped choosing that article the
+    fallback stopped matching and the test raised StopIteration instead of failing with a
+    reason.
+    """
+    card, claims, article = _card()
+    # `select_claims` is the code's OWN answer to "which two claims does this card speak for",
+    # used by the builder and by the gate alike — so asking it is asking the thing under test
+    # rather than string-matching a headline the card deliberately abbreviates
+    # ("15.88 cents per kilowatt-hour" renders as "15.88¢/kWh").
+    hero, movement = card_mod.select_claims(article, claims)
+    assert hero.tier == "data", (hero.id, hero.tier)
+    assert movement.tier == "derived", (movement.id, movement.tier)
+    assert card["headline"] and card["subhead"]
 
 
 def test_compaction_may_never_change_a_digit():
@@ -149,21 +174,36 @@ def test_a_FROZEN_card_is_caught_when_the_reading_moves():
     import copy
     card, claims, article = _card()
     moved = copy.deepcopy(claims)
-    for c in moved:                         # only the reading moves; the derivation lags
-        if c.metric == "energy_price_cents_kwh" and c.tier == "data":
-            c.figure = "12.10 cents per kilowatt-hour"
+    # THE HERO CLAIM, whichever article the engine picked — not a named metric. Pinning this to
+    # `energy_price_cents_kwh` meant the mutation only landed while the electricity article
+    # ranked first; once another did, nothing moved and the test failed reporting that the
+    # stale figure was "still in the ledger" when the real answer was that nothing had been
+    # made stale. A mutation test has to know it mutated something.
+    hero, _ = card_mod.select_claims(article, moved)
+    before = hero.figure
+    hero.figure = "99.91 units nobody reported"   # only the reading moves; the derivation lags
+    assert hero.figure != before, "the mutation did not change the hero claim"
     result = card_mod.verify_card(card, moved, article=article)
     assert not result.ok
     assert any(f.startswith("C1a") for f in result.failures), result.failures
-    # and the proof that the backstop alone would have missed it
+    # AND THE PROOF THAT THE BACKSTOP ALONE WOULD HAVE MISSED IT — derived from this run's own
+    # figures rather than from the literal "13.88", which was one article's August 2026 reading.
+    # The movement claim's derivation quotes the reading it was computed from, so the stale
+    # number is still in the ledger's numeral pool: a numerals-anywhere check sees a card that
+    # traces, and only the slot-exact check sees a card that is wrong.
     import validator
     allowed = set()
     for c in moved:
         if c.tier in ("data", "official", "derived"):
             allowed |= validator._extract_numerals(c.figure)
             allowed |= validator._extract_numerals(c.derivation)
-    assert "13.88" in allowed, ("the stale figure is still somewhere in the ledger — which is "
-                                "exactly why the slot-exact check has to exist")
+    stale = validator._extract_numerals(before)
+    assert stale & allowed, (
+        f"the stale figure {before!r} left the ledger entirely, so this run cannot demonstrate "
+        f"the hole C1a exists to close")
+    assert validator._extract_numerals(card["headline"]) <= allowed, (
+        f"a numerals-anywhere check would already have rejected {card['headline']!r}, so this "
+        f"run is not exercising the gap between the backstop and the slot-exact check")
 
 
 def test_the_subhead_slot_is_checked_exactly_too():
@@ -726,6 +766,91 @@ def _acrush(today):
     return run_article.write_acrush({}, claims, feed), claims
 
 
+def _acrush_cycles():
+    """The two pinned cycles plus one DERIVED from whatever month the data now reaches, so this
+    invariant keeps being checked against the live newest period without anyone re-pinning it."""
+    import thi_source
+    newest = max(p.period[:7] for series in thi_source.load_history(date(2027, 12, 1))
+                 if series.metric == "permit_activity_hvac" and series.area_id == "austin_metro"
+                 for p in series.points)
+    year, month = int(newest[:4]), int(newest[5:7])
+    return [JULY_CYCLE, AUG_CYCLE,
+            date(year + (month == 12), 1 if month == 12 else month + 1, 1)]
+
+
+def test_builder4_THE_SUPERLATIVE_AGREES_WITH_THE_RANK_IN_ITS_OWN_DERIVATION():
+    """L16 applied to a SUPERLATIVE, which is the hardest case for the existing gates: it
+    carries no numeral, so G1 has nothing to trace and cannot see it being wrong.
+
+    C2 computed the heat's rank, printed it in its own derivation, and then asserted "the most
+    cooling demand in the N months we hold" regardless. September 2026 ranks 2 of 13 — 695
+    against August's 755 — so the claim, the article's opener and the Facebook caption's hook
+    would all have published a superlative contradicted by the line beside it.
+    """
+    for today in _acrush_cycles():
+        _, claims = _acrush(today)
+        c2 = next(c for c in claims if c.id == "C2")
+        rank = int(re.search(r"ranks (\d+) of ", c2.derivation).group(1))
+        expected = {1: "highest", 2: "second-highest",
+                    3: "third-highest"}.get(rank, f"{rank}th-highest")
+        assert expected in c2.figure, (today, rank, c2.figure)
+        assert expected in c2.text, (today, rank, c2.text)
+        if rank != 1:
+            assert "the highest of" not in c2.figure, (today, c2.figure)
+
+
+def test_builder4_C3s_DIRECTION_WORD_AGREES_WITH_ITS_OWN_ARITHMETIC():
+    """C3 hardcoded "up" and "rose" next to a derivation reading "695 vs 755 = -8%" — the
+    article said cooling demand rose 8% in the month it fell 8%. H2, four lines above it in the
+    same builder, had always branched on the sign. This holds both to the same rule."""
+    for today in _acrush_cycles():
+        _, claims = _acrush(today)
+        for claim_id in ("H2", "C3"):
+            claim = next(c for c in claims if c.id == claim_id)
+            signed = float(re.search(r"= (-?[\d.]+)%", claim.derivation).group(1))
+            assert claim.figure.startswith("up" if signed >= 0 else "down"), (
+                today, claim_id, claim.figure, claim.derivation)
+            assert ("rose" in claim.text or "up" in claim.text) is (signed >= 0), (
+                today, claim_id, claim.text, claim.derivation)
+
+
+def test_builder4_THE_OPENER_AND_THE_CAPTION_follow_C2_not_a_typed_superlative():
+    """The same superlative was typed in three places. Forcing the rank must move all of them.
+
+    This is the flip test for a claim with no numeral in it, so nothing else in the stack can
+    catch a regression here.
+    """
+    _, claims = _acrush(AUG_CYCLE)
+
+    def with_rank(phrase):
+        out = _copy.deepcopy(claims)
+        for c in out:
+            if c.id == "C2":
+                c.figure = f"the {phrase} of the last 13 months"
+                c.text = f"That is the {phrase} cooling demand in the 13 months we hold."
+        return out
+
+    def surfaces(phrase):
+        forced = with_rank(phrase)
+        # Force a divergence too: the superlative only appears on that branch.
+        for c in forced:
+            if c.id == "C3":
+                c.figure, c.text = "down 8% month over month", "Cooling demand fell from before."
+            if c.id == "H2":
+                c.figure, c.text = "up 6% month over month", "HVAC permits rose from before."
+        article = run_article.write_acrush({}, forced, engine.load_feed())
+        return article["body"], run_article.acrush_caption(article, forced)
+
+    top_body, top_caption = surfaces("highest")
+    second_body, second_caption = surfaces("second-highest")
+    assert "hottest month Austin has had" in top_body
+    assert "Hottest month of the year" in top_caption
+    assert "hottest month Austin has had" not in second_body, (
+        "the article called a second-ranked month the hottest in the record")
+    assert "Hottest month of the year" not in second_caption, (
+        "the caption called a second-ranked month the hottest of the year")
+
+
 def test_builder4_verifies_in_both_periods():
     import claim_ledger as cl
     for today in (JULY_CYCLE, AUG_CYCLE):
@@ -859,8 +984,20 @@ def test_builder5_the_card_leads_on_the_widest_gap_and_the_DATA_picks_it():
     month can put a different trade on the card."""
     article, claims = _sa(AUG_CYCLE)
     card = card_mod.build_card(article, claims)
-    assert card["headline"] == "451 tree permits"
-    assert card["subhead"] == "103% above its 11-month average"
+    by_id = {c.id: c for c in claims}
+    # THE RULE, not August 2026's answer to it. This asserted "451 tree permits" and "103% above
+    # its 11-month average", which were right when typed and have moved twice since — Round 45's
+    # recount and Round 48's mapping-version filter — so it failed while the selection rule it
+    # describes kept working perfectly.
+    gaps = {c.id: abs(float(re.search(r"([\d.]+)%", c.figure).group(1)))
+            for c in claims if re.fullmatch(r"T\d+d", c.id)}
+    assert len(gaps) >= 3, f"too few trades to have a widest: {gaps}"
+    widest = max(gaps, key=gaps.get)
+    assert widest == "T0d", (
+        f"the widest gap is {widest} at {gaps[widest]}%, but the builder led on T0d at "
+        f"{gaps['T0d']}% — the hero is not being picked by the data")
+    assert card["headline"] == by_id["T0"].figure, (card["headline"], by_id["T0"].figure)
+    assert card["subhead"] == by_id["T0d"].figure, (card["subhead"], by_id["T0d"].figure)
     assert card["source"] == "City of San Antonio"
 
 
@@ -987,12 +1124,32 @@ def _power_claims(today=None):
 
 
 def _rising(claims):
-    """Force the year-over-year comparison the other way, and the verdict with it."""
+    """Force the year-over-year comparison UP, and the verdict with it."""
     out = _copy.deepcopy(claims)
     for c in out:
         if c.id == "C2":
             c.figure = "up 7.4% year over year"
             c.text = "That is higher than a year earlier."
+    return out
+
+
+def _falling(claims):
+    """Force it DOWN.
+
+    Round 48. The three tests below used the REAL claims as their falling case and only forced
+    the rising one — which worked while Texas power happened to be getting cheaper. It is not:
+    July 2026 is 15.88c against July 2025's 15.36c, +3.4%. So they failed asserting "**No.**"
+    about a month the builder correctly answers "**Yes.**" about, and the flip test they were
+    written to be went red for the one reason it must never go red: the data moved.
+
+    Both directions are forced now, and the real claims are asserted against their OWN sign
+    rather than against a direction typed in September.
+    """
+    out = _copy.deepcopy(claims)
+    for c in out:
+        if c.id == "C2":
+            c.figure = "down 7.4% year over year"
+            c.text = "That is lower than a year earlier."
     return out
 
 
@@ -1002,11 +1159,17 @@ def test_FROZEN_power_verdict_is_the_SIGN_of_the_year_over_year_move():
     every gate green. This is the single most important flip in the rewrite."""
     feed = engine.load_feed()
     claims = _power_claims()
-    falling = run_article.write_power({}, claims, feed)["body"]
+    falling = run_article.write_power({}, _falling(claims), feed)["body"]
     rising = run_article.write_power({}, _rising(claims), feed)["body"]
     assert "**No.**" in falling and "cheaper than it was a year ago" in falling
     assert "**No.**" not in rising, "the verdict survived its own condition being inverted"
     assert "**Yes.**" in rising and "dearer than it was a year ago" in rising
+    # AND the real claims get the verdict their own sign implies — the tie to reality, without
+    # a direction written down anywhere in this test.
+    real = run_article.write_power({}, claims, feed)["body"]
+    really_rising = {c.id: c for c in claims}["C2"].figure.startswith("up")
+    assert ("**Yes.**" in real) is really_rising, (
+        f"C2 reads {dict((c.id, c.figure) for c in claims)['C2']!r} and the verdict disagrees")
 
 
 def test_FROZEN_power_WEATHER_section_stops_denying_a_mild_month_when_it_was_one():
@@ -1015,16 +1178,36 @@ def test_FROZEN_power_WEATHER_section_stops_denying_a_mild_month_when_it_was_one
     still not established, because nothing we hold measures the link."""
     feed = engine.load_feed()
     claims = _power_claims()
-    real = run_article.write_power({}, claims, feed)["body"]
-    mild = _copy.deepcopy(claims)
-    for c in mild:
-        if c.id == "C5d":
-            c.text = "Austin's August was cooler than its normal."
-            c.figure = "-12.0% against the normal"
-    softened = run_article.write_power({}, mild, feed)["body"]
-    assert "Neither metro had a mild" in real
+
+    def with_mildness(cooler: bool):
+        """Both metros at, or both metros below, their normal — stated rather than inherited.
+
+        The real month used to supply the "not mild" case. On the period the data now supports
+        San Antonio ran 5.6% below its normal, so the builder correctly takes the "at least
+        available" branch and the old assertion failed for being a snapshot of July 2025's
+        weather rather than a statement about the branch.
+        """
+        out = _copy.deepcopy(claims)
+        for c in out:
+            if c.id in ("C5d", "C8d"):
+                name = "Austin" if c.id == "C5d" else "San Antonio"
+                month = c.text.split("'s ", 1)[1].split(" was", 1)[0]
+                c.text = (f"{name}'s {month} was "
+                          f"{'cooler than' if cooler else 'hotter than'} its normal.")
+                c.figure = f"{'-12.0' if cooler else '+12.0'}% against the normal"
+        return out
+
+    not_mild = run_article.write_power({}, with_mildness(False), feed)["body"]
+    softened = run_article.write_power({}, with_mildness(True), feed)["body"]
+    assert "Neither metro had a mild" in not_mild
     assert "Neither metro had a mild" not in softened, "it denied a mild month that happened"
     assert "at least available" in softened and "not the same as established" in softened
+    assert "at least available" not in not_mild, (
+        "it offered the weather explanation for a month that was not mild")
+    # And the real month lands on whichever branch its own readings imply.
+    real = run_article.write_power({}, claims, feed)["body"]
+    really_mild = any("cooler than" in c.text for c in claims if c.id in ("C5d", "C8d"))
+    assert ("at least available" in real) is really_mild
 
 
 def test_FROZEN_power_CAPTION_hook_follows_the_direction_too():
@@ -1032,8 +1215,10 @@ def test_FROZEN_power_CAPTION_hook_follows_the_direction_too():
     caption = run_article.TOPIC_CAPTIONS["electricity-still-rising"]
     claims = _power_claims()
     article = run_article.write_power({}, claims, feed)
-    assert "for once, is not" in caption(article, claims)
+    assert "for once, is not" in caption(article, _falling(claims))
     assert "for once, is not" not in caption(article, _rising(claims))
+    really_rising = {c.id: c for c in claims}["C2"].figure.startswith("up")
+    assert ("for once, is not" in caption(article, claims)) is not really_rising
 
 
 def test_the_power_article_CLAIMS_ARE_ALL_ONE_PERIOD():
@@ -1047,13 +1232,40 @@ def test_the_power_article_CLAIMS_ARE_ALL_ONE_PERIOD():
 
 def test_the_power_article_REFUSES_a_period_it_cannot_compare():
     """No year-ago month means no year-over-year claim, and the article is built on one. It
-    halts with the reason rather than quietly comparing against something else."""
-    from datetime import date as _date
+    halts with the reason rather than quietly comparing against something else.
+
+    THE CONDITION IS CONSTRUCTED, not hunted for by date. This used to pass 2026-04-15 and rely
+    on the real price series not reaching 2025-03. Round 47 widened that series back to 2024-08,
+    so no period it can now choose lacks its year-ago month — the condition simply stopped
+    existing, and the test reported that the builder had failed to refuse something it was never
+    offered. Good for the article, and it leaves this refusal untested unless the gap is built.
+    """
+    import gates
+    import thi_source
+    period = run_article._power_period(TODAY)
+    year_ago = f"{int(period[:4]) - 1}{period[4:]}"
+    real = thi_source.load_history
+
+    def without_the_year_ago(today, **kw):
+        out = []
+        for series in real(today, **kw):
+            if series.area_id == "texas" and series.metric == "energy_price_cents_kwh":
+                series = _copy.copy(series)
+                series.points = [p for p in series.points if p.period[:7] != year_ago]
+            out.append(series)
+        return out
+
+    thi_source.load_history = without_the_year_ago
     try:
-        run_article.build_power_claims(engine.load_feed(), CFG, _date(2026, 4, 15))
-        raise AssertionError("it built an article with no year-ago month to compare against")
-    except Exception as exc:
-        assert "year-over-year" in str(exc) and "2025-03" in str(exc), str(exc)
+        built = None
+        try:
+            run_article.build_power_claims(engine.load_feed(), CFG, TODAY)
+            built = "it built an article with no year-ago month to compare against"
+        except gates.GateHalt as exc:
+            assert "year-over-year" in str(exc) and year_ago in str(exc), str(exc)
+        assert built is None, built
+    finally:
+        thi_source.load_history = real
 
 
 def _permit_claims(today=None):
