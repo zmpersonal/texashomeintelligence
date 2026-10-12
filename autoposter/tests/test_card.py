@@ -1172,6 +1172,47 @@ def test_FROZEN_power_verdict_is_the_SIGN_of_the_year_over_year_move():
         f"C2 reads {dict((c.id, c.figure) for c in claims)['C2']!r} and the verdict disagrees")
 
 
+def test_FROZEN_power_CAPTION_weather_sentence_follows_the_SAME_test_the_body_does():
+    """The caption is the half most readers see, and it was the half still asserting.
+
+    `power_caption` said "And no, it was not just a mild summer" unconditionally while the body
+    beneath it branches — so on a month where a metro DID run below normal, the post ruled the
+    explanation out and the article it linked to called it "at least available this time". Found
+    by reading the caption of a real cycle, not by any gate: G1 traces numerals and a denial
+    carries none.
+    """
+    feed = engine.load_feed()
+    claims = _power_claims()
+    article = run_article.write_power({}, claims, feed)
+    article["canonical_url"] = "https://texashomeintelligence.com/analysis/x/"
+
+    def with_mildness(cooler):
+        out = _copy.deepcopy(claims)
+        for c in out:
+            if c.id in ("C5d", "C8d"):
+                name = "Austin" if c.id == "C5d" else "San Antonio"
+                month = c.text.split("'s ", 1)[1].split(" was", 1)[0]
+                c.text = (f"{name}'s {month} was "
+                          f"{'cooler than' if cooler else 'hotter than'} its normal.")
+                c.figure = f"{'-12.0' if cooler else '+12.0'}% against the normal"
+        return out
+
+    not_mild = run_article.power_caption(article, with_mildness(False))
+    mild = run_article.power_caption(article, with_mildness(True))
+    assert "not just a mild summer" in not_mild
+    assert "not just a mild summer" not in mild, (
+        "the caption denied a mild month that happened")
+    assert "at least available" in mild and "nothing we hold measures the link" in mild
+    # The body and the caption must agree about the SAME month, which is the defect's shape.
+    for claims_variant in (with_mildness(True), with_mildness(False)):
+        body = run_article.write_power({}, claims_variant, feed)["body"]
+        caption = run_article.power_caption(article, claims_variant)
+        assert ("at least available" in body) is ("at least available" in caption), (
+            "the article and its caption disagree about whether the month was mild")
+    # And no doubled reference period: the figures already read "... against the normal".
+    assert "against the normal against" not in not_mild and "against the normal against" not in mild
+
+
 def test_FROZEN_power_WEATHER_section_stops_denying_a_mild_month_when_it_was_one():
     """"Neither metro had a mild summer" is an answer to the objection only while the months
     were not mild. When one is, the honest line is that the explanation is AVAILABLE — and

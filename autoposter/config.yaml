@@ -208,7 +208,22 @@ staleness_hours:
   # The comment it replaces read "published with a 1-2 month lag", which the series on disk
   # does not support and which is where the 90 came from.
   energy_price_cents_kwh: 2880
-  cooling_degree_days: 2160      # NOAA monthly summaries, similar lag -> 90 days
+  # 2026-10-12 (Round 48): 2160 -> 2880, i.e. 90 -> 120 days, for the same reason as the price
+  # bound above — a bound should mean "no claim is older than its own source's lag", and 90 was
+  # shorter than the lag of the article this metric is cross-checked INTO.
+  #
+  # THE ARITHMETIC. NOAA's GSOM runs about one month behind, so the summer article's own claims
+  # are ~41 days old and this changes nothing for it. What it unblocks is the electricity
+  # article: that builder deliberately pins BOTH its series to one period so every claim in the
+  # piece ages together, which means its cooling cross-check carries the EIA's ~3-month-old
+  # month and was judged against a bound set for NOAA's one-month lag. An article is governed by
+  # its tightest metric rather than by its subject.
+  #
+  # That is a design question, not something this widening settles — it is logged in
+  # docs/v3/BACKLOG.md as the better rule (bound an article by its PRIMARY metric and judge
+  # cross-checks against their own). Until then this value has to cover the oldest claim any
+  # article legitimately carries on it.
+  cooling_degree_days: 2880
   # 2026-09-19: 60 -> 90 days, bringing permits in line with every other monthly series here.
   #
   # 60 days is almost exactly one month, so a month's claims expired at the moment its

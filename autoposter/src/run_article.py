@@ -934,11 +934,31 @@ def power_caption(article: dict, claims: list[Claim]) -> str:
             "the number."
             if rising else
             "\"Everything's going up.\" Texas residential power, for once, is not.")
+    # THE WEATHER SENTENCE FOLLOWS THE SAME TEST THE ARTICLE'S DOES. It asserted "And no, it
+    # was not just a mild summer" unconditionally while the body beneath it branches — so on a
+    # month where a metro DID run below normal, the post said the explanation was ruled out and
+    # the article it linked to said it was "at least available this time". The caption is the
+    # half a reader sees first and the only half most of them see.
+    #
+    # `mild` is computed exactly as `write_power` computes it, off the same claims, rather than
+    # by a second rule that could drift from it.
+    mild = [t for t in ("C5", "C8") if "cooler than" in c[f"{t}d"].text]
+    where = " and ".join("Austin" if t == "C5" else "San Antonio" for t in mild)
+    # The figures already read "-0.1% against the normal", so the sentence must not add
+    # "against its 1991-2020 normal" on top — that produced "ran -0.1% against the normal
+    # against its 1991-2020 normal". The reference period is named once, where it belongs.
+    # The source string already carries "1991-2020", which is what satisfies G2's as_of
+    # requirement here, so naming the period again just stutters.
+    readings = (f"Austin ran {c['C5d'].figure}, San Antonio {c['C8d'].figure} "
+                f"(source: {c['C5n'].source}).")
+    weather = (f"And no, it was not just a mild summer — {readings}"
+               if not mild else
+               f"A mild month is at least available this time — {where} ran below normal — but "
+               f"nothing we hold measures the link. {readings}")
     return (
         f"{hook} {label}: {c['C1'].figure}, {c['C2'].figure}, {c['C3'].figure} "
         f"(source: {EIA_SOURCE}, as of {c['C1'].as_of}). "
-        f"And no, it was not just a mild summer — Austin ran {c['C5d'].figure} against its "
-        f"1991-2020 normal, San Antonio {c['C8d'].figure}. "
+        f"{weather} "
         f"We can't tell you what moved the price, and we're not going to guess. "
         f"The series, with the arithmetic shown \u2192 {article['canonical_url']} "
         f"Send this to whoever told you the power bill only goes one way."

@@ -196,13 +196,20 @@ def site_renderer():
     The card comes from the SITE's own generator, the same one a human runs. If it refuses —
     overflow, a font that will not decode — this raises, the card gate fails, and the cycle
     skips. That is the intended path, not an accident.
+
+    IT NAMES THE SLUG, and that is load-bearing. The generator renders every article it can and
+    exits non-zero only for a slug it was ASKED for, so `check=True` here means "THIS article's
+    card could not be drawn" rather than "some article's could not". Measured 2026-10-12: one
+    already-published article overflows its card, and while the generator exited on the first
+    failure that single card made the card gate unpassable for every future article, whichever
+    article the cycle was publishing.
     """
     def render(article) -> None:
         slug = article["slug"]
         analysis = REPO / "site" / "src" / "data" / "analysis" / f"{slug}.md"
         analysis.parent.mkdir(parents=True, exist_ok=True)
         analysis.write_text(article["frontmatter"] + "\n" + article["body"])
-        subprocess.run(["npm", "run", "og-cards"], cwd=REPO / "site", check=True)
+        subprocess.run(["npm", "run", "og-cards", "--", slug], cwd=REPO / "site", check=True)
     return render
 
 

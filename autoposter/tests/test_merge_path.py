@@ -753,6 +753,28 @@ def test_REAL_git_confirmation_raises_when_the_merge_silently_does_nothing():
         ra.REPO, ra.open_and_merge_pr = real_repo, real_pr
 
 
+def test_the_RENDERER_NAMES_THE_SLUG_it_needs():
+    """So `check=True` means "this article's card failed", not "some article's did".
+
+    The site generator renders every article it can and fails the exit code only for a slug it
+    was asked for. Measured 2026-10-12: one already-published article overflows its card, and
+    while that exit code was global it made the card gate unpassable for EVERY future article,
+    whichever one the cycle was publishing. Naming the slug is what scopes it — so the name
+    being in the argv is the assertion.
+    """
+    fake = FakeRun()
+    _patch(fake)
+    try:
+        ra.site_renderer()({"slug": "a-test-article", "frontmatter": "---\n---", "body": "x"})
+    finally:
+        ra.subprocess.run = _REAL_RUN
+        for leftover in (ra.REPO / "site" / "src" / "data" / "analysis" / "a-test-article.md",):
+            leftover.unlink(missing_ok=True)
+    calls = fake.argv("npm run og-cards")
+    assert calls, [c for c in fake.calls]
+    assert calls[0] == ["npm", "run", "og-cards", "--", "a-test-article"], calls[0]
+
+
 if __name__ == "__main__":
     fns = [f for n, f in sorted(globals().items()) if n.startswith("test_")]
     ok = 0
