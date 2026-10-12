@@ -206,7 +206,13 @@ def _everything_published(cfg):
     assert ranked, "no buildable topic; this premise would be vacuous"
     for i, topic in enumerate(ranked):
         title = engine._current_title(topic, run_article.TOPIC_ARTICLES, today)
-        (folder / f"{i}.md").write_text(f'title: "{title}"\n')
+        # A real frontmatter block, including `published: true`. A bare `title:` line used to
+        # be enough because the reader took every title it found; since Round 48 it reads
+        # `published:` the way the site does, so a premise that means "this is LIVE" has to
+        # say so. A fixture that no longer matches what production writes is a premise that
+        # has quietly stopped standing in for anything.
+        (folder / f"{i}.md").write_text(
+            f'---\ntitle: "{title}"\npublishedAt: "2026-09-18"\npublished: true\n---\n')
     return cfg
 
 

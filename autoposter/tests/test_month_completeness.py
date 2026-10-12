@@ -27,21 +27,33 @@ RAW_DATASET = "municipal-permits"
 
 class FakeGenerated:
     """A throwaway `generated/` tree, so these tests state their own coverage instead of
-    depending on whatever the last real ingestion happened to reach."""
+    depending on whatever the last real ingestion happened to reach.
 
-    def __init__(self, coverage: str | None, months=("2026-06", "2026-07", "2026-08", "2026-09")):
+    `sa_coverage` writes San Antonio's pair of files too, and is OPTIONAL rather than always
+    on: a second city means a second `permit_activity_*` series, and the tests that take
+    `[0]` of the series list would then be reading whichever city sorted first. Only the
+    per-city test needs two, so only it asks for two.
+    """
+
+    def __init__(self, coverage: str | None, months=("2026-06", "2026-07", "2026-08", "2026-09"),
+                 sa_coverage: str | None = None):
         self.root = Path(tempfile.mkdtemp())
         for dataset in (TRADE_DATASET, RAW_DATASET):
             (self.root / dataset).mkdir(parents=True)
-        (self.root / TRADE_DATASET / "austin.json").write_text(json.dumps({
-            "status": "live", "source": {"name": "City of Austin (test)"},
+        self._write_city("austin", coverage, months)
+        if sa_coverage is not None:
+            self._write_city("san-antonio", sa_coverage, months)
+
+    def _write_city(self, location: str, coverage: str | None, months) -> None:
+        (self.root / TRADE_DATASET / f"{location}.json").write_text(json.dumps({
+            "status": "live", "source": {"name": f"City of {location} (test)"},
             "observations": [
                 {"observedAt": f"{m}-01T00:00:00.000Z",
                  "value": {"category": t, "month": m, "permitCount": 100}}
                 for m in months for t in ("solar", "hvac", "roofing")],
         }))
-        (self.root / RAW_DATASET / "austin.json").write_text(json.dumps({
-            "status": "live", "source": {"name": "City of Austin (test)"},
+        (self.root / RAW_DATASET / f"{location}.json").write_text(json.dumps({
+            "status": "live", "source": {"name": f"City of {location} (test)"},
             "observations": ([{"observedAt": f"{coverage}T00:00:00.000Z", "value": {}}]
                              if coverage else []),
         }))
@@ -53,6 +65,24 @@ class FakeGenerated:
     def __exit__(self, *exc):
         thi_source.GENERATED = self._real
         return False
+
+
+def _held_trade_months(location: str) -> set[str]:
+    """Which months the REAL trade dataset carries, read straight off the file.
+
+    The series cannot answer this: the guard under test is what drops months from the series,
+    so asking the series which months exist would be asking the guard to grade itself.
+    """
+    path = Path(thi_source.GENERATED) / TRADE_DATASET / f"{location}.json"
+    doc = json.loads(path.read_text())
+    return {(o.get("value") or {}).get("month") for o in doc.get("observations") or []
+            if (o.get("value") or {}).get("month")}
+
+
+def _months_after(month: str, count: int) -> date:
+    """`2026-10`, 2 -> 2026-12-01. Used to put a month safely in the past."""
+    index = int(month[:4]) * 12 + int(month[5:7]) - 1 + count
+    return date(index // 12, index % 12 + 1, 1)
 
 
 def _austin_months(today):
@@ -117,23 +147,81 @@ def test_the_refusal_SAYS_WHY_on_the_series():
 
 # ===================================================== per city, not globally
 
-def test_COVERAGE_IS_PER_CITY():
-    """At the same ingestion Austin reached 2026-09-17 and San Antonio 2026-09-11. A single
-    global cutoff would call one of them complete while it is not."""
-    austin = thi_source.permit_coverage_through("austin")
-    sa = thi_source.permit_coverage_through("san-antonio")
-    assert austin and sa, (austin, sa)
-    assert austin != sa, "the two cities' coverage is being read from one place"
+def test_each_CITYS_COVERAGE_COMES_FROM_ITS_OWN_FILE():
+    """INDEPENDENCE, proved by perturbation rather than by inequality.
+
+    What this guards is that each city's answer is a function of that city's own raw dataset —
+    so a global cutoff cannot call one city complete on the strength of the other's ingestion.
+
+    It used to assert `austin != sa`, which is not that property. Inequality was a SIDE EFFECT
+    of the two ingestions happening to stop on different days (2026-09-17 and 2026-09-11 when
+    the test was written), and on 2026-10-09 both cities genuinely reached the same day — so
+    the assertion went red while the code it guards was entirely correct. Two files read
+    independently are *allowed* to agree.
+
+    The perturbation form cannot be fooled either way: start the two cities EQUAL, so equality
+    is explicitly not the thing under test, then move one and require that only that one's
+    answer moves.
+    """
+    with FakeGenerated(coverage="2026-09-20", sa_coverage="2026-09-20"):
+        both = (thi_source.permit_coverage_through("austin"),
+                thi_source.permit_coverage_through("san-antonio"))
+    assert both == (date(2026, 9, 20), date(2026, 9, 20)), both
+
+    with FakeGenerated(coverage="2026-09-11", sa_coverage="2026-09-20"):
+        austin = thi_source.permit_coverage_through("austin")
+        sa = thi_source.permit_coverage_through("san-antonio")
+    assert austin == date(2026, 9, 11), f"Austin's own change did not reach its answer: {austin}"
+    assert sa == date(2026, 9, 20), f"San Antonio moved when only Austin's data changed: {sa}"
+
+    with FakeGenerated(coverage="2026-09-20", sa_coverage="2026-09-05"):
+        austin = thi_source.permit_coverage_through("austin")
+        sa = thi_source.permit_coverage_through("san-antonio")
+    assert sa == date(2026, 9, 5), f"San Antonio's own change did not reach its answer: {sa}"
+    assert austin == date(2026, 9, 20), f"Austin moved when only San Antonio's data changed: {austin}"
 
 
-def test_the_REAL_datasets_refuse_september_today():
-    """Against the actual checkout, not a fixture: neither city's September is complete."""
+def test_the_REAL_datasets_OBEY_THE_RULE_whatever_the_date():
+    """Against the actual checkout: the RULE, derived from whatever coverage is on disk.
+
+    The previous version asserted that neither city's SEPTEMBER was complete — true when it was
+    written, and false three weeks later when the ingestion passed 2026-09-30. Re-pinning it to
+    October would buy another three weeks. A test that needs re-pinning is a test that gets
+    silenced the third time it fires, so this states the rule instead and reads the month out of
+    the data.
+
+    Both halves, and neither can pass vacuously:
+
+    * REFUSE, as an invariant over every month published — nothing in the series may outrun the
+      ingestion. Always has something to check, because the series always has months.
+    * ACCEPT — the newest month the raw dataset holds that IS fully covered must be published.
+      A guard that refuses everything would satisfy the first half alone.
+
+    `today` is taken two months past the newest month on file so that the CALENDAR rule cannot
+    be what refuses anything here; this test is about coverage, and the current-month drop has
+    its own test above.
+    """
     for location, area in (("austin", "austin_metro"), ("san-antonio", "san_antonio_metro")):
         coverage = thi_source.permit_coverage_through(location)
-        assert coverage < date(2026, 9, 30), f"{location} coverage moved: {coverage}"
-    months = [p.period[:7] for s in thi_source.load_history(date(2026, 10, 1))
-              if s.metric == "permit_activity_solar" for p in s.points]
-    assert "2026-09" not in months, "the real partial September got through"
+        assert coverage, f"{location}: coverage is unknown, so the rule cannot be tested"
+        held = _held_trade_months(location)
+        assert held, f"{location}: no trade months on file"
+        today = _months_after(max(held), 2)
+        published = {p.period[:7] for s in thi_source.load_history(today)
+                     if s.area_id == area and s.metric == "permit_activity_solar"
+                     for p in s.points}
+        assert published, f"{location}: nothing published at all on {today}"
+
+        for month in sorted(published):
+            assert thi_source._last_day_of(month) <= coverage, (
+                f"{location} published {month}, which ends "
+                f"{thi_source._last_day_of(month)}, but ingestion only reached {coverage}")
+
+        covered = [m for m in held if thi_source._last_day_of(m) <= coverage]
+        assert covered, f"{location}: no month on file is fully covered by {coverage}"
+        assert max(covered) in published, (
+            f"{location}: {max(covered)} is fully covered by {coverage} and on file, but was "
+            f"not published — the guard is refusing a complete month")
 
 
 # ============================ the class: which series this question applies to, and which not

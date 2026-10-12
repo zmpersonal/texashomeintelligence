@@ -273,5 +273,13 @@ if __name__ == "__main__":
             f(); ok += 1; print("PASS", f.__name__)
         except AssertionError as e:
             print("FAIL", f.__name__, str(e)[:300])
+        # Round 48. WITHOUT THIS CLAUSE a raised exception aborted the whole file: every test
+        # after the first raise never ran, and the `N/M passed` line never printed at all. The
+        # exit code was still non-zero, so the workflow saw red — but it saw red with no verdict
+        # list, which is why "9 tests failing" was the reported shape of a file where 20-odd
+        # tests had not been attempted. Same family as the missing `sys.exit` (Round 47b): the
+        # reporting half of a check, missing, so the file could not say what it knew.
+        except Exception as e:                      # noqa: BLE001
+            print("ERROR", f.__name__, f"{type(e).__name__}: {e}"[:300])
     print(f"{ok}/{len(fns)} passed")
     sys.exit(0 if ok == len(fns) else 1)

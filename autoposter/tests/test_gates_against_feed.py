@@ -101,8 +101,25 @@ def test_g5_AGREES_WITH_THE_ARITHMETIC_on_every_real_as_of():
 # ---------------------------------------------------------------- each gate bites
 
 def test_g1_altered_numeral_rejected():
-    p = _good(); p["caption"] = p["caption"].replace("permits", "9999 permits")
-    assert any("G1" in f for f in _check(p).failures)
+    """A numeral the ledger does not back is refused — with the mutation PROVED to have landed.
+
+    It used to mutate `"permits"` into `"9999 permits"`, which changed nothing at all unless the
+    feed's rank-1 story happened to be a permit story. On 2026-10-12 rank 1 was a drought story,
+    the replacement was a no-op, the gate correctly found nothing wrong, and the assertion
+    failed — having spent the previous weeks passing on an unmutated piece. A mutation test that
+    cannot say whether it mutated anything is measuring the mutation's absence.
+
+    So: the clean piece must pass first (otherwise a rejection proves nothing), the mutation is
+    unconditional, and that it changed the caption is asserted rather than assumed.
+    """
+    p = _good()
+    clean = _check(p)
+    assert clean.ok, f"the UNMUTATED piece must pass or the mutation proves nothing: {clean.failures}"
+    before = p["caption"]
+    p["caption"] = before + " And 9999 of them, apparently."
+    assert p["caption"] != before, "the mutation did not change the caption"
+    assert any("G1" in f for f in _check(p).failures), (
+        f"an unbacked 9999 passed G1: {_check(p).failures}")
 
 
 def test_g1_subtly_altered_numeral_rejected():
@@ -242,8 +259,29 @@ def test_ranking_card_with_no_numeric_cells_rejected():
 
 
 def test_over_platform_limit_rejected():
-    p = _good(); p["platform"] = "x"      # 280 chars
-    assert any("exceeds x limit" in f for f in _check(p).failures)
+    """Over the platform's limit is refused, and the same piece under it is not.
+
+    It used to set `platform = "x"` (280 chars) and trust that the real feed's rank-1 caption
+    was longer than that. On 2026-10-12 that caption was 267 characters — legitimately UNDER the
+    limit, so nothing was rejected and the assertion failed with the gate working perfectly. The
+    limit is what is under test, so the caption is now built FROM the limit instead of inherited
+    from whatever story ranked first today.
+
+    Padded with a word, not a number: a numeral would be refused by G1 first and the failure
+    would no longer be about the limit.
+    """
+    limit = v.PLATFORM_LIMITS["x"]
+    under = _good(); under["platform"] = "x"
+    under["caption"] = under["caption"][:limit - 20]
+    assert len(under["caption"]) <= limit
+    assert not any("exceeds x limit" in f for f in _check(under).failures), (
+        "a caption inside the limit was called over it")
+
+    over = _good(); over["platform"] = "x"
+    over["caption"] = over["caption"] + " padding" * ((limit // 8) + 1)
+    assert len(over["caption"]) > limit, "the piece under test is not actually over the limit"
+    assert any("exceeds x limit" in f for f in _check(over).failures), (
+        f"an over-limit caption passed: {_check(over).failures}")
 
 
 def test_unknown_platform_rejected_not_ignored():

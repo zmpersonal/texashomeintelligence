@@ -428,7 +428,10 @@ def test_the_engine_skips_a_topic_it_has_already_written():
     cfg = _isolated_cfg()
     ranked = [t for t in topic_scorer.score_topics(engine.load_feed(), cfg) if t["buildable"]]
     taken = engine._current_title(ranked[0], run_article.TOPIC_ARTICLES, today)
-    Path(cfg["publish"]["analysis_dir"], "taken.md").write_text(f'title: "{taken}"\n')
+    # Frontmatter, not a bare title line: `published_questions` reads `published:` since
+    # Round 48, and a premise meaning "already live" must carry the flag the site gates on.
+    Path(cfg["publish"]["analysis_dir"], "taken.md").write_text(
+        f'---\ntitle: "{taken}"\npublishedAt: "2026-09-11"\npublished: true\n---\n')
 
     published = engine.published_questions(cfg)
     assert taken in published, "the premise did not take"
@@ -442,6 +445,49 @@ def test_the_engine_skips_a_topic_it_has_already_written():
     # builder, and not already written.
     assert r["topic"]["buildable"]
     assert r["topic"]["id"] in run_article.TOPIC_ARTICLES
+
+
+def test_a_WITHDRAWN_article_does_NOT_retire_its_topic():
+    """`published: false` is the site's own gate: `content.config.ts` builds a route only for
+    `published: true`, so a withdrawn article is not live and its question is not answered
+    anywhere a reader or a crawler can reach. Until Round 48 `published_questions` took every
+    `title:` in the folder regardless, so the one lever for taking an article down also silently
+    removed the machine's ability to replace it — and the docstring saying it read what was
+    "already live on the site" was simply false.
+
+    All three states, because only the set of them proves the field is being read: the same
+    file, live, withdrawn, and silent on the question. Silent counts as withdrawn, because the
+    site's schema defaults it to false.
+    """
+    today = date(2026, 9, 11)
+    cfg = _isolated_cfg()
+    ranked = [t for t in topic_scorer.score_topics(engine.load_feed(), cfg) if t["buildable"]]
+    title = engine._current_title(ranked[0], run_article.TOPIC_ARTICLES, today)
+    path = Path(cfg["publish"]["analysis_dir"], "withdrawn.md")
+    head = f'---\ntitle: "{title}"\npublishedAt: "2026-09-11"\n'
+
+    path.write_text(head + "published: false\n---\n")
+    assert title not in engine.published_questions(cfg), "a withdrawn article retired its topic"
+
+    path.write_text(head + "published: true\n---\n")
+    assert title in engine.published_questions(cfg), "a LIVE article did not retire its topic"
+
+    path.write_text(head + "---\n")
+    assert title not in engine.published_questions(cfg), (
+        "an article that never says `published:` counted as live; the site's schema defaults "
+        "that field to false and builds no route for it")
+
+
+def test_the_published_flag_is_read_from_the_FRONTMATTER_not_the_body():
+    """A body can contain a line beginning `published:` — a quoted spec, a code fence, a table.
+    The site parses only the frontmatter, so this must too, or an article could be retired (or
+    un-retired) by its own prose."""
+    cfg = _isolated_cfg()
+    Path(cfg["publish"]["analysis_dir"], "tricky.md").write_text(
+        '---\ntitle: "A withdrawn piece"\npublished: false\n---\n\n'
+        "Our frontmatter looks like this:\n\n    published: true\n")
+    assert "A withdrawn piece" not in engine.published_questions(cfg), (
+        "a `published: true` line in the BODY counted as the article being live")
 
 
 def test_a_topic_with_no_claim_builder_HALTS_rather_than_falling_through():
@@ -1172,5 +1218,13 @@ if __name__ == "__main__":
             f(); ok += 1; print("PASS", f.__name__)
         except AssertionError as e:
             print("FAIL", f.__name__, str(e)[:300])
+        # Round 48. WITHOUT THIS CLAUSE a raised exception aborted the whole file: every test
+        # after the first raise never ran, and the `N/M passed` line never printed at all. The
+        # exit code was still non-zero, so the workflow saw red — but it saw red with no verdict
+        # list, which is why "9 tests failing" was the reported shape of a file where 20-odd
+        # tests had not been attempted. Same family as the missing `sys.exit` (Round 47b): the
+        # reporting half of a check, missing, so the file could not say what it knew.
+        except Exception as e:                      # noqa: BLE001
+            print("ERROR", f.__name__, f"{type(e).__name__}: {e}"[:300])
     print(f"{ok}/{len(fns)} passed")
     sys.exit(0 if ok == len(fns) else 1)

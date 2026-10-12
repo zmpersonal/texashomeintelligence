@@ -118,16 +118,46 @@ def frontmatter(article: dict, claims: list[Claim], card_block: str, published_a
     return "\n".join(lines)
 
 
+def _frontmatter(text: str) -> str:
+    """Just the YAML block between the opening and closing `---`.
+
+    The whole file is not safe to pattern-match: an article's BODY can contain a line starting
+    `published:` — a quoted spec, a code fence — and the site reads only the frontmatter, so
+    this must too.
+    """
+    if not text.startswith("---"):
+        return ""
+    end = text.find("\n---", 3)
+    return text[3:end] if end != -1 else ""
+
+
 def published_questions(config: dict) -> set[str]:
-    """The H1 of every article already live on the site.
+    """The H1 of every article that is actually LIVE on the site.
 
     The topic scorer ranks what is WORTH writing; it has no idea what has been written. Without
     this the engine picks the same top-ranked topic every cycle, forever — the article equivalent
     of re-posting the same link, and the reason a cadence driver needs it before it runs
     unattended. Titles, because an article's H1 is its topic's question verbatim (gate C4).
 
+    LIVE, not merely present. `published: false` is the site's own deploy-on-command gate:
+    `site/src/content.config.ts` builds a route only for `published: true`, and the field
+    DEFAULTS TO FALSE there, so an article that omits it has no URL either. This read agrees
+    with the site on both counts.
+
+    Until Round 48 it took every `title:` in the folder regardless of `published:`, so a
+    WITHDRAWN article still retired its topic and the sentence at the top of this docstring was
+    false — a stated-guarantee failure of exactly the class Round 46 inventoried. It happened to
+    point the safe way, which is why it survived: over-excluding never publishes anything wrong.
+    The cost is that withdrawal did not mean withdrawn, so the one lever for taking an article
+    down also silently removed the machine's ability to replace it.
+
     Read-only, across the Rule 0 boundary. An absent collection means nothing is published yet,
     which is the correct answer for a fresh checkout rather than a reason to halt.
+
+    NOT a dedup guarantee on its own: exclusion is keyed on a FILE being present and live, so
+    deleting a published article rather than flipping its flag makes its topic eligible again.
+    That is the right behaviour for a deliberate removal and the wrong one for a mistake, and
+    nothing here can tell those apart.
     """
     directory = (config.get("publish") or {}).get(
         "analysis_dir", "../site/src/data/analysis")
@@ -136,9 +166,11 @@ def published_questions(config: dict) -> set[str]:
         return set()
     titles = set()
     for path in folder.glob("*.md"):
-        match = re.search(r'^title:\s*"([^"]+)"', path.read_text(), re.M)
-        if match:
-            titles.add(match.group(1))
+        head = _frontmatter(path.read_text())
+        title = re.search(r'^title:\s*"([^"]+)"', head, re.M)
+        live = re.search(r"^published:\s*true\s*$", head, re.M)
+        if title and live:
+            titles.add(title.group(1))
     return titles
 
 
