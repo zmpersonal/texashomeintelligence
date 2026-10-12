@@ -196,7 +196,18 @@ topic_score_weights:
 # round number: a monthly series cannot be fresher than monthly.
 staleness_hours:
   # --- metrics the generator actually emits today (Phase 2) ---
-  energy_price_cents_kwh: 2160   # EIA monthly, published with a 1-2 month lag -> 90 days
+  # 2026-10-12 (Round 48): 2160 -> 2880, i.e. 90 -> 120 days. THE ARITHMETIC, per the
+  # tuned-number rule: the EIA runs about THREE MONTHS behind real time (newest month 2026-07
+  # on 2026-10-11), and a claim is dated the 1st of its month, so the newest figure the series
+  # can hold is 90-120 days old for most of any given month. Against a 90-day bound the
+  # electricity article was buildable only for the few days after each EIA release and halted
+  # the rest of the time — a bound shorter than its own source's lag. 120 days is the lag plus
+  # one full month of slack, which is a real window without letting a price get old enough to
+  # mislead a reader under the question "are prices still going up?".
+  #
+  # The comment it replaces read "published with a 1-2 month lag", which the series on disk
+  # does not support and which is where the 90 came from.
+  energy_price_cents_kwh: 2880
   cooling_degree_days: 2160      # NOAA monthly summaries, similar lag -> 90 days
   # 2026-09-19: 60 -> 90 days, bringing permits in line with every other monthly series here.
   #

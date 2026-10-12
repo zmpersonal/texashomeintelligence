@@ -29,6 +29,7 @@ from pathlib import Path
 
 import claim_ledger
 import validator as social_validator
+import gates
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -61,7 +62,7 @@ SOURCE_SHORT = {
 CARD_FIELDS = ("question", "headline", "subhead", "source", "asOf")
 
 
-class CardHalt(Exception):
+class CardHalt(gates.GateHalt):
     """The card cannot be built or cannot be backed. Never downgraded to a warning."""
 
 

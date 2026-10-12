@@ -60,7 +60,8 @@ SIDECAR = {
 
 def _run():
     return engine.run("thi", config=_isolated_cfg(), write_fn=run_article.write,
-                      build_claims_fn=run_article.build_claims, today=TODAY)
+                      build_claims_fn=run_article.build_claims, today=TODAY,
+                      articles=run_article.TOPIC_ARTICLES)
 
 
 def _card():

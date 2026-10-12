@@ -32,6 +32,7 @@ import yaml
 import card as card_mod
 import channel_guard
 import claim_ledger as ledger_mod
+import gates
 import publish_gate
 import publish_target
 import topic_scorer
@@ -192,6 +193,20 @@ def _current_title(topic: dict, articles: dict | None, today: date) -> str:
     return topic["question"]
 
 
+class AllTopicsHalted(gates.GateHalt):
+    """Every eligible topic's gates refused. Carries one line per topic, with its reason.
+
+    A `GateHalt`, deliberately: nothing is broken. Each topic was offered to its own builder and
+    its own ledger, and each was refused for a stated reason. The driver reports it as a
+    WITHHOLD and stays green — but it reports it, with every reason, which is the whole
+    difference from the eighteen days this replaced.
+    """
+
+    def __init__(self, skipped: list[str]):
+        self.skipped = skipped
+        super().__init__("every eligible topic halted — " + " | ".join(skipped))
+
+
 class NothingDefensible(RuntimeError):
     """The engine has nothing worth writing RIGHT NOW. A refusal, not a fault.
 
@@ -241,23 +256,62 @@ def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
     if not buildable:
         raise NothingDefensible(
             "no topic is defensible from the current feed — rescope, don't reach")
-    chosen = buildable[0]
-
-    # An article's claim-builder and writer belong to its TOPIC. Adding an article is adding a
-    # pair to that registry; the engine never grows a branch per story.
-    if articles:
-        if chosen["id"] not in articles:
-            raise RuntimeError(
-                f"topic {chosen['id']!r} ranks highest and buildable but has no claim-builder. "
-                f"Write one rather than letting the engine fall through to another story — "
-                f"silently publishing the runner-up is how a machine drifts off its own ranking.")
-        build_claims_fn, write_fn = articles[chosen["id"]]
 
     # ---- Stages 2-3: build the ledger IN CODE from the feed, then verify it before any prose.
-    claims = build_claims_fn(feed, config, today)
-    ledger_result = ledger_mod.verify_ledger(claims, config, today)
-    if not ledger_result.ok:
-        raise ledger_mod.LedgerHalt(ledger_result.failures)
+    #
+    # ── FALL-THROUGH, AND EXACTLY HOW FAR IT GOES (Round 48) ──────────────────
+    # This used to be `chosen = buildable[0]` with no fall-through at all, and the comment
+    # defending that said "silently publishing the runner-up is how a machine drifts off its own
+    # ranking". That argument is sound and it is about a DIFFERENT CASE: a topic that ranks
+    # highest and has NO CLAIM-BUILDER. That is a gap in the registry — a code defect — and
+    # stepping over it would mean the engine quietly publishes something other than what its own
+    # ranking chose. It still halts, below, unchanged.
+    #
+    # A GATE REFUSING is not that. The top-ranked topic's data can be too old, or short of a
+    # year-ago month, or missing a month both its series need; the ranking was right and the
+    # data is not there yet. Measured on 2026-10-12: `electricity-still-rising` ranked 0 of five
+    # eligible topics and its claims were 2472h old against a 2160h bound, so one dead topic
+    # blocked FOUR publishable articles for eighteen days.
+    #
+    # FALL-THROUGH IS NEVER SILENT. Every skip is recorded with its reason, returned on the
+    # result as `skipped`, printed to the run log, and reported in the cycle's notice. A skip
+    # nobody can see is how a halt stops meaning anything, which is the thing being fixed here,
+    # not a cost to accept in exchange for it.
+    #
+    # AND IT STOPS AT THE MODEL CALL. Only the pre-model stages fall through, because the budget
+    # is one call per cycle and a second candidate would need a second one. A refusal AFTER the
+    # prose exists — a prose gate, the card, the two-lock — halts the cycle, as it always did.
+    skipped: list[str] = []
+    chosen: dict | None = None
+    claims: list[Claim] = []
+    ledger_result = None
+    for candidate in buildable:
+        candidate_build, candidate_write = build_claims_fn, write_fn
+        # An article's claim-builder and writer belong to its TOPIC. Adding an article is adding
+        # a pair to that registry; the engine never grows a branch per story.
+        if articles:
+            if candidate["id"] not in articles:
+                raise RuntimeError(
+                    f"topic {candidate['id']!r} is buildable but has no claim-builder. Write one "
+                    f"rather than letting the engine step past it — a MISSING BUILDER is a gap "
+                    f"in the registry, not a statement about the data, and publishing the "
+                    f"runner-up instead is how a machine drifts off its own ranking. (A gate "
+                    f"REFUSING is the other case, and that one does fall through, loudly.)")
+            candidate_build, candidate_write = articles[candidate["id"]]
+        try:
+            candidate_claims = candidate_build(feed, config, today)
+            result = ledger_mod.verify_ledger(candidate_claims, config, today)
+            if not result.ok:
+                raise ledger_mod.LedgerHalt(result.failures)
+        except gates.GateHalt as exc:
+            skipped.append(f"{candidate['id']}: {exc}")
+            print(f"[halt] {candidate['id']} refused, moving on: {exc}")
+            continue
+        chosen, claims, ledger_result = candidate, candidate_claims, result
+        build_claims_fn, write_fn = candidate_build, candidate_write
+        break
+    if chosen is None or ledger_result is None:
+        raise AllTopicsHalted(skipped)
 
     # ---- Stage 4: THE ONE MODEL CALL.
     budget.spend()
@@ -288,6 +342,10 @@ def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
 
     return {
         "target": resolved, "topic": chosen, "shortlist": ranked, "tension": tension,
+        # Every topic this cycle stepped over, and why. On the result rather than only in the
+        # log, so the driver's notice can name them — a fall-through nobody sees is the defect,
+        # not the fix.
+        "skipped": skipped,
         "claims": claims, "article": article, "model_calls": budget.calls,
         "ledger_checked": ledger_result.checked,
         "card": card, "card_frontmatter": card_mod.frontmatter_block(card),

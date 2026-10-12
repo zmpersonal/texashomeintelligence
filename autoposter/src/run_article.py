@@ -1135,6 +1135,21 @@ def acrush_title_for(today: date) -> str:
     return acrush_title(latest_period(today, "austin_metro", "permit_activity_hvac"))
 
 
+def _rank_phrase(rank: int) -> str:
+    """`1 -> "highest"`, `2 -> "second-highest"`, `7 -> "7th-highest"`.
+
+    Round 48. Exists because a builder computed a rank, put it in a derivation, and then
+    asserted "the highest" in the claim text regardless — so September 2026 (695 cooling
+    degree-days, rank 2 of 13, against August's 755) would have published a superlative its own
+    derivation contradicted, with every gate green. A superlative is the most citable sentence
+    on a page and KPI #1 is citation, so this is the expensive kind of wrong.
+
+    Words up to third so the prose introduces no numeral G1 would have to trace; beyond that the
+    digit is unavoidable and lives in the claim's own figure, which is where G1 looks.
+    """
+    return {1: "highest", 2: "second-highest", 3: "third-highest"}.get(rank, f"{rank}th-highest")
+
+
 def _acrush_facts(today: date) -> dict:
     """CODE. The latest month and the one before it, for BOTH series, plus where the heat ranks."""
     import thi_source
@@ -1176,23 +1191,40 @@ def build_acrush_claims(feed: dict, config: dict, today: date) -> list[Claim]:
         Claim("C1", f"Austin recorded {f['heat_now']:.0f} cooling degree-days in {f['label']}.",
               tier="data", figure=f"{f['heat_now']:.0f} cooling degree-days",
               source=GSOM, as_of=f["cdd_as_of"], metric="cooling_degree_days"),
-        Claim("C2", f"That is the most cooling demand in the {f['heat_months']} months we hold.",
+        # THE SUPERLATIVE FOLLOWS THE RANK IT COMPUTES. This claim used to say "the most
+        # cooling demand in the N months we hold" unconditionally while its own derivation
+        # printed the real rank beside it. Ranked 2, it was simply false.
+        Claim("C2", f"That is the {_rank_phrase(f['heat_rank'])} cooling demand in the "
+                    f"{f['heat_months']} months we hold.",
               tier="derived",
-              figure=f"the highest of the last {f['heat_months']} months",
+              figure=f"the {_rank_phrase(f['heat_rank'])} of the last {f['heat_months']} months",
               source=GSOM, as_of=f["cdd_as_of"], metric="cooling_degree_days",
               derivation=f"{f['heat_now']:.0f} ranks {f['heat_rank']} of {f['heat_months']} "
                          f"monthly readings held"),
-        Claim("C3", f"Cooling demand also rose from {f['prior_label']}.",
-              tier="derived", figure=f"up {abs(f['heat_pct']):.0f}% month over month",
+        # THE DIRECTION FOLLOWS THE SIGN, the way H2 four lines up already did. This one
+        # hardcoded "up" and "rose" and printed a derivation reading "695 vs 755 = -8%": the
+        # article said cooling demand rose 8% in the month it fell 8%.
+        #
+        # "also" is gone with it. "Cooling demand ALSO rose" asserts agreement with the permit
+        # direction — the very thing the verdict below is computed to decide — so it was a
+        # second frozen conclusion riding along inside the first.
+        Claim("C3", f"Cooling demand {'rose' if f['heat_pct'] >= 0 else 'fell'} from "
+                    f"{f['prior_label']}.",
+              tier="derived",
+              figure=f"{'up' if f['heat_pct'] >= 0 else 'down'} "
+                     f"{abs(f['heat_pct']):.0f}% month over month",
               source=GSOM, as_of=f["cdd_as_of"], metric="cooling_degree_days",
               derivation=f"{f['heat_now']:.0f} vs {f['heat_prior']:.0f} = {f['heat_pct']:.0f}%"),
         Claim("H3", f"Austin issued {f['hvac_prior']:,.0f} HVAC permits in {f['prior_label']}.",
               tier="data", figure=f"{f['hvac_prior']:,.0f} HVAC permits",
               source=AUSTIN_HVAC_SOURCE, as_of=f["as_of"], metric="permit_activity_hvac"),
+        # "why they moved APART" named a direction, so in the month the two series agreed the
+        # article's own humility paragraph contradicted its verdict. The claim is about what we
+        # cannot measure, which does not depend on which way anything moved.
         Claim("HX",
-              "We cannot say from these two series why they moved apart. A permit is filed "
-              "days or weeks after the decision to replace a system, and nothing here measures "
-              "that lag, installer capacity, or how many units simply kept running.",
+              "We cannot say from these two series why they moved as they did. A permit is "
+              "filed days or weeks after the decision to replace a system, and nothing here "
+              "measures that lag, installer capacity, or how many units simply kept running.",
               tier="external", hedged=True),
     ]
 
@@ -1217,8 +1249,15 @@ def write_acrush(topic: dict, claims: list[Claim], feed: dict) -> dict:
 
     if diverged:
         verdict = "**No — they moved in opposite directions.**"
-        opener = (f"{label} was the hottest month Austin has had in the record we hold: "
-                  f"{c['C1'].figure}, {c['C2'].figure} ({GSOM_SOURCE}, as of {label}). "
+        # "the hottest month Austin has had in the record we hold" is the same superlative C2
+        # carries, typed a second time — and it was unconditional here too. It is said only
+        # when C2 says it, which is to say only when the rank is 1.
+        hottest = c["C2"].figure.startswith("the highest")
+        opener = ((f"{label} was the hottest month Austin has had in the record we hold: "
+                   f"{c['C1'].figure}, {c['C2'].figure} ({GSOM_SOURCE}, as of {label}). "
+                   if hottest else
+                   f"Austin's cooling demand in {label} came to {c['C1'].figure} — "
+                   f"{c['C2'].figure} ({GSOM_SOURCE}, as of {label}). ") +
                   f"HVAC permits went the other way: {c['H1'].figure}, {c['H2'].figure} "
                   f"({AUSTIN_HVAC_SOURCE}, as of {label}).")
         reading = ("**cooling demand is not a live indicator of HVAC work being started.** If "

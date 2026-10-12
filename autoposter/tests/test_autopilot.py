@@ -144,16 +144,61 @@ def test_a_card_that_was_never_rendered_SKIPS():
     assert "nothing published" in d.notice()
 
 
-def test_a_STALE_claim_SKIPS():
+def test_a_STALE_claim_WITHHOLDS_and_NAMES_EVERY_TOPIC_it_refused():
     """THE PROOF. Move the clock past every staleness bound and the same article stops being
-    publishable. Nothing about the article changed; only how old its data is."""
+    publishable. Nothing about the article changed; only how old its data is.
+
+    Round 48 made the OUTCOME of that precise. It used to be `skip` — the same word a broken
+    gate produced — and the reason read "the article could not be produced cleanly". Now a gate
+    refusing is its own outcome, it is green, and it names every topic it stepped over with the
+    numbers that refused it.
+    """
     cfg = _cfg()
     cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
     d = autopilot.evaluate(cfg, today=date(2027, 6, 1), state=_ready_state(),
                            **_kwargs(cfg))
-    assert d.action == "skip"
-    assert any(not v.ok for v in d.verdicts), [v.line() for v in d.verdicts]
-    assert "nothing published" in d.notice()
+    assert d.action == "withheld", d.action
+    assert d.skipped, "the refusal named no topic at all"
+    assert len(d.skipped) >= 2, f"only one topic was offered: {d.skipped}"
+    assert all("old, bound" in line for line in d.skipped), d.skipped
+    assert not d.is_broken, "a gate refusing must not turn the run red"
+    notice = d.notice()
+    assert "nothing published" in notice
+    for line in d.skipped:
+        assert line.split(":")[0] in notice, f"{line.split(':')[0]} is not in the notice"
+
+
+def test_a_GATE_REFUSING_and_A_CRASH_are_DIFFERENT_OUTCOMES():
+    """THE DISTINCTION, as an assertion. Collapsing these is what hid the cadence failure for
+    eighteen days: a claim-staleness refusal that named its own numbers arrived as "the article
+    could not be produced cleanly", which is what a crash says.
+
+    Classification is on exception TYPE, never on the message — so the crash half uses an
+    exception the gates have never heard of, and must still be a fault.
+    """
+    cfg = _cfg()
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
+    refused = autopilot.evaluate(cfg, today=date(2027, 6, 1), state=_ready_state(),
+                                 **_kwargs(cfg))
+    assert refused.action == "withheld" and not refused.is_broken
+
+    class SomethingNobodyPlannedFor(Exception):
+        pass
+
+    def exploding_builder(feed, config, today):
+        raise SomethingNobodyPlannedFor("the builder itself broke")
+
+    crashed = autopilot.evaluate(
+        cfg, today=TODAY, state=_ready_state(),
+        **_kwargs(cfg, articles={tid: (exploding_builder, run_article.write)
+                                 for tid in run_article.TOPIC_ARTICLES}))
+    assert crashed.action == "skip", crashed.action
+    assert "could not be produced cleanly" in crashed.reason
+    assert "SomethingNobodyPlannedFor" in " ".join(v.detail for v in crashed.verdicts), (
+        [v.line() for v in crashed.verdicts])
+    assert not crashed.skipped, (
+        "a crash was recorded as a topic stepped over — an unrecognised exception must not be "
+        "classified as a designed refusal")
 
 
 def test_a_STALE_rendered_card_SKIPS():
@@ -315,6 +360,12 @@ def test_a_BROKEN_gate_is_STILL_LOUD_even_though_a_quiet_day_is_not():
         raise RuntimeError("the resolver itself broke")
 
     cfg = _cfg()
+    # A RENDERED CARD HAS TO EXIST or this test proves something else. The card gate runs
+    # before the link gate — deliberately, cheap checks first — so without a staged sidecar the
+    # cycle failed on "no rendered card" and the exploding resolver was never reached. The
+    # assertion below then failed while the behaviour under test was fine, which is the premise
+    # drifting out from under a test rather than a defect.
+    cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=_sidecar_dir())
     notices = []
     d = autopilot.run_cycle(
         cfg, today=TODAY, notify_fn=notices.append, merge_fn=lambda dec: None,
