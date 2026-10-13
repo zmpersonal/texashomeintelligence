@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-12T19:02:35+00:00",
+  "generated_at": "2026-10-13T16:57:47+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -39,14 +39,14 @@
           "value": 1097.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 205.5833,
+          "vs_baseline": 205.6667,
           "mom": 62.0
         },
         "permit_activity_plumbing": {
           "value": 1296.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 65.4167,
+          "vs_baseline": 65.5,
           "mom": -45.0
         },
         "permit_activity_roofing": {
@@ -155,7 +155,7 @@
       "county": "Travis",
       "metric": "drought_stage",
       "angle": "warning",
-      "surprise_score": 0.672,
+      "surprise_score": 0.667,
       "why": "fell back out of Extreme Drought (D3); a large move against its own history",
       "figure": "fell back out of Extreme Drought (D3) — now D2",
       "source": "U.S. Drought Monitor",
@@ -311,7 +311,7 @@
       "area_id": "austin_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
-      "surprise_score": 0.169,
+      "surprise_score": 0.17,
       "why": "a modest move against its own history",
       "figure": "1,296 plumbing permits in 2026-09, -3% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
