@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-12T19:01:26.909Z",
-  "lastSuccessAt": "2026-10-12T19:01:26.909Z",
+  "lastAttemptAt": "2026-10-13T16:56:31.486Z",
+  "lastSuccessAt": "2026-10-13T16:56:31.486Z",
   "lastError": null,
   "source": {
     "name": "NOAA Storm Events Database",
@@ -101,7 +101,7 @@
     },
     {
       "observedAt": "2025-10-24T22:10:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:33.531Z",
+      "ingestedAt": "2026-10-13T16:56:37.442Z",
       "key": "1297370",
       "value": {
         "eventType": "Wind",
@@ -112,7 +112,7 @@
     },
     {
       "observedAt": "2025-10-24T22:35:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:33.531Z",
+      "ingestedAt": "2026-10-13T16:56:37.442Z",
       "key": "1297320",
       "value": {
         "eventType": "Tornado",
@@ -123,7 +123,7 @@
     },
     {
       "observedAt": "2025-10-24T22:46:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:33.531Z",
+      "ingestedAt": "2026-10-13T16:56:37.442Z",
       "key": "1297322",
       "value": {
         "eventType": "Tornado",
@@ -134,7 +134,7 @@
     },
     {
       "observedAt": "2025-10-24T23:01:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:33.531Z",
+      "ingestedAt": "2026-10-13T16:56:37.442Z",
       "key": "1297371",
       "value": {
         "eventType": "Wind",
@@ -145,7 +145,7 @@
     },
     {
       "observedAt": "2025-10-24T23:01:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:33.531Z",
+      "ingestedAt": "2026-10-13T16:56:37.442Z",
       "key": "1297372",
       "value": {
         "eventType": "Wind",
@@ -156,7 +156,7 @@
     },
     {
       "observedAt": "2025-10-24T23:02:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:33.531Z",
+      "ingestedAt": "2026-10-13T16:56:37.442Z",
       "key": "1297494",
       "value": {
         "eventType": "Wind",
@@ -167,7 +167,7 @@
     },
     {
       "observedAt": "2025-10-24T23:02:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:33.531Z",
+      "ingestedAt": "2026-10-13T16:56:37.442Z",
       "key": "1297495",
       "value": {
         "eventType": "Wind",
@@ -178,7 +178,7 @@
     },
     {
       "observedAt": "2025-10-25T03:24:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:33.531Z",
+      "ingestedAt": "2026-10-13T16:56:37.442Z",
       "key": "1297374",
       "value": {
         "eventType": "Hail",
@@ -189,7 +189,7 @@
     },
     {
       "observedAt": "2025-10-25T03:33:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:33.531Z",
+      "ingestedAt": "2026-10-13T16:56:37.442Z",
       "key": "1297375",
       "value": {
         "eventType": "Hail",
@@ -200,7 +200,7 @@
     },
     {
       "observedAt": "2025-11-01T16:26:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:33.533Z",
+      "ingestedAt": "2026-10-13T16:56:37.443Z",
       "key": "1300629",
       "value": {
         "eventType": "Hail",
@@ -211,7 +211,7 @@
     },
     {
       "observedAt": "2026-01-25T04:00:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.147Z",
+      "ingestedAt": "2026-10-13T16:56:40.846Z",
       "key": "1314443",
       "value": {
         "eventType": "Wind",
@@ -222,7 +222,7 @@
     },
     {
       "observedAt": "2026-01-25T04:00:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.146Z",
+      "ingestedAt": "2026-10-13T16:56:40.845Z",
       "key": "1314445",
       "value": {
         "eventType": "Wind",
@@ -233,7 +233,7 @@
     },
     {
       "observedAt": "2026-01-25T04:00:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.147Z",
+      "ingestedAt": "2026-10-13T16:56:40.845Z",
       "key": "1314451",
       "value": {
         "eventType": "Wind",
@@ -244,7 +244,7 @@
     },
     {
       "observedAt": "2026-01-26T04:00:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.144Z",
+      "ingestedAt": "2026-10-13T16:56:40.843Z",
       "key": "1314428",
       "value": {
         "eventType": "Wind",
@@ -255,7 +255,7 @@
     },
     {
       "observedAt": "2026-01-26T04:00:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.144Z",
+      "ingestedAt": "2026-10-13T16:56:40.843Z",
       "key": "1314430",
       "value": {
         "eventType": "Wind",
@@ -266,7 +266,7 @@
     },
     {
       "observedAt": "2026-01-26T04:00:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.144Z",
+      "ingestedAt": "2026-10-13T16:56:40.843Z",
       "key": "1314436",
       "value": {
         "eventType": "Wind",
@@ -277,7 +277,7 @@
     },
     {
       "observedAt": "2026-02-14T16:05:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.144Z",
+      "ingestedAt": "2026-10-13T16:56:40.843Z",
       "key": "1319326",
       "value": {
         "eventType": "Wind",
@@ -288,7 +288,7 @@
     },
     {
       "observedAt": "2026-03-07T15:51:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.151Z",
+      "ingestedAt": "2026-10-13T16:56:40.850Z",
       "key": "1325737",
       "value": {
         "eventType": "Hail",
@@ -299,7 +299,7 @@
     },
     {
       "observedAt": "2026-03-07T16:21:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.151Z",
+      "ingestedAt": "2026-10-13T16:56:40.850Z",
       "key": "1325738",
       "value": {
         "eventType": "Hail",
@@ -310,7 +310,7 @@
     },
     {
       "observedAt": "2026-03-08T06:50:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.152Z",
+      "ingestedAt": "2026-10-13T16:56:40.851Z",
       "key": "1325740",
       "value": {
         "eventType": "Flood",
@@ -321,7 +321,7 @@
     },
     {
       "observedAt": "2026-03-10T18:40:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.146Z",
+      "ingestedAt": "2026-10-13T16:56:40.845Z",
       "key": "1319780",
       "value": {
         "eventType": "Hail",
@@ -332,7 +332,7 @@
     },
     {
       "observedAt": "2026-03-10T19:30:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.146Z",
+      "ingestedAt": "2026-10-13T16:56:40.845Z",
       "key": "1319783",
       "value": {
         "eventType": "Hail",
@@ -343,7 +343,7 @@
     },
     {
       "observedAt": "2026-04-20T13:10:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.152Z",
+      "ingestedAt": "2026-10-13T16:56:40.851Z",
       "key": "1333705",
       "value": {
         "eventType": "Flood",
@@ -354,7 +354,7 @@
     },
     {
       "observedAt": "2026-04-20T16:16:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.152Z",
+      "ingestedAt": "2026-10-13T16:56:40.850Z",
       "key": "1333711",
       "value": {
         "eventType": "Flood",
@@ -365,7 +365,7 @@
     },
     {
       "observedAt": "2026-04-20T16:17:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.152Z",
+      "ingestedAt": "2026-10-13T16:56:40.850Z",
       "key": "1333706",
       "value": {
         "eventType": "Flood",
@@ -376,7 +376,7 @@
     },
     {
       "observedAt": "2026-04-20T16:25:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.152Z",
+      "ingestedAt": "2026-10-13T16:56:40.850Z",
       "key": "1333707",
       "value": {
         "eventType": "Flood",
@@ -387,7 +387,7 @@
     },
     {
       "observedAt": "2026-04-20T16:38:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.152Z",
+      "ingestedAt": "2026-10-13T16:56:40.850Z",
       "key": "1333722",
       "value": {
         "eventType": "Flood",
@@ -398,7 +398,7 @@
     },
     {
       "observedAt": "2026-04-20T17:22:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.152Z",
+      "ingestedAt": "2026-10-13T16:56:40.850Z",
       "key": "1333709",
       "value": {
         "eventType": "Flood",
@@ -409,7 +409,7 @@
     },
     {
       "observedAt": "2026-04-21T06:00:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.156Z",
+      "ingestedAt": "2026-10-13T16:56:40.856Z",
       "key": "1333730",
       "value": {
         "eventType": "Flood",
@@ -420,7 +420,7 @@
     },
     {
       "observedAt": "2026-05-01T06:35:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.149Z",
+      "ingestedAt": "2026-10-13T16:56:40.848Z",
       "key": "1338427",
       "value": {
         "eventType": "Flood",
@@ -431,7 +431,7 @@
     },
     {
       "observedAt": "2026-05-01T06:54:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.151Z",
+      "ingestedAt": "2026-10-13T16:56:40.849Z",
       "key": "1338428",
       "value": {
         "eventType": "Flood",
@@ -442,7 +442,7 @@
     },
     {
       "observedAt": "2026-05-01T08:15:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.155Z",
+      "ingestedAt": "2026-10-13T16:56:40.856Z",
       "key": "1338671",
       "value": {
         "eventType": "Flood",
@@ -453,7 +453,7 @@
     },
     {
       "observedAt": "2026-05-01T11:15:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.151Z",
+      "ingestedAt": "2026-10-13T16:56:40.850Z",
       "key": "1338435",
       "value": {
         "eventType": "Flood",
@@ -464,7 +464,7 @@
     },
     {
       "observedAt": "2026-05-01T12:30:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.155Z",
+      "ingestedAt": "2026-10-13T16:56:40.856Z",
       "key": "1340807",
       "value": {
         "eventType": "Flood",
@@ -475,7 +475,7 @@
     },
     {
       "observedAt": "2026-05-09T16:12:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.150Z",
+      "ingestedAt": "2026-10-13T16:56:40.848Z",
       "key": "1340643",
       "value": {
         "eventType": "Hail",
@@ -486,7 +486,7 @@
     },
     {
       "observedAt": "2026-05-09T16:18:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.150Z",
+      "ingestedAt": "2026-10-13T16:56:40.849Z",
       "key": "1340644",
       "value": {
         "eventType": "Hail",
@@ -497,7 +497,7 @@
     },
     {
       "observedAt": "2026-05-09T16:21:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.150Z",
+      "ingestedAt": "2026-10-13T16:56:40.849Z",
       "key": "1340646",
       "value": {
         "eventType": "Hail",
@@ -508,7 +508,7 @@
     },
     {
       "observedAt": "2026-05-10T21:00:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.150Z",
+      "ingestedAt": "2026-10-13T16:56:40.849Z",
       "key": "1335015",
       "value": {
         "eventType": "Wind",
@@ -519,7 +519,7 @@
     },
     {
       "observedAt": "2026-05-10T21:01:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.150Z",
+      "ingestedAt": "2026-10-13T16:56:40.849Z",
       "key": "1335017",
       "value": {
         "eventType": "Wind",
@@ -530,7 +530,7 @@
     },
     {
       "observedAt": "2026-05-10T21:05:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.151Z",
+      "ingestedAt": "2026-10-13T16:56:40.849Z",
       "key": "1335018",
       "value": {
         "eventType": "Wind",
@@ -541,7 +541,7 @@
     },
     {
       "observedAt": "2026-05-10T21:15:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.150Z",
+      "ingestedAt": "2026-10-13T16:56:40.849Z",
       "key": "1335006",
       "value": {
         "eventType": "Wind",
@@ -552,7 +552,7 @@
     },
     {
       "observedAt": "2026-05-10T22:05:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.151Z",
+      "ingestedAt": "2026-10-13T16:56:40.849Z",
       "key": "1335010",
       "value": {
         "eventType": "Wind",
@@ -563,7 +563,7 @@
     },
     {
       "observedAt": "2026-05-19T23:00:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.150Z",
+      "ingestedAt": "2026-10-13T16:56:40.848Z",
       "key": "1335036",
       "value": {
         "eventType": "Wind",
@@ -574,7 +574,7 @@
     },
     {
       "observedAt": "2026-05-26T09:20:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.151Z",
+      "ingestedAt": "2026-10-13T16:56:40.849Z",
       "key": "1340662",
       "value": {
         "eventType": "Tornado",
@@ -585,7 +585,7 @@
     },
     {
       "observedAt": "2026-05-26T18:30:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.149Z",
+      "ingestedAt": "2026-10-13T16:56:40.848Z",
       "key": "1340776",
       "value": {
         "eventType": "Flood",
@@ -596,7 +596,7 @@
     },
     {
       "observedAt": "2026-05-26T18:42:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.150Z",
+      "ingestedAt": "2026-10-13T16:56:40.848Z",
       "key": "1340761",
       "value": {
         "eventType": "Hail",
@@ -607,7 +607,7 @@
     },
     {
       "observedAt": "2026-05-26T20:40:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.149Z",
+      "ingestedAt": "2026-10-13T16:56:40.848Z",
       "key": "1340770",
       "value": {
         "eventType": "Wind",
@@ -618,7 +618,7 @@
     },
     {
       "observedAt": "2026-05-26T20:45:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.150Z",
+      "ingestedAt": "2026-10-13T16:56:40.848Z",
       "key": "1340771",
       "value": {
         "eventType": "Wind",
@@ -629,7 +629,7 @@
     },
     {
       "observedAt": "2026-05-26T20:55:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.150Z",
+      "ingestedAt": "2026-10-13T16:56:40.849Z",
       "key": "1340675",
       "value": {
         "eventType": "Wind",
@@ -640,7 +640,7 @@
     },
     {
       "observedAt": "2026-05-26T20:57:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.150Z",
+      "ingestedAt": "2026-10-13T16:56:40.848Z",
       "key": "1340772",
       "value": {
         "eventType": "Wind",
@@ -651,7 +651,7 @@
     },
     {
       "observedAt": "2026-05-26T21:00:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.151Z",
+      "ingestedAt": "2026-10-13T16:56:40.849Z",
       "key": "1340781",
       "value": {
         "eventType": "Flood",
@@ -662,7 +662,7 @@
     },
     {
       "observedAt": "2026-05-26T21:06:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.149Z",
+      "ingestedAt": "2026-10-13T16:56:40.848Z",
       "key": "1340773",
       "value": {
         "eventType": "Wind",
@@ -673,7 +673,7 @@
     },
     {
       "observedAt": "2026-05-26T21:25:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.149Z",
+      "ingestedAt": "2026-10-13T16:56:40.848Z",
       "key": "1340774",
       "value": {
         "eventType": "Wind",
@@ -684,7 +684,7 @@
     },
     {
       "observedAt": "2026-05-26T22:30:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.155Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1340782",
       "value": {
         "eventType": "Flood",
@@ -695,7 +695,7 @@
     },
     {
       "observedAt": "2026-05-26T23:00:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.155Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1340783",
       "value": {
         "eventType": "Flood",
@@ -706,7 +706,7 @@
     },
     {
       "observedAt": "2026-06-02T18:46:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.149Z",
+      "ingestedAt": "2026-10-13T16:56:40.847Z",
       "key": "1349512",
       "value": {
         "eventType": "Wind",
@@ -717,7 +717,7 @@
     },
     {
       "observedAt": "2026-06-05T05:00:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.154Z",
+      "ingestedAt": "2026-10-13T16:56:40.854Z",
       "key": "1350093",
       "value": {
         "eventType": "Flood",
@@ -728,7 +728,7 @@
     },
     {
       "observedAt": "2026-06-05T06:00:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.154Z",
+      "ingestedAt": "2026-10-13T16:56:40.854Z",
       "key": "1350100",
       "value": {
         "eventType": "Flood",
@@ -739,7 +739,7 @@
     },
     {
       "observedAt": "2026-06-05T06:37:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.154Z",
+      "ingestedAt": "2026-10-13T16:56:40.854Z",
       "key": "1350109",
       "value": {
         "eventType": "Flood",
@@ -750,7 +750,7 @@
     },
     {
       "observedAt": "2026-06-15T04:30:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.155Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350816",
       "value": {
         "eventType": "Flood",
@@ -761,7 +761,7 @@
     },
     {
       "observedAt": "2026-06-15T04:33:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.154Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350789",
       "value": {
         "eventType": "Flood",
@@ -772,7 +772,7 @@
     },
     {
       "observedAt": "2026-06-15T04:59:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.154Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350791",
       "value": {
         "eventType": "Flood",
@@ -783,7 +783,7 @@
     },
     {
       "observedAt": "2026-06-15T05:20:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.154Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350792",
       "value": {
         "eventType": "Flood",
@@ -794,7 +794,7 @@
     },
     {
       "observedAt": "2026-06-15T05:25:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.154Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350794",
       "value": {
         "eventType": "Flood",
@@ -805,7 +805,7 @@
     },
     {
       "observedAt": "2026-06-15T05:33:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.154Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350795",
       "value": {
         "eventType": "Flood",
@@ -816,7 +816,7 @@
     },
     {
       "observedAt": "2026-06-15T05:40:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.154Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350796",
       "value": {
         "eventType": "Flood",
@@ -827,7 +827,7 @@
     },
     {
       "observedAt": "2026-06-15T05:55:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.154Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350799",
       "value": {
         "eventType": "Flood",
@@ -838,7 +838,7 @@
     },
     {
       "observedAt": "2026-06-15T05:55:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.154Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350801",
       "value": {
         "eventType": "Flood",
@@ -849,7 +849,7 @@
     },
     {
       "observedAt": "2026-06-15T06:30:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.155Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350808",
       "value": {
         "eventType": "Flood",
@@ -860,7 +860,7 @@
     },
     {
       "observedAt": "2026-06-15T07:03:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.155Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350811",
       "value": {
         "eventType": "Flood",
@@ -871,7 +871,7 @@
     },
     {
       "observedAt": "2026-06-15T07:03:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.155Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350812",
       "value": {
         "eventType": "Flood",
@@ -882,7 +882,7 @@
     },
     {
       "observedAt": "2026-06-15T07:03:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.155Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350813",
       "value": {
         "eventType": "Flood",
@@ -893,7 +893,7 @@
     },
     {
       "observedAt": "2026-06-15T07:30:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.155Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350819",
       "value": {
         "eventType": "Flood",
@@ -904,7 +904,7 @@
     },
     {
       "observedAt": "2026-06-20T00:22:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.155Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350900",
       "value": {
         "eventType": "Flood",
@@ -915,7 +915,7 @@
     },
     {
       "observedAt": "2026-06-20T00:33:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.155Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350901",
       "value": {
         "eventType": "Flood",
@@ -926,7 +926,7 @@
     },
     {
       "observedAt": "2026-06-20T00:47:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.155Z",
+      "ingestedAt": "2026-10-13T16:56:40.855Z",
       "key": "1350902",
       "value": {
         "eventType": "Flood",
@@ -937,7 +937,7 @@
     },
     {
       "observedAt": "2026-06-20T01:00:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.153Z",
+      "ingestedAt": "2026-10-13T16:56:40.853Z",
       "key": "1350903",
       "value": {
         "eventType": "Wind",
@@ -948,7 +948,7 @@
     },
     {
       "observedAt": "2026-06-20T01:05:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.148Z",
+      "ingestedAt": "2026-10-13T16:56:40.847Z",
       "key": "1350904",
       "value": {
         "eventType": "Flood",
@@ -959,7 +959,7 @@
     },
     {
       "observedAt": "2026-06-20T01:06:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.153Z",
+      "ingestedAt": "2026-10-13T16:56:40.853Z",
       "key": "1350905",
       "value": {
         "eventType": "Flood",
@@ -970,7 +970,7 @@
     },
     {
       "observedAt": "2026-06-20T01:15:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.153Z",
+      "ingestedAt": "2026-10-13T16:56:40.854Z",
       "key": "1350907",
       "value": {
         "eventType": "Flood",
@@ -981,7 +981,7 @@
     },
     {
       "observedAt": "2026-06-20T01:20:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.153Z",
+      "ingestedAt": "2026-10-13T16:56:40.853Z",
       "key": "1350906",
       "value": {
         "eventType": "Flood",
@@ -992,7 +992,7 @@
     },
     {
       "observedAt": "2026-06-20T01:23:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.153Z",
+      "ingestedAt": "2026-10-13T16:56:40.854Z",
       "key": "1350909",
       "value": {
         "eventType": "Flood",
@@ -1003,7 +1003,7 @@
     },
     {
       "observedAt": "2026-06-20T01:25:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.153Z",
+      "ingestedAt": "2026-10-13T16:56:40.854Z",
       "key": "1350908",
       "value": {
         "eventType": "Flood",
@@ -1014,7 +1014,7 @@
     },
     {
       "observedAt": "2026-06-20T03:30:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.153Z",
+      "ingestedAt": "2026-10-13T16:56:40.854Z",
       "key": "1350910",
       "value": {
         "eventType": "Flood",
@@ -1025,7 +1025,7 @@
     },
     {
       "observedAt": "2026-06-20T04:30:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.153Z",
+      "ingestedAt": "2026-10-13T16:56:40.854Z",
       "key": "1350912",
       "value": {
         "eventType": "Flood",
@@ -1036,7 +1036,7 @@
     },
     {
       "observedAt": "2026-06-20T04:30:00.000Z",
-      "ingestedAt": "2026-10-12T19:01:37.153Z",
+      "ingestedAt": "2026-10-13T16:56:40.854Z",
       "key": "1350913",
       "value": {
         "eventType": "Flood",
