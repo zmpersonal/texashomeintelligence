@@ -2,10 +2,10 @@
   "datasetId": "swdi-nx3hail",
   "location": "san-antonio",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-10-13T16:56:49.658Z",
+  "status": "stale",
+  "lastAttemptAt": "2026-10-14T14:30:45.071Z",
   "lastSuccessAt": "2026-10-13T16:56:49.658Z",
-  "lastError": null,
+  "lastError": "SWDI nx3hail response is missing expected column(s) ZTIME, LON, LAT, WSR_ID, CELL_ID, PROB, SEVPROB, MAXSIZE. Columns returned: summary. The product's shape has changed — read the response before changing this fetcher.",
   "source": {
     "name": "NOAA Severe Weather Data Inventory — nx3hail (NEXRAD radar-derived hail signatures, not confirmed hail reports)",
     "url": "https://www.ncei.noaa.gov/swdiws/"
