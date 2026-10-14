@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-13T16:57:47+00:00",
+  "generated_at": "2026-10-14T14:31:40+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -32,7 +32,7 @@
           "value": 1634.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 311.1667,
+          "vs_baseline": 311.4167,
           "mom": 122.0
         },
         "permit_activity_hvac": {
@@ -46,7 +46,7 @@
           "value": 1296.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 65.5,
+          "vs_baseline": 65.5833,
           "mom": -45.0
         },
         "permit_activity_roofing": {
@@ -155,7 +155,7 @@
       "county": "Travis",
       "metric": "drought_stage",
       "angle": "warning",
-      "surprise_score": 0.667,
+      "surprise_score": 0.662,
       "why": "fell back out of Extreme Drought (D3); a large move against its own history",
       "figure": "fell back out of Extreme Drought (D3) — now D2",
       "source": "U.S. Drought Monitor",
@@ -227,7 +227,7 @@
       "area_id": "austin_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.285,
+      "surprise_score": 0.284,
       "why": "a modest move against its own history",
       "figure": "695 cooling degree-days in 2026-09, -8% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -239,7 +239,7 @@
       "area_id": "san_antonio_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.268,
+      "surprise_score": 0.267,
       "why": "a modest move against its own history",
       "figure": "689 cooling degree-days in 2026-09, -2% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -287,7 +287,7 @@
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.189,
+      "surprise_score": 0.188,
       "why": "a cost signal",
       "figure": "15.88¢ per kWh (2026-07), -0.4% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
