@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-15T14:40:22+00:00",
+  "generated_at": "2026-10-15T14:45:01+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -176,7 +176,7 @@
       "angle": "reveal",
       "surprise_score": 0.645,
       "why": "a large move against its own history; at a level well outside this area's own range",
-      "figure": "580 trees permits in 2026-09, +29% month over month",
+      "figure": "580 tree permits in 2026-09, +29% month over month",
       "source": "City of San Antonio Permits Open Data",
       "as_of": "2026-09-01",
       "suppressed": false
@@ -188,7 +188,7 @@
       "angle": "reveal",
       "surprise_score": 0.491,
       "why": "at a level well outside this area's own range",
-      "figure": "188 energy_storage permits in 2026-09, +29% month over month",
+      "figure": "188 battery-storage permits in 2026-09, +29% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
       "as_of": "2026-09-01",
       "suppressed": false
@@ -260,7 +260,7 @@
       "angle": "reveal",
       "surprise_score": 0.239,
       "why": "a modest move against its own history",
-      "figure": "1,097 hvac permits in 2026-09, +6% month over month",
+      "figure": "1,097 HVAC permits in 2026-09, +6% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
       "as_of": "2026-09-01",
       "suppressed": false
@@ -284,7 +284,7 @@
       "angle": "reveal",
       "surprise_score": 0.2,
       "why": "a modest move against its own history",
-      "figure": "1,067 hvac permits in 2026-09, -6% month over month",
+      "figure": "1,067 HVAC permits in 2026-09, -6% month over month",
       "source": "City of San Antonio Permits Open Data",
       "as_of": "2026-09-01",
       "suppressed": false
