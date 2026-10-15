@@ -356,6 +356,62 @@ async function sanAntonio() {
   };
 }
 
+/**
+ * Where the backlog's 4,233 came from — asked, not assumed.
+ *
+ * Round 49's probe called `austinTradeWhere('2026-09-01T00:00:00.000',
+ * '2026-10-01T00:00:00.000')`. Socrata's `between` is inclusive at BOTH ends, so
+ * that window is September plus the 1st of October, and the 4,233 it returned is
+ * not a September figure. The ingestion never bounds a month this way: its
+ * predicate spans the whole recount window and each row's month comes from
+ * parsing its own `issue_date`.
+ *
+ * Prediction before running: September alone is 4,090 (what this probe counted by
+ * parsing rows), the right-inclusive window is 4,233, and the difference is the
+ * 143 permits issued on 2026-10-01.
+ */
+async function windowBoundary() {
+  const ask = async (since: string, until: string) => {
+    const { serverCount, where } = await fetchAustinTradeRows(since, until, process.env.SOCRATA_APP_TOKEN);
+    return { since, until, where, rows: serverCount };
+  };
+  const inclusive = await ask("2026-09-01T00:00:00.000", "2026-10-01T00:00:00.000");
+  const septOnly = await ask("2026-09-01T00:00:00.000", "2026-09-30T23:59:59.999");
+  const oct1Only = await ask("2026-10-01T00:00:00.000", "2026-10-01T23:59:59.999");
+  return {
+    explanation:
+      "Socrata `between` is inclusive at both ends, so Round 49's September window included " +
+      "2026-10-01 and its 4,233 is not a September figure.",
+    rightInclusiveWindow: inclusive,
+    septemberOnly: septOnly,
+    october1Only: oct1Only,
+    controls: [
+      {
+        id: "W1",
+        prediction: "the right-inclusive window reproduces Round 49's row count",
+        expected: 4233,
+        actual: inclusive.rows,
+        pass: inclusive.rows === 4233,
+        note: "rows, not distinct permits — Austin measured 0.00% duplication, so they are equal",
+      },
+      {
+        id: "W2",
+        prediction: "September alone equals what this probe counted by parsing issue_date",
+        expected: 4090,
+        actual: septOnly.rows,
+        pass: septOnly.rows === 4090,
+      },
+      {
+        id: "W3",
+        prediction: "the gap is exactly the permits issued on 2026-10-01",
+        expected: inclusive.rows - septOnly.rows,
+        actual: oct1Only.rows,
+        pass: inclusive.rows - septOnly.rows === oct1Only.rows,
+      },
+    ],
+  };
+}
+
 const out = {
   measuredAt: new Date().toISOString(),
   focusMonth: FOCUS,
@@ -364,10 +420,11 @@ const out = {
     "the tally is this probe's and is checked by the controls.",
   austin: await austin(),
   sanAntonio: await sanAntonio(),
+  windowBoundary: await windowBoundary(),
 };
 writeFileSync(OUT, JSON.stringify(out, null, 2) + "\n");
 console.log(`wrote ${OUT.pathname}`);
-for (const c of [...out.austin.controls, ...out.sanAntonio.controls]) {
+for (const c of [...out.austin.controls, ...out.sanAntonio.controls, ...out.windowBoundary.controls]) {
   console.log(`  ${c.pass ? "PASS" : "FAIL"}  ${c.id}  ${c.prediction}`);
 }
 console.log(
