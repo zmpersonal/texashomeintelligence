@@ -1,12 +1,12 @@
 {
-  "measuredAt": "2026-10-15T13:37:55.198Z",
+  "measuredAt": "2026-10-15T13:39:57.206Z",
   "focusMonth": "2026-09",
   "note": "Round 50. Measurement only. Every request is built by the ingestion fetcher's own code; the tally is this probe's and is checked by the controls.",
   "austin": {
-    "where": "issue_date between '2025-09-01T00:00:00' and '2026-10-15T13:37:55' AND (permit_type_desc in ('Electrical Permit', 'Plumbing Permit', 'Mechanical Permit') OR work_class in ('Auxiliary Power', 'Roof') OR upper(work_class) like '%ROOF%' OR upper(permit_type_desc) like '%ROOF%' OR upper(description) like '%ROOF%' OR upper(description) like '%SOLAR%' OR upper(description) like '%PHOTOVOLTAIC%')",
+    "where": "issue_date between '2025-09-01T00:00:00' and '2026-10-15T13:39:57' AND (permit_type_desc in ('Electrical Permit', 'Plumbing Permit', 'Mechanical Permit') OR work_class in ('Auxiliary Power', 'Roof') OR upper(work_class) like '%ROOF%' OR upper(permit_type_desc) like '%ROOF%' OR upper(description) like '%ROOF%' OR upper(description) like '%SOLAR%' OR upper(description) like '%PHOTOVOLTAIC%')",
     "window": {
       "since": "2025-09-01T00:00:00.000Z",
-      "until": "2026-10-15T13:37:55.198Z"
+      "until": "2026-10-15T13:39:57.206Z"
     },
     "rowsRead": 47599,
     "serverCount": 47599,
@@ -4948,7 +4948,7 @@
     "csvUrl": "https://data.sanantonio.gov/dataset/05012dcb-ba1b-4ade-b5f3-7403bc7f52eb/resource/c21106f9-3ef5-4f3a-8604-f992b4db7512/download/permits_issued.csv",
     "window": {
       "since": "2025-09-01T00:00:00.000Z",
-      "until": "2026-10-15T13:37:57.334Z"
+      "until": "2026-10-15T13:39:59.569Z"
     },
     "columns": {
       "typeCol": "PERMIT TYPE",
@@ -6070,5 +6070,219 @@
         "pass": true
       }
     ]
+  },
+  "austinSolarComposition": {
+    "question": "of the permits counted as solar, how many say solar — and what are the rest?",
+    "byMonth": [
+      {
+        "month": "2025-09",
+        "solarTotal": 144,
+        "saysSolar": 140,
+        "noSolarText": 4,
+        "pctNoSolarText": 2.8,
+        "noSolarText_storage": 4,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 0,
+        "topOtherDescriptions": {}
+      },
+      {
+        "month": "2025-10",
+        "solarTotal": 160,
+        "saysSolar": 156,
+        "noSolarText": 4,
+        "pctNoSolarText": 2.5,
+        "noSolarText_storage": 3,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 1,
+        "topOtherDescriptions": {
+          "Installation of a 15.13kW system with 1 Tesla PW 1 Expansion pack and 1 Gateway": 1
+        }
+      },
+      {
+        "month": "2025-11",
+        "solarTotal": 128,
+        "saysSolar": 123,
+        "noSolarText": 5,
+        "pctNoSolarText": 3.9,
+        "noSolarText_storage": 4,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 1,
+        "topOtherDescriptions": {
+          "[ELipps Main House] 132 Ground-Mounted residential Trina Vertex 620W panels": 1
+        }
+      },
+      {
+        "month": "2025-12",
+        "solarTotal": 90,
+        "saysSolar": 88,
+        "noSolarText": 2,
+        "pctNoSolarText": 2.2,
+        "noSolarText_storage": 1,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 1,
+        "topOtherDescriptions": {
+          "Installation of 960kW AC Roof Mounted Auxiliary Power System \n3500 S SH 130 SVRD SB BLDG 1-Unit DG": 1
+        }
+      },
+      {
+        "month": "2026-01",
+        "solarTotal": 46,
+        "saysSolar": 43,
+        "noSolarText": 3,
+        "pctNoSolarText": 6.5,
+        "noSolarText_storage": 2,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 1,
+        "topOtherDescriptions": {
+          "Unit A: Rev meter 7269812\nWork complete need second permit since this is a duplex. First permit for Unit B is ": 1
+        }
+      },
+      {
+        "month": "2026-02",
+        "solarTotal": 54,
+        "saysSolar": 51,
+        "noSolarText": 3,
+        "pctNoSolarText": 5.6,
+        "noSolarText_storage": 1,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 2,
+        "topOtherDescriptions": {
+          "installation of 50k WAC Ballasted roof top auxiliary power system": 1,
+          "Replacing the AC disconnect": 1
+        }
+      },
+      {
+        "month": "2026-03",
+        "solarTotal": 33,
+        "saysSolar": 32,
+        "noSolarText": 1,
+        "pctNoSolarText": 3,
+        "noSolarText_storage": 1,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 0,
+        "topOtherDescriptions": {}
+      },
+      {
+        "month": "2026-04",
+        "solarTotal": 79,
+        "saysSolar": 72,
+        "noSolarText": 7,
+        "pctNoSolarText": 8.9,
+        "noSolarText_storage": 5,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 2,
+        "topOtherDescriptions": {
+          "Pre-Wire For Detach and Reset": 1,
+          "Installation of 37.83 KW Rooftop System for Existing Office/Warehouse": 1
+        }
+      },
+      {
+        "month": "2026-05",
+        "solarTotal": 48,
+        "saysSolar": 46,
+        "noSolarText": 2,
+        "pctNoSolarText": 4.2,
+        "noSolarText_storage": 2,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 0,
+        "topOtherDescriptions": {}
+      },
+      {
+        "month": "2026-06",
+        "solarTotal": 79,
+        "saysSolar": 74,
+        "noSolarText": 5,
+        "pctNoSolarText": 6.3,
+        "noSolarText_storage": 3,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 2,
+        "topOtherDescriptions": {
+          "24 MODULES - SYSTEM SIZE STC (8.64 kW DC / 7.60 kW AC)": 1,
+          "Express: Installation of GAF Timberline asphalt and energy shingles": 1
+        }
+      },
+      {
+        "month": "2026-07",
+        "solarTotal": 93,
+        "saysSolar": 72,
+        "noSolarText": 21,
+        "pctNoSolarText": 22.6,
+        "noSolarText_storage": 20,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 1,
+        "topOtherDescriptions": {
+          "Installation of GM Energy V2H (vehicle-to-home) charging system. Per guidance from Stuart Prior at AE we need ": 1
+        }
+      },
+      {
+        "month": "2026-08",
+        "solarTotal": 224,
+        "saysSolar": 80,
+        "noSolarText": 144,
+        "pctNoSolarText": 64.3,
+        "noSolarText_storage": 142,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 2,
+        "topOtherDescriptions": {
+          "Installation of 540kW AC Roof Mounted Auxiliary Power System \n\nThe service is for BLDG 2 UNIT DG": 1,
+          "Installation of Tesla Powershare bidirectional V2H (vehicle-to-home) charging system. Per guidance from Stuart": 1
+        }
+      },
+      {
+        "month": "2026-09",
+        "solarTotal": 240,
+        "saysSolar": 62,
+        "noSolarText": 178,
+        "pctNoSolarText": 74.2,
+        "noSolarText_storage": 178,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 0,
+        "topOtherDescriptions": {}
+      },
+      {
+        "month": "2026-10",
+        "solarTotal": 75,
+        "saysSolar": 20,
+        "noSolarText": 55,
+        "pctNoSolarText": 73.3,
+        "noSolarText_storage": 55,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 0,
+        "topOtherDescriptions": {}
+      }
+    ],
+    "thePublishedClaim": {
+      "article": "/analysis/is-austins-home-improvement-boom-cooling-off/",
+      "claim": "Austin issued 224 solar permits in August 2026 - up 138% month over month",
+      "august": {
+        "month": "2026-08",
+        "solarTotal": 224,
+        "saysSolar": 80,
+        "noSolarText": 144,
+        "pctNoSolarText": 64.3,
+        "noSolarText_storage": 142,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 2,
+        "topOtherDescriptions": {
+          "Installation of 540kW AC Roof Mounted Auxiliary Power System \n\nThe service is for BLDG 2 UNIT DG": 1,
+          "Installation of Tesla Powershare bidirectional V2H (vehicle-to-home) charging system. Per guidance from Stuart": 1
+        }
+      },
+      "july": {
+        "month": "2026-07",
+        "solarTotal": 93,
+        "saysSolar": 72,
+        "noSolarText": 21,
+        "pctNoSolarText": 22.6,
+        "noSolarText_storage": 20,
+        "noSolarText_generator": 0,
+        "noSolarText_other": 1,
+        "topOtherDescriptions": {
+          "Installation of GM Energy V2H (vehicle-to-home) charging system. Per guidance from Stuart Prior at AE we need ": 1
+        }
+      },
+      "momOnSaysSolarOnly": 11.1,
+      "note": "momOnSaysSolarOnly recomputes the published month-over-month using ONLY permits whose description names solar. It is a diagnostic, not a proposed replacement figure."
+    }
   }
 }
