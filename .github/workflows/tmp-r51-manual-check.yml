@@ -95,6 +95,41 @@ jobs:
           except Exception as e:
               out["reachability"]["live_pdf"] = f"{type(e).__name__}: {e}"
 
+          # 3 · PHRASE PRESENCE, over the FULL text of each capture — not over the filtered
+          #     matched-line list. The hypothesis is that the live revision tells filers to split
+          #     one project into several Auxiliary Power EPs where the January revision did not,
+          #     which would multiply permits without multiplying installations. Inferring that
+          #     from a phrase being absent from a FILTERED list would be the same
+          #     absence-by-association mistake this round has already made twice.
+          PHRASES = {
+              "separated_into_their_own": r"separated\s+into\s+their\s+own",
+              "can_be_included_together": r"can\s+be\s+included\s+together",
+              "all_dg_requires_aux_power": r"will require an Auxiliary Power|require an Auxiliary Power Electrical Permit",
+              "battery_storage_named": r"batter\w*\s+storage|battery\s+back-?up",
+              "ess_defined": r"ESS\s*=\s*Energy Storage System",
+              "project_includes_ess_trigger": r"project includes an Energy Storage System",
+              "twentyfive_kw_threshold": r"25\s*kW",
+              "revision_or_version_marker": r"THIS VERSION PUBLISHED|revision history|Rev\.\s*\d|Version\s*\d",
+          }
+          def phrase_table(pdf_bytes, name):
+              q = pathlib.Path(f"/tmp/{name}-full.pdf"); q.write_bytes(pdf_bytes)
+              txt = subprocess.run(["pdftotext", "-layout", str(q), "-"],
+                                   capture_output=True, text=True).stdout
+              flat = re.sub(r"\s+", " ", txt)
+              return {k: bool(re.search(v, flat, re.I)) for k, v in PHRASES.items()}
+
+          out["phrasePresence"] = {}
+          for ts in before_may[:1]:
+              try:
+                  out["phrasePresence"][ts] = phrase_table(
+                      fetch(f"https://web.archive.org/web/{ts}id_/https://{MANUAL}", binary=True), ts)
+              except Exception as e:
+                  out["phrasePresence"][ts] = {"error": f"{type(e).__name__}: {e}"}
+          try:
+              out["phrasePresence"]["live"] = phrase_table(fetch("https://" + MANUAL, binary=True), "live2")
+          except Exception as e:
+              out["phrasePresence"]["live"] = {"error": f"{type(e).__name__}: {e}"}
+
           out["verdict"] = (
               "no capture of this manual before 2026-05 exists in the archive; the question cannot "
               "be settled from a public archive and needs Austin Energy directly"
