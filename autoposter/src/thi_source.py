@@ -70,6 +70,17 @@ class Series:
     note: str = ""
     county: str = ""     # set where a metro's reading is actually one county's (drought anchor)
     dropped: list[str] = field(default_factory=list)   # audit trail of what was excluded
+    # Round 52. Breaks this series SPANS, read from the site's own
+    # `src/data/discontinuities.ts`. Built with the record rather than after it:
+    # the autoposter is the half that computes month-over-month and N-month
+    # baselines on these series, so it is the half where honouring a break
+    # matters most.
+    #
+    # REPORTING, NOT YET POLICY — see the note in `discontinuities.ts` and the
+    # options in `docs/audits/round-52-discontinuities.md`. Every figure is
+    # still computed exactly as before. What a builder should DO with a spanned
+    # break is an owner decision, and this is the one place it will read.
+    discontinuities: list[dict] = field(default_factory=list)
 
     @property
     def latest(self) -> float:
@@ -226,6 +237,44 @@ def permit_coverage_through(location: str) -> date | None:
     return date.fromisoformat(max(seen)[:10]) if seen else None
 
 
+_DISCONTINUITIES_JSON = REPO_ROOT / "site" / "src" / "data" / "discontinuities.json"
+
+
+def _discontinuities() -> list[dict]:
+    """Breaks the SITE records, read from the JSON twin of its TypeScript registry.
+
+    THE JSON, NOT THE TYPESCRIPT, and deliberately. `withdrawnArticles.ts` is read from here by
+    regex, and getting that regex right for a second entry took two attempts — a tolerant parser
+    is a second definition of one fact that can disagree with the first. `discontinuityunit.ts`
+    asserts the twin is byte-identical to the module, so a stale twin fails the build rather than
+    giving this reader a different answer from the site's.
+
+    Read-only across the Rule 0 boundary, like `published_questions`. A missing file means nothing
+    is recorded, which is the right answer for a fresh checkout rather than a reason to halt.
+    """
+    try:
+        return json.loads(_DISCONTINUITIES_JSON.read_text())
+    except (OSError, ValueError):
+        return []
+
+
+def _breaks_spanned(dataset: str, location: str, series: str,
+                    first_month: str, last_month: str) -> list[dict]:
+    """The breaks a span crosses. Mirrors `discontinuitiesCrossed` in the site module.
+
+    A break at month M separates months before M from M onward, so a span crosses it only when it
+    starts before M and reaches M or later. Boundaries asserted on the TypeScript side in
+    `discontinuityunit.ts` §2 and here in `test_discontinuities.py`.
+    """
+    lo, hi = sorted((first_month, last_month))
+    return [d for d in _discontinuities()
+            if d.get("datasetId") == dataset
+            and d.get("location") in ("*", location)
+            and d.get("series") in ("*", series)
+            and lo < d.get("fromMonth", "")
+            and hi >= d.get("fromMonth", "")]
+
+
 def _permit_trades(location: str, today: date) -> list[Series]:
     doc = _load("permit-trade-activity", location)
     if not _live(doc):
@@ -312,6 +361,9 @@ def _permit_trades(location: str, today: date) -> list[Series]:
             # is the same argument the completeness guard already makes for itself. The
             # superseded-version rows are listed for the same reason: "the series got shorter"
             # and "a mapping version was retired" need different responses.
+            # Round 52: the breaks THIS series spans, reported not yet acted on.
+            discontinuities=_breaks_spanned(
+                "permit-trade-activity", location, trade, pts[0].period[:7], pts[-1].period[:7]),
             dropped=([f"incomplete current month {m}" for m in sorted(set(dropped))] +
                      [f"{m}: ingestion reached "
                       f"{coverage.isoformat() if coverage else 'nowhere (dataset unusable)'}, "
