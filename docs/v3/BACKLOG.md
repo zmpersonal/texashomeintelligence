@@ -39,8 +39,108 @@ Probes (P1, P2) can run in any gap; they write an audit and change no served pag
 | 49 | Mutation testing on the replays. Round 46 answered "can it fail" for all 28 and "would it fail" for 4. Break each guarded behaviour deliberately, confirm the matching replay goes red, fix or flag the ones that do not. | Round 46 class D |
 | 28 | The ledger tier (item 28 below). Sequenced after 49. | owner |
 | — | Stale-prose cleanup: ROADMAP's "do not re-add or link", `CLAUDE.md:97`'s "No Tools, no Services", `types.ts`'s `observedAt` and `FeedStatus` claims, with class B's unswept half folded in. | Round 46 F7, F8, F12, F14 |
+| 50 | The permit discrepancy, as a measurement round (item 34). Shipped — see `docs/audits/round-50-permit-overlap.md`. Closed 34; raised 35, 36, 37. | owner |
+| 51 | **Austin's solar mapping (item 35).** A live article states a 138% solar surge that measures as +11.1%; the count is 64–74% battery storage since July. Needs the mapping decision AND a copy correction, so it is owner-gated on both. | Round 50 |
 
 ---
+
+## Open now — raised by Round 50
+
+These sit above the older numbered items because one of them is live and wrong. Items 1–34 are
+further down, in their original order.
+
+### 35 · Austin's published "solar" permit counts are mostly battery storage — LIVE DEFECT
+
+Round 50, measured. Austin assigns solar from `work_class = "Auxiliary Power"` as well as from
+description text. `Auxiliary Power` is the class the city uses for distributed energy resources
+generally — PV, storage, generators, V2H — and **from July 2026 storage came to dominate it.**
+
+| month | published solar | permits naming solar | % naming no solar |
+|---|--:|--:|--:|
+| 2025-09 … 2026-06 | 33–160 | 32–156 | **2.2–8.9** |
+| 2026-07 | 93 | 72 | 22.6 |
+| **2026-08** | **224** | **80** | **64.3** |
+| **2026-09** | **240** | **62** | **74.2** |
+
+142 of August's 144 non-solar permits and 178 of 178 in September describe energy storage.
+
+**A live article is wrong.** `/analysis/is-austins-home-improvement-boom-cooling-off/` headlines
+"224 solar permits in a single month, up 138% month over month — the largest month in the twelve
+we hold". On permits that name solar: 80, **+11.1%**, and 6th in the window. The autoposter's
+feed also has `austin_metro / permit_activity_solar` ranked #4 at "240 solar permits in 2026-09",
+so **a future cycle can publish another one.**
+
+San Antonio is unaffected — its solar is the explicit `Solar - Photovoltaic Permit` type.
+
+Options, costs and what each still misses are in §7A of the audit. The live article needs a copy
+correction under any of them, which is an owner decision. **Scope → the next round.**
+
+### 36 · A composition check on `sourceValues`
+
+Round 50. The defect in item 35 was visible in the committed file for four months and nothing
+read it: `toObservations` stores `sourceValues` — the per-source-value permit counts — on every
+monthly observation, and Austin's August solar row says `Auxiliary Power: 194` against
+`description mentions solar/photovoltaic/PV: 30`.
+
+A check that flags when a category's mechanism mix moves sharply month over month would have
+caught it in **July, at 22.6%**, from data already on disk, with no new source. It generalises to
+any category in either metro.
+
+Third face of a pattern now worth naming as a family: Round 46 found **a config key with no
+consumer**; Round 49 found **a consumer with no config**; this is **a stored provenance field
+with no consumer** — the data that would have raised the alarm, recorded faithfully and never
+looked at.
+
+### 37 · `austinPermits.ts` shortens before it redacts
+
+Round 50, noticed in passing, not fixed — it is a PII question in a different file and deserves
+its own decision. `austinPermits.ts:116` calls
+`redactPersonalShapes(row.description?.slice(0, 300))`. A personal shape straddling character 300
+is cut in half, after which the redactor cannot match it, so a fragment can reach the committed
+`municipal-permits` archive. This is the inverse of Round 47's rule. Severity looks low — a
+fragment rather than a full address — and `scripts/redact-committed-descriptions.ts` exists, so
+check whether it already covers this before changing the fetcher.
+
+## Standing rule — reusing a request builder with hand-chosen arguments is still a hand-built request
+
+Round 50, and it is the third tightening of the same rule in three rounds.
+
+Round 49 hardened "use the repo's own code" into "**per request**", after a probe imported one
+request builder and rebuilt another by hand. This round found that the same probe's *Austin*
+request — the one that did call `austinTradeWhere` — was also wrong, because it chose the bounds
+by hand: `between '2026-09-01' and '2026-10-01'`, and Socrata's `between` is inclusive at both
+ends. The window was September plus a day, and the 4,233 it produced went into the backlog as a
+September figure and stayed there for a round.
+
+The ingestion never bounds a month that way. Its predicate spans the whole recount window and
+each row's month comes from parsing its own `issue_date`.
+
+> **The builder guarantees the shape of the query, never that the arguments mean what you think.
+> Where the pipeline derives an argument, derive it the same way — do not retype it.**
+
+The honest summary of the three rounds: obeying the letter of this rule has not once been enough.
+Each time, the part left to hand was the part that broke.
+
+## Standing rule — a control must state the population it could not have seen
+
+Round 50. The Austin solar mapping carried this evidence in its own comment:
+
+> *"of the 469 Auxiliary Power rows inside the roof-matched archive, 463 (98.7%) mention solar.
+> That measurement is on the roof-matched subset, not the full 808 in the window, so it is strong
+> evidence rather than proof"*
+
+The caveat is there. What is missing is the **direction** of the bias. The roof-matched archive is
+selected by the word *roof*; rooftop solar contains it, a battery cabinet and a meter socket do
+not. So the 98.7% was measured on a population from which the counterexample had already been
+filtered out, and it read as reassurance for fourteen months while the thing it appeared to rule
+out took over the category.
+
+> **A control taken on a subset must say which population it excluded, and why that exclusion
+> cannot hide what the control is meant to rule out.** "Measured on a subset, so evidence not
+> proof" is not enough — it understates, because a biased subset is worse than a small one.
+
+Same family as Round 47's 178-mile distance and Round 49's °C-days: a control that cannot see the
+thing it is meant to rule out is not a weak control, it is a misleading one.
 
 ## Standing rule — a replay that reports a value is not a check
 
@@ -1361,7 +1461,7 @@ by amending a comment to match what the code happens to do.
 
 ---
 
-### 34 · Our per-category permit counts sum to more than the city's distinct permits
+### 34 · ~~Our per-category permit counts sum to more than the city's distinct permits~~ — CLOSED, Round 50
 
 Round 49 measured it and did not chase it; the owner scoped it as the next round rather than a
 backlog line, because **it is a measured discrepancy on a published figure.**
@@ -1399,3 +1499,22 @@ one trade per permit.
 
 **Scope → medium. Measurement first, then a decision.** The Socrata cross-check is one request
 and ~230 ms (`docs/audits/round-49-probe.json`).
+
+**CLOSED by Round 50** (`docs/audits/round-50-permit-overlap.md`). Three corrections to the
+framing above:
+
+1. **The 201 was wrong — it is 344 (8.41%).** The 4,233 came from a window that was September
+   *plus 2026-10-01*: Socrata's `between` is inclusive at both ends. Measured and confirmed to
+   the permit (W1–W3).
+2. **The hypothesis was right about the mechanism and wrong to call it a defect.** Austin's
+   overlap is the description-text paths crossing the permit-type path, and the classifier's own
+   comment already says so: a rooftop solar install filed as an Electrical Permit is electrical
+   by class and solar by the city's words. Both counts are correct. Only the *sum* is meaningless
+   — and nothing publishes a sum.
+3. **San Antonio overlaps too, by a different mechanism entirely** — one commercial project
+   number carrying electrical, mechanical and plumbing sub-permits. 3.3–7.5% a month. Not an
+   error of ours: the city is saying the project involves three trades.
+
+Additivity has never held in either metro in any month (Austin 3.1–9.6%, SA 3.3–7.5%). No reader
+has seen a cross-trade sum, because none is published anywhere. The open decisions are item 35
+(the live solar defect the round turned up) and the additivity options in §7B of the audit.
