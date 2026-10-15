@@ -40,7 +40,8 @@ Probes (P1, P2) can run in any gap; they write an audit and change no served pag
 | 28 | The ledger tier (item 28 below). Sequenced after 49. | owner |
 | — | Stale-prose cleanup: ROADMAP's "do not re-add or link", `CLAUDE.md:97`'s "No Tools, no Services", `types.ts`'s `observedAt` and `FeedStatus` claims, with class B's unswept half folded in. | Round 46 F7, F8, F12, F14 |
 | 50 | The permit discrepancy, as a measurement round (item 34). Shipped — see `docs/audits/round-50-permit-overlap.md`. Closed 34; raised 35, 36, 37. | owner |
-| 51 | **Austin's solar mapping (item 35).** A live article states a 138% solar surge that measures as +11.1%; the count is 64–74% battery storage since July. Needs the mapping decision AND a copy correction, so it is owner-gated on both. | Round 50 |
+| 50b | **Austin's solar mapping (item 35)** — split into `solar` and `energy_storage`, bumped to `trades-v3`, both series re-based, feed refreshed. Shipped on the branch; the article and methodology copy are drafted and awaiting the owner. | Round 50 |
+| 51 | **A builder for `energy_storage`** (item 35's open third). The category ranks 3rd in the feed and nothing can write it. The storage surge — 4 permits in May 2026 to 188 in September — is the finding the broken solar count was hiding. | Round 50 |
 
 ---
 
@@ -49,7 +50,7 @@ Probes (P1, P2) can run in any gap; they write an audit and change no served pag
 These sit above the older numbered items because one of them is live and wrong. Items 1–34 are
 further down, in their original order.
 
-### 35 · Austin's published "solar" permit counts are mostly battery storage — LIVE DEFECT
+### 35 · Austin's published "solar" permit counts are mostly battery storage — MAPPING FIXED, COPY PENDING
 
 Round 50, measured. Austin assigns solar from `work_class = "Auxiliary Power"` as well as from
 description text. `Auxiliary Power` is the class the city uses for distributed energy resources
@@ -72,8 +73,21 @@ so **a future cycle can publish another one.**
 
 San Antonio is unaffected — its solar is the explicit `Solar - Photovoltaic Permit` type.
 
-Options, costs and what each still misses are in §7A of the audit. The live article needs a copy
-correction under any of them, which is an owner decision. **Scope → the next round.**
+**Owner took option 2, Round 50: split into `solar` and `energy_storage`.** Done — the mapping,
+the `trades-v3` bump, the re-base of both series, and the feed refresh that retires the old
+numbers from the autoposter. §10 of the audit has every figure that moved. Storage is now its own
+series and it is the better finding: 4 permits in May 2026, 29 in July, 146 in August, 188 in
+September.
+
+**What is still open and is yours:**
+- **The article.** The finding does NOT survive recomputation, and it fails twice — the solar
+  section reverses (159% above its average → 1.9% below) and so does the article's own verdict
+  (1 of 3 trades below → 2 of 3). Both roads are drafted in `round-50-drafts.md`; the
+  recommendation is withdrawal on the electricity article's reasoning.
+- **The `/methodology/` entry**, drafted in the same file.
+- **A builder for `energy_storage`.** The category ranks 3rd in the feed and nothing can write
+  it, so the machine cannot publish a storage claim by accident — and cannot tell the story
+  either. That is the next round's obvious candidate.
 
 ### 36 · A composition check on `sourceValues`
 
@@ -91,15 +105,54 @@ consumer**; Round 49 found **a consumer with no config**; this is **a stored pro
 with no consumer** — the data that would have raised the alarm, recorded faithfully and never
 looked at.
 
-### 37 · `austinPermits.ts` shortens before it redacts
+### 37 · ~~`austinPermits.ts` shortens before it redacts~~ — FIXED, Round 50
 
 Round 50, noticed in passing, not fixed — it is a PII question in a different file and deserves
 its own decision. `austinPermits.ts:116` calls
 `redactPersonalShapes(row.description?.slice(0, 300))`. A personal shape straddling character 300
 is cut in half, after which the redactor cannot match it, so a fragment can reach the committed
 `municipal-permits` archive. This is the inverse of Round 47's rule. Severity looks low — a
-fragment rather than a full address — and `scripts/redact-committed-descriptions.ts` exists, so
-check whether it already covers this before changing the fetcher.
+fragment rather than a full address.
+
+**FIXED in Round 50, and the backfill script does NOT cover it** — checked, as this item asked:
+`redact-committed-descriptions.ts` reads the value already on disk, which is the truncated one, so
+it sees the same unmatchable fragment. Proven rather than asserted: an address placed to straddle
+character 300 leaks `1234 M` under the old order **and records zero removals**, so the run log
+reported a clean pass. Two further findings came out of the same read — San Antonio's fetcher had
+no redaction pass at all (latent, not live: no description column resolves, so all 5,666 committed
+descriptions are empty), and this round's own probes published two personal names before being
+rewritten to emit structural predicates instead of free text.
+
+### 38 · `social-feed.json` carries no mapping version
+
+Round 50, found while confirming that the queued article could not be built from the old series.
+The cadence reads the COMMITTED feed, not the datasets. The feed records `generated_at` and
+nothing about the methodology behind its numbers, so **a feed built under `trades-v2` is
+indistinguishable from one built under `trades-v3` except by its timestamp** — and only to a human
+reading two timestamps.
+
+This round refreshed the feed by hand in the same run as the re-ingest, so the live state is
+correct. The gap is that nothing would have caught it: re-ingesting alone leaves a stale feed that
+looks entirely healthy, and every figure in it is "legal" by the gates' definition because it
+traces to the feed.
+
+Same family as item 36 (a stored provenance field with no consumer) with the opposite shape:
+**provenance that was never stored at all.** A `mapping_versions` block on the feed, plus a check
+that the cycle refuses a feed whose versions disagree with the datasets on disk, would close it.
+
+### 39 · Both mapping-version readers compare versions as STRINGS
+
+Round 50, latent, not triggered. `site/src/lib/tradeActivity.ts` does `.sort().at(-1)` and
+`autoposter/src/thi_source.py` does `version > versions.get(trade, "")` — both lexicographic. So
+`trades-v10` sorts BELOW `trades-v2`, and at the tenth bump both readers would silently publish
+v9 while v10 sat on disk unread.
+
+`trades-v3` is safe, which is why this was logged rather than fixed mid-bump: changing the
+comparison also means changing `permitcountunit.ts`, which asserts the `.sort().at(-1)` idiom by
+name. Worth doing before v10, and the natural moment is whenever that assertion is next touched.
+
+The failure mode is the one this mechanism exists to prevent, reached by a different route: not a
+mixture of versions, but confidently publishing the wrong single one.
 
 ## Standing rule — reusing a request builder with hand-chosen arguments is still a hand-built request
 

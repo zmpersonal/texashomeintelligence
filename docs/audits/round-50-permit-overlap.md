@@ -377,3 +377,133 @@ needs its own decision rather than a drive-by edit. This round's probe redacts *
 | probe controls | 9/9 pass (A1–A5, S1, W1–W3) |
 | probe wrote no dataset file | asserted by the workflow; `site/src/data/generated` unchanged |
 | `austinTradeWhere` / mappings | unchanged — this round reads, it does not reclassify |
+
+---
+
+## 10 · What landed (build phase, owner's ruling: option 2 on the mapping)
+
+### The split
+
+`Auxiliary Power` no longer assigns a category. It is a **filter** telling the predicate which
+rows to fetch; the description decides what they are. Two lists now exist where one did:
+`AUSTIN_WORK_CLASS_MAP` classifies, `AUSTIN_WORK_CLASSES_IN_SCOPE` downloads. Conflating them is
+what let a download filter masquerade as a classification for fourteen months — and had the
+predicate kept reading the map, `Auxiliary Power` would have silently stopped being fetched and
+`energy_storage` would have been empty.
+
+`AUSTIN_STORAGE_TEXT` is read off the live descriptions, not written from the two examples the
+hand-read surfaced: battery 393, backup 391, meter 392, socket 383, storage 20 across the 434
+`Auxiliary Power` descriptions that mention no solar. `meter socket` and a bare `backup` are
+excluded — a meter socket is electrical work that accompanies storage, and backup without a
+battery could be a generator. The stated limit: the test runs only on `Auxiliary Power` rows,
+because that is the population it was measured on.
+
+A row naming both solar and a battery lands in **both** categories, like a rooftop solar install
+landing in solar and roofing. One job, genuinely both, and these counts were never additive.
+A row naming neither is left unclassified — 13 in the window, per this file's own rule that an
+unmapped value is never forced into the nearest bucket.
+
+### Every published figure that moved
+
+Austin: **39** category-month figures — solar re-based across all 13 months, plus 13 new
+`energy_storage` rows and 13 new all-trades rows. San Antonio: **13**, every one of them a new
+all-trades row. **No existing San Antonio figure moved**, which is what should happen to a metro
+whose mapping was untouched.
+
+| month | solar v2 | solar v3 | | energy_storage |
+|---|--:|--:|--:|--:|
+| 2025-09 | 144 | 140 | −2.8% | 34 |
+| 2025-10 | 160 | 156 | −2.5% | 36 |
+| 2025-11 | 128 | 123 | −3.9% | 32 |
+| 2025-12 | 90 | 88 | −2.2% | 18 |
+| 2026-01 | 46 | 43 | −6.5% | 6 |
+| 2026-02 | 54 | 51 | −5.6% | 9 |
+| 2026-03 | 33 | 32 | −3.0% | 5 |
+| 2026-04 | 79 | 72 | −8.9% | 10 |
+| 2026-05 | 48 | 46 | −4.2% | **4** |
+| 2026-06 | 79 | 74 | −6.3% | 13 |
+| 2026-07 | 93 | 72 | **−22.6%** | 29 |
+| 2026-08 | 224 | **80** | **−64.3%** | **146** |
+| 2026-09 | 240 | **62** | **−74.2%** | **188** |
+
+Roofing, hvac, plumbing and electrical are untouched in both metros — asserted, not assumed:
+§4 of `verify-trade-mapping.ts` proves the roofing text test is byte-identical across its
+1,740-case cross-product.
+
+### The readers, confirmed BEFORE the bump, as instructed
+
+There are **two** production readers and both already filtered to the newest version *per
+category*, which is what lets a brand-new category coexist with a re-based one:
+
+- `site/src/lib/tradeActivity.ts` (Round 45)
+- `autoposter/src/thi_source.py::_permit_trades` (Round 48)
+
+Everything else that touches `permitCount` is downstream of `tradeActivity()` or is a replay.
+`permitcountunit.ts` already asserted both select a version and that neither pins one as a
+literal; it passes, and its category-count assertion caught the split itself.
+
+### The queued article cannot be built from the old series — but not for the reason it looked like
+
+The cadence reads the **committed `social-feed.json`**, not the datasets, and **that file carries
+no mapping version**. A feed built under v2 is indistinguishable from one built under v3 except by
+its timestamp, so re-ingesting alone would have left the queued Austin solar story buildable from
+v2 figures. Refreshing the feed is what actually retired them. After the refresh:
+
+| | before | after |
+|---|---|---|
+| Austin solar | rank **4** · "240 solar permits in 2026-09, +7% MoM" · surprise 0.372 | rank **12** · "62 solar permits in 2026-09, −22% MoM" · surprise 0.193 |
+| Austin storage | — | rank **3** · "188 battery-storage permits in 2026-09, +29% MoM" · surprise 0.491 |
+
+The surge is now ranked where it belongs and attributed to the thing that did it. There is no
+builder for `energy_storage`, so the machine cannot write it yet — which also means it cannot
+publish a storage claim by accident.
+
+**Two things found while confirming this, both logged rather than fixed** (items 38 and 39): the
+feed carries no mapping-version stamp, so only a human can tell a stale feed from a fresh one; and
+both readers compare versions **lexically**, so `trades-v10` would sort below `trades-v2`. v3 is
+safe under both; v10 is not.
+
+### The copy, drafted and not shipped
+
+`docs/audits/round-50-drafts.md` carries the `/methodology/` entry and the recomputed article
+section. **The finding does not survive the recomputation, and it fails twice**: the solar
+section's claim reverses (159% above its average → 1.9% below it) and so does the article's own
+verdict (1 of 3 trades below → 2 of 3, which is the builder's next branch, "More than you might
+think"). Recommendation recorded there: withdraw rather than correct, on the electricity
+article's reasoning — its central claim cannot be restated because the surprise it reported did
+not happen. Both roads are drafted; the choice is the owner's.
+
+### Also landed
+
+- **Item 37**, proven not asserted: an address placed to straddle character 300 leaks the fragment
+  `1234 M` under shorten-then-redact **and records zero removals**, so the run log would have
+  reported a clean pass. `redact-committed-descriptions.ts` could not have recovered it either —
+  it reads the already-truncated value.
+- **San Antonio's permit fetcher had no redaction pass at all**, never added when Austin's was in
+  Round 45. It changes no current output — all 5,666 committed descriptions are empty because no
+  description column resolves — which is exactly why it is better added before the city renames
+  that column than after.
+- **My own PII error.** This round's probes wrote descriptions into committed JSON after passing
+  them through `redactPersonalShapes`, which catches address and phone shapes and knows nothing
+  about names. Two carried a personal name and reached a public repo. Corrected forward to
+  structural predicates, and both probes can no longer emit free text. The lesson is the one the
+  round kept finding in other people's code: **redaction is not a substitute for not collecting
+  it.**
+- **The feed's `figure` said "188 energy_storage permits"** — a raw metric name in the string the
+  model quotes verbatim. Fixed at the source with `build_feed.TRADE_DISPLAY`, plus a guard that
+  fails for the *next* category added, not this one.
+- **Two frozen-conclusion tests were pinned to live data** and broke on the re-base, correctly.
+  Both live arms now derive their expectation from the tally the builder computed. Round 48 gave
+  twelve tests this treatment and missed these two because the world agreed with them at the time.
+
+### Verification
+
+| check | result |
+|---|---|
+| `verify-trade-mapping.ts` | **19/19**, including a new flip test: four rows differing only in description, work class held at `Auxiliary Power`, category moves with the text |
+| `permitcountunit.ts` | 37/37 |
+| autoposter suite | **394/394** |
+| `npm run check` | 0 errors, 0 warnings, 0 hints |
+| re-base control R1 | `energy_storage` reconciles **exactly** with the independent composition count, every month — and exits non-zero if it ever does not |
+| v1/v2/v3 all still on disk | asserted in the workflow; history is not overwritten |
+| nothing outside the two write boundaries committed | asserted in the workflow |
