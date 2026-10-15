@@ -44,6 +44,7 @@ Probes (P1, P2) can run in any gap; they write an audit and change no served pag
 | 50c | **The withdrawal** (item 35's article half). `published: false`, 410 Gone, registry entry, `withdrawnrender` §6 and a 404 control. Built on the branch; the methodology and notice copy are drafted and awaiting the owner. | Round 50 |
 | 51 | **The storage finding, measured** — read, not written. See `docs/audits/round-51-storage-series.md`. It is a step at July, the vocabulary inverts across it, and the series is not comparable either side. Austin-only: San Antonio's permit file has no description column. | Round 50 |
 | 52 | **The feed's missing mapping version** (item 38). Owner-scoped as its own round, after the withdrawal lands: a feed with no mapping version is a stale feed indistinguishable from a fresh one, and that is what nearly published a v2 figure on 2026-10-15. | Round 50 |
+| 53 | **Recording that a SOURCE changed its behaviour** (item 41). Owner-scoped as the next round. The storage series is the case: a real series with a real July break whose cause is now documented, and nowhere for that fact to live but an audit nobody is obliged to read. | Round 51 |
 
 ---
 
@@ -221,7 +222,7 @@ name. Worth doing before v10, and the natural moment is whenever that assertion 
 The failure mode is the one this mechanism exists to prevent, reached by a different route: not a
 mixture of versions, but confidently publishing the wrong single one.
 
-### 41 · Nothing records the SOURCE changing its behaviour
+### 41 · Nothing records the SOURCE changing its behaviour — SCOPED AS THE NEXT ROUND
 
 Round 51. `CATEGORY_MAPPING_VERSION` exists so a change in OUR methodology cannot be silently
 compared across. Nothing expresses the other direction: the City of Austin changed how it
@@ -238,7 +239,32 @@ This is the third face of the provenance family: Round 46 found a config key wit
 Round 49 a consumer with no config, Round 50 a stored field with no reader. This is a fact with
 nowhere to be stored.
 
-### 42 · Austin may be starting to use a `Roof` work class
+**Owner-scoped as the next round (53), and the storage series is the case that argues for it.**
+Round 51 established the discontinuity *and its cause*: Austin Energy's permitting manual told
+filers, between January and May 2026, to separate solar, batteries, pre-wire and generators into
+their own Auxiliary Power EPs. One project that filed one permit now files several. The storage
+series is real data and the July break is a fact about it — and right now that fact lives in an
+audit document, which is to say it lives in whoever remembers to read it.
+
+**What the round has to settle, not assume:**
+- **Where it is recorded.** A per-series discontinuity needs a home: a `discontinuities` block on
+  the dataset file, or observations carrying a `sourceBehaviourVersion` beside `mappingVersion`.
+  The second is tempting for symmetry and probably wrong — a mapping version is OURS to bump on a
+  known date; a source's behaviour change is discovered later and applies retroactively to months
+  already stored.
+- **What it carries.** At minimum: the date or month the break falls on, which series it affects,
+  what changed, and the evidence. A break with no evidence link is a rumour.
+- **Who honours it.** `tradeActivity()` and the autoposter's `_permit_trades` both compute
+  month-over-month and multi-month baselines ACROSS the break today. A recorded break that no
+  reader consults is item 36's shape again — and this round must not add a fourth face to that
+  family while closing the third.
+- **Whether it is visible to a reader.** The methodology page states what "sourced" means; a
+  series with a known break should say so where its figures render.
+
+**Scope → medium.** One dataset field, two readers, one render surface. The hard part is the
+retroactive semantics, not the plumbing.
+
+### 42 · ~~Austin may be starting to use a `Roof` work class~~ — MEASURED, Round 51: it is one permit
 
 Round 51, noticed in passing, not a round. Round 6 measured `work_class = "Roof"` as **one row in
 54,798** and concluded Austin has no roofing class worth the name — which is why Austin roofing is
@@ -246,8 +272,50 @@ a description-text match, with the 35%-re-roofing / 32.5%-adjacent / 32.5%-unrel
 implies. The class **first appears in the window in 2026-08** and is still under 200 permits.
 
 If the city keeps using it, Austin roofing could be read from a real class instead of a text
-match, which would be a material improvement to the most-caveated figure on the site. Worth
-re-measuring in a few months rather than acting on now.
+match, which would be a material improvement to the most-caveated figure on the site.
+
+**MEASURED IMMEDIATELY instead of in a few months, at the owner's instruction — the worry does not
+materialise.** `work_class = "Roof"` accounts for **one permit, in August 2026, across the whole
+feed**, and none in September. Round 6's "one row in 54,798" is still the state of it; the window
+simply now holds one more. The roofing series is **100% description-text in every month**, and the
+count shows no break: 210, 199, 168, 157, 121, 137, 129, 148, 114, 191, 150, 144, 167.
+
+And the thing storage had to be caught by — vocabulary — is stable too. Across roofing-classified
+permits the term shares move month to month the way a text match over varied free text does, with
+no step at any month: *re-roof* 6–32%, *replace* 14–50%, *shingle* 7–23%. Nothing resembling
+storage's 8–25% → 92% collapse onto one description shape.
+
+One real trend fell out of it: the share of roofing permits also mentioning solar drops from
+**~50% in late 2025 to ~20–26% through 2026** — independent corroboration of the solar decline
+Round 50's re-base found from the other direction.
+
+**Re-measure if the class's volume ever leaves single digits.** The instrument now exists.
+
+## Standing rule — "does not record it" is not "shows none"
+
+Round 51, and it generalises well past storage.
+
+Austin's battery-storage series exists because Austin's permit file has a description column to
+text-match. San Antonio's has **no description column at all** — 16 headers, none of them one —
+and exactly one energy-named permit type. So a battery installed in San Antonio is filed under
+something that does not say so, and nothing in the file distinguishes it.
+
+Two sentences are available and only one is true:
+
+- ~~"San Antonio shows no battery storage."~~ False, and it is the kind of false that reads as a
+  finding.
+- **"San Antonio does not record battery storage."** True, and it is a statement about the file
+  rather than about the city.
+
+> **Wherever we measure something in one metro and not another, the absence is a property of the
+> SOURCE until we have shown otherwise — and it must be written as one.** A metro that lacks the
+> field, the permit type or the column has not reported a zero; it has not been asked.
+
+This bears on far more than storage. Austin has no foundation or tree permit type, which
+`CATEGORIES_WITHOUT_SOURCE` already states as absent rather than zero — that constant is this rule
+already applied once, and the rule is the generalisation of it. The live risk is in COPY, not in
+the data: a cross-metro sentence that reads "Austin has X and San Antonio does not" is almost
+always wrong, and almost always wrong in the direction that invents a finding.
 
 ## Standing rule — a probe writes the measurement, not the material
 

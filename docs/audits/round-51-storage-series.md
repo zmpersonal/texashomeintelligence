@@ -10,6 +10,14 @@ asserts that rather than trusting it.
 
 ## 0 · The short version
 
+> **Resolved in §7.** The one decisive check was reachable. Austin Energy's permitting manual
+> required an Auxiliary Power EP for battery work in its **January 2026** revision too, so the
+> requirement did not change — but the live revision adds an instruction that solar, batteries,
+> pre-wire and generators **"should all be separated into their own Auxiliary Power EPs."** One
+> project that filed one permit now files several. That single change predicts every measurement
+> below, including the ones that looked like a market. **The July step is a permitting-process
+> change, and there is no storage story to publish.**
+
 **It is a step, not a curve, and the step is in the vocabulary as much as in the count.** Before
 July the permits read like engineering descriptions of solar-plus-storage installs, with system
 sizes. From August, 90% of them share one description that names no size, no solar and no product.
@@ -221,6 +229,28 @@ would have *detected* this; it would not have *recorded* it.
 
 ---
 
+## 5b · Item 42, measured now rather than in a few months
+
+The owner's instruction: *"that one worries me more than it reads… don't wait a few months —
+measure it now."* Fair, and the worry does not materialise.
+
+| | |
+|---|---|
+| `work_class = "Roof"` across the whole feed | **1 permit, 2026-08.** None in September |
+| roofing assignment mechanism, every month | **100% description-text** |
+| roofing count, 2025-09 → 2026-09 | 210, 199, 168, 157, 121, 137, 129, 148, 114, 191, 150, 144, 167 — no break |
+
+The vocabulary is stable too, which is the test storage failed. Term shares across
+roofing-classified permits move month to month the way a text match over varied free text does:
+*re-roof* 6–32%, *replace* 14–50%, *shingle* 7–23%, *repair* 2–12%. **No month collapses onto one
+shape**, against storage's 8–25% → 92%.
+
+One real trend fell out of it: the share of roofing permits that also mention solar falls from
+**~50% in late 2025 to ~20–26% through 2026**, which independently corroborates the solar decline
+Round 50's re-base found from the other direction.
+
+The instrument now exists; re-measure if that class's volume ever leaves single digits.
+
 ## 6 · Verification
 
 | check | result |
@@ -232,3 +262,68 @@ would have *detected* this; it would not have *recorded* it.
 | the Upgrade mechanism | prediction stated before the measurement, and **falsified** |
 | `npm run check` | 0 errors, 0 warnings, 0 hints |
 | `verify-trade-mapping` | 19/19 |
+
+---
+
+## 7 · The manual revision, retrieved — and it settles it
+
+§4 named this as the one decisive external check. It was reachable, and it was run in Actions
+because this session cannot reach the documents: the proxy answers **403 to CONNECT** for
+`archive.org` and `web.archive.org`, and `austinenergy.com` and `services.austintexas.gov` do not
+resolve. Measured, not assumed.
+
+The archive holds **one** capture of the manual before May 2026: **2026-01-30**. Both it and the
+live copy were downloaded and their full extracted text searched for named phrases — not the
+filtered match list, because inferring absence from a filtered view is the mistake this round
+already made twice.
+
+| phrase | 2026-01-30 | live (published May 2026) |
+|---|:--:|:--:|
+| all DG — including energy storage — requires an Auxiliary Power EP | **yes** | **yes** |
+| battery storage named explicitly | **yes** | **yes** |
+| the 25 kW threshold | **yes** | **yes** |
+| *"separated into their own"* Auxiliary Power EPs | **no** | **yes** |
+| *"can be included together"* (solar and batteries) | **no** | **yes** |
+| a trigger condition for *"project includes an Energy Storage System"* | **no** | **yes** |
+| a published-version marker | no | yes |
+
+**The permit requirement did not change. The filing instruction did.** January already read:
+
+> "ALL Solar Distributed Generation (DG) Systems, Energy Storage Systems (ESS), and/or
+> Interconnected Spinning Generators in Austin Energy (AE) territory will require an Auxiliary
+> Power Electrical Permit" · "Residential Auxiliary Power Permit: required for any/all distributed
+> generation interconnected to the Austin Energy grid (including solar, wind, **battery storage**,
+> or grid-tied spinning…)" · "ESS = Energy Storage System, also known as Battery back-up"
+
+The live revision adds the instruction that the types
+
+> "…**should all be separated into their own Auxiliary Power EPs**"
+
+### Why this explains everything the data showed, at once
+
+One project that previously filed **one** Auxiliary Power EP covering solar-plus-battery now files
+**separate** EPs. That single change accounts for every measurement in this audit:
+
+| measurement | what the split predicts |
+|---|---|
+| count steps ~10× without the feed moving | same jobs, more permits each |
+| kW and kWh ratings vanish (25 of 34 → 1 of 146) | a battery-only EP states the battery's scope, not the solar system's size |
+| "additional meter socket" appears from zero | the battery-side scope described on its own |
+| 90% share one description shape | a narrow standardised scope produces a narrow standardised description |
+| `Upgrade` class stays flat | no new utility-side work — the same work, split differently |
+| dispersion stays high (188 projects, 33 ZIPs) | the same dispersed residential jobs throughout |
+
+**So the July step is a permitting-process change, not a battery-adoption wave** — and that is the
+answer that says there is no story here to publish.
+
+### What this does not establish
+
+- **Only one pre-May capture exists.** The wording changed somewhere between 2026-01-30 and the
+  May publication; the permit step lands in July–August. A lag of a few months between a manual
+  revision and filing behaviour is plausible and is **not demonstrated here**.
+- The instruction reads *"should"*. Nothing retrieved says when it began to be enforced.
+- **It does not rule out real growth underneath.** Both can be true at once, and this feed still
+  cannot apportion between them — §2 stands.
+
+What would close the remaining gap is Austin Energy's own Permission-to-Operate count by month,
+which no permit feed holds. That is now a much narrower question to ask them than the one in §4.
