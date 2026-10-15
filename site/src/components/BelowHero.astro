@@ -22,7 +22,7 @@
  */
 import DataStatus from "./DataStatus.astro";
 import FaqAccordion from "./FaqAccordion.astro";
-import { monthLabel, monthDatetime, pct, type TradeActivity } from "../lib/tradeActivity";
+import { monthLabel, monthDatetime, pct, type TradeActivity, type TradeComparison } from "../lib/tradeActivity";
 import { contextReading } from "../lib/belowHeroReadings";
 import { textMatchComposition } from "../lib/textMatchComposition";
 import type { BelowHeroSpec } from "../data/belowHero";
@@ -30,7 +30,17 @@ import { formatDate, machineDate } from "../lib/format";
 
 interface Props {
   spec: BelowHeroSpec;
-  activity: TradeActivity;
+  /**
+   * Round 52. The comparison is REQUIRED in the type, not checked in the body.
+   *
+   * Every figure on this page is derived from one run of months that share one
+   * source behaviour (`tradeActivity()` slices the window at every recorded
+   * break). When the current run is too short to support a figure there is no
+   * comparison to pass, and a page that cannot state a figure must not be
+   * built from a stale one — so the caller cannot hand this component an
+   * activity without one, and nothing here has to remember to look.
+   */
+  activity: TradeActivity & { comparison: TradeComparison };
   cityName: string;
   location: string;
   /** Dated, volatile external facts. Reviewed on a cadence — see HANDOFF. */
@@ -40,7 +50,9 @@ interface Props {
 const { spec, activity, cityName, location, notices = [] } = Astro.props;
 const noun = spec.subjectNoun;
 
-const a = activity;
+// The activity, with the figures of the segment it speaks for folded in. The
+// window below is that segment's window, not the file's.
+const a = { ...activity, ...activity.comparison };
 const windowLabel = `${monthLabel(a.windowStart)} to ${monthLabel(a.windowEnd)}`;
 const issuedTypes = a.sourceTypes.length;
 

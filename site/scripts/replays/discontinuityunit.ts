@@ -15,6 +15,12 @@
  * look alike and are not: a span ENDING at M-1 crosses nothing, and a span
  * STARTING at M crosses nothing either.
  *
+ * THE THIRD JOB, added with the policy: that the reader HONOURS the record.
+ * §6 drives `segmentsOf` — the one function that decides which months a figure
+ * may be computed from — at the boundary in both directions, and proves the
+ * slicing is what withholds the figure by running the same months with the
+ * record removed and watching a different answer come out.
+ *
  * Run: npx tsx scripts/replays/discontinuityunit.ts   (from site/)
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -23,7 +29,16 @@ import { fileURLToPath } from "node:url";
 import {
   DISCONTINUITIES,
   discontinuitiesCrossed,
+  type Discontinuity,
 } from "../../src/data/discontinuities";
+// From the pure module, not from `tradeActivity.ts` — that one reaches the
+// generated datasets through `import.meta.glob`, which does not exist outside a
+// Vite build, so importing it here would make this replay unrunnable.
+import {
+  MIN_SEGMENT_MONTHS,
+  segmentsOf,
+  type TradeObservation,
+} from "../../src/lib/tradeSegments";
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 let pass = 0, fail = 0;
@@ -93,6 +108,93 @@ A("no entry names a mapping version",
   !DISCONTINUITIES.some((d) => /trades-v\d|METHODOLOGY_VERSION/.test(d.what)));
 
 console.log("\n══ 5 · THE JSON TWIN THE AUTOPOSTER READS CANNOT GO STALE ══\n");
+
+console.log("\n══ 6 · THE READER HONOURS IT — POLICY C, THE WINDOW IS CUT ══\n");
+/*
+ * A for month-over-month and C for baselines (owner, Round 52). The site
+ * publishes no month-over-month figure — its claims are a monthly table and a
+ * half-over-half window — so A lives where that claim is made, in the
+ * autoposter (`_figure`, `_area_metric`, both article builders), asserted in
+ * `autoposter/tests/test_discontinuities.py`. What this asserts is C, which is
+ * the whole of the policy on this side.
+ */
+const months = (from: number, to: number, count = 10): TradeObservation[] =>
+  Array.from({ length: to - from + 1 }, (_, i) => ({
+    category: "energy_storage",
+    month: `2026-${String(from + i).padStart(2, "0")}`,
+    permitCount: count,
+    mappingVersion: "trades-v3",
+    mechanisms: ["work-class"],
+    sourceValues: [{ value: "hand-built for a test", count }],
+  }));
+const live = DISCONTINUITIES.find(
+  (d) => d.series === "energy_storage" && d.location === "austin") as Discontinuity;
+A("the live storage break is the case §6 runs on", Boolean(live), live?.fromMonth);
+
+{
+  // Thirteen months either side of the live break's month, as the series holds today.
+  const rows = months(1, 9);
+  const segs = segmentsOf(rows, [live]);
+  A("a spanned window becomes two segments", segs.length === 2,
+    segs.map((s) => `${s.fromMonth}..${s.toMonth}`).join(" | "));
+  A("…cut exactly at the break's own month", segs[1]?.fromMonth === live.fromMonth,
+    `${segs[0]?.toMonth} then ${segs[1]?.fromMonth}`);
+  A("…and the near side names the break that opened it",
+    segs[1]?.openedBy?.fromMonth === live.fromMonth);
+  A("the near side publishes nothing — three months, under the minimum",
+    segs[1]?.comparison === undefined && Boolean(segs[1]?.withheld),
+    segs[1]?.withheld?.reason);
+  A("…and the reason states the minimum rather than implying one",
+    segs[1]?.withheld?.minimumMonths === MIN_SEGMENT_MONTHS &&
+      segs[1]?.withheld?.reason.includes(String(MIN_SEGMENT_MONTHS)));
+  A("the far side is long enough and keeps its own figures",
+    segs[0]?.comparison !== undefined &&
+      segs[0]?.comparison?.windowEnd === "2026-06");
+  A("…and no segment's figures reach across the cut",
+    segs.every((s) => (s.comparison?.months ?? []).every(
+      (m) => (s.openedBy ? m.month >= live.fromMonth : m.month < live.fromMonth))));
+
+  // NON-VACUOUS, the Round 41a way: the same rows with the record removed produce one
+  // segment whose figures are the whole window's. So what withholds the near side is the
+  // record, not the shape of these numbers.
+  const unbroken = segmentsOf(rows, []);
+  A("the same months with no break recorded: one segment, figures published",
+    unbroken.length === 1 && unbroken[0].comparison !== undefined);
+  A("…covering every month, which the segmented version refuses to do",
+    unbroken[0].comparison?.monthCount === rows.length &&
+      segs.every((s) => (s.comparison?.monthCount ?? 0) < rows.length),
+    `${unbroken[0].comparison?.monthCount} vs ${segs.map((s) => s.comparison?.monthCount ?? 0).join("/")}`);
+}
+
+{
+  // The boundary, asserted at the boundary. Exactly MIN publishes; one fewer does not.
+  const at = segmentsOf(months(7, 6 + MIN_SEGMENT_MONTHS), [live]);
+  A(`a near side of exactly ${MIN_SEGMENT_MONTHS} months publishes`,
+    at.length === 1 && at[0].comparison !== undefined,
+    `${at[0]?.fromMonth}..${at[0]?.toMonth}`);
+  const under = segmentsOf(months(7, 5 + MIN_SEGMENT_MONTHS), [live]);
+  A(`a near side of ${MIN_SEGMENT_MONTHS - 1} does not`,
+    under.length === 1 && under[0].comparison === undefined &&
+      under[0].withheld?.monthCount === MIN_SEGMENT_MONTHS - 1);
+
+  // And the minimum governs a window that was CUT, not every window: a short series with
+  // no break recorded is governed by what already governed it, which this round did not
+  // touch. Asserted because the two cases differ by the record alone.
+  const shortAndWhole = segmentsOf(months(7, 8), []);
+  A("a short window with no break recorded still publishes",
+    shortAndWhole.length === 1 && shortAndWhole[0].comparison?.monthCount === 2);
+}
+
+{
+  // A break at the very first month of the window leaves ONE segment, not an empty one
+  // in front of it — the off-by-one that would have shipped a `compare([])`.
+  const atStart = segmentsOf(months(7, 9), [live]);
+  A("a break at the window's first month leaves one segment",
+    atStart.length === 1 && atStart[0].fromMonth === "2026-07");
+  A("…and it is marked as opened by the break",
+    atStart[0]?.openedBy?.fromMonth === live.fromMonth);
+}
+
 /*
  * The TS module is authoritative: it is where the non-empty evidence tuple is
  * enforced at compile time. But the autoposter is Python, across the Rule 0

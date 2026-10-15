@@ -291,6 +291,37 @@ Round 50's re-base found from the other direction.
 
 **Re-measure if the class's volume ever leaves single digits.** The instrument now exists.
 
+## Standing rule — a correction can remove the signal that would have found the next one
+
+Round 52, measured while auditing for breaks we had not recorded.
+
+The composition scan is the retroactive form of item 36: watch a category's `sourceValues` mix and
+a series that quietly stops measuring the same thing shows up as its composition moving. Run over
+every committed dataset, it flagged **nothing** — and the reason it found nothing is the finding.
+
+Under `trades-v2`, Austin solar's composition moved **51/49 → 69/31 → 87/13 → 91/9** across the
+storage break. That is the signal, in the data we hold, and a composition check would have caught
+it. Round 50 split solar from battery storage, and under `trades-v3` every category has a **single**
+source value at **100% in every month** — because the split gave each category a clean mechanism,
+which is exactly what made it the right fix. There is no longer a mix to move.
+
+> **A correction can remove the signal that would have found the next instance of the same thing.**
+> A fix that tidies a mechanism also tidies whatever a detector was reading off the mess. The fix
+> is still right; what is wrong is assuming the detector still covers that class afterwards.
+
+Two things follow, and both are load-bearing.
+
+**It is the argument that item 36 does not subsume item 41.** A detector that works on mixed
+mechanisms goes blind precisely when the mapping is tidied; a recorded fact with evidence does not
+degrade when the data it describes gets cleaner. The two are complements, not alternatives — which
+is the reason this round built the record rather than extending the scan.
+
+**And it generalises past composition.** Whenever a round fixes the thing some check was reading —
+a field it watched for drift, an overlap it counted, a mixture it measured — the fix should say
+what that check could see before and can no longer see, in the round's own audit. Otherwise the
+coverage loss is invisible: the check still runs, still passes, and now passes for a different
+reason.
+
 ## Standing rule — "does not record it" is not "shows none"
 
 Round 51, and it generalises well past storage.
