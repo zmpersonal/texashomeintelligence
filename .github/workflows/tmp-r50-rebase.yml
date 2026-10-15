@@ -27,6 +27,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: claude/thi-plan-review-m40n0x
+          # `refresh-feed.py` compares the rebuilt feed against the copy ON MAIN,
+          # read from the ref rather than the working tree. A shallow
+          # single-branch checkout has no `origin/main` for it to read, which is
+          # why the step failed twice before this line existed.
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
