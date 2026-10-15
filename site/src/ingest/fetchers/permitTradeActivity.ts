@@ -474,6 +474,9 @@ export function austinTradeWhere(since: string, until: string): string {
 }
 
 interface AustinRow {
+  // Deliberately NO index signature. Adding one would let a typo in a field name typecheck
+  // inside the ingestion loop, which is a worse trade than making a probe cast for the extra
+  // columns it asked for via `extraSelect`.
   /** Round 45: the identifier, newly selected. Austin's feed is 1:1 today, so
    * this changes no published figure — it is what makes that a measured
    * property of our counting rather than an inherited property of the feed. */
@@ -501,6 +504,16 @@ export async function fetchAustinTradeRows(
   since: string,
   until: string,
   appToken?: string,
+  /**
+   * Extra columns, for a caller that needs a field ingestion does not store.
+   *
+   * Round 51 added it rather than letting a probe assemble its own Austin request: the point of
+   * this function is that ONE piece of code builds every Austin request, predicate, page walk and
+   * count cross-check included. A probe needing a different `$select` is a different request, not
+   * a reproduction of this one — but it still has no business re-deriving the window or the
+   * predicate, which is where Round 49 and Round 50 each went wrong.
+   */
+  extraSelect?: readonly string[],
 ): Promise<{ rows: AustinRow[]; serverCount: number; where: string }> {
   const where = austinTradeWhere(since, until);
   const headers: Record<string, string> = {};
@@ -532,7 +545,10 @@ export async function fetchAustinTradeRows(
       $where: where,
       // `permit_number` added in Round 45. It was never requested before, so
       // the identifier needed to deduplicate was not even on the wire.
-      $select: "permit_number,permit_type_desc,work_class,description,issue_date",
+      $select: [
+        "permit_number", "permit_type_desc", "work_class", "description", "issue_date",
+        ...(extraSelect ?? []),
+      ].join(","),
       $order: ":id",
       $limit: String(AUSTIN_PAGE_SIZE),
       $offset: String(page * AUSTIN_PAGE_SIZE),

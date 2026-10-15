@@ -25,7 +25,6 @@ import {
   resolveHeader,
 } from "../../src/ingest/fetchers/permitTradeActivity";
 import {
-  AUSTIN_SOLAR_TEXT,
   AUSTIN_STORAGE_TEXT,
   SAN_ANTONIO_PERMIT_TYPE_MAP,
 } from "../../src/ingest/tradeCategories";
@@ -124,6 +123,62 @@ async function austin() {
       };
     });
 
+  // ── Q2b: ONE FILER OR MANY HOMES? ──────────────────────────────────────────
+  // The templating in Q1 says ~90% of post-July storage permits share one description shape.
+  // That is consistent with one program filing repeatedly AND with one big installer doing real
+  // work, and those are different findings. The feed carries no applicant or contractor field —
+  // measured, see `availableFieldNames` — so the filer cannot be named from it. What it does
+  // carry is CONCENTRATION: a master permit, a project id, a council district, a ZIP and a
+  // permit class. If 146 permits share one master permit or sit in one district, it is one
+  // project rather than a city-wide shift.
+  //
+  // Counts and shares only. `original_address1` exists in the feed and is deliberately not
+  // requested: Round 44's ruling allowlists what we read, and a street address is outside it.
+  const EXTRA = [
+    "permit_class", "permit_class_mapped", "issue_method",
+    "council_district", "original_zip", "masterpermitnum", "project_id",
+  ] as const;
+  const { rows: wide } = await fetchAustinTradeRows(
+    w.since, w.until, process.env.SOCRATA_APP_TOKEN, EXTRA);
+
+  const concentration = new Map<string, Map<string, Map<string, number>>>();
+  for (const r of wide) {
+    if (!r.issue_date) continue;
+    if ((r.work_class ?? "").trim() !== "Auxiliary Power") continue;
+    if (!AUSTIN_STORAGE_TEXT.test(r.description ?? "")) continue;
+    const month = new Date(r.issue_date).toISOString().slice(0, 7);
+    const extra = r as unknown as Record<string, string | undefined>;
+    const forMonth = concentration.get(month) ?? new Map<string, Map<string, number>>();
+    for (const f of EXTRA) {
+      const counts = forMonth.get(f) ?? new Map<string, number>();
+      const v = (extra[f] ?? "").trim() || "(blank)";
+      counts.set(v, (counts.get(v) ?? 0) + 1);
+      forMonth.set(f, counts);
+    }
+    concentration.set(month, forMonth);
+  }
+
+  const concentrationByMonth = [...concentration.keys()].sort().map((m) => {
+    const fields = concentration.get(m)!;
+    const out: Record<string, unknown> = { month: m };
+    for (const f of EXTRA) {
+      const counts = fields.get(f) ?? new Map<string, number>();
+      const total = [...counts.values()].reduce((s, n) => s + n, 0);
+      const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+      out[f] = {
+        distinct: counts.size,
+        topShare: total ? +((sorted[0]?.[1] ?? 0) / total * 100).toFixed(1) : null,
+        // The VALUES of permit_class / permit_class_mapped / issue_method are small
+        // vocabularies the city publishes, so naming them says something. A district or a ZIP
+        // is reported as a distribution only.
+        values: ["permit_class", "permit_class_mapped", "issue_method"].includes(f)
+          ? Object.fromEntries(sorted.slice(0, 6))
+          : undefined,
+      };
+    }
+    return out;
+  });
+
   // ── Q2: did the mix change, or the volume? Asked of the WHOLE feed, not our predicate. ──
   const get = async (params: Record<string, string>) => {
     const url = new URL(AUSTIN);
@@ -175,6 +230,7 @@ async function austin() {
     window: w,
     auxPowerByMonth: describe(aux),
     storageByMonth: describe(storage),
+    storageConcentrationByMonth: concentrationByMonth,
     wholeFeedByMonth: Object.fromEntries(
       allByMonth.map((r) => [(r.month ?? "").slice(0, 7), Number(r.permits)])),
     auxPowerClassVolumeByMonth: seriesFor(classByMonth, "work_class", "Auxiliary Power"),
