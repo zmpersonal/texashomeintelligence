@@ -23,6 +23,8 @@ import article_engine as engine
 import topic_scorer                 # noqa: E402     # noqa: E402
 import card as card_mod            # noqa: E402
 import run_article                 # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent / "fixtures"))
+import retired_electricity_builder as retired   # noqa: E402
 from claim_ledger import Claim     # noqa: E402
 
 def _isolated_cfg():
@@ -59,8 +61,8 @@ SIDECAR = {
 
 
 def _run():
-    return engine.run("thi", config=_isolated_cfg(), write_fn=run_article.write,
-                      build_claims_fn=run_article.build_claims, today=TODAY,
+    return engine.run("thi", config=_isolated_cfg(), write_fn=retired.write,
+                      build_claims_fn=retired.build_claims, today=TODAY,
                       articles=run_article.TOPIC_ARTICLES)
 
 
@@ -107,8 +109,8 @@ def test_the_built_block_matches_the_card_the_owner_APPROVED():
         return
     approved = re.search(r"^card:\n(?:  .*\n)+", live, re.M)
     assert approved, "could not find the approved card block — check this by hand"
-    assert engine.run("thi", config=_isolated_cfg(), write_fn=run_article.write,
-                      build_claims_fn=run_article.build_claims,
+    assert engine.run("thi", config=_isolated_cfg(), write_fn=retired.write,
+                      build_claims_fn=retired.build_claims,
                       today=TODAY)["card_frontmatter"] == approved.group(0).rstrip()
 
 
@@ -476,8 +478,8 @@ def test_the_engine_skips_a_topic_it_has_already_written():
 
     published = engine.published_questions(cfg)
     assert taken in published, "the premise did not take"
-    r = engine.run("thi", config=cfg, write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=today,
+    r = engine.run("thi", config=cfg, write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=today,
                    articles=run_article.TOPIC_ARTICLES, exclude_published=True)
     assert r["article"]["title"] != taken, "it wrote the topic it had already written"
     assert r["article"]["title"] not in published
@@ -534,8 +536,8 @@ def test_the_published_flag_is_read_from_the_FRONTMATTER_not_the_body():
 def test_a_topic_with_no_claim_builder_HALTS_rather_than_falling_through():
     """Silently publishing the runner-up is how a machine drifts off its own ranking."""
     try:
-        engine.run("thi", config=_isolated_cfg(), write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=date(2026, 9, 11),
+        engine.run("thi", config=_isolated_cfg(), write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=date(2026, 9, 11),
                    articles={"nothing-matches": (None, None)}, exclude_published=True)
     except RuntimeError as e:
         assert "no claim-builder" in str(e)
@@ -1603,7 +1605,7 @@ def test_FROZEN_the_locked_builder_REFUSES_another_period_instead_of_crashing():
     an engine bug."""
     import claim_ledger as cl
     try:
-        run_article.build_claims(engine.load_feed(), CFG, date(2026, 6, 15))
+        retired.build_claims(engine.load_feed(), CFG, date(2026, 6, 15))
     except cl.LedgerHalt as e:
         assert "locked to August 2026" in str(e)
         return

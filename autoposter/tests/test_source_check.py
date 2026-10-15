@@ -29,6 +29,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import article_engine as engine            # noqa: E402
 import claim_ledger as cl                  # noqa: E402
 import run_article                         # noqa: E402
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent / "fixtures"))
+import retired_electricity_builder as retired   # noqa: E402
 import source_check                        # noqa: E402
 
 CFG, FEED = engine.load_config(), engine.load_feed()
@@ -168,8 +170,8 @@ def test_the_DRIVER_REFUSES_on_a_disagreement_rather_than_publishing():
     cfg["publish"] = dict(cfg["publish"], published_ledger=tempfile.mkdtemp() + "/empty.json",
                           analysis_dir=tempfile.mkdtemp())
     d = autopilot.evaluate(
-        cfg, today=TODAY, write_fn=run_article.write,
-        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES,
+        cfg, today=TODAY, write_fn=retired.write,
+        build_claims_fn=retired.build_claims, articles=run_article.TOPIC_ARTICLES,
         captions=run_article.TOPIC_CAPTIONS, link_opener=lambda u: (True, "ok"),
         media_opener=lambda u: (True, "ok"), verify_fn=contradicting,
         state={"history": []}, env={})

@@ -15,6 +15,8 @@ import card as card_mod            # noqa: E402
 import claim_ledger as cl           # noqa: E402
 import publish_target as pt         # noqa: E402
 import run_article                  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent / "fixtures"))
+import retired_electricity_builder as retired   # noqa: E402
 import topic_scorer                 # noqa: E402
 import yaml                         # noqa: E402
 
@@ -68,8 +70,8 @@ def test_lookalike_host_halts():
 
 
 def test_full_run_halts_before_writing_anything():
-    e = _halts(engine.run, "thi", write_fn=run_article.write,
-               build_claims_fn=run_article.build_claims, today=TODAY,
+    e = _halts(engine.run, "thi", write_fn=retired.write,
+               build_claims_fn=retired.build_claims, today=TODAY,
                articles=run_article.TOPIC_ARTICLES, specs_dir=MISMATCH)
     assert "two locks disagree" in str(e)
 
@@ -87,8 +89,8 @@ def test_second_model_call_raises():
 
 
 def test_a_real_run_spends_exactly_one():
-    r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY,
+    r = engine.run("thi", write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=TODAY,
                    articles=run_article.TOPIC_ARTICLES)
     assert r["model_calls"] == 1
 
@@ -122,8 +124,8 @@ def test_a_HALTED_topic_is_STEPPED_OVER_and_the_SKIP_IS_RECORDED():
     """
     ranked = [t for t in topic_scorer.score_topics(engine.load_feed(), CFG) if t["buildable"]]
     top, runner_up = ranked[0]["id"], ranked[1]["id"]
-    r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY,
+    r = engine.run("thi", write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=TODAY,
                    articles=_registry_with(top, _refusing()))
     assert r["topic"]["id"] == runner_up, r["topic"]["id"]
     assert r["skipped"] == [f"{top}: LEDGER: this topic's data is not there yet"], r["skipped"]
@@ -135,8 +137,8 @@ def test_EVERY_topic_halting_raises_ONE_refusal_carrying_EVERY_reason():
     articles = {tid: (_refusing(f"{tid} says no"), w)
                 for tid, (_, w) in ((t, tuple(b)) for t, b in run_article.TOPIC_ARTICLES.items())}
     try:
-        engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY, articles=articles)
+        engine.run("thi", write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=TODAY, articles=articles)
     except engine.AllTopicsHalted as exc:
         assert len(exc.skipped) >= 4, exc.skipped
         assert all("says no" in line for line in exc.skipped), exc.skipped
@@ -161,8 +163,8 @@ def test_FALL_THROUGH_STOPS_AT_THE_MODEL_CALL():
     real = engine.ledger_mod.verify_prose
     engine.ledger_mod.verify_prose = lambda *a, **kw: Failing()
     try:
-        e = _halts(engine.run, "thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY,
+        e = _halts(engine.run, "thi", write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=TODAY,
                    articles=run_article.TOPIC_ARTICLES)
         assert "every numeral is wrong" in str(e), str(e)
         assert not isinstance(e, engine.AllTopicsHalted), (
@@ -204,7 +206,7 @@ def _real_claims_and_body(topic_id="electricity-still-rising", today=None):
 
     These three tests exercise the ledger and the prose gates against real output, so the
     builder has to be the one actually wired to the topic. They used to call
-    `run_article.build_claims` by name — the August-2026 one-off, retired on 2026-09-19 and
+    `retired.build_claims` by name (now a test fixture) — the August-2026 one-off, retired on 2026-09-19 and
     overridden in `TOPIC_ARTICLES` ever since, which Round 45's purge of the fabricated rows
     finally made unbuildable. Reading the registry means a builder being replaced cannot leave
     a test pointed at the previous one.
@@ -301,8 +303,8 @@ def test_facebook_promo_passes_the_full_social_suite():
     """
     if not _card_rendered():
         return
-    r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY,
+    r = engine.run("thi", write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=TODAY,
                    articles=run_article.TOPIC_ARTICLES)
     post, gate = engine.build_facebook_promo(r["article"], r["claims"], _cfg_unposted(), TODAY,
                                              link_opener=OK_LINK, media_opener=OK_LINK)
@@ -315,8 +317,8 @@ def test_promo_is_REJECTED_when_the_OG_card_does_not_resolve():
     exempt it from the media gate — it puts it under one."""
     if not _card_rendered():
         return
-    r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY,
+    r = engine.run("thi", write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=TODAY,
                    articles=run_article.TOPIC_ARTICLES)
     _, gate = engine.build_facebook_promo(r["article"], r["claims"], _cfg_unposted(), TODAY,
                                           link_opener=OK_LINK,
@@ -331,8 +333,8 @@ def test_promo_is_REJECTED_when_its_destination_does_not_resolve():
     and a published link to nowhere."""
     if not _card_rendered():
         return
-    r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY,
+    r = engine.run("thi", write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=TODAY,
                    articles=run_article.TOPIC_ARTICLES)
     _, gate = engine.build_facebook_promo(r["article"], r["claims"], _cfg_unposted(), TODAY,
                                           link_opener=lambda url: (False, "HTTP 404"))
@@ -345,8 +347,8 @@ def test_promo_is_REJECTED_when_the_destination_is_merely_UNREACHABLE():
     publishing on that ambiguity is the exact thing the halt of 2026-09-11 refused to do."""
     if not _card_rendered():
         return
-    r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY,
+    r = engine.run("thi", write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=TODAY,
                    articles=run_article.TOPIC_ARTICLES)
     _, gate = engine.build_facebook_promo(
         r["article"], r["claims"], _cfg_unposted(), TODAY,

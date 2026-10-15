@@ -30,6 +30,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import article_engine as engine       # noqa: E402
 import channel_guard                  # noqa: E402
 import run_article                    # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent / "fixtures"))
+import retired_electricity_builder as retired   # noqa: E402
 import run_autopilot as ra            # noqa: E402
 
 def _isolated_cfg():
@@ -56,8 +58,8 @@ def _real_post():
     cfg = _isolated_cfg()                        # the SAME premise the engine ran under: the
     #                                              duplicate gate must judge the article the
     #                                              engine was allowed to pick, not the live one.
-    result = engine.run("thi", config=cfg, write_fn=run_article.write,
-                        build_claims_fn=run_article.build_claims, today=TODAY,
+    result = engine.run("thi", config=cfg, write_fn=retired.write,
+                        build_claims_fn=retired.build_claims, today=TODAY,
                         articles=run_article.TOPIC_ARTICLES, exclude_published=True)
     article, claims, card = result["article"], result["claims"], result["card"]
     directory = Path(tempfile.mkdtemp())
