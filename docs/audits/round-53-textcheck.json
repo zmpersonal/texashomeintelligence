@@ -1,0 +1,6 @@
+{
+  "offenders": [],
+  "guardCanFire": true,
+  "plantedOffenderPath": "$.byCategoryMonth[0].plantedForTheGuard",
+  "note": "paths and shapes only; the matched text is deliberately absent. `guardCanFire` is this same guard run against the measurement with one description-shaped string planted in it."
+}
