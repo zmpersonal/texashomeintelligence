@@ -1,8 +1,8 @@
 {
-  "measuredAt": "2026-10-15T14:18:32.440Z",
+  "measuredAt": "2026-10-15T14:24:22.085Z",
   "window": {
     "since": "2025-09-01T00:00:00.000Z",
-    "until": "2026-10-15T14:18:30.662Z"
+    "until": "2026-10-15T14:24:17.508Z"
   },
   "auxPowerRows": 1093,
   "candidateStoragePattern": "\\bbatter\\w*|\\bstorage\\b|\\bess\\b|powerwall|\\bbess\\b|\\bess\\/|energy\\s+storage",
@@ -168,22 +168,111 @@
     "auxiliary": 3,
     "need": 3
   },
-  "residueTotal": 13,
-  "residueMatchingNeither": {
-    "note": "Verbatim descriptions are NOT recorded here. Two of the 13 carried a personal name, and a city permit record being public is not a reason for this repo to republish it (Round 44's allowlist ruling). Classified by hand from the run output instead; the probe no longer emits free text.",
-    "total": 13,
-    "handClassified": {
-      "reads as solar but never says solar/PV/photovoltaic": 6,
-      "reads as storage but never says battery/storage": 1,
-      "neither \u2014 vehicle-to-home charging": 2,
-      "neither \u2014 electrical service work": 3,
-      "neither \u2014 roofing with energy shingles": 1
+  "residueShapes": [
+    {
+      "count": 1,
+      "length": 96,
+      "mentionsKw": false,
+      "mentionsRoofMounted": true,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
     },
-    "theShapesThatMatter": [
-      "kW DC / kW AC with a module count and no the word solar",
-      "'Roof Mounted Auxiliary Power System' with a kW rating",
-      "a named panel manufacturer with a wattage",
-      "a named battery product with an expansion pack and a gateway"
-    ]
-  }
+    {
+      "count": 1,
+      "length": 980,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": true,
+      "mentionsModulesOrPanels": true
+    },
+    {
+      "count": 1,
+      "length": 675,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": true,
+      "mentionsModulesOrPanels": true
+    },
+    {
+      "count": 1,
+      "length": 54,
+      "mentionsKw": true,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": true
+    },
+    {
+      "count": 1,
+      "length": 67,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 29,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 69,
+      "mentionsKw": true,
+      "mentionsRoofMounted": true,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 65,
+      "mentionsKw": false,
+      "mentionsRoofMounted": true,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 27,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 119,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 98,
+      "mentionsKw": false,
+      "mentionsRoofMounted": true,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 75,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": true
+    },
+    {
+      "count": 1,
+      "length": 79,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    }
+  ],
+  "residueTotal": 13
 }
