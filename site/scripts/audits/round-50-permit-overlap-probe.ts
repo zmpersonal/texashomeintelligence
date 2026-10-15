@@ -19,11 +19,18 @@
  * run, stated in `controls` below. A control that fails means this probe is
  * wrong, not that the city's data is.
  *
- * ── PII ─────────────────────────────────────────────────────────────────────
- * The hand-readable sample carries permit descriptions. Every one goes through
- * the repo's own `redactPersonalShapes`, and it is REDACTED BEFORE IT IS
- * SHORTENED (Round 47's rule), so a truncation cannot leave half an address
- * behind the redactor's back.
+ * ── PII: THIS FILE COMMITS NO FREE TEXT ─────────────────────────────────────
+ * It used to. The first run wrote permit descriptions into the committed JSON,
+ * having passed them through `redactPersonalShapes` — which catches address and
+ * phone SHAPES and knows nothing about names. Two of the descriptions carried a
+ * personal name, and they reached a public repo. A city permit record being
+ * public is not a reason for this repo to republish it (Round 44's allowlist
+ * ruling: allowlist what we ingest, never denylist what we don't).
+ *
+ * So descriptions are reduced to STRUCTURAL PREDICATES here — does the text
+ * mention roof, solar, a battery — which is all the tally needs. Free text is
+ * read from the run's own output during a hand-read and never written down.
+ * Redaction is not a substitute for not collecting it.
  */
 import { writeFileSync, readFileSync } from "node:fs";
 import {
@@ -34,12 +41,23 @@ import {
 } from "../../src/ingest/fetchers/permitTradeActivity";
 import { classifyAustin, classifySanAntonio } from "../../src/ingest/tradeCategories";
 import { parseCsv, rowsToRecords } from "../../src/ingest/csv";
-import { redactPersonalShapes } from "../../src/ingest/redactPersonalShapes";
 
 const OUT = new URL("../../../docs/audits/round-50-probe.json", import.meta.url);
 const FOCUS = "2026-09";
 
 type Cats = Set<string>;
+
+/** What a description is, without being what it says. The only form of a
+ * permit description this file is allowed to write down. */
+function describe(text: string) {
+  return {
+    length: text.length,
+    mentionsRoof: /roof/i.test(text),
+    mentionsSolarOrPv: /\bsolar\b|photovoltaic|\bpv\b/i.test(text),
+    mentionsBatteryOrStorage: /\bbatter|\bstorage\b|powerwall/i.test(text),
+    mentionsKw: /\bkw\b/i.test(text),
+  };
+}
 
 function pairKey(a: string, b: string): string {
   return [a, b].sort().join(" + ");
@@ -112,7 +130,7 @@ async function austin() {
     month: string;
     permit_type_desc: string;
     work_class: string;
-    description: string;
+    descriptionShape: ReturnType<typeof describe>;
     categories: string[];
     mechanisms: string[];
   }[] = [];
@@ -135,15 +153,12 @@ async function austin() {
     perPermit.set(id, prev);
 
     if (cls.length > 1 && month === FOCUS) {
-      // REDACT, THEN SHORTEN. Round 47's rule, and the inverse of what
-      // austinPermits.ts does at its line 116 — noted in the audit.
-      const red = redactPersonalShapes(row.description ?? "");
       multi.push({
         permit: rawId,
         month,
         permit_type_desc: (row.permit_type_desc ?? "").trim(),
         work_class: (row.work_class ?? "").trim(),
-        description: red.text.slice(0, 220),
+        descriptionShape: describe(row.description ?? ""),
         categories: cls.map((c) => c.category),
         mechanisms: cls.map((c) => `${c.category}:${c.mechanism}`),
       });
@@ -415,8 +430,8 @@ async function austinSolarComposition() {
       else if (GENERATOR.test(desc)) m.auxOnlyGenerator.add(id);
       else {
         m.auxOnlyOther.add(id);
-        // REDACT, then shorten. A description shape, for reading — not a record of a permit.
-        const key = redactPersonalShapes(desc).text.slice(0, 110) || "(empty description)";
+        // A SHAPE, never the text. See the header.
+        const key = JSON.stringify(describe(desc));
         m.otherExamples.set(key, (m.otherExamples.get(key) ?? 0) + 1);
       }
     }

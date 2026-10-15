@@ -16,7 +16,6 @@
 import { writeFileSync } from "node:fs";
 import { fetchAustinTradeRows, recountWindow } from "../../src/ingest/fetchers/permitTradeActivity";
 import { AUSTIN_SOLAR_TEXT } from "../../src/ingest/tradeCategories";
-import { redactPersonalShapes } from "../../src/ingest/redactPersonalShapes";
 
 const OUT = new URL("../../../docs/audits/round-50-aux-vocabulary.json", import.meta.url);
 
@@ -44,8 +43,17 @@ for (const r of aux) {
   else if (isStorage) m.storage++;
   else {
     m.neither++;
-    // REDACT, then shorten.
-    const key = redactPersonalShapes(desc).text.slice(0, 160).trim() || "(empty description)";
+    // A SHAPE, never the text — the first run of this probe committed two
+    // personal names to a public repo this way. `redactPersonalShapes` knows
+    // address and phone shapes and nothing about names, so it was never the
+    // control this needed. Residue text is read from the run output by hand.
+    const key = JSON.stringify({
+      length: desc.length,
+      mentionsKw: /\bkw\b/i.test(desc),
+      mentionsRoofMounted: /roof[\s-]*mount|roof ?top/i.test(desc),
+      mentionsV2hOrCharging: /v2h|vehicle-to-home|charging/i.test(desc),
+      mentionsModulesOrPanels: /\bmodules?\b|\bpanels?\b/i.test(desc),
+    });
     residue.set(key, (residue.get(key) ?? 0) + 1);
   }
   byMonth.set(month, m);
@@ -68,9 +76,9 @@ const out = {
   topTokensInNonSolarDescriptions: Object.fromEntries(
     [...tokens.entries()].sort((a, b) => b[1] - a[1]).slice(0, 60),
   ),
-  residueMatchingNeither: Object.fromEntries(
-    [...residue.entries()].sort((a, b) => b[1] - a[1]),
-  ),
+  residueShapes: [...residue.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([shape, count]) => ({ count, ...JSON.parse(shape) })),
   residueTotal: [...residue.values()].reduce((s, n) => s + n, 0),
 };
 writeFileSync(OUT, JSON.stringify(out, null, 2) + "\n");

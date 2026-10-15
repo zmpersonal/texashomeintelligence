@@ -168,20 +168,22 @@
     "auxiliary": 3,
     "need": 3
   },
+  "residueTotal": 13,
   "residueMatchingNeither": {
-    "Installation of 540kW AC Roof Mounted Auxiliary Power System \n\nThe service is for BLDG 2 UNIT DG": 1,
-    "Installation of Tesla Powershare bidirectional V2H (vehicle-to-home) charging system. Per guidance from Stuart Prior at AE we need to submit this interconnectio": 1,
-    "Installation of GM Energy V2H (vehicle-to-home) charging system. Per guidance from Stuart Prior at AE we need to submit this interconnection application with in": 1,
-    "24 MODULES - SYSTEM SIZE STC (8.64 kW DC / 7.60 kW AC)": 1,
-    "Express: Installation of GAF Timberline asphalt and energy shingles": 1,
-    "Pre-Wire For Detach and Reset": 1,
-    "Installation of 37.83 KW Rooftop System for Existing Office/Warehouse": 1,
-    "installation of 50k WAC Ballasted roof top auxiliary power system": 1,
-    "Replacing the AC disconnect": 1,
-    "Unit A: Rev meter 7269812\nWork complete need second permit since this is a duplex. First permit for Unit B is 25-020847": 1,
-    "Installation of 960kW AC Roof Mounted Auxiliary Power System \n3500 S SH 130 SVRD SB BLDG 1-Unit DG": 1,
-    "[ELipps Main House] 132 Ground-Mounted residential Trina Vertex 620W panels": 1,
-    "Installation of a 15.13kW system with 1 Tesla PW 1 Expansion pack and 1 Gateway": 1
-  },
-  "residueTotal": 13
+    "note": "Verbatim descriptions are NOT recorded here. Two of the 13 carried a personal name, and a city permit record being public is not a reason for this repo to republish it (Round 44's allowlist ruling). Classified by hand from the run output instead; the probe no longer emits free text.",
+    "total": 13,
+    "handClassified": {
+      "reads as solar but never says solar/PV/photovoltaic": 6,
+      "reads as storage but never says battery/storage": 1,
+      "neither \u2014 vehicle-to-home charging": 2,
+      "neither \u2014 electrical service work": 3,
+      "neither \u2014 roofing with energy shingles": 1
+    },
+    "theShapesThatMatter": [
+      "kW DC / kW AC with a module count and no the word solar",
+      "'Roof Mounted Auxiliary Power System' with a kW rating",
+      "a named panel manufacturer with a wattage",
+      "a named battery product with an expansion pack and a gateway"
+    ]
+  }
 }
