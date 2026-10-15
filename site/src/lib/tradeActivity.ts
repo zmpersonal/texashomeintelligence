@@ -19,20 +19,35 @@
  * decision was that each city gets the better reading its own source supports,
  * labelled for what it is.
  *
- * ── THE TREND THRESHOLD ───────────────────────────────────────────────────
- * A permit count is a count of events, so its month-to-month wobble is
- * Poisson: the standard deviation of a monthly count with mean m is √m, which
- * is 100/√m as a percentage. A half-over-half change smaller than that is
- * indistinguishable from counting noise, and this module refuses to call it a
- * trend — `clearsThreshold` is false and the page says so rather than making
- * the claim. It is deliberately the conservative form: the noise on a
- * six-month SUM is smaller still (1/√6 of it), so testing the change against
- * the single-month figure sets a higher bar than the comparison strictly
- * needs.
+ * The threshold a trend claim must clear, and what a recorded source
+ * discontinuity does to every figure here, are documented on
+ * `TradeComparison` and `MIN_SEGMENT_MONTHS` below.
  *
  * All arithmetic here is deterministic. No model output, ever (COST.md rule 2).
  */
 import { findDataset, freshnessOf, type Freshness } from "./datasets";
+import { discontinuitiesCrossed, type Discontinuity } from "../data/discontinuities";
+// The pure half — which months a figure may be computed from, and the figures
+// themselves. Its own module so it is testable outside a Vite build; see its
+// header. Re-exported below so this file stays the one import for callers.
+import {
+  MIN_SEGMENT_MONTHS,
+  segmentsOf,
+  type SegmentWithheld,
+  type SourceType,
+  type TradeComparison,
+  type TradeObservation,
+  type TradeSegment,
+} from "./tradeSegments";
+export {
+  MIN_SEGMENT_MONTHS,
+  segmentsOf,
+  type SegmentWithheld,
+  type SourceType,
+  type TradeComparison,
+  type TradeObservation,
+  type TradeSegment,
+};
 // Round 10b: a module-scope `new Date()` reads 1970 under the Workers runtime
 // Astro builds against. Anything needing the real build date uses this.
 import { buildNow } from "../data/serviceNotices";
@@ -43,76 +58,46 @@ import {
   type TradeCategory,
 } from "../ingest/tradeCategories";
 
-interface TradeObservation {
-  category: string;
-  month: string;
-  permitCount: number;
-  mappingVersion: string;
-  mechanisms: string[];
-  sourceValues: { value: string; count: number }[];
-}
 
-export interface SourceType {
-  value: string;
-  count: number;
-}
+
+
+
+
 
 export interface TradeActivity {
   category: string;
   location: string;
-  /** Months present, oldest first. */
-  months: { month: string; permitCount: number }[];
-  monthCount: number;
-  total: number;
-  /** Rounded — a mean of counts is not a precise quantity. */
-  meanPerMonth: number;
-  firstHalf: number;
-  secondHalf: number;
-  /** Percent change, first half of the window to second. */
-  changePct: number;
-  /** 100/√mean — the counting-noise floor a claim must clear. */
-  noisePct: number;
-  /** True when |changePct| exceeds the noise floor. */
-  clearsThreshold: boolean;
-  /** "rose" | "fell" | "held roughly flat" — derived, never asserted. */
-  direction: "rose" | "fell" | "flat";
-  /** Highest-count months, highest first. */
-  peakMonths: { month: string; permitCount: number }[];
-  /** Lowest-count month in the window. */
-  troughMonth: { month: string; permitCount: number };
   /**
-   * Round 12. SEASONALITY IS A DIFFERENT QUESTION FROM TREND, and conflating
-   * them produces a false claim. San Antonio roofing is the case that proves
-   * it: half-over-half it is flat to 0.1%, well inside the noise floor, so no
-   * trend is reportable — and yet the window runs 634 permits in one month and
-   * 270 in another, a 2.3x swing that is nowhere near noise.
+   * Breaks this window SPANS — Round 52. Built with the record rather than
+   * after it: `discontinuities.ts` has a consumer from the day it exists,
+   * because a recorded fact nothing consults is the defect this family keeps
+   * producing (Round 46 a config key with no consumer, Round 49 a consumer
+   * with no config, Round 50 a stored field with no reader).
    *
-   * Trend asks "is the second half different from the first". Seasonality asks
-   * "is the peak different from the trough". A series can be dead flat on the
-   * first and violently seasonal on the second, which is exactly what a roofing
-   * series does: it rises and falls within the year and lands where it started.
-   *
-   * Tested the same way as the trend — against counting noise. The difference
-   * between two Poisson counts has standard deviation sqrt(peak + trough), so
-   * `amplitudeSigma` is how many of those the observed spread is. Above 2 the
-   * spread cannot be explained by counting noise.
+   * `spansDiscontinuity` is the one-line test a caller needs; `crossedBy` says
+   * which computations cross, because they do not all cross the same breaks: a
+   * month-over-month on two post-break months crosses nothing while the
+   * window's mean crosses everything.
    */
-  amplitude: {
-    spread: number;
-    ratio: number;
-    sigma: number;
-    /** True when the peak-to-trough spread exceeds counting noise. */
-    significant: boolean;
-  };
-  /** The metro's own permit-type names that rolled into this category. */
-  sourceTypes: SourceType[];
+  spansDiscontinuity: boolean;
+  discontinuities: Discontinuity[];
+  crossedBy: { window: Discontinuity[]; monthOverMonth: Discontinuity[] };
+  /** The window cut at every break it spans, oldest first. One segment when it
+   * spans none — in which case `segments[0].comparison` is the whole window and
+   * every figure is what it was before this round. */
+  segments: TradeSegment[];
+  /** The newest segment's figures: what a page or a builder may publish now.
+   * Undefined when that segment is too short to support them, and then
+   * `withheld` says so. Nothing falls back to an older segment — history under
+   * a retired source behaviour is not the current reading, and substituting it
+   * would be the quiet wrong answer this policy exists to prevent. */
+  comparison?: TradeComparison;
+  withheld?: SegmentWithheld;
   /** How rows were classified: permit-type / work-class / description-text. */
   mechanisms: string[];
   mappingVersion: string;
   /** Every mapping version present on disk for this series, newest last. */
   mappingVersionsOnDisk: string[];
-  windowStart: string;
-  windowEnd: string;
   /** Permit types the mapping assigns to this category, whether or not any
    * were issued in this window. `sourceTypes.length` is how many actually
    * issued — the two differ and the page must not conflate them. */
@@ -191,70 +176,36 @@ export function tradeActivity(location: string, category: string): TradeActivity
   const rows = all.filter((r) => r.month < currentMonth);
   if (rows.length === 0) return undefined;
 
-  const months = rows.map((r) => ({ month: r.month, permitCount: r.permitCount }));
-  const total = rows.reduce((s, r) => s + r.permitCount, 0);
-  const n = rows.length;
-  const mean = total / n;
+  // Round 52. The whole window, and separately the last two months — the span a
+  // month-over-month claim actually makes.
+  const windowBreaks = discontinuitiesCrossed(
+    "permit-trade-activity", location, category,
+    rows[0].month, rows[rows.length - 1].month);
+  const momBreaks = rows.length >= 2
+    ? discontinuitiesCrossed("permit-trade-activity", location, category,
+                             rows[rows.length - 2].month, rows[rows.length - 1].month)
+    : [];
 
-  // Split into halves. An odd month count drops the middle month from both
-  // sides rather than letting it land on one — a half-over-half comparison
-  // with unequal denominators is not a comparison.
-  const half = Math.floor(n / 2);
-  const firstHalf = rows.slice(0, half).reduce((s, r) => s + r.permitCount, 0);
-  const secondHalf = rows.slice(n - half).reduce((s, r) => s + r.permitCount, 0);
-  const changePct = firstHalf === 0 ? 0 : ((secondHalf - firstHalf) / firstHalf) * 100;
-  const noisePct = mean > 0 ? (100 * Math.sqrt(mean)) / mean : Infinity;
-  const clearsThreshold = Math.abs(changePct) > noisePct;
-
-  const sortedDesc = [...months].sort((a, b) => b.permitCount - a.permitCount);
-
-  const agg = new Map<string, number>();
-  for (const r of rows) {
-    for (const s of r.sourceValues) agg.set(s.value, (agg.get(s.value) ?? 0) + s.count);
-  }
-  const sourceTypes = [...agg.entries()]
-    .map(([value, count]) => ({ value, count }))
-    .sort((a, b) => b.count - a.count);
+  const segments = segmentsOf(rows, windowBreaks);
+  const current = segments[segments.length - 1];
 
   return {
     category,
     location,
-    months,
-    monthCount: n,
-    total,
-    meanPerMonth: Math.round(mean),
-    firstHalf,
-    secondHalf,
-    changePct,
-    noisePct,
-    clearsThreshold,
-    direction: !clearsThreshold ? "flat" : changePct > 0 ? "rose" : "fell",
-    peakMonths: sortedDesc.slice(0, 3),
-    troughMonth: sortedDesc[sortedDesc.length - 1],
-    amplitude: (() => {
-      const peak = sortedDesc[0].permitCount;
-      const trough = sortedDesc[sortedDesc.length - 1].permitCount;
-      const spread = peak - trough;
-      const sigmaUnit = Math.sqrt(peak + trough);
-      return {
-        spread,
-        ratio: trough > 0 ? peak / trough : Infinity,
-        sigma: sigmaUnit > 0 ? spread / sigmaUnit : 0,
-        significant: sigmaUnit > 0 && spread / sigmaUnit > 2,
-      };
-    })(),
-    sourceTypes,
+    spansDiscontinuity: windowBreaks.length > 0,
+    discontinuities: windowBreaks,
+    crossedBy: { window: windowBreaks, monthOverMonth: momBreaks },
+    segments,
+    // Exactly one of the two, and the withheld case carries no number at all.
+    ...(current.comparison
+      ? { comparison: current.comparison }
+      : { withheld: current.withheld }),
     mechanisms: [...new Set(rows.flatMap((r) => r.mechanisms))],
     // Safe now that `all` is filtered to one version — and asserted, because
     // "rows[0] speaks for all of them" is exactly the assumption that made the
     // version mechanism decorative.
     mappingVersion: newest ?? rows[0].mappingVersion,
-    /** Every version on disk for this series, newest last. More than one is
-     * normal after a methodology change and means the older ones are retained
-     * but not published. */
     mappingVersionsOnDisk: versions,
-    windowStart: months[0].month,
-    windowEnd: months[n - 1].month,
     mappedTypeCount: mappedTypeCount(location, category),
     droppedIncompleteMonths,
     freshness: freshnessOf(dataset),

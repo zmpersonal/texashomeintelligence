@@ -27,7 +27,12 @@
 import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { bump, toObservations, type Bucket } from "../../src/ingest/fetchers/permitTradeActivity";
+import {
+  bump,
+  fetchAustinTradeRows,
+  toObservations,
+  type Bucket,
+} from "../../src/ingest/fetchers/permitTradeActivity";
 import { redactPersonalShapes, hasPersonalShape } from "../../src/ingest/redactPersonalShapes";
 import type { TradeCategory } from "../../src/ingest/tradeCategories";
 
@@ -46,7 +51,7 @@ function countOf(obs: ReturnType<typeof toObservations>, category: string, month
   return obs.find((o) => o.value.category === category && o.value.month === month)?.value.permitCount;
 }
 
-function main() {
+async function main() {
   // ── 1 · THE DEFECT ITSELF ───────────────────────────────────────────────
   // The San Antonio shape, in miniature: one permit, many rows, one month.
   console.log("\n══ 1 · one permit on many rows counts once ══\n");
@@ -136,10 +141,39 @@ function main() {
       "and throws rather than counting rows when it is missing",
       /throw new Error\([\s\S]{0,400}no permit-identifier column/.test(src),
     );
+    /*
+     * ON THE WIRE, NOT IN THE SOURCE. This asserted `/\$select:\s*"permit_number,/`
+     * against the file, and Round 50 made `$select` an array so a probe could add a
+     * column — the request kept asking for `permit_number`, the regex stopped matching,
+     * and the sweep went red for a defect that did not exist. A test of the source's
+     * PROSE rather than its behaviour, which is a class this project has logged before.
+     *
+     * So the request is built by the fetcher's own code and read off the URL it hands
+     * to `fetch` (Round 49's rule: a verifier calls the project's own request builder,
+     * per request). `fetch` is stubbed, so nothing leaves the machine; the stub answers
+     * the count(1) cross-check with 0 and the page walk with an empty page, which is
+     * the one pair of answers that satisfies the fetcher's own completeness check.
+     */
+    const urls: string[] = [];
+    const realFetch = globalThis.fetch;
+    try {
+      globalThis.fetch = (async (input: RequestInfo | URL) => {
+        const url = String(input);
+        urls.push(url);
+        const body = url.includes("count(1)") ? [{ count_1: "0" }] : [];
+        return new Response(JSON.stringify(body), { status: 200 });
+      }) as typeof fetch;
+      await fetchAustinTradeRows("2026-09-01", "2026-09-30");
+    } finally {
+      globalThis.fetch = realFetch;
+    }
+    const paged = urls.find((u) => u.includes("%24offset=0") || u.includes("$offset=0"));
+    assert("the Austin page walk is on the wire at all", Boolean(paged), urls.join(" | "));
+    const select = paged ? (new URL(paged).searchParams.get("$select") ?? "") : "";
     assert(
       "Austin asks Socrata for permit_number",
-      /\$select:\s*"permit_number,/.test(src),
-      "the identifier is not even on the wire",
+      select.split(",").includes("permit_number"),
+      `$select=${select || "(none)"} — the identifier is not even on the wire`,
     );
     const bumpCalls = [...src.matchAll(/bump\(\s*buckets,/g)].length;
     assert(`both loops call bump() (${bumpCalls} call sites)`, bumpCalls === 2, String(bumpCalls));
@@ -287,9 +321,9 @@ function main() {
   process.exit(failures === 0 ? 0 : 1);
 }
 
-try {
-  main();
-} catch (e) {
+// `main` became async when §5 started reading the Austin request off the wire the
+// fetcher builds, rather than off the file's text.
+main().catch((e) => {
   console.log(`\nPERMIT_COUNT_UNIT_STATUS=error ${e instanceof Error ? e.message : String(e)}`);
   process.exit(2);
-}
+});

@@ -1,0 +1,25 @@
+[
+  {
+    "datasetId": "permit-trade-activity",
+    "location": "austin",
+    "series": "energy_storage",
+    "fromMonth": "2026-07",
+    "what": "Austin Energy's Solar Permitting Manual began instructing filers that pre-wire, solar, batteries, spinning generators and wind \"should all be separated into their own Auxiliary Power EPs\". The permit requirement did not change — its January 2026 revision already covered energy storage — but one project that previously filed a single permit now files several, so permit counts rise without installations rising. The descriptions change with it: system sizes disappear and a single standardised scope dominates.",
+    "cause": "source",
+    "discoveredAt": "2026-10-15",
+    "evidence": [
+      {
+        "what": "Round 51's audit: the series, the vocabulary inversion, the dispersion measures and the falsified Upgrade-class cross-check",
+        "path": "docs/audits/round-51-storage-series.md"
+      },
+      {
+        "what": "The archived 2026-01-30 capture compared with the live copy, phrase by phrase over the full extracted text of both",
+        "path": "docs/audits/round-51-manual-check.json"
+      },
+      {
+        "what": "Austin Energy's Solar Permitting Manual, the live copy",
+        "url": "https://austinenergy.com/-/media/project/websites/austinenergy/green-power/solar/austinenergy_solarpermittingmanual.pdf"
+      }
+    ]
+  }
+]

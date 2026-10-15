@@ -37,6 +37,26 @@ Hook frame: *"One county got hit hardest. Guess before tomorrow's reveal."*
 the storm-chaser you beat to the door. Hook frame: *"Heads-up {county} — the calm version, not
 the panic version."* Ask: "send this to someone who'll thank you."
 
+## Never write a cross-metro absence as a finding
+
+Round 51. **"Does not record it" is not "shows none."** A sentence of the shape *"Austin has X and
+San Antonio does not"* is almost always wrong, and it is wrong in the direction that invents a
+finding — which is the one direction this brand cannot afford.
+
+The case that produced the rule: Austin's permit file has a description column, so battery-storage
+work can be found in it. San Antonio's permit file has **no description column at all** and one
+energy-named permit type. So San Antonio has not reported zero batteries; it has not been asked.
+
+- ✗ "San Antonio shows no battery storage." — a claim about the city, and false.
+- ✓ "San Antonio does not record battery storage." — a claim about the file, and true.
+- ✓ Or simply say nothing about San Antonio, which is usually better: an Austin finding does not
+  need a San Antonio sentence to be complete.
+
+**The general rule: where we measure something in one metro and not another, the absence belongs
+to the SOURCE until shown otherwise, and must be written that way.** The data side already states
+this for Austin's missing foundation and tree permit types — `CATEGORIES_WITHOUT_SOURCE` calls them
+absent rather than zero. This is the same rule for copy.
+
 ## Slot discipline (the contract with the validator)
 Write copy around these; code fills them from the feed. Every one carries its source inline.
 `{{county}}` `{{metric_change}}` `{{grade}}` `{{window}}` `{{winner_county}}` `{{figure}}`

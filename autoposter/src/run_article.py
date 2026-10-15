@@ -106,17 +106,44 @@ def _permit_facts(today: date) -> dict:
     facts = {}
     for trade in TRADES:
         s = series[("austin_metro", f"permit_activity_{trade}")]
+        # ── ROUND 52. A SOURCE CHANGE HALTS THIS BUILDER, IT DOES NOT SHRINK IT ──
+        # Every claim below compares months: `_mom` the last two, `_base` the newest
+        # against the mean of the rest. Policy A refuses the first across a recorded
+        # source change and policy C refuses the second when too few months have passed
+        # since one, so a trade in that state has no claims this builder can make.
+        #
+        # It halts rather than dropping the trade, because the article's shape is
+        # derived from all three: the writer sorts them and names the busy and slow
+        # lanes from the sort, so silently writing the piece about two would change what
+        # it asserts without anyone deciding to. A halt puts that decision with a person
+        # (Rule 1). Nothing reaches this today — none of solar, HVAC or roofing spans a
+        # break — and when one does, what the piece should say instead is copy.
+        if s.withheld:
+            raise RuntimeError(
+                f"_permit_facts: austin {trade} figures are withheld — {s.withheld}. Every "
+                f"permit claim is a comparison between months, and this series has too few "
+                f"on the near side of a source change to support one. Halting rather than "
+                f"writing the piece about the other trades.")
+        if s.mom_breaks:
+            raise RuntimeError(
+                f"_permit_facts: austin {trade}'s last two months straddle the source change "
+                f"recorded at {s.mom_breaks[-1]['fromMonth']} ({s.mom_breaks[-1]['what']}). A "
+                f"month-over-month claim across it compares two instruments. Halting.")
         values = s.values
         latest, prior = values[-1], values[-2]
-        baseline = sum(values[:-1]) / len(values[:-1])   # the mean of every earlier month
+        # The baseline is the near side of the newest break and nothing before it (policy
+        # C). With no break spanned, `current_segment` is the whole series and this is the
+        # same mean it always was.
+        segment = [p.value for p in s.current_segment]
+        baseline = sum(segment[:-1]) / len(segment[:-1])   # the mean of every earlier month
         facts[trade] = {
             "latest": latest, "prior": prior, "baseline": baseline,
-            "months": len(values) - 1,
+            "months": len(segment) - 1,
             "mom_pct": _pct(latest, prior),
             "base_pct": _pct(latest, baseline),
             "as_of": s.points[-1].period,
             "prior_as_of": s.points[-2].period,
-            "peak": max(values),
+            "peak": max(segment),   # the near side only — a cross-break superlative is a claim about two instruments
         }
     return facts
 
@@ -1313,10 +1340,26 @@ def _sa_facts(today: date) -> dict:
         key = ("san_antonio_metro", f"permit_activity_{trade}")
         if key not in series:
             continue
-        values = series[key].values
-        baseline = sum(values[:-1]) / len(values[:-1])
+        s = series[key]
+        # Round 52, the same halt as `_permit_facts` and for the same reason: this card's
+        # hero and its weakest lane are chosen by sorting trades on `base_pct`, so a trade
+        # whose comparisons are refused cannot be quietly left out of the sort without
+        # changing what the card asserts. A missing series is a different case and still
+        # skips above — that is a feed that never had the rows.
+        if s.withheld:
+            raise RuntimeError(
+                f"_sa_facts: san antonio {trade} figures are withheld — {s.withheld}. The card "
+                f"ranks trades against their own normal and cannot rank one that has none. "
+                f"Halting rather than writing it about the rest.")
+        if s.mom_breaks:
+            raise RuntimeError(
+                f"_sa_facts: san antonio {trade}'s last two months straddle the source change "
+                f"recorded at {s.mom_breaks[-1]['fromMonth']}. Halting.")
+        values = s.values
+        segment = [p.value for p in s.current_segment]
+        baseline = sum(segment[:-1]) / len(segment[:-1])
         rows[trade] = {"latest": values[-1], "prior": values[-2], "baseline": baseline,
-                       "months": len(values) - 1,
+                       "months": len(segment) - 1,
                        "base_pct": _pct(values[-1], baseline),
                        "mom_pct": _pct(values[-1], values[-2]),
                        "as_of": series[key].points[-1].period[:7] + "-01",

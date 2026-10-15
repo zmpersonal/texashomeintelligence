@@ -109,6 +109,37 @@ if (belowHero && !activity) {
       `render a content layer with no data behind it — refusing to build it.`,
   );
 }
+/**
+ * Round 52. A withheld comparison stops the build rather than the page.
+ *
+ * `tradeActivity()` withholds every derived figure when the months since a
+ * recorded source change are too few to support one. This layer's copy states
+ * a mean, a half-over-half trend and a seasonality verdict, so there is no
+ * version of this page that is honest without them — and the two silent
+ * alternatives are both worse than a failed build: dropping the layer would
+ * quietly shrink an indexed page, and falling back to the pre-break months
+ * would publish history as the current reading.
+ *
+ * What the page should say instead is copy, which is the owner's (CLAUDE.md).
+ * So this refuses, names the series and says how long the wait is, and the
+ * decision lands with a person rather than with a default.
+ */
+if (belowHero && activity && !activity.comparison) {
+  const w = activity.withheld;
+  throw new Error(
+    `ServicePage: ${locationSlug}/${serviceSlug} reads ${belowHero.category} activity whose ` +
+      `figures are withheld — ${w?.reason ?? "no comparison available"} The below-hero layer ` +
+      `states a mean, a trend and a seasonality verdict, none of which this series can ` +
+      `currently support. Refusing to build it: the page needs copy for the withheld state, ` +
+      `or the series needs ${w ? w.minimumMonths - w.monthCount : "more"} more complete months.`,
+  );
+}
+// The refusal above means an activity reaching the layer always has a
+// comparison; this binds it in the form the component's type demands, so the
+// guarantee is carried by the types rather than restated in the markup.
+const layer =
+  activity && activity.comparison ? { ...activity, comparison: activity.comparison } : undefined;
+
 const notices = belowHero ? (SERVICE_NOTICES[`${locationSlug}/${serviceSlug}`] ?? []) : [];
 
 // The hero's STRUCTURE is unchanged this round — no new tool, no address
@@ -222,10 +253,10 @@ const dateModified = activity?.freshness.asOf ?? signalReading?.freshness.asOf;
     </section>
   )}
 
-  {belowHero && activity && (
+  {belowHero && layer && (
     <BelowHero
       spec={belowHero}
-      activity={activity}
+      activity={layer}
       cityName={cityName}
       location={locationSlug}
       notices={notices}

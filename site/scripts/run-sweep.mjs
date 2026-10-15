@@ -52,6 +52,7 @@ const UNITS = [
   ['datascopeunit', ['npx', 'tsx', 'scripts/replays/datascopeunit.ts']],
   ['datasetintegrityunit', ['npx', 'tsx', 'scripts/replays/datasetintegrityunit.ts']],
   ['permitcountunit', ['npx', 'tsx', 'scripts/replays/permitcountunit.ts']],
+  ['discontinuityunit', ['npx', 'tsx', 'scripts/replays/discontinuityunit.ts']],
   ['seedunit', ['npx', 'tsx', 'scripts/replays/seedunit.ts']],
   ['verify-trade-mapping', ['npx', 'tsx', 'scripts/verify-trade-mapping.ts']],
   ['verify-content', ['node', 'scripts/verify-content.mjs']],

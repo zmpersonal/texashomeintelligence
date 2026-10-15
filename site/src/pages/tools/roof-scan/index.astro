@@ -42,13 +42,45 @@ const description =
   "named by product and period. No hail sizes, no cost, no damage claims.";
 
 // Everything below is computed at build time from src/data/generated/**.
-const areas = METROS.map((m) => ({
-  metro: m,
-  confirmed: confirmedHail(m.id),
-  radar: radarHail(m.id),
-  box: boxDescription(m.id),
-  permits: tradeActivity(m.id, "roofing"),
-}));
+const areas = METROS.map((m) => {
+  const permits = tradeActivity(m.id, "roofing");
+  return {
+    metro: m,
+    confirmed: confirmedHail(m.id),
+    radar: radarHail(m.id),
+    box: boxDescription(m.id),
+    permits,
+    /**
+     * Round 52. The permit card states a total over a named window, so it is
+     * built from ONE run of months that share one source behaviour rather than
+     * from the file. `tradeActivity()` slices the window at every recorded
+     * source discontinuity; this is the newest slice's figures.
+     */
+    figures: permits?.comparison,
+  };
+});
+
+/**
+ * A withheld figure stops the build, and does not quietly drop the card.
+ *
+ * A missing dataset omits a metro's card — that path is unchanged, and it is
+ * the sample/no-data case. This is the other case: the data is there and the
+ * figures are refused because too few months have passed since a recorded
+ * source change. The card has no copy for that, and the two silent options are
+ * both wrong on an indexed page (dropping the metro reads as "no roofing
+ * activity"; falling back to the pre-break months publishes history as the
+ * current count). So it refuses and says what it needs — copy is the owner's.
+ */
+for (const { metro, permits, figures } of areas) {
+  if (permits && !figures) {
+    const w = permits.withheld;
+    throw new Error(
+      `roof-scan: ${metro.id} roofing figures are withheld — ${w?.reason ?? "no comparison available"} ` +
+        `The permit card states a total across a named window and has no copy for the withheld ` +
+        `state. Refusing to build it.`,
+    );
+  }
+}
 
 // The licensing notice, reused rather than restated. It is a roofing notice, so
 // it is read from the same catalogue the roofing service pages read.
@@ -263,16 +295,16 @@ const areaLabels = Object.fromEntries(areaDefinitions().map((a) => [a.areaId, a.
     <div class="wrap" style="max-width:820px;">
       <h2>{COPY.permitsHeading}</h2>
       <p>{COPY.permitsBody}</p>
-      {areas.map(({ metro, permits }) =>
-        permits ? (
+      {areas.map(({ metro, permits, figures }) =>
+        permits && figures ? (
           <div class="card rs-metro-card" data-metro={metro.id} data-reading="permits">
             <p class="metric-label">Re-roof permits on record, {metro.label}</p>
-            <p class="metric-value">{permits.total.toLocaleString()}</p>
+            <p class="metric-value">{figures.total.toLocaleString()}</p>
             <p class="metric-note">
-              Across {permits.monthCount} complete months, {monthLabel(permits.windowStart)} to{" "}
-              {monthLabel(permits.windowEnd)}. Classified by{" "}
+              Across {figures.monthCount} complete months, {monthLabel(figures.windowStart)} to{" "}
+              {monthLabel(figures.windowEnd)}. Classified by{" "}
               {permits.mechanisms.includes("permit-type")
-                ? `the city's own permit type — ${permits.sourceTypes.map((s) => `"${s.value}"`).join(", ")}`
+                ? `the city's own permit type — ${figures.sourceTypes.map((s) => `"${s.value}"`).join(", ")}`
                 : "matching text in the permit description, because this city publishes no roofing permit type"}.
             </p>
             {/*
