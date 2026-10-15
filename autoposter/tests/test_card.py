@@ -596,7 +596,9 @@ def test_builder3_normals_come_from_the_FEED_not_a_hardcoded_dict():
     """The first article hardcoded two July normals. This builder reads all twelve from the
     file, so a corrected normal reaches the article without anyone editing Python."""
     import thi_source
-    normals, source = thi_source.climate_normals("austin")
+    # Three values since Round 49: the `official` tier now requires the document a reader can
+    # open, so the URL comes back with the figures rather than being typed somewhere else.
+    normals, source, url = thi_source.climate_normals("austin")
     assert sorted(normals) == list(range(1, 13))
     assert "1991-2020" in source
 

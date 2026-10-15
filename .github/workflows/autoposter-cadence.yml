@@ -248,4 +248,10 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           BLOTATO_API_KEY: ${{ secrets.BLOTATO_API_KEY }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Round 49's source check re-asks the upstream for every transcribed figure, and the
+          # EIA request needs a key. WITHOUT THIS LINE the check still runs and still fails open
+          # — so every cycle would record `unverified` for the electricity claim, forever, and
+          # look like a working gate. That is the failure the round set out to rule out: a check
+          # that can never run is not a check. `test_source_check.py` asserts this stays here.
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
         run: python3 src/run_autopilot.py

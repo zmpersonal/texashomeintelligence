@@ -325,6 +325,39 @@ async function candidateStations(site: ClimateSite): Promise<Station[]> {
   return eligible;
 }
 
+/**
+ * ONE STATION, ONE MONTH, ONE VALUE — the publish-time check for a `data` claim (Round 49).
+ *
+ * WHY IT LIVES HERE AND NOT IN THE VERIFIER. It reuses this module's own `getRows`, its
+ * `GSOM_DATASET` and — the part that matters — `units: "standard"`. Round 49's probe rebuilt
+ * this request by hand, omitted that one parameter, and reported our 695 degF-days as 386.3
+ * degC-days: a correct figure flagged as wrong, which is how a verification gate gets switched
+ * off. A verifier that rebuilds a request measures the rebuild.
+ *
+ * WHAT IT DOES NOT VERIFY, stated because the ledger will cite it: the station is passed in
+ * from the row we stored, so this checks the VALUE we recorded for that station. It does not
+ * re-run station selection and cannot tell you the station choice was right.
+ */
+export async function verifyMonthlyCdd(
+  stationId: string,
+  period: string,
+): Promise<{ found: boolean; value: number | null }> {
+  const [year, month] = period.split("-").map(Number);
+  const lastDay = new Date(Date.UTC(year, month, 0)).toISOString().slice(0, 10);
+  const rows = await getRows({
+    dataset: GSOM_DATASET,
+    stations: stationId,
+    dataTypes: "CLDD",
+    startDate: `${period}-01`,
+    endDate: lastDay,
+    format: "json",
+    units: "standard",
+  });
+  const hit = rows.find((r) => String((r as Record<string, unknown>).DATE ?? "").startsWith(period));
+  const raw = hit ? Number((hit as Record<string, unknown>).CLDD) : NaN;
+  return { found: Boolean(hit) && Number.isFinite(raw), value: Number.isFinite(raw) ? raw : null };
+}
+
 async function getRows(params: Record<string, string>): Promise<ApiRow[]> {
   const url = new URL(ACCESS_DATA_V1);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);

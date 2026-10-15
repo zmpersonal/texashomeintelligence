@@ -159,6 +159,44 @@ const dateModified = sourceRows
         presented as an observed fact.
       </p>
 
+      <h2>What &ldquo;sourced&rdquo; means on an analysis article, exactly</h2>
+      <p>
+        Every figure in an analysis article is recorded as a claim before a word is written, and
+        each claim says where it came from. There are three kinds, and they are not equally
+        strong &mdash; so this page says what each one means rather than leaving
+        &ldquo;sourced&rdquo; to carry all three.
+      </p>
+      <ul>
+        <li>
+          <strong>A reading we ingest</strong> &mdash; a figure from a series we fetch and store,
+          such as the EIA&rsquo;s Texas residential electricity price or a NOAA monthly
+          cooling-degree-day total. Where the source will answer for one specific value, we
+          <strong>re-ask it at publishing time</strong> and the article does not go out if the
+          source disagrees or has no such month.
+        </li>
+        <li>
+          <strong>A fixed reference constant</strong> &mdash; a published value for a fixed
+          period that cannot change, such as a 1991&ndash;2020 climate normal. These carry a link
+          to the document they come from. They are not re-asked, because they do not move.
+        </li>
+        <li>
+          <strong>A figure we compute</strong> &mdash; a permit count, or any arithmetic over the
+          readings above. The source publishes records; the number is ours. There is no upstream
+          figure to compare it against, so we do not claim one: these are checked by testing the
+          calculation itself against the rules it is supposed to follow.
+        </li>
+      </ul>
+      <p>
+        Two limits worth stating plainly. Re-asking the source proves our stored copy agrees with
+        what the source says today &mdash; it would catch a fabricated row, a stale capture or a
+        figure the source has since revised. It does not prove our own reading code is right,
+        because the same code asks both times; that is what the calculation tests are for. And if
+        a source is <em>unreachable</em> at publishing time, we record that the figure could not
+        be re-checked and publish anyway, rather than withholding a correct article because a
+        federal API is down. &ldquo;Could not be checked&rdquo; is never recorded as
+        &ldquo;checked&rdquo;.
+      </p>
+
       <h2>Stale and failed data</h2>
       <p>
         If a source feed fails or returns nothing useful, we do not silently show a zero or blank

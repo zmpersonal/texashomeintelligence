@@ -30,6 +30,9 @@ SLUG = "are-texas-electricity-prices-still-going-up"
 # filters them out of the movers series on purpose (they are a different record type), but as a
 # REFERENCE VALUE a normal is exactly what turns "it was hot" into a checkable claim.
 NORMALS_SOURCE = "NOAA NCEI U.S. Climate Normals 1991-2020"
+# Round 49 gave `official` a mechanical meaning: a document a reader can open. The live builders
+# read this from the dataset file's own `source.url`; this constant serves the retired one.
+NORMALS_URL = "https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly-1991-2020"
 JULY_NORMAL = {"austin_metro": 644.8, "san_antonio_metro": 643.3}
 # The citation a reader should see. The exact dataset label from the feed
 # ("EIA Electricity Data (Texas, residential)") is recorded in the ledger notes rather than
@@ -103,6 +106,7 @@ def build_claims(feed: dict, config: dict, today: date) -> list[Claim]:
                   source=cdd.source, as_of="2026-07-01", metric="cooling_degree_days"),
             Claim(f"{label}n", f"{name}'s July normal is {normal} cooling degree-days.",
                   tier="official", figure=f"{normal} cooling degree-days",
+                  source_url=NORMALS_URL,
                   source=NORMALS_SOURCE, as_of="1991-2020", metric="cooling_degree_days",
                   timeless=True,
                   notes="A 1991-2020 climate normal is a fixed reference period, not a current "
@@ -793,7 +797,7 @@ def build_power_claims(feed: dict, config: dict, today: date) -> list[Claim]:
     # two-entry July dict that could only ever describe one month of the year.
     for area, tag in (("austin_metro", "C5"), ("san_antonio_metro", "C8")):
         location = "austin" if area == "austin_metro" else "san-antonio"
-        normals, normals_source = thi_source.climate_normals(location)
+        normals, normals_source, normals_url = thi_source.climate_normals(location)
         normal = normals.get(int(period[5:7]))
         cdd = series[(area, "cooling_degree_days")]
         actual = {p.period[:7]: p.value for p in cdd.points}[period]
@@ -810,8 +814,8 @@ def build_power_claims(feed: dict, config: dict, today: date) -> list[Claim]:
             Claim(f"{tag}n", f"{name}'s {label[:-5]} normal is {normal:.1f} cooling "
                              f"degree-days.",
                   tier="official", figure=f"{normal:.1f} cooling degree-days",
-                  source=normals_source, as_of="1991-2020", metric="cooling_degree_days",
-                  timeless=True,
+                  source=normals_source, source_url=normals_url,
+                  as_of="1991-2020", metric="cooling_degree_days", timeless=True,
                   notes="A 1991-2020 climate normal is a fixed reference period, not a current "
                         "reading, so the freshness bound does not apply to it."),
             Claim(f"{tag}d",
@@ -1024,7 +1028,7 @@ def _summer_facts(today: date) -> dict:
     series = {(s.area_id, s.metric): s for s in thi_source.load_history(today)}
     facts = {}
     for location, area in (("austin", "austin_metro"), ("san-antonio", "san_antonio_metro")):
-        normals, normals_source = thi_source.climate_normals(location)
+        normals, normals_source, normals_url = thi_source.climate_normals(location)
         cdd = series[(area, "cooling_degree_days")]
         rows = []
         for point in cdd.points[-2:][::-1]:          # latest first, then the month before
@@ -1033,7 +1037,8 @@ def _summer_facts(today: date) -> dict:
             rows.append({"actual": actual, "normal": normal, "pct": _pct(actual, normal),
                          "period": point.period[:7], "as_of": point.period[:7] + "-01",
                          "label": month_label(point.period)})
-        facts[area] = {"rows": rows, "normals_source": normals_source}
+        facts[area] = {"rows": rows, "normals_source": normals_source,
+                       "normals_url": normals_url}
     return facts
 
 
@@ -1048,6 +1053,7 @@ def build_summer_claims(feed: dict, config: dict, today: date) -> list[Claim]:
     for tag, area, place in (("A", "austin_metro", "Austin"),
                              ("S", "san_antonio_metro", "San Antonio")):
         normals_source = f[area]["normals_source"]
+        normals_url = f[area]["normals_url"]
         for index, row in enumerate(f[area]["rows"]):
             slot = "1" if index == 0 else "2"        # 1 = the month the article is about
             claims.append(Claim(
@@ -1059,8 +1065,8 @@ def build_summer_claims(feed: dict, config: dict, today: date) -> list[Claim]:
                 f"{tag}{slot}n", f"{place}'s {row['label'].split()[0]} normal is "
                                  f"{row['normal']:.1f} cooling degree-days.",
                 tier="official", figure=f"{row['normal']:.1f} cooling degree-days",
-                source=normals_source, as_of="1991-2020", metric="cooling_degree_days",
-                timeless=True,
+                source=normals_source, source_url=normals_url,
+                as_of="1991-2020", metric="cooling_degree_days", timeless=True,
                 notes="A 1991-2020 climate normal is a fixed reference period, not a current "
                       "reading, so the freshness bound does not apply to it."))
             direction = "above" if row["pct"] >= 0 else "below"

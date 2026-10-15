@@ -44,6 +44,7 @@ import channel_guard
 import claim_ledger as ledger_mod
 import gates
 import publish_gate
+import source_check
 import publish_target
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -90,6 +91,11 @@ class CycleDecision:
     post_url: str = ""
     # The post-deploy verdicts. Empty until the deploy has happened and they have actually run.
     live_verdicts: list[GateVerdict] = field(default_factory=list)
+    # Claims whose SOURCE check could not run, one line each with the reason. The check fails
+    # open — an unreachable federal API is not a reason to withhold a correct article — so this
+    # is the thing that stops "could not be checked" from reading as "checked". Empty is the
+    # normal state; a non-empty list is reported on every outcome, including a publish.
+    unverified: list[str] = field(default_factory=list)
     # A sign-off that was supplied and could NOT be used, with the reason. Set only on
     # `too_soon`: the cadence floor is checked before an article is chosen, so a dispatch that
     # names a slug can be answered by the clock before anything is built. Empty on a scheduled
@@ -149,6 +155,13 @@ class CycleDecision:
         if not self.live_verdicts:
             return False
         return all(v.ok for v in self.live_verdicts)
+
+    def _unverified_line(self) -> str:
+        """The claims whose source check could not run. Empty on a normal day."""
+        if not self.unverified:
+            return ""
+        return ("⚠ UPSTREAM UNVERIFIED — the check could not run, and the cycle proceeded:\n" +
+                "\n".join(f"  • {line}" for line in self.unverified) + "\n")
 
     def _skipped_line(self) -> str:
         """The topics this cycle stepped over, for the notices that are about something else.
@@ -257,7 +270,7 @@ class CycleDecision:
             failed = [v for v in self.verdicts if not v.ok]
             body = "\n".join(f"  • {v.name} — {v.detail}" for v in failed)
             return (f"⚠️ THI autoposter SKIPPED this cycle — nothing published.\n"
-                    f"{self.reason}\n{body}\n{self._skipped_line()}"
+                    f"{self.reason}\n{body}\n{self._unverified_line()}{self._skipped_line()}"
                     f"No post goes out on an unclear gate. Nothing is broken; this cycle waits.")
         return "✅ published"                     # the real FYI is built by `published_notice`
 
@@ -503,7 +516,8 @@ def _verify_until_stable(verify_opener, url: str, *, attempts: int, delay: int,
 
 def _find_promotion(config: dict, *, today: date, write_fn, build_claims_fn, articles: dict,
                     captions: dict, link_opener, media_opener, render_fn=None,
-                    defer_resolution: bool = False, ledger_path: Path | None = None,
+                    defer_resolution: bool = False, verify_fn=None,
+                    ledger_path: Path | None = None,
                     state: dict | None = None, env: dict | None = None) -> "CycleDecision | None":
     """The oldest orphan that still passes every gate, or None.
 
@@ -528,6 +542,20 @@ def _find_promotion(config: dict, *, today: date, write_fn, build_claims_fn, art
         verdicts.append(_verdict("claim-freshness", lambda c=claims: (
             ledger_mod.verify_ledger(c, config, today).ok,
             "all claims inside their staleness bounds")))
+
+        # THE SOURCE CHECK APPLIES TO A PROMOTION TOO (Round 49). An orphan is an article already
+        # live whose figures are about to be put in a post, and "it was fine when it was written"
+        # is exactly the assumption a re-ask exists to stop — the article may have been published
+        # before the source revised the month it reports on. Same fail-open rule: unreachable is
+        # recorded, a disagreement refuses this orphan and the loop tries the next one.
+        def _source_gate(c=claims, d=decision):
+            summary = (verify_fn or source_check.check_all)(c)
+            unverified = list((summary or {}).get("unverified") or [])
+            d.unverified = unverified
+            return True, ("every checkable claim re-asked at its source" if not unverified
+                          else f"{len(unverified)} UNVERIFIED (fail-open): "
+                               + "; ".join(unverified))
+        verdicts.append(_verdict("source-check", _source_gate))
 
         def _card_gate(a=article, c=claims):
             card = card_mod.build_card(a, c)
@@ -600,7 +628,7 @@ def _verdict(name: str, fn) -> GateVerdict:
 
 def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: dict,
              link_opener, media_opener, captions: dict, render_fn=None,
-             defer_resolution: bool = False,
+             defer_resolution: bool = False, verify_fn=None,
              state: dict | None = None, env: dict | None = None) -> CycleDecision:
     """Build the whole cycle and collect every gate's verdict. PUBLISHES NOTHING.
 
@@ -677,6 +705,29 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
     decision.reason = f"topic: {result['topic']['id']}"
     decision.skipped = list(result.get("skipped") or [])
 
+    # ---- RE-ASK THE SOURCE (Round 49). It lives HERE and not in the engine for the reason every
+    # other side effect in this module does: the engine is run by most of the suite, and a stage
+    # that opens a socket makes those tests depend on a network and a node process. It is
+    # injected so the decision stays provable without either.
+    #
+    # It FAILS OPEN on an unreachable source and RAISES on a real disagreement. Those are not the
+    # same event: a check that could not run is not a check that failed, and a federal API being
+    # down is not a reason to withhold a correct article (owner, 2026-10-12). The unverified state
+    # is stamped on each claim, carried on the decision, and named in the notice — it never reads
+    # as verified.
+    verify = verify_fn or source_check.check_all
+    try:
+        verification = verify(claims)
+    except source_check.SourceMismatch as exc:
+        # The check RAN and disagreed. This is the Round 43 shape — a figure the source does not
+        # support — so it stops the article rather than being recorded beside it.
+        decision.reason = "a claim's source disagrees with the figure it states"
+        decision.verdicts = [GateVerdict("source-check", False, str(exc))]
+        return decision
+    decision.unverified = list((verification or {}).get("unverified") or [])
+    for line in decision.unverified:
+        print(f"[unverified] {line}")
+
     verdicts = [
         GateVerdict("topic-selection", True, result["topic"]["id"]),
         GateVerdict("claim-ledger", True, f"{result['ledger_checked']} claims verified"),
@@ -685,6 +736,16 @@ def evaluate(config: dict, *, today: date, write_fn, build_claims_fn, articles: 
         GateVerdict("model-budget", result["model_calls"] == 1,
                     f"{result['model_calls']} model call(s)"),
     ]
+
+    # ---- the source check's result, as a verdict a reader of the sweep sees. It PASSES when
+    # nothing could not be checked, and still passes — with the detail — when something could
+    # not, because fail-open is the designed behaviour and a red verdict for it would train
+    # whoever reads this to ignore the colour.
+    verdicts.append(GateVerdict(
+        "source-check", True,
+        "every checkable claim re-asked at its source" if not decision.unverified
+        else f"{len(decision.unverified)} claim(s) UNVERIFIED (fail-open): "
+             + "; ".join(decision.unverified)))
 
     # ---- freshness of every claim the piece rests on, re-checked at publish time rather than
     # trusted from when the feed was built.

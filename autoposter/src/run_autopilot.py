@@ -610,6 +610,10 @@ def main() -> int:
         # The article's URL and its card are created BY the deploy, so their resolution checks
         # cannot run in the pre-deploy sweep. They move to `run_cycle`'s post-deploy stage.
         defer_resolution=True,
+        # Round 49. The real source check: it shells out to `site/scripts/verify-claim.ts`, which
+        # calls the project's OWN fetcher per request. Named here, with the other real IO, so the
+        # decision module stays provable without a network or a node process.
+        verify_fn=source_check.check_all,
         verify_opener=http_opener,
         write_fn=run_article.write,
         build_claims_fn=run_article.build_claims,
