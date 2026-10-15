@@ -108,7 +108,7 @@ export interface TradeActivityValue {
  */
 const RECOUNT_MONTHS = 13;
 
-function recountWindow(until: string): { since: string; until: string } {
+export function recountWindow(until: string): { since: string; until: string } {
   const end = new Date(until);
   const start = new Date(
     Date.UTC(end.getUTCFullYear(), end.getUTCMonth() - RECOUNT_MONTHS, 1, 0, 0, 0, 0),
@@ -224,7 +224,7 @@ const SA_PACKAGE_SHOW_URL =
   "https://data.sanantonio.gov/api/3/action/package_show?id=building-permits";
 const SA_RESOURCE_NAME_MATCH = /permits?\s*issued/i;
 
-async function sanAntonioCsvUrl(): Promise<string> {
+export async function sanAntonioCsvUrl(): Promise<string> {
   const res = await fetch(SA_PACKAGE_SHOW_URL);
   if (!res.ok) throw new Error(`San Antonio CKAN package_show failed: HTTP ${res.status}`);
   const body = (await res.json()) as {
@@ -247,7 +247,7 @@ async function sanAntonioCsvUrl(): Promise<string> {
   return resource.url;
 }
 
-function resolveHeader(sample: Record<string, string>, candidates: string[]): string | null {
+export function resolveHeader(sample: Record<string, string>, candidates: string[]): string | null {
   const keys = new Map(Object.keys(sample).map((k) => [k.trim().toUpperCase(), k] as const));
   for (const c of candidates) {
     const hit = keys.get(c.toUpperCase());
@@ -433,6 +433,71 @@ interface AustinRow {
   issue_date?: string;
 }
 
+/**
+ * The Austin read, as ONE function, so a caller that needs the rows makes the
+ * ingestion request rather than a copy of it.
+ *
+ * Extracted in Round 50 for the overlap measurement, and extracted rather than
+ * reproduced because of Round 49's standing rule: a verifier builds every
+ * outbound request with the code that built it for ingestion, PER REQUEST. The
+ * Round 49 probe imported `austinTradeWhere` and then rebuilt a NOAA request by
+ * hand in the same file, and reported a correct figure as wrong. The predicate,
+ * the resource URL, the `$select`, the page walk and the count(1) cross-check
+ * all live here now, and `fetchRaw` below calls this — so there is one path and
+ * a measurement cannot drift from the ingestion it is measuring.
+ */
+export async function fetchAustinTradeRows(
+  since: string,
+  until: string,
+  appToken?: string,
+): Promise<{ rows: AustinRow[]; serverCount: number; where: string }> {
+  const where = austinTradeWhere(since, until);
+  const headers: Record<string, string> = {};
+  if (appToken) headers["X-App-Token"] = appToken;
+
+  const get = async (params: Record<string, string>): Promise<unknown> => {
+    const url = new URL(AUSTIN_RESOURCE_URL);
+    for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
+    const res = await fetch(url, { headers });
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(
+        `Austin permits fetch failed: HTTP ${res.status} from ${url.toString()} - ${body.slice(0, 300)}`,
+      );
+    }
+    return res.json();
+  };
+
+  // The layer cross-check, run on EVERY ingestion. Round 7 removed the
+  // temporary enumeration step that compared the server-side predicate
+  // against a local reproduction; this replaces it inside the fetcher, where
+  // it also guards against a silently truncated page walk.
+  const countRows = (await get({ $select: "count(1)", $where: where })) as { count_1?: string }[];
+  const serverCount = Number(countRows[0]?.count_1 ?? NaN);
+
+  const rows: AustinRow[] = [];
+  for (let page = 0; page < AUSTIN_MAX_PAGES; page++) {
+    const batch = (await get({
+      $where: where,
+      // `permit_number` added in Round 45. It was never requested before, so
+      // the identifier needed to deduplicate was not even on the wire.
+      $select: "permit_number,permit_type_desc,work_class,description,issue_date",
+      $order: ":id",
+      $limit: String(AUSTIN_PAGE_SIZE),
+      $offset: String(page * AUSTIN_PAGE_SIZE),
+    })) as AustinRow[];
+    rows.push(...batch);
+    if (batch.length < AUSTIN_PAGE_SIZE) break;
+  }
+  if (Number.isFinite(serverCount) && rows.length !== serverCount) {
+    throw new Error(
+      `Austin trade activity: incomplete read - server-side count(1) says ${serverCount} for this ` +
+        `$where, the paged download returned ${rows.length}. Refusing to publish counts from a partial read.`,
+    );
+  }
+  return { rows, serverCount, where };
+}
+
 export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
   datasetId: "permit-trade-activity",
   location: "austin",
@@ -445,50 +510,11 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
     // Same reason as San Antonio: this is a recomputed aggregate, not an
     // append-only log, so it recounts its whole window every run.
     const austinWindow = recountWindow(ctx.window.until);
-    const where = austinTradeWhere(austinWindow.since, austinWindow.until);
-    const headers: Record<string, string> = {};
-    if (ctx.env.SOCRATA_APP_TOKEN) headers["X-App-Token"] = ctx.env.SOCRATA_APP_TOKEN;
-
-    const get = async (params: Record<string, string>): Promise<unknown> => {
-      const url = new URL(AUSTIN_RESOURCE_URL);
-      for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
-      const res = await fetch(url, { headers });
-      if (!res.ok) {
-        const body = await res.text();
-        throw new Error(
-          `Austin permits fetch failed: HTTP ${res.status} from ${url.toString()} - ${body.slice(0, 300)}`,
-        );
-      }
-      return res.json();
-    };
-
-    // The layer cross-check, run on EVERY ingestion. Round 7 removed the
-    // temporary enumeration step that compared the server-side predicate
-    // against a local reproduction; this replaces it inside the fetcher, where
-    // it also guards against a silently truncated page walk.
-    const countRows = (await get({ $select: "count(1)", $where: where })) as { count_1?: string }[];
-    const serverCount = Number(countRows[0]?.count_1 ?? NaN);
-
-    const rows: AustinRow[] = [];
-    for (let page = 0; page < AUSTIN_MAX_PAGES; page++) {
-      const batch = (await get({
-        $where: where,
-        // `permit_number` added in Round 45. It was never requested before, so
-        // the identifier needed to deduplicate was not even on the wire.
-        $select: "permit_number,permit_type_desc,work_class,description,issue_date",
-        $order: ":id",
-        $limit: String(AUSTIN_PAGE_SIZE),
-        $offset: String(page * AUSTIN_PAGE_SIZE),
-      })) as AustinRow[];
-      rows.push(...batch);
-      if (batch.length < AUSTIN_PAGE_SIZE) break;
-    }
-    if (Number.isFinite(serverCount) && rows.length !== serverCount) {
-      throw new Error(
-        `Austin trade activity: incomplete read - server-side count(1) says ${serverCount} for this ` +
-          `$where, the paged download returned ${rows.length}. Refusing to publish counts from a partial read.`,
-      );
-    }
+    const { rows } = await fetchAustinTradeRows(
+      austinWindow.since,
+      austinWindow.until,
+      ctx.env.SOCRATA_APP_TOKEN,
+    );
 
     const buckets = new Map<string, Bucket>();
     const unknown = new Map<string, number>();

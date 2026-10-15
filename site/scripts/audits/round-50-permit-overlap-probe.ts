@@ -1,0 +1,380 @@
+/**
+ * Round 50 — is a permit counted in more than one trade, and how often?
+ *
+ * MEASURES. Decides nothing, fixes nothing, writes no dataset file. The round's
+ * question is whether our per-category counts can be added up, and if not, by
+ * how much they overshoot and why.
+ *
+ * ── HOW EVERY REQUEST IS BUILT ──────────────────────────────────────────────
+ * Through the ingestion fetcher's own code, per request — Round 49's standing
+ * rule. Austin goes through `fetchAustinTradeRows`, which owns the predicate,
+ * the resource URL, the `$select`, the page walk and the count(1) cross-check;
+ * San Antonio through `sanAntonioCsvUrl` and `resolveHeader`. Classification
+ * goes through `classifyAustin` / `classifySanAntonio`. Nothing here rebuilds a
+ * request or re-states a mapping.
+ *
+ * What is still this file's own code is the TALLY: grouping classifications by
+ * permit and counting the overlaps. A tally bug is therefore possible, which is
+ * what the CONTROLS exist for — four predictions with answers known before the
+ * run, stated in `controls` below. A control that fails means this probe is
+ * wrong, not that the city's data is.
+ *
+ * ── PII ─────────────────────────────────────────────────────────────────────
+ * The hand-readable sample carries permit descriptions. Every one goes through
+ * the repo's own `redactPersonalShapes`, and it is REDACTED BEFORE IT IS
+ * SHORTENED (Round 47's rule), so a truncation cannot leave half an address
+ * behind the redactor's back.
+ */
+import { writeFileSync, readFileSync } from "node:fs";
+import {
+  fetchAustinTradeRows,
+  recountWindow,
+  sanAntonioCsvUrl,
+  resolveHeader,
+} from "../../src/ingest/fetchers/permitTradeActivity";
+import { classifyAustin, classifySanAntonio } from "../../src/ingest/tradeCategories";
+import { parseCsv, rowsToRecords } from "../../src/ingest/csv";
+import { redactPersonalShapes } from "../../src/ingest/redactPersonalShapes";
+
+const OUT = new URL("../../../docs/audits/round-50-probe.json", import.meta.url);
+const FOCUS = "2026-09";
+
+type Cats = Set<string>;
+
+function pairKey(a: string, b: string): string {
+  return [a, b].sort().join(" + ");
+}
+
+/** Per-category distinct-permit counts, the same quantity `toObservations` publishes. */
+function categoryCounts(perPermit: Map<string, { cats: Cats; month: string }>) {
+  const out = new Map<string, Map<string, Set<string>>>(); // month -> cat -> ids
+  for (const [id, { cats, month }] of perPermit) {
+    const m = out.get(month) ?? new Map<string, Set<string>>();
+    for (const c of cats) {
+      const s = m.get(c) ?? new Set<string>();
+      s.add(id);
+      m.set(c, s);
+    }
+    out.set(month, m);
+  }
+  return out;
+}
+
+function overlapReport(perPermit: Map<string, { cats: Cats; month: string }>, month: string) {
+  const inMonth = [...perPermit.entries()].filter(([, v]) => v.month === month);
+  const byCount = new Map<number, number>();
+  const pairs = new Map<string, number>();
+  const combos = new Map<string, number>();
+  for (const [, { cats }] of inMonth) {
+    byCount.set(cats.size, (byCount.get(cats.size) ?? 0) + 1);
+    const list = [...cats].sort();
+    if (list.length > 1) {
+      combos.set(list.join(" + "), (combos.get(list.join(" + ")) ?? 0) + 1);
+      for (let i = 0; i < list.length; i++)
+        for (let j = i + 1; j < list.length; j++) {
+          const k = pairKey(list[i], list[j]);
+          pairs.set(k, (pairs.get(k) ?? 0) + 1);
+        }
+    }
+  }
+  const counts: Map<string, Set<string>> =
+    categoryCounts(perPermit).get(month) ?? new Map<string, Set<string>>();
+  const pairsOfCount: [string, number][] = [...counts.entries()]
+    .map(([c, s]): [string, number] => [c, s.size])
+    .sort((a, b) => b[1] - a[1]);
+  const perCategory: Record<string, number> = Object.fromEntries(pairsOfCount);
+  const summed: number = pairsOfCount.reduce((s, [, n]) => s + n, 0);
+  return {
+    month,
+    distinctPermitsClassified: inMonth.length,
+    perCategory,
+    sumOfPerCategory: summed,
+    overshoot: summed - inMonth.length,
+    permitsByCategoryCount: Object.fromEntries([...byCount.entries()].sort()),
+    categoryPairs: Object.fromEntries([...pairs.entries()].sort((a, b) => b[1] - a[1])),
+    categoryCombinations: Object.fromEntries([...combos.entries()].sort((a, b) => b[1] - a[1])),
+  };
+}
+
+async function austin() {
+  // The published window, from the ingestion's own function — not a window of
+  // this file's choosing.
+  const w = recountWindow(new Date().toISOString());
+  const { rows, serverCount, where } = await fetchAustinTradeRows(
+    w.since,
+    w.until,
+    process.env.SOCRATA_APP_TOKEN,
+  );
+
+  const perPermit = new Map<string, { cats: Cats; month: string }>();
+  const multi: {
+    permit: string;
+    month: string;
+    permit_type_desc: string;
+    work_class: string;
+    description: string;
+    categories: string[];
+    mechanisms: string[];
+  }[] = [];
+  let dropped = 0;
+  let rowsWithoutId = 0;
+
+  for (const row of rows) {
+    if (!row.issue_date) continue;
+    const month = new Date(row.issue_date).toISOString().slice(0, 7);
+    const cls = classifyAustin(row);
+    if (cls.length === 0) {
+      dropped++;
+      continue;
+    }
+    const rawId = (row.permit_number ?? "").trim();
+    if (!rawId) rowsWithoutId++;
+    const id = rawId || `__no-id__${row.issue_date}#${perPermit.size}`;
+    const prev = perPermit.get(id) ?? { cats: new Set<string>(), month };
+    for (const c of cls) prev.cats.add(c.category);
+    perPermit.set(id, prev);
+
+    if (cls.length > 1 && month === FOCUS) {
+      // REDACT, THEN SHORTEN. Round 47's rule, and the inverse of what
+      // austinPermits.ts does at its line 116 — noted in the audit.
+      const red = redactPersonalShapes(row.description ?? "");
+      multi.push({
+        permit: rawId,
+        month,
+        permit_type_desc: (row.permit_type_desc ?? "").trim(),
+        work_class: (row.work_class ?? "").trim(),
+        description: red.text.slice(0, 220),
+        categories: cls.map((c) => c.category),
+        mechanisms: cls.map((c) => `${c.category}:${c.mechanism}`),
+      });
+    }
+  }
+
+  // ── CONTROLS: answers known before the run ──
+  const focus = overlapReport(perPermit, FOCUS);
+  const committed = JSON.parse(
+    readFileSync(new URL("../../src/data/generated/permit-trade-activity/austin.json", import.meta.url), "utf8"),
+  );
+  const published: Record<string, number> = {};
+  for (const o of committed.observations) {
+    if (o.seed) continue;
+    if (o.value.mappingVersion !== "trades-v2") continue;
+    if (o.value.month !== FOCUS) continue;
+    published[o.value.category] = o.value.permitCount;
+  }
+  const eph = ["electrical", "plumbing", "hvac"];
+  const ephSum = eph.reduce((s, c) => s + Number(focus.perCategory[c] ?? 0), 0);
+  const ephOverlapping = [...perPermit.entries()].filter(
+    ([, v]) => v.month === FOCUS && eph.filter((c) => v.cats.has(c)).length > 1,
+  ).length;
+  const roofSolar = Number(focus.categoryPairs["roofing + solar"] ?? 0);
+
+  const controls = [
+    {
+      id: "A1",
+      prediction: `recomputed ${FOCUS} per-category counts equal the committed file exactly`,
+      expected: published,
+      actual: focus.perCategory,
+      // Compared key by key, so a difference in key ORDER cannot fail a control
+      // that is meant to be about values. Both directions, so a category present
+      // in one and absent from the other is caught either way round.
+      pass:
+        Object.keys(published).length === Object.keys(focus.perCategory).length &&
+        Object.keys(published).every((k) => published[k] === focus.perCategory[k]),
+      meaning: "a mismatch means THIS PROBE's read or tally is wrong, not the data",
+    },
+    {
+      id: "A2",
+      prediction: "electrical/plumbing/hvac are pairwise disjoint (one permit_type_desc per row)",
+      expected: 0,
+      actual: ephOverlapping,
+      pass: ephOverlapping === 0,
+      meaning: "if non-zero, a permit carries two trade permit types and the mechanism is not what the code implies",
+    },
+    {
+      id: "A3",
+      prediction: "electrical+plumbing+hvac sum to 4,027 for 2026-09 (from the committed file)",
+      expected: 4027,
+      actual: ephSum,
+      pass: ephSum === 4027,
+    },
+    {
+      id: "A4",
+      prediction:
+        "at least 25 permits are in BOTH roofing and solar — the Auxiliary Power rows counted " +
+        "in the committed municipal-permits archive for 2026-09",
+      expected: ">= 25",
+      actual: roofSolar,
+      pass: roofSolar >= 25,
+    },
+    {
+      id: "A5",
+      prediction: "count(1) and the paged read agree (asserted inside fetchAustinTradeRows)",
+      expected: serverCount,
+      actual: rows.length,
+      pass: rows.length === serverCount,
+    },
+  ];
+
+  const byMonth = [...categoryCounts(perPermit).keys()].sort().map((m) => {
+    const r = overlapReport(perPermit, m);
+    return {
+      month: m,
+      distinct: r.distinctPermitsClassified,
+      summed: r.sumOfPerCategory,
+      overshoot: r.overshoot,
+      pctOvershoot: r.distinctPermitsClassified
+        ? +((r.overshoot / r.distinctPermitsClassified) * 100).toFixed(2)
+        : null,
+    };
+  });
+
+  return {
+    where,
+    window: w,
+    rowsRead: rows.length,
+    serverCount,
+    droppedByClassifier: dropped,
+    rowsWithoutId,
+    distinctPermitsAllMonths: perPermit.size,
+    controls,
+    focusMonth: focus,
+    byMonth,
+    handSample: multi,
+  };
+}
+
+async function sanAntonio() {
+  const w = recountWindow(new Date().toISOString());
+  const url = await sanAntonioCsvUrl();
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`San Antonio CSV: HTTP ${res.status}`);
+  const records = rowsToRecords(parseCsv(await res.text()));
+  if (records.length === 0) throw new Error("San Antonio CSV: no records");
+
+  const typeCol = resolveHeader(records[0], ["PERMIT TYPE", "PERMIT_TYPE", "PERMITTYPE", "TYPE"]);
+  const dateCol = resolveHeader(records[0], [
+    "DATE ISSUED", "ISSUE DATE", "ISSUED DATE", "ISSUE_DATE", "ISSUED_DATE",
+    "APPROVED DATE", "DATE SUBMITTED",
+  ]);
+  const idCol = resolveHeader(records[0], [
+    "PERMIT #", "PERMIT NUMBER", "PERMIT NO", "PERMIT_NO", "PERMITNUMBER", "RECORD NUMBER",
+  ]);
+  if (!typeCol || !dateCol || !idCol) throw new Error("San Antonio CSV: missing a required column");
+
+  const perPermit = new Map<string, { cats: Cats; month: string }>();
+  const typesPerPermit = new Map<string, Set<string>>();
+  const monthsPerPermit = new Map<string, Set<string>>();
+  const multi: { permit: string; month: string; permitTypes: string[]; categories: string[] }[] = [];
+  let dropped = 0;
+
+  for (const row of records) {
+    const raw = row[dateCol];
+    if (!raw) continue;
+    const parsed = new Date(raw);
+    if (Number.isNaN(parsed.getTime())) continue;
+    const observedAt = parsed.toISOString();
+    if (observedAt < w.since || observedAt > w.until) continue;
+
+    const permitType = row[typeCol] ?? "";
+    const cls = classifySanAntonio(permitType);
+    if (cls.length === 0) {
+      dropped++;
+      continue;
+    }
+    const month = observedAt.slice(0, 7);
+    const rawId = (row[idCol] ?? "").trim();
+    const id = rawId || `__no-id__${observedAt}#${perPermit.size}`;
+    const prev = perPermit.get(id) ?? { cats: new Set<string>(), month };
+    for (const c of cls) prev.cats.add(c.category);
+    perPermit.set(id, prev);
+    if (rawId) {
+      const t = typesPerPermit.get(rawId) ?? new Set<string>();
+      t.add(permitType.trim());
+      typesPerPermit.set(rawId, t);
+      const m = monthsPerPermit.get(rawId) ?? new Set<string>();
+      m.add(month);
+      monthsPerPermit.set(rawId, m);
+    }
+  }
+
+  for (const [id, v] of perPermit) {
+    if (v.cats.size > 1 && v.month === FOCUS) {
+      multi.push({
+        permit: id,
+        month: v.month,
+        permitTypes: [...(typesPerPermit.get(id) ?? [])],
+        categories: [...v.cats].sort(),
+      });
+    }
+  }
+
+  const spanningTypes = [...typesPerPermit.values()].filter((v) => v.size > 1).length;
+  const spanningMonths = [...monthsPerPermit.values()].filter((v) => v.size > 1).length;
+  const spanningCategories = [...perPermit.values()].filter((v) => v.cats.size > 1).length;
+
+  const focus = overlapReport(perPermit, FOCUS);
+  const byMonth = [...categoryCounts(perPermit).keys()].sort().map((m) => {
+    const r = overlapReport(perPermit, m);
+    return {
+      month: m,
+      distinct: r.distinctPermitsClassified,
+      summed: r.sumOfPerCategory,
+      overshoot: r.overshoot,
+      pctOvershoot: r.distinctPermitsClassified
+        ? +((r.overshoot / r.distinctPermitsClassified) * 100).toFixed(2)
+        : null,
+    };
+  });
+
+  const controls = [
+    {
+      id: "S1",
+      prediction:
+        "classifySanAntonio returns at most ONE category per row, so any multi-category permit " +
+        "must come from one permit number carrying SEVERAL permit types across rows",
+      expected: "spanningCategories <= spanningTypes",
+      actual: { spanningCategories, spanningTypes },
+      pass: spanningCategories <= spanningTypes,
+    },
+  ];
+
+  return {
+    csvUrl: url.replace(/\?.*$/, ""),
+    window: w,
+    columns: { typeCol, dateCol, idCol },
+    recordsInFile: records.length,
+    droppedByClassifier: dropped,
+    distinctPermitsAllMonths: perPermit.size,
+    spanningTypes,
+    spanningMonths,
+    spanningCategories,
+    controls,
+    focusMonth: focus,
+    byMonth,
+    handSample: multi.slice(0, 60),
+  };
+}
+
+const out = {
+  measuredAt: new Date().toISOString(),
+  focusMonth: FOCUS,
+  note:
+    "Round 50. Measurement only. Every request is built by the ingestion fetcher's own code; " +
+    "the tally is this probe's and is checked by the controls.",
+  austin: await austin(),
+  sanAntonio: await sanAntonio(),
+};
+writeFileSync(OUT, JSON.stringify(out, null, 2) + "\n");
+console.log(`wrote ${OUT.pathname}`);
+for (const c of [...out.austin.controls, ...out.sanAntonio.controls]) {
+  console.log(`  ${c.pass ? "PASS" : "FAIL"}  ${c.id}  ${c.prediction}`);
+}
+console.log(
+  `  AUSTIN ${FOCUS}: ${out.austin.focusMonth.distinctPermitsClassified} distinct, ` +
+    `summed ${out.austin.focusMonth.sumOfPerCategory}, overshoot ${out.austin.focusMonth.overshoot}`,
+);
+console.log(
+  `  SAN ANTONIO ${FOCUS}: ${out.sanAntonio.focusMonth.distinctPermitsClassified} distinct, ` +
+    `summed ${out.sanAntonio.focusMonth.sumOfPerCategory}, overshoot ${out.sanAntonio.focusMonth.overshoot}`,
+);
