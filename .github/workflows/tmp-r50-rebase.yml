@@ -61,13 +61,52 @@ jobs:
         working-directory: site
         run: npx tsx scripts/replays/permitcountunit.ts
 
-      - name: Commit
+      - name: Identify the committer
         run: |
           git config user.name  "thi-probe"
           git config user.email "noreply@texashomeintelligence.com"
+
+      - name: Commit the site side
+        run: |
           git add site/src/data/generated/permit-trade-activity docs/audits/round-50-rebase.json
           git diff --cached --quiet && { echo "no change"; exit 0; }
           git commit -m "Round 50: re-ingest permit trade activity under trades-v3
 
           Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+
+      - name: Refresh the social feed, so the autoposter cannot read the old series
+        # THE QUESTION THE OWNER ASKED. The cadence reads the COMMITTED
+        # social-feed.json, not the datasets, and that file carries no mapping
+        # version — so a feed built under v2 is indistinguishable from one built
+        # under v3 except by its timestamp. Rebuilding it here is what actually
+        # retires the old numbers; without this step the queued Austin solar
+        # story would still be buildable from v2 figures.
+        working-directory: autoposter
+        run: python3 tools/refresh-feed.py
+
+      - name: Commit the autoposter side SEPARATELY
+        # Rule 0: every autoposter commit's file list entirely under autoposter/.
+        run: |
+          git add autoposter/data
+          git diff --cached --quiet && { echo "no feed change"; exit 0; }
+          git commit -m "Round 50: refresh the feed onto trades-v3
+
+          Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
+
+      - name: Nothing outside the two boundaries may be committed
+        run: |
+          files=$(git diff --name-only origin/claude/thi-plan-review-m40n0x..HEAD)
+          echo "$files"
+          bad=$(echo "$files" | grep -v '^site/src/data/generated/permit-trade-activity/' \
+                              | grep -v '^docs/audits/round-50-rebase.json$' \
+                              | grep -v '^autoposter/data/' || true)
+          [ -z "$bad" ] || { echo "::error::unexpected files: $bad"; exit 1; }
+
+      - name: Push
+        run: |
           for i in 1 2 3 4; do git push origin HEAD:claude/thi-plan-review-m40n0x && break || sleep $((2**i)); done

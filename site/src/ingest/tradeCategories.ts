@@ -292,13 +292,21 @@ export const AUSTIN_SOLAR_TEXT = /\bsolar\b|photovoltaic|\bpv\b/i;
  * happens to accompany storage, and "backup" without a battery could be a
  * generator. The predicate names the device, not its wiring.
  *
+ * `ESS` and `BESS` are in because they are what the industry calls the thing —
+ * (Battery) Energy Storage System. Omitting bare `ESS` first time round cost
+ * exactly 8 rows across the 13-month window, every one of them storage, and
+ * finding them is what made this predicate reconcile to ZERO against the
+ * independent composition count in `round-50-aux-vocabulary.json`. That
+ * reconciliation is now a control in the rebase report rather than an
+ * observation, because "explained and tiny" is how the 98.7% started.
+ *
  * KNOWN LIMIT, stated rather than discovered later: this is only consulted for
  * rows whose `work_class` is `Auxiliary Power`, because that is the population
  * it was measured on. A battery installed under a plain Electrical Permit with
  * a storage description is NOT counted, the same way Austin's missing roofing
  * class limits roofing. How large that population is has not been measured.
  */
-export const AUSTIN_STORAGE_TEXT = /\bbatter\w*|\bstorage\b|powerwall|\bbess\b/i;
+export const AUSTIN_STORAGE_TEXT = /\bbatter\w*|\bstorage\b|powerwall|\bb?ess\b/i;
 
 export function classifyAustin(row: {
   permit_type_desc?: string;

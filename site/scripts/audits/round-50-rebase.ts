@@ -118,11 +118,52 @@ for (const metro of ["austin", "san-antonio"]) {
   moved[metro] = rows;
 }
 
+/**
+ * CONTROL. `energy_storage` must equal, exactly, the independent composition
+ * count measured by `round-50-aux-vocabulary.json` — its `storage` plus its
+ * `both` rows, since a description naming solar AND a battery belongs in both
+ * categories. Two code paths, written separately, over the same live feed.
+ *
+ * It did not reconcile on the first run: the production predicate omitted bare
+ * `ESS` and came out 8 rows light across the window. That is why this is a
+ * control and not a sentence in an audit.
+ */
+function storageControl() {
+  let vocab: any;
+  try {
+    vocab = JSON.parse(readFileSync(
+      new URL("../../../docs/audits/round-50-aux-vocabulary.json", import.meta.url), "utf8"));
+  } catch {
+    return [{ id: "R1", pass: false, note: "the vocabulary measurement is missing; nothing to reconcile against" }];
+  }
+  const austinAfter = (after.austin as any).figures as Record<string, { count: number }>;
+  const rows: { id: string; pass: boolean; note: string }[] = [];
+  let mismatches = 0;
+  for (const [month, v] of Object.entries(vocab.byMonth as Record<string, any>)) {
+    const expected = v.storage + v.both;
+    const actual = austinAfter[`energy_storage/${month}`]?.count;
+    if (actual === undefined) continue;        // the incomplete month is dropped from publication
+    if (actual !== expected) {
+      mismatches++;
+      rows.push({ id: `R1/${month}`, pass: false, note: `energy_storage ${actual} vs composition ${expected}` });
+    }
+  }
+  rows.unshift({
+    id: "R1",
+    pass: mismatches === 0,
+    note: mismatches === 0
+      ? "energy_storage reconciles exactly with the independent composition count, every month"
+      : `${mismatches} month(s) disagree`,
+  });
+  return rows;
+}
+
 const out = {
   measuredAt: new Date().toISOString(),
   note: "Round 50. v2 rows remain on disk as history and stop being read; v3 is published.",
   ingestion,
   movedFigures: moved,
+  controls: storageControl(),
   before,
   after,
 };
@@ -131,4 +172,14 @@ console.log(`\nwrote ${OUT.pathname}`);
 for (const metro of ["austin", "san-antonio"]) {
   const n = Object.keys((moved as any)[metro]).length;
   console.log(`  ${metro}: ${n} published category-month figure(s) moved`);
+}
+let failed = 0;
+for (const c of out.controls) {
+  if (!c.pass) failed++;
+  console.log(`  ${c.pass ? "PASS" : "FAIL"}  ${c.id}  ${c.note}`);
+}
+if (failed > 0) {
+  // A re-base whose own control disagrees must not look like a success.
+  console.error(`\n${failed} control(s) failed — the published figures and the independent count disagree.`);
+  process.exit(1);
 }
