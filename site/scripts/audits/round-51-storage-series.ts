@@ -184,6 +184,76 @@ async function austin() {
     return out;
   });
 
+  // ── Q5 (item 42): is ROOFING about to develop the same discontinuity? ──────
+  // Round 6 measured `work_class = "Roof"` as ONE row in 54,798 and concluded Austin has no
+  // roofing class worth the name — which is why Austin roofing is a description-text match. The
+  // class first appears in this window in 2026-08. The committed file says it accounted for one
+  // permit that month and none in September, so the COUNT has not moved. That leaves the
+  // question storage answered the hard way: has the roofing VOCABULARY shifted?
+  //
+  // Two measurements. The class's own volume across the whole feed, month by month. And the
+  // description composition of roofing-classified permits — the same test as for storage, so the
+  // two series are judged by one standard.
+  const ROOF_TERMS: Record<string, RegExp> = {
+    reroof: /\bre[\s-]?roof\w*/i,
+    shingle: /shingle/i,
+    replace: /\breplac\w*/i,
+    repair: /\brepair\w*/i,
+    tear_off: /tear[\s-]?off/i,
+    decking: /\bdeck(ing)?\b/i,
+    squares: /\bsquares?\b/i,
+    // The sweep-in cases Round 50's hand-read found: roof-adjacent and incidental mentions.
+    skylight: /skylight/i,
+    rooftop_unit: /roof\s*top\s*unit|rooftop\s*unit|\brtu\b/i,
+    solar_on_roof: /\bsolar\b|photovoltaic|\bpv\b/i,
+    new_construction: /new construction|new residence|new single[\s-]family/i,
+    remodel: /remodel/i,
+  };
+  const roofing = new Map<string, {
+    permits: Set<string>; byClass: Map<string, number>; terms: Record<string, Set<string>>;
+    roofClassAlsoSaysRoofInDescription: number; roofClassTotal: number;
+  }>();
+  for (const r of rows) {
+    if (!r.issue_date) continue;
+    const haystack = `${r.work_class ?? ""} ${r.permit_type_desc ?? ""} ${r.description ?? ""}`.toLowerCase();
+    if (!haystack.includes("roof")) continue;        // the live roofing predicate, not a copy
+    const month = new Date(r.issue_date).toISOString().slice(0, 7);
+    const id = (r.permit_number ?? "").trim() || `${r.issue_date}#${roofing.size}`;
+    const b = roofing.get(month) ?? {
+      permits: new Set<string>(), byClass: new Map<string, number>(),
+      terms: Object.fromEntries(Object.keys(ROOF_TERMS).map((k) => [k, new Set<string>()])),
+      roofClassAlsoSaysRoofInDescription: 0, roofClassTotal: 0,
+    };
+    b.permits.add(id);
+    const wc = (r.work_class ?? "").trim() || "(blank)";
+    b.byClass.set(wc, (b.byClass.get(wc) ?? 0) + 1);
+    if (wc === "Roof") {
+      b.roofClassTotal++;
+      // THE DECISIVE ONE. If a Roof-class row also says roof in its DESCRIPTION, the text match
+      // would have caught it anyway and the class adds no new population. If it does not, the
+      // class is bringing in permits the series never had — which is how a discontinuity starts.
+      if (/roof/i.test(r.description ?? "")) b.roofClassAlsoSaysRoofInDescription++;
+    }
+    for (const [name, re] of Object.entries(ROOF_TERMS)) {
+      if (re.test(r.description ?? "")) b.terms[name].add(id);
+    }
+    roofing.set(month, b);
+  }
+  const roofingByMonth = [...roofing.keys()].sort().map((m) => {
+    const b = roofing.get(m)!;
+    const n = b.permits.size;
+    return {
+      month: m,
+      permits: n,
+      roofClassPermits: b.roofClassTotal,
+      roofClassAlsoSaysRoofInDescription: b.roofClassAlsoSaysRoofInDescription,
+      topWorkClasses: Object.fromEntries(
+        [...b.byClass.entries()].sort((a, c) => c[1] - a[1]).slice(0, 5)),
+      termShares: Object.fromEntries(Object.entries(b.terms)
+        .map(([k, v]) => [k, n ? +(v.size / n * 100).toFixed(1) : 0])),
+    };
+  });
+
   // ── Q2: did the mix change, or the volume? Asked of the WHOLE feed, not our predicate. ──
   const get = async (params: Record<string, string>) => {
     const url = new URL(AUSTIN);
@@ -236,6 +306,7 @@ async function austin() {
     auxPowerByMonth: describe(aux),
     storageByMonth: describe(storage),
     storageConcentrationByMonth: concentrationByMonth,
+    roofingCompositionByMonth: roofingByMonth,
     wholeFeedByMonth: Object.fromEntries(
       allByMonth.map((r) => [(r.month ?? "").slice(0, 7), Number(r.permits)])),
     auxPowerClassVolumeByMonth: seriesFor(classByMonth, "work_class", "Auxiliary Power"),
@@ -251,6 +322,7 @@ async function austin() {
      * cross-check worth running.
      */
     upgradeClassVolumeByMonth: seriesFor(classByMonth, "work_class", "Upgrade"),
+    roofWorkClassVolumeByMonth: seriesFor(classByMonth, "work_class", "Roof"),
     repairClassVolumeByMonth: seriesFor(classByMonth, "work_class", "Repair"),
     topWorkClassesByMonth: Object.fromEntries(
       [...new Set(classByMonth.map((r) => r.work_class ?? "(blank)"))]
