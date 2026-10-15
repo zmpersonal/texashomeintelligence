@@ -1,10 +1,10 @@
 {
-  "measuredAt": "2026-10-15T16:38:22.592Z",
+  "measuredAt": "2026-10-15T16:40:15.475Z",
   "question": "what does the Austin battery-storage series say, and is it filing mix or homes?",
   "austin": {
     "window": {
       "since": "2025-09-01T00:00:00.000Z",
-      "until": "2026-10-15T16:38:22.592Z"
+      "until": "2026-10-15T16:40:15.476Z"
     },
     "auxPowerByMonth": [
       {
@@ -669,7 +669,10 @@
         },
         "masterpermitnum": {
           "distinct": 1,
-          "topShare": 100
+          "topShare": 100,
+          "values": {
+            "(blank)": 34
+          }
         },
         "project_id": {
           "distinct": 34,
@@ -709,7 +712,10 @@
         },
         "masterpermitnum": {
           "distinct": 1,
-          "topShare": 100
+          "topShare": 100,
+          "values": {
+            "(blank)": 36
+          }
         },
         "project_id": {
           "distinct": 36,
@@ -749,7 +755,10 @@
         },
         "masterpermitnum": {
           "distinct": 1,
-          "topShare": 100
+          "topShare": 100,
+          "values": {
+            "(blank)": 32
+          }
         },
         "project_id": {
           "distinct": 32,
@@ -789,7 +798,10 @@
         },
         "masterpermitnum": {
           "distinct": 1,
-          "topShare": 100
+          "topShare": 100,
+          "values": {
+            "(blank)": 18
+          }
         },
         "project_id": {
           "distinct": 18,
@@ -829,7 +841,10 @@
         },
         "masterpermitnum": {
           "distinct": 1,
-          "topShare": 100
+          "topShare": 100,
+          "values": {
+            "(blank)": 6
+          }
         },
         "project_id": {
           "distinct": 6,
@@ -869,7 +884,11 @@
         },
         "masterpermitnum": {
           "distinct": 2,
-          "topShare": 88.9
+          "topShare": 88.9,
+          "values": {
+            "13649242": 1,
+            "(blank)": 8
+          }
         },
         "project_id": {
           "distinct": 9,
@@ -909,7 +928,10 @@
         },
         "masterpermitnum": {
           "distinct": 1,
-          "topShare": 100
+          "topShare": 100,
+          "values": {
+            "(blank)": 5
+          }
         },
         "project_id": {
           "distinct": 5,
@@ -949,7 +971,10 @@
         },
         "masterpermitnum": {
           "distinct": 1,
-          "topShare": 100
+          "topShare": 100,
+          "values": {
+            "(blank)": 10
+          }
         },
         "project_id": {
           "distinct": 10,
@@ -991,7 +1016,11 @@
         },
         "masterpermitnum": {
           "distinct": 2,
-          "topShare": 75
+          "topShare": 75,
+          "values": {
+            "13684431": 1,
+            "(blank)": 3
+          }
         },
         "project_id": {
           "distinct": 4,
@@ -1033,7 +1062,12 @@
         },
         "masterpermitnum": {
           "distinct": 3,
-          "topShare": 84.6
+          "topShare": 84.6,
+          "values": {
+            "13692950": 1,
+            "13704056": 1,
+            "(blank)": 11
+          }
         },
         "project_id": {
           "distinct": 13,
@@ -1075,7 +1109,12 @@
         },
         "masterpermitnum": {
           "distinct": 3,
-          "topShare": 93.1
+          "topShare": 93.1,
+          "values": {
+            "13693124": 1,
+            "13714013": 1,
+            "(blank)": 27
+          }
         },
         "project_id": {
           "distinct": 29,
@@ -1115,7 +1154,10 @@
         },
         "masterpermitnum": {
           "distinct": 1,
-          "topShare": 100
+          "topShare": 100,
+          "values": {
+            "(blank)": 146
+          }
         },
         "project_id": {
           "distinct": 146,
@@ -1157,7 +1199,11 @@
         },
         "masterpermitnum": {
           "distinct": 2,
-          "topShare": 99.5
+          "topShare": 99.5,
+          "values": {
+            "13759894": 1,
+            "(blank)": 187
+          }
         },
         "project_id": {
           "distinct": 188,
@@ -1197,7 +1243,10 @@
         },
         "masterpermitnum": {
           "distinct": 1,
-          "topShare": 100
+          "topShare": 100,
+          "values": {
+            "(blank)": 59
+          }
         },
         "project_id": {
           "distinct": 59,
