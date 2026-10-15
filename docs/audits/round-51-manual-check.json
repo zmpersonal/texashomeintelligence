@@ -1269,5 +1269,27 @@
   ],
   "capturesBeforeMay2026": [
     "20260130093207"
-  ]
+  ],
+  "phrasePresence": {
+    "20260130093207": {
+      "separated_into_their_own": false,
+      "can_be_included_together": false,
+      "all_dg_requires_aux_power": true,
+      "battery_storage_named": true,
+      "ess_defined": true,
+      "project_includes_ess_trigger": false,
+      "twentyfive_kw_threshold": true,
+      "revision_or_version_marker": false
+    },
+    "live": {
+      "separated_into_their_own": true,
+      "can_be_included_together": true,
+      "all_dg_requires_aux_power": true,
+      "battery_storage_named": true,
+      "ess_defined": false,
+      "project_includes_ess_trigger": true,
+      "twentyfive_kw_threshold": true,
+      "revision_or_version_marker": true
+    }
+  }
 }
