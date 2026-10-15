@@ -34,7 +34,11 @@
  * count and report it.
  */
 
-/** The seven categories. Nothing outside this list is a category. */
+/** The eight categories. Nothing outside this list is a category.
+ *
+ * `energy_storage` is Round 50's split. It is not a new data source — it is the
+ * half of Austin's `Auxiliary Power` work class that was being published as
+ * `solar` and is not solar. See `AUSTIN_STORAGE_TEXT`. */
 export const TRADE_CATEGORIES = [
   "roofing",
   "hvac",
@@ -42,6 +46,7 @@ export const TRADE_CATEGORIES = [
   "electrical",
   "foundation",
   "solar",
+  "energy_storage",
   "trees",
 ] as const;
 export type TradeCategory = (typeof TRADE_CATEGORIES)[number];
@@ -50,7 +55,18 @@ export type TradeCategory = (typeof TRADE_CATEGORIES)[number];
  * Bump when any mapping below changes, or when the COUNTING BASIS changes.
  *
  * Round 45 bumped it to `trades-v2` for the second reason: `permitCount` was a
- * row count and is now a count of distinct permits. The mappings are untouched.
+ * row count and is now a count of distinct permits. The mappings were untouched.
+ *
+ * Round 50 bumped it to `trades-v3` for the FIRST reason, and this one moves
+ * published figures. Austin's `Auxiliary Power` work class mapped straight to
+ * `solar`; measured over the full window it is the class Austin uses for
+ * distributed energy generally, and from July 2026 battery storage came to
+ * dominate it — 64.3% of August's published "solar" permits and 74.2% of
+ * September's named no solar, photovoltaic or PV at all. So the class no longer
+ * assigns a category by itself: the description decides, and storage is its own
+ * category. Austin's solar series re-bases DOWNWARD and a live article's
+ * headline figure is wrong under v2. See
+ * `docs/audits/round-50-permit-overlap.md`.
  * A count computed under one basis must never be compared against one computed
  * under another, which is the same rule this constant already existed to
  * enforce — a trend line spanning the boundary would have compared two
@@ -66,7 +82,7 @@ export type TradeCategory = (typeof TRADE_CATEGORIES)[number];
  * produced under another. A page or a trend line that spans a version
  * boundary is comparing two different questions.
  */
-export const CATEGORY_MAPPING_VERSION = "trades-v2";
+export const CATEGORY_MAPPING_VERSION = "trades-v3";
 
 /** How a row was assigned to a category — the provenance that lets a page
  * say what its number actually is. */
@@ -206,9 +222,30 @@ export const AUSTIN_PERMIT_TYPE_MAP: Record<string, TradeCategory | null> = {
  * description matches independently.
  */
 export const AUSTIN_WORK_CLASS_MAP: Record<string, TradeCategory> = {
-  "Auxiliary Power": "solar", // 808 in window; 98.7% solar where measured
   Roof: "roofing", // 1 row in 54,798. Austin has no roofing class worth the name.
 };
+
+/**
+ * Work classes the DOWNLOAD must include, whether or not they assign a category
+ * on their own.
+ *
+ * `Auxiliary Power` is here and deliberately absent from the map above. Round 50
+ * is why. It used to map straight to `solar` on the strength of a measurement
+ * taken "inside the roof-matched archive" — a population selected by the word
+ * roof, which rooftop solar contains and a battery cabinet does not. The control
+ * was shaped to confirm what it confirmed. Measured on all 1,093 Auxiliary Power
+ * rows in the window instead, the class splits four ways: 491 say solar only,
+ * 421 say a battery or storage only, 168 say BOTH, and 13 say neither.
+ *
+ * So the class is a FILTER, not a verdict: it tells the predicate which rows to
+ * fetch, and `classifyAustin` reads the description to decide what they are. The
+ * two lists are separate because conflating them is what let a download filter
+ * masquerade as a classification for fourteen months.
+ */
+export const AUSTIN_WORK_CLASSES_IN_SCOPE: readonly string[] = [
+  "Auxiliary Power",
+  ...Object.keys(AUSTIN_WORK_CLASS_MAP),
+];
 
 /**
  * The roofing text test, byte-for-byte the predicate `austinPermits.ts` has
@@ -240,6 +277,36 @@ export function austinRoofHaystack(row: {
 // Exported so `lib/textMatchComposition.ts` can measure the solar share of the
 // roof text match with THIS predicate rather than a copy of it.
 export const AUSTIN_SOLAR_TEXT = /\bsolar\b|photovoltaic|\bpv\b/i;
+
+/**
+ * Storage wording, READ OFF the live descriptions rather than written from two
+ * examples (`docs/audits/round-50-aux-vocabulary.json`).
+ *
+ * Word frequencies across the 434 `Auxiliary Power` descriptions in the window
+ * that do NOT mention solar: battery 393, backup 391, meter 392, socket 383,
+ * system 418, storage 20, energy 24. One string accounts for the bulk of it —
+ * "BASE: Installing a backup battery system and additional meter socket."
+ *
+ * Narrow and literal, like `AUSTIN_SOLAR_TEXT`. `meter socket` and `backup`
+ * alone are deliberately NOT here: a meter socket is electrical work that
+ * happens to accompany storage, and "backup" without a battery could be a
+ * generator. The predicate names the device, not its wiring.
+ *
+ * `ESS` and `BESS` are in because they are what the industry calls the thing —
+ * (Battery) Energy Storage System. Omitting bare `ESS` first time round cost
+ * exactly 8 rows across the 13-month window, every one of them storage, and
+ * finding them is what made this predicate reconcile to ZERO against the
+ * independent composition count in `round-50-aux-vocabulary.json`. That
+ * reconciliation is now a control in the rebase report rather than an
+ * observation, because "explained and tiny" is how the 98.7% started.
+ *
+ * KNOWN LIMIT, stated rather than discovered later: this is only consulted for
+ * rows whose `work_class` is `Auxiliary Power`, because that is the population
+ * it was measured on. A battery installed under a plain Electrical Permit with
+ * a storage description is NOT counted, the same way Austin's missing roofing
+ * class limits roofing. How large that population is has not been measured.
+ */
+export const AUSTIN_STORAGE_TEXT = /\bbatter\w*|\bstorage\b|powerwall|\bb?ess\b/i;
 
 export function classifyAustin(row: {
   permit_type_desc?: string;
@@ -273,6 +340,19 @@ export function classifyAustin(row: {
   if (AUSTIN_SOLAR_TEXT.test(row.description ?? "")) {
     add("solar", "description-text", "description mentions solar/photovoltaic/PV");
   }
+  // ── ROUND 50: `Auxiliary Power` IS A FILTER, NOT A VERDICT ───────────────
+  // The class gates WHICH rows this test runs on; the description decides what
+  // they are. A row saying both solar and storage lands in both categories, the
+  // same way a rooftop solar install lands in solar and roofing — it is one job
+  // that genuinely is both, and these counts have never been additive.
+  // A row saying NEITHER is left unclassified and reported, per this file's rule
+  // that an unmapped value is never forced into the nearest bucket: 13 rows in
+  // the 14-month window, mostly solar wording this test does not know ("24
+  // MODULES - SYSTEM SIZE STC") and vehicle-to-home chargers.
+  if (wc === "Auxiliary Power" && AUSTIN_STORAGE_TEXT.test(row.description ?? "")) {
+    add("energy_storage", "description-text",
+        "work class Auxiliary Power, description mentions a battery or storage");
+  }
   return out;
 }
 
@@ -293,5 +373,8 @@ export function isUnknownAustinType(permitTypeDesc: string): boolean {
  */
 export const CATEGORIES_WITHOUT_SOURCE: Record<string, TradeCategory[]> = {
   austin: ["foundation", "trees"],
-  "san-antonio": [],
+  // Round 50: San Antonio's 68 permit types include no storage type. Its solar
+  // is the explicit `Solar - Photovoltaic Permit` and is unaffected by the
+  // Austin defect — absent, not zero.
+  "san-antonio": ["energy_storage"],
 };

@@ -1,0 +1,278 @@
+{
+  "measuredAt": "2026-10-15T14:24:22.085Z",
+  "window": {
+    "since": "2025-09-01T00:00:00.000Z",
+    "until": "2026-10-15T14:24:17.508Z"
+  },
+  "auxPowerRows": 1093,
+  "candidateStoragePattern": "\\bbatter\\w*|\\bstorage\\b|\\bess\\b|powerwall|\\bbess\\b|\\bess\\/|energy\\s+storage",
+  "byMonth": {
+    "2025-09": {
+      "aux": 100,
+      "solar": 66,
+      "storage": 4,
+      "both": 30,
+      "neither": 0
+    },
+    "2025-10": {
+      "aux": 102,
+      "solar": 65,
+      "storage": 3,
+      "both": 33,
+      "neither": 1
+    },
+    "2025-11": {
+      "aux": 94,
+      "solar": 61,
+      "storage": 4,
+      "both": 28,
+      "neither": 1
+    },
+    "2025-12": {
+      "aux": 56,
+      "solar": 37,
+      "storage": 1,
+      "both": 17,
+      "neither": 1
+    },
+    "2026-01": {
+      "aux": 29,
+      "solar": 22,
+      "storage": 2,
+      "both": 4,
+      "neither": 1
+    },
+    "2026-02": {
+      "aux": 33,
+      "solar": 22,
+      "storage": 1,
+      "both": 8,
+      "neither": 2
+    },
+    "2026-03": {
+      "aux": 22,
+      "solar": 17,
+      "storage": 1,
+      "both": 4,
+      "neither": 0
+    },
+    "2026-04": {
+      "aux": 47,
+      "solar": 35,
+      "storage": 5,
+      "both": 5,
+      "neither": 2
+    },
+    "2026-05": {
+      "aux": 24,
+      "solar": 20,
+      "storage": 2,
+      "both": 2,
+      "neither": 0
+    },
+    "2026-06": {
+      "aux": 39,
+      "solar": 24,
+      "storage": 3,
+      "both": 10,
+      "neither": 2
+    },
+    "2026-07": {
+      "aux": 64,
+      "solar": 34,
+      "storage": 20,
+      "both": 9,
+      "neither": 1
+    },
+    "2026-08": {
+      "aux": 194,
+      "solar": 46,
+      "storage": 142,
+      "both": 4,
+      "neither": 2
+    },
+    "2026-09": {
+      "aux": 219,
+      "solar": 31,
+      "storage": 178,
+      "both": 10,
+      "neither": 0
+    },
+    "2026-10": {
+      "aux": 70,
+      "solar": 11,
+      "storage": 55,
+      "both": 4,
+      "neither": 0
+    }
+  },
+  "topTokensInNonSolarDescriptions": {
+    "system": 418,
+    "and": 403,
+    "battery": 393,
+    "meter": 392,
+    "backup": 391,
+    "installing": 388,
+    "additional": 383,
+    "socket": 383,
+    "base": 379,
+    "energy": 24,
+    "existing": 24,
+    "install": 22,
+    "storage": 20,
+    "new": 19,
+    "the": 18,
+    "for": 15,
+    "with": 14,
+    "installation": 14,
+    "tesla": 14,
+    "residential": 11,
+    "main": 11,
+    "only": 10,
+    "residence": 10,
+    "disconnect": 8,
+    "will": 8,
+    "single": 8,
+    "family": 8,
+    "service": 7,
+    "from": 7,
+    "gateway": 7,
+    "etj": 6,
+    "this": 6,
+    "permit": 6,
+    "utility": 5,
+    "power": 5,
+    "unit": 5,
+    "panel": 5,
+    "charger": 5,
+    "underground": 5,
+    "panels": 5,
+    "along": 4,
+    "updates": 4,
+    "home": 4,
+    "inspection": 4,
+    "grid": 4,
+    "breaker": 4,
+    "placed": 4,
+    "wall": 4,
+    "loads": 4,
+    "batteries": 4,
+    "ess": 3,
+    "disconnecting": 3,
+    "reconnecting": 3,
+    "after": 3,
+    "job": 3,
+    "completion": 3,
+    "roof": 3,
+    "mounted": 3,
+    "auxiliary": 3,
+    "need": 3
+  },
+  "residueShapes": [
+    {
+      "count": 1,
+      "length": 96,
+      "mentionsKw": false,
+      "mentionsRoofMounted": true,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 980,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": true,
+      "mentionsModulesOrPanels": true
+    },
+    {
+      "count": 1,
+      "length": 675,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": true,
+      "mentionsModulesOrPanels": true
+    },
+    {
+      "count": 1,
+      "length": 54,
+      "mentionsKw": true,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": true
+    },
+    {
+      "count": 1,
+      "length": 67,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 29,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 69,
+      "mentionsKw": true,
+      "mentionsRoofMounted": true,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 65,
+      "mentionsKw": false,
+      "mentionsRoofMounted": true,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 27,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 119,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 98,
+      "mentionsKw": false,
+      "mentionsRoofMounted": true,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    },
+    {
+      "count": 1,
+      "length": 75,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": true
+    },
+    {
+      "count": 1,
+      "length": 79,
+      "mentionsKw": false,
+      "mentionsRoofMounted": false,
+      "mentionsV2hOrCharging": false,
+      "mentionsModulesOrPanels": false
+    }
+  ],
+  "residueTotal": 13
+}

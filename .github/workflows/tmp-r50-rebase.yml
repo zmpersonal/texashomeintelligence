@@ -1,0 +1,126 @@
+# TEMPORARY — Round 50. Delete when the round lands.
+#
+# Re-ingests ONLY permit-trade-activity, under `trades-v3`, and commits both the regenerated
+# dataset and a report of every published figure that moved. On the round's BRANCH — a dataset
+# write on `main` is a production deploy.
+name: tmp r50 rebase permit trade activity
+
+on:
+  # A branch-only workflow is not dispatchable until GitHub has seen it, so it
+  # registers itself on its own path. Re-running is safe: the fetcher recounts
+  # its whole window and `mergeObservations` keys on `key`, so a second run
+  # replaces the same v3 rows rather than appending duplicates.
+  push:
+    branches: [claude/thi-plan-review-m40n0x]
+    paths:
+      - ".github/workflows/tmp-r50-rebase.yml"
+      - "site/scripts/audits/round-50-rebase.ts"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebase:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/thi-plan-review-m40n0x
+          # `refresh-feed.py` compares the rebuilt feed against the copy ON MAIN,
+          # read from the ref rather than the working tree. A shallow
+          # single-branch checkout has no `origin/main` for it to read, which is
+          # why the step failed twice before this line existed.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+        working-directory: site
+
+      - name: The mapping must verify BEFORE anything is rewritten
+        working-directory: site
+        run: npx tsx scripts/verify-trade-mapping.ts
+
+      - name: Re-ingest under trades-v3 and report what moved
+        working-directory: site
+        env:
+          SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
+        run: npx tsx scripts/audits/round-50-rebase.ts
+
+      - name: The v2 rows must still be on disk — history is never overwritten
+        working-directory: site
+        run: |
+          for m in austin san-antonio; do
+            f="src/data/generated/permit-trade-activity/$m.json"
+            for v in trades-v1 trades-v2 trades-v3; do
+              c=$(grep -o "\"$v/" "$f" | wc -l)
+              echo "$m: $v rows = $c"
+              [ "$c" -gt 0 ] || { echo "::error::$m lost its $v rows"; exit 1; }
+            done
+          done
+
+      - name: The readers must not turn the all-trades row into a category
+        working-directory: site
+        run: npx tsx scripts/replays/permitcountunit.ts
+
+      - name: Identify the committer
+        run: |
+          git config user.name  "thi-probe"
+          git config user.email "noreply@texashomeintelligence.com"
+
+      - name: Commit the site side
+        run: |
+          git add site/src/data/generated/permit-trade-activity docs/audits/round-50-rebase.json
+          git diff --cached --quiet && { echo "no change"; exit 0; }
+          git commit -m "Round 50: re-ingest permit trade activity under trades-v3
+
+          Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+
+      - name: Refresh the social feed, so the autoposter cannot read the old series
+        # THE QUESTION THE OWNER ASKED. The cadence reads the COMMITTED
+        # social-feed.json, not the datasets, and that file carries no mapping
+        # version — so a feed built under v2 is indistinguishable from one built
+        # under v3 except by its timestamp. Rebuilding it here is what actually
+        # retires the old numbers; without this step the queued Austin solar
+        # story would still be buildable from v2 figures.
+        #
+        # `--dry-run` IS THE CORRECT MODE HERE, and not because this is a rehearsal.
+        # Without it, `refresh-feed.py` does `git checkout -B ... origin/main` and
+        # opens a PR against main — that is its production job, and main
+        # auto-deploys the live site. On a round branch that is exactly what must
+        # not happen. The flag only suppresses the commit-to-main; the feed is
+        # still rebuilt and still validated against its schema by `write_feed`
+        # before being written, which is the part this step needs. The commit to
+        # THIS branch is the next step's job.
+        working-directory: autoposter
+        run: python3 tools/refresh-feed.py --dry-run
+
+      - name: Commit the autoposter side SEPARATELY
+        # Rule 0: every autoposter commit's file list entirely under autoposter/.
+        run: |
+          git add autoposter/data
+          git diff --cached --quiet && { echo "no feed change"; exit 0; }
+          git commit -m "Round 50: refresh the feed onto trades-v3
+
+          Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
+
+      - name: Nothing outside the two boundaries may be committed
+        run: |
+          files=$(git diff --name-only origin/claude/thi-plan-review-m40n0x..HEAD)
+          echo "$files"
+          bad=$(echo "$files" | grep -v '^site/src/data/generated/permit-trade-activity/' \
+                              | grep -v '^docs/audits/round-50-rebase.json$' \
+                              | grep -v '^autoposter/data/' || true)
+          [ -z "$bad" ] || { echo "::error::unexpected files: $bad"; exit 1; }
+
+      - name: Push
+        run: |
+          for i in 1 2 3 4; do git push origin HEAD:claude/thi-plan-review-m40n0x && break || sleep $((2**i)); done

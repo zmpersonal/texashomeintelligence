@@ -22,6 +22,7 @@ from __future__ import annotations
 import copy
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -206,11 +207,57 @@ def site_renderer():
     """
     def render(article) -> None:
         slug = article["slug"]
+        assert_not_withdrawn(slug)
         analysis = REPO / "site" / "src" / "data" / "analysis" / f"{slug}.md"
         analysis.parent.mkdir(parents=True, exist_ok=True)
         analysis.write_text(article["frontmatter"] + "\n" + article["body"])
         subprocess.run(["npm", "run", "og-cards", "--", slug], cwd=REPO / "site", check=True)
     return render
+
+
+WITHDRAWN_REGISTRY = REPO / "site" / "src" / "data" / "withdrawnArticles.ts"
+
+
+def withdrawn_slugs() -> set[str]:
+    """Slugs the site has permanently retracted, read from its own registry.
+
+    Read-only across the Rule 0 boundary, like `published_questions`.
+    """
+    try:
+        src = WITHDRAWN_REGISTRY.read_text()
+    except OSError:
+        # No registry means nothing has been withdrawn, which is the right answer
+        # for a fresh checkout — not a reason to halt.
+        return set()
+    block = re.search(r"export const WITHDRAWN_ARTICLES = \[(.*?)\] as const", src, re.S)
+    return set(re.findall(r'slug:\s*"([^"]+)"', block.group(1))) if block else set()
+
+
+def assert_not_withdrawn(slug: str) -> None:
+    """A withdrawal is permanent. Refuse to write an article at a retracted slug.
+
+    WHY THIS IS REACHABLE AND NOT THEORETICAL. Round 48 made `published: false` re-open a
+    topic deliberately, so that withdrawing an article does not also remove the machine's
+    ability to replace it. For a RECURRING builder that is right — next month is a different
+    article. But the Austin permits builder keeps a map of the periods it has already published
+    under their original titles and slugs (`BOOM_PUBLISHED_SLUG`), so building that same period
+    again regenerates the same slug — and Round 50 withdrew one of those. The URL answers
+    410 Gone from `WITHDRAWN_ARTICLES`, and a regenerated file at that slug would quietly turn
+    a public retraction back into a live article.
+
+    Measured as unreachable TODAY only because the builder picks the latest complete month, and
+    that is September rather than the withdrawn August. "Currently out of reach" is not a
+    guarantee, and this one costs a dictionary lookup.
+
+    Halts hard rather than skipping: nothing about republishing a retraction is a degraded
+    version worth shipping.
+    """
+    if slug in withdrawn_slugs():
+        raise RuntimeError(
+            f"refusing to write `{slug}`: it is in the site's withdrawal registry. A withdrawn "
+            f"article is retracted, not merely unpublished — its URL answers 410 Gone and "
+            f"writing this file would turn a public correction back into a live article. If the "
+            f"topic should be republished, it needs a new slug and a human decision.")
 
 
 def restore_card_dirs() -> None:

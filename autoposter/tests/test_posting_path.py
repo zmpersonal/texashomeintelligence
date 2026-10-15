@@ -20,6 +20,7 @@ import copy
 import io
 import json
 import os
+import re
 import sys
 import tempfile
 from datetime import date
@@ -247,6 +248,44 @@ def test_a_transport_failure_propagates_rather_than_being_swallowed():
         assert "connection reset" in str(exc)
     finally:
         _restore()
+
+
+def test_a_WITHDRAWN_SLUG_CANNOT_BE_REGENERATED():
+    """A withdrawal is permanent; `published: false` alone is not.
+
+    Round 48 made `published: false` re-open a topic deliberately, so withdrawing an article
+    does not also remove the machine's ability to replace it. For a recurring builder that is
+    right. But the Austin permits builder keeps the periods it has already published under
+    their ORIGINAL titles and slugs, so rebuilding that period regenerates that slug — and
+    Round 50 withdrew one of them. A file written there would turn a 410 Gone back into a live
+    article.
+
+    Unreachable today only because the builder picks the latest complete month. That is a
+    coincidence of the calendar, not a guarantee.
+    """
+    withdrawn = ra.withdrawn_slugs()
+    assert withdrawn, "the withdrawal registry read empty; this guard has gone blind"
+    for slug in withdrawn:
+        try:
+            ra.assert_not_withdrawn(slug)
+        except RuntimeError as exc:
+            assert "410" in str(exc), f"the refusal should say what the URL now answers: {exc}"
+        else:
+            raise AssertionError(f"a withdrawn slug was allowed through: {slug}")
+    # And it must not refuse everything, which would be a gate that blocks the whole machine.
+    ra.assert_not_withdrawn("a-slug-that-was-never-published")
+
+
+def test_THE_WITHDRAWN_SLUGS_ARE_ALSO_UNPUBLISHED_ON_THE_SITE():
+    """A 410 on a slug whose article file still says `published: true` would be two answers to
+    one question. The site's own replay asserts this from the other side; this asserts the
+    autoposter agrees, because it is the thing that writes those files."""
+    analysis = ra.REPO / "site" / "src" / "data" / "analysis"
+    for slug in ra.withdrawn_slugs():
+        f = analysis / f"{slug}.md"
+        assert f.exists(), f"{slug} is withdrawn but its source file is gone — the record is lost"
+        assert re.search(r"^published:\s*false\s*$", f.read_text(), re.M), (
+            f"{slug} is in the withdrawal registry but its file is still published")
 
 
 if __name__ == "__main__":

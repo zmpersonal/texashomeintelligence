@@ -7,7 +7,7 @@ import {
   isUnknownAustinType,
   isUnknownSanAntonioType,
   AUSTIN_PERMIT_TYPE_MAP,
-  AUSTIN_WORK_CLASS_MAP,
+  AUSTIN_WORK_CLASSES_IN_SCOPE,
   type ClassificationMechanism,
   type TradeCategory,
 } from "../tradeCategories";
@@ -48,7 +48,18 @@ import {
  */
 
 export interface TradeActivityValue {
-  category: TradeCategory;
+  /**
+   * `null` on the ALL-TRADES row that Round 50 added — the month's distinct
+   * permit count, which belongs to no category.
+   *
+   * Null rather than a sentinel string on purpose. Both readers already skip it
+   * without being changed: the site filters `value.category === category`, which
+   * no category equals, and the autoposter's `_permit_trades` drops any row with
+   * a falsy category before it can become a series. A string like "all-trades"
+   * would have become `permit_activity_all-trades` in the social feed and been
+   * publishable.
+   */
+  category: TradeCategory | null;
   /** "YYYY-MM" - the month permits were ISSUED, not ingested. */
   month: string;
   permitCount: number;
@@ -58,6 +69,18 @@ export interface TradeActivityValue {
   mechanisms: ClassificationMechanism[];
   /** Metro-native values that rolled into this count, with their share. */
   sourceValues: { value: string; count: number }[];
+  /**
+   * Round 50. Present and `"all-trades"` only on the month's distinct-permit
+   * row, so a reader can recognise it positively rather than by a null check.
+   *
+   * WHY IT EXISTS. The per-category counts are each correct and their SUM is
+   * meaningless: one permit can be in several categories, measured at 3.1-9.6%
+   * of Austin's months and 3.3-7.5% of San Antonio's. Nothing published a
+   * cross-trade total, but nothing could have produced a correct one either, and
+   * a round had to go and measure the overshoot to answer the question. Now the
+   * right total is stored next to the parts that must not be added.
+   */
+  scope?: "all-trades";
 }
 
 /**
@@ -108,7 +131,7 @@ export interface TradeActivityValue {
  */
 const RECOUNT_MONTHS = 13;
 
-function recountWindow(until: string): { since: string; until: string } {
+export function recountWindow(until: string): { since: string; until: string } {
   const end = new Date(until);
   const start = new Date(
     Date.UTC(end.getUTCFullYear(), end.getUTCMonth() - RECOUNT_MONTHS, 1, 0, 0, 0, 0),
@@ -161,8 +184,26 @@ export function bump(
 export function toObservations(
   buckets: Map<string, Bucket>,
   ingestedAt: string,
+  /** Round 50: distinct permit ids per month, across every category. */
+  permitsByMonth?: Map<string, Set<string>>,
 ): Observation<TradeActivityValue>[] {
   const out: Observation<TradeActivityValue>[] = [];
+  for (const [month, permits] of permitsByMonth ?? []) {
+    out.push({
+      observedAt: new Date(`${month}-01T00:00:00.000Z`).toISOString(),
+      ingestedAt,
+      key: `${CATEGORY_MAPPING_VERSION}/all-trades/${month}`,
+      value: {
+        category: null,
+        scope: "all-trades",
+        month,
+        permitCount: permits.size,
+        mappingVersion: CATEGORY_MAPPING_VERSION,
+        mechanisms: [],
+        sourceValues: [],
+      },
+    });
+  }
   for (const [key, b] of buckets) {
     const [category, month] = key.split(" ") as [TradeCategory, string];
     out.push({
@@ -224,7 +265,7 @@ const SA_PACKAGE_SHOW_URL =
   "https://data.sanantonio.gov/api/3/action/package_show?id=building-permits";
 const SA_RESOURCE_NAME_MATCH = /permits?\s*issued/i;
 
-async function sanAntonioCsvUrl(): Promise<string> {
+export async function sanAntonioCsvUrl(): Promise<string> {
   const res = await fetch(SA_PACKAGE_SHOW_URL);
   if (!res.ok) throw new Error(`San Antonio CKAN package_show failed: HTTP ${res.status}`);
   const body = (await res.json()) as {
@@ -247,7 +288,7 @@ async function sanAntonioCsvUrl(): Promise<string> {
   return resource.url;
 }
 
-function resolveHeader(sample: Record<string, string>, candidates: string[]): string | null {
+export function resolveHeader(sample: Record<string, string>, candidates: string[]): string | null {
   const keys = new Map(Object.keys(sample).map((k) => [k.trim().toUpperCase(), k] as const));
   for (const c of candidates) {
     const hit = keys.get(c.toUpperCase());
@@ -320,6 +361,7 @@ export const permitTradeActivitySanAntonio: FetcherModule<TradeActivityValue> = 
     // each category-month but still appears in each one it genuinely belongs to.
     const monthsPerPermit = new Map<string, Set<string>>();
     const typesPerPermit = new Map<string, Set<string>>();
+    const permitsByMonth = new Map<string, Set<string>>();
     for (const row of records) {
       const raw = row[dateCol];
       if (!raw) continue;
@@ -353,6 +395,11 @@ export const permitTradeActivitySanAntonio: FetcherModule<TradeActivityValue> = 
         t.add(permitType.trim());
         typesPerPermit.set(rawId, t);
       }
+      // Round 50: the month's distinct permits, across every category — the
+      // correct total, stored beside the parts that must not be added.
+      const forMonth = permitsByMonth.get(month) ?? new Set<string>();
+      forMonth.add(permitId);
+      permitsByMonth.set(month, forMonth);
       for (const c of classifications) {
         bump(buckets, c.category, month, c.mechanism, c.sourceValue, permitId);
       }
@@ -367,7 +414,7 @@ export const permitTradeActivitySanAntonio: FetcherModule<TradeActivityValue> = 
         `${spanningTypes} permit(s) span more than one permit type.`,
     );
     reportCounts("san-antonio", retained, dropped, unknown);
-    return toObservations(buckets, new Date().toISOString());
+    return toObservations(buckets, new Date().toISOString(), permitsByMonth);
   },
 };
 
@@ -406,7 +453,11 @@ export function austinTradeWhere(since: string, until: string): string {
   const types = Object.entries(AUSTIN_PERMIT_TYPE_MAP)
     .filter(([, c]) => c !== null)
     .map(([t]) => soqlQuote(t));
-  const workClasses = Object.keys(AUSTIN_WORK_CLASS_MAP).map((w) => soqlQuote(w));
+  // Round 50: the classes to DOWNLOAD, not the classes that assign a category.
+  // `Auxiliary Power` must still be fetched — it is how storage is found — but it
+  // no longer decides anything on its own. Driving the predicate from the map
+  // would now silently stop fetching it and `energy_storage` would be empty.
+  const workClasses = AUSTIN_WORK_CLASSES_IN_SCOPE.map((w) => soqlQuote(w));
   const clauses = [
     `permit_type_desc in (${types.join(", ")})`,
     `work_class in (${workClasses.join(", ")})`,
@@ -433,6 +484,71 @@ interface AustinRow {
   issue_date?: string;
 }
 
+/**
+ * The Austin read, as ONE function, so a caller that needs the rows makes the
+ * ingestion request rather than a copy of it.
+ *
+ * Extracted in Round 50 for the overlap measurement, and extracted rather than
+ * reproduced because of Round 49's standing rule: a verifier builds every
+ * outbound request with the code that built it for ingestion, PER REQUEST. The
+ * Round 49 probe imported `austinTradeWhere` and then rebuilt a NOAA request by
+ * hand in the same file, and reported a correct figure as wrong. The predicate,
+ * the resource URL, the `$select`, the page walk and the count(1) cross-check
+ * all live here now, and `fetchRaw` below calls this — so there is one path and
+ * a measurement cannot drift from the ingestion it is measuring.
+ */
+export async function fetchAustinTradeRows(
+  since: string,
+  until: string,
+  appToken?: string,
+): Promise<{ rows: AustinRow[]; serverCount: number; where: string }> {
+  const where = austinTradeWhere(since, until);
+  const headers: Record<string, string> = {};
+  if (appToken) headers["X-App-Token"] = appToken;
+
+  const get = async (params: Record<string, string>): Promise<unknown> => {
+    const url = new URL(AUSTIN_RESOURCE_URL);
+    for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
+    const res = await fetch(url, { headers });
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(
+        `Austin permits fetch failed: HTTP ${res.status} from ${url.toString()} - ${body.slice(0, 300)}`,
+      );
+    }
+    return res.json();
+  };
+
+  // The layer cross-check, run on EVERY ingestion. Round 7 removed the
+  // temporary enumeration step that compared the server-side predicate
+  // against a local reproduction; this replaces it inside the fetcher, where
+  // it also guards against a silently truncated page walk.
+  const countRows = (await get({ $select: "count(1)", $where: where })) as { count_1?: string }[];
+  const serverCount = Number(countRows[0]?.count_1 ?? NaN);
+
+  const rows: AustinRow[] = [];
+  for (let page = 0; page < AUSTIN_MAX_PAGES; page++) {
+    const batch = (await get({
+      $where: where,
+      // `permit_number` added in Round 45. It was never requested before, so
+      // the identifier needed to deduplicate was not even on the wire.
+      $select: "permit_number,permit_type_desc,work_class,description,issue_date",
+      $order: ":id",
+      $limit: String(AUSTIN_PAGE_SIZE),
+      $offset: String(page * AUSTIN_PAGE_SIZE),
+    })) as AustinRow[];
+    rows.push(...batch);
+    if (batch.length < AUSTIN_PAGE_SIZE) break;
+  }
+  if (Number.isFinite(serverCount) && rows.length !== serverCount) {
+    throw new Error(
+      `Austin trade activity: incomplete read - server-side count(1) says ${serverCount} for this ` +
+        `$where, the paged download returned ${rows.length}. Refusing to publish counts from a partial read.`,
+    );
+  }
+  return { rows, serverCount, where };
+}
+
 export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
   datasetId: "permit-trade-activity",
   location: "austin",
@@ -445,50 +561,11 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
     // Same reason as San Antonio: this is a recomputed aggregate, not an
     // append-only log, so it recounts its whole window every run.
     const austinWindow = recountWindow(ctx.window.until);
-    const where = austinTradeWhere(austinWindow.since, austinWindow.until);
-    const headers: Record<string, string> = {};
-    if (ctx.env.SOCRATA_APP_TOKEN) headers["X-App-Token"] = ctx.env.SOCRATA_APP_TOKEN;
-
-    const get = async (params: Record<string, string>): Promise<unknown> => {
-      const url = new URL(AUSTIN_RESOURCE_URL);
-      for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
-      const res = await fetch(url, { headers });
-      if (!res.ok) {
-        const body = await res.text();
-        throw new Error(
-          `Austin permits fetch failed: HTTP ${res.status} from ${url.toString()} - ${body.slice(0, 300)}`,
-        );
-      }
-      return res.json();
-    };
-
-    // The layer cross-check, run on EVERY ingestion. Round 7 removed the
-    // temporary enumeration step that compared the server-side predicate
-    // against a local reproduction; this replaces it inside the fetcher, where
-    // it also guards against a silently truncated page walk.
-    const countRows = (await get({ $select: "count(1)", $where: where })) as { count_1?: string }[];
-    const serverCount = Number(countRows[0]?.count_1 ?? NaN);
-
-    const rows: AustinRow[] = [];
-    for (let page = 0; page < AUSTIN_MAX_PAGES; page++) {
-      const batch = (await get({
-        $where: where,
-        // `permit_number` added in Round 45. It was never requested before, so
-        // the identifier needed to deduplicate was not even on the wire.
-        $select: "permit_number,permit_type_desc,work_class,description,issue_date",
-        $order: ":id",
-        $limit: String(AUSTIN_PAGE_SIZE),
-        $offset: String(page * AUSTIN_PAGE_SIZE),
-      })) as AustinRow[];
-      rows.push(...batch);
-      if (batch.length < AUSTIN_PAGE_SIZE) break;
-    }
-    if (Number.isFinite(serverCount) && rows.length !== serverCount) {
-      throw new Error(
-        `Austin trade activity: incomplete read - server-side count(1) says ${serverCount} for this ` +
-          `$where, the paged download returned ${rows.length}. Refusing to publish counts from a partial read.`,
-      );
-    }
+    const { rows } = await fetchAustinTradeRows(
+      austinWindow.since,
+      austinWindow.until,
+      ctx.env.SOCRATA_APP_TOKEN,
+    );
 
     const buckets = new Map<string, Bucket>();
     const unknown = new Map<string, number>();
@@ -496,6 +573,7 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
     let dropped = 0;
     let rowsWithoutId = 0;
     const seenPermits = new Set<string>();
+    const permitsByMonth = new Map<string, Set<string>>();
     for (const row of rows) {
       if (!row.issue_date) continue;
       const observedAt = new Date(row.issue_date).toISOString();
@@ -520,6 +598,10 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
       const permitId = rawId || `__no-id__${observedAt}#${retained}`;
       if (!rawId) rowsWithoutId++;
       else seenPermits.add(rawId);
+      // Round 50 — see the San Antonio loop.
+      const forMonth = permitsByMonth.get(month) ?? new Set<string>();
+      forMonth.add(permitId);
+      permitsByMonth.set(month, forMonth);
       for (const c of classifications) {
         bump(buckets, c.category, month, c.mechanism, c.sourceValue, permitId);
       }
@@ -534,6 +616,6 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
         `row(s); count(1) agreed exactly.`,
     );
     reportCounts("austin", retained, dropped, unknown);
-    return toObservations(buckets, new Date().toISOString());
+    return toObservations(buckets, new Date().toISOString(), permitsByMonth);
   },
 };

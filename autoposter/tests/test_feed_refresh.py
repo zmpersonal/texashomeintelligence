@@ -231,6 +231,44 @@ def test_a_REFRESH_ALONE_does_not_move_eligibility___PUBLISHING_DOES():
         f"publishing one title moved more than one topic: {first} -> {after}")
 
 
+def test_NO_FEED_FIGURE_CARRIES_A_RAW_METRIC_NAME():
+    """A figure is the legal source of every numeral a post may contain, so the model quotes it
+    verbatim. Round 50's new `energy_storage` category rendered as "188 energy_storage permits",
+    underscore and all. `hvac` had the same shape and had only ever been fixed downstream in the
+    article builders, leaving the feed itself wrong for anything else that read it."""
+    feed = json.loads((Path(__file__).resolve().parents[1] / "data" / "social-feed.json").read_text())
+    offenders = [(s["metric"], s["figure"]) for s in feed.get("stories", [])
+                 if "_" in s.get("figure", "")]
+    assert not offenders, (
+        f"{len(offenders)} figure(s) contain an underscore, which means a raw metric name reached "
+        f"copy: {offenders[:4]}")
+
+
+def test_THE_TWO_TRADE_DISPLAY_MAPS_CANNOT_DIVERGE():
+    """`build_feed.TRADE_DISPLAY` names trades for the FEED; `run_article.TRADE_NAME` names them
+    for the San Antonio article. Two maps for one question is the shape this project keeps
+    finding, and the cheap guard is to assert they agree wherever they overlap rather than to
+    restructure the dependency between the two modules."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+    import run_article                              # noqa: PLC0415
+
+    overlap = set(build_feed.TRADE_DISPLAY) & set(run_article.TRADE_NAME)
+    assert overlap, "the maps no longer overlap; this guard has gone blind"
+    disagree = {k: (build_feed.TRADE_DISPLAY[k], run_article.TRADE_NAME[k])
+                for k in overlap if build_feed.TRADE_DISPLAY[k] != run_article.TRADE_NAME[k]}
+    assert not disagree, f"the feed and the article disagree on a trade's name: {disagree}"
+
+    # And every trade the feed can emit must be named SOMEWHERE, or the raw
+    # suffix reaches copy again the next time a category is added.
+    import thi_source                               # noqa: PLC0415
+    _ = thi_source
+    feed = json.loads((Path(__file__).resolve().parents[1] / "data" / "social-feed.json").read_text())
+    trades = {s["metric"].removeprefix("permit_activity_") for s in feed.get("stories", [])
+              if s["metric"].startswith("permit_activity_")}
+    unnamed = sorted(t for t in trades if "_" in t and t not in build_feed.TRADE_DISPLAY)
+    assert not unnamed, f"these trades would render their raw metric name in copy: {unnamed}"
+
+
 if __name__ == "__main__":
     fns = [f for n, f in sorted(globals().items()) if n.startswith("test_")]
     ok = 0

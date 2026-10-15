@@ -1,4 +1,5 @@
 import type { FetcherModule, Observation } from "../types";
+import { redactPersonalShapes } from "../redactPersonalShapes";
 import type { PermitValue } from "./austinPermits";
 import { parseCsv, rowsToRecords } from "../csv";
 
@@ -169,7 +170,17 @@ export const sanAntonioPermits: FetcherModule<PermitValue> = {
         key,
         value: {
           permitType: type || "Roofing",
-          workDescription: description?.slice(0, 300),
+          // Round 50: this fetcher had NO redaction pass at all. Round 45 added one
+          // to Austin after finding nine committed descriptions carrying a street
+          // address, three of which reached the published CSV — and the same pass
+          // was never applied here. It changes no current output: San Antonio's
+          // CSV exposes no description column that `resolveHeader` matches, so
+          // every one of the 5,666 committed descriptions is empty today. That is
+          // exactly why it is worth having now rather than later — the day the
+          // city adds or renames that column, descriptions start flowing into a
+          // public archive and a published CSV, and nothing here would have
+          // stopped them. Redact, then shorten.
+          workDescription: redactPersonalShapes(description).text.slice(0, 300),
           // No status column exists in the real CSV — this resource is
           // specifically "Permits Issued", so every row is issued by definition.
           status: (cols.status ? row[cols.status] : "") || "Issued",

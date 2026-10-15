@@ -2,7 +2,7 @@
 title: "Is Austin's home-improvement boom actually cooling off?"
 description: "Austin's permit record says the boom is not cooling evenly: roofing is below its own pace, HVAC is above it, and solar just had its biggest month in a year."
 publishedAt: "2026-09-11"
-published: true
+published: false
 metrics:
   - permit_activity_solar
   - permit_activity_hvac

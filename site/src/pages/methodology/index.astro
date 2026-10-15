@@ -231,7 +231,7 @@ const dateModified = sourceRows
       </p>
 
       <h2>Have you ever published a number that was wrong?</h2>
-      <p>Yes. Twice, and these are the records of them.</p>
+      <p>Yes. Three times, and these are the records of them.</p>
 
       <h3>28 August &ndash; 1 October 2026 &mdash; a placeholder electricity price published as a measurement</h3>
       <p>
@@ -319,6 +319,45 @@ const dateModified = sourceRows
         counting reverts; and the whole thirteen-month window is recomputed on every run, so no
         month can be left on an older method.
       </p>
+
+      <h3>11 September &ndash; 15 October 2026 &mdash; Austin &ldquo;solar&rdquo; permits counted battery storage</h3>
+      <p>
+        This one was a classification error: a mapping that put battery storage in a solar bucket,
+        because Austin files both under one work class and the city's filing mix changed while our
+        mapping did not. Every figure was real and every permit was one the city issued. We put
+        them in the wrong category.
+      </p>
+      <p>
+        It mattered on one page, the analysis article <em>Is Austin's home-improvement boom
+        actually cooling off?</em>, which from 11 September 2026 reported
+        <strong>224 solar permits in August 2026</strong> and called it the largest solar month
+        in the twelve we held, on the strength of a month-over-month jump. Counting only permits whose record describes solar, photovoltaic or PV work,
+        August 2026 had <strong>80</strong> &mdash; up 11.1% on July and 1.9% <em>below</em> its own
+        11-month average, at the time of this correction &mdash; and it was not the largest month in
+        the window, which at the time of this correction was October 2025 at 156.
+        <strong>There was no solar surge in Austin in August 2026.</strong> What rose was battery
+        storage: at the time of this correction, 4 permits in May 2026, 29 in July, 146 in August
+        and 188 in September.
+      </p>
+      <p>What we have done about it:</p>
+      <ul class="key-findings">
+        <li>
+          <strong>Storage is its own category now</strong>, and a work class alone no longer decides
+          a trade &mdash; the permit's own description does. Austin's solar counts were recomputed
+          for every month we hold and are lower throughout: by 2% to 9% before July 2026, by 23% in
+          July, 64% in August and 74% in September.
+        </li>
+        <li>
+          <strong>The article has been withdrawn</strong> rather than corrected, and its address
+          returns <code>410 Gone</code>. Its central claim could not be restated: the surprise it
+          reported did not happen, and recounting the month reverses the article's own answer to its
+          own question.
+        </li>
+        <li>
+          <strong>San Antonio was never affected.</strong> That city files solar under a permit type
+          that names photovoltaic work explicitly, so its solar counts never contained storage.
+        </li>
+      </ul>
 
       <h2>How is the Home Stress Index calculated?</h2>
       <p>

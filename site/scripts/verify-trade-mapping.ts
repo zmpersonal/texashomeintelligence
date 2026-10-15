@@ -23,6 +23,7 @@ import {
   SAN_ANTONIO_PERMIT_TYPE_MAP,
   AUSTIN_PERMIT_TYPE_MAP,
   AUSTIN_WORK_CLASS_MAP,
+  AUSTIN_WORK_CLASSES_IN_SCOPE,
   CATEGORY_MAPPING_VERSION,
   TRADE_CATEGORIES,
   classifySanAntonio,
@@ -130,13 +131,23 @@ const DESCRIPTIONS = [
   // intended, and the reason the containment direction is asserted rather than
   // the two being expected to match exactly.
   "Solarium addition with glass panels",
+  // Round 50's split. The first is storage and must NOT read as solar; the
+  // second is both and must read as both; the third is the residue that names
+  // neither and must stay unclassified.
+  "BASE: Installing a backup battery system and additional meter socket.",
+  "Install 10.5kW DC solar system with 13.5kWh battery storage",
+  "Installation of GM Energy vehicle-to-home charging system",
 ];
 const where = austinTradeWhere("2025-09-03T00:00:00.000Z", "2026-09-03T00:00:00.000Z");
 
 /** Faithful evaluation of the generated SoQL predicate, in JS. */
 function serverPredicateKeeps(row: { permit_type_desc: string; work_class: string; description: string }): boolean {
   const mappedTypes = Object.entries(AUSTIN_PERMIT_TYPE_MAP).filter(([, c]) => c !== null).map(([t]) => t);
-  const mappedClasses = Object.keys(AUSTIN_WORK_CLASS_MAP);
+  // Round 50: the predicate is generated from the IN-SCOPE list, not the
+  // category map — `Auxiliary Power` is fetched but assigns nothing by itself.
+  // This reproduction has to read the same constant or the containment check
+  // starts testing a predicate that is no longer the one being sent.
+  const mappedClasses = [...AUSTIN_WORK_CLASSES_IN_SCOPE];
   return (
     mappedTypes.includes(row.permit_type_desc) ||
     mappedClasses.includes(row.work_class) ||
@@ -194,13 +205,42 @@ A("the roofing set is unchanged across the whole enumerated cross-product",
   roofMismatch === 0, `${roofCases.toLocaleString("en-US")} cases, 0 differences`);
 
 console.log("\n-- 5. Vocabulary invariants --");
-A("exactly seven categories", TRADE_CATEGORIES.length === 7, TRADE_CATEGORIES.join(", "));
+A("exactly eight categories", TRADE_CATEGORIES.length === 8, TRADE_CATEGORIES.join(", "));
 const usedSa = new Set(Object.values(SAN_ANTONIO_PERMIT_TYPE_MAP).filter(Boolean));
-const usedAu = new Set([...Object.values(AUSTIN_PERMIT_TYPE_MAP).filter(Boolean), ...Object.values(AUSTIN_WORK_CLASS_MAP), "roofing"]);
+// `roofing` and `energy_storage` are Austin sources that no map VALUE carries:
+// both are decided by a text test in `classifyAustin` (Austin has no roofing
+// class worth the name, and `Auxiliary Power` is a filter rather than a verdict
+// since Round 50). Listed here explicitly so "has a source" stays honest.
+const usedAu = new Set([...Object.values(AUSTIN_PERMIT_TYPE_MAP).filter(Boolean), ...Object.values(AUSTIN_WORK_CLASS_MAP), "roofing", "energy_storage"]);
 A("every category either has a source in a metro or is declared absent",
   TRADE_CATEGORIES.every((c) => usedSa.has(c) || usedAu.has(c)));
 A("Austin genuinely has no foundation or tree source (declared, not assumed)",
   !usedAu.has("foundation") && !usedAu.has("trees"));
+
+console.log("\n-- 6. Round 50: Auxiliary Power is a filter, not a verdict --");
+// THE FLIP TEST FOR THE SPLIT. Each row differs from the next ONLY in its
+// description, with `work_class` held at `Auxiliary Power` — so the category
+// has to move with the text. Under v2 all four of these were `solar`.
+const auxCase = (description: string) =>
+  classifyAustin({ permit_type_desc: "Electrical Permit", work_class: "Auxiliary Power", description })
+    .map((c) => c.category)
+    .sort();
+const storageOnly = auxCase("BASE: Installing a backup battery system and additional meter socket.");
+const solarOnly = auxCase("Install new 5.67 kwdc rooftop solar system servicing new resi only.");
+const bothOf = auxCase("Install 10.5kW DC solar system with 13.5kWh battery storage");
+const neither = auxCase("Installation of GM Energy vehicle-to-home charging system");
+
+A("a battery description is energy_storage and NOT solar",
+  storageOnly.includes("energy_storage") && !storageOnly.includes("solar"), storageOnly.join(", "));
+A("a solar description is solar and NOT energy_storage",
+  solarOnly.includes("solar") && !solarOnly.includes("energy_storage"), solarOnly.join(", "));
+A("a description naming both lands in both",
+  bothOf.includes("solar") && bothOf.includes("energy_storage"), bothOf.join(", "));
+A("a description naming neither is left unclassified, not bucketed",
+  !neither.includes("solar") && !neither.includes("energy_storage"), neither.join(", ") || "(none)");
+A("the work class alone never assigns a category any more",
+  !Object.keys(AUSTIN_WORK_CLASS_MAP).includes("Auxiliary Power")
+    && AUSTIN_WORK_CLASSES_IN_SCOPE.includes("Auxiliary Power"));
 
 console.log(`\n-- generated Austin SoQL $where --\n${where}\n`);
 console.log(`=== ${pass} passed, ${fail} failed ===`);

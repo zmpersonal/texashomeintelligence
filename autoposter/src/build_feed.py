@@ -66,7 +66,8 @@ def _figure(series: thi_source.Series, delta: float, crossed: str | None) -> str
         tail = "" if change is None else f", {change:+.1f}% month over month"
         return f"{latest:.2f}¢ per kWh ({period[:7]}){tail}"
     if series.metric.startswith("permit_activity_"):
-        trade = series.metric.removeprefix("permit_activity_")
+        trade = TRADE_DISPLAY.get(series.metric.removeprefix("permit_activity_"),
+                                  series.metric.removeprefix("permit_activity_"))
         change = _pct(latest, series.points[-2].value)
         tail = "" if change is None else f", {change:+.0f}% month over month"
         return f"{latest:,.0f} {trade} permits in {period[:7]}{tail}"
@@ -75,6 +76,21 @@ def _figure(series: thi_source.Series, delta: float, crossed: str | None) -> str
         tail = "" if change is None else f", {change:+.0f}% vs the prior month"
         return f"{latest:,.0f} cooling degree-days in {period[:7]}{tail}"
     return f"{latest:,.2f} ({period})"
+
+
+#: How a trade reads in COPY. The feed's `figure` is the legal source of every numeral a post
+#: may contain, so a raw metric suffix leaking into it is a copy defect, not a cosmetic one.
+#:
+#: Round 50 is why this exists here rather than only in `run_article.py`: the new
+#: `energy_storage` category rendered as "188 energy_storage permits in 2026-09" — an underscore,
+#: in a figure the model is bound to quote verbatim. `hvac` had the same shape ("1,137 hvac
+#: permits") and was only ever fixed downstream in the article builders, which left the feed
+#: itself wrong for anything that read it.
+TRADE_DISPLAY = {
+    "hvac": "HVAC",
+    "energy_storage": "battery-storage",
+    "trees": "tree",
+}
 
 
 def compute_signals(series: thi_source.Series, cfg: dict, coverage: dict,

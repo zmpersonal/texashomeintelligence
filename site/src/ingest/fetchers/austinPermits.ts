@@ -113,7 +113,16 @@ export const austinPermits: FetcherModule<PermitValue> = {
         // Redacted BEFORE the value is built, so the repository never carries it
         // either: the generated JSON is public, so "not on the site" is not
         // "not public".
-        const redacted = redactPersonalShapes(row.description?.slice(0, 300));
+        // REDACT, THEN SHORTEN — Round 50, and the order is the whole point.
+        // This used to read `redactPersonalShapes(row.description?.slice(0, 300))`,
+        // which is the inverse of the rule Round 47 wrote after a near-miss. A
+        // personal shape straddling character 300 was cut in half first, after
+        // which the redactor could not match the fragment that remained, and the
+        // fragment reached this public archive. `redact-committed-descriptions.ts`
+        // could not recover it either: it reads what is already on disk, which is
+        // the truncated value, so it sees the same unmatchable fragment.
+        const redacted = redactPersonalShapes(row.description);
+        redacted.text = redacted.text.slice(0, 300);
         for (const r of redacted.removed) {
           redactions.push({ permit: row.permit_number, ...r });
         }
