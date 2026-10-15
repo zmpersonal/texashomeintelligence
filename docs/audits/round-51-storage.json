@@ -1,10 +1,10 @@
 {
-  "measuredAt": "2026-10-15T16:41:46.224Z",
+  "measuredAt": "2026-10-15T19:58:54.282Z",
   "question": "what does the Austin battery-storage series say, and is it filing mix or homes?",
   "austin": {
     "window": {
       "since": "2025-09-01T00:00:00.000Z",
-      "until": "2026-10-15T16:41:46.225Z"
+      "until": "2026-10-15T19:58:54.283Z"
     },
     "auxPowerByMonth": [
       {
@@ -1254,6 +1254,386 @@
         }
       }
     ],
+    "roofingCompositionByMonth": [
+      {
+        "month": "2025-09",
+        "permits": 210,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Auxiliary Power": 70,
+          "Remodel": 44,
+          "Repair": 42,
+          "Addition and Remodel": 31,
+          "New": 18
+        },
+        "termShares": {
+          "reroof": 9,
+          "shingle": 9.5,
+          "replace": 21,
+          "repair": 11,
+          "tear_off": 0.5,
+          "decking": 12.4,
+          "squares": 4.8,
+          "skylight": 0,
+          "rooftop_unit": 1.9,
+          "solar_on_roof": 45.7,
+          "new_construction": 8.1,
+          "remodel": 21
+        }
+      },
+      {
+        "month": "2025-10",
+        "permits": 199,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Auxiliary Power": 74,
+          "Repair": 52,
+          "Addition and Remodel": 39,
+          "Remodel": 23,
+          "New": 10
+        },
+        "termShares": {
+          "reroof": 9.5,
+          "shingle": 14.1,
+          "replace": 14.1,
+          "repair": 3,
+          "tear_off": 2,
+          "decking": 10.6,
+          "squares": 1,
+          "skylight": 2,
+          "rooftop_unit": 0.5,
+          "solar_on_roof": 53.8,
+          "new_construction": 8,
+          "remodel": 14.1
+        }
+      },
+      {
+        "month": "2025-11",
+        "permits": 168,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Auxiliary Power": 78,
+          "Repair": 32,
+          "Addition and Remodel": 23,
+          "Remodel": 21,
+          "New": 8
+        },
+        "termShares": {
+          "reroof": 6,
+          "shingle": 9.5,
+          "replace": 20.8,
+          "repair": 2.4,
+          "tear_off": 0,
+          "decking": 13.1,
+          "squares": 0,
+          "skylight": 0,
+          "rooftop_unit": 1.2,
+          "solar_on_roof": 53,
+          "new_construction": 2.4,
+          "remodel": 11.3
+        }
+      },
+      {
+        "month": "2025-12",
+        "permits": 157,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Auxiliary Power": 46,
+          "Remodel": 42,
+          "Repair": 28,
+          "Addition and Remodel": 26,
+          "New": 14
+        },
+        "termShares": {
+          "reroof": 6.4,
+          "shingle": 10.2,
+          "replace": 30.6,
+          "repair": 12.1,
+          "tear_off": 0.6,
+          "decking": 15.3,
+          "squares": 0,
+          "skylight": 0,
+          "rooftop_unit": 0,
+          "solar_on_roof": 31.2,
+          "new_construction": 5.7,
+          "remodel": 13.4
+        }
+      },
+      {
+        "month": "2026-01",
+        "permits": 121,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Remodel": 49,
+          "Addition and Remodel": 24,
+          "Auxiliary Power": 20,
+          "Repair": 20,
+          "New": 6
+        },
+        "termShares": {
+          "reroof": 24.8,
+          "shingle": 6.6,
+          "replace": 50.4,
+          "repair": 12.4,
+          "tear_off": 0,
+          "decking": 7.4,
+          "squares": 4.1,
+          "skylight": 3.3,
+          "rooftop_unit": 0.8,
+          "solar_on_roof": 20.7,
+          "new_construction": 2.5,
+          "remodel": 16.5
+        }
+      },
+      {
+        "month": "2026-02",
+        "permits": 137,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Addition and Remodel": 37,
+          "Remodel": 34,
+          "Auxiliary Power": 26,
+          "Repair": 22,
+          "New": 14
+        },
+        "termShares": {
+          "reroof": 5.8,
+          "shingle": 9.5,
+          "replace": 35.8,
+          "repair": 7.3,
+          "tear_off": 0.7,
+          "decking": 9.5,
+          "squares": 2.2,
+          "skylight": 2.2,
+          "rooftop_unit": 1.5,
+          "solar_on_roof": 25.5,
+          "new_construction": 2.9,
+          "remodel": 21.2
+        }
+      },
+      {
+        "month": "2026-03",
+        "permits": 129,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Repair": 31,
+          "Addition and Remodel": 29,
+          "Remodel": 28,
+          "New": 21,
+          "Auxiliary Power": 16
+        },
+        "termShares": {
+          "reroof": 7.8,
+          "shingle": 13.2,
+          "replace": 39.5,
+          "repair": 11.6,
+          "tear_off": 0,
+          "decking": 12.4,
+          "squares": 0,
+          "skylight": 0,
+          "rooftop_unit": 1.6,
+          "solar_on_roof": 14.7,
+          "new_construction": 4.7,
+          "remodel": 23.3
+        }
+      },
+      {
+        "month": "2026-04",
+        "permits": 148,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Remodel": 61,
+          "Addition and Remodel": 31,
+          "Auxiliary Power": 27,
+          "Repair": 20,
+          "New": 8
+        },
+        "termShares": {
+          "reroof": 16.2,
+          "shingle": 8.8,
+          "replace": 33.1,
+          "repair": 5.4,
+          "tear_off": 0.7,
+          "decking": 12.8,
+          "squares": 1.4,
+          "skylight": 0,
+          "rooftop_unit": 0,
+          "solar_on_roof": 24.3,
+          "new_construction": 5.4,
+          "remodel": 18.2
+        }
+      },
+      {
+        "month": "2026-05",
+        "permits": 114,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Remodel": 32,
+          "Addition and Remodel": 32,
+          "Repair": 28,
+          "Auxiliary Power": 14,
+          "New": 4
+        },
+        "termShares": {
+          "reroof": 10.5,
+          "shingle": 14,
+          "replace": 40.4,
+          "repair": 7,
+          "tear_off": 0,
+          "decking": 14.9,
+          "squares": 0,
+          "skylight": 1.8,
+          "rooftop_unit": 4.4,
+          "solar_on_roof": 23.7,
+          "new_construction": 1.8,
+          "remodel": 32.5
+        }
+      },
+      {
+        "month": "2026-06",
+        "permits": 191,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Remodel": 85,
+          "Repair": 46,
+          "Addition and Remodel": 28,
+          "Auxiliary Power": 24,
+          "New": 5
+        },
+        "termShares": {
+          "reroof": 31.9,
+          "shingle": 23,
+          "replace": 45,
+          "repair": 9.9,
+          "tear_off": 0.5,
+          "decking": 11,
+          "squares": 0,
+          "skylight": 1.6,
+          "rooftop_unit": 0.5,
+          "solar_on_roof": 23,
+          "new_construction": 1,
+          "remodel": 14.7
+        }
+      },
+      {
+        "month": "2026-07",
+        "permits": 150,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Remodel": 50,
+          "Auxiliary Power": 32,
+          "Addition and Remodel": 31,
+          "Repair": 30,
+          "New": 3
+        },
+        "termShares": {
+          "reroof": 19.3,
+          "shingle": 6.7,
+          "replace": 24.7,
+          "repair": 8,
+          "tear_off": 0,
+          "decking": 14,
+          "squares": 0,
+          "skylight": 1.3,
+          "rooftop_unit": 2,
+          "solar_on_roof": 34,
+          "new_construction": 2.7,
+          "remodel": 21.3
+        }
+      },
+      {
+        "month": "2026-08",
+        "permits": 144,
+        "roofClassPermits": 1,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Addition and Remodel": 34,
+          "Repair": 33,
+          "Remodel": 28,
+          "Auxiliary Power": 28,
+          "New": 16
+        },
+        "termShares": {
+          "reroof": 13.9,
+          "shingle": 11.8,
+          "replace": 27.1,
+          "repair": 8.3,
+          "tear_off": 1.4,
+          "decking": 20.8,
+          "squares": 0,
+          "skylight": 0.7,
+          "rooftop_unit": 0.7,
+          "solar_on_roof": 26.4,
+          "new_construction": 7.6,
+          "remodel": 20.1
+        }
+      },
+      {
+        "month": "2026-09",
+        "permits": 167,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Remodel": 60,
+          "Addition and Remodel": 37,
+          "Auxiliary Power": 25,
+          "Repair": 24,
+          "New": 15
+        },
+        "termShares": {
+          "reroof": 22.8,
+          "shingle": 9.6,
+          "replace": 27.5,
+          "repair": 5.4,
+          "tear_off": 0.6,
+          "decking": 9.6,
+          "squares": 1.8,
+          "skylight": 0.6,
+          "rooftop_unit": 1.2,
+          "solar_on_roof": 20.4,
+          "new_construction": 7.2,
+          "remodel": 24
+        }
+      },
+      {
+        "month": "2026-10",
+        "permits": 74,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Remodel": 25,
+          "Addition and Remodel": 13,
+          "Repair": 13,
+          "New": 11,
+          "Auxiliary Power": 10
+        },
+        "termShares": {
+          "reroof": 10.8,
+          "shingle": 18.9,
+          "replace": 47.3,
+          "repair": 6.8,
+          "tear_off": 2.7,
+          "decking": 17.6,
+          "squares": 5.4,
+          "skylight": 0,
+          "rooftop_unit": 1.4,
+          "solar_on_roof": 14.9,
+          "new_construction": 20.3,
+          "remodel": 33.8
+        }
+      }
+    ],
     "wholeFeedByMonth": {
       "2025-09": 4272,
       "2025-10": 4413,
@@ -1301,6 +1681,9 @@
       "2026-08": 174,
       "2026-09": 198,
       "2026-10": 77
+    },
+    "roofWorkClassVolumeByMonth": {
+      "2026-08": 1
     },
     "repairClassVolumeByMonth": {
       "2025-09": 866,
