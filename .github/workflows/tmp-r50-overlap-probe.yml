@@ -10,6 +10,7 @@ on:
     branches: [claude/thi-plan-review-m40n0x]
     paths:
       - "site/scripts/audits/round-50-permit-overlap-probe.ts"
+      - "site/scripts/audits/round-50-aux-power-vocabulary.ts"
       - ".github/workflows/tmp-r50-overlap-probe.yml"
   workflow_dispatch:
 
@@ -36,6 +37,12 @@ jobs:
           SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
         run: npx tsx scripts/audits/round-50-permit-overlap-probe.ts
 
+      - name: What the Auxiliary Power descriptions actually say
+        working-directory: site
+        env:
+          SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
+        run: npx tsx scripts/audits/round-50-aux-power-vocabulary.ts
+
       - name: The probe must not have written a dataset file
         # It measures. If it ever starts writing what the site serves, that is a different
         # thing wearing this one's name.
@@ -50,7 +57,7 @@ jobs:
         run: |
           git config user.name  "thi-probe"
           git config user.email "noreply@texashomeintelligence.com"
-          git add docs/audits/round-50-probe.json
+          git add docs/audits/round-50-probe.json docs/audits/round-50-aux-vocabulary.json
           git diff --cached --quiet && { echo "no change"; exit 0; }
           git commit -m "Round 50 probe result: measured permit-category overlap
 
