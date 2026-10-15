@@ -180,10 +180,33 @@ async function main(): Promise<void> {
     const classes = classifyAustin(r);
     if (classes.length === 0) unclassified++;
     for (const c of classes) record(c.category, month, permitId, description);
+
+    /*
+     * ── THE v2 RECONSTRUCTION: WHAT THE DETECTOR WOULD HAVE SEEN IN AUGUST ──
+     * "Would it have fired in July" has two readings, and only the harder one is worth
+     * answering. The easy one is whether today's categories show the break in July —
+     * they do. The one that decides whether this was ever going to help is whether the
+     * mapping that was LIVE at the time would have shown it, because in August the
+     * storage rows were not a category of their own: `trades-v2` mapped the whole
+     * `Auxiliary Power` work class into `solar`, and Round 50 removed exactly that line:
+     *
+     *     "Auxiliary Power": "solar", // 808 in window; 98.7% solar where measured
+     *
+     * Nothing else about solar changed in that commit — `AUSTIN_SOLAR_TEXT` and the
+     * permit-type map's solar entries are byte-identical across it (checked in the diff).
+     * So v2's solar bucket is exactly today's solar plus every Auxiliary Power row, which
+     * is a set union over the current classifier rather than a second copy of the old one.
+     * A re-implemented classifier would be a second definition that can disagree with the
+     * first, which is the defect this project keeps finding.
+     */
+    const isAux = (r.work_class ?? "").trim() === "Auxiliary Power";
+    if (isAux || classes.some((c) => c.category === "solar")) {
+      record("v2_solar", month, permitId, description);
+    }
   }
 
   const categories = [...new Set([...cells.keys()].map((k) => k.split("|")[0]))]
-    .filter((c) => c !== "*")
+    .filter((c) => c !== "*" && c !== "v2_solar")
     .sort();
 
   /*
@@ -212,6 +235,10 @@ async function main(): Promise<void> {
       marginalRequestCost:
         "none. `description` is already in the ingest's $select because Austin's classifier " +
         "needs it, and the window is already re-read in full every ingest (RECOUNT_MONTHS=13).",
+      v2Reconstruction:
+        "v2_solar = today's solar classification UNION every row whose work_class is " +
+        "'Auxiliary Power' — the one mapping line Round 50 removed. A set union over the " +
+        "current classifier, not a second copy of the old one.",
       sanAntonioReach:
         "not measurable. San Antonio's export has no description column — measured in " +
         "docs/audits/round-51-storage.json (sanAntonio.columns / sanAntonio.headers) and cited " +
@@ -241,6 +268,10 @@ async function main(): Promise<void> {
     austinCategories: categories,
     wholeFeedByMonth: rowsFor("*"),
     byCategoryMonth: categories.flatMap((c) => rowsFor(c)),
+    /** The pre-Round-50 solar bucket, reconstructed — see the comment at the record call.
+     *  Reported separately because it is not a series we publish; it is the series the
+     *  detector would have been watching when the break happened. */
+    v2SolarByMonth: rowsFor("v2_solar"),
   };
 
   writeFileSync(OUT, JSON.stringify(out, null, 2) + "\n");
