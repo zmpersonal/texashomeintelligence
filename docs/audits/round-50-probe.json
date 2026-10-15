@@ -1,12 +1,12 @@
 {
-  "measuredAt": "2026-10-15T13:39:57.206Z",
+  "measuredAt": "2026-10-15T14:18:09.112Z",
   "focusMonth": "2026-09",
   "note": "Round 50. Measurement only. Every request is built by the ingestion fetcher's own code; the tally is this probe's and is checked by the controls.",
   "austin": {
-    "where": "issue_date between '2025-09-01T00:00:00' and '2026-10-15T13:39:57' AND (permit_type_desc in ('Electrical Permit', 'Plumbing Permit', 'Mechanical Permit') OR work_class in ('Auxiliary Power', 'Roof') OR upper(work_class) like '%ROOF%' OR upper(permit_type_desc) like '%ROOF%' OR upper(description) like '%ROOF%' OR upper(description) like '%SOLAR%' OR upper(description) like '%PHOTOVOLTAIC%')",
+    "where": "issue_date between '2025-09-01T00:00:00' and '2026-10-15T14:18:09' AND (permit_type_desc in ('Electrical Permit', 'Plumbing Permit', 'Mechanical Permit') OR work_class in ('Auxiliary Power', 'Roof') OR upper(work_class) like '%ROOF%' OR upper(permit_type_desc) like '%ROOF%' OR upper(description) like '%ROOF%' OR upper(description) like '%SOLAR%' OR upper(description) like '%PHOTOVOLTAIC%')",
     "window": {
       "since": "2025-09-01T00:00:00.000Z",
-      "until": "2026-10-15T13:39:57.206Z"
+      "until": "2026-10-15T14:18:09.112Z"
     },
     "rowsRead": 47599,
     "serverCount": 47599,
@@ -4948,7 +4948,7 @@
     "csvUrl": "https://data.sanantonio.gov/dataset/05012dcb-ba1b-4ade-b5f3-7403bc7f52eb/resource/c21106f9-3ef5-4f3a-8604-f992b4db7512/download/permits_issued.csv",
     "window": {
       "since": "2025-09-01T00:00:00.000Z",
-      "until": "2026-10-15T13:39:59.569Z"
+      "until": "2026-10-15T14:18:12.563Z"
     },
     "columns": {
       "typeCol": "PERMIT TYPE",
