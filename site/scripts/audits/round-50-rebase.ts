@@ -27,6 +27,34 @@ const DATA = (metro: string) =>
 type Row = { category: string | null; month: string; permitCount: number; mappingVersion: string;
              scope?: string; sourceValues?: { value: string; count: number }[] };
 
+/**
+ * The published view AT A NAMED VERSION, so the comparison is v2-against-v3 and
+ * not "before this run against after it".
+ *
+ * The first cut of this script compared the file against itself across the
+ * re-ingest, which made the report depend on run ORDER: a second run found v3
+ * already published, reported almost nothing as moved, and the real v2→v3
+ * movement vanished from the committed artifact. "Store history, never
+ * overwrite" is what makes the honest version possible — the v2 rows are still
+ * on disk, so both views are computable from one file, deterministically, any
+ * number of times.
+ */
+function publishedAt(metro: string, version: string) {
+  const doc = JSON.parse(readFileSync(DATA(metro), "utf8"));
+  const rows: Row[] = (doc.observations ?? []).filter((o: any) => !o.seed).map((o: any) => o.value);
+  const currentMonth = new Date().toISOString().slice(0, 7);
+  const out = new Map<string, { count: number; sources: Record<string, number> }>();
+  for (const r of rows) {
+    if (r.mappingVersion !== version) continue;
+    if (r.month >= currentMonth) continue;
+    out.set(`${r.category ?? "__all-trades__"}/${r.month}`, {
+      count: r.permitCount,
+      sources: Object.fromEntries((r.sourceValues ?? []).map((s) => [s.value, s.count])),
+    });
+  }
+  return out;
+}
+
 /** The published view: newest mapping version per category, incomplete month dropped. */
 function published(metro: string) {
   const doc = JSON.parse(readFileSync(DATA(metro), "utf8"));
@@ -80,13 +108,6 @@ function derived(figures: Map<string, { count: number }>) {
   return out;
 }
 
-const before: Record<string, unknown> = {};
-for (const metro of ["austin", "san-antonio"]) {
-  const p = published(metro);
-  before[metro] = { versions: p.versions, derived: derived(p.figures),
-                    figures: Object.fromEntries(p.figures) };
-}
-
 const ingestion: Record<string, unknown> = {};
 for (const fetcher of [permitTradeActivityAustin, permitTradeActivitySanAntonio]) {
   const entry = REGISTRY.find(
@@ -98,18 +119,21 @@ for (const fetcher of [permitTradeActivityAustin, permitTradeActivitySanAntonio]
   console.log(`  ${r.datasetId}/${r.location}: ${r.outcome} — ${r.message}`);
 }
 
+const before: Record<string, unknown> = {};
 const after: Record<string, unknown> = {};
 const moved: Record<string, unknown> = {};
 for (const metro of ["austin", "san-antonio"]) {
-  const p = published(metro);
-  after[metro] = { versions: p.versions, derived: derived(p.figures),
-                   figures: Object.fromEntries(p.figures) };
+  const v2 = publishedAt(metro, "trades-v2");
+  const v3 = publishedAt(metro, "trades-v3");
+  const live = published(metro);
+  before[metro] = { atVersion: "trades-v2", derived: derived(v2), figures: Object.fromEntries(v2) };
+  after[metro] = { atVersion: "trades-v3", versionsNowPublished: live.versions,
+                   derived: derived(v3), figures: Object.fromEntries(v3) };
 
-  const b = (before[metro] as any).figures as Record<string, { count: number }>;
   const rows: Record<string, { from: number | null; to: number | null; delta: number | null; pct: number | null }> = {};
-  for (const k of new Set([...Object.keys(b), ...p.figures.keys()])) {
-    const from = b[k]?.count ?? null;
-    const to = p.figures.get(k)?.count ?? null;
+  for (const k of new Set([...v2.keys(), ...v3.keys()])) {
+    const from = v2.get(k)?.count ?? null;
+    const to = v3.get(k)?.count ?? null;
     if (from === to) continue;
     rows[k] = { from, to,
       delta: from !== null && to !== null ? to - from : null,
@@ -136,7 +160,7 @@ function storageControl() {
   } catch {
     return [{ id: "R1", pass: false, note: "the vocabulary measurement is missing; nothing to reconcile against" }];
   }
-  const austinAfter = (after.austin as any).figures as Record<string, { count: number }>;
+  const austinAfter = (after.austin as any).figures as Record<string, { count: number }>;  // trades-v3
   const rows: { id: string; pass: boolean; note: string }[] = [];
   let mismatches = 0;
   for (const [month, v] of Object.entries(vocab.byMonth as Record<string, any>)) {
@@ -160,7 +184,9 @@ function storageControl() {
 
 const out = {
   measuredAt: new Date().toISOString(),
-  note: "Round 50. v2 rows remain on disk as history and stop being read; v3 is published.",
+  note: ("Round 50. v2 rows remain on disk as history and stop being read; v3 is published. "
+         + "`movedFigures` compares the v2-published view against the v3-published view, both "
+         + "computed from the same file, so re-running this script cannot change the answer."),
   ingestion,
   movedFigures: moved,
   controls: storageControl(),
