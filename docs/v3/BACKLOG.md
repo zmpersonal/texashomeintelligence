@@ -44,7 +44,8 @@ Probes (P1, P2) can run in any gap; they write an audit and change no served pag
 | 50c | **The withdrawal** (item 35's article half). `published: false`, 410 Gone, registry entry, `withdrawnrender` §6 and a 404 control. Built on the branch; the methodology and notice copy are drafted and awaiting the owner. | Round 50 |
 | 51 | **The storage finding, measured** — read, not written. See `docs/audits/round-51-storage-series.md`. It is a step at July, the vocabulary inverts across it, and the series is not comparable either side. Austin-only: San Antonio's permit file has no description column. | Round 50 |
 | 52 | **The feed's missing mapping version** (item 38). Owner-scoped as its own round, after the withdrawal lands: a feed with no mapping version is a stale feed indistinguishable from a fresh one, and that is what nearly published a v2 figure on 2026-10-15. | Round 50 |
-| 53 | **Recording that a SOURCE changed its behaviour** (item 41). Owner-scoped as the next round. The storage series is the case: a real series with a real July break whose cause is now documented, and nowhere for that fact to live but an audit nobody is obliged to read. | Round 51 |
+| 52b | **Recording that a SOURCE changed its behaviour** (item 41). Shipped and merged — `docs/audits/round-52-discontinuities.md`. The record, both readers, evidence required in the type, and the owner's policy: refuse a month-over-month claim across a break (A), compute a baseline on the near side and withhold it when that side is under six months (C). | Round 51 |
+| 53 | **Would a description fingerprint have caught the break?** (item 43). Measure-only, shipped — `docs/audits/round-53-fingerprint.md`. **Answer: yes.** Top-shape share doubling AND shapes-per-permit falling to ≤0.8× fires on storage 2026-07 on today's categories, fires on it on the mapping that was live at the time, and fires on nothing else in 60 cells. The vocabulary half of the proposal is dead — novelty went DOWN in the break month. Build not started; the decision is the owner's. | Round 52 |
 
 ---
 
@@ -290,6 +291,40 @@ One real trend fell out of it: the share of roofing permits also mentioning sola
 Round 50's re-base found from the other direction.
 
 **Re-measure if the class's volume ever leaves single digits.** The instrument now exists.
+
+## Item 43 — the description fingerprint (ANSWERED, not built)
+
+Raised by Round 52's conclusion: both break scans see only what the datasets retain, and the
+storage break lived in raw descriptions we do not store. Owner-scoped as measure-only — *is there
+a cheap thing we could retain that would make a break like this visible without storing free
+text?*
+
+**Measured in Round 53. The answer is yes, with three qualifications.** Full report in
+`docs/audits/round-53-fingerprint.md`; the measurement is `round-53-fingerprint.json` (84 cells
+over 47,599 Austin rows) and the rule sweep is `round-53-rules.json` (612 rules).
+
+- **The rule:** against the trailing three months of the same category, the top description
+  shape's share at least **doubles** AND distinct **shapes per permit falls to ≤0.8×**. Fires on
+  `energy_storage/2026-07` at 4.12× / 0.41×, on the reconstructed `v2_solar/2026-07` — what was
+  actually being watched in August — at 2.97× / 0.78×, and on **nothing else** in 60 evaluable
+  cells.
+- **It is a conjunction or it is nothing.** Concentration alone fires on roofing twice and
+  electrical twice; diversity alone fires on HVAC. Every innocent cell fails one of the two, and
+  several fail narrowly: the separation at the time was 0.78 against 0.80, with HVAC at 0.79.
+- **No n floor above 29.** The break month held 29 permits; all 153 swept rules with `n ≥ 30` miss
+  it.
+- **Vocabulary novelty is dead.** `newTokenShare` in the break month went DOWN (31.3% against a
+  43.3% trailing mean) — templating repeats words, it does not introduce them. Every vocabulary
+  rule misses the break and fires on small-sample churn instead.
+- **Cost:** no extra request (the description is already in the ingest's `$select`), 315 ms of CPU
+  per ingest measured on real descriptions, 78 rows of eight numbers stored.
+- **Reach:** Austin only — 6 of 13 permit series. San Antonio's export has no description column,
+  so there is nothing to fingerprint; its analogue is the permit-type mix, which is item 36.
+
+**If it is ever built,** it is a flag for a human and never an automatic withholding: a recorded
+discontinuity requires evidence (Round 52, enforced in the type), and this produces a suspicion —
+the start of a Round 51 investigation, not a substitute for one. Wiring it straight to
+`discontinuities.ts` would be recording a rumour.
 
 ## Standing rule — a correction can remove the signal that would have found the next one
 
