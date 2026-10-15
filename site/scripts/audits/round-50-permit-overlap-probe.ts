@@ -357,6 +357,114 @@ async function sanAntonio() {
 }
 
 /**
+ * WHAT THE SOLAR COUNT IS MADE OF — the question the hand-read forced.
+ *
+ * Austin assigns solar two ways: `work_class = "Auxiliary Power"`, and a
+ * description mentioning solar/photovoltaic/PV. The committed file's own
+ * `sourceValues` show the first path supplying 194 of August 2026's 224 and 219
+ * of September's 240, while the text path stays flat near 30 — and a hand-read
+ * of 30 multi-category September permits found 24 carrying the identical
+ * description "BASE: Installing a backup battery system and additional meter
+ * socket", which names no solar at all.
+ *
+ * The mapping's own comment says the Auxiliary-Power-is-solar evidence was
+ * measured "inside the roof-matched archive" — a subset selected by the word
+ * roof, which rooftop solar contains and a battery cabinet does not. So the
+ * 98.7% was measured on the one subset that cannot contain the counterexample.
+ *
+ * This counts the whole solar set instead, per month, with no subsetting: how
+ * many solar-classified permits actually say solar, how many are Auxiliary Power
+ * saying something else, and what that something else is.
+ */
+async function austinSolarComposition() {
+  const w = recountWindow(new Date().toISOString());
+  const { rows } = await fetchAustinTradeRows(w.since, w.until, process.env.SOCRATA_APP_TOKEN);
+  const SOLAR_TEXT = /\bsolar\b|photovoltaic|\bpv\b/i;
+  const STORAGE = /\bbatter|\bstorage\b|\bess\b|powerwall|\bess\b|backup\s+batter/i;
+  const GENERATOR = /\bgenerator\b|\bgenset\b/i;
+
+  type M = {
+    solarTotal: Set<string>;
+    saysSolar: Set<string>;
+    auxOnly: Set<string>;
+    auxOnlyStorage: Set<string>;
+    auxOnlyGenerator: Set<string>;
+    auxOnlyOther: Set<string>;
+    otherExamples: Map<string, number>;
+  };
+  const months = new Map<string, M>();
+  const blank = (): M => ({
+    solarTotal: new Set(), saysSolar: new Set(), auxOnly: new Set(),
+    auxOnlyStorage: new Set(), auxOnlyGenerator: new Set(), auxOnlyOther: new Set(),
+    otherExamples: new Map(),
+  });
+
+  for (const row of rows) {
+    if (!row.issue_date) continue;
+    const cls = classifyAustin(row);
+    if (!cls.some((c) => c.category === "solar")) continue;
+    const month = new Date(row.issue_date).toISOString().slice(0, 7);
+    const m = months.get(month) ?? blank();
+    const id = (row.permit_number ?? "").trim() || `__no-id__${row.issue_date}`;
+    const desc = row.description ?? "";
+    m.solarTotal.add(id);
+    if (SOLAR_TEXT.test(desc)) m.saysSolar.add(id);
+    else {
+      m.auxOnly.add(id);
+      if (STORAGE.test(desc)) m.auxOnlyStorage.add(id);
+      else if (GENERATOR.test(desc)) m.auxOnlyGenerator.add(id);
+      else {
+        m.auxOnlyOther.add(id);
+        // REDACT, then shorten. A description shape, for reading — not a record of a permit.
+        const key = redactPersonalShapes(desc).text.slice(0, 110) || "(empty description)";
+        m.otherExamples.set(key, (m.otherExamples.get(key) ?? 0) + 1);
+      }
+    }
+    months.set(month, m);
+  }
+
+  const byMonth = [...months.keys()].sort().map((k) => {
+    const m = months.get(k)!;
+    return {
+      month: k,
+      solarTotal: m.solarTotal.size,
+      saysSolar: m.saysSolar.size,
+      noSolarText: m.auxOnly.size,
+      pctNoSolarText: m.solarTotal.size
+        ? +((m.auxOnly.size / m.solarTotal.size) * 100).toFixed(1)
+        : null,
+      noSolarText_storage: m.auxOnlyStorage.size,
+      noSolarText_generator: m.auxOnlyGenerator.size,
+      noSolarText_other: m.auxOnlyOther.size,
+      topOtherDescriptions: Object.fromEntries(
+        [...m.otherExamples.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6),
+      ),
+    };
+  });
+
+  const aug = byMonth.find((r) => r.month === "2026-08");
+  const jul = byMonth.find((r) => r.month === "2026-07");
+  return {
+    question:
+      "of the permits counted as solar, how many say solar — and what are the rest?",
+    byMonth,
+    thePublishedClaim: {
+      article: "/analysis/is-austins-home-improvement-boom-cooling-off/",
+      claim: "Austin issued 224 solar permits in August 2026 - up 138% month over month",
+      august: aug,
+      july: jul,
+      momOnSaysSolarOnly:
+        aug && jul && jul.saysSolar
+          ? +(((aug.saysSolar - jul.saysSolar) / jul.saysSolar) * 100).toFixed(1)
+          : null,
+      note:
+        "momOnSaysSolarOnly recomputes the published month-over-month using ONLY permits whose " +
+        "description names solar. It is a diagnostic, not a proposed replacement figure.",
+    },
+  };
+}
+
+/**
  * Where the backlog's 4,233 came from — asked, not assumed.
  *
  * Round 49's probe called `austinTradeWhere('2026-09-01T00:00:00.000',
@@ -421,6 +529,7 @@ const out = {
   austin: await austin(),
   sanAntonio: await sanAntonio(),
   windowBoundary: await windowBoundary(),
+  austinSolarComposition: await austinSolarComposition(),
 };
 writeFileSync(OUT, JSON.stringify(out, null, 2) + "\n");
 console.log(`wrote ${OUT.pathname}`);
