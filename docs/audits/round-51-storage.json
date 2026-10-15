@@ -1,0 +1,2024 @@
+{
+  "measuredAt": "2026-10-15T19:58:54.282Z",
+  "question": "what does the Austin battery-storage series say, and is it filing mix or homes?",
+  "austin": {
+    "window": {
+      "since": "2025-09-01T00:00:00.000Z",
+      "until": "2026-10-15T19:58:54.283Z"
+    },
+    "auxPowerByMonth": [
+      {
+        "month": "2025-09",
+        "permits": 100,
+        "distinctDescriptionShapes": 62,
+        "topShapeShare": 16,
+        "top3ShapeShare": 24,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 7,
+          "storage": 24,
+          "ess": 1,
+          "powerwall": 3,
+          "backup": 5,
+          "solar": 93,
+          "photovoltaic": 20,
+          "rooftop": 63,
+          "inverter": 2,
+          "kw_rating": 73,
+          "kwh_rating": 9,
+          "tesla": 7
+        }
+      },
+      {
+        "month": "2025-10",
+        "permits": 102,
+        "distinctDescriptionShapes": 66,
+        "topShapeShare": 11.8,
+        "top3ShapeShare": 23.5,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 9,
+          "storage": 24,
+          "ess": 1,
+          "powerwall": 2,
+          "backup": 6,
+          "solar": 98,
+          "photovoltaic": 20,
+          "rooftop": 67,
+          "inverter": 7,
+          "kw_rating": 85,
+          "kwh_rating": 11,
+          "tesla": 4,
+          "enphase": 3
+        }
+      },
+      {
+        "month": "2025-11",
+        "permits": 94,
+        "distinctDescriptionShapes": 59,
+        "topShapeShare": 13.8,
+        "top3ShapeShare": 26.6,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 10,
+          "storage": 20,
+          "ess": 2,
+          "powerwall": 2,
+          "backup": 6,
+          "meter_socket": 2,
+          "solar": 89,
+          "photovoltaic": 11,
+          "rooftop": 72,
+          "ground_mount": 1,
+          "inverter": 6,
+          "kw_rating": 77,
+          "kwh_rating": 10,
+          "tesla": 5,
+          "enphase": 1
+        }
+      },
+      {
+        "month": "2025-12",
+        "permits": 56,
+        "distinctDescriptionShapes": 48,
+        "topShapeShare": 10.7,
+        "top3ShapeShare": 19.6,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 10,
+          "storage": 10,
+          "ess": 1,
+          "powerwall": 2,
+          "backup": 6,
+          "solar": 53,
+          "photovoltaic": 11,
+          "rooftop": 38,
+          "ground_mount": 2,
+          "inverter": 9,
+          "generator": 1,
+          "interconnection": 2,
+          "kw_rating": 45,
+          "kwh_rating": 8,
+          "tesla": 1,
+          "enphase": 2
+        }
+      },
+      {
+        "month": "2026-01",
+        "permits": 29,
+        "distinctDescriptionShapes": 26,
+        "topShapeShare": 10.3,
+        "top3ShapeShare": 20.7,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 1,
+          "storage": 4,
+          "powerwall": 1,
+          "backup": 1,
+          "solar": 25,
+          "photovoltaic": 8,
+          "rooftop": 18,
+          "inverter": 2,
+          "kw_rating": 22,
+          "kwh_rating": 1,
+          "tesla": 2,
+          "enphase": 2
+        }
+      },
+      {
+        "month": "2026-02",
+        "permits": 33,
+        "distinctDescriptionShapes": 30,
+        "topShapeShare": 6.1,
+        "top3ShapeShare": 18.2,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 4,
+          "storage": 5,
+          "powerwall": 1,
+          "backup": 1,
+          "solar": 26,
+          "photovoltaic": 8,
+          "rooftop": 26,
+          "ground_mount": 1,
+          "inverter": 2,
+          "generator": 1,
+          "interconnection": 1,
+          "kw_rating": 24,
+          "kwh_rating": 1,
+          "tesla": 2,
+          "generac": 1
+        }
+      },
+      {
+        "month": "2026-03",
+        "permits": 22,
+        "distinctDescriptionShapes": 20,
+        "topShapeShare": 13.6,
+        "top3ShapeShare": 22.7,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 3,
+          "storage": 2,
+          "powerwall": 2,
+          "solar": 20,
+          "photovoltaic": 5,
+          "rooftop": 16,
+          "inverter": 2,
+          "kw_rating": 15,
+          "kwh_rating": 1,
+          "tesla": 1,
+          "enphase": 1
+        }
+      },
+      {
+        "month": "2026-04",
+        "permits": 47,
+        "distinctDescriptionShapes": 40,
+        "topShapeShare": 8.5,
+        "top3ShapeShare": 21.3,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 3,
+          "storage": 7,
+          "ess": 1,
+          "backup": 2,
+          "solar": 34,
+          "photovoltaic": 7,
+          "rooftop": 27,
+          "inverter": 1,
+          "interconnection": 2,
+          "kw_rating": 28,
+          "kwh_rating": 1,
+          "tesla": 2
+        }
+      },
+      {
+        "month": "2026-05",
+        "permits": 24,
+        "distinctDescriptionShapes": 21,
+        "topShapeShare": 8.3,
+        "top3ShapeShare": 25,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 1,
+          "storage": 4,
+          "solar": 20,
+          "photovoltaic": 4,
+          "rooftop": 13,
+          "interconnection": 2,
+          "kw_rating": 13
+        }
+      },
+      {
+        "month": "2026-06",
+        "permits": 39,
+        "distinctDescriptionShapes": 38,
+        "topShapeShare": 5.1,
+        "top3ShapeShare": 10.3,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 6,
+          "storage": 7,
+          "ess": 2,
+          "powerwall": 1,
+          "backup": 1,
+          "solar": 32,
+          "photovoltaic": 8,
+          "rooftop": 22,
+          "inverter": 6,
+          "interconnection": 2,
+          "kw_rating": 29,
+          "kwh_rating": 3,
+          "tesla": 2
+        }
+      },
+      {
+        "month": "2026-07",
+        "permits": 64,
+        "distinctDescriptionShapes": 45,
+        "topShapeShare": 26.6,
+        "top3ShapeShare": 32.8,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 23,
+          "storage": 6,
+          "ess": 1,
+          "backup": 20,
+          "meter_socket": 18,
+          "solar": 42,
+          "photovoltaic": 7,
+          "rooftop": 30,
+          "inverter": 4,
+          "v2h": 1,
+          "interconnection": 11,
+          "kw_rating": 25,
+          "kwh_rating": 5,
+          "tesla": 1,
+          "enphase": 1
+        }
+      },
+      {
+        "month": "2026-08",
+        "permits": 194,
+        "distinctDescriptionShapes": 56,
+        "topShapeShare": 69.1,
+        "top3ShapeShare": 72.2,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 141,
+          "storage": 4,
+          "ess": 2,
+          "powerwall": 1,
+          "backup": 138,
+          "meter_socket": 137,
+          "solar": 47,
+          "photovoltaic": 9,
+          "rooftop": 28,
+          "inverter": 4,
+          "v2h": 1,
+          "interconnection": 3,
+          "kw_rating": 27,
+          "tesla": 2,
+          "enphase": 3
+        }
+      },
+      {
+        "month": "2026-09",
+        "permits": 219,
+        "distinctDescriptionShapes": 46,
+        "topShapeShare": 76.7,
+        "top3ShapeShare": 79,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 181,
+          "storage": 7,
+          "ess": 2,
+          "backup": 178,
+          "meter_socket": 175,
+          "solar": 40,
+          "photovoltaic": 9,
+          "rooftop": 24,
+          "inverter": 2,
+          "v2h": 1,
+          "kw_rating": 27,
+          "kwh_rating": 2,
+          "tesla": 1
+        }
+      },
+      {
+        "month": "2026-10",
+        "permits": 70,
+        "distinctDescriptionShapes": 18,
+        "topShapeShare": 71.4,
+        "top3ShapeShare": 78.6,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 55,
+          "storage": 3,
+          "ess": 1,
+          "powerwall": 1,
+          "backup": 55,
+          "meter_socket": 54,
+          "solar": 14,
+          "photovoltaic": 7,
+          "rooftop": 9,
+          "interconnection": 1,
+          "kw_rating": 13,
+          "tesla": 1
+        }
+      }
+    ],
+    "storageByMonth": [
+      {
+        "month": "2025-09",
+        "permits": 34,
+        "distinctDescriptionShapes": 23,
+        "topShapeShare": 11.8,
+        "top3ShapeShare": 29.4,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 7,
+          "storage": 24,
+          "ess": 1,
+          "powerwall": 3,
+          "backup": 4,
+          "solar": 30,
+          "photovoltaic": 7,
+          "rooftop": 17,
+          "inverter": 2,
+          "kw_rating": 25,
+          "kwh_rating": 9,
+          "tesla": 4
+        }
+      },
+      {
+        "month": "2025-10",
+        "permits": 36,
+        "distinctDescriptionShapes": 20,
+        "topShapeShare": 19.4,
+        "top3ShapeShare": 47.2,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 9,
+          "storage": 24,
+          "ess": 1,
+          "powerwall": 2,
+          "backup": 6,
+          "solar": 33,
+          "photovoltaic": 9,
+          "rooftop": 22,
+          "kw_rating": 31,
+          "kwh_rating": 11,
+          "tesla": 1,
+          "enphase": 2
+        }
+      },
+      {
+        "month": "2025-11",
+        "permits": 32,
+        "distinctDescriptionShapes": 20,
+        "topShapeShare": 21.9,
+        "top3ShapeShare": 46.9,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 10,
+          "storage": 20,
+          "ess": 2,
+          "powerwall": 2,
+          "backup": 6,
+          "meter_socket": 1,
+          "solar": 28,
+          "photovoltaic": 1,
+          "rooftop": 23,
+          "inverter": 2,
+          "kw_rating": 26,
+          "kwh_rating": 10,
+          "tesla": 4
+        }
+      },
+      {
+        "month": "2025-12",
+        "permits": 18,
+        "distinctDescriptionShapes": 16,
+        "topShapeShare": 16.7,
+        "top3ShapeShare": 27.8,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 10,
+          "storage": 10,
+          "ess": 1,
+          "powerwall": 2,
+          "backup": 6,
+          "solar": 16,
+          "photovoltaic": 4,
+          "rooftop": 11,
+          "ground_mount": 1,
+          "inverter": 3,
+          "generator": 1,
+          "interconnection": 2,
+          "kw_rating": 13,
+          "kwh_rating": 8,
+          "tesla": 1
+        }
+      },
+      {
+        "month": "2026-01",
+        "permits": 6,
+        "distinctDescriptionShapes": 6,
+        "topShapeShare": 16.7,
+        "top3ShapeShare": 50,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 1,
+          "storage": 4,
+          "powerwall": 1,
+          "backup": 1,
+          "solar": 4,
+          "photovoltaic": 1,
+          "rooftop": 3,
+          "kw_rating": 4,
+          "kwh_rating": 1,
+          "tesla": 1
+        }
+      },
+      {
+        "month": "2026-02",
+        "permits": 9,
+        "distinctDescriptionShapes": 8,
+        "topShapeShare": 22.2,
+        "top3ShapeShare": 44.4,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 4,
+          "storage": 5,
+          "powerwall": 1,
+          "backup": 1,
+          "solar": 7,
+          "photovoltaic": 3,
+          "rooftop": 5,
+          "ground_mount": 1,
+          "inverter": 2,
+          "kw_rating": 6,
+          "kwh_rating": 1,
+          "tesla": 2
+        }
+      },
+      {
+        "month": "2026-03",
+        "permits": 5,
+        "distinctDescriptionShapes": 5,
+        "topShapeShare": 20,
+        "top3ShapeShare": 60,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 3,
+          "storage": 2,
+          "powerwall": 2,
+          "solar": 4,
+          "photovoltaic": 1,
+          "rooftop": 4,
+          "inverter": 1,
+          "kw_rating": 4,
+          "kwh_rating": 1,
+          "tesla": 1
+        }
+      },
+      {
+        "month": "2026-04",
+        "permits": 10,
+        "distinctDescriptionShapes": 10,
+        "topShapeShare": 10,
+        "top3ShapeShare": 30,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 3,
+          "storage": 7,
+          "ess": 1,
+          "backup": 2,
+          "solar": 4,
+          "photovoltaic": 1,
+          "rooftop": 2,
+          "inverter": 1,
+          "interconnection": 1,
+          "kw_rating": 4,
+          "kwh_rating": 1,
+          "tesla": 2
+        }
+      },
+      {
+        "month": "2026-05",
+        "permits": 4,
+        "distinctDescriptionShapes": 4,
+        "topShapeShare": 25,
+        "top3ShapeShare": 75,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 1,
+          "storage": 4,
+          "solar": 2,
+          "rooftop": 2,
+          "interconnection": 1,
+          "kw_rating": 1
+        }
+      },
+      {
+        "month": "2026-06",
+        "permits": 13,
+        "distinctDescriptionShapes": 13,
+        "topShapeShare": 7.7,
+        "top3ShapeShare": 23.1,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 6,
+          "storage": 7,
+          "ess": 2,
+          "powerwall": 1,
+          "backup": 1,
+          "solar": 9,
+          "photovoltaic": 5,
+          "rooftop": 6,
+          "inverter": 3,
+          "interconnection": 2,
+          "kw_rating": 8,
+          "kwh_rating": 3,
+          "tesla": 2
+        }
+      },
+      {
+        "month": "2026-07",
+        "permits": 29,
+        "distinctDescriptionShapes": 12,
+        "topShapeShare": 58.6,
+        "top3ShapeShare": 69,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 23,
+          "storage": 6,
+          "ess": 1,
+          "backup": 20,
+          "meter_socket": 18,
+          "solar": 8,
+          "photovoltaic": 1,
+          "rooftop": 4,
+          "inverter": 1,
+          "interconnection": 2,
+          "kw_rating": 8,
+          "kwh_rating": 5,
+          "tesla": 1,
+          "enphase": 1
+        }
+      },
+      {
+        "month": "2026-08",
+        "permits": 146,
+        "distinctDescriptionShapes": 12,
+        "topShapeShare": 91.8,
+        "top3ShapeShare": 93.8,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 141,
+          "storage": 4,
+          "ess": 2,
+          "powerwall": 1,
+          "backup": 138,
+          "meter_socket": 137,
+          "solar": 3,
+          "photovoltaic": 1,
+          "rooftop": 1,
+          "kw_rating": 1,
+          "tesla": 1,
+          "enphase": 1
+        }
+      },
+      {
+        "month": "2026-09",
+        "permits": 188,
+        "distinctDescriptionShapes": 18,
+        "topShapeShare": 89.4,
+        "top3ShapeShare": 92,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 181,
+          "storage": 7,
+          "ess": 2,
+          "backup": 178,
+          "meter_socket": 175,
+          "solar": 9,
+          "photovoltaic": 3,
+          "rooftop": 4,
+          "inverter": 1,
+          "kw_rating": 6,
+          "kwh_rating": 2,
+          "tesla": 1
+        }
+      },
+      {
+        "month": "2026-10",
+        "permits": 59,
+        "distinctDescriptionShapes": 8,
+        "topShapeShare": 84.7,
+        "top3ShapeShare": 91.5,
+        "emptyDescription": 0,
+        "terms": {
+          "battery": 55,
+          "storage": 3,
+          "ess": 1,
+          "powerwall": 1,
+          "backup": 55,
+          "meter_socket": 54,
+          "solar": 4,
+          "photovoltaic": 3,
+          "rooftop": 3,
+          "kw_rating": 5,
+          "tesla": 1
+        }
+      }
+    ],
+    "storageConcentrationByMonth": [
+      {
+        "month": "2025-09",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 34
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 34
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 34
+          }
+        },
+        "council_district": {
+          "distinct": 9,
+          "topShare": 23.5
+        },
+        "original_zip": {
+          "distinct": 21,
+          "topShare": 11.8
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "(blank)": 34
+          }
+        },
+        "project_id": {
+          "distinct": 34,
+          "topShare": 2.9
+        }
+      },
+      {
+        "month": "2025-10",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 36
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 36
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 36
+          }
+        },
+        "council_district": {
+          "distinct": 9,
+          "topShare": 27.8
+        },
+        "original_zip": {
+          "distinct": 17,
+          "topShare": 11.1
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "(blank)": 36
+          }
+        },
+        "project_id": {
+          "distinct": 36,
+          "topShare": 2.8
+        }
+      },
+      {
+        "month": "2025-11",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 32
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 32
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 32
+          }
+        },
+        "council_district": {
+          "distinct": 10,
+          "topShare": 18.8
+        },
+        "original_zip": {
+          "distinct": 21,
+          "topShare": 15.6
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "(blank)": 32
+          }
+        },
+        "project_id": {
+          "distinct": 32,
+          "topShare": 3.1
+        }
+      },
+      {
+        "month": "2025-12",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 18
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 18
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 18
+          }
+        },
+        "council_district": {
+          "distinct": 6,
+          "topShare": 38.9
+        },
+        "original_zip": {
+          "distinct": 14,
+          "topShare": 16.7
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "(blank)": 18
+          }
+        },
+        "project_id": {
+          "distinct": 18,
+          "topShare": 5.6
+        }
+      },
+      {
+        "month": "2026-01",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 6
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 6
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 6
+          }
+        },
+        "council_district": {
+          "distinct": 4,
+          "topShare": 33.3
+        },
+        "original_zip": {
+          "distinct": 6,
+          "topShare": 16.7
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "(blank)": 6
+          }
+        },
+        "project_id": {
+          "distinct": 6,
+          "topShare": 16.7
+        }
+      },
+      {
+        "month": "2026-02",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 9
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 9
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 9
+          }
+        },
+        "council_district": {
+          "distinct": 7,
+          "topShare": 22.2
+        },
+        "original_zip": {
+          "distinct": 8,
+          "topShare": 22.2
+        },
+        "masterpermitnum": {
+          "distinct": 2,
+          "topShare": 88.9,
+          "values": {
+            "13649242": 1,
+            "(blank)": 8
+          }
+        },
+        "project_id": {
+          "distinct": 9,
+          "topShare": 11.1
+        }
+      },
+      {
+        "month": "2026-03",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 5
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 5
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 5
+          }
+        },
+        "council_district": {
+          "distinct": 5,
+          "topShare": 20
+        },
+        "original_zip": {
+          "distinct": 5,
+          "topShare": 20
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "(blank)": 5
+          }
+        },
+        "project_id": {
+          "distinct": 5,
+          "topShare": 20
+        }
+      },
+      {
+        "month": "2026-04",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 10
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 10
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 10
+          }
+        },
+        "council_district": {
+          "distinct": 7,
+          "topShare": 40
+        },
+        "original_zip": {
+          "distinct": 10,
+          "topShare": 10
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "(blank)": 10
+          }
+        },
+        "project_id": {
+          "distinct": 10,
+          "topShare": 10
+        }
+      },
+      {
+        "month": "2026-05",
+        "permit_class": {
+          "distinct": 2,
+          "topShare": 75,
+          "values": {
+            "Residential": 3,
+            "Commercial": 1
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 2,
+          "topShare": 75,
+          "values": {
+            "Residential": 3,
+            "Commercial": 1
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 4
+          }
+        },
+        "council_district": {
+          "distinct": 2,
+          "topShare": 75
+        },
+        "original_zip": {
+          "distinct": 2,
+          "topShare": 75
+        },
+        "masterpermitnum": {
+          "distinct": 2,
+          "topShare": 75,
+          "values": {
+            "13684431": 1,
+            "(blank)": 3
+          }
+        },
+        "project_id": {
+          "distinct": 4,
+          "topShare": 25
+        }
+      },
+      {
+        "month": "2026-06",
+        "permit_class": {
+          "distinct": 2,
+          "topShare": 84.6,
+          "values": {
+            "Residential": 11,
+            "Commercial": 2
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 2,
+          "topShare": 84.6,
+          "values": {
+            "Residential": 11,
+            "Commercial": 2
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 13
+          }
+        },
+        "council_district": {
+          "distinct": 7,
+          "topShare": 30.8
+        },
+        "original_zip": {
+          "distinct": 9,
+          "topShare": 23.1
+        },
+        "masterpermitnum": {
+          "distinct": 3,
+          "topShare": 84.6,
+          "values": {
+            "13692950": 1,
+            "13704056": 1,
+            "(blank)": 11
+          }
+        },
+        "project_id": {
+          "distinct": 13,
+          "topShare": 7.7
+        }
+      },
+      {
+        "month": "2026-07",
+        "permit_class": {
+          "distinct": 2,
+          "topShare": 93.1,
+          "values": {
+            "Residential": 27,
+            "Commercial": 2
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 2,
+          "topShare": 93.1,
+          "values": {
+            "Residential": 27,
+            "Commercial": 2
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 29
+          }
+        },
+        "council_district": {
+          "distinct": 9,
+          "topShare": 24.1
+        },
+        "original_zip": {
+          "distinct": 16,
+          "topShare": 13.8
+        },
+        "masterpermitnum": {
+          "distinct": 3,
+          "topShare": 93.1,
+          "values": {
+            "13693124": 1,
+            "13714013": 1,
+            "(blank)": 27
+          }
+        },
+        "project_id": {
+          "distinct": 29,
+          "topShare": 3.4
+        }
+      },
+      {
+        "month": "2026-08",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 146
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 146
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 146
+          }
+        },
+        "council_district": {
+          "distinct": 11,
+          "topShare": 26.7
+        },
+        "original_zip": {
+          "distinct": 32,
+          "topShare": 14.4
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "(blank)": 146
+          }
+        },
+        "project_id": {
+          "distinct": 146,
+          "topShare": 0.7
+        }
+      },
+      {
+        "month": "2026-09",
+        "permit_class": {
+          "distinct": 2,
+          "topShare": 98.9,
+          "values": {
+            "Residential": 186,
+            "Commercial": 2
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 2,
+          "topShare": 98.9,
+          "values": {
+            "Residential": 186,
+            "Commercial": 2
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 188
+          }
+        },
+        "council_district": {
+          "distinct": 11,
+          "topShare": 23.9
+        },
+        "original_zip": {
+          "distinct": 33,
+          "topShare": 12.2
+        },
+        "masterpermitnum": {
+          "distinct": 2,
+          "topShare": 99.5,
+          "values": {
+            "13759894": 1,
+            "(blank)": 187
+          }
+        },
+        "project_id": {
+          "distinct": 188,
+          "topShare": 0.5
+        }
+      },
+      {
+        "month": "2026-10",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 59
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 59
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 59
+          }
+        },
+        "council_district": {
+          "distinct": 10,
+          "topShare": 28.8
+        },
+        "original_zip": {
+          "distinct": 25,
+          "topShare": 8.5
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "(blank)": 59
+          }
+        },
+        "project_id": {
+          "distinct": 59,
+          "topShare": 1.7
+        }
+      }
+    ],
+    "roofingCompositionByMonth": [
+      {
+        "month": "2025-09",
+        "permits": 210,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Auxiliary Power": 70,
+          "Remodel": 44,
+          "Repair": 42,
+          "Addition and Remodel": 31,
+          "New": 18
+        },
+        "termShares": {
+          "reroof": 9,
+          "shingle": 9.5,
+          "replace": 21,
+          "repair": 11,
+          "tear_off": 0.5,
+          "decking": 12.4,
+          "squares": 4.8,
+          "skylight": 0,
+          "rooftop_unit": 1.9,
+          "solar_on_roof": 45.7,
+          "new_construction": 8.1,
+          "remodel": 21
+        }
+      },
+      {
+        "month": "2025-10",
+        "permits": 199,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Auxiliary Power": 74,
+          "Repair": 52,
+          "Addition and Remodel": 39,
+          "Remodel": 23,
+          "New": 10
+        },
+        "termShares": {
+          "reroof": 9.5,
+          "shingle": 14.1,
+          "replace": 14.1,
+          "repair": 3,
+          "tear_off": 2,
+          "decking": 10.6,
+          "squares": 1,
+          "skylight": 2,
+          "rooftop_unit": 0.5,
+          "solar_on_roof": 53.8,
+          "new_construction": 8,
+          "remodel": 14.1
+        }
+      },
+      {
+        "month": "2025-11",
+        "permits": 168,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Auxiliary Power": 78,
+          "Repair": 32,
+          "Addition and Remodel": 23,
+          "Remodel": 21,
+          "New": 8
+        },
+        "termShares": {
+          "reroof": 6,
+          "shingle": 9.5,
+          "replace": 20.8,
+          "repair": 2.4,
+          "tear_off": 0,
+          "decking": 13.1,
+          "squares": 0,
+          "skylight": 0,
+          "rooftop_unit": 1.2,
+          "solar_on_roof": 53,
+          "new_construction": 2.4,
+          "remodel": 11.3
+        }
+      },
+      {
+        "month": "2025-12",
+        "permits": 157,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Auxiliary Power": 46,
+          "Remodel": 42,
+          "Repair": 28,
+          "Addition and Remodel": 26,
+          "New": 14
+        },
+        "termShares": {
+          "reroof": 6.4,
+          "shingle": 10.2,
+          "replace": 30.6,
+          "repair": 12.1,
+          "tear_off": 0.6,
+          "decking": 15.3,
+          "squares": 0,
+          "skylight": 0,
+          "rooftop_unit": 0,
+          "solar_on_roof": 31.2,
+          "new_construction": 5.7,
+          "remodel": 13.4
+        }
+      },
+      {
+        "month": "2026-01",
+        "permits": 121,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Remodel": 49,
+          "Addition and Remodel": 24,
+          "Auxiliary Power": 20,
+          "Repair": 20,
+          "New": 6
+        },
+        "termShares": {
+          "reroof": 24.8,
+          "shingle": 6.6,
+          "replace": 50.4,
+          "repair": 12.4,
+          "tear_off": 0,
+          "decking": 7.4,
+          "squares": 4.1,
+          "skylight": 3.3,
+          "rooftop_unit": 0.8,
+          "solar_on_roof": 20.7,
+          "new_construction": 2.5,
+          "remodel": 16.5
+        }
+      },
+      {
+        "month": "2026-02",
+        "permits": 137,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Addition and Remodel": 37,
+          "Remodel": 34,
+          "Auxiliary Power": 26,
+          "Repair": 22,
+          "New": 14
+        },
+        "termShares": {
+          "reroof": 5.8,
+          "shingle": 9.5,
+          "replace": 35.8,
+          "repair": 7.3,
+          "tear_off": 0.7,
+          "decking": 9.5,
+          "squares": 2.2,
+          "skylight": 2.2,
+          "rooftop_unit": 1.5,
+          "solar_on_roof": 25.5,
+          "new_construction": 2.9,
+          "remodel": 21.2
+        }
+      },
+      {
+        "month": "2026-03",
+        "permits": 129,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Repair": 31,
+          "Addition and Remodel": 29,
+          "Remodel": 28,
+          "New": 21,
+          "Auxiliary Power": 16
+        },
+        "termShares": {
+          "reroof": 7.8,
+          "shingle": 13.2,
+          "replace": 39.5,
+          "repair": 11.6,
+          "tear_off": 0,
+          "decking": 12.4,
+          "squares": 0,
+          "skylight": 0,
+          "rooftop_unit": 1.6,
+          "solar_on_roof": 14.7,
+          "new_construction": 4.7,
+          "remodel": 23.3
+        }
+      },
+      {
+        "month": "2026-04",
+        "permits": 148,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Remodel": 61,
+          "Addition and Remodel": 31,
+          "Auxiliary Power": 27,
+          "Repair": 20,
+          "New": 8
+        },
+        "termShares": {
+          "reroof": 16.2,
+          "shingle": 8.8,
+          "replace": 33.1,
+          "repair": 5.4,
+          "tear_off": 0.7,
+          "decking": 12.8,
+          "squares": 1.4,
+          "skylight": 0,
+          "rooftop_unit": 0,
+          "solar_on_roof": 24.3,
+          "new_construction": 5.4,
+          "remodel": 18.2
+        }
+      },
+      {
+        "month": "2026-05",
+        "permits": 114,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Remodel": 32,
+          "Addition and Remodel": 32,
+          "Repair": 28,
+          "Auxiliary Power": 14,
+          "New": 4
+        },
+        "termShares": {
+          "reroof": 10.5,
+          "shingle": 14,
+          "replace": 40.4,
+          "repair": 7,
+          "tear_off": 0,
+          "decking": 14.9,
+          "squares": 0,
+          "skylight": 1.8,
+          "rooftop_unit": 4.4,
+          "solar_on_roof": 23.7,
+          "new_construction": 1.8,
+          "remodel": 32.5
+        }
+      },
+      {
+        "month": "2026-06",
+        "permits": 191,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Remodel": 85,
+          "Repair": 46,
+          "Addition and Remodel": 28,
+          "Auxiliary Power": 24,
+          "New": 5
+        },
+        "termShares": {
+          "reroof": 31.9,
+          "shingle": 23,
+          "replace": 45,
+          "repair": 9.9,
+          "tear_off": 0.5,
+          "decking": 11,
+          "squares": 0,
+          "skylight": 1.6,
+          "rooftop_unit": 0.5,
+          "solar_on_roof": 23,
+          "new_construction": 1,
+          "remodel": 14.7
+        }
+      },
+      {
+        "month": "2026-07",
+        "permits": 150,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Remodel": 50,
+          "Auxiliary Power": 32,
+          "Addition and Remodel": 31,
+          "Repair": 30,
+          "New": 3
+        },
+        "termShares": {
+          "reroof": 19.3,
+          "shingle": 6.7,
+          "replace": 24.7,
+          "repair": 8,
+          "tear_off": 0,
+          "decking": 14,
+          "squares": 0,
+          "skylight": 1.3,
+          "rooftop_unit": 2,
+          "solar_on_roof": 34,
+          "new_construction": 2.7,
+          "remodel": 21.3
+        }
+      },
+      {
+        "month": "2026-08",
+        "permits": 144,
+        "roofClassPermits": 1,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Addition and Remodel": 34,
+          "Repair": 33,
+          "Remodel": 28,
+          "Auxiliary Power": 28,
+          "New": 16
+        },
+        "termShares": {
+          "reroof": 13.9,
+          "shingle": 11.8,
+          "replace": 27.1,
+          "repair": 8.3,
+          "tear_off": 1.4,
+          "decking": 20.8,
+          "squares": 0,
+          "skylight": 0.7,
+          "rooftop_unit": 0.7,
+          "solar_on_roof": 26.4,
+          "new_construction": 7.6,
+          "remodel": 20.1
+        }
+      },
+      {
+        "month": "2026-09",
+        "permits": 167,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Remodel": 60,
+          "Addition and Remodel": 37,
+          "Auxiliary Power": 25,
+          "Repair": 24,
+          "New": 15
+        },
+        "termShares": {
+          "reroof": 22.8,
+          "shingle": 9.6,
+          "replace": 27.5,
+          "repair": 5.4,
+          "tear_off": 0.6,
+          "decking": 9.6,
+          "squares": 1.8,
+          "skylight": 0.6,
+          "rooftop_unit": 1.2,
+          "solar_on_roof": 20.4,
+          "new_construction": 7.2,
+          "remodel": 24
+        }
+      },
+      {
+        "month": "2026-10",
+        "permits": 74,
+        "roofClassPermits": 0,
+        "roofClassAlsoSaysRoofInDescription": 0,
+        "topWorkClasses": {
+          "Remodel": 25,
+          "Addition and Remodel": 13,
+          "Repair": 13,
+          "New": 11,
+          "Auxiliary Power": 10
+        },
+        "termShares": {
+          "reroof": 10.8,
+          "shingle": 18.9,
+          "replace": 47.3,
+          "repair": 6.8,
+          "tear_off": 2.7,
+          "decking": 17.6,
+          "squares": 5.4,
+          "skylight": 0,
+          "rooftop_unit": 1.4,
+          "solar_on_roof": 14.9,
+          "new_construction": 20.3,
+          "remodel": 33.8
+        }
+      }
+    ],
+    "wholeFeedByMonth": {
+      "2025-09": 4272,
+      "2025-10": 4413,
+      "2025-11": 3699,
+      "2025-12": 4018,
+      "2026-01": 4174,
+      "2026-02": 4162,
+      "2026-03": 4814,
+      "2026-04": 4900,
+      "2026-05": 4642,
+      "2026-06": 5328,
+      "2026-07": 5129,
+      "2026-08": 5103,
+      "2026-09": 5130,
+      "2026-10": 1971
+    },
+    "auxPowerClassVolumeByMonth": {
+      "2025-09": 100,
+      "2025-10": 102,
+      "2025-11": 94,
+      "2025-12": 56,
+      "2026-01": 29,
+      "2026-02": 33,
+      "2026-03": 22,
+      "2026-04": 47,
+      "2026-05": 24,
+      "2026-06": 39,
+      "2026-07": 64,
+      "2026-08": 194,
+      "2026-09": 219,
+      "2026-10": 70
+    },
+    "upgradeClassVolumeByMonth": {
+      "2025-09": 179,
+      "2025-10": 138,
+      "2025-11": 158,
+      "2025-12": 117,
+      "2026-01": 122,
+      "2026-02": 158,
+      "2026-03": 175,
+      "2026-04": 178,
+      "2026-05": 169,
+      "2026-06": 179,
+      "2026-07": 173,
+      "2026-08": 174,
+      "2026-09": 198,
+      "2026-10": 77
+    },
+    "roofWorkClassVolumeByMonth": {
+      "2026-08": 1
+    },
+    "repairClassVolumeByMonth": {
+      "2025-09": 866,
+      "2025-10": 798,
+      "2025-11": 768,
+      "2025-12": 798,
+      "2026-01": 775,
+      "2026-02": 777,
+      "2026-03": 849,
+      "2026-04": 905,
+      "2026-05": 747,
+      "2026-06": 855,
+      "2026-07": 781,
+      "2026-08": 814,
+      "2026-09": 820,
+      "2026-10": 363
+    },
+    "topWorkClassesByMonth": {
+      "Addition and Remodel": {
+        "2025-09": 372,
+        "2025-10": 416,
+        "2025-11": 258,
+        "2025-12": 290,
+        "2026-01": 318,
+        "2026-02": 287,
+        "2026-03": 359,
+        "2026-04": 385,
+        "2026-05": 342,
+        "2026-06": 393,
+        "2026-07": 346,
+        "2026-08": 329,
+        "2026-09": 386,
+        "2026-10": 144
+      },
+      "Auxiliary Power": {
+        "2025-09": 100,
+        "2025-10": 102,
+        "2025-11": 94,
+        "2025-12": 56,
+        "2026-01": 29,
+        "2026-02": 33,
+        "2026-03": 22,
+        "2026-04": 47,
+        "2026-05": 24,
+        "2026-06": 39,
+        "2026-07": 64,
+        "2026-08": 194,
+        "2026-09": 219,
+        "2026-10": 70
+      },
+      "Change Out": {
+        "2025-09": 697,
+        "2025-10": 566,
+        "2025-11": 421,
+        "2025-12": 514,
+        "2026-01": 455,
+        "2026-02": 492,
+        "2026-03": 671,
+        "2026-04": 620,
+        "2026-05": 695,
+        "2026-06": 803,
+        "2026-07": 954,
+        "2026-08": 876,
+        "2026-09": 814,
+        "2026-10": 236
+      },
+      "Demolition": {
+        "2025-09": 61,
+        "2025-10": 66,
+        "2025-11": 72,
+        "2025-12": 76,
+        "2026-01": 101,
+        "2026-02": 84,
+        "2026-03": 112,
+        "2026-04": 90,
+        "2026-05": 92,
+        "2026-06": 100,
+        "2026-07": 92,
+        "2026-08": 99,
+        "2026-09": 104,
+        "2026-10": 40
+      },
+      "Homebuilder Loop": {
+        "2025-09": 138,
+        "2025-10": 155,
+        "2025-11": 147,
+        "2025-12": 175,
+        "2026-01": 186,
+        "2026-02": 193,
+        "2026-03": 198,
+        "2026-04": 197,
+        "2026-05": 190,
+        "2026-06": 238,
+        "2026-07": 198,
+        "2026-08": 164,
+        "2026-09": 234,
+        "2026-10": 71
+      },
+      "Interior Demo Non-Structural": {
+        "2025-09": 10,
+        "2025-10": 13,
+        "2025-11": 11,
+        "2025-12": 27,
+        "2026-01": 19,
+        "2026-02": 14,
+        "2026-03": 18,
+        "2026-04": 13,
+        "2026-05": 16,
+        "2026-06": 24,
+        "2026-07": 12,
+        "2026-08": 17,
+        "2026-09": 14,
+        "2026-10": 5
+      },
+      "Irrigation": {
+        "2025-09": 192,
+        "2025-10": 140,
+        "2025-11": 144,
+        "2025-12": 95,
+        "2026-01": 159,
+        "2026-02": 167,
+        "2026-03": 120,
+        "2026-04": 164,
+        "2026-05": 160,
+        "2026-06": 164,
+        "2026-07": 163,
+        "2026-08": 170,
+        "2026-09": 199,
+        "2026-10": 69
+      },
+      "New": {
+        "2025-09": 1027,
+        "2025-10": 1304,
+        "2025-11": 1085,
+        "2025-12": 1137,
+        "2026-01": 1192,
+        "2026-02": 1229,
+        "2026-03": 1461,
+        "2026-04": 1417,
+        "2026-05": 1429,
+        "2026-06": 1617,
+        "2026-07": 1462,
+        "2026-08": 1405,
+        "2026-09": 1327,
+        "2026-10": 531
+      },
+      "Remodel": {
+        "2025-09": 452,
+        "2025-10": 579,
+        "2025-11": 408,
+        "2025-12": 567,
+        "2026-01": 672,
+        "2026-02": 559,
+        "2026-03": 651,
+        "2026-04": 681,
+        "2026-05": 592,
+        "2026-06": 731,
+        "2026-07": 699,
+        "2026-08": 655,
+        "2026-09": 611,
+        "2026-10": 282
+      },
+      "Repair": {
+        "2025-09": 866,
+        "2025-10": 798,
+        "2025-11": 768,
+        "2025-12": 798,
+        "2026-01": 775,
+        "2026-02": 777,
+        "2026-03": 849,
+        "2026-04": 905,
+        "2026-05": 747,
+        "2026-06": 855,
+        "2026-07": 781,
+        "2026-08": 814,
+        "2026-09": 820,
+        "2026-10": 363
+      },
+      "Special Inspections Program": {
+        "2025-09": 54,
+        "2025-10": 30,
+        "2025-11": 17,
+        "2025-12": 21,
+        "2026-01": 29,
+        "2026-02": 29,
+        "2026-03": 25,
+        "2026-04": 37,
+        "2026-05": 41,
+        "2026-06": 28,
+        "2026-07": 53,
+        "2026-08": 51,
+        "2026-09": 60,
+        "2026-10": 12
+      },
+      "Upgrade": {
+        "2025-09": 179,
+        "2025-10": 138,
+        "2025-11": 158,
+        "2025-12": 117,
+        "2026-01": 122,
+        "2026-02": 158,
+        "2026-03": 175,
+        "2026-04": 178,
+        "2026-05": 169,
+        "2026-06": 179,
+        "2026-07": 173,
+        "2026-08": 174,
+        "2026-09": 198,
+        "2026-10": 77
+      },
+      "Wall": {
+        "2025-09": 66,
+        "2025-10": 54,
+        "2025-11": 63,
+        "2025-12": 75,
+        "2026-01": 56,
+        "2026-02": 81,
+        "2026-03": 80,
+        "2026-04": 93,
+        "2026-05": 61,
+        "2026-06": 97,
+        "2026-07": 59,
+        "2026-08": 60,
+        "2026-09": 60,
+        "2026-10": 36
+      }
+    },
+    "workClassFirstSeen": {
+      "Addition": "2025-09",
+      "Addition and Remodel": "2025-09",
+      "Auxiliary Power": "2025-09",
+      "Auxiliary Water": "2025-09",
+      "Change Out": "2025-09",
+      "Cut Over/Tank Abandonment": "2025-09",
+      "Demolition": "2025-09",
+      "Fireline": "2025-09",
+      "Freestanding": "2025-09",
+      "Homebuilder Loop": "2025-09",
+      "Interior Demo Non-Structural": "2025-09",
+      "Irrigation": "2025-09",
+      "Modification": "2025-09",
+      "New": "2025-09",
+      "Plumbing Service Line": "2025-09",
+      "Projecting": "2025-09",
+      "Remodel": "2025-09",
+      "Repair": "2025-09",
+      "Shell": "2025-09",
+      "Special Inspections Program": "2025-09",
+      "Temporary  Loop": "2025-09",
+      "Upgrade": "2025-09",
+      "Wall": "2025-09",
+      "Relocation": "2025-10",
+      "Awning": "2025-11",
+      "Grease Interceptor (GI) replacement": "2025-11",
+      "Demo": "2025-12",
+      "Plumbing Utility Connection": "2026-02",
+      "Roof": "2026-08"
+    },
+    "permitTypeFirstSeen": {
+      "Plumbing Permit": "2025-09",
+      "Electrical Permit": "2025-09",
+      "Driveway / Sidewalks": "2025-09",
+      "Building Permit": "2025-09",
+      "Mechanical Permit": "2025-09"
+    },
+    "availableFieldNames": [
+      "applieddate",
+      "calendar_year_issued",
+      "council_district",
+      "day_issued",
+      "description",
+      "expiresdate",
+      "fiscal_year_issued",
+      "issue_date",
+      "issue_method",
+      "issued_in_last_30_days",
+      "jurisdiction",
+      "link",
+      "masterpermitnum",
+      "original_address1",
+      "original_city",
+      "original_state",
+      "original_zip",
+      "permit_class",
+      "permit_class_mapped",
+      "permit_location",
+      "permit_number",
+      "permit_type_desc",
+      "permittype",
+      "project_id",
+      "status_current",
+      "statusdate",
+      "tcad_id",
+      "work_class"
+    ]
+  },
+  "sanAntonio": {
+    "columns": {
+      "typeCol": "PERMIT TYPE",
+      "dateCol": "DATE ISSUED",
+      "descriptionColumnResolves": null
+    },
+    "headers": [
+      "PERMIT TYPE",
+      "PERMIT #",
+      "PROJECT NAME",
+      "WORK TYPE",
+      "ADDRESS",
+      "LOCATION",
+      "X_COORD",
+      "Y_COORD",
+      "DATE SUBMITTED",
+      "DATE ISSUED",
+      "DECLARED VALUATION",
+      "AREA (SF)",
+      "PRIMARY CONTACT",
+      "CD",
+      "NCD",
+      "HD"
+    ],
+    "distinctPermitTypesInWindow": 67,
+    "typesMatchingEnergyWords": {
+      "Solar - Photovoltaic Permit": {
+        "permits": 749,
+        "first": "2025-09",
+        "last": "2026-10"
+      }
+    },
+    "typesNotInOurMap": {},
+    "solarTypeSeries": {
+      "Solar - Photovoltaic Permit": {
+        "permits": 749,
+        "first": "2025-09",
+        "last": "2026-10"
+      }
+    }
+  }
+}
