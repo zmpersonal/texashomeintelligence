@@ -171,7 +171,12 @@ async function austin() {
         // The VALUES of permit_class / permit_class_mapped / issue_method are small
         // vocabularies the city publishes, so naming them says something. A district or a ZIP
         // is reported as a distribution only.
-        values: ["permit_class", "permit_class_mapped", "issue_method"].includes(f)
+        // `masterpermitnum` is a CITY IDENTIFIER, not PII, and its value decides a reading:
+        // "1 distinct at 100%" is uninformative if that one value is blank and a strong finding
+        // if it is a real master permit. Project id already settles dispersion, but inferring
+        // the blank rather than reading it is the association mistake this round already made
+        // once.
+        values: ["permit_class", "permit_class_mapped", "issue_method", "masterpermitnum"].includes(f)
           ? Object.fromEntries(sorted.slice(0, 6))
           : undefined,
       };
