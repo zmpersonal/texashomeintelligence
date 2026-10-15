@@ -44,27 +44,47 @@ jobs:
 
       - name: No permit description may appear in the measurement
         # The standing line from Round 50: a probe writes the measurement, not the material.
-        # Asserted rather than trusted — the vocabulary is counted against a named term list and
-        # templating via hashes, so no free text should be able to reach the file.
+        # Asserted rather than trusted. It reports the JSON PATH of any offender and never the
+        # offending text — a guard against publishing free text must not publish it to complain,
+        # and an Actions log this session cannot read is not a record either, so the paths are
+        # written to a file that gets committed whether or not the check passes.
+        if: always()
         run: |
           python3 - <<'PY'
-          import json, re, sys
-          d = json.load(open("docs/audits/round-51-storage.json"))
-          s = json.dumps(d)
-          # A description would show up as a long run of words with spaces. Term names, month keys
-          # and field names are short and snake/kebab shaped.
-          bad = [w for w in re.findall(r'"[^"]{60,}"', s)
-                 if w.count(" ") >= 6 and "question" not in w and "::" not in w]
-          if bad:
-              print("::error::free text reached the measurement:", bad[:2]); sys.exit(1)
-          print("no free text in the measurement")
+          import json, pathlib, sys
+          src = pathlib.Path("docs/audits/round-51-storage.json")
+          if not src.exists():
+              print("no measurement written; nothing to check"); sys.exit(0)
+          d = json.loads(src.read_text())
+          hits = []
+          def walk(o, path="$"):
+              if isinstance(o, dict):
+                  for k, v in o.items():
+                      # A KEY can be free text too (a permit type is fine; a description is not).
+                      if isinstance(k, str) and len(k) >= 60 and k.count(" ") >= 6:
+                          hits.append({"path": f"{path}.<key>", "length": len(k), "spaces": k.count(" ")})
+                      walk(v, f"{path}.{k}")
+              elif isinstance(o, list):
+                  for i, v in enumerate(o): walk(v, f"{path}[{i}]")
+              elif isinstance(o, str) and len(o) >= 60 and o.count(" ") >= 6:
+                  hits.append({"path": path, "length": len(o), "spaces": o.count(" ")})
+          walk(d)
+          hits = [h for h in hits if not h["path"].endswith(".question")]
+          pathlib.Path("docs/audits/round-51-textcheck.json").write_text(
+              json.dumps({"offenders": hits, "note":
+                          "paths and shapes only; the matched text is deliberately absent"},
+                         indent=2) + "\n")
+          for h in hits[:10]: print("  offender:", h)
+          print(f"{len(hits)} offender(s)")
+          sys.exit(1 if hits else 0)
           PY
 
       - name: Commit the measurement
+        if: always()
         run: |
           git config user.name  "thi-probe"
           git config user.email "noreply@texashomeintelligence.com"
-          git add docs/audits/round-51-storage.json
+          git add docs/audits/round-51-storage.json docs/audits/round-51-textcheck.json
           git diff --cached --quiet && { echo "no change"; exit 0; }
           git commit -m "Round 51 probe result: the Austin storage series
 
