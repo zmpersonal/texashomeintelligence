@@ -1,10 +1,10 @@
 {
-  "measuredAt": "2026-10-15T16:33:21.367Z",
+  "measuredAt": "2026-10-15T16:38:22.592Z",
   "question": "what does the Austin battery-storage series say, and is it filing mix or homes?",
   "austin": {
     "window": {
       "since": "2025-09-01T00:00:00.000Z",
-      "until": "2026-10-15T16:33:21.368Z"
+      "until": "2026-10-15T16:38:22.592Z"
     },
     "auxPowerByMonth": [
       {
@@ -632,6 +632,576 @@
           "rooftop": 3,
           "kw_rating": 5,
           "tesla": 1
+        }
+      }
+    ],
+    "storageConcentrationByMonth": [
+      {
+        "month": "2025-09",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 34
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 34
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 34
+          }
+        },
+        "council_district": {
+          "distinct": 9,
+          "topShare": 23.5
+        },
+        "original_zip": {
+          "distinct": 21,
+          "topShare": 11.8
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100
+        },
+        "project_id": {
+          "distinct": 34,
+          "topShare": 2.9
+        }
+      },
+      {
+        "month": "2025-10",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 36
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 36
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 36
+          }
+        },
+        "council_district": {
+          "distinct": 9,
+          "topShare": 27.8
+        },
+        "original_zip": {
+          "distinct": 17,
+          "topShare": 11.1
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100
+        },
+        "project_id": {
+          "distinct": 36,
+          "topShare": 2.8
+        }
+      },
+      {
+        "month": "2025-11",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 32
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 32
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 32
+          }
+        },
+        "council_district": {
+          "distinct": 10,
+          "topShare": 18.8
+        },
+        "original_zip": {
+          "distinct": 21,
+          "topShare": 15.6
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100
+        },
+        "project_id": {
+          "distinct": 32,
+          "topShare": 3.1
+        }
+      },
+      {
+        "month": "2025-12",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 18
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 18
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 18
+          }
+        },
+        "council_district": {
+          "distinct": 6,
+          "topShare": 38.9
+        },
+        "original_zip": {
+          "distinct": 14,
+          "topShare": 16.7
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100
+        },
+        "project_id": {
+          "distinct": 18,
+          "topShare": 5.6
+        }
+      },
+      {
+        "month": "2026-01",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 6
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 6
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 6
+          }
+        },
+        "council_district": {
+          "distinct": 4,
+          "topShare": 33.3
+        },
+        "original_zip": {
+          "distinct": 6,
+          "topShare": 16.7
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100
+        },
+        "project_id": {
+          "distinct": 6,
+          "topShare": 16.7
+        }
+      },
+      {
+        "month": "2026-02",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 9
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 9
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 9
+          }
+        },
+        "council_district": {
+          "distinct": 7,
+          "topShare": 22.2
+        },
+        "original_zip": {
+          "distinct": 8,
+          "topShare": 22.2
+        },
+        "masterpermitnum": {
+          "distinct": 2,
+          "topShare": 88.9
+        },
+        "project_id": {
+          "distinct": 9,
+          "topShare": 11.1
+        }
+      },
+      {
+        "month": "2026-03",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 5
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 5
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 5
+          }
+        },
+        "council_district": {
+          "distinct": 5,
+          "topShare": 20
+        },
+        "original_zip": {
+          "distinct": 5,
+          "topShare": 20
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100
+        },
+        "project_id": {
+          "distinct": 5,
+          "topShare": 20
+        }
+      },
+      {
+        "month": "2026-04",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 10
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 10
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 10
+          }
+        },
+        "council_district": {
+          "distinct": 7,
+          "topShare": 40
+        },
+        "original_zip": {
+          "distinct": 10,
+          "topShare": 10
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100
+        },
+        "project_id": {
+          "distinct": 10,
+          "topShare": 10
+        }
+      },
+      {
+        "month": "2026-05",
+        "permit_class": {
+          "distinct": 2,
+          "topShare": 75,
+          "values": {
+            "Residential": 3,
+            "Commercial": 1
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 2,
+          "topShare": 75,
+          "values": {
+            "Residential": 3,
+            "Commercial": 1
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 4
+          }
+        },
+        "council_district": {
+          "distinct": 2,
+          "topShare": 75
+        },
+        "original_zip": {
+          "distinct": 2,
+          "topShare": 75
+        },
+        "masterpermitnum": {
+          "distinct": 2,
+          "topShare": 75
+        },
+        "project_id": {
+          "distinct": 4,
+          "topShare": 25
+        }
+      },
+      {
+        "month": "2026-06",
+        "permit_class": {
+          "distinct": 2,
+          "topShare": 84.6,
+          "values": {
+            "Residential": 11,
+            "Commercial": 2
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 2,
+          "topShare": 84.6,
+          "values": {
+            "Residential": 11,
+            "Commercial": 2
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 13
+          }
+        },
+        "council_district": {
+          "distinct": 7,
+          "topShare": 30.8
+        },
+        "original_zip": {
+          "distinct": 9,
+          "topShare": 23.1
+        },
+        "masterpermitnum": {
+          "distinct": 3,
+          "topShare": 84.6
+        },
+        "project_id": {
+          "distinct": 13,
+          "topShare": 7.7
+        }
+      },
+      {
+        "month": "2026-07",
+        "permit_class": {
+          "distinct": 2,
+          "topShare": 93.1,
+          "values": {
+            "Residential": 27,
+            "Commercial": 2
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 2,
+          "topShare": 93.1,
+          "values": {
+            "Residential": 27,
+            "Commercial": 2
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 29
+          }
+        },
+        "council_district": {
+          "distinct": 9,
+          "topShare": 24.1
+        },
+        "original_zip": {
+          "distinct": 16,
+          "topShare": 13.8
+        },
+        "masterpermitnum": {
+          "distinct": 3,
+          "topShare": 93.1
+        },
+        "project_id": {
+          "distinct": 29,
+          "topShare": 3.4
+        }
+      },
+      {
+        "month": "2026-08",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 146
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 146
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 146
+          }
+        },
+        "council_district": {
+          "distinct": 11,
+          "topShare": 26.7
+        },
+        "original_zip": {
+          "distinct": 32,
+          "topShare": 14.4
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100
+        },
+        "project_id": {
+          "distinct": 146,
+          "topShare": 0.7
+        }
+      },
+      {
+        "month": "2026-09",
+        "permit_class": {
+          "distinct": 2,
+          "topShare": 98.9,
+          "values": {
+            "Residential": 186,
+            "Commercial": 2
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 2,
+          "topShare": 98.9,
+          "values": {
+            "Residential": 186,
+            "Commercial": 2
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 188
+          }
+        },
+        "council_district": {
+          "distinct": 11,
+          "topShare": 23.9
+        },
+        "original_zip": {
+          "distinct": 33,
+          "topShare": 12.2
+        },
+        "masterpermitnum": {
+          "distinct": 2,
+          "topShare": 99.5
+        },
+        "project_id": {
+          "distinct": 188,
+          "topShare": 0.5
+        }
+      },
+      {
+        "month": "2026-10",
+        "permit_class": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 59
+          }
+        },
+        "permit_class_mapped": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Residential": 59
+          }
+        },
+        "issue_method": {
+          "distinct": 1,
+          "topShare": 100,
+          "values": {
+            "Permit Center": 59
+          }
+        },
+        "council_district": {
+          "distinct": 10,
+          "topShare": 28.8
+        },
+        "original_zip": {
+          "distinct": 25,
+          "topShare": 8.5
+        },
+        "masterpermitnum": {
+          "distinct": 1,
+          "topShare": 100
+        },
+        "project_id": {
+          "distinct": 59,
+          "topShare": 1.7
         }
       }
     ],
