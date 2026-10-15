@@ -1,12 +1,12 @@
 {
-  "measuredAt": "2026-10-15T13:35:19.709Z",
+  "measuredAt": "2026-10-15T13:37:55.198Z",
   "focusMonth": "2026-09",
   "note": "Round 50. Measurement only. Every request is built by the ingestion fetcher's own code; the tally is this probe's and is checked by the controls.",
   "austin": {
-    "where": "issue_date between '2025-09-01T00:00:00' and '2026-10-15T13:35:19' AND (permit_type_desc in ('Electrical Permit', 'Plumbing Permit', 'Mechanical Permit') OR work_class in ('Auxiliary Power', 'Roof') OR upper(work_class) like '%ROOF%' OR upper(permit_type_desc) like '%ROOF%' OR upper(description) like '%ROOF%' OR upper(description) like '%SOLAR%' OR upper(description) like '%PHOTOVOLTAIC%')",
+    "where": "issue_date between '2025-09-01T00:00:00' and '2026-10-15T13:37:55' AND (permit_type_desc in ('Electrical Permit', 'Plumbing Permit', 'Mechanical Permit') OR work_class in ('Auxiliary Power', 'Roof') OR upper(work_class) like '%ROOF%' OR upper(permit_type_desc) like '%ROOF%' OR upper(description) like '%ROOF%' OR upper(description) like '%SOLAR%' OR upper(description) like '%PHOTOVOLTAIC%')",
     "window": {
       "since": "2025-09-01T00:00:00.000Z",
-      "until": "2026-10-15T13:35:19.709Z"
+      "until": "2026-10-15T13:37:55.198Z"
     },
     "rowsRead": 47599,
     "serverCount": 47599,
@@ -4948,7 +4948,7 @@
     "csvUrl": "https://data.sanantonio.gov/dataset/05012dcb-ba1b-4ade-b5f3-7403bc7f52eb/resource/c21106f9-3ef5-4f3a-8604-f992b4db7512/download/permits_issued.csv",
     "window": {
       "since": "2025-09-01T00:00:00.000Z",
-      "until": "2026-10-15T13:35:29.969Z"
+      "until": "2026-10-15T13:37:57.334Z"
     },
     "columns": {
       "typeCol": "PERMIT TYPE",
@@ -6023,6 +6023,51 @@
           "electrical",
           "plumbing"
         ]
+      }
+    ]
+  },
+  "windowBoundary": {
+    "explanation": "Socrata `between` is inclusive at both ends, so Round 49's September window included 2026-10-01 and its 4,233 is not a September figure.",
+    "rightInclusiveWindow": {
+      "since": "2026-09-01T00:00:00.000",
+      "until": "2026-10-01T00:00:00.000",
+      "where": "issue_date between '2026-09-01T00:00:00.000' and '2026-10-01T00:00:00.000' AND (permit_type_desc in ('Electrical Permit', 'Plumbing Permit', 'Mechanical Permit') OR work_class in ('Auxiliary Power', 'Roof') OR upper(work_class) like '%ROOF%' OR upper(permit_type_desc) like '%ROOF%' OR upper(description) like '%ROOF%' OR upper(description) like '%SOLAR%' OR upper(description) like '%PHOTOVOLTAIC%')",
+      "rows": 4233
+    },
+    "septemberOnly": {
+      "since": "2026-09-01T00:00:00.000",
+      "until": "2026-09-30T23:59:59.999",
+      "where": "issue_date between '2026-09-01T00:00:00.000' and '2026-09-30T23:59:59.999' AND (permit_type_desc in ('Electrical Permit', 'Plumbing Permit', 'Mechanical Permit') OR work_class in ('Auxiliary Power', 'Roof') OR upper(work_class) like '%ROOF%' OR upper(permit_type_desc) like '%ROOF%' OR upper(description) like '%ROOF%' OR upper(description) like '%SOLAR%' OR upper(description) like '%PHOTOVOLTAIC%')",
+      "rows": 4090
+    },
+    "october1Only": {
+      "since": "2026-10-01T00:00:00.000",
+      "until": "2026-10-01T23:59:59.999",
+      "where": "issue_date between '2026-10-01T00:00:00.000' and '2026-10-01T23:59:59.999' AND (permit_type_desc in ('Electrical Permit', 'Plumbing Permit', 'Mechanical Permit') OR work_class in ('Auxiliary Power', 'Roof') OR upper(work_class) like '%ROOF%' OR upper(permit_type_desc) like '%ROOF%' OR upper(description) like '%ROOF%' OR upper(description) like '%SOLAR%' OR upper(description) like '%PHOTOVOLTAIC%')",
+      "rows": 143
+    },
+    "controls": [
+      {
+        "id": "W1",
+        "prediction": "the right-inclusive window reproduces Round 49's row count",
+        "expected": 4233,
+        "actual": 4233,
+        "pass": true,
+        "note": "rows, not distinct permits — Austin measured 0.00% duplication, so they are equal"
+      },
+      {
+        "id": "W2",
+        "prediction": "September alone equals what this probe counted by parsing issue_date",
+        "expected": 4090,
+        "actual": 4090,
+        "pass": true
+      },
+      {
+        "id": "W3",
+        "prediction": "the gap is exactly the permits issued on 2026-10-01",
+        "expected": 143,
+        "actual": 143,
+        "pass": true
       }
     ]
   }
