@@ -1,0 +1,134 @@
+# TEMPORARY — Round 53. Delete when the round is decided.
+#
+# No external host is reachable from an agent session, and Actions logs are served from a host it
+# cannot follow a redirect to — so the probe WRITES AND COMMITS its measurement. Read-only on the
+# datasets: a step below fails the run if anything under src/data/generated moved.
+#
+# MEASURE ONLY. This probe answers whether a description fingerprint WOULD HAVE caught the storage
+# break and whether it would have fired on anything else. It wires nothing into ingestion.
+name: tmp r53 description-fingerprint probe
+
+on:
+  push:
+    branches: [claude/thi-plan-review-m40n0x]
+    paths:
+      - "site/scripts/audits/round-53-shape-fingerprint.ts"
+      - ".github/workflows/tmp-r53-fingerprint-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+        working-directory: site
+
+      - name: Fingerprint every Austin trade category, month by month
+        working-directory: site
+        env:
+          SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
+        run: npx tsx scripts/audits/round-53-shape-fingerprint.ts
+
+      - name: The probe must not have written a dataset file
+        run: |
+          if ! git diff --quiet -- site/src/data/generated; then
+            echo "::error::the probe modified site/src/data/generated — it is read-only by design"
+            exit 1
+          fi
+
+      - name: No permit description may appear in the measurement
+        # The standing line from Round 50: a probe writes the measurement, not the material.
+        # Asserted rather than trusted, and it is the whole design constraint of this round — a
+        # fingerprint that turned out to carry text would be a worse answer than "no".
+        #
+        # It reports the JSON PATH of any offender and never the offending text: a guard against
+        # publishing free text must not publish it to complain, and an Actions log this session
+        # cannot read is not a record either, so the paths are written to a file that gets
+        # committed whether or not the check passes.
+        #
+        # `$.notes.*` is skipped, and only that prefix: the probe puts every sentence I wrote
+        # under it, so the guard still covers every measured field without an allowlist that
+        # grows a path per round.
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, sys
+
+          SRC = pathlib.Path("docs/audits/round-53-fingerprint.json")
+          if not SRC.exists():
+              print("no measurement written; nothing to check"); sys.exit(0)
+
+          def suspicious(s):
+              return len(s) >= 60 and s.count(" ") >= 6
+
+          def offenders(o, path="$", found=None):
+              """Paths of every long, spacey string, walking the STRUCTURE rather than
+              regexing the serialised JSON — Round 50's first guard regexed the text and
+              produced a false positive on its own punctuation."""
+              found = [] if found is None else found
+              if isinstance(o, dict):
+                  for k, v in o.items():
+                      # A KEY can be free text too (a permit type is fine; a description is not).
+                      if isinstance(k, str) and suspicious(k):
+                          found.append({"path": f"{path}.<key>", "length": len(k),
+                                        "spaces": k.count(" ")})
+                      offenders(v, f"{path}.{k}", found)
+              elif isinstance(o, list):
+                  for i, v in enumerate(o):
+                      offenders(v, f"{path}[{i}]", found)
+              elif isinstance(o, str) and suspicious(o):
+                  found.append({"path": path, "length": len(o), "spaces": o.count(" ")})
+              return [h for h in found if not h["path"].startswith("$.notes.")]
+
+          measurement = json.loads(SRC.read_text())
+          hits = offenders(measurement)
+
+          # NON-VACUITY. A guard that has never fired is a guard nobody has checked, and this
+          # one is the whole design constraint of the round. So it is run a second time against
+          # the same measurement with one description-shaped string planted in it, and the
+          # result is recorded: if `guardCanFire` is false, the empty `offenders` above means
+          # nothing.
+          PLANTED_AT = "$.byCategoryMonth[0].plantedForTheGuard"
+          planted = json.loads(SRC.read_text())
+          planted["byCategoryMonth"][0]["plantedForTheGuard"] = (
+              "INSTALL BATTERY BACKUP SYSTEM AND ADDITIONAL METER SOCKET AT SINGLE FAMILY RESIDENCE"
+          )
+          # By PATH, not by count: a real offender elsewhere in the file would make a
+          # count-based check read as "the guard cannot fire" at exactly the moment it had.
+          can_fire = any(h["path"] == PLANTED_AT for h in offenders(planted))
+
+          pathlib.Path("docs/audits/round-53-textcheck.json").write_text(
+              json.dumps({
+                  "offenders": hits,
+                  "guardCanFire": can_fire,
+                  "plantedOffenderPath": PLANTED_AT if can_fire else None,
+                  "note": "paths and shapes only; the matched text is deliberately absent. "
+                          "`guardCanFire` is this same guard run against the measurement with "
+                          "one description-shaped string planted in it.",
+              }, indent=2) + "\n")
+          for h in hits[:10]:
+              print("  offender:", h)
+          print(f"{len(hits)} offender(s); guard can fire: {can_fire}")
+          sys.exit(0 if (not hits and can_fire) else 1)
+          PY
+
+      - name: Commit the measurement
+        if: always()
+        run: |
+          git config user.name  "thi-probe"
+          git config user.email "noreply@texashomeintelligence.com"
+          git add docs/audits/round-53-fingerprint.json docs/audits/round-53-textcheck.json
+          git diff --cached --quiet && { echo "no change"; exit 0; }
+          git commit -m "Round 53 probe result: the per-month description fingerprint, every Austin category
+
+          Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
+          for i in 1 2 3 4; do git push origin HEAD:${GITHUB_REF_NAME} && break || sleep $((2**i)); done
