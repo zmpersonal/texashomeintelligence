@@ -1424,6 +1424,26 @@ def _permit_claims(today=None):
     return run_article.build_permit_claims(engine.load_feed(), CFG, today or _date(2026, 9, 19))
 
 
+def _below_count(claims):
+    """How many Austin trades the BUILDER computed as below their own pace, read off the claims
+    it produced rather than recomputed here — a second implementation of the arithmetic is a
+    second thing that can be wrong."""
+    return sum(1 for c in claims if c.id.endswith("_base") and "below" in c.figure)
+
+
+def _majority_above(claims):
+    return (3 - _below_count(claims)) > _below_count(claims)
+
+
+def _expected_verdict(claims):
+    """The verdict `write_permits` must reach for this period, derived from the same tally it
+    reads. Mirrors run_article.py's three branches and nothing else."""
+    n = _below_count(claims)
+    if (3 - n) > n:
+        return "Mostly no" if n else "All three trades are running above"
+    return "More than you might think"
+
+
 def _all_trades(claims, gap):
     """Force every Austin trade to the same side of its own pace."""
     out = _copy.deepcopy(claims)
@@ -1445,7 +1465,14 @@ def test_FROZEN_austin_permit_verdict_follows_the_tally():
     real = run_article.write_permits({}, claims, feed)["body"]
     below = run_article.write_permits({}, _all_trades(claims, "below"), feed)["body"]
     above = run_article.write_permits({}, _all_trades(claims, "above"), feed)["body"]
-    assert "Mostly no" in real, real.split("\n")[3]
+    # The live arm's expectation is DERIVED from the tally the builder computed, not written
+    # down. It used to read `assert "Mostly no" in real`, which passed only while Austin
+    # happened to have one trade below its pace — a test whose base case is live data is pinned
+    # to the world (Round 48's standing rule, and twelve tests got this treatment then). Round
+    # 50 re-based solar from 224 to 80 for August, which put TWO of three trades below their
+    # average and flipped the verdict exactly as it should have. The flip arms below were
+    # always properties; this arm now is too.
+    assert _expected_verdict(claims) in real, real.split("\n")[3]
     assert "More than you might think" in below, "the verdict ignored an all-below month"
     assert "All three trades are running above" in above, "the verdict ignored an all-above month"
 
@@ -1475,7 +1502,16 @@ def test_FROZEN_austin_CAPTION_hook_follows_the_tally_too():
     caption = run_article.TOPIC_CAPTIONS["austin-improvement-boom-cooling"]
     claims = _permit_claims()
     article = run_article.write_permits({}, claims, feed)
-    assert "says otherwise" in caption(article, claims)
+    # Same correction as the verdict test above. "says otherwise" belongs on a period where the
+    # record CONTRADICTS the cooling-off premise — which is a majority running above their own
+    # pace. Asserting it unconditionally made this arm a live-data pin, and it broke the moment
+    # Round 50's re-base moved Austin to two-of-three below.
+    hook = caption(article, claims)
+    if _majority_above(claims):
+        assert "says otherwise" in hook
+    else:
+        assert "says otherwise" not in hook, (
+            "the caption told the reader the record contradicts a claim it now supports")
     flipped = _all_trades(claims, "below")
     assert "says otherwise" not in caption(run_article.write_permits({}, flipped, feed), flipped)
 
