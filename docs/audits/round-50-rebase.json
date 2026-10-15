@@ -1,6 +1,6 @@
 {
-  "measuredAt": "2026-10-15T14:38:08.981Z",
-  "note": "Round 50. v2 rows remain on disk as history and stop being read; v3 is published.",
+  "measuredAt": "2026-10-15T14:40:17.845Z",
+  "note": "Round 50. v2 rows remain on disk as history and stop being read; v3 is published. `movedFigures` compares the v2-published view against the v3-published view, both computed from the same file, so re-running this script cannot change the answer.",
   "ingestion": {
     "permit-trade-activity/austin": {
       "outcome": "live",
@@ -15,44 +15,321 @@
   },
   "movedFigures": {
     "austin": {
-      "energy_storage/2025-09": {
+      "solar/2025-09": {
+        "from": 144,
+        "to": 140,
+        "delta": -4,
+        "pct": -2.8
+      },
+      "solar/2025-10": {
+        "from": 160,
+        "to": 156,
+        "delta": -4,
+        "pct": -2.5
+      },
+      "solar/2025-11": {
+        "from": 128,
+        "to": 123,
+        "delta": -5,
+        "pct": -3.9
+      },
+      "solar/2025-12": {
+        "from": 90,
+        "to": 88,
+        "delta": -2,
+        "pct": -2.2
+      },
+      "solar/2026-01": {
+        "from": 46,
+        "to": 43,
+        "delta": -3,
+        "pct": -6.5
+      },
+      "solar/2026-02": {
+        "from": 54,
+        "to": 51,
+        "delta": -3,
+        "pct": -5.6
+      },
+      "solar/2026-03": {
         "from": 33,
+        "to": 32,
+        "delta": -1,
+        "pct": -3
+      },
+      "solar/2026-04": {
+        "from": 79,
+        "to": 72,
+        "delta": -7,
+        "pct": -8.9
+      },
+      "solar/2026-05": {
+        "from": 48,
+        "to": 46,
+        "delta": -2,
+        "pct": -4.2
+      },
+      "solar/2026-06": {
+        "from": 79,
+        "to": 74,
+        "delta": -5,
+        "pct": -6.3
+      },
+      "solar/2026-07": {
+        "from": 93,
+        "to": 72,
+        "delta": -21,
+        "pct": -22.6
+      },
+      "solar/2026-08": {
+        "from": 224,
+        "to": 80,
+        "delta": -144,
+        "pct": -64.3
+      },
+      "solar/2026-09": {
+        "from": 240,
+        "to": 62,
+        "delta": -178,
+        "pct": -74.2
+      },
+      "__all-trades__/2025-09": {
+        "from": null,
+        "to": 3373,
+        "delta": null,
+        "pct": null
+      },
+      "energy_storage/2025-09": {
+        "from": null,
         "to": 34,
-        "delta": 1,
-        "pct": 3
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2025-10": {
+        "from": null,
+        "to": 3219,
+        "delta": null,
+        "pct": null
       },
       "energy_storage/2025-10": {
-        "from": 35,
+        "from": null,
         "to": 36,
-        "delta": 1,
-        "pct": 2.9
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2025-11": {
+        "from": null,
+        "to": 2857,
+        "delta": null,
+        "pct": null
       },
       "energy_storage/2025-11": {
-        "from": 30,
+        "from": null,
         "to": 32,
-        "delta": 2,
-        "pct": 6.7
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2025-12": {
+        "from": null,
+        "to": 3094,
+        "delta": null,
+        "pct": null
+      },
+      "energy_storage/2025-12": {
+        "from": null,
+        "to": 18,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-01": {
+        "from": null,
+        "to": 3203,
+        "delta": null,
+        "pct": null
+      },
+      "energy_storage/2026-01": {
+        "from": null,
+        "to": 6,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-02": {
+        "from": null,
+        "to": 3295,
+        "delta": null,
+        "pct": null
+      },
+      "energy_storage/2026-02": {
+        "from": null,
+        "to": 9,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-03": {
+        "from": null,
+        "to": 3670,
+        "delta": null,
+        "pct": null
+      },
+      "energy_storage/2026-03": {
+        "from": null,
+        "to": 5,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-04": {
+        "from": null,
+        "to": 3789,
+        "delta": null,
+        "pct": null
+      },
+      "energy_storage/2026-04": {
+        "from": null,
+        "to": 10,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-05": {
+        "from": null,
+        "to": 3557,
+        "delta": null,
+        "pct": null
+      },
+      "energy_storage/2026-05": {
+        "from": null,
+        "to": 4,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-06": {
+        "from": null,
+        "to": 4114,
+        "delta": null,
+        "pct": null
       },
       "energy_storage/2026-06": {
-        "from": 11,
+        "from": null,
         "to": 13,
-        "delta": 2,
-        "pct": 18.2
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-07": {
+        "from": null,
+        "to": 3931,
+        "delta": null,
+        "pct": null
       },
       "energy_storage/2026-07": {
-        "from": 28,
+        "from": null,
         "to": 29,
-        "delta": 1,
-        "pct": 3.6
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-08": {
+        "from": null,
+        "to": 3945,
+        "delta": null,
+        "pct": null
       },
       "energy_storage/2026-08": {
-        "from": 145,
+        "from": null,
         "to": 146,
-        "delta": 1,
-        "pct": 0.7
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-09": {
+        "from": null,
+        "to": 4090,
+        "delta": null,
+        "pct": null
+      },
+      "energy_storage/2026-09": {
+        "from": null,
+        "to": 188,
+        "delta": null,
+        "pct": null
       }
     },
-    "san-antonio": {}
+    "san-antonio": {
+      "__all-trades__/2025-09": {
+        "from": null,
+        "to": 4958,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2025-10": {
+        "from": null,
+        "to": 4866,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2025-11": {
+        "from": null,
+        "to": 3675,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2025-12": {
+        "from": null,
+        "to": 3386,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-01": {
+        "from": null,
+        "to": 3746,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-02": {
+        "from": null,
+        "to": 3830,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-03": {
+        "from": null,
+        "to": 4688,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-04": {
+        "from": null,
+        "to": 4365,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-05": {
+        "from": null,
+        "to": 4318,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-06": {
+        "from": null,
+        "to": 4692,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-07": {
+        "from": null,
+        "to": 5061,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-08": {
+        "from": null,
+        "to": 4861,
+        "delta": null,
+        "pct": null
+      },
+      "__all-trades__/2026-09": {
+        "from": null,
+        "to": 4694,
+        "delta": null,
+        "pct": null
+      }
+    }
   },
   "controls": [
     {
@@ -63,34 +340,8 @@
   ],
   "before": {
     "austin": {
-      "versions": {
-        "electrical": "trades-v3",
-        "hvac": "trades-v3",
-        "plumbing": "trades-v3",
-        "roofing": "trades-v3",
-        "solar": "trades-v3",
-        "__all-trades__": "trades-v3",
-        "energy_storage": "trades-v3"
-      },
+      "atVersion": "trades-v2",
       "derived": {
-        "__all-trades__": {
-          "months": 13,
-          "total": 46137,
-          "mean": 3549,
-          "latest": {
-            "month": "2026-09",
-            "n": 4090
-          },
-          "peak": {
-            "month": "2026-06",
-            "n": 4114
-          },
-          "trough": {
-            "month": "2025-11",
-            "n": 2857
-          },
-          "halfOverHalfPct": 23
-        },
         "electrical": {
           "months": 13,
           "total": 17505,
@@ -108,24 +359,6 @@
             "n": 1106
           },
           "halfOverHalfPct": 18.1
-        },
-        "energy_storage": {
-          "months": 13,
-          "total": 522,
-          "mean": 40.2,
-          "latest": {
-            "month": "2026-09",
-            "n": 188
-          },
-          "peak": {
-            "month": "2026-09",
-            "n": 188
-          },
-          "trough": {
-            "month": "2026-05",
-            "n": 4
-          },
-          "halfOverHalfPct": 194.7
         },
         "hvac": {
           "months": 13,
@@ -183,38 +416,28 @@
         },
         "solar": {
           "months": 13,
-          "total": 1039,
-          "mean": 79.9,
+          "total": 1418,
+          "mean": 109.1,
           "latest": {
             "month": "2026-09",
-            "n": 62
+            "n": 240
           },
           "peak": {
-            "month": "2025-10",
-            "n": 156
+            "month": "2026-09",
+            "n": 240
           },
           "trough": {
             "month": "2026-03",
-            "n": 32
+            "n": 33
           },
-          "halfOverHalfPct": -32.4
+          "halfOverHalfPct": 22.7
         }
       },
       "figures": {
-        "__all-trades__/2025-09": {
-          "count": 3373,
-          "sources": {}
-        },
         "electrical/2025-09": {
           "count": 1190,
           "sources": {
             "Electrical Permit": 1190
-          }
-        },
-        "energy_storage/2025-09": {
-          "count": 33,
-          "sources": {
-            "work class Auxiliary Power, description mentions a battery or storage": 33
           }
         },
         "hvac/2025-09": {
@@ -236,25 +459,16 @@
           }
         },
         "solar/2025-09": {
-          "count": 140,
+          "count": 144,
           "sources": {
-            "description mentions solar/photovoltaic/PV": 140
+            "Auxiliary Power": 100,
+            "description mentions solar/photovoltaic/PV": 44
           }
-        },
-        "__all-trades__/2025-10": {
-          "count": 3219,
-          "sources": {}
         },
         "electrical/2025-10": {
           "count": 1288,
           "sources": {
             "Electrical Permit": 1288
-          }
-        },
-        "energy_storage/2025-10": {
-          "count": 35,
-          "sources": {
-            "work class Auxiliary Power, description mentions a battery or storage": 35
           }
         },
         "hvac/2025-10": {
@@ -276,25 +490,16 @@
           }
         },
         "solar/2025-10": {
-          "count": 156,
+          "count": 160,
           "sources": {
-            "description mentions solar/photovoltaic/PV": 156
+            "Auxiliary Power": 102,
+            "description mentions solar/photovoltaic/PV": 58
           }
-        },
-        "__all-trades__/2025-11": {
-          "count": 2857,
-          "sources": {}
         },
         "electrical/2025-11": {
           "count": 1106,
           "sources": {
             "Electrical Permit": 1106
-          }
-        },
-        "energy_storage/2025-11": {
-          "count": 30,
-          "sources": {
-            "work class Auxiliary Power, description mentions a battery or storage": 30
           }
         },
         "hvac/2025-11": {
@@ -316,25 +521,16 @@
           }
         },
         "solar/2025-11": {
-          "count": 123,
+          "count": 128,
           "sources": {
-            "description mentions solar/photovoltaic/PV": 123
+            "Auxiliary Power": 94,
+            "description mentions solar/photovoltaic/PV": 34
           }
-        },
-        "__all-trades__/2025-12": {
-          "count": 3094,
-          "sources": {}
         },
         "electrical/2025-12": {
           "count": 1246,
           "sources": {
             "Electrical Permit": 1246
-          }
-        },
-        "energy_storage/2025-12": {
-          "count": 18,
-          "sources": {
-            "work class Auxiliary Power, description mentions a battery or storage": 18
           }
         },
         "hvac/2025-12": {
@@ -356,25 +552,16 @@
           }
         },
         "solar/2025-12": {
-          "count": 88,
+          "count": 90,
           "sources": {
-            "description mentions solar/photovoltaic/PV": 88
+            "Auxiliary Power": 56,
+            "description mentions solar/photovoltaic/PV": 34
           }
-        },
-        "__all-trades__/2026-01": {
-          "count": 3203,
-          "sources": {}
         },
         "electrical/2026-01": {
           "count": 1273,
           "sources": {
             "Electrical Permit": 1273
-          }
-        },
-        "energy_storage/2026-01": {
-          "count": 6,
-          "sources": {
-            "work class Auxiliary Power, description mentions a battery or storage": 6
           }
         },
         "hvac/2026-01": {
@@ -396,25 +583,16 @@
           }
         },
         "solar/2026-01": {
-          "count": 43,
+          "count": 46,
           "sources": {
-            "description mentions solar/photovoltaic/PV": 43
+            "Auxiliary Power": 29,
+            "description mentions solar/photovoltaic/PV": 17
           }
-        },
-        "__all-trades__/2026-02": {
-          "count": 3295,
-          "sources": {}
         },
         "electrical/2026-02": {
           "count": 1304,
           "sources": {
             "Electrical Permit": 1304
-          }
-        },
-        "energy_storage/2026-02": {
-          "count": 9,
-          "sources": {
-            "work class Auxiliary Power, description mentions a battery or storage": 9
           }
         },
         "hvac/2026-02": {
@@ -436,25 +614,16 @@
           }
         },
         "solar/2026-02": {
-          "count": 51,
+          "count": 54,
           "sources": {
-            "description mentions solar/photovoltaic/PV": 51
+            "Auxiliary Power": 33,
+            "description mentions solar/photovoltaic/PV": 21
           }
-        },
-        "__all-trades__/2026-03": {
-          "count": 3670,
-          "sources": {}
         },
         "electrical/2026-03": {
           "count": 1353,
           "sources": {
             "Electrical Permit": 1353
-          }
-        },
-        "energy_storage/2026-03": {
-          "count": 5,
-          "sources": {
-            "work class Auxiliary Power, description mentions a battery or storage": 5
           }
         },
         "hvac/2026-03": {
@@ -476,25 +645,16 @@
           }
         },
         "solar/2026-03": {
-          "count": 32,
+          "count": 33,
           "sources": {
-            "description mentions solar/photovoltaic/PV": 32
+            "Auxiliary Power": 22,
+            "description mentions solar/photovoltaic/PV": 11
           }
-        },
-        "__all-trades__/2026-04": {
-          "count": 3789,
-          "sources": {}
         },
         "electrical/2026-04": {
           "count": 1381,
           "sources": {
             "Electrical Permit": 1381
-          }
-        },
-        "energy_storage/2026-04": {
-          "count": 10,
-          "sources": {
-            "work class Auxiliary Power, description mentions a battery or storage": 10
           }
         },
         "hvac/2026-04": {
@@ -516,25 +676,16 @@
           }
         },
         "solar/2026-04": {
-          "count": 72,
+          "count": 79,
           "sources": {
-            "description mentions solar/photovoltaic/PV": 72
+            "Auxiliary Power": 47,
+            "description mentions solar/photovoltaic/PV": 32
           }
-        },
-        "__all-trades__/2026-05": {
-          "count": 3557,
-          "sources": {}
         },
         "electrical/2026-05": {
           "count": 1328,
           "sources": {
             "Electrical Permit": 1328
-          }
-        },
-        "energy_storage/2026-05": {
-          "count": 4,
-          "sources": {
-            "work class Auxiliary Power, description mentions a battery or storage": 4
           }
         },
         "hvac/2026-05": {
@@ -556,25 +707,16 @@
           }
         },
         "solar/2026-05": {
-          "count": 46,
+          "count": 48,
           "sources": {
-            "description mentions solar/photovoltaic/PV": 46
+            "Auxiliary Power": 24,
+            "description mentions solar/photovoltaic/PV": 24
           }
-        },
-        "__all-trades__/2026-06": {
-          "count": 4114,
-          "sources": {}
         },
         "electrical/2026-06": {
           "count": 1516,
           "sources": {
             "Electrical Permit": 1516
-          }
-        },
-        "energy_storage/2026-06": {
-          "count": 11,
-          "sources": {
-            "work class Auxiliary Power, description mentions a battery or storage": 11
           }
         },
         "hvac/2026-06": {
@@ -596,25 +738,16 @@
           }
         },
         "solar/2026-06": {
-          "count": 74,
+          "count": 79,
           "sources": {
-            "description mentions solar/photovoltaic/PV": 74
+            "description mentions solar/photovoltaic/PV": 40,
+            "Auxiliary Power": 39
           }
-        },
-        "__all-trades__/2026-07": {
-          "count": 3931,
-          "sources": {}
         },
         "electrical/2026-07": {
           "count": 1374,
           "sources": {
             "Electrical Permit": 1374
-          }
-        },
-        "energy_storage/2026-07": {
-          "count": 28,
-          "sources": {
-            "work class Auxiliary Power, description mentions a battery or storage": 28
           }
         },
         "hvac/2026-07": {
@@ -636,25 +769,16 @@
           }
         },
         "solar/2026-07": {
-          "count": 72,
+          "count": 93,
           "sources": {
-            "description mentions solar/photovoltaic/PV": 72
+            "Auxiliary Power": 64,
+            "description mentions solar/photovoltaic/PV": 29
           }
-        },
-        "__all-trades__/2026-08": {
-          "count": 3945,
-          "sources": {}
         },
         "electrical/2026-08": {
           "count": 1512,
           "sources": {
             "Electrical Permit": 1512
-          }
-        },
-        "energy_storage/2026-08": {
-          "count": 145,
-          "sources": {
-            "work class Auxiliary Power, description mentions a battery or storage": 145
           }
         },
         "hvac/2026-08": {
@@ -677,25 +801,16 @@
           }
         },
         "solar/2026-08": {
-          "count": 80,
+          "count": 224,
           "sources": {
-            "description mentions solar/photovoltaic/PV": 80
+            "Auxiliary Power": 194,
+            "description mentions solar/photovoltaic/PV": 30
           }
-        },
-        "__all-trades__/2026-09": {
-          "count": 4090,
-          "sources": {}
         },
         "electrical/2026-09": {
           "count": 1634,
           "sources": {
             "Electrical Permit": 1634
-          }
-        },
-        "energy_storage/2026-09": {
-          "count": 188,
-          "sources": {
-            "work class Auxiliary Power, description mentions a battery or storage": 188
           }
         },
         "hvac/2026-09": {
@@ -717,43 +832,17 @@
           }
         },
         "solar/2026-09": {
-          "count": 62,
+          "count": 240,
           "sources": {
-            "description mentions solar/photovoltaic/PV": 62
+            "Auxiliary Power": 219,
+            "description mentions solar/photovoltaic/PV": 21
           }
         }
       }
     },
     "san-antonio": {
-      "versions": {
-        "electrical": "trades-v3",
-        "foundation": "trades-v3",
-        "hvac": "trades-v3",
-        "plumbing": "trades-v3",
-        "roofing": "trades-v3",
-        "solar": "trades-v3",
-        "trees": "trades-v3",
-        "__all-trades__": "trades-v3"
-      },
+      "atVersion": "trades-v2",
       "derived": {
-        "__all-trades__": {
-          "months": 13,
-          "total": 57140,
-          "mean": 4395.4,
-          "latest": {
-            "month": "2026-09",
-            "n": 4694
-          },
-          "peak": {
-            "month": "2026-07",
-            "n": 5061
-          },
-          "trough": {
-            "month": "2025-12",
-            "n": 3386
-          },
-          "halfOverHalfPct": 14.4
-        },
         "electrical": {
           "months": 13,
           "total": 10390,
@@ -882,10 +971,6 @@
         }
       },
       "figures": {
-        "__all-trades__/2025-09": {
-          "count": 4958,
-          "sources": {}
-        },
         "electrical/2025-09": {
           "count": 867,
           "sources": {
@@ -944,10 +1029,6 @@
             "Tree Permit": 39
           }
         },
-        "__all-trades__/2025-10": {
-          "count": 4866,
-          "sources": {}
-        },
         "electrical/2025-10": {
           "count": 856,
           "sources": {
@@ -1004,10 +1085,6 @@
             "Tree Affidavit Permit": 157,
             "Tree Permit": 31
           }
-        },
-        "__all-trades__/2025-11": {
-          "count": 3675,
-          "sources": {}
         },
         "electrical/2025-11": {
           "count": 724,
@@ -1066,10 +1143,6 @@
             "Tree Permit": 23
           }
         },
-        "__all-trades__/2025-12": {
-          "count": 3386,
-          "sources": {}
-        },
         "electrical/2025-12": {
           "count": 675,
           "sources": {
@@ -1125,10 +1198,6 @@
             "Tree Affidavit Permit": 98,
             "Tree Permit": 18
           }
-        },
-        "__all-trades__/2026-01": {
-          "count": 3746,
-          "sources": {}
         },
         "electrical/2026-01": {
           "count": 760,
@@ -1186,10 +1255,6 @@
             "Tree Affidavit Permit": 140,
             "Tree Permit": 24
           }
-        },
-        "__all-trades__/2026-02": {
-          "count": 3830,
-          "sources": {}
         },
         "electrical/2026-02": {
           "count": 800,
@@ -1249,10 +1314,6 @@
             "Tree Permit": 67
           }
         },
-        "__all-trades__/2026-03": {
-          "count": 4688,
-          "sources": {}
-        },
         "electrical/2026-03": {
           "count": 925,
           "sources": {
@@ -1311,10 +1372,6 @@
             "Tree Permit": 65
           }
         },
-        "__all-trades__/2026-04": {
-          "count": 4365,
-          "sources": {}
-        },
         "electrical/2026-04": {
           "count": 780,
           "sources": {
@@ -1371,10 +1428,6 @@
             "Tree Affidavit Permit": 160,
             "Tree Permit": 76
           }
-        },
-        "__all-trades__/2026-05": {
-          "count": 4318,
-          "sources": {}
         },
         "electrical/2026-05": {
           "count": 769,
@@ -1434,10 +1487,6 @@
             "Tree Permit": 64
           }
         },
-        "__all-trades__/2026-06": {
-          "count": 4692,
-          "sources": {}
-        },
         "electrical/2026-06": {
           "count": 728,
           "sources": {
@@ -1496,10 +1545,6 @@
             "Tree Permit": 48
           }
         },
-        "__all-trades__/2026-07": {
-          "count": 5061,
-          "sources": {}
-        },
         "electrical/2026-07": {
           "count": 900,
           "sources": {
@@ -1555,10 +1600,6 @@
             "Tree Affidavit Permit": 316,
             "Tree Permit": 60
           }
-        },
-        "__all-trades__/2026-08": {
-          "count": 4861,
-          "sources": {}
         },
         "electrical/2026-08": {
           "count": 788,
@@ -1617,10 +1658,6 @@
             "Tree Affidavit Permit": 430,
             "Tree Permit": 21
           }
-        },
-        "__all-trades__/2026-09": {
-          "count": 4694,
-          "sources": {}
         },
         "electrical/2026-09": {
           "count": 818,
@@ -1683,7 +1720,8 @@
   },
   "after": {
     "austin": {
-      "versions": {
+      "atVersion": "trades-v3",
+      "versionsNowPublished": {
         "electrical": "trades-v3",
         "hvac": "trades-v3",
         "plumbing": "trades-v3",
@@ -2345,7 +2383,8 @@
       }
     },
     "san-antonio": {
-      "versions": {
+      "atVersion": "trades-v3",
+      "versionsNowPublished": {
         "electrical": "trades-v3",
         "foundation": "trades-v3",
         "hvac": "trades-v3",
