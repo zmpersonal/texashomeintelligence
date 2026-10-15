@@ -6,6 +6,15 @@
 name: tmp r50 rebase permit trade activity
 
 on:
+  # A branch-only workflow is not dispatchable until GitHub has seen it, so it
+  # registers itself on its own path. Re-running is safe: the fetcher recounts
+  # its whole window and `mergeObservations` keys on `key`, so a second run
+  # replaces the same v3 rows rather than appending duplicates.
+  push:
+    branches: [claude/thi-plan-review-m40n0x]
+    paths:
+      - ".github/workflows/tmp-r50-rebase.yml"
+      - "site/scripts/audits/round-50-rebase.ts"
   workflow_dispatch:
 
 permissions:
