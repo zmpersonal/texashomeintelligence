@@ -86,8 +86,17 @@ jobs:
         # under v3 except by its timestamp. Rebuilding it here is what actually
         # retires the old numbers; without this step the queued Austin solar
         # story would still be buildable from v2 figures.
+        #
+        # `--dry-run` IS THE CORRECT MODE HERE, and not because this is a rehearsal.
+        # Without it, `refresh-feed.py` does `git checkout -B ... origin/main` and
+        # opens a PR against main — that is its production job, and main
+        # auto-deploys the live site. On a round branch that is exactly what must
+        # not happen. The flag only suppresses the commit-to-main; the feed is
+        # still rebuilt and still validated against its schema by `write_feed`
+        # before being written, which is the part this step needs. The commit to
+        # THIS branch is the next step's job.
         working-directory: autoposter
-        run: python3 tools/refresh-feed.py
+        run: python3 tools/refresh-feed.py --dry-run
 
       - name: Commit the autoposter side SEPARATELY
         # Rule 0: every autoposter commit's file list entirely under autoposter/.
