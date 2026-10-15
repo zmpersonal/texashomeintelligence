@@ -1,0 +1,72 @@
+# TEMPORARY — Round 51. Delete when the round is decided.
+#
+# No external host is reachable from an agent session, and Actions logs are served from a host it
+# cannot follow a redirect to — so the probe WRITES AND COMMITS its measurement. Read-only on the
+# datasets: a step below fails the run if anything under src/data/generated moved.
+name: tmp r51 storage-series probe
+
+on:
+  push:
+    branches: [claude/thi-plan-review-m40n0x]
+    paths:
+      - "site/scripts/audits/round-51-storage-series.ts"
+      - ".github/workflows/tmp-r51-storage-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+        working-directory: site
+
+      - name: Read the storage series, both metros
+        working-directory: site
+        env:
+          SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
+        run: npx tsx scripts/audits/round-51-storage-series.ts
+
+      - name: The probe must not have written a dataset file
+        run: |
+          if ! git diff --quiet -- site/src/data/generated; then
+            echo "::error::the probe modified site/src/data/generated — it is read-only by design"
+            exit 1
+          fi
+
+      - name: No permit description may appear in the measurement
+        # The standing line from Round 50: a probe writes the measurement, not the material.
+        # Asserted rather than trusted — the vocabulary is counted against a named term list and
+        # templating via hashes, so no free text should be able to reach the file.
+        run: |
+          python3 - <<'PY'
+          import json, re, sys
+          d = json.load(open("docs/audits/round-51-storage.json"))
+          s = json.dumps(d)
+          # A description would show up as a long run of words with spaces. Term names, month keys
+          # and field names are short and snake/kebab shaped.
+          bad = [w for w in re.findall(r'"[^"]{60,}"', s)
+                 if w.count(" ") >= 6 and "question" not in w and "::" not in w]
+          if bad:
+              print("::error::free text reached the measurement:", bad[:2]); sys.exit(1)
+          print("no free text in the measurement")
+          PY
+
+      - name: Commit the measurement
+        run: |
+          git config user.name  "thi-probe"
+          git config user.email "noreply@texashomeintelligence.com"
+          git add docs/audits/round-51-storage.json
+          git diff --cached --quiet && { echo "no change"; exit 0; }
+          git commit -m "Round 51 probe result: the Austin storage series
+
+          Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
+          for i in 1 2 3 4; do git push origin HEAD:${GITHUB_REF_NAME} && break || sleep $((2**i)); done
