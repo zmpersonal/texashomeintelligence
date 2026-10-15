@@ -7,7 +7,7 @@ import {
   isUnknownAustinType,
   isUnknownSanAntonioType,
   AUSTIN_PERMIT_TYPE_MAP,
-  AUSTIN_WORK_CLASS_MAP,
+  AUSTIN_WORK_CLASSES_IN_SCOPE,
   type ClassificationMechanism,
   type TradeCategory,
 } from "../tradeCategories";
@@ -48,7 +48,18 @@ import {
  */
 
 export interface TradeActivityValue {
-  category: TradeCategory;
+  /**
+   * `null` on the ALL-TRADES row that Round 50 added — the month's distinct
+   * permit count, which belongs to no category.
+   *
+   * Null rather than a sentinel string on purpose. Both readers already skip it
+   * without being changed: the site filters `value.category === category`, which
+   * no category equals, and the autoposter's `_permit_trades` drops any row with
+   * a falsy category before it can become a series. A string like "all-trades"
+   * would have become `permit_activity_all-trades` in the social feed and been
+   * publishable.
+   */
+  category: TradeCategory | null;
   /** "YYYY-MM" - the month permits were ISSUED, not ingested. */
   month: string;
   permitCount: number;
@@ -58,6 +69,18 @@ export interface TradeActivityValue {
   mechanisms: ClassificationMechanism[];
   /** Metro-native values that rolled into this count, with their share. */
   sourceValues: { value: string; count: number }[];
+  /**
+   * Round 50. Present and `"all-trades"` only on the month's distinct-permit
+   * row, so a reader can recognise it positively rather than by a null check.
+   *
+   * WHY IT EXISTS. The per-category counts are each correct and their SUM is
+   * meaningless: one permit can be in several categories, measured at 3.1-9.6%
+   * of Austin's months and 3.3-7.5% of San Antonio's. Nothing published a
+   * cross-trade total, but nothing could have produced a correct one either, and
+   * a round had to go and measure the overshoot to answer the question. Now the
+   * right total is stored next to the parts that must not be added.
+   */
+  scope?: "all-trades";
 }
 
 /**
@@ -161,8 +184,26 @@ export function bump(
 export function toObservations(
   buckets: Map<string, Bucket>,
   ingestedAt: string,
+  /** Round 50: distinct permit ids per month, across every category. */
+  permitsByMonth?: Map<string, Set<string>>,
 ): Observation<TradeActivityValue>[] {
   const out: Observation<TradeActivityValue>[] = [];
+  for (const [month, permits] of permitsByMonth ?? []) {
+    out.push({
+      observedAt: new Date(`${month}-01T00:00:00.000Z`).toISOString(),
+      ingestedAt,
+      key: `${CATEGORY_MAPPING_VERSION}/all-trades/${month}`,
+      value: {
+        category: null,
+        scope: "all-trades",
+        month,
+        permitCount: permits.size,
+        mappingVersion: CATEGORY_MAPPING_VERSION,
+        mechanisms: [],
+        sourceValues: [],
+      },
+    });
+  }
   for (const [key, b] of buckets) {
     const [category, month] = key.split(" ") as [TradeCategory, string];
     out.push({
@@ -320,6 +361,7 @@ export const permitTradeActivitySanAntonio: FetcherModule<TradeActivityValue> = 
     // each category-month but still appears in each one it genuinely belongs to.
     const monthsPerPermit = new Map<string, Set<string>>();
     const typesPerPermit = new Map<string, Set<string>>();
+    const permitsByMonth = new Map<string, Set<string>>();
     for (const row of records) {
       const raw = row[dateCol];
       if (!raw) continue;
@@ -353,6 +395,11 @@ export const permitTradeActivitySanAntonio: FetcherModule<TradeActivityValue> = 
         t.add(permitType.trim());
         typesPerPermit.set(rawId, t);
       }
+      // Round 50: the month's distinct permits, across every category — the
+      // correct total, stored beside the parts that must not be added.
+      const forMonth = permitsByMonth.get(month) ?? new Set<string>();
+      forMonth.add(permitId);
+      permitsByMonth.set(month, forMonth);
       for (const c of classifications) {
         bump(buckets, c.category, month, c.mechanism, c.sourceValue, permitId);
       }
@@ -367,7 +414,7 @@ export const permitTradeActivitySanAntonio: FetcherModule<TradeActivityValue> = 
         `${spanningTypes} permit(s) span more than one permit type.`,
     );
     reportCounts("san-antonio", retained, dropped, unknown);
-    return toObservations(buckets, new Date().toISOString());
+    return toObservations(buckets, new Date().toISOString(), permitsByMonth);
   },
 };
 
@@ -406,7 +453,11 @@ export function austinTradeWhere(since: string, until: string): string {
   const types = Object.entries(AUSTIN_PERMIT_TYPE_MAP)
     .filter(([, c]) => c !== null)
     .map(([t]) => soqlQuote(t));
-  const workClasses = Object.keys(AUSTIN_WORK_CLASS_MAP).map((w) => soqlQuote(w));
+  // Round 50: the classes to DOWNLOAD, not the classes that assign a category.
+  // `Auxiliary Power` must still be fetched — it is how storage is found — but it
+  // no longer decides anything on its own. Driving the predicate from the map
+  // would now silently stop fetching it and `energy_storage` would be empty.
+  const workClasses = AUSTIN_WORK_CLASSES_IN_SCOPE.map((w) => soqlQuote(w));
   const clauses = [
     `permit_type_desc in (${types.join(", ")})`,
     `work_class in (${workClasses.join(", ")})`,
@@ -522,6 +573,7 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
     let dropped = 0;
     let rowsWithoutId = 0;
     const seenPermits = new Set<string>();
+    const permitsByMonth = new Map<string, Set<string>>();
     for (const row of rows) {
       if (!row.issue_date) continue;
       const observedAt = new Date(row.issue_date).toISOString();
@@ -546,6 +598,10 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
       const permitId = rawId || `__no-id__${observedAt}#${retained}`;
       if (!rawId) rowsWithoutId++;
       else seenPermits.add(rawId);
+      // Round 50 — see the San Antonio loop.
+      const forMonth = permitsByMonth.get(month) ?? new Set<string>();
+      forMonth.add(permitId);
+      permitsByMonth.set(month, forMonth);
       for (const c of classifications) {
         bump(buckets, c.category, month, c.mechanism, c.sourceValue, permitId);
       }
@@ -560,6 +616,6 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
         `row(s); count(1) agreed exactly.`,
     );
     reportCounts("austin", retained, dropped, unknown);
-    return toObservations(buckets, new Date().toISOString());
+    return toObservations(buckets, new Date().toISOString(), permitsByMonth);
   },
 };
