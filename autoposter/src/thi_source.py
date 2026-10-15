@@ -52,6 +52,20 @@ DROUGHT_ANCHOR = {"austin": ("48453", "Travis"), "san-antonio": ("48029", "Bexar
 _DROUGHT_STAGE = re.compile(r"\bD([0-4])\b")
 
 
+#: Round 52 policy C. The minimum complete periods a CUT segment needs before any
+#: figure is derived from it. Mirrors `MIN_SEGMENT_MONTHS` in
+#: `site/src/lib/tradeSegments.ts`; `test_discontinuities.py` reads the constant out
+#: of that file and asserts the two agree, because one policy with two definitions
+#: that can drift is the defect this project keeps finding (the mapping version's
+#: reading half in Round 45, the ledger tier in Round 49).
+#:
+#: SIX, and what it is compensating for: a half-over-half comparison on fewer than
+#: three periods per side is two points against two points, which the Poisson noise
+#: floor in `tradeSegments.ts` cannot rescue — it tests the size of a change, not
+#: whether the comparison had enough months to mean anything.
+MIN_SEGMENT_MONTHS = 6
+
+
 @dataclass
 class Point:
     period: str      # ISO date identifying the period the reading covers
@@ -76,11 +90,63 @@ class Series:
     # baselines on these series, so it is the half where honouring a break
     # matters most.
     #
-    # REPORTING, NOT YET POLICY — see the note in `discontinuities.ts` and the
-    # options in `docs/audits/round-52-discontinuities.md`. Every figure is
-    # still computed exactly as before. What a builder should DO with a spanned
-    # break is an owner decision, and this is the one place it will read.
+    # The policy the owner chose, measured in
+    # `docs/audits/round-52-discontinuities.md`:
+    #   A. a month-over-month claim across a break is REFUSED — `mom_breaks`
+    #   C. a baseline is computed on the near side only, and withheld entirely
+    #      when that side is too short — `current_segment` / `withheld`
+    # Nothing falls back to the far side: months produced under a retired
+    # source behaviour are history, not a quieter version of now.
     discontinuities: list[dict] = field(default_factory=list)
+
+    @property
+    def break_months(self) -> list[str]:
+        """The `fromMonth` of every break this series spans, oldest first."""
+        return sorted({d["fromMonth"] for d in self.discontinuities})
+
+    @property
+    def current_segment(self) -> list[Point]:
+        """The points since the newest break — the run that shares one source
+        behaviour at the series' near end. Every point when it spans none."""
+        cuts = self.break_months
+        if not cuts:
+            return list(self.points)
+        return [p for p in self.points if p.period[:7] >= cuts[-1]]
+
+    @property
+    def mom_breaks(self) -> list[dict]:
+        """Breaks the LAST TWO points straddle — the span a month-over-month
+        claim actually makes. Mirrors `discontinuitiesCrossed`'s boundary rule
+        (`lo < fromMonth <= hi`), asserted against it in `discontinuityunit.ts`
+        §2 and `test_discontinuities.py`."""
+        if len(self.points) < 2:
+            return []
+        lo, hi = self.points[-2].period[:7], self.points[-1].period[:7]
+        return [d for d in self.discontinuities if lo < d["fromMonth"] <= hi]
+
+    @property
+    def withheld(self) -> str | None:
+        """Why no baseline or deviation may be computed from this series, or None.
+
+        Policy C, and it applies to a series that SPANS a break and to no other.
+        A short unbroken series is governed by the existing `history_min_weeks`
+        gate — raising that for everything would be this round widening its own
+        scope. What is new is that the periods on the far side of a break can no
+        longer supplement the near side, so the near side has to stand on its
+        own, and under six of them a half-over-half split puts fewer than three
+        on each side. The site reader draws the line in the same place and with
+        the same constant (`tradeSegments.ts`); `test_discontinuities.py` reads it from there.
+        """
+        if not self.discontinuities:
+            return None
+        seg = self.current_segment
+        if len(seg) >= MIN_SEGMENT_MONTHS:
+            return None
+        return (f"{len(seg)} complete period{'' if len(seg) == 1 else 's'} since the source "
+                f"change recorded at {self.break_months[-1]} "
+                f"({seg[0].period[:7]} to {seg[-1].period[:7]}) — under the "
+                f"{MIN_SEGMENT_MONTHS}-period minimum a half-over-half comparison needs to put "
+                f"three on each side")
 
     @property
     def latest(self) -> float:
@@ -258,6 +324,33 @@ def _discontinuities() -> list[dict]:
         return []
 
 
+#: Datasets whose loaders below pass recorded breaks through to the Series they build.
+#: A record for anything else would be read by nobody, which is the silent half of this
+#: whole family of defects — so `_assert_every_break_is_read` refuses to load instead.
+_BREAK_AWARE_DATASETS = {"permit-trade-activity"}
+
+
+def _assert_every_break_is_read() -> None:
+    """A recorded break no loader honours halts the run rather than being ignored.
+
+    `_breaks_spanned` is wired into the permit loader and no other. If a break were
+    recorded for drought or electricity tomorrow, every series of that dataset would keep
+    computing month-over-month and baselines straight across it, and nothing here would
+    say so: the record would exist, the policy would be live, and the figure would be
+    wrong — the exact shape of the defects this round exists to close (a config key with
+    no consumer, a stored field with no reader). A check that fails open needs a separate
+    assertion that it can run; this is that assertion, pointed at coverage rather than at
+    any one figure.
+    """
+    unread = sorted({d["datasetId"] for d in _discontinuities()} - _BREAK_AWARE_DATASETS)
+    if unread:
+        raise RuntimeError(
+            f"thi_source: discontinuities.json records a break for {', '.join(unread)}, and no "
+            f"loader here passes breaks through for that dataset — every figure from it would "
+            f"be computed across the break in silence. Wire `_breaks_spanned` into that "
+            f"loader and add the dataset to `_BREAK_AWARE_DATASETS`.")
+
+
 def _breaks_spanned(dataset: str, location: str, series: str,
                     first_month: str, last_month: str) -> list[dict]:
     """The breaks a span crosses. Mirrors `discontinuitiesCrossed` in the site module.
@@ -412,6 +505,7 @@ def load_history(today: date | None = None, min_points: int = 4) -> list[Series]
     honesty gate exists to stop (harness Meta-Rule 5, gate the data before the feature).
     """
     today = today or datetime.now(timezone.utc).date()
+    _assert_every_break_is_read()
     out: list[Series] = []
     for location in ("austin", "san-antonio"):
         for series in (

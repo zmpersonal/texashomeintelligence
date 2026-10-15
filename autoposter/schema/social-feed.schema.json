@@ -136,6 +136,13 @@
             "type": "string"
           },
           "description": "named thresholds crossed this period"
+        },
+        "withheld": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "ROUND 52. Comparison fields NOT computed for this metric, each naming the fields it covers and why. A recorded source discontinuity (site/src/data/discontinuities.ts) means the periods either side of it were produced by different source behaviour, so a delta or baseline computed across one compares two instruments. The current reading is still published; the comparison is not. An absent comparison field always has an entry here — build_feed asserts the pairing, because a field absent for an unstated reason reads as no change."
         }
       }
     },
