@@ -239,6 +239,24 @@ async function austin() {
     wholeFeedByMonth: Object.fromEntries(
       allByMonth.map((r) => [(r.month ?? "").slice(0, 7), Number(r.permits)])),
     auxPowerClassVolumeByMonth: seriesFor(classByMonth, "work_class", "Auxiliary Power"),
+    /**
+     * THE CORROBORATION CHECK. Austin Energy's Solar Permitting Manual (published May 2026) says
+     * a residential grid-interconnected solar/battery project needs a Residential Auxiliary Power
+     * EP, and that a separate UPGRADE permit may be needed for work on the utility side of the
+     * meter — which is what "additional meter socket" is. So if the July step is a FILING change
+     * in which each battery job now files an Auxiliary Power EP plus an Upgrade EP, the Upgrade
+     * class should move in step with it. If Upgrade is flat, the step is not that mechanism.
+     *
+     * A prediction with a direction, made before reading the answer, which is the only kind of
+     * cross-check worth running.
+     */
+    upgradeClassVolumeByMonth: seriesFor(classByMonth, "work_class", "Upgrade"),
+    repairClassVolumeByMonth: seriesFor(classByMonth, "work_class", "Repair"),
+    topWorkClassesByMonth: Object.fromEntries(
+      [...new Set(classByMonth.map((r) => r.work_class ?? "(blank)"))]
+        .map((wc) => [wc, seriesFor(classByMonth, "work_class", wc)] as const)
+        .filter(([, s]) => Object.values(s).reduce((a, b) => a + b, 0) >= 200),
+    ),
     workClassFirstSeen: firstSeen(classByMonth, "work_class"),
     permitTypeFirstSeen: firstSeen(typeByMonth, "permit_type_desc"),
     availableFieldNames: fields,
