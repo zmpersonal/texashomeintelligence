@@ -33,6 +33,7 @@
  * All arithmetic here is deterministic. No model output, ever (COST.md rule 2).
  */
 import { findDataset, freshnessOf, type Freshness } from "./datasets";
+import { discontinuitiesCrossed, type Discontinuity } from "../data/discontinuities";
 // Round 10b: a module-scope `new Date()` reads 1970 under the Workers runtime
 // Astro builds against. Anything needing the real build date uses this.
 import { buildNow } from "../data/serviceNotices";
@@ -60,6 +61,28 @@ export interface SourceType {
 export interface TradeActivity {
   category: string;
   location: string;
+  /**
+   * Breaks this window SPANS — Round 52. Built with the record rather than after
+   * it: `discontinuities.ts` has a consumer from the day it exists, because a
+   * recorded fact nothing consults is the defect this family keeps producing
+   * (Round 46 a config key with no consumer, Round 49 a consumer with no
+   * config, Round 50 a stored field with no reader).
+   *
+   * REPORTING, NOT YET POLICY. What a page or a builder should DO about a
+   * spanned break — refuse the figure, label it, or compute each side separately
+   * — is an owner decision with measured consequences, recorded in
+   * `docs/audits/round-52-discontinuities.md`. Every figure below is still
+   * computed exactly as before; this field says which of them cross a break so
+   * the policy, once chosen, has one place to read and nothing to re-derive.
+   *
+   * `spansDiscontinuity` is the one-line test a caller needs; `crossedBy` says
+   * which computations cross, because they do not all cross the same breaks: a
+   * month-over-month on two post-break months crosses nothing while the
+   * window's mean crosses everything.
+   */
+  spansDiscontinuity: boolean;
+  discontinuities: Discontinuity[];
+  crossedBy: { window: Discontinuity[]; monthOverMonth: Discontinuity[] };
   /** Months present, oldest first. */
   months: { month: string; permitCount: number }[];
   monthCount: number;
@@ -192,6 +215,15 @@ export function tradeActivity(location: string, category: string): TradeActivity
   if (rows.length === 0) return undefined;
 
   const months = rows.map((r) => ({ month: r.month, permitCount: r.permitCount }));
+  // Round 52. The whole window, and separately the last two months — the span a
+  // month-over-month claim actually makes.
+  const windowBreaks = discontinuitiesCrossed(
+    "permit-trade-activity", location, category,
+    months[0]?.month ?? "", months[months.length - 1]?.month ?? "");
+  const momBreaks = months.length >= 2
+    ? discontinuitiesCrossed("permit-trade-activity", location, category,
+                             months[months.length - 2].month, months[months.length - 1].month)
+    : [];
   const total = rows.reduce((s, r) => s + r.permitCount, 0);
   const n = rows.length;
   const mean = total / n;
@@ -217,6 +249,9 @@ export function tradeActivity(location: string, category: string): TradeActivity
     .sort((a, b) => b.count - a.count);
 
   return {
+    spansDiscontinuity: windowBreaks.length > 0,
+    discontinuities: windowBreaks,
+    crossedBy: { window: windowBreaks, monthOverMonth: momBreaks },
     category,
     location,
     months,
