@@ -221,7 +221,7 @@ class NothingDefensible(RuntimeError):
     """
 
 
-def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
+def run(site_key: str, *, write_fn=None, build_claims_fn=None, today: date | None = None,
         specs_dir: Path | None = None, destination: dict | None = None,
         articles: dict | None = None, exclude_published: bool = False,
         config: dict | None = None) -> dict:
@@ -285,6 +285,14 @@ def run(site_key: str, *, write_fn, build_claims_fn, today: date | None = None,
     chosen: dict | None = None
     claims: list[Claim] = []
     ledger_result = None
+    if not articles and (write_fn is None or build_claims_fn is None):
+        # Round 50. The pair used to be REQUIRED, and production passed the retired electricity
+        # builder into it on every cycle — never reached, because `articles` is always supplied
+        # and always wins below. Optional now, so nothing has to name a builder it does not use;
+        # a caller with neither a registry nor a pair still fails here rather than later.
+        raise RuntimeError(
+            "engine.run needs either `articles` (a topic -> builder registry) or an explicit "
+            "`write_fn`/`build_claims_fn` pair. It was given neither.")
     for candidate in buildable:
         candidate_build, candidate_write = build_claims_fn, write_fn
         # An article's claim-builder and writer belong to its TOPIC. Adding an article is adding

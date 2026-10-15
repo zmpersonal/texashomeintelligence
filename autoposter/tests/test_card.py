@@ -23,6 +23,8 @@ import article_engine as engine
 import topic_scorer                 # noqa: E402     # noqa: E402
 import card as card_mod            # noqa: E402
 import run_article                 # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent / "fixtures"))
+import retired_electricity_builder as retired   # noqa: E402
 from claim_ledger import Claim     # noqa: E402
 
 def _isolated_cfg():
@@ -59,8 +61,8 @@ SIDECAR = {
 
 
 def _run():
-    return engine.run("thi", config=_isolated_cfg(), write_fn=run_article.write,
-                      build_claims_fn=run_article.build_claims, today=TODAY,
+    return engine.run("thi", config=_isolated_cfg(), write_fn=retired.write,
+                      build_claims_fn=retired.build_claims, today=TODAY,
                       articles=run_article.TOPIC_ARTICLES)
 
 
@@ -107,8 +109,8 @@ def test_the_built_block_matches_the_card_the_owner_APPROVED():
         return
     approved = re.search(r"^card:\n(?:  .*\n)+", live, re.M)
     assert approved, "could not find the approved card block — check this by hand"
-    assert engine.run("thi", config=_isolated_cfg(), write_fn=run_article.write,
-                      build_claims_fn=run_article.build_claims,
+    assert engine.run("thi", config=_isolated_cfg(), write_fn=retired.write,
+                      build_claims_fn=retired.build_claims,
                       today=TODAY)["card_frontmatter"] == approved.group(0).rstrip()
 
 
@@ -476,8 +478,8 @@ def test_the_engine_skips_a_topic_it_has_already_written():
 
     published = engine.published_questions(cfg)
     assert taken in published, "the premise did not take"
-    r = engine.run("thi", config=cfg, write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=today,
+    r = engine.run("thi", config=cfg, write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=today,
                    articles=run_article.TOPIC_ARTICLES, exclude_published=True)
     assert r["article"]["title"] != taken, "it wrote the topic it had already written"
     assert r["article"]["title"] not in published
@@ -534,8 +536,8 @@ def test_the_published_flag_is_read_from_the_FRONTMATTER_not_the_body():
 def test_a_topic_with_no_claim_builder_HALTS_rather_than_falling_through():
     """Silently publishing the runner-up is how a machine drifts off its own ranking."""
     try:
-        engine.run("thi", config=_isolated_cfg(), write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=date(2026, 9, 11),
+        engine.run("thi", config=_isolated_cfg(), write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=date(2026, 9, 11),
                    articles={"nothing-matches": (None, None)}, exclude_published=True)
     except RuntimeError as e:
         assert "no claim-builder" in str(e)
@@ -1603,11 +1605,59 @@ def test_FROZEN_the_locked_builder_REFUSES_another_period_instead_of_crashing():
     an engine bug."""
     import claim_ledger as cl
     try:
-        run_article.build_claims(engine.load_feed(), CFG, date(2026, 6, 15))
+        retired.build_claims(engine.load_feed(), CFG, date(2026, 6, 15))
     except cl.LedgerHalt as e:
         assert "locked to August 2026" in str(e)
         return
     raise AssertionError("a period-locked builder must refuse another period explicitly")
+
+
+def test_EVERY_BUILDER_puts_the_VERDICT_IN_ITS_OWN_PARAGRAPH():
+    """The house shape for an answer section is two paragraphs: the verdict alone, then the
+    evidence — because a reader scanning for the answer should hit it by itself. `analysisrender`
+    asserts it on the RENDERED page, which means it can only catch a breach AFTER an article is
+    published and swept, and that is exactly how it was found: the power builder ran the verdict
+    together with the figure, and the first full sweep after its first article went red three days
+    later.
+
+    So the shape is asserted here too, at the template, for every builder at once. That is the
+    difference between fixing one article and fixing the thing that writes them.
+    """
+    import re as _re
+    from datetime import date as _date
+
+    feed = engine.load_feed()
+    today = _date(2026, 9, 19)
+    builders = {
+        "power": (run_article.build_power_claims, run_article.write_power),
+        "permits": (run_article.build_permit_claims, run_article.write_permits),
+        "summer": (run_article.build_summer_claims, run_article.write_summer),
+        "acrush": (run_article.build_acrush_claims, run_article.write_acrush),
+        "sa": (run_article.build_sa_claims, run_article.write_sa),
+    }
+    checked, skipped = 0, []
+    for name, (build, write) in builders.items():
+        try:
+            body = write({}, build(feed, CFG, today), feed)["body"]
+        except Exception as exc:                    # noqa: BLE001
+            # A builder with no data for this period cannot be shape-checked. Recorded, not
+            # swallowed — if every builder skips, the assertion below fails rather than passing
+            # on an empty set.
+            skipped.append(f"{name}: {type(exc).__name__}")
+            continue
+        assert "## The short answer" in body, f"{name} has no answer section"
+        section = body.split("## The short answer", 1)[1].split("\n## ", 1)[0]
+        paras = [x for x in _re.split(r"\n\s*\n", section) if x.strip()]
+        assert len(paras) >= 2, (
+            f"{name}'s answer section is {len(paras)} paragraph(s); the verdict must stand alone "
+            f"before the evidence. First paragraph: {paras[0][:120]!r}")
+        # The verdict paragraph carries the bolded answer and NOT the figure that supports it.
+        assert "**" in paras[0], f"{name}'s first answer paragraph carries no bolded verdict"
+        checked += 1
+
+    assert checked >= 3, (
+        f"only {checked} builder(s) could be shape-checked, so this guard is nearly blind "
+        f"(skipped: {skipped})")
 
 
 if __name__ == "__main__":

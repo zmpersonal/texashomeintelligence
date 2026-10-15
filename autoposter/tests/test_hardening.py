@@ -25,6 +25,8 @@ import card as card_mod         # noqa: E402
 import media                        # noqa: E402
 import publish_gate                 # noqa: E402
 import run_article                  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent / "fixtures"))
+import retired_electricity_builder as retired   # noqa: E402
 import yaml                         # noqa: E402
 
 HERE = Path(__file__).resolve().parent
@@ -35,8 +37,8 @@ OK_LINK = lambda url: (True, "resolved 200")     # noqa: E731
 
 
 def _promo(config=None):
-    r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY)
+    r = engine.run("thi", write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=TODAY)
     return engine.build_facebook_promo(r["article"], r["claims"], _cfg_unposted(config), TODAY,
                                        link_opener=OK_LINK, media_opener=OK_LINK)
 
@@ -117,8 +119,8 @@ def test_media_follows_the_RENDERED_CARD_rather_than_a_constant():
         json.dumps(dict(original, path="/images/og/moved/elsewhere.png")))
     cfg = _cfg_unposted()
     cfg["publish"] = dict(cfg["publish"], og_sidecar_dir=str(temp_dir))
-    r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY)
+    r = engine.run("thi", write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=TODAY)
     post, _ = engine.build_facebook_promo(r["article"], r["claims"], cfg, TODAY,
                                           link_opener=OK_LINK, media_opener=OK_LINK)
     assert post["media_url"] == "https://texashomeintelligence.com/images/og/moved/elsewhere.png"
@@ -132,8 +134,8 @@ def test_the_derived_media_is_what_the_gate_actually_checks():
     if not _card_rendered():
         return
     seen = []
-    r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY)
+    r = engine.run("thi", write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=TODAY)
 
     def watching(url):
         seen.append(url)
@@ -258,8 +260,8 @@ def test_the_resolver_plugs_into_the_real_gate_as_an_opener():
     if not _card_rendered():
         return
     stale = lambda rid: _log(URL, checked_at=NOW - timedelta(hours=1))   # noqa: E731
-    r = engine.run("thi", write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY)
+    r = engine.run("thi", write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=TODAY)
     url = r["article"]["canonical_url"]
     opener = media.actions_resolver(
         dispatch=lambda u, h: 99,

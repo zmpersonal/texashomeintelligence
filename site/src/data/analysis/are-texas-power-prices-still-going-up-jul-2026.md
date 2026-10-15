@@ -23,7 +23,9 @@ card:
 
 ## The short answer
 
-**Yes.** Texas residential electricity is dearer than it was a year ago. The average residential price in July 2026 was 15.88 cents per kilowatt-hour — up 3.4% year over year, and
+**Yes.** Texas residential electricity is dearer than it was a year ago.
+
+The average residential price in July 2026 was 15.88 cents per kilowatt-hour — up 3.4% year over year, and
 down 6.5% from the peak (U.S. Energy Information Administration, as of July 2026).
 
 ## The series, not the headline

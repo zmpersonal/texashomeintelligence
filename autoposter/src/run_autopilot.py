@@ -662,8 +662,8 @@ def main() -> int:
         # decision module stays provable without a network or a node process.
         verify_fn=source_check.check_all,
         verify_opener=http_opener,
-        write_fn=run_article.write,
-        build_claims_fn=run_article.build_claims,
+        # No `write_fn`/`build_claims_fn`: the registry below is what the engine uses, every
+        # time. Passing a pair here named the RETIRED electricity builder and never called it.
         articles=run_article.TOPIC_ARTICLES,
         captions=run_article.TOPIC_CAPTIONS,
         link_opener=http_opener,

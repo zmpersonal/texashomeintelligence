@@ -22,6 +22,8 @@ import autopilot                    # noqa: E402
 import publish_gate                # noqa: E402
 import card as card_mod             # noqa: E402
 import run_article                  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent / "fixtures"))
+import retired_electricity_builder as retired   # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 TODAY = date(2026, 9, 11)
@@ -37,8 +39,8 @@ def _picked(cfg=None):
     `austin-ac-rush-vs-heat` at 0.65 moved it above the permits piece. Tests pinned to a slug
     then fail for a reason that has nothing to do with what they measure.
     """
-    r = engine.run("thi", config=cfg or _cfg(), write_fn=run_article.write,
-                   build_claims_fn=run_article.build_claims, today=TODAY,
+    r = engine.run("thi", config=cfg or _cfg(), write_fn=retired.write,
+                   build_claims_fn=retired.build_claims, today=TODAY,
                    articles=run_article.TOPIC_ARTICLES, exclude_published=True)
     return r["article"], r["card"]
 
@@ -127,7 +129,7 @@ def _no_source_check(claims):
 
 
 def _kwargs(cfg, **over):
-    base = dict(write_fn=run_article.write, build_claims_fn=run_article.build_claims,
+    base = dict(write_fn=retired.write, build_claims_fn=retired.build_claims,
                 articles=run_article.TOPIC_ARTICLES, link_opener=OK, media_opener=OK,
                 captions=run_article.TOPIC_CAPTIONS, env=_approving_env(cfg),
                 verify_fn=_no_source_check)
@@ -365,7 +367,7 @@ def test_a_GATE_REFUSING_and_A_CRASH_are_DIFFERENT_OUTCOMES():
 
     crashed = autopilot.evaluate(
         cfg, today=TODAY, state=_ready_state(),
-        **_kwargs(cfg, articles={tid: (exploding_builder, run_article.write)
+        **_kwargs(cfg, articles={tid: (exploding_builder, retired.write)
                                  for tid in run_article.TOPIC_ARTICLES}))
     assert crashed.action == "skip", crashed.action
     assert "could not be produced cleanly" in crashed.reason
@@ -447,8 +449,8 @@ def _nothing_left_to_do(cfg, ledger_path):
     """
     _everything_published(cfg)
     orphans = autopilot.promotable_orphans(
-        cfg, today=TODAY, write_fn=run_article.write,
-        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES,
+        cfg, today=TODAY, write_fn=retired.write,
+        build_claims_fn=retired.build_claims, articles=run_article.TOPIC_ARTICLES,
         ledger_path=ledger_path)
     rows = [{"platform": "facebook", "page_id": "PIN", "post_publish_verified": True,
              "article_url": o["article"]["canonical_url"]}
@@ -778,8 +780,8 @@ def test_an_ORPHAN_is_promoted_even_when_the_cadence_floor_says_too_soon():
     state = Path(tempfile.mkdtemp()) / "s.json"
     autopilot.save_state({"last_article_at": TODAY.isoformat(), "cycles": 1}, state)   # too soon
     found = autopilot.promotable_orphans(
-        cfg, today=TODAY, write_fn=run_article.write,
-        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES)
+        cfg, today=TODAY, write_fn=retired.write,
+        build_claims_fn=retired.build_claims, articles=run_article.TOPIC_ARTICLES)
     if not found:
         return                                     # nothing orphaned in this checkout
     d = autopilot.run_cycle(
@@ -801,8 +803,8 @@ def test_a_promotion_NEVER_merges_or_waits_for_a_deploy():
     # copy holds whatever the engine picks NOW, which is a different article entirely.
     merged, waited = [], []
     found = autopilot.promotable_orphans(
-        cfg, today=TODAY, write_fn=run_article.write,
-        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES)
+        cfg, today=TODAY, write_fn=retired.write,
+        build_claims_fn=retired.build_claims, articles=run_article.TOPIC_ARTICLES)
     if not found:
         return
     d = autopilot.run_cycle(
@@ -824,8 +826,8 @@ def test_a_promotion_does_NOT_advance_the_cadence_clock():
     state = Path(tempfile.mkdtemp()) / "s.json"
     autopilot.save_state({"last_article_at": "2026-09-01", "cycles": 1}, state)
     found = autopilot.promotable_orphans(
-        cfg, today=TODAY, write_fn=run_article.write,
-        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES)
+        cfg, today=TODAY, write_fn=retired.write,
+        build_claims_fn=retired.build_claims, articles=run_article.TOPIC_ARTICLES)
     if not found:
         return
     autopilot.run_cycle(
@@ -849,8 +851,8 @@ def test_an_ALREADY_PROMOTED_article_is_not_an_orphan():
     empty = Path(tempfile.mkdtemp()) / "l.json"
     empty.write_text("[]")
     found = autopilot.promotable_orphans(
-        cfg, today=TODAY, write_fn=run_article.write,
-        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES,
+        cfg, today=TODAY, write_fn=retired.write,
+        build_claims_fn=retired.build_claims, articles=run_article.TOPIC_ARTICLES,
         ledger_path=empty)
     if not found:
         return
@@ -858,8 +860,8 @@ def test_an_ALREADY_PROMOTED_article_is_not_an_orphan():
     recorded.write_text(json.dumps([{"platform": "facebook", "post_url": "https://facebook.com/x",
                                      "article_url": o["article"]["canonical_url"]} for o in found]))
     assert autopilot.promotable_orphans(
-        cfg, today=TODAY, write_fn=run_article.write,
-        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES,
+        cfg, today=TODAY, write_fn=retired.write,
+        build_claims_fn=retired.build_claims, articles=run_article.TOPIC_ARTICLES,
         ledger_path=recorded) == []
 
 
@@ -884,8 +886,8 @@ def test_a_STALE_orphan_is_REFUSED_not_promoted():
     """
     cfg = _cfg()
     found = autopilot.promotable_orphans(
-        cfg, today=TODAY, write_fn=run_article.write,
-        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES,
+        cfg, today=TODAY, write_fn=retired.write,
+        build_claims_fn=retired.build_claims, articles=run_article.TOPIC_ARTICLES,
         ledger_path=Path(tempfile.mkdtemp()) / "l.json")
     if not found:
         return                                     # nothing orphaned in this checkout
@@ -905,7 +907,7 @@ def test_a_STALE_orphan_is_REFUSED_not_promoted():
     def promotion(config):
         return autopilot._find_promotion(
             config, today=TODAY, ledger_path=Path(tempfile.mkdtemp()) / "l.json",
-            write_fn=run_article.write, build_claims_fn=run_article.build_claims,
+            write_fn=retired.write, build_claims_fn=retired.build_claims,
             articles=run_article.TOPIC_ARTICLES, captions=run_article.TOPIC_CAPTIONS,
             link_opener=OK, media_opener=OK, defer_resolution=True, env={})
 
@@ -1865,8 +1867,8 @@ def test_THE_LOOP_IS_CLOSED_a_recorded_post_is_no_longer_an_orphan():
     again — which is what stops the machine posting the same link every day."""
     cfg = _cfg()
     found = autopilot.promotable_orphans(
-        cfg, today=TODAY, write_fn=run_article.write,
-        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES,
+        cfg, today=TODAY, write_fn=retired.write,
+        build_claims_fn=retired.build_claims, articles=run_article.TOPIC_ARTICLES,
         ledger_path=Path(tempfile.mkdtemp()) / "l.json")
     if not found:
         return
@@ -1881,8 +1883,8 @@ def test_THE_LOOP_IS_CLOSED_a_recorded_post_is_no_longer_an_orphan():
         "article_slug": first["article"]["slug"], "streak_after": 2}]))
 
     again = autopilot.promotable_orphans(
-        cfg, today=TODAY, write_fn=run_article.write,
-        build_claims_fn=run_article.build_claims, articles=run_article.TOPIC_ARTICLES,
+        cfg, today=TODAY, write_fn=retired.write,
+        build_claims_fn=retired.build_claims, articles=run_article.TOPIC_ARTICLES,
         ledger_path=ledger)
     assert first["topic_id"] not in [o["topic_id"] for o in again], \
         "a recorded post is still being offered for promotion — the duplicate loop is open"

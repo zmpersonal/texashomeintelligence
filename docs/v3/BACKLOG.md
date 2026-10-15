@@ -125,7 +125,7 @@ no redaction pass at all (latent, not live: no description column resolves, so a
 descriptions are empty), and this round's own probes published two personal names before being
 rewritten to emit structural predicates instead of free text.
 
-### 40 · The power article's answer section is one paragraph where the house shape is two
+### 40 · ~~The power article's answer section is one paragraph~~ — FIXED IN THE BUILDER, Round 50
 
 Found by the first full `npm run sweep` since Round 48 published that article. `analysisrender`
 asserts the answer section renders as exactly two paragraphs — the verdict alone, then the figure
@@ -155,6 +155,36 @@ discards the exit code AND shows only the last four lines — and this failure p
 of the log. The standing rule written that same round ("a pipe discards the exit code you were
 checking") was written about this exact command, and this is its first retroactive victim: the
 rule was logged, the run that logged it had already missed something.
+
+**ANSWERED, and the answer changed the fix. It is the TEMPLATE, not that one article.**
+`write_power`'s body template ran the verdict and the figure on the same line:
+
+```
+{verdict} The average residential price in {label} was {c['C1'].figure} — …
+```
+
+Every other live builder writes `{verdict}` followed by a blank line. So this builder would have
+produced a one-paragraph answer section **every month it ran**, and the fix is in the builder with
+the live article corrected to match — not the article alone. Owner's ruling: split it, keep the
+wording, do not relax the assertion.
+
+**What landed:** the break in the template; the same split in the live article, at the same point,
+so the builder's output for July 2026 now matches the corrected file; and a new guard,
+`test_EVERY_BUILDER_puts_the_VERDICT_IN_ITS_OWN_PARAGRAPH`, which checks all five live builders at
+the template rather than waiting for a published article to be swept. Proven by reverting the
+template and watching it name the builder. `analysisrender` is untouched and the sweep is 33/33 —
+the first fully green sweep since Round 48.
+
+**The generalisable half:** `analysisrender` can only catch a breach of house shape AFTER an
+article is published and swept. A template assertion catches it before anything is written. Where
+a rendered-output check guards a convention, the generator deserves one too.
+
+**Found in passing, not fixed:** `run_article.write` (line ~131) and `build_claims` are DEAD —
+`TOPIC_ARTICLES` registers them at line 532 and both entries are overwritten at 667 and 1008, and
+nothing else references them. It is a ~260-line builder carrying a full article template,
+including its own answer-section shape, that no reader reaches. Same family as
+`article_engine._metric` (Round 46 F18, deleted in Round 49). Needs the owner's call: delete it or
+wire it.
 
 ### 38 · `social-feed.json` carries no mapping version
 
