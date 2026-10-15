@@ -65,7 +65,7 @@ Astro.response.status = entry ? 410 : 404;
         <p class="mt-4">{entry.reason}</p>
         <p class="mt-8">
           <a href="/methodology/">How we handle an error like this</a> ·
-          <a href="/data/texas/electricity-prices/">The electricity series itself, with its sources</a> ·
+          {entry.series && (<><a href={entry.series.href}>{entry.series.label}</a> · </>)}
           <a href="/analysis/">All analysis</a>
         </p>
       </>

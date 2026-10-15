@@ -41,7 +41,9 @@ Probes (P1, P2) can run in any gap; they write an audit and change no served pag
 | — | Stale-prose cleanup: ROADMAP's "do not re-add or link", `CLAUDE.md:97`'s "No Tools, no Services", `types.ts`'s `observedAt` and `FeedStatus` claims, with class B's unswept half folded in. | Round 46 F7, F8, F12, F14 |
 | 50 | The permit discrepancy, as a measurement round (item 34). Shipped — see `docs/audits/round-50-permit-overlap.md`. Closed 34; raised 35, 36, 37. | owner |
 | 50b | **Austin's solar mapping (item 35)** — split into `solar` and `energy_storage`, bumped to `trades-v3`, both series re-based, feed refreshed. Shipped on the branch; the article and methodology copy are drafted and awaiting the owner. | Round 50 |
-| 51 | **A builder for `energy_storage`** (item 35's open third). The category ranks 3rd in the feed and nothing can write it. The storage surge — 4 permits in May 2026 to 188 in September — is the finding the broken solar count was hiding. | Round 50 |
+| 50c | **The withdrawal** (item 35's article half). `published: false`, 410 Gone, registry entry, `withdrawnrender` §6 and a 404 control. Built on the branch; the methodology and notice copy are drafted and awaiting the owner. | Round 50 |
+| 51 | **The storage finding, measured before anything is written** (item 35's open third). 4 permits in May 2026 to 188 in September is the better story and it was discarded as contamination for two months. The series gets read first; a builder only after the owner has seen what it says. | Round 50 |
+| 52 | **The feed's missing mapping version** (item 38). Owner-scoped as its own round, after the withdrawal lands: a feed with no mapping version is a stale feed indistinguishable from a fresh one, and that is what nearly published a v2 figure on 2026-10-15. | Round 50 |
 
 ---
 
@@ -123,6 +125,37 @@ no redaction pass at all (latent, not live: no description column resolves, so a
 descriptions are empty), and this round's own probes published two personal names before being
 rewritten to emit structural predicates instead of free text.
 
+### 40 · The power article's answer section is one paragraph where the house shape is two
+
+Found by the first full `npm run sweep` since Round 48 published that article. `analysisrender`
+asserts the answer section renders as exactly two paragraphs — the verdict alone, then the figure
+that supports it — which is the shape every other article uses:
+
+```
+**Mostly no — more trades are running above their own pace than below it.**
+
+4 of 7 trades above their own average in August 2026 (…)
+```
+
+`are-texas-power-prices-still-going-up-jul-2026` runs them together:
+
+```
+**Yes.** Texas residential electricity is dearer than it was a year ago. The average
+residential price in July 2026 was 15.88 cents per kilowatt-hour — up 3.4% year over year…
+```
+
+The answer box still renders and is still styled as a box; what is lost is the separation of the
+verdict from its evidence, which is the convention the assertion exists to hold. **Not fixed
+here: it is article copy, which is the owner's.** Two roads — split the paragraph, or decide the
+convention does not apply to a one-line verdict and narrow the assertion. **Relaxing the
+assertion to make a red check green is not one of them.**
+
+**Why it sat for three days.** Round 48 ran the sweep as `npm run sweep 2>&1 | tail -4`, which
+discards the exit code AND shows only the last four lines — and this failure prints in the middle
+of the log. The standing rule written that same round ("a pipe discards the exit code you were
+checking") was written about this exact command, and this is its first retroactive victim: the
+rule was logged, the run that logged it had already missed something.
+
 ### 38 · `social-feed.json` carries no mapping version
 
 Round 50, found while confirming that the queued article could not be built from the old series.
@@ -140,6 +173,10 @@ Same family as item 36 (a stored provenance field with no consumer) with the opp
 **provenance that was never stored at all.** A `mapping_versions` block on the feed, plus a check
 that the cycle refuses a feed whose versions disagree with the datasets on disk, would close it.
 
+**Owner-scoped as its own round (52), after the withdrawal lands.** It is the real one of the
+pair: 39 is latent at a version number we have not reached, this one nearly published a v2 figure
+on the day it was found.
+
 ### 39 · Both mapping-version readers compare versions as STRINGS
 
 Round 50, latent, not triggered. `site/src/lib/tradeActivity.ts` does `.sort().at(-1)` and
@@ -153,6 +190,30 @@ name. Worth doing before v10, and the natural moment is whenever that assertion 
 
 The failure mode is the one this mechanism exists to prevent, reached by a different route: not a
 mixture of versions, but confidently publishing the wrong single one.
+
+## Standing rule — a probe writes the measurement, not the material
+
+Round 50, and it is my own error rather than one found in the code.
+
+The round's probes wrote permit descriptions into committed JSON, having passed them through
+`redactPersonalShapes` first. That function catches address and phone SHAPES and knows nothing
+about names. Two descriptions carried a personal name and reached a public repo.
+
+The reflex was wrong before the function was: **I reached for the redactor instead of asking
+whether the field needed writing down at all.** The descriptions were evidence for a hand-read,
+and a hand-read happens against the run's own output. Nothing downstream needed the text — the
+tally needed to know whether a description mentions roof, solar or a battery, which is four
+booleans.
+
+> **A probe writes the measurement, not the material. A description is evidence for a count, not
+> something the count needs to carry.** Where free text is genuinely needed, it is read from the
+> run output and left there; what gets committed is the structural predicate the measurement
+> actually used.
+
+Redaction is a last line, not a licence. It cannot be the reason a field is safe to publish,
+because it only knows the shapes someone thought to teach it — and a name is not one of them.
+Both probes are now structurally incapable of emitting free text, which is a stronger guarantee
+than a redactor applied correctly.
 
 ## Standing rule — reusing a request builder with hand-chosen arguments is still a hand-built request
 

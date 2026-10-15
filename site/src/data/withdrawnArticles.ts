@@ -43,6 +43,19 @@ export interface WithdrawnArticle {
   withdrawnAt: string;
   /** One sentence, in plain language, on why. This is what a reader gets. */
   reason: string;
+  /**
+   * The live series this article was about, where one is published — so the
+   * notice can send a reader to the real data instead of a dead end.
+   *
+   * OPTIONAL, and Round 50 is why it exists at all. The route hard-coded
+   * "The electricity series itself, with its sources" pointing at
+   * `/data/texas/electricity-prices/`, which was true of the only entry there
+   * was. The second withdrawal is about Austin permit activity, for which no
+   * data page is published — so the field is per-entry and absent is a valid
+   * answer. One entry's context had been baked into shared machinery, which is
+   * the thing a second instance always finds.
+   */
+  series?: { href: string; label: string };
 }
 
 export const WITHDRAWN_ARTICLES = [
@@ -56,6 +69,21 @@ export const WITHDRAWN_ARTICLES = [
       "real feed, so the price it reported was never measured. The underlying error is " +
       "fixed and the article is not being corrected, because the real series does not " +
       "support the question it asked.",
+    series: {
+      href: "/data/texas/electricity-prices/",
+      label: "The electricity series itself, with its sources",
+    },
+  },
+  {
+    slug: "is-austins-home-improvement-boom-cooling-off",
+    title: "Is Austin's home-improvement boom actually cooling off?",
+    publishedAt: "2026-09-11",
+    withdrawnAt: "2026-10-15",
+    reason:
+      "Its solar figures counted battery-storage permits as solar, because Austin files " +
+      "both under one work class and the mix changed while our mapping did not. Recounting " +
+      "the month reverses both the finding it led with and the article's own answer to its " +
+      "title, so it is withdrawn rather than corrected.",
   },
 ] as const satisfies readonly WithdrawnArticle[];
 
