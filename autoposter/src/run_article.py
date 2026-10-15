@@ -884,10 +884,18 @@ def write_power(topic: dict, claims: list[Claim], feed: dict) -> dict:
                    f"{readings} Available is not the same as established, and nothing we hold "
                    f"measures the link.")
 
+    # THE VERDICT GETS ITS OWN PARAGRAPH. This template ran it together with the figure, so
+    # every month this builder produced a one-paragraph answer section while every other builder
+    # produced two — the house shape being the verdict alone, then the evidence, because a reader
+    # scanning for the answer should hit it by itself. `analysisrender` asserts that shape and
+    # went red on the first full sweep after this builder's first article was published, which is
+    # what showed it was the TEMPLATE and not that one article. (Round 50, item 40.)
     body = f"""
 ## The short answer
 
-{verdict} The average residential price in {label} was {c['C1'].figure} — {c['C2'].figure}, and
+{verdict}
+
+The average residential price in {label} was {c['C1'].figure} — {c['C2'].figure}, and
 {c['C3'].figure} ({S}, as of {label}).
 
 ## The series, not the headline
