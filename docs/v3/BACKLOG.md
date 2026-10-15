@@ -42,7 +42,7 @@ Probes (P1, P2) can run in any gap; they write an audit and change no served pag
 | 50 | The permit discrepancy, as a measurement round (item 34). Shipped — see `docs/audits/round-50-permit-overlap.md`. Closed 34; raised 35, 36, 37. | owner |
 | 50b | **Austin's solar mapping (item 35)** — split into `solar` and `energy_storage`, bumped to `trades-v3`, both series re-based, feed refreshed. Shipped on the branch; the article and methodology copy are drafted and awaiting the owner. | Round 50 |
 | 50c | **The withdrawal** (item 35's article half). `published: false`, 410 Gone, registry entry, `withdrawnrender` §6 and a 404 control. Built on the branch; the methodology and notice copy are drafted and awaiting the owner. | Round 50 |
-| 51 | **The storage finding, measured before anything is written** (item 35's open third). 4 permits in May 2026 to 188 in September is the better story and it was discarded as contamination for two months. The series gets read first; a builder only after the owner has seen what it says. | Round 50 |
+| 51 | **The storage finding, measured** — read, not written. See `docs/audits/round-51-storage-series.md`. It is a step at July, the vocabulary inverts across it, and the series is not comparable either side. Austin-only: San Antonio's permit file has no description column. | Round 50 |
 | 52 | **The feed's missing mapping version** (item 38). Owner-scoped as its own round, after the withdrawal lands: a feed with no mapping version is a stale feed indistinguishable from a fresh one, and that is what nearly published a v2 figure on 2026-10-15. | Round 50 |
 
 ---
@@ -220,6 +220,34 @@ name. Worth doing before v10, and the natural moment is whenever that assertion 
 
 The failure mode is the one this mechanism exists to prevent, reached by a different route: not a
 mixture of versions, but confidently publishing the wrong single one.
+
+### 41 · Nothing records the SOURCE changing its behaviour
+
+Round 51. `CATEGORY_MAPPING_VERSION` exists so a change in OUR methodology cannot be silently
+compared across. Nothing expresses the other direction: the City of Austin changed how it
+describes battery work around July 2026 — the vocabulary inverts, system sizes disappear, 90% of
+permits share one description shape — so the storage series measures a different thing either
+side of July, and no field on any observation says so.
+
+Item 36 (a composition check on `sourceValues`) would have **detected** it. It would not have
+**recorded** it, and a reader comparing June to September gets no warning. The instrument is
+either a `sourceBehaviourVersion` alongside the mapping version, or a documented series break
+that the renderer honours.
+
+This is the third face of the provenance family: Round 46 found a config key with no consumer,
+Round 49 a consumer with no config, Round 50 a stored field with no reader. This is a fact with
+nowhere to be stored.
+
+### 42 · Austin may be starting to use a `Roof` work class
+
+Round 51, noticed in passing, not a round. Round 6 measured `work_class = "Roof"` as **one row in
+54,798** and concluded Austin has no roofing class worth the name — which is why Austin roofing is
+a description-text match, with the 35%-re-roofing / 32.5%-adjacent / 32.5%-unrelated split that
+implies. The class **first appears in the window in 2026-08** and is still under 200 permits.
+
+If the city keeps using it, Austin roofing could be read from a real class instead of a text
+match, which would be a material improvement to the most-caveated figure on the site. Worth
+re-measuring in a few months rather than acting on now.
 
 ## Standing rule — a probe writes the measurement, not the material
 
