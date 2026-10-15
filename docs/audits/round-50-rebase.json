@@ -1,5 +1,5 @@
 {
-  "measuredAt": "2026-10-15T14:31:53.763Z",
+  "measuredAt": "2026-10-15T14:38:08.981Z",
   "note": "Round 50. v2 rows remain on disk as history and stop being read; v3 is published.",
   "ingestion": {
     "permit-trade-activity/austin": {
@@ -15,1717 +15,53 @@
   },
   "movedFigures": {
     "austin": {
-      "solar/2025-09": {
-        "from": 144,
-        "to": 140,
-        "delta": -4,
-        "pct": -2.8
-      },
-      "solar/2025-10": {
-        "from": 160,
-        "to": 156,
-        "delta": -4,
-        "pct": -2.5
-      },
-      "solar/2025-11": {
-        "from": 128,
-        "to": 123,
-        "delta": -5,
-        "pct": -3.9
-      },
-      "solar/2025-12": {
-        "from": 90,
-        "to": 88,
-        "delta": -2,
-        "pct": -2.2
-      },
-      "solar/2026-01": {
-        "from": 46,
-        "to": 43,
-        "delta": -3,
-        "pct": -6.5
-      },
-      "solar/2026-02": {
-        "from": 54,
-        "to": 51,
-        "delta": -3,
-        "pct": -5.6
-      },
-      "solar/2026-03": {
-        "from": 33,
-        "to": 32,
-        "delta": -1,
-        "pct": -3
-      },
-      "solar/2026-04": {
-        "from": 79,
-        "to": 72,
-        "delta": -7,
-        "pct": -8.9
-      },
-      "solar/2026-05": {
-        "from": 48,
-        "to": 46,
-        "delta": -2,
-        "pct": -4.2
-      },
-      "solar/2026-06": {
-        "from": 79,
-        "to": 74,
-        "delta": -5,
-        "pct": -6.3
-      },
-      "solar/2026-07": {
-        "from": 93,
-        "to": 72,
-        "delta": -21,
-        "pct": -22.6
-      },
-      "solar/2026-08": {
-        "from": 224,
-        "to": 80,
-        "delta": -144,
-        "pct": -64.3
-      },
-      "solar/2026-09": {
-        "from": 240,
-        "to": 62,
-        "delta": -178,
-        "pct": -74.2
-      },
-      "__all-trades__/2025-09": {
-        "from": null,
-        "to": 3373,
-        "delta": null,
-        "pct": null
-      },
       "energy_storage/2025-09": {
-        "from": null,
-        "to": 33,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2025-10": {
-        "from": null,
-        "to": 3219,
-        "delta": null,
-        "pct": null
+        "from": 33,
+        "to": 34,
+        "delta": 1,
+        "pct": 3
       },
       "energy_storage/2025-10": {
-        "from": null,
-        "to": 35,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2025-11": {
-        "from": null,
-        "to": 2857,
-        "delta": null,
-        "pct": null
+        "from": 35,
+        "to": 36,
+        "delta": 1,
+        "pct": 2.9
       },
       "energy_storage/2025-11": {
-        "from": null,
-        "to": 30,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2025-12": {
-        "from": null,
-        "to": 3094,
-        "delta": null,
-        "pct": null
-      },
-      "energy_storage/2025-12": {
-        "from": null,
-        "to": 18,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-01": {
-        "from": null,
-        "to": 3203,
-        "delta": null,
-        "pct": null
-      },
-      "energy_storage/2026-01": {
-        "from": null,
-        "to": 6,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-02": {
-        "from": null,
-        "to": 3295,
-        "delta": null,
-        "pct": null
-      },
-      "energy_storage/2026-02": {
-        "from": null,
-        "to": 9,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-03": {
-        "from": null,
-        "to": 3670,
-        "delta": null,
-        "pct": null
-      },
-      "energy_storage/2026-03": {
-        "from": null,
-        "to": 5,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-04": {
-        "from": null,
-        "to": 3789,
-        "delta": null,
-        "pct": null
-      },
-      "energy_storage/2026-04": {
-        "from": null,
-        "to": 10,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-05": {
-        "from": null,
-        "to": 3557,
-        "delta": null,
-        "pct": null
-      },
-      "energy_storage/2026-05": {
-        "from": null,
-        "to": 4,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-06": {
-        "from": null,
-        "to": 4114,
-        "delta": null,
-        "pct": null
+        "from": 30,
+        "to": 32,
+        "delta": 2,
+        "pct": 6.7
       },
       "energy_storage/2026-06": {
-        "from": null,
-        "to": 11,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-07": {
-        "from": null,
-        "to": 3931,
-        "delta": null,
-        "pct": null
+        "from": 11,
+        "to": 13,
+        "delta": 2,
+        "pct": 18.2
       },
       "energy_storage/2026-07": {
-        "from": null,
-        "to": 28,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-08": {
-        "from": null,
-        "to": 3945,
-        "delta": null,
-        "pct": null
+        "from": 28,
+        "to": 29,
+        "delta": 1,
+        "pct": 3.6
       },
       "energy_storage/2026-08": {
-        "from": null,
-        "to": 145,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-09": {
-        "from": null,
-        "to": 4090,
-        "delta": null,
-        "pct": null
-      },
-      "energy_storage/2026-09": {
-        "from": null,
-        "to": 188,
-        "delta": null,
-        "pct": null
+        "from": 145,
+        "to": 146,
+        "delta": 1,
+        "pct": 0.7
       }
     },
-    "san-antonio": {
-      "__all-trades__/2025-09": {
-        "from": null,
-        "to": 4958,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2025-10": {
-        "from": null,
-        "to": 4866,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2025-11": {
-        "from": null,
-        "to": 3675,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2025-12": {
-        "from": null,
-        "to": 3386,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-01": {
-        "from": null,
-        "to": 3746,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-02": {
-        "from": null,
-        "to": 3830,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-03": {
-        "from": null,
-        "to": 4688,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-04": {
-        "from": null,
-        "to": 4365,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-05": {
-        "from": null,
-        "to": 4318,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-06": {
-        "from": null,
-        "to": 4692,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-07": {
-        "from": null,
-        "to": 5061,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-08": {
-        "from": null,
-        "to": 4861,
-        "delta": null,
-        "pct": null
-      },
-      "__all-trades__/2026-09": {
-        "from": null,
-        "to": 4694,
-        "delta": null,
-        "pct": null
-      }
-    }
+    "san-antonio": {}
   },
+  "controls": [
+    {
+      "id": "R1",
+      "pass": true,
+      "note": "energy_storage reconciles exactly with the independent composition count, every month"
+    }
+  ],
   "before": {
-    "austin": {
-      "versions": {
-        "electrical": "trades-v2",
-        "hvac": "trades-v2",
-        "plumbing": "trades-v2",
-        "roofing": "trades-v2",
-        "solar": "trades-v2"
-      },
-      "derived": {
-        "electrical": {
-          "months": 13,
-          "total": 17505,
-          "mean": 1346.5,
-          "latest": {
-            "month": "2026-09",
-            "n": 1634
-          },
-          "peak": {
-            "month": "2026-09",
-            "n": 1634
-          },
-          "trough": {
-            "month": "2025-11",
-            "n": 1106
-          },
-          "halfOverHalfPct": 18.1
-        },
-        "hvac": {
-          "months": 13,
-          "total": 11793,
-          "mean": 907.2,
-          "latest": {
-            "month": "2026-09",
-            "n": 1097
-          },
-          "peak": {
-            "month": "2026-07",
-            "n": 1225
-          },
-          "trough": {
-            "month": "2026-02",
-            "n": 638
-          },
-          "halfOverHalfPct": 40.8
-        },
-        "plumbing": {
-          "months": 13,
-          "total": 16061,
-          "mean": 1235.5,
-          "latest": {
-            "month": "2026-09",
-            "n": 1296
-          },
-          "peak": {
-            "month": "2026-04",
-            "n": 1403
-          },
-          "trough": {
-            "month": "2025-11",
-            "n": 1026
-          },
-          "halfOverHalfPct": 16.4
-        },
-        "roofing": {
-          "months": 13,
-          "total": 2035,
-          "mean": 156.5,
-          "latest": {
-            "month": "2026-09",
-            "n": 167
-          },
-          "peak": {
-            "month": "2025-09",
-            "n": 210
-          },
-          "trough": {
-            "month": "2026-05",
-            "n": 114
-          },
-          "halfOverHalfPct": -7.9
-        },
-        "solar": {
-          "months": 13,
-          "total": 1418,
-          "mean": 109.1,
-          "latest": {
-            "month": "2026-09",
-            "n": 240
-          },
-          "peak": {
-            "month": "2026-09",
-            "n": 240
-          },
-          "trough": {
-            "month": "2026-03",
-            "n": 33
-          },
-          "halfOverHalfPct": 22.7
-        }
-      },
-      "figures": {
-        "electrical/2025-09": {
-          "count": 1190,
-          "sources": {
-            "Electrical Permit": 1190
-          }
-        },
-        "hvac/2025-09": {
-          "count": 926,
-          "sources": {
-            "Mechanical Permit": 926
-          }
-        },
-        "plumbing/2025-09": {
-          "count": 1191,
-          "sources": {
-            "Plumbing Permit": 1191
-          }
-        },
-        "roofing/2025-09": {
-          "count": 210,
-          "sources": {
-            "description contains \"roof\"": 210
-          }
-        },
-        "solar/2025-09": {
-          "count": 144,
-          "sources": {
-            "Auxiliary Power": 100,
-            "description mentions solar/photovoltaic/PV": 44
-          }
-        },
-        "electrical/2025-10": {
-          "count": 1288,
-          "sources": {
-            "Electrical Permit": 1288
-          }
-        },
-        "hvac/2025-10": {
-          "count": 841,
-          "sources": {
-            "Mechanical Permit": 841
-          }
-        },
-        "plumbing/2025-10": {
-          "count": 1039,
-          "sources": {
-            "Plumbing Permit": 1039
-          }
-        },
-        "roofing/2025-10": {
-          "count": 199,
-          "sources": {
-            "description contains \"roof\"": 199
-          }
-        },
-        "solar/2025-10": {
-          "count": 160,
-          "sources": {
-            "Auxiliary Power": 102,
-            "description mentions solar/photovoltaic/PV": 58
-          }
-        },
-        "electrical/2025-11": {
-          "count": 1106,
-          "sources": {
-            "Electrical Permit": 1106
-          }
-        },
-        "hvac/2025-11": {
-          "count": 683,
-          "sources": {
-            "Mechanical Permit": 683
-          }
-        },
-        "plumbing/2025-11": {
-          "count": 1026,
-          "sources": {
-            "Plumbing Permit": 1026
-          }
-        },
-        "roofing/2025-11": {
-          "count": 168,
-          "sources": {
-            "description contains \"roof\"": 168
-          }
-        },
-        "solar/2025-11": {
-          "count": 128,
-          "sources": {
-            "Auxiliary Power": 94,
-            "description mentions solar/photovoltaic/PV": 34
-          }
-        },
-        "electrical/2025-12": {
-          "count": 1246,
-          "sources": {
-            "Electrical Permit": 1246
-          }
-        },
-        "hvac/2025-12": {
-          "count": 709,
-          "sources": {
-            "Mechanical Permit": 709
-          }
-        },
-        "plumbing/2025-12": {
-          "count": 1084,
-          "sources": {
-            "Plumbing Permit": 1084
-          }
-        },
-        "roofing/2025-12": {
-          "count": 157,
-          "sources": {
-            "description contains \"roof\"": 157
-          }
-        },
-        "solar/2025-12": {
-          "count": 90,
-          "sources": {
-            "Auxiliary Power": 56,
-            "description mentions solar/photovoltaic/PV": 34
-          }
-        },
-        "electrical/2026-01": {
-          "count": 1273,
-          "sources": {
-            "Electrical Permit": 1273
-          }
-        },
-        "hvac/2026-01": {
-          "count": 713,
-          "sources": {
-            "Mechanical Permit": 713
-          }
-        },
-        "plumbing/2026-01": {
-          "count": 1158,
-          "sources": {
-            "Plumbing Permit": 1158
-          }
-        },
-        "roofing/2026-01": {
-          "count": 121,
-          "sources": {
-            "description contains \"roof\"": 121
-          }
-        },
-        "solar/2026-01": {
-          "count": 46,
-          "sources": {
-            "Auxiliary Power": 29,
-            "description mentions solar/photovoltaic/PV": 17
-          }
-        },
-        "electrical/2026-02": {
-          "count": 1304,
-          "sources": {
-            "Electrical Permit": 1304
-          }
-        },
-        "hvac/2026-02": {
-          "count": 638,
-          "sources": {
-            "Mechanical Permit": 638
-          }
-        },
-        "plumbing/2026-02": {
-          "count": 1304,
-          "sources": {
-            "Plumbing Permit": 1304
-          }
-        },
-        "roofing/2026-02": {
-          "count": 137,
-          "sources": {
-            "description contains \"roof\"": 137
-          }
-        },
-        "solar/2026-02": {
-          "count": 54,
-          "sources": {
-            "Auxiliary Power": 33,
-            "description mentions solar/photovoltaic/PV": 21
-          }
-        },
-        "electrical/2026-03": {
-          "count": 1353,
-          "sources": {
-            "Electrical Permit": 1353
-          }
-        },
-        "hvac/2026-03": {
-          "count": 933,
-          "sources": {
-            "Mechanical Permit": 933
-          }
-        },
-        "plumbing/2026-03": {
-          "count": 1340,
-          "sources": {
-            "Plumbing Permit": 1340
-          }
-        },
-        "roofing/2026-03": {
-          "count": 129,
-          "sources": {
-            "description contains \"roof\"": 129
-          }
-        },
-        "solar/2026-03": {
-          "count": 33,
-          "sources": {
-            "Auxiliary Power": 22,
-            "description mentions solar/photovoltaic/PV": 11
-          }
-        },
-        "electrical/2026-04": {
-          "count": 1381,
-          "sources": {
-            "Electrical Permit": 1381
-          }
-        },
-        "hvac/2026-04": {
-          "count": 929,
-          "sources": {
-            "Mechanical Permit": 929
-          }
-        },
-        "plumbing/2026-04": {
-          "count": 1403,
-          "sources": {
-            "Plumbing Permit": 1403
-          }
-        },
-        "roofing/2026-04": {
-          "count": 148,
-          "sources": {
-            "description contains \"roof\"": 148
-          }
-        },
-        "solar/2026-04": {
-          "count": 79,
-          "sources": {
-            "Auxiliary Power": 47,
-            "description mentions solar/photovoltaic/PV": 32
-          }
-        },
-        "electrical/2026-05": {
-          "count": 1328,
-          "sources": {
-            "Electrical Permit": 1328
-          }
-        },
-        "hvac/2026-05": {
-          "count": 950,
-          "sources": {
-            "Mechanical Permit": 950
-          }
-        },
-        "plumbing/2026-05": {
-          "count": 1228,
-          "sources": {
-            "Plumbing Permit": 1228
-          }
-        },
-        "roofing/2026-05": {
-          "count": 114,
-          "sources": {
-            "description contains \"roof\"": 114
-          }
-        },
-        "solar/2026-05": {
-          "count": 48,
-          "sources": {
-            "Auxiliary Power": 24,
-            "description mentions solar/photovoltaic/PV": 24
-          }
-        },
-        "electrical/2026-06": {
-          "count": 1516,
-          "sources": {
-            "Electrical Permit": 1516
-          }
-        },
-        "hvac/2026-06": {
-          "count": 1114,
-          "sources": {
-            "Mechanical Permit": 1114
-          }
-        },
-        "plumbing/2026-06": {
-          "count": 1379,
-          "sources": {
-            "Plumbing Permit": 1379
-          }
-        },
-        "roofing/2026-06": {
-          "count": 191,
-          "sources": {
-            "description contains \"roof\"": 191
-          }
-        },
-        "solar/2026-06": {
-          "count": 79,
-          "sources": {
-            "description mentions solar/photovoltaic/PV": 40,
-            "Auxiliary Power": 39
-          }
-        },
-        "electrical/2026-07": {
-          "count": 1374,
-          "sources": {
-            "Electrical Permit": 1374
-          }
-        },
-        "hvac/2026-07": {
-          "count": 1225,
-          "sources": {
-            "Mechanical Permit": 1225
-          }
-        },
-        "plumbing/2026-07": {
-          "count": 1272,
-          "sources": {
-            "Plumbing Permit": 1272
-          }
-        },
-        "roofing/2026-07": {
-          "count": 150,
-          "sources": {
-            "description contains \"roof\"": 150
-          }
-        },
-        "solar/2026-07": {
-          "count": 93,
-          "sources": {
-            "Auxiliary Power": 64,
-            "description mentions solar/photovoltaic/PV": 29
-          }
-        },
-        "electrical/2026-08": {
-          "count": 1512,
-          "sources": {
-            "Electrical Permit": 1512
-          }
-        },
-        "hvac/2026-08": {
-          "count": 1035,
-          "sources": {
-            "Mechanical Permit": 1035
-          }
-        },
-        "plumbing/2026-08": {
-          "count": 1341,
-          "sources": {
-            "Plumbing Permit": 1341
-          }
-        },
-        "roofing/2026-08": {
-          "count": 144,
-          "sources": {
-            "description contains \"roof\"": 143,
-            "Roof": 1
-          }
-        },
-        "solar/2026-08": {
-          "count": 224,
-          "sources": {
-            "Auxiliary Power": 194,
-            "description mentions solar/photovoltaic/PV": 30
-          }
-        },
-        "electrical/2026-09": {
-          "count": 1634,
-          "sources": {
-            "Electrical Permit": 1634
-          }
-        },
-        "hvac/2026-09": {
-          "count": 1097,
-          "sources": {
-            "Mechanical Permit": 1097
-          }
-        },
-        "plumbing/2026-09": {
-          "count": 1296,
-          "sources": {
-            "Plumbing Permit": 1296
-          }
-        },
-        "roofing/2026-09": {
-          "count": 167,
-          "sources": {
-            "description contains \"roof\"": 167
-          }
-        },
-        "solar/2026-09": {
-          "count": 240,
-          "sources": {
-            "Auxiliary Power": 219,
-            "description mentions solar/photovoltaic/PV": 21
-          }
-        }
-      }
-    },
-    "san-antonio": {
-      "versions": {
-        "electrical": "trades-v2",
-        "foundation": "trades-v2",
-        "hvac": "trades-v2",
-        "plumbing": "trades-v2",
-        "roofing": "trades-v2",
-        "solar": "trades-v2",
-        "trees": "trades-v2"
-      },
-      "derived": {
-        "electrical": {
-          "months": 13,
-          "total": 10390,
-          "mean": 799.2,
-          "latest": {
-            "month": "2026-09",
-            "n": 818
-          },
-          "peak": {
-            "month": "2026-03",
-            "n": 925
-          },
-          "trough": {
-            "month": "2025-12",
-            "n": 675
-          },
-          "halfOverHalfPct": 2.2
-        },
-        "foundation": {
-          "months": 13,
-          "total": 3463,
-          "mean": 266.4,
-          "latest": {
-            "month": "2026-09",
-            "n": 230
-          },
-          "peak": {
-            "month": "2025-10",
-            "n": 312
-          },
-          "trough": {
-            "month": "2025-09",
-            "n": 227
-          },
-          "halfOverHalfPct": 1
-        },
-        "hvac": {
-          "months": 13,
-          "total": 11976,
-          "mean": 921.2,
-          "latest": {
-            "month": "2026-09",
-            "n": 1067
-          },
-          "peak": {
-            "month": "2026-06",
-            "n": 1195
-          },
-          "trough": {
-            "month": "2025-12",
-            "n": 639
-          },
-          "halfOverHalfPct": 35.8
-        },
-        "plumbing": {
-          "months": 13,
-          "total": 24811,
-          "mean": 1908.5,
-          "latest": {
-            "month": "2026-09",
-            "n": 1731
-          },
-          "peak": {
-            "month": "2025-10",
-            "n": 2175
-          },
-          "trough": {
-            "month": "2025-12",
-            "n": 1579
-          },
-          "halfOverHalfPct": 3.7
-        },
-        "roofing": {
-          "months": 13,
-          "total": 5340,
-          "mean": 410.8,
-          "latest": {
-            "month": "2026-09",
-            "n": 370
-          },
-          "peak": {
-            "month": "2025-09",
-            "n": 715
-          },
-          "trough": {
-            "month": "2025-12",
-            "n": 269
-          },
-          "halfOverHalfPct": -2.6
-        },
-        "solar": {
-          "months": 13,
-          "total": 734,
-          "mean": 56.5,
-          "latest": {
-            "month": "2026-09",
-            "n": 51
-          },
-          "peak": {
-            "month": "2025-09",
-            "n": 114
-          },
-          "trough": {
-            "month": "2026-05",
-            "n": 32
-          },
-          "halfOverHalfPct": -41.7
-        },
-        "trees": {
-          "months": 13,
-          "total": 3489,
-          "mean": 268.4,
-          "latest": {
-            "month": "2026-09",
-            "n": 580
-          },
-          "peak": {
-            "month": "2026-09",
-            "n": 580
-          },
-          "trough": {
-            "month": "2025-12",
-            "n": 116
-          },
-          "halfOverHalfPct": 125.6
-        }
-      },
-      "figures": {
-        "electrical/2025-09": {
-          "count": 867,
-          "sources": {
-            "Electrical General Permit": 769,
-            "Electrical TOPS Permit": 126,
-            "Electrical TML Permit": 62,
-            "Electrical Reconnect Permit": 23,
-            "Electrical Completion Permit": 12,
-            "LSR Electrical Permit": 2
-          }
-        },
-        "foundation/2025-09": {
-          "count": 227,
-          "sources": {
-            "Foundation Repair Permit": 225,
-            "Comm Foundation Permit": 2
-          }
-        },
-        "hvac/2025-09": {
-          "count": 1066,
-          "sources": {
-            "Mechanical Permit": 923,
-            "LSR Mechanical Permit": 107,
-            "Mechanical Completion Permit": 36
-          }
-        },
-        "plumbing/2025-09": {
-          "count": 2103,
-          "sources": {
-            "Plumbing General Permit": 874,
-            "Plumbing Irrigation Permit": 551,
-            "LSR Plumbing Permit": 368,
-            "Plumbing Gas Permit": 253,
-            "Plumbing Sewer Permit": 238,
-            "Plumbing Backflow Permit": 32,
-            "Plumbing Medical Gas Permit": 14,
-            "Plumbing Completion Permit": 11
-          }
-        },
-        "roofing/2025-09": {
-          "count": 715,
-          "sources": {
-            "Re-Roof Permit": 715
-          }
-        },
-        "solar/2025-09": {
-          "count": 114,
-          "sources": {
-            "Solar - Photovoltaic Permit": 114
-          }
-        },
-        "trees/2025-09": {
-          "count": 196,
-          "sources": {
-            "Tree Affidavit Permit": 157,
-            "Tree Permit": 39
-          }
-        },
-        "electrical/2025-10": {
-          "count": 856,
-          "sources": {
-            "Electrical General Permit": 739,
-            "Electrical TOPS Permit": 134,
-            "Electrical TML Permit": 42,
-            "Electrical Reconnect Permit": 18,
-            "Electrical Completion Permit": 10
-          }
-        },
-        "foundation/2025-10": {
-          "count": 312,
-          "sources": {
-            "Foundation Repair Permit": 309,
-            "Comm Foundation Permit": 3
-          }
-        },
-        "hvac/2025-10": {
-          "count": 879,
-          "sources": {
-            "Mechanical Permit": 793,
-            "LSR Mechanical Permit": 80,
-            "Mechanical Completion Permit": 6
-          }
-        },
-        "plumbing/2025-10": {
-          "count": 2175,
-          "sources": {
-            "Plumbing General Permit": 763,
-            "Plumbing Irrigation Permit": 540,
-            "LSR Plumbing Permit": 436,
-            "Plumbing Gas Permit": 293,
-            "Plumbing Sewer Permit": 233,
-            "Plumbing Backflow Permit": 40,
-            "Plumbing Completion Permit": 22,
-            "Plumbing Medical Gas Permit": 10
-          }
-        },
-        "roofing/2025-10": {
-          "count": 587,
-          "sources": {
-            "Re-Roof Permit": 587
-          }
-        },
-        "solar/2025-10": {
-          "count": 107,
-          "sources": {
-            "Solar - Photovoltaic Permit": 107
-          }
-        },
-        "trees/2025-10": {
-          "count": 188,
-          "sources": {
-            "Tree Affidavit Permit": 157,
-            "Tree Permit": 31
-          }
-        },
-        "electrical/2025-11": {
-          "count": 724,
-          "sources": {
-            "Electrical General Permit": 608,
-            "Electrical TOPS Permit": 132,
-            "Electrical TML Permit": 37,
-            "Electrical Reconnect Permit": 20,
-            "Electrical Completion Permit": 11,
-            "LSR Electrical Permit": 4
-          }
-        },
-        "foundation/2025-11": {
-          "count": 242,
-          "sources": {
-            "Foundation Repair Permit": 242
-          }
-        },
-        "hvac/2025-11": {
-          "count": 663,
-          "sources": {
-            "Mechanical Permit": 586,
-            "LSR Mechanical Permit": 70,
-            "Mechanical Completion Permit": 7
-          }
-        },
-        "plumbing/2025-11": {
-          "count": 1724,
-          "sources": {
-            "Plumbing General Permit": 725,
-            "Plumbing Irrigation Permit": 386,
-            "LSR Plumbing Permit": 295,
-            "Plumbing Sewer Permit": 217,
-            "Plumbing Gas Permit": 213,
-            "Plumbing Backflow Permit": 28,
-            "Plumbing Medical Gas Permit": 12,
-            "Plumbing Completion Permit": 9
-          }
-        },
-        "roofing/2025-11": {
-          "count": 343,
-          "sources": {
-            "Re-Roof Permit": 343
-          }
-        },
-        "solar/2025-11": {
-          "count": 86,
-          "sources": {
-            "Solar - Photovoltaic Permit": 86
-          }
-        },
-        "trees/2025-11": {
-          "count": 130,
-          "sources": {
-            "Tree Affidavit Permit": 107,
-            "Tree Permit": 23
-          }
-        },
-        "electrical/2025-12": {
-          "count": 675,
-          "sources": {
-            "Electrical General Permit": 575,
-            "Electrical TOPS Permit": 104,
-            "Electrical TML Permit": 54,
-            "Electrical Reconnect Permit": 20,
-            "Electrical Completion Permit": 13
-          }
-        },
-        "foundation/2025-12": {
-          "count": 253,
-          "sources": {
-            "Foundation Repair Permit": 253
-          }
-        },
-        "hvac/2025-12": {
-          "count": 639,
-          "sources": {
-            "Mechanical Permit": 581,
-            "LSR Mechanical Permit": 49,
-            "Mechanical Completion Permit": 9
-          }
-        },
-        "plumbing/2025-12": {
-          "count": 1579,
-          "sources": {
-            "Plumbing General Permit": 691,
-            "Plumbing Irrigation Permit": 392,
-            "Plumbing Gas Permit": 202,
-            "Plumbing Sewer Permit": 202,
-            "LSR Plumbing Permit": 189,
-            "Plumbing Backflow Permit": 26,
-            "Plumbing Completion Permit": 21,
-            "Plumbing Medical Gas Permit": 4
-          }
-        },
-        "roofing/2025-12": {
-          "count": 269,
-          "sources": {
-            "Re-Roof Permit": 269
-          }
-        },
-        "solar/2025-12": {
-          "count": 50,
-          "sources": {
-            "Solar - Photovoltaic Permit": 50
-          }
-        },
-        "trees/2025-12": {
-          "count": 116,
-          "sources": {
-            "Tree Affidavit Permit": 98,
-            "Tree Permit": 18
-          }
-        },
-        "electrical/2026-01": {
-          "count": 760,
-          "sources": {
-            "Electrical General Permit": 663,
-            "Electrical TOPS Permit": 110,
-            "Electrical TML Permit": 55,
-            "Electrical Reconnect Permit": 20,
-            "Electrical Completion Permit": 13
-          }
-        },
-        "foundation/2026-01": {
-          "count": 251,
-          "sources": {
-            "Foundation Repair Permit": 250,
-            "Comm Foundation Permit": 1
-          }
-        },
-        "hvac/2026-01": {
-          "count": 728,
-          "sources": {
-            "Mechanical Permit": 673,
-            "LSR Mechanical Permit": 51,
-            "Mechanical Completion Permit": 4
-          }
-        },
-        "plumbing/2026-01": {
-          "count": 1812,
-          "sources": {
-            "Plumbing General Permit": 828,
-            "Plumbing Irrigation Permit": 449,
-            "LSR Plumbing Permit": 254,
-            "Plumbing Sewer Permit": 223,
-            "Plumbing Gas Permit": 201,
-            "Plumbing Backflow Permit": 27,
-            "Plumbing Medical Gas Permit": 12,
-            "Plumbing Completion Permit": 11
-          }
-        },
-        "roofing/2026-01": {
-          "count": 270,
-          "sources": {
-            "Re-Roof Permit": 270
-          }
-        },
-        "solar/2026-01": {
-          "count": 43,
-          "sources": {
-            "Solar - Photovoltaic Permit": 43
-          }
-        },
-        "trees/2026-01": {
-          "count": 164,
-          "sources": {
-            "Tree Affidavit Permit": 140,
-            "Tree Permit": 24
-          }
-        },
-        "electrical/2026-02": {
-          "count": 800,
-          "sources": {
-            "Electrical General Permit": 693,
-            "Electrical TOPS Permit": 101,
-            "Electrical TML Permit": 34,
-            "Electrical Completion Permit": 18,
-            "Electrical Reconnect Permit": 18,
-            "LSR Electrical Permit": 1
-          }
-        },
-        "foundation/2026-02": {
-          "count": 301,
-          "sources": {
-            "Foundation Repair Permit": 300,
-            "Comm Foundation Permit": 1
-          }
-        },
-        "hvac/2026-02": {
-          "count": 659,
-          "sources": {
-            "Mechanical Permit": 594,
-            "LSR Mechanical Permit": 59,
-            "Mechanical Completion Permit": 6
-          }
-        },
-        "plumbing/2026-02": {
-          "count": 1790,
-          "sources": {
-            "Plumbing General Permit": 787,
-            "Plumbing Irrigation Permit": 482,
-            "Plumbing Gas Permit": 216,
-            "LSR Plumbing Permit": 215,
-            "Plumbing Sewer Permit": 200,
-            "Plumbing Backflow Permit": 30,
-            "Plumbing Medical Gas Permit": 11,
-            "Plumbing Completion Permit": 5
-          }
-        },
-        "roofing/2026-02": {
-          "count": 328,
-          "sources": {
-            "Re-Roof Permit": 328
-          }
-        },
-        "solar/2026-02": {
-          "count": 34,
-          "sources": {
-            "Solar - Photovoltaic Permit": 34
-          }
-        },
-        "trees/2026-02": {
-          "count": 195,
-          "sources": {
-            "Tree Affidavit Permit": 128,
-            "Tree Permit": 67
-          }
-        },
-        "electrical/2026-03": {
-          "count": 925,
-          "sources": {
-            "Electrical General Permit": 807,
-            "Electrical TOPS Permit": 131,
-            "Electrical TML Permit": 44,
-            "Electrical Reconnect Permit": 26,
-            "Electrical Completion Permit": 14,
-            "LSR Electrical Permit": 1
-          }
-        },
-        "foundation/2026-03": {
-          "count": 275,
-          "sources": {
-            "Foundation Repair Permit": 273,
-            "Comm Foundation Permit": 2
-          }
-        },
-        "hvac/2026-03": {
-          "count": 1049,
-          "sources": {
-            "Mechanical Permit": 941,
-            "LSR Mechanical Permit": 96,
-            "Mechanical Completion Permit": 12
-          }
-        },
-        "plumbing/2026-03": {
-          "count": 2030,
-          "sources": {
-            "Plumbing General Permit": 871,
-            "Plumbing Irrigation Permit": 624,
-            "Plumbing Sewer Permit": 250,
-            "LSR Plumbing Permit": 193,
-            "Plumbing Gas Permit": 189,
-            "Plumbing Backflow Permit": 49,
-            "Plumbing Medical Gas Permit": 10,
-            "Plumbing Completion Permit": 9
-          }
-        },
-        "roofing/2026-03": {
-          "count": 382,
-          "sources": {
-            "Re-Roof Permit": 382
-          }
-        },
-        "solar/2026-03": {
-          "count": 47,
-          "sources": {
-            "Solar - Photovoltaic Permit": 47
-          }
-        },
-        "trees/2026-03": {
-          "count": 269,
-          "sources": {
-            "Tree Affidavit Permit": 204,
-            "Tree Permit": 65
-          }
-        },
-        "electrical/2026-04": {
-          "count": 780,
-          "sources": {
-            "Electrical General Permit": 676,
-            "Electrical TOPS Permit": 98,
-            "Electrical TML Permit": 25,
-            "Electrical Reconnect Permit": 17,
-            "Electrical Completion Permit": 10
-          }
-        },
-        "foundation/2026-04": {
-          "count": 295,
-          "sources": {
-            "Foundation Repair Permit": 293,
-            "Comm Foundation Permit": 2
-          }
-        },
-        "hvac/2026-04": {
-          "count": 807,
-          "sources": {
-            "Mechanical Permit": 752,
-            "LSR Mechanical Permit": 51,
-            "Mechanical Completion Permit": 4
-          }
-        },
-        "plumbing/2026-04": {
-          "count": 1947,
-          "sources": {
-            "Plumbing General Permit": 782,
-            "Plumbing Irrigation Permit": 649,
-            "Plumbing Gas Permit": 222,
-            "LSR Plumbing Permit": 191,
-            "Plumbing Sewer Permit": 179,
-            "Plumbing Backflow Permit": 39,
-            "Plumbing Completion Permit": 8,
-            "Plumbing Medical Gas Permit": 6
-          }
-        },
-        "roofing/2026-04": {
-          "count": 420,
-          "sources": {
-            "Re-Roof Permit": 420
-          }
-        },
-        "solar/2026-04": {
-          "count": 53,
-          "sources": {
-            "Solar - Photovoltaic Permit": 53
-          }
-        },
-        "trees/2026-04": {
-          "count": 236,
-          "sources": {
-            "Tree Affidavit Permit": 160,
-            "Tree Permit": 76
-          }
-        },
-        "electrical/2026-05": {
-          "count": 769,
-          "sources": {
-            "Electrical General Permit": 696,
-            "Electrical TOPS Permit": 91,
-            "Electrical TML Permit": 35,
-            "Electrical Reconnect Permit": 12,
-            "Electrical Completion Permit": 10,
-            "LSR Electrical Permit": 1
-          }
-        },
-        "foundation/2026-05": {
-          "count": 255,
-          "sources": {
-            "Foundation Repair Permit": 253,
-            "Comm Foundation Permit": 2
-          }
-        },
-        "hvac/2026-05": {
-          "count": 900,
-          "sources": {
-            "Mechanical Permit": 840,
-            "LSR Mechanical Permit": 58,
-            "Mechanical Completion Permit": 2
-          }
-        },
-        "plumbing/2026-05": {
-          "count": 1890,
-          "sources": {
-            "Plumbing General Permit": 720,
-            "Plumbing Irrigation Permit": 703,
-            "Plumbing Gas Permit": 215,
-            "Plumbing Sewer Permit": 208,
-            "LSR Plumbing Permit": 183,
-            "Plumbing Backflow Permit": 26,
-            "Plumbing Completion Permit": 11,
-            "Plumbing Medical Gas Permit": 8
-          }
-        },
-        "roofing/2026-05": {
-          "count": 424,
-          "sources": {
-            "Re-Roof Permit": 424
-          }
-        },
-        "solar/2026-05": {
-          "count": 32,
-          "sources": {
-            "Solar - Photovoltaic Permit": 32
-          }
-        },
-        "trees/2026-05": {
-          "count": 299,
-          "sources": {
-            "Tree Affidavit Permit": 235,
-            "Tree Permit": 64
-          }
-        },
-        "electrical/2026-06": {
-          "count": 728,
-          "sources": {
-            "Electrical General Permit": 635,
-            "Electrical TOPS Permit": 74,
-            "Electrical TML Permit": 33,
-            "Electrical Reconnect Permit": 19,
-            "Electrical Completion Permit": 16,
-            "LSR Electrical Permit": 1
-          }
-        },
-        "foundation/2026-06": {
-          "count": 250,
-          "sources": {
-            "Foundation Repair Permit": 247,
-            "Comm Foundation Permit": 3
-          }
-        },
-        "hvac/2026-06": {
-          "count": 1195,
-          "sources": {
-            "Mechanical Permit": 1088,
-            "LSR Mechanical Permit": 101,
-            "Mechanical Completion Permit": 6
-          }
-        },
-        "plumbing/2026-06": {
-          "count": 1950,
-          "sources": {
-            "Plumbing General Permit": 779,
-            "Plumbing Irrigation Permit": 644,
-            "LSR Plumbing Permit": 214,
-            "Plumbing Sewer Permit": 213,
-            "Plumbing Gas Permit": 190,
-            "Plumbing Backflow Permit": 30,
-            "Plumbing Completion Permit": 9,
-            "Plumbing Medical Gas Permit": 5
-          }
-        },
-        "roofing/2026-06": {
-          "count": 456,
-          "sources": {
-            "Re-Roof Permit": 456
-          }
-        },
-        "solar/2026-06": {
-          "count": 43,
-          "sources": {
-            "Solar - Photovoltaic Permit": 43
-          }
-        },
-        "trees/2026-06": {
-          "count": 289,
-          "sources": {
-            "Tree Affidavit Permit": 241,
-            "Tree Permit": 48
-          }
-        },
-        "electrical/2026-07": {
-          "count": 900,
-          "sources": {
-            "Electrical General Permit": 792,
-            "Electrical TOPS Permit": 73,
-            "Electrical TML Permit": 44,
-            "Electrical Reconnect Permit": 39,
-            "Electrical Completion Permit": 6
-          }
-        },
-        "foundation/2026-07": {
-          "count": 291,
-          "sources": {
-            "Foundation Repair Permit": 291
-          }
-        },
-        "hvac/2026-07": {
-          "count": 1194,
-          "sources": {
-            "Mechanical Permit": 1095,
-            "LSR Mechanical Permit": 94,
-            "Mechanical Completion Permit": 5
-          }
-        },
-        "plumbing/2026-07": {
-          "count": 2097,
-          "sources": {
-            "Plumbing General Permit": 902,
-            "Plumbing Irrigation Permit": 599,
-            "Plumbing Gas Permit": 232,
-            "LSR Plumbing Permit": 208,
-            "Plumbing Sewer Permit": 198,
-            "Plumbing Backflow Permit": 66,
-            "Plumbing Completion Permit": 12,
-            "Plumbing Medical Gas Permit": 6
-          }
-        },
-        "roofing/2026-07": {
-          "count": 382,
-          "sources": {
-            "Re-Roof Permit": 382
-          }
-        },
-        "solar/2026-07": {
-          "count": 41,
-          "sources": {
-            "Solar - Photovoltaic Permit": 41
-          }
-        },
-        "trees/2026-07": {
-          "count": 376,
-          "sources": {
-            "Tree Affidavit Permit": 316,
-            "Tree Permit": 60
-          }
-        },
-        "electrical/2026-08": {
-          "count": 788,
-          "sources": {
-            "Electrical General Permit": 709,
-            "Electrical TOPS Permit": 69,
-            "Electrical TML Permit": 38,
-            "Electrical Reconnect Permit": 13,
-            "Electrical Completion Permit": 12,
-            "LSR Electrical Permit": 2
-          }
-        },
-        "foundation/2026-08": {
-          "count": 281,
-          "sources": {
-            "Foundation Repair Permit": 279,
-            "Comm Foundation Permit": 2
-          }
-        },
-        "hvac/2026-08": {
-          "count": 1130,
-          "sources": {
-            "Mechanical Permit": 1029,
-            "LSR Mechanical Permit": 82,
-            "Mechanical Completion Permit": 19
-          }
-        },
-        "plumbing/2026-08": {
-          "count": 1983,
-          "sources": {
-            "Plumbing General Permit": 855,
-            "Plumbing Irrigation Permit": 583,
-            "Plumbing Gas Permit": 211,
-            "LSR Plumbing Permit": 210,
-            "Plumbing Sewer Permit": 199,
-            "Plumbing Backflow Permit": 38,
-            "Plumbing Completion Permit": 12,
-            "Plumbing Medical Gas Permit": 2
-          }
-        },
-        "roofing/2026-08": {
-          "count": 394,
-          "sources": {
-            "Re-Roof Permit": 394
-          }
-        },
-        "solar/2026-08": {
-          "count": 33,
-          "sources": {
-            "Solar - Photovoltaic Permit": 33
-          }
-        },
-        "trees/2026-08": {
-          "count": 451,
-          "sources": {
-            "Tree Affidavit Permit": 430,
-            "Tree Permit": 21
-          }
-        },
-        "electrical/2026-09": {
-          "count": 818,
-          "sources": {
-            "Electrical General Permit": 736,
-            "Electrical TOPS Permit": 78,
-            "Electrical TML Permit": 27,
-            "Electrical Reconnect Permit": 17,
-            "Electrical Completion Permit": 13
-          }
-        },
-        "foundation/2026-09": {
-          "count": 230,
-          "sources": {
-            "Foundation Repair Permit": 230
-          }
-        },
-        "hvac/2026-09": {
-          "count": 1067,
-          "sources": {
-            "Mechanical Permit": 971,
-            "LSR Mechanical Permit": 85,
-            "Mechanical Completion Permit": 11
-          }
-        },
-        "plumbing/2026-09": {
-          "count": 1731,
-          "sources": {
-            "Plumbing General Permit": 749,
-            "Plumbing Irrigation Permit": 450,
-            "Plumbing Gas Permit": 248,
-            "LSR Plumbing Permit": 177,
-            "Plumbing Sewer Permit": 175,
-            "Plumbing Backflow Permit": 34,
-            "Plumbing Medical Gas Permit": 10,
-            "Plumbing Completion Permit": 8
-          }
-        },
-        "roofing/2026-09": {
-          "count": 370,
-          "sources": {
-            "Re-Roof Permit": 370
-          }
-        },
-        "solar/2026-09": {
-          "count": 51,
-          "sources": {
-            "Solar - Photovoltaic Permit": 51
-          }
-        },
-        "trees/2026-09": {
-          "count": 580,
-          "sources": {
-            "Tree Affidavit Permit": 531,
-            "Tree Permit": 49
-          }
-        }
-      }
-    }
-  },
-  "after": {
     "austin": {
       "versions": {
         "electrical": "trades-v3",
@@ -2319,6 +655,1626 @@
           "count": 145,
           "sources": {
             "work class Auxiliary Power, description mentions a battery or storage": 145
+          }
+        },
+        "hvac/2026-08": {
+          "count": 1035,
+          "sources": {
+            "Mechanical Permit": 1035
+          }
+        },
+        "plumbing/2026-08": {
+          "count": 1341,
+          "sources": {
+            "Plumbing Permit": 1341
+          }
+        },
+        "roofing/2026-08": {
+          "count": 144,
+          "sources": {
+            "description contains \"roof\"": 143,
+            "Roof": 1
+          }
+        },
+        "solar/2026-08": {
+          "count": 80,
+          "sources": {
+            "description mentions solar/photovoltaic/PV": 80
+          }
+        },
+        "__all-trades__/2026-09": {
+          "count": 4090,
+          "sources": {}
+        },
+        "electrical/2026-09": {
+          "count": 1634,
+          "sources": {
+            "Electrical Permit": 1634
+          }
+        },
+        "energy_storage/2026-09": {
+          "count": 188,
+          "sources": {
+            "work class Auxiliary Power, description mentions a battery or storage": 188
+          }
+        },
+        "hvac/2026-09": {
+          "count": 1097,
+          "sources": {
+            "Mechanical Permit": 1097
+          }
+        },
+        "plumbing/2026-09": {
+          "count": 1296,
+          "sources": {
+            "Plumbing Permit": 1296
+          }
+        },
+        "roofing/2026-09": {
+          "count": 167,
+          "sources": {
+            "description contains \"roof\"": 167
+          }
+        },
+        "solar/2026-09": {
+          "count": 62,
+          "sources": {
+            "description mentions solar/photovoltaic/PV": 62
+          }
+        }
+      }
+    },
+    "san-antonio": {
+      "versions": {
+        "electrical": "trades-v3",
+        "foundation": "trades-v3",
+        "hvac": "trades-v3",
+        "plumbing": "trades-v3",
+        "roofing": "trades-v3",
+        "solar": "trades-v3",
+        "trees": "trades-v3",
+        "__all-trades__": "trades-v3"
+      },
+      "derived": {
+        "__all-trades__": {
+          "months": 13,
+          "total": 57140,
+          "mean": 4395.4,
+          "latest": {
+            "month": "2026-09",
+            "n": 4694
+          },
+          "peak": {
+            "month": "2026-07",
+            "n": 5061
+          },
+          "trough": {
+            "month": "2025-12",
+            "n": 3386
+          },
+          "halfOverHalfPct": 14.4
+        },
+        "electrical": {
+          "months": 13,
+          "total": 10390,
+          "mean": 799.2,
+          "latest": {
+            "month": "2026-09",
+            "n": 818
+          },
+          "peak": {
+            "month": "2026-03",
+            "n": 925
+          },
+          "trough": {
+            "month": "2025-12",
+            "n": 675
+          },
+          "halfOverHalfPct": 2.2
+        },
+        "foundation": {
+          "months": 13,
+          "total": 3463,
+          "mean": 266.4,
+          "latest": {
+            "month": "2026-09",
+            "n": 230
+          },
+          "peak": {
+            "month": "2025-10",
+            "n": 312
+          },
+          "trough": {
+            "month": "2025-09",
+            "n": 227
+          },
+          "halfOverHalfPct": 1
+        },
+        "hvac": {
+          "months": 13,
+          "total": 11976,
+          "mean": 921.2,
+          "latest": {
+            "month": "2026-09",
+            "n": 1067
+          },
+          "peak": {
+            "month": "2026-06",
+            "n": 1195
+          },
+          "trough": {
+            "month": "2025-12",
+            "n": 639
+          },
+          "halfOverHalfPct": 35.8
+        },
+        "plumbing": {
+          "months": 13,
+          "total": 24811,
+          "mean": 1908.5,
+          "latest": {
+            "month": "2026-09",
+            "n": 1731
+          },
+          "peak": {
+            "month": "2025-10",
+            "n": 2175
+          },
+          "trough": {
+            "month": "2025-12",
+            "n": 1579
+          },
+          "halfOverHalfPct": 3.7
+        },
+        "roofing": {
+          "months": 13,
+          "total": 5340,
+          "mean": 410.8,
+          "latest": {
+            "month": "2026-09",
+            "n": 370
+          },
+          "peak": {
+            "month": "2025-09",
+            "n": 715
+          },
+          "trough": {
+            "month": "2025-12",
+            "n": 269
+          },
+          "halfOverHalfPct": -2.6
+        },
+        "solar": {
+          "months": 13,
+          "total": 734,
+          "mean": 56.5,
+          "latest": {
+            "month": "2026-09",
+            "n": 51
+          },
+          "peak": {
+            "month": "2025-09",
+            "n": 114
+          },
+          "trough": {
+            "month": "2026-05",
+            "n": 32
+          },
+          "halfOverHalfPct": -41.7
+        },
+        "trees": {
+          "months": 13,
+          "total": 3489,
+          "mean": 268.4,
+          "latest": {
+            "month": "2026-09",
+            "n": 580
+          },
+          "peak": {
+            "month": "2026-09",
+            "n": 580
+          },
+          "trough": {
+            "month": "2025-12",
+            "n": 116
+          },
+          "halfOverHalfPct": 125.6
+        }
+      },
+      "figures": {
+        "__all-trades__/2025-09": {
+          "count": 4958,
+          "sources": {}
+        },
+        "electrical/2025-09": {
+          "count": 867,
+          "sources": {
+            "Electrical General Permit": 769,
+            "Electrical TOPS Permit": 126,
+            "Electrical TML Permit": 62,
+            "Electrical Reconnect Permit": 23,
+            "Electrical Completion Permit": 12,
+            "LSR Electrical Permit": 2
+          }
+        },
+        "foundation/2025-09": {
+          "count": 227,
+          "sources": {
+            "Foundation Repair Permit": 225,
+            "Comm Foundation Permit": 2
+          }
+        },
+        "hvac/2025-09": {
+          "count": 1066,
+          "sources": {
+            "Mechanical Permit": 923,
+            "LSR Mechanical Permit": 107,
+            "Mechanical Completion Permit": 36
+          }
+        },
+        "plumbing/2025-09": {
+          "count": 2103,
+          "sources": {
+            "Plumbing General Permit": 874,
+            "Plumbing Irrigation Permit": 551,
+            "LSR Plumbing Permit": 368,
+            "Plumbing Gas Permit": 253,
+            "Plumbing Sewer Permit": 238,
+            "Plumbing Backflow Permit": 32,
+            "Plumbing Medical Gas Permit": 14,
+            "Plumbing Completion Permit": 11
+          }
+        },
+        "roofing/2025-09": {
+          "count": 715,
+          "sources": {
+            "Re-Roof Permit": 715
+          }
+        },
+        "solar/2025-09": {
+          "count": 114,
+          "sources": {
+            "Solar - Photovoltaic Permit": 114
+          }
+        },
+        "trees/2025-09": {
+          "count": 196,
+          "sources": {
+            "Tree Affidavit Permit": 157,
+            "Tree Permit": 39
+          }
+        },
+        "__all-trades__/2025-10": {
+          "count": 4866,
+          "sources": {}
+        },
+        "electrical/2025-10": {
+          "count": 856,
+          "sources": {
+            "Electrical General Permit": 739,
+            "Electrical TOPS Permit": 134,
+            "Electrical TML Permit": 42,
+            "Electrical Reconnect Permit": 18,
+            "Electrical Completion Permit": 10
+          }
+        },
+        "foundation/2025-10": {
+          "count": 312,
+          "sources": {
+            "Foundation Repair Permit": 309,
+            "Comm Foundation Permit": 3
+          }
+        },
+        "hvac/2025-10": {
+          "count": 879,
+          "sources": {
+            "Mechanical Permit": 793,
+            "LSR Mechanical Permit": 80,
+            "Mechanical Completion Permit": 6
+          }
+        },
+        "plumbing/2025-10": {
+          "count": 2175,
+          "sources": {
+            "Plumbing General Permit": 763,
+            "Plumbing Irrigation Permit": 540,
+            "LSR Plumbing Permit": 436,
+            "Plumbing Gas Permit": 293,
+            "Plumbing Sewer Permit": 233,
+            "Plumbing Backflow Permit": 40,
+            "Plumbing Completion Permit": 22,
+            "Plumbing Medical Gas Permit": 10
+          }
+        },
+        "roofing/2025-10": {
+          "count": 587,
+          "sources": {
+            "Re-Roof Permit": 587
+          }
+        },
+        "solar/2025-10": {
+          "count": 107,
+          "sources": {
+            "Solar - Photovoltaic Permit": 107
+          }
+        },
+        "trees/2025-10": {
+          "count": 188,
+          "sources": {
+            "Tree Affidavit Permit": 157,
+            "Tree Permit": 31
+          }
+        },
+        "__all-trades__/2025-11": {
+          "count": 3675,
+          "sources": {}
+        },
+        "electrical/2025-11": {
+          "count": 724,
+          "sources": {
+            "Electrical General Permit": 608,
+            "Electrical TOPS Permit": 132,
+            "Electrical TML Permit": 37,
+            "Electrical Reconnect Permit": 20,
+            "Electrical Completion Permit": 11,
+            "LSR Electrical Permit": 4
+          }
+        },
+        "foundation/2025-11": {
+          "count": 242,
+          "sources": {
+            "Foundation Repair Permit": 242
+          }
+        },
+        "hvac/2025-11": {
+          "count": 663,
+          "sources": {
+            "Mechanical Permit": 586,
+            "LSR Mechanical Permit": 70,
+            "Mechanical Completion Permit": 7
+          }
+        },
+        "plumbing/2025-11": {
+          "count": 1724,
+          "sources": {
+            "Plumbing General Permit": 725,
+            "Plumbing Irrigation Permit": 386,
+            "LSR Plumbing Permit": 295,
+            "Plumbing Sewer Permit": 217,
+            "Plumbing Gas Permit": 213,
+            "Plumbing Backflow Permit": 28,
+            "Plumbing Medical Gas Permit": 12,
+            "Plumbing Completion Permit": 9
+          }
+        },
+        "roofing/2025-11": {
+          "count": 343,
+          "sources": {
+            "Re-Roof Permit": 343
+          }
+        },
+        "solar/2025-11": {
+          "count": 86,
+          "sources": {
+            "Solar - Photovoltaic Permit": 86
+          }
+        },
+        "trees/2025-11": {
+          "count": 130,
+          "sources": {
+            "Tree Affidavit Permit": 107,
+            "Tree Permit": 23
+          }
+        },
+        "__all-trades__/2025-12": {
+          "count": 3386,
+          "sources": {}
+        },
+        "electrical/2025-12": {
+          "count": 675,
+          "sources": {
+            "Electrical General Permit": 575,
+            "Electrical TOPS Permit": 104,
+            "Electrical TML Permit": 54,
+            "Electrical Reconnect Permit": 20,
+            "Electrical Completion Permit": 13
+          }
+        },
+        "foundation/2025-12": {
+          "count": 253,
+          "sources": {
+            "Foundation Repair Permit": 253
+          }
+        },
+        "hvac/2025-12": {
+          "count": 639,
+          "sources": {
+            "Mechanical Permit": 581,
+            "LSR Mechanical Permit": 49,
+            "Mechanical Completion Permit": 9
+          }
+        },
+        "plumbing/2025-12": {
+          "count": 1579,
+          "sources": {
+            "Plumbing General Permit": 691,
+            "Plumbing Irrigation Permit": 392,
+            "Plumbing Gas Permit": 202,
+            "Plumbing Sewer Permit": 202,
+            "LSR Plumbing Permit": 189,
+            "Plumbing Backflow Permit": 26,
+            "Plumbing Completion Permit": 21,
+            "Plumbing Medical Gas Permit": 4
+          }
+        },
+        "roofing/2025-12": {
+          "count": 269,
+          "sources": {
+            "Re-Roof Permit": 269
+          }
+        },
+        "solar/2025-12": {
+          "count": 50,
+          "sources": {
+            "Solar - Photovoltaic Permit": 50
+          }
+        },
+        "trees/2025-12": {
+          "count": 116,
+          "sources": {
+            "Tree Affidavit Permit": 98,
+            "Tree Permit": 18
+          }
+        },
+        "__all-trades__/2026-01": {
+          "count": 3746,
+          "sources": {}
+        },
+        "electrical/2026-01": {
+          "count": 760,
+          "sources": {
+            "Electrical General Permit": 663,
+            "Electrical TOPS Permit": 110,
+            "Electrical TML Permit": 55,
+            "Electrical Reconnect Permit": 20,
+            "Electrical Completion Permit": 13
+          }
+        },
+        "foundation/2026-01": {
+          "count": 251,
+          "sources": {
+            "Foundation Repair Permit": 250,
+            "Comm Foundation Permit": 1
+          }
+        },
+        "hvac/2026-01": {
+          "count": 728,
+          "sources": {
+            "Mechanical Permit": 673,
+            "LSR Mechanical Permit": 51,
+            "Mechanical Completion Permit": 4
+          }
+        },
+        "plumbing/2026-01": {
+          "count": 1812,
+          "sources": {
+            "Plumbing General Permit": 828,
+            "Plumbing Irrigation Permit": 449,
+            "LSR Plumbing Permit": 254,
+            "Plumbing Sewer Permit": 223,
+            "Plumbing Gas Permit": 201,
+            "Plumbing Backflow Permit": 27,
+            "Plumbing Medical Gas Permit": 12,
+            "Plumbing Completion Permit": 11
+          }
+        },
+        "roofing/2026-01": {
+          "count": 270,
+          "sources": {
+            "Re-Roof Permit": 270
+          }
+        },
+        "solar/2026-01": {
+          "count": 43,
+          "sources": {
+            "Solar - Photovoltaic Permit": 43
+          }
+        },
+        "trees/2026-01": {
+          "count": 164,
+          "sources": {
+            "Tree Affidavit Permit": 140,
+            "Tree Permit": 24
+          }
+        },
+        "__all-trades__/2026-02": {
+          "count": 3830,
+          "sources": {}
+        },
+        "electrical/2026-02": {
+          "count": 800,
+          "sources": {
+            "Electrical General Permit": 693,
+            "Electrical TOPS Permit": 101,
+            "Electrical TML Permit": 34,
+            "Electrical Completion Permit": 18,
+            "Electrical Reconnect Permit": 18,
+            "LSR Electrical Permit": 1
+          }
+        },
+        "foundation/2026-02": {
+          "count": 301,
+          "sources": {
+            "Foundation Repair Permit": 300,
+            "Comm Foundation Permit": 1
+          }
+        },
+        "hvac/2026-02": {
+          "count": 659,
+          "sources": {
+            "Mechanical Permit": 594,
+            "LSR Mechanical Permit": 59,
+            "Mechanical Completion Permit": 6
+          }
+        },
+        "plumbing/2026-02": {
+          "count": 1790,
+          "sources": {
+            "Plumbing General Permit": 787,
+            "Plumbing Irrigation Permit": 482,
+            "Plumbing Gas Permit": 216,
+            "LSR Plumbing Permit": 215,
+            "Plumbing Sewer Permit": 200,
+            "Plumbing Backflow Permit": 30,
+            "Plumbing Medical Gas Permit": 11,
+            "Plumbing Completion Permit": 5
+          }
+        },
+        "roofing/2026-02": {
+          "count": 328,
+          "sources": {
+            "Re-Roof Permit": 328
+          }
+        },
+        "solar/2026-02": {
+          "count": 34,
+          "sources": {
+            "Solar - Photovoltaic Permit": 34
+          }
+        },
+        "trees/2026-02": {
+          "count": 195,
+          "sources": {
+            "Tree Affidavit Permit": 128,
+            "Tree Permit": 67
+          }
+        },
+        "__all-trades__/2026-03": {
+          "count": 4688,
+          "sources": {}
+        },
+        "electrical/2026-03": {
+          "count": 925,
+          "sources": {
+            "Electrical General Permit": 807,
+            "Electrical TOPS Permit": 131,
+            "Electrical TML Permit": 44,
+            "Electrical Reconnect Permit": 26,
+            "Electrical Completion Permit": 14,
+            "LSR Electrical Permit": 1
+          }
+        },
+        "foundation/2026-03": {
+          "count": 275,
+          "sources": {
+            "Foundation Repair Permit": 273,
+            "Comm Foundation Permit": 2
+          }
+        },
+        "hvac/2026-03": {
+          "count": 1049,
+          "sources": {
+            "Mechanical Permit": 941,
+            "LSR Mechanical Permit": 96,
+            "Mechanical Completion Permit": 12
+          }
+        },
+        "plumbing/2026-03": {
+          "count": 2030,
+          "sources": {
+            "Plumbing General Permit": 871,
+            "Plumbing Irrigation Permit": 624,
+            "Plumbing Sewer Permit": 250,
+            "LSR Plumbing Permit": 193,
+            "Plumbing Gas Permit": 189,
+            "Plumbing Backflow Permit": 49,
+            "Plumbing Medical Gas Permit": 10,
+            "Plumbing Completion Permit": 9
+          }
+        },
+        "roofing/2026-03": {
+          "count": 382,
+          "sources": {
+            "Re-Roof Permit": 382
+          }
+        },
+        "solar/2026-03": {
+          "count": 47,
+          "sources": {
+            "Solar - Photovoltaic Permit": 47
+          }
+        },
+        "trees/2026-03": {
+          "count": 269,
+          "sources": {
+            "Tree Affidavit Permit": 204,
+            "Tree Permit": 65
+          }
+        },
+        "__all-trades__/2026-04": {
+          "count": 4365,
+          "sources": {}
+        },
+        "electrical/2026-04": {
+          "count": 780,
+          "sources": {
+            "Electrical General Permit": 676,
+            "Electrical TOPS Permit": 98,
+            "Electrical TML Permit": 25,
+            "Electrical Reconnect Permit": 17,
+            "Electrical Completion Permit": 10
+          }
+        },
+        "foundation/2026-04": {
+          "count": 295,
+          "sources": {
+            "Foundation Repair Permit": 293,
+            "Comm Foundation Permit": 2
+          }
+        },
+        "hvac/2026-04": {
+          "count": 807,
+          "sources": {
+            "Mechanical Permit": 752,
+            "LSR Mechanical Permit": 51,
+            "Mechanical Completion Permit": 4
+          }
+        },
+        "plumbing/2026-04": {
+          "count": 1947,
+          "sources": {
+            "Plumbing General Permit": 782,
+            "Plumbing Irrigation Permit": 649,
+            "Plumbing Gas Permit": 222,
+            "LSR Plumbing Permit": 191,
+            "Plumbing Sewer Permit": 179,
+            "Plumbing Backflow Permit": 39,
+            "Plumbing Completion Permit": 8,
+            "Plumbing Medical Gas Permit": 6
+          }
+        },
+        "roofing/2026-04": {
+          "count": 420,
+          "sources": {
+            "Re-Roof Permit": 420
+          }
+        },
+        "solar/2026-04": {
+          "count": 53,
+          "sources": {
+            "Solar - Photovoltaic Permit": 53
+          }
+        },
+        "trees/2026-04": {
+          "count": 236,
+          "sources": {
+            "Tree Affidavit Permit": 160,
+            "Tree Permit": 76
+          }
+        },
+        "__all-trades__/2026-05": {
+          "count": 4318,
+          "sources": {}
+        },
+        "electrical/2026-05": {
+          "count": 769,
+          "sources": {
+            "Electrical General Permit": 696,
+            "Electrical TOPS Permit": 91,
+            "Electrical TML Permit": 35,
+            "Electrical Reconnect Permit": 12,
+            "Electrical Completion Permit": 10,
+            "LSR Electrical Permit": 1
+          }
+        },
+        "foundation/2026-05": {
+          "count": 255,
+          "sources": {
+            "Foundation Repair Permit": 253,
+            "Comm Foundation Permit": 2
+          }
+        },
+        "hvac/2026-05": {
+          "count": 900,
+          "sources": {
+            "Mechanical Permit": 840,
+            "LSR Mechanical Permit": 58,
+            "Mechanical Completion Permit": 2
+          }
+        },
+        "plumbing/2026-05": {
+          "count": 1890,
+          "sources": {
+            "Plumbing General Permit": 720,
+            "Plumbing Irrigation Permit": 703,
+            "Plumbing Gas Permit": 215,
+            "Plumbing Sewer Permit": 208,
+            "LSR Plumbing Permit": 183,
+            "Plumbing Backflow Permit": 26,
+            "Plumbing Completion Permit": 11,
+            "Plumbing Medical Gas Permit": 8
+          }
+        },
+        "roofing/2026-05": {
+          "count": 424,
+          "sources": {
+            "Re-Roof Permit": 424
+          }
+        },
+        "solar/2026-05": {
+          "count": 32,
+          "sources": {
+            "Solar - Photovoltaic Permit": 32
+          }
+        },
+        "trees/2026-05": {
+          "count": 299,
+          "sources": {
+            "Tree Affidavit Permit": 235,
+            "Tree Permit": 64
+          }
+        },
+        "__all-trades__/2026-06": {
+          "count": 4692,
+          "sources": {}
+        },
+        "electrical/2026-06": {
+          "count": 728,
+          "sources": {
+            "Electrical General Permit": 635,
+            "Electrical TOPS Permit": 74,
+            "Electrical TML Permit": 33,
+            "Electrical Reconnect Permit": 19,
+            "Electrical Completion Permit": 16,
+            "LSR Electrical Permit": 1
+          }
+        },
+        "foundation/2026-06": {
+          "count": 250,
+          "sources": {
+            "Foundation Repair Permit": 247,
+            "Comm Foundation Permit": 3
+          }
+        },
+        "hvac/2026-06": {
+          "count": 1195,
+          "sources": {
+            "Mechanical Permit": 1088,
+            "LSR Mechanical Permit": 101,
+            "Mechanical Completion Permit": 6
+          }
+        },
+        "plumbing/2026-06": {
+          "count": 1950,
+          "sources": {
+            "Plumbing General Permit": 779,
+            "Plumbing Irrigation Permit": 644,
+            "LSR Plumbing Permit": 214,
+            "Plumbing Sewer Permit": 213,
+            "Plumbing Gas Permit": 190,
+            "Plumbing Backflow Permit": 30,
+            "Plumbing Completion Permit": 9,
+            "Plumbing Medical Gas Permit": 5
+          }
+        },
+        "roofing/2026-06": {
+          "count": 456,
+          "sources": {
+            "Re-Roof Permit": 456
+          }
+        },
+        "solar/2026-06": {
+          "count": 43,
+          "sources": {
+            "Solar - Photovoltaic Permit": 43
+          }
+        },
+        "trees/2026-06": {
+          "count": 289,
+          "sources": {
+            "Tree Affidavit Permit": 241,
+            "Tree Permit": 48
+          }
+        },
+        "__all-trades__/2026-07": {
+          "count": 5061,
+          "sources": {}
+        },
+        "electrical/2026-07": {
+          "count": 900,
+          "sources": {
+            "Electrical General Permit": 792,
+            "Electrical TOPS Permit": 73,
+            "Electrical TML Permit": 44,
+            "Electrical Reconnect Permit": 39,
+            "Electrical Completion Permit": 6
+          }
+        },
+        "foundation/2026-07": {
+          "count": 291,
+          "sources": {
+            "Foundation Repair Permit": 291
+          }
+        },
+        "hvac/2026-07": {
+          "count": 1194,
+          "sources": {
+            "Mechanical Permit": 1095,
+            "LSR Mechanical Permit": 94,
+            "Mechanical Completion Permit": 5
+          }
+        },
+        "plumbing/2026-07": {
+          "count": 2097,
+          "sources": {
+            "Plumbing General Permit": 902,
+            "Plumbing Irrigation Permit": 599,
+            "Plumbing Gas Permit": 232,
+            "LSR Plumbing Permit": 208,
+            "Plumbing Sewer Permit": 198,
+            "Plumbing Backflow Permit": 66,
+            "Plumbing Completion Permit": 12,
+            "Plumbing Medical Gas Permit": 6
+          }
+        },
+        "roofing/2026-07": {
+          "count": 382,
+          "sources": {
+            "Re-Roof Permit": 382
+          }
+        },
+        "solar/2026-07": {
+          "count": 41,
+          "sources": {
+            "Solar - Photovoltaic Permit": 41
+          }
+        },
+        "trees/2026-07": {
+          "count": 376,
+          "sources": {
+            "Tree Affidavit Permit": 316,
+            "Tree Permit": 60
+          }
+        },
+        "__all-trades__/2026-08": {
+          "count": 4861,
+          "sources": {}
+        },
+        "electrical/2026-08": {
+          "count": 788,
+          "sources": {
+            "Electrical General Permit": 709,
+            "Electrical TOPS Permit": 69,
+            "Electrical TML Permit": 38,
+            "Electrical Reconnect Permit": 13,
+            "Electrical Completion Permit": 12,
+            "LSR Electrical Permit": 2
+          }
+        },
+        "foundation/2026-08": {
+          "count": 281,
+          "sources": {
+            "Foundation Repair Permit": 279,
+            "Comm Foundation Permit": 2
+          }
+        },
+        "hvac/2026-08": {
+          "count": 1130,
+          "sources": {
+            "Mechanical Permit": 1029,
+            "LSR Mechanical Permit": 82,
+            "Mechanical Completion Permit": 19
+          }
+        },
+        "plumbing/2026-08": {
+          "count": 1983,
+          "sources": {
+            "Plumbing General Permit": 855,
+            "Plumbing Irrigation Permit": 583,
+            "Plumbing Gas Permit": 211,
+            "LSR Plumbing Permit": 210,
+            "Plumbing Sewer Permit": 199,
+            "Plumbing Backflow Permit": 38,
+            "Plumbing Completion Permit": 12,
+            "Plumbing Medical Gas Permit": 2
+          }
+        },
+        "roofing/2026-08": {
+          "count": 394,
+          "sources": {
+            "Re-Roof Permit": 394
+          }
+        },
+        "solar/2026-08": {
+          "count": 33,
+          "sources": {
+            "Solar - Photovoltaic Permit": 33
+          }
+        },
+        "trees/2026-08": {
+          "count": 451,
+          "sources": {
+            "Tree Affidavit Permit": 430,
+            "Tree Permit": 21
+          }
+        },
+        "__all-trades__/2026-09": {
+          "count": 4694,
+          "sources": {}
+        },
+        "electrical/2026-09": {
+          "count": 818,
+          "sources": {
+            "Electrical General Permit": 736,
+            "Electrical TOPS Permit": 78,
+            "Electrical TML Permit": 27,
+            "Electrical Reconnect Permit": 17,
+            "Electrical Completion Permit": 13
+          }
+        },
+        "foundation/2026-09": {
+          "count": 230,
+          "sources": {
+            "Foundation Repair Permit": 230
+          }
+        },
+        "hvac/2026-09": {
+          "count": 1067,
+          "sources": {
+            "Mechanical Permit": 971,
+            "LSR Mechanical Permit": 85,
+            "Mechanical Completion Permit": 11
+          }
+        },
+        "plumbing/2026-09": {
+          "count": 1731,
+          "sources": {
+            "Plumbing General Permit": 749,
+            "Plumbing Irrigation Permit": 450,
+            "Plumbing Gas Permit": 248,
+            "LSR Plumbing Permit": 177,
+            "Plumbing Sewer Permit": 175,
+            "Plumbing Backflow Permit": 34,
+            "Plumbing Medical Gas Permit": 10,
+            "Plumbing Completion Permit": 8
+          }
+        },
+        "roofing/2026-09": {
+          "count": 370,
+          "sources": {
+            "Re-Roof Permit": 370
+          }
+        },
+        "solar/2026-09": {
+          "count": 51,
+          "sources": {
+            "Solar - Photovoltaic Permit": 51
+          }
+        },
+        "trees/2026-09": {
+          "count": 580,
+          "sources": {
+            "Tree Affidavit Permit": 531,
+            "Tree Permit": 49
+          }
+        }
+      }
+    }
+  },
+  "after": {
+    "austin": {
+      "versions": {
+        "electrical": "trades-v3",
+        "hvac": "trades-v3",
+        "plumbing": "trades-v3",
+        "roofing": "trades-v3",
+        "solar": "trades-v3",
+        "__all-trades__": "trades-v3",
+        "energy_storage": "trades-v3"
+      },
+      "derived": {
+        "__all-trades__": {
+          "months": 13,
+          "total": 46137,
+          "mean": 3549,
+          "latest": {
+            "month": "2026-09",
+            "n": 4090
+          },
+          "peak": {
+            "month": "2026-06",
+            "n": 4114
+          },
+          "trough": {
+            "month": "2025-11",
+            "n": 2857
+          },
+          "halfOverHalfPct": 23
+        },
+        "electrical": {
+          "months": 13,
+          "total": 17505,
+          "mean": 1346.5,
+          "latest": {
+            "month": "2026-09",
+            "n": 1634
+          },
+          "peak": {
+            "month": "2026-09",
+            "n": 1634
+          },
+          "trough": {
+            "month": "2025-11",
+            "n": 1106
+          },
+          "halfOverHalfPct": 18.1
+        },
+        "energy_storage": {
+          "months": 13,
+          "total": 530,
+          "mean": 40.8,
+          "latest": {
+            "month": "2026-09",
+            "n": 188
+          },
+          "peak": {
+            "month": "2026-09",
+            "n": 188
+          },
+          "trough": {
+            "month": "2026-05",
+            "n": 4
+          },
+          "halfOverHalfPct": 188.9
+        },
+        "hvac": {
+          "months": 13,
+          "total": 11793,
+          "mean": 907.2,
+          "latest": {
+            "month": "2026-09",
+            "n": 1097
+          },
+          "peak": {
+            "month": "2026-07",
+            "n": 1225
+          },
+          "trough": {
+            "month": "2026-02",
+            "n": 638
+          },
+          "halfOverHalfPct": 40.8
+        },
+        "plumbing": {
+          "months": 13,
+          "total": 16061,
+          "mean": 1235.5,
+          "latest": {
+            "month": "2026-09",
+            "n": 1296
+          },
+          "peak": {
+            "month": "2026-04",
+            "n": 1403
+          },
+          "trough": {
+            "month": "2025-11",
+            "n": 1026
+          },
+          "halfOverHalfPct": 16.4
+        },
+        "roofing": {
+          "months": 13,
+          "total": 2035,
+          "mean": 156.5,
+          "latest": {
+            "month": "2026-09",
+            "n": 167
+          },
+          "peak": {
+            "month": "2025-09",
+            "n": 210
+          },
+          "trough": {
+            "month": "2026-05",
+            "n": 114
+          },
+          "halfOverHalfPct": -7.9
+        },
+        "solar": {
+          "months": 13,
+          "total": 1039,
+          "mean": 79.9,
+          "latest": {
+            "month": "2026-09",
+            "n": 62
+          },
+          "peak": {
+            "month": "2025-10",
+            "n": 156
+          },
+          "trough": {
+            "month": "2026-03",
+            "n": 32
+          },
+          "halfOverHalfPct": -32.4
+        }
+      },
+      "figures": {
+        "__all-trades__/2025-09": {
+          "count": 3373,
+          "sources": {}
+        },
+        "electrical/2025-09": {
+          "count": 1190,
+          "sources": {
+            "Electrical Permit": 1190
+          }
+        },
+        "energy_storage/2025-09": {
+          "count": 34,
+          "sources": {
+            "work class Auxiliary Power, description mentions a battery or storage": 34
+          }
+        },
+        "hvac/2025-09": {
+          "count": 926,
+          "sources": {
+            "Mechanical Permit": 926
+          }
+        },
+        "plumbing/2025-09": {
+          "count": 1191,
+          "sources": {
+            "Plumbing Permit": 1191
+          }
+        },
+        "roofing/2025-09": {
+          "count": 210,
+          "sources": {
+            "description contains \"roof\"": 210
+          }
+        },
+        "solar/2025-09": {
+          "count": 140,
+          "sources": {
+            "description mentions solar/photovoltaic/PV": 140
+          }
+        },
+        "__all-trades__/2025-10": {
+          "count": 3219,
+          "sources": {}
+        },
+        "electrical/2025-10": {
+          "count": 1288,
+          "sources": {
+            "Electrical Permit": 1288
+          }
+        },
+        "energy_storage/2025-10": {
+          "count": 36,
+          "sources": {
+            "work class Auxiliary Power, description mentions a battery or storage": 36
+          }
+        },
+        "hvac/2025-10": {
+          "count": 841,
+          "sources": {
+            "Mechanical Permit": 841
+          }
+        },
+        "plumbing/2025-10": {
+          "count": 1039,
+          "sources": {
+            "Plumbing Permit": 1039
+          }
+        },
+        "roofing/2025-10": {
+          "count": 199,
+          "sources": {
+            "description contains \"roof\"": 199
+          }
+        },
+        "solar/2025-10": {
+          "count": 156,
+          "sources": {
+            "description mentions solar/photovoltaic/PV": 156
+          }
+        },
+        "__all-trades__/2025-11": {
+          "count": 2857,
+          "sources": {}
+        },
+        "electrical/2025-11": {
+          "count": 1106,
+          "sources": {
+            "Electrical Permit": 1106
+          }
+        },
+        "energy_storage/2025-11": {
+          "count": 32,
+          "sources": {
+            "work class Auxiliary Power, description mentions a battery or storage": 32
+          }
+        },
+        "hvac/2025-11": {
+          "count": 683,
+          "sources": {
+            "Mechanical Permit": 683
+          }
+        },
+        "plumbing/2025-11": {
+          "count": 1026,
+          "sources": {
+            "Plumbing Permit": 1026
+          }
+        },
+        "roofing/2025-11": {
+          "count": 168,
+          "sources": {
+            "description contains \"roof\"": 168
+          }
+        },
+        "solar/2025-11": {
+          "count": 123,
+          "sources": {
+            "description mentions solar/photovoltaic/PV": 123
+          }
+        },
+        "__all-trades__/2025-12": {
+          "count": 3094,
+          "sources": {}
+        },
+        "electrical/2025-12": {
+          "count": 1246,
+          "sources": {
+            "Electrical Permit": 1246
+          }
+        },
+        "energy_storage/2025-12": {
+          "count": 18,
+          "sources": {
+            "work class Auxiliary Power, description mentions a battery or storage": 18
+          }
+        },
+        "hvac/2025-12": {
+          "count": 709,
+          "sources": {
+            "Mechanical Permit": 709
+          }
+        },
+        "plumbing/2025-12": {
+          "count": 1084,
+          "sources": {
+            "Plumbing Permit": 1084
+          }
+        },
+        "roofing/2025-12": {
+          "count": 157,
+          "sources": {
+            "description contains \"roof\"": 157
+          }
+        },
+        "solar/2025-12": {
+          "count": 88,
+          "sources": {
+            "description mentions solar/photovoltaic/PV": 88
+          }
+        },
+        "__all-trades__/2026-01": {
+          "count": 3203,
+          "sources": {}
+        },
+        "electrical/2026-01": {
+          "count": 1273,
+          "sources": {
+            "Electrical Permit": 1273
+          }
+        },
+        "energy_storage/2026-01": {
+          "count": 6,
+          "sources": {
+            "work class Auxiliary Power, description mentions a battery or storage": 6
+          }
+        },
+        "hvac/2026-01": {
+          "count": 713,
+          "sources": {
+            "Mechanical Permit": 713
+          }
+        },
+        "plumbing/2026-01": {
+          "count": 1158,
+          "sources": {
+            "Plumbing Permit": 1158
+          }
+        },
+        "roofing/2026-01": {
+          "count": 121,
+          "sources": {
+            "description contains \"roof\"": 121
+          }
+        },
+        "solar/2026-01": {
+          "count": 43,
+          "sources": {
+            "description mentions solar/photovoltaic/PV": 43
+          }
+        },
+        "__all-trades__/2026-02": {
+          "count": 3295,
+          "sources": {}
+        },
+        "electrical/2026-02": {
+          "count": 1304,
+          "sources": {
+            "Electrical Permit": 1304
+          }
+        },
+        "energy_storage/2026-02": {
+          "count": 9,
+          "sources": {
+            "work class Auxiliary Power, description mentions a battery or storage": 9
+          }
+        },
+        "hvac/2026-02": {
+          "count": 638,
+          "sources": {
+            "Mechanical Permit": 638
+          }
+        },
+        "plumbing/2026-02": {
+          "count": 1304,
+          "sources": {
+            "Plumbing Permit": 1304
+          }
+        },
+        "roofing/2026-02": {
+          "count": 137,
+          "sources": {
+            "description contains \"roof\"": 137
+          }
+        },
+        "solar/2026-02": {
+          "count": 51,
+          "sources": {
+            "description mentions solar/photovoltaic/PV": 51
+          }
+        },
+        "__all-trades__/2026-03": {
+          "count": 3670,
+          "sources": {}
+        },
+        "electrical/2026-03": {
+          "count": 1353,
+          "sources": {
+            "Electrical Permit": 1353
+          }
+        },
+        "energy_storage/2026-03": {
+          "count": 5,
+          "sources": {
+            "work class Auxiliary Power, description mentions a battery or storage": 5
+          }
+        },
+        "hvac/2026-03": {
+          "count": 933,
+          "sources": {
+            "Mechanical Permit": 933
+          }
+        },
+        "plumbing/2026-03": {
+          "count": 1340,
+          "sources": {
+            "Plumbing Permit": 1340
+          }
+        },
+        "roofing/2026-03": {
+          "count": 129,
+          "sources": {
+            "description contains \"roof\"": 129
+          }
+        },
+        "solar/2026-03": {
+          "count": 32,
+          "sources": {
+            "description mentions solar/photovoltaic/PV": 32
+          }
+        },
+        "__all-trades__/2026-04": {
+          "count": 3789,
+          "sources": {}
+        },
+        "electrical/2026-04": {
+          "count": 1381,
+          "sources": {
+            "Electrical Permit": 1381
+          }
+        },
+        "energy_storage/2026-04": {
+          "count": 10,
+          "sources": {
+            "work class Auxiliary Power, description mentions a battery or storage": 10
+          }
+        },
+        "hvac/2026-04": {
+          "count": 929,
+          "sources": {
+            "Mechanical Permit": 929
+          }
+        },
+        "plumbing/2026-04": {
+          "count": 1403,
+          "sources": {
+            "Plumbing Permit": 1403
+          }
+        },
+        "roofing/2026-04": {
+          "count": 148,
+          "sources": {
+            "description contains \"roof\"": 148
+          }
+        },
+        "solar/2026-04": {
+          "count": 72,
+          "sources": {
+            "description mentions solar/photovoltaic/PV": 72
+          }
+        },
+        "__all-trades__/2026-05": {
+          "count": 3557,
+          "sources": {}
+        },
+        "electrical/2026-05": {
+          "count": 1328,
+          "sources": {
+            "Electrical Permit": 1328
+          }
+        },
+        "energy_storage/2026-05": {
+          "count": 4,
+          "sources": {
+            "work class Auxiliary Power, description mentions a battery or storage": 4
+          }
+        },
+        "hvac/2026-05": {
+          "count": 950,
+          "sources": {
+            "Mechanical Permit": 950
+          }
+        },
+        "plumbing/2026-05": {
+          "count": 1228,
+          "sources": {
+            "Plumbing Permit": 1228
+          }
+        },
+        "roofing/2026-05": {
+          "count": 114,
+          "sources": {
+            "description contains \"roof\"": 114
+          }
+        },
+        "solar/2026-05": {
+          "count": 46,
+          "sources": {
+            "description mentions solar/photovoltaic/PV": 46
+          }
+        },
+        "__all-trades__/2026-06": {
+          "count": 4114,
+          "sources": {}
+        },
+        "electrical/2026-06": {
+          "count": 1516,
+          "sources": {
+            "Electrical Permit": 1516
+          }
+        },
+        "energy_storage/2026-06": {
+          "count": 13,
+          "sources": {
+            "work class Auxiliary Power, description mentions a battery or storage": 13
+          }
+        },
+        "hvac/2026-06": {
+          "count": 1114,
+          "sources": {
+            "Mechanical Permit": 1114
+          }
+        },
+        "plumbing/2026-06": {
+          "count": 1379,
+          "sources": {
+            "Plumbing Permit": 1379
+          }
+        },
+        "roofing/2026-06": {
+          "count": 191,
+          "sources": {
+            "description contains \"roof\"": 191
+          }
+        },
+        "solar/2026-06": {
+          "count": 74,
+          "sources": {
+            "description mentions solar/photovoltaic/PV": 74
+          }
+        },
+        "__all-trades__/2026-07": {
+          "count": 3931,
+          "sources": {}
+        },
+        "electrical/2026-07": {
+          "count": 1374,
+          "sources": {
+            "Electrical Permit": 1374
+          }
+        },
+        "energy_storage/2026-07": {
+          "count": 29,
+          "sources": {
+            "work class Auxiliary Power, description mentions a battery or storage": 29
+          }
+        },
+        "hvac/2026-07": {
+          "count": 1225,
+          "sources": {
+            "Mechanical Permit": 1225
+          }
+        },
+        "plumbing/2026-07": {
+          "count": 1272,
+          "sources": {
+            "Plumbing Permit": 1272
+          }
+        },
+        "roofing/2026-07": {
+          "count": 150,
+          "sources": {
+            "description contains \"roof\"": 150
+          }
+        },
+        "solar/2026-07": {
+          "count": 72,
+          "sources": {
+            "description mentions solar/photovoltaic/PV": 72
+          }
+        },
+        "__all-trades__/2026-08": {
+          "count": 3945,
+          "sources": {}
+        },
+        "electrical/2026-08": {
+          "count": 1512,
+          "sources": {
+            "Electrical Permit": 1512
+          }
+        },
+        "energy_storage/2026-08": {
+          "count": 146,
+          "sources": {
+            "work class Auxiliary Power, description mentions a battery or storage": 146
           }
         },
         "hvac/2026-08": {
