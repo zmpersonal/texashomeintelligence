@@ -45,6 +45,7 @@ Probes (P1, P2) can run in any gap; they write an audit and change no served pag
 | 51 | **The storage finding, measured** — read, not written. See `docs/audits/round-51-storage-series.md`. It is a step at July, the vocabulary inverts across it, and the series is not comparable either side. Austin-only: San Antonio's permit file has no description column. | Round 50 |
 | 52 | **The feed's missing mapping version** (item 38). Owner-scoped as its own round, after the withdrawal lands: a feed with no mapping version is a stale feed indistinguishable from a fresh one, and that is what nearly published a v2 figure on 2026-10-15. | Round 50 |
 | 52b | **Recording that a SOURCE changed its behaviour** (item 41). Shipped and merged — `docs/audits/round-52-discontinuities.md`. The record, both readers, evidence required in the type, and the owner's policy: refuse a month-over-month claim across a break (A), compute a baseline on the near side and withhold it when that side is under six months (C). | Round 51 |
+| 54 | **The description-shape detector, built** (item 43). Owner-approved with two conditions: the threshold visible as the weak point, and a flag structurally incapable of becoming a discontinuity. Shipped — `docs/audits/round-54-detector.md`. Live path verified: 84/84 cells carry a shape and a verdict, 0 verdict mismatches, 2 flags (both already explained by the Round 52 record, so no issue raised), 0 false positives. **Not a gate** — asserted byte-for-byte against the publishing layer. | Round 53 |
 | 53 | **Would a description fingerprint have caught the break?** (item 43). Measure-only, shipped — `docs/audits/round-53-fingerprint.md`. **Answer: yes.** Top-shape share doubling AND shapes-per-permit falling to ≤0.8× fires on storage 2026-07 on today's categories, fires on it on the mapping that was live at the time, and fires on nothing else in 60 cells. The vocabulary half of the proposal is dead — novelty went DOWN in the break month. Build not started; the decision is the owner's. | Round 52 |
 
 ---
@@ -292,7 +293,7 @@ Round 50's re-base found from the other direction.
 
 **Re-measure if the class's volume ever leaves single digits.** The instrument now exists.
 
-## Item 43 — the description fingerprint (ANSWERED, not built)
+## Item 43 — the description fingerprint (ANSWERED and BUILT)
 
 Raised by Round 52's conclusion: both break scans see only what the datasets retain, and the
 storage break lived in raw descriptions we do not store. Owner-scoped as measure-only — *is there
@@ -321,10 +322,32 @@ over 47,599 Austin rows) and the rule sweep is `round-53-rules.json` (612 rules)
 - **Reach:** Austin only — 6 of 13 permit series. San Antonio's export has no description column,
   so there is nothing to fingerprint; its analogue is the permit-type mix, which is item 36.
 
-**If it is ever built,** it is a flag for a human and never an automatic withholding: a recorded
-discontinuity requires evidence (Round 52, enforced in the type), and this produces a suspicion —
-the start of a Round 51 investigation, not a substitute for one. Wiring it straight to
-`discontinuities.ts` would be recording a rumour.
+**BUILT in Round 54** (`docs/audits/round-54-detector.md`), as a flag for a human and never an
+automatic withholding. Three locks make a flag incapable of becoming a record: the type (a
+`ShapeFlag` is missing every field a `Discontinuity` requires, so the assignment does not compile),
+the dependency direction (neither module imports the other), and admissibility
+(`discontinuityunit.ts` refuses a record whose only evidence is machine output). It surfaces as a
+GitHub issue, once per newly flagged cell.
+
+**Two corrections the build produced, both worth more than the feature:**
+
+1. **The margin was comparing cells that were not competing.** Round 53's "0.78 against 0.80 with
+   HVAC at 0.79" set `hvac/2026-07`'s diversity against the break's — but HVAC failed
+   *concentration* at 1.25× and could never have been flagged whatever its diversity. The cell
+   that competes on the diversity axis is `roofing/2026-01` at 0.861. So the sensitivity margin is
+   **0.016** (thin — a break 2% less templated would have been missed) and the specificity margin
+   is **0.061**, with a **0.077** separation. Reported per axis now, each read only among the cells
+   that could cross it.
+2. **A margin metric that cries wolf hides a real narrowing.** The first implementation reported
+   `−0.221` and "tighter than measured" on a window with no false positive in it, because the
+   break's own third month sits far inside the diversity threshold while failing concentration.
+   Caught by the live run, rebuilt rather than tuned.
+
+**And a measured fact about the detector's behaviour:** a flag marks the TRANSITION, not the state.
+By the third templated month the trailing baseline has absorbed the template and the cell stops
+flagging (`energy_storage/2026-09` reads 1.70× and is declined). A flag is visible for a month or
+two and then goes quiet, which is the argument for raising it durably and once rather than showing
+it on a surface where it would simply vanish.
 
 ## Standing rule — a correction can remove the signal that would have found the next one
 

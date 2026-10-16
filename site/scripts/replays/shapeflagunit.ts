@@ -19,7 +19,9 @@
  *
  * Run: npx tsx scripts/replays/shapeflagunit.ts   (from site/)
  */
-import { readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ShapeAccumulator, normaliseDescription } from "../../src/ingest/descriptionShape";
@@ -401,6 +403,65 @@ console.log("\n══ 6 · THE LIVE DATASET, AND THE STORED VERDICT ══\n");
         (fresh.margin.tighterThanRound53 ? "  *** TIGHTER ***" : ""),
     );
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+console.log("\n══ 7 · THE SURFACE: ONCE EVER, AND IT CANNOT BREAK AN INGEST ══\n");
+{
+  /*
+   * The de-duplication is what decides whether an issue is a surface or a nuisance, so it is
+   * exercised rather than described. `--dry-run` creates nothing and needs no network.
+   */
+  const tmp = mkdtempSync(join(tmpdir(), "shapeflag-"));
+  const report = {
+    unexplained: [
+      {
+        cell: "austin/solar/2026-11",
+        marker: "<!-- shape-flag:austin/solar/2026-11 -->",
+        title: "Description-shape flag: austin/solar 2026-11",
+        flag: {},
+      },
+      {
+        cell: "austin/hvac/2026-11",
+        marker: "<!-- shape-flag:austin/hvac/2026-11 -->",
+        title: "Description-shape flag: austin/hvac 2026-11",
+        flag: {},
+      },
+    ],
+    explainedCount: 2,
+    evaluated: 56,
+    nearMisses: 6,
+    marginTighterThanRound53: true,
+    markdown: "## Description-shape detector\n\nbody\n",
+  };
+  writeFileSync(join(tmp, "report.json"), JSON.stringify(report));
+  writeFileSync(join(tmp, "seen.txt"), "older issue\n<!-- shape-flag:austin/hvac/2026-11 -->\n");
+  const run = (args: string[]): { out: string; code: number } => {
+    try {
+      return {
+        out: execFileSync("node", ["scripts/raise-shape-flag-issues.mjs", ...args], {
+          encoding: "utf8",
+        }),
+        code: 0,
+      };
+    } catch (e) {
+      const err = e as { status?: number; stdout?: string };
+      return { out: err.stdout ?? "", code: err.status ?? 1 };
+    }
+  };
+
+  const both = run(["--report", join(tmp, "report.json"), "--seen", join(tmp, "seen.txt"), "--dry-run"]);
+  A("a flag already raised is never raised again", both.out.includes("1 not yet raised"), both.out.trim().split("\n")[0]);
+  A("…and the one that has not been is", both.out.includes("austin/solar/2026-11"));
+  A("…while the one that has is not", !both.out.includes("would raise: Description-shape flag: austin/hvac"));
+  A("a tightened margin warns on the way past",
+    both.out.includes("::warning::") && /TIGHTER/.test(both.out));
+
+  const none = run(["--report", join(tmp, "report.json"), "--seen", join(tmp, "seen.txt")].slice(0, 0).concat(["--dry-run"]));
+  A("no report: says so and exits 0", none.code === 0 && /nothing to do/.test(none.out));
+  const missing = run(["--report", join(tmp, "missing.json"), "--dry-run"]);
+  A("an unreadable report cannot break the ingest", missing.code === 0 && /::warning::/.test(missing.out));
+  rmSync(tmp, { recursive: true, force: true });
 }
 
 console.log(`\n═══ ${pass} passed, ${fail} failed ═══`);

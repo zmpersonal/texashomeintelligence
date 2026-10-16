@@ -97,37 +97,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           [ -s /tmp/shape-flags.json ] || exit 0
-          # The label is created idempotently; a 422 for "already exists" is the normal case.
+          # The label is created idempotently; a 422 "already exists" is the normal case.
           gh api -X POST "repos/$GITHUB_REPOSITORY/labels" -f name=shape-flag \
             -f color=d4a72c -f description="A description-shape suspicion, not a finding" \
             >/dev/null 2>&1 || true
           # Every issue ever raised this way, open or closed, so a flag is raised ONCE EVER.
           gh api "repos/$GITHUB_REPOSITORY/issues?state=all&labels=shape-flag&per_page=100" \
-            --jq '.[].body' > /tmp/shape-flag-issues.txt 2>/dev/null || : > /tmp/shape-flag-issues.txt
-          node -e '
-            const fs = require("fs");
-            const r = JSON.parse(fs.readFileSync("/tmp/shape-flags.json", "utf8"));
-            const seen = fs.readFileSync("/tmp/shape-flag-issues.txt", "utf8");
-            const fresh = r.unexplained.filter((f) => !seen.includes(f.marker));
-            fs.writeFileSync("/tmp/shape-flag-new.json", JSON.stringify(fresh));
-            console.log(`${fresh.length} of ${r.unexplained.length} flag(s) not yet raised`);
-          ' || exit 0
-          node -e '
-            const fs = require("fs"), { execFileSync } = require("child_process");
-            const fresh = JSON.parse(fs.readFileSync("/tmp/shape-flag-new.json", "utf8"));
-            const report = JSON.parse(fs.readFileSync("/tmp/shape-flags.json", "utf8")).markdown;
-            for (const f of fresh) {
-              const body = `${f.marker}\n\n${report}`;
-              fs.writeFileSync("/tmp/shape-flag-body.md", body);
-              try {
-                execFileSync("gh", ["api", "-X", "POST", `repos/${process.env.GITHUB_REPOSITORY}/issues`,
-                  "-f", `title=${f.title}`, "-F", "body=@/tmp/shape-flag-body.md",
-                  "-f", "labels[]=shape-flag"], { stdio: "inherit" });
-              } catch (e) {
-                console.log(`::warning::could not raise the flag for ${f.cell}: ${e.message}`);
-              }
-            }
-          ' || true
+            --jq '.[].body' > /tmp/shape-flag-issues.txt 2>/dev/null \
+            || : > /tmp/shape-flag-issues.txt
+          node scripts/raise-shape-flag-issues.mjs \
+            --report /tmp/shape-flags.json --seen /tmp/shape-flag-issues.txt
 
       - name: Commit generated data if it changed
         run: |

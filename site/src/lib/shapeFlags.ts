@@ -492,6 +492,16 @@ export function evaluateShapeFlags(
     nearestDeclinedOnConcentration,
     diversitySeparation,
     round53: ROUND_53_SEPARATION,
+    /*
+     * The trip condition reads the DIVERSITY axis only, and that is deliberate.
+     *
+     * The concentration-axis margin is reported because it is informative, but it is not a trip
+     * wire: the cell nearest that boundary on the live window is `energy_storage/2026-09` at
+     * 1.70× — the break's own third month, aging out as its baseline absorbs the template. It
+     * is not an innocent cell crowding the threshold, and tripping on it would be the same
+     * category error this whole metric was rebuilt to remove. The axis that actually separated
+     * the break from an ordinary month is diversity, and that is the one watched.
+     */
     tighterThanRound53:
       (closestToMissed !== null &&
         closestToMissed.insideDiversityBy < ROUND_53_SEPARATION.flaggedAtTheTime.insideDiversityBy) ||
