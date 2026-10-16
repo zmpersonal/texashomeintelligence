@@ -1,0 +1,2003 @@
+{
+  "measuredAt": "2026-10-16T01:52:29.180Z",
+  "notes": {
+    "question": "run the real ingest path against the live source: does the detector store what it should, flag what Round 53 said it would, and leave the published figures alone?",
+    "policy": "VERIFICATION. The dataset is not written; the workflow asserts src/data/generated is untouched. Counts, shares and verdicts only — no description and no hash of one.",
+    "storedVerdictMatchesFreshEvaluation": true
+  },
+  "rows": {
+    "observations": 98,
+    "categoryMonths": 84,
+    "allTradesRows": 14,
+    "carryingShape": 84,
+    "carryingVerdict": 84,
+    "storedVerdictMismatches": 0
+  },
+  "coverage": {
+    "cells": 84,
+    "evaluated": 56,
+    "withoutDescriptionColumn": 0,
+    "withoutTrailingBaseline": 18,
+    "tooFewPermits": 4,
+    "incompleteMonth": 6
+  },
+  "flags": [
+    {
+      "category": "energy_storage",
+      "month": "2026-07",
+      "permits": 29,
+      "topShapeShare": 58.6,
+      "trailingTopShare": 14.2,
+      "concentrationRatio": 4.117,
+      "shapesPerPermit": 0.414,
+      "trailingShapesPerPermit": 1,
+      "diversityRatio": 0.414,
+      "margin": {
+        "concentration": 2.117,
+        "diversity": 0.386
+      },
+      "status": "suspicion",
+      "nextStep": "A REASON TO LOOK, not a finding and not a record. The descriptions in this category-month collapsed onto a few wordings against its own recent history. Establish what the source changed (Round 51 is the worked example: the city's own manual, retrieved and dated), and only then write a discontinuity — which requires evidence that resolves in the repo. Nothing may be withheld or relabelled on this alone.",
+      "explainedByRecord": "recorded from 2026-07"
+    },
+    {
+      "category": "energy_storage",
+      "month": "2026-08",
+      "permits": 146,
+      "topShapeShare": 91.8,
+      "trailingTopShare": 30.4,
+      "concentrationRatio": 3.016,
+      "shapesPerPermit": 0.082,
+      "trailingShapesPerPermit": 0.805,
+      "diversityRatio": 0.102,
+      "margin": {
+        "concentration": 1.016,
+        "diversity": 0.698
+      },
+      "status": "suspicion",
+      "nextStep": "A REASON TO LOOK, not a finding and not a record. The descriptions in this category-month collapsed onto a few wordings against its own recent history. Establish what the source changed (Round 51 is the worked example: the city's own manual, retrieved and dated), and only then write a discontinuity — which requires evidence that resolves in the repo. Nothing may be withheld or relabelled on this alone.",
+      "explainedByRecord": "recorded from 2026-07"
+    }
+  ],
+  "flagLines": [
+    "energy_storage/2026-07: descriptions templated — the commonest wording covers 58.6% of 29 permits against a 14.2% trailing average (4.117×), and distinct wordings per permit fell to 0.414 from 1 (0.414×). A reason to look, not a finding.",
+    "energy_storage/2026-08: descriptions templated — the commonest wording covers 91.8% of 146 permits against a 30.4% trailing average (3.016×), and distinct wordings per permit fell to 0.082 from 0.805 (0.102×). A reason to look, not a finding."
+  ],
+  "nearMisses": [
+    {
+      "category": "electrical",
+      "month": "2026-08",
+      "permits": 1512,
+      "concentrationRatio": 5.235,
+      "diversityRatio": 0.955,
+      "passed": "concentration",
+      "declined": "concentration 5.235× cleared 2×, but diversity 0.955× did not reach 0.8× — a batch of similarly worded permits looks like this; so does the same break seen in a second category (see reach.blindSpotMeasured)"
+    },
+    {
+      "category": "electrical",
+      "month": "2026-09",
+      "permits": 1634,
+      "concentrationRatio": 2.492,
+      "diversityRatio": 0.911,
+      "passed": "concentration",
+      "declined": "concentration 2.492× cleared 2×, but diversity 0.911× did not reach 0.8× — a batch of similarly worded permits looks like this; so does the same break seen in a second category (see reach.blindSpotMeasured)"
+    },
+    {
+      "category": "energy_storage",
+      "month": "2026-09",
+      "permits": 188,
+      "concentrationRatio": 1.696,
+      "diversityRatio": 0.193,
+      "passed": "diversity",
+      "declined": "diversity 0.193× cleared 0.8×, but concentration 1.696× did not reach 2×"
+    },
+    {
+      "category": "hvac",
+      "month": "2026-07",
+      "permits": 1225,
+      "concentrationRatio": 1.253,
+      "diversityRatio": 0.793,
+      "passed": "diversity",
+      "declined": "diversity 0.793× cleared 0.8×, but concentration 1.253× did not reach 2×"
+    },
+    {
+      "category": "roofing",
+      "month": "2026-01",
+      "permits": 121,
+      "concentrationRatio": 2.545,
+      "diversityRatio": 0.861,
+      "passed": "concentration",
+      "declined": "concentration 2.545× cleared 2×, but diversity 0.861× did not reach 0.8× — a batch of similarly worded permits looks like this; so does the same break seen in a second category (see reach.blindSpotMeasured)"
+    },
+    {
+      "category": "roofing",
+      "month": "2026-06",
+      "permits": 191,
+      "concentrationRatio": 2.548,
+      "diversityRatio": 0.914,
+      "passed": "concentration",
+      "declined": "concentration 2.548× cleared 2×, but diversity 0.914× did not reach 0.8× — a batch of similarly worded permits looks like this; so does the same break seen in a second category (see reach.blindSpotMeasured)"
+    }
+  ],
+  "margin": {
+    "thresholds": {
+      "concentrationRatio": 2,
+      "diversityRatio": 0.8,
+      "minPermits": 10
+    },
+    "closestFlagged": {
+      "cell": "energy_storage/2026-07",
+      "concentrationRatio": 4.117,
+      "diversityRatio": 0.414
+    },
+    "closestDeclined": {
+      "cell": "energy_storage/2026-09",
+      "concentrationRatio": 1.696,
+      "diversityRatio": 0.193
+    },
+    "diversityGap": -0.221,
+    "round53": {
+      "measuredOn": "60 cells — 6 Austin categories × 10 complete months, 47,599 rows",
+      "break": {
+        "cell": "energy_storage/2026-07",
+        "concentration": 4.12,
+        "diversity": 0.41
+      },
+      "breakAsSeenAtTheTime": {
+        "cell": "v2_solar/2026-07",
+        "concentration": 2.97,
+        "diversity": 0.78
+      },
+      "nearestDeclined": {
+        "cell": "hvac/2026-07",
+        "concentration": 1.25,
+        "diversity": 0.79
+      },
+      "diversityGap": 0.01
+    },
+    "tighterThanRound53": true,
+    "note": "The diversity axis carried the whole separation in the only case that mattered: the break as it was visible at the time cleared at 0.78 with an innocent cell at 0.79. `diversityGap` is this window's version of that 0.01. If it narrows, the detector is closer to firing on an ordinary month than it was when it was measured — re-measure and say so; do not move the threshold until it reads clean."
+  },
+  "round53": {
+    "measuredOn": "60 cells — 6 Austin categories × 10 complete months, 47,599 rows",
+    "break": {
+      "cell": "energy_storage/2026-07",
+      "concentration": 4.12,
+      "diversity": 0.41
+    },
+    "breakAsSeenAtTheTime": {
+      "cell": "v2_solar/2026-07",
+      "concentration": 2.97,
+      "diversity": 0.78
+    },
+    "nearestDeclined": {
+      "cell": "hvac/2026-07",
+      "concentration": 1.25,
+      "diversity": 0.79
+    },
+    "diversityGap": 0.01
+  },
+  "reach": {
+    "metros": [
+      "austin"
+    ],
+    "seriesCovered": 6,
+    "seriesTotal": 13,
+    "sanAntonio": "San Antonio's permit export has no description column at all, so there is nothing to fingerprint and no San Antonio series is covered. Its analogue is the permit-type mix — backlog item 36. Absence of a flag there is absence of a measurement, not absence of a break.",
+    "detectsOnly": "changes that TEMPLATE wording. A source that re-words diversely, renames a permit type or stops publishing a field leaves shape concentration untouched and will not be flagged.",
+    "blindSpotMeasured": "the same break can be visible in a SECOND category without being flagged there. Austin's Auxiliary Power EPs are also electrical permits, so the templated wording entered electrical too: 5.24× concentration in 2026-08 with diversity at 0.96× — declined, on purpose, because a rule loose enough to catch it also fires on roofing 2026-01 and 2026-06. Read a flag on one category as 'at least here', never as 'only here'.",
+    "earliest": "the first COMPLETE month after a change, which is the earliest anything can be under the completeness rule the readers already apply."
+  },
+  "cells": [
+    {
+      "category": "electrical",
+      "month": "2025-09",
+      "permits": 1190,
+      "shape": {
+        "withDescription": 1190,
+        "emptyDescriptions": 0,
+        "distinctShapes": 982,
+        "shapesPerPermit": 0.825,
+        "topShapeShare": 1.7,
+        "top3ShapeShare": 4.5
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "electrical",
+      "month": "2025-10",
+      "permits": 1288,
+      "shape": {
+        "withDescription": 1288,
+        "emptyDescriptions": 0,
+        "distinctShapes": 1017,
+        "shapesPerPermit": 0.79,
+        "topShapeShare": 1.9,
+        "top3ShapeShare": 4.3
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "electrical",
+      "month": "2025-11",
+      "permits": 1106,
+      "shape": {
+        "withDescription": 1106,
+        "emptyDescriptions": 0,
+        "distinctShapes": 886,
+        "shapesPerPermit": 0.801,
+        "topShapeShare": 1.5,
+        "top3ShapeShare": 3.9
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "electrical",
+      "month": "2025-12",
+      "permits": 1246,
+      "shape": {
+        "withDescription": 1246,
+        "emptyDescriptions": 0,
+        "distinctShapes": 949,
+        "shapesPerPermit": 0.762,
+        "topShapeShare": 1.9,
+        "top3ShapeShare": 4.9
+      },
+      "verdict": {
+        "trailingTopShare": 1.7,
+        "trailingShapesPerPermit": 0.805,
+        "concentrationRatio": 1.118,
+        "diversityRatio": 0.946,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "electrical",
+      "month": "2026-01",
+      "permits": 1273,
+      "shape": {
+        "withDescription": 1273,
+        "emptyDescriptions": 0,
+        "distinctShapes": 962,
+        "shapesPerPermit": 0.756,
+        "topShapeShare": 2.4,
+        "top3ShapeShare": 6.9
+      },
+      "verdict": {
+        "trailingTopShare": 1.8,
+        "trailingShapesPerPermit": 0.784,
+        "concentrationRatio": 1.358,
+        "diversityRatio": 0.964,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "electrical",
+      "month": "2026-02",
+      "permits": 1304,
+      "shape": {
+        "withDescription": 1304,
+        "emptyDescriptions": 0,
+        "distinctShapes": 1027,
+        "shapesPerPermit": 0.788,
+        "topShapeShare": 1.5,
+        "top3ShapeShare": 3.9
+      },
+      "verdict": {
+        "trailingTopShare": 1.9,
+        "trailingShapesPerPermit": 0.773,
+        "concentrationRatio": 0.776,
+        "diversityRatio": 1.019,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "electrical",
+      "month": "2026-03",
+      "permits": 1353,
+      "shape": {
+        "withDescription": 1353,
+        "emptyDescriptions": 0,
+        "distinctShapes": 1099,
+        "shapesPerPermit": 0.812,
+        "topShapeShare": 1.3,
+        "top3ShapeShare": 3.4
+      },
+      "verdict": {
+        "trailingTopShare": 1.9,
+        "trailingShapesPerPermit": 0.769,
+        "concentrationRatio": 0.672,
+        "diversityRatio": 1.056,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "electrical",
+      "month": "2026-04",
+      "permits": 1381,
+      "shape": {
+        "withDescription": 1381,
+        "emptyDescriptions": 0,
+        "distinctShapes": 1145,
+        "shapesPerPermit": 0.829,
+        "topShapeShare": 1.7,
+        "top3ShapeShare": 4.4
+      },
+      "verdict": {
+        "trailingTopShare": 1.7,
+        "trailingShapesPerPermit": 0.785,
+        "concentrationRatio": 0.981,
+        "diversityRatio": 1.056,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "electrical",
+      "month": "2026-05",
+      "permits": 1328,
+      "shape": {
+        "withDescription": 1328,
+        "emptyDescriptions": 0,
+        "distinctShapes": 1053,
+        "shapesPerPermit": 0.793,
+        "topShapeShare": 1.6,
+        "top3ShapeShare": 3.8
+      },
+      "verdict": {
+        "trailingTopShare": 1.5,
+        "trailingShapesPerPermit": 0.81,
+        "concentrationRatio": 1.067,
+        "diversityRatio": 0.979,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "electrical",
+      "month": "2026-06",
+      "permits": 1516,
+      "shape": {
+        "withDescription": 1516,
+        "emptyDescriptions": 0,
+        "distinctShapes": 1227,
+        "shapesPerPermit": 0.809,
+        "topShapeShare": 1.7,
+        "top3ShapeShare": 4.4
+      },
+      "verdict": {
+        "trailingTopShare": 1.5,
+        "trailingShapesPerPermit": 0.811,
+        "concentrationRatio": 1.109,
+        "diversityRatio": 0.997,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "electrical",
+      "month": "2026-07",
+      "permits": 1374,
+      "shape": {
+        "withDescription": 1374,
+        "emptyDescriptions": 0,
+        "distinctShapes": 1052,
+        "shapesPerPermit": 0.766,
+        "topShapeShare": 1.8,
+        "top3ShapeShare": 4.7
+      },
+      "verdict": {
+        "trailingTopShare": 1.7,
+        "trailingShapesPerPermit": 0.81,
+        "concentrationRatio": 1.08,
+        "diversityRatio": 0.945,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "electrical",
+      "month": "2026-08",
+      "permits": 1512,
+      "shape": {
+        "withDescription": 1512,
+        "emptyDescriptions": 0,
+        "distinctShapes": 1140,
+        "shapesPerPermit": 0.754,
+        "topShapeShare": 8.9,
+        "top3ShapeShare": 11.7
+      },
+      "verdict": {
+        "trailingTopShare": 1.7,
+        "trailingShapesPerPermit": 0.789,
+        "concentrationRatio": 5.235,
+        "diversityRatio": 0.955,
+        "passed": [
+          "concentration"
+        ],
+        "flagged": false
+      }
+    },
+    {
+      "category": "electrical",
+      "month": "2026-09",
+      "permits": 1634,
+      "shape": {
+        "withDescription": 1634,
+        "emptyDescriptions": 0,
+        "distinctShapes": 1156,
+        "shapesPerPermit": 0.707,
+        "topShapeShare": 10.3,
+        "top3ShapeShare": 14.6
+      },
+      "verdict": {
+        "trailingTopShare": 4.1,
+        "trailingShapesPerPermit": 0.776,
+        "concentrationRatio": 2.492,
+        "diversityRatio": 0.911,
+        "passed": [
+          "concentration"
+        ],
+        "flagged": false
+      }
+    },
+    {
+      "category": "electrical",
+      "month": "2026-10",
+      "permits": 592,
+      "shape": {
+        "withDescription": 592,
+        "emptyDescriptions": 0,
+        "distinctShapes": 468,
+        "shapesPerPermit": 0.791,
+        "topShapeShare": 8.4,
+        "top3ShapeShare": 11.5
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "incomplete-month"
+      }
+    },
+    {
+      "category": "energy_storage",
+      "month": "2025-09",
+      "permits": 34,
+      "shape": {
+        "withDescription": 34,
+        "emptyDescriptions": 0,
+        "distinctShapes": 23,
+        "shapesPerPermit": 0.676,
+        "topShapeShare": 11.8,
+        "top3ShapeShare": 29.4
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "energy_storage",
+      "month": "2025-10",
+      "permits": 36,
+      "shape": {
+        "withDescription": 36,
+        "emptyDescriptions": 0,
+        "distinctShapes": 20,
+        "shapesPerPermit": 0.556,
+        "topShapeShare": 19.4,
+        "top3ShapeShare": 47.2
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "energy_storage",
+      "month": "2025-11",
+      "permits": 32,
+      "shape": {
+        "withDescription": 32,
+        "emptyDescriptions": 0,
+        "distinctShapes": 20,
+        "shapesPerPermit": 0.625,
+        "topShapeShare": 21.9,
+        "top3ShapeShare": 46.9
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "energy_storage",
+      "month": "2025-12",
+      "permits": 18,
+      "shape": {
+        "withDescription": 18,
+        "emptyDescriptions": 0,
+        "distinctShapes": 16,
+        "shapesPerPermit": 0.889,
+        "topShapeShare": 16.7,
+        "top3ShapeShare": 27.8
+      },
+      "verdict": {
+        "trailingTopShare": 17.7,
+        "trailingShapesPerPermit": 0.619,
+        "concentrationRatio": 0.944,
+        "diversityRatio": 1.436,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "energy_storage",
+      "month": "2026-01",
+      "permits": 6,
+      "shape": {
+        "withDescription": 6,
+        "emptyDescriptions": 0,
+        "distinctShapes": 6,
+        "shapesPerPermit": 1,
+        "topShapeShare": 16.7,
+        "top3ShapeShare": 50
+      },
+      "verdict": {
+        "trailingTopShare": 19.3,
+        "trailingShapesPerPermit": 0.69,
+        "concentrationRatio": 0.864,
+        "diversityRatio": 1.449,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "too-few-permits"
+      }
+    },
+    {
+      "category": "energy_storage",
+      "month": "2026-02",
+      "permits": 9,
+      "shape": {
+        "withDescription": 9,
+        "emptyDescriptions": 0,
+        "distinctShapes": 8,
+        "shapesPerPermit": 0.889,
+        "topShapeShare": 22.2,
+        "top3ShapeShare": 44.4
+      },
+      "verdict": {
+        "trailingTopShare": 18.4,
+        "trailingShapesPerPermit": 0.838,
+        "concentrationRatio": 1.204,
+        "diversityRatio": 1.061,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "too-few-permits"
+      }
+    },
+    {
+      "category": "energy_storage",
+      "month": "2026-03",
+      "permits": 5,
+      "shape": {
+        "withDescription": 5,
+        "emptyDescriptions": 0,
+        "distinctShapes": 5,
+        "shapesPerPermit": 1,
+        "topShapeShare": 20,
+        "top3ShapeShare": 60
+      },
+      "verdict": {
+        "trailingTopShare": 18.5,
+        "trailingShapesPerPermit": 0.926,
+        "concentrationRatio": 1.079,
+        "diversityRatio": 1.08,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "too-few-permits"
+      }
+    },
+    {
+      "category": "energy_storage",
+      "month": "2026-04",
+      "permits": 10,
+      "shape": {
+        "withDescription": 10,
+        "emptyDescriptions": 0,
+        "distinctShapes": 10,
+        "shapesPerPermit": 1,
+        "topShapeShare": 10,
+        "top3ShapeShare": 30
+      },
+      "verdict": {
+        "trailingTopShare": 19.6,
+        "trailingShapesPerPermit": 0.963,
+        "concentrationRatio": 0.509,
+        "diversityRatio": 1.038,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "energy_storage",
+      "month": "2026-05",
+      "permits": 4,
+      "shape": {
+        "withDescription": 4,
+        "emptyDescriptions": 0,
+        "distinctShapes": 4,
+        "shapesPerPermit": 1,
+        "topShapeShare": 25,
+        "top3ShapeShare": 75
+      },
+      "verdict": {
+        "trailingTopShare": 17.4,
+        "trailingShapesPerPermit": 0.963,
+        "concentrationRatio": 1.437,
+        "diversityRatio": 1.038,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "too-few-permits"
+      }
+    },
+    {
+      "category": "energy_storage",
+      "month": "2026-06",
+      "permits": 13,
+      "shape": {
+        "withDescription": 13,
+        "emptyDescriptions": 0,
+        "distinctShapes": 13,
+        "shapesPerPermit": 1,
+        "topShapeShare": 7.7,
+        "top3ShapeShare": 23.1
+      },
+      "verdict": {
+        "trailingTopShare": 18.3,
+        "trailingShapesPerPermit": 1,
+        "concentrationRatio": 0.42,
+        "diversityRatio": 1,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "energy_storage",
+      "month": "2026-07",
+      "permits": 29,
+      "shape": {
+        "withDescription": 29,
+        "emptyDescriptions": 0,
+        "distinctShapes": 12,
+        "shapesPerPermit": 0.414,
+        "topShapeShare": 58.6,
+        "top3ShapeShare": 69
+      },
+      "verdict": {
+        "trailingTopShare": 14.2,
+        "trailingShapesPerPermit": 1,
+        "concentrationRatio": 4.117,
+        "diversityRatio": 0.414,
+        "passed": [
+          "concentration",
+          "diversity"
+        ],
+        "flagged": true
+      }
+    },
+    {
+      "category": "energy_storage",
+      "month": "2026-08",
+      "permits": 146,
+      "shape": {
+        "withDescription": 146,
+        "emptyDescriptions": 0,
+        "distinctShapes": 12,
+        "shapesPerPermit": 0.082,
+        "topShapeShare": 91.8,
+        "top3ShapeShare": 93.8
+      },
+      "verdict": {
+        "trailingTopShare": 30.4,
+        "trailingShapesPerPermit": 0.805,
+        "concentrationRatio": 3.016,
+        "diversityRatio": 0.102,
+        "passed": [
+          "concentration",
+          "diversity"
+        ],
+        "flagged": true
+      }
+    },
+    {
+      "category": "energy_storage",
+      "month": "2026-09",
+      "permits": 188,
+      "shape": {
+        "withDescription": 188,
+        "emptyDescriptions": 0,
+        "distinctShapes": 18,
+        "shapesPerPermit": 0.096,
+        "topShapeShare": 89.4,
+        "top3ShapeShare": 92
+      },
+      "verdict": {
+        "trailingTopShare": 52.7,
+        "trailingShapesPerPermit": 0.499,
+        "concentrationRatio": 1.696,
+        "diversityRatio": 0.193,
+        "passed": [
+          "diversity"
+        ],
+        "flagged": false
+      }
+    },
+    {
+      "category": "energy_storage",
+      "month": "2026-10",
+      "permits": 59,
+      "shape": {
+        "withDescription": 59,
+        "emptyDescriptions": 0,
+        "distinctShapes": 8,
+        "shapesPerPermit": 0.136,
+        "topShapeShare": 84.7,
+        "top3ShapeShare": 91.5
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "incomplete-month"
+      }
+    },
+    {
+      "category": "hvac",
+      "month": "2025-09",
+      "permits": 926,
+      "shape": {
+        "withDescription": 926,
+        "emptyDescriptions": 0,
+        "distinctShapes": 480,
+        "shapesPerPermit": 0.518,
+        "topShapeShare": 33,
+        "top3ShapeShare": 36.6
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "hvac",
+      "month": "2025-10",
+      "permits": 841,
+      "shape": {
+        "withDescription": 841,
+        "emptyDescriptions": 0,
+        "distinctShapes": 500,
+        "shapesPerPermit": 0.595,
+        "topShapeShare": 27.5,
+        "top3ShapeShare": 29.6
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "hvac",
+      "month": "2025-11",
+      "permits": 683,
+      "shape": {
+        "withDescription": 683,
+        "emptyDescriptions": 0,
+        "distinctShapes": 393,
+        "shapesPerPermit": 0.575,
+        "topShapeShare": 28,
+        "top3ShapeShare": 30.2
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "hvac",
+      "month": "2025-12",
+      "permits": 709,
+      "shape": {
+        "withDescription": 709,
+        "emptyDescriptions": 0,
+        "distinctShapes": 414,
+        "shapesPerPermit": 0.584,
+        "topShapeShare": 29.6,
+        "top3ShapeShare": 32
+      },
+      "verdict": {
+        "trailingTopShare": 29.5,
+        "trailingShapesPerPermit": 0.563,
+        "concentrationRatio": 1.003,
+        "diversityRatio": 1.038,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "hvac",
+      "month": "2026-01",
+      "permits": 713,
+      "shape": {
+        "withDescription": 713,
+        "emptyDescriptions": 0,
+        "distinctShapes": 431,
+        "shapesPerPermit": 0.604,
+        "topShapeShare": 19.2,
+        "top3ShapeShare": 23.1
+      },
+      "verdict": {
+        "trailingTopShare": 28.4,
+        "trailingShapesPerPermit": 0.585,
+        "concentrationRatio": 0.677,
+        "diversityRatio": 1.033,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "hvac",
+      "month": "2026-02",
+      "permits": 638,
+      "shape": {
+        "withDescription": 638,
+        "emptyDescriptions": 0,
+        "distinctShapes": 440,
+        "shapesPerPermit": 0.69,
+        "topShapeShare": 19.4,
+        "top3ShapeShare": 22.4
+      },
+      "verdict": {
+        "trailingTopShare": 25.6,
+        "trailingShapesPerPermit": 0.588,
+        "concentrationRatio": 0.758,
+        "diversityRatio": 1.174,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "hvac",
+      "month": "2026-03",
+      "permits": 933,
+      "shape": {
+        "withDescription": 933,
+        "emptyDescriptions": 0,
+        "distinctShapes": 567,
+        "shapesPerPermit": 0.608,
+        "topShapeShare": 22.5,
+        "top3ShapeShare": 27
+      },
+      "verdict": {
+        "trailingTopShare": 22.7,
+        "trailingShapesPerPermit": 0.626,
+        "concentrationRatio": 0.99,
+        "diversityRatio": 0.971,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "hvac",
+      "month": "2026-04",
+      "permits": 929,
+      "shape": {
+        "withDescription": 929,
+        "emptyDescriptions": 0,
+        "distinctShapes": 595,
+        "shapesPerPermit": 0.64,
+        "topShapeShare": 22.7,
+        "top3ShapeShare": 24.9
+      },
+      "verdict": {
+        "trailingTopShare": 20.4,
+        "trailingShapesPerPermit": 0.634,
+        "concentrationRatio": 1.115,
+        "diversityRatio": 1.009,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "hvac",
+      "month": "2026-05",
+      "permits": 950,
+      "shape": {
+        "withDescription": 950,
+        "emptyDescriptions": 0,
+        "distinctShapes": 563,
+        "shapesPerPermit": 0.593,
+        "topShapeShare": 25.1,
+        "top3ShapeShare": 29.7
+      },
+      "verdict": {
+        "trailingTopShare": 21.5,
+        "trailingShapesPerPermit": 0.646,
+        "concentrationRatio": 1.166,
+        "diversityRatio": 0.918,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "hvac",
+      "month": "2026-06",
+      "permits": 1114,
+      "shape": {
+        "withDescription": 1114,
+        "emptyDescriptions": 0,
+        "distinctShapes": 607,
+        "shapesPerPermit": 0.545,
+        "topShapeShare": 24.5,
+        "top3ShapeShare": 28.7
+      },
+      "verdict": {
+        "trailingTopShare": 23.4,
+        "trailingShapesPerPermit": 0.614,
+        "concentrationRatio": 1.046,
+        "diversityRatio": 0.888,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "hvac",
+      "month": "2026-07",
+      "permits": 1225,
+      "shape": {
+        "withDescription": 1225,
+        "emptyDescriptions": 0,
+        "distinctShapes": 576,
+        "shapesPerPermit": 0.47,
+        "topShapeShare": 30.2,
+        "top3ShapeShare": 39.1
+      },
+      "verdict": {
+        "trailingTopShare": 24.1,
+        "trailingShapesPerPermit": 0.593,
+        "concentrationRatio": 1.253,
+        "diversityRatio": 0.793,
+        "passed": [
+          "diversity"
+        ],
+        "flagged": false
+      }
+    },
+    {
+      "category": "hvac",
+      "month": "2026-08",
+      "permits": 1035,
+      "shape": {
+        "withDescription": 1035,
+        "emptyDescriptions": 0,
+        "distinctShapes": 553,
+        "shapesPerPermit": 0.534,
+        "topShapeShare": 28.4,
+        "top3ShapeShare": 35
+      },
+      "verdict": {
+        "trailingTopShare": 26.6,
+        "trailingShapesPerPermit": 0.536,
+        "concentrationRatio": 1.068,
+        "diversityRatio": 0.996,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "hvac",
+      "month": "2026-09",
+      "permits": 1097,
+      "shape": {
+        "withDescription": 1097,
+        "emptyDescriptions": 0,
+        "distinctShapes": 543,
+        "shapesPerPermit": 0.495,
+        "topShapeShare": 31.2,
+        "top3ShapeShare": 41.4
+      },
+      "verdict": {
+        "trailingTopShare": 27.7,
+        "trailingShapesPerPermit": 0.516,
+        "concentrationRatio": 1.126,
+        "diversityRatio": 0.959,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "hvac",
+      "month": "2026-10",
+      "permits": 376,
+      "shape": {
+        "withDescription": 376,
+        "emptyDescriptions": 0,
+        "distinctShapes": 226,
+        "shapesPerPermit": 0.601,
+        "topShapeShare": 30.1,
+        "top3ShapeShare": 34.6
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "incomplete-month"
+      }
+    },
+    {
+      "category": "plumbing",
+      "month": "2025-09",
+      "permits": 1191,
+      "shape": {
+        "withDescription": 1191,
+        "emptyDescriptions": 0,
+        "distinctShapes": 893,
+        "shapesPerPermit": 0.75,
+        "topShapeShare": 4,
+        "top3ShapeShare": 7.3
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "plumbing",
+      "month": "2025-10",
+      "permits": 1039,
+      "shape": {
+        "withDescription": 1039,
+        "emptyDescriptions": 0,
+        "distinctShapes": 784,
+        "shapesPerPermit": 0.755,
+        "topShapeShare": 4.2,
+        "top3ShapeShare": 7.4
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "plumbing",
+      "month": "2025-11",
+      "permits": 1026,
+      "shape": {
+        "withDescription": 1026,
+        "emptyDescriptions": 0,
+        "distinctShapes": 766,
+        "shapesPerPermit": 0.747,
+        "topShapeShare": 3.3,
+        "top3ShapeShare": 8.2
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "plumbing",
+      "month": "2025-12",
+      "permits": 1084,
+      "shape": {
+        "withDescription": 1084,
+        "emptyDescriptions": 0,
+        "distinctShapes": 824,
+        "shapesPerPermit": 0.76,
+        "topShapeShare": 2.6,
+        "top3ShapeShare": 6.5
+      },
+      "verdict": {
+        "trailingTopShare": 3.8,
+        "trailingShapesPerPermit": 0.751,
+        "concentrationRatio": 0.678,
+        "diversityRatio": 1.012,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "plumbing",
+      "month": "2026-01",
+      "permits": 1158,
+      "shape": {
+        "withDescription": 1158,
+        "emptyDescriptions": 0,
+        "distinctShapes": 830,
+        "shapesPerPermit": 0.717,
+        "topShapeShare": 2.7,
+        "top3ShapeShare": 6.6
+      },
+      "verdict": {
+        "trailingTopShare": 3.4,
+        "trailingShapesPerPermit": 0.754,
+        "concentrationRatio": 0.802,
+        "diversityRatio": 0.951,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "plumbing",
+      "month": "2026-02",
+      "permits": 1304,
+      "shape": {
+        "withDescription": 1304,
+        "emptyDescriptions": 0,
+        "distinctShapes": 997,
+        "shapesPerPermit": 0.765,
+        "topShapeShare": 4,
+        "top3ShapeShare": 8.1
+      },
+      "verdict": {
+        "trailingTopShare": 2.9,
+        "trailingShapesPerPermit": 0.741,
+        "concentrationRatio": 1.395,
+        "diversityRatio": 1.032,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "plumbing",
+      "month": "2026-03",
+      "permits": 1340,
+      "shape": {
+        "withDescription": 1340,
+        "emptyDescriptions": 0,
+        "distinctShapes": 1066,
+        "shapesPerPermit": 0.796,
+        "topShapeShare": 2.8,
+        "top3ShapeShare": 5.4
+      },
+      "verdict": {
+        "trailingTopShare": 3.1,
+        "trailingShapesPerPermit": 0.747,
+        "concentrationRatio": 0.903,
+        "diversityRatio": 1.065,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "plumbing",
+      "month": "2026-04",
+      "permits": 1403,
+      "shape": {
+        "withDescription": 1403,
+        "emptyDescriptions": 0,
+        "distinctShapes": 997,
+        "shapesPerPermit": 0.711,
+        "topShapeShare": 2.6,
+        "top3ShapeShare": 6.8
+      },
+      "verdict": {
+        "trailingTopShare": 3.2,
+        "trailingShapesPerPermit": 0.759,
+        "concentrationRatio": 0.821,
+        "diversityRatio": 0.936,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "plumbing",
+      "month": "2026-05",
+      "permits": 1228,
+      "shape": {
+        "withDescription": 1228,
+        "emptyDescriptions": 0,
+        "distinctShapes": 934,
+        "shapesPerPermit": 0.761,
+        "topShapeShare": 3.2,
+        "top3ShapeShare": 5.9
+      },
+      "verdict": {
+        "trailingTopShare": 3.1,
+        "trailingShapesPerPermit": 0.757,
+        "concentrationRatio": 1.021,
+        "diversityRatio": 1.005,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "plumbing",
+      "month": "2026-06",
+      "permits": 1379,
+      "shape": {
+        "withDescription": 1379,
+        "emptyDescriptions": 0,
+        "distinctShapes": 1045,
+        "shapesPerPermit": 0.758,
+        "topShapeShare": 1.5,
+        "top3ShapeShare": 4.1
+      },
+      "verdict": {
+        "trailingTopShare": 2.9,
+        "trailingShapesPerPermit": 0.756,
+        "concentrationRatio": 0.523,
+        "diversityRatio": 1.003,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "plumbing",
+      "month": "2026-07",
+      "permits": 1272,
+      "shape": {
+        "withDescription": 1272,
+        "emptyDescriptions": 0,
+        "distinctShapes": 903,
+        "shapesPerPermit": 0.71,
+        "topShapeShare": 2.3,
+        "top3ShapeShare": 5.7
+      },
+      "verdict": {
+        "trailingTopShare": 2.4,
+        "trailingShapesPerPermit": 0.743,
+        "concentrationRatio": 0.945,
+        "diversityRatio": 0.955,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "plumbing",
+      "month": "2026-08",
+      "permits": 1341,
+      "shape": {
+        "withDescription": 1341,
+        "emptyDescriptions": 0,
+        "distinctShapes": 985,
+        "shapesPerPermit": 0.735,
+        "topShapeShare": 2,
+        "top3ShapeShare": 5.5
+      },
+      "verdict": {
+        "trailingTopShare": 2.3,
+        "trailingShapesPerPermit": 0.743,
+        "concentrationRatio": 0.857,
+        "diversityRatio": 0.989,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "plumbing",
+      "month": "2026-09",
+      "permits": 1296,
+      "shape": {
+        "withDescription": 1296,
+        "emptyDescriptions": 0,
+        "distinctShapes": 988,
+        "shapesPerPermit": 0.762,
+        "topShapeShare": 2.4,
+        "top3ShapeShare": 5.5
+      },
+      "verdict": {
+        "trailingTopShare": 1.9,
+        "trailingShapesPerPermit": 0.734,
+        "concentrationRatio": 1.241,
+        "diversityRatio": 1.038,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "plumbing",
+      "month": "2026-10",
+      "permits": 456,
+      "shape": {
+        "withDescription": 456,
+        "emptyDescriptions": 0,
+        "distinctShapes": 370,
+        "shapesPerPermit": 0.811,
+        "topShapeShare": 3.1,
+        "top3ShapeShare": 7.7
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "incomplete-month"
+      }
+    },
+    {
+      "category": "roofing",
+      "month": "2025-09",
+      "permits": 210,
+      "shape": {
+        "withDescription": 210,
+        "emptyDescriptions": 0,
+        "distinctShapes": 133,
+        "shapesPerPermit": 0.633,
+        "topShapeShare": 7.6,
+        "top3ShapeShare": 13.3
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "roofing",
+      "month": "2025-10",
+      "permits": 199,
+      "shape": {
+        "withDescription": 199,
+        "emptyDescriptions": 0,
+        "distinctShapes": 129,
+        "shapesPerPermit": 0.648,
+        "topShapeShare": 6.5,
+        "top3ShapeShare": 12.6
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "roofing",
+      "month": "2025-11",
+      "permits": 168,
+      "shape": {
+        "withDescription": 168,
+        "emptyDescriptions": 0,
+        "distinctShapes": 113,
+        "shapesPerPermit": 0.673,
+        "topShapeShare": 7.7,
+        "top3ShapeShare": 16.7
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "roofing",
+      "month": "2025-12",
+      "permits": 157,
+      "shape": {
+        "withDescription": 157,
+        "emptyDescriptions": 0,
+        "distinctShapes": 118,
+        "shapesPerPermit": 0.752,
+        "topShapeShare": 10.2,
+        "top3ShapeShare": 16.6
+      },
+      "verdict": {
+        "trailingTopShare": 7.3,
+        "trailingShapesPerPermit": 0.651,
+        "concentrationRatio": 1.404,
+        "diversityRatio": 1.155,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "roofing",
+      "month": "2026-01",
+      "permits": 121,
+      "shape": {
+        "withDescription": 121,
+        "emptyDescriptions": 0,
+        "distinctShapes": 72,
+        "shapesPerPermit": 0.595,
+        "topShapeShare": 20.7,
+        "top3ShapeShare": 27.3
+      },
+      "verdict": {
+        "trailingTopShare": 8.1,
+        "trailingShapesPerPermit": 0.691,
+        "concentrationRatio": 2.545,
+        "diversityRatio": 0.861,
+        "passed": [
+          "concentration"
+        ],
+        "flagged": false
+      }
+    },
+    {
+      "category": "roofing",
+      "month": "2026-02",
+      "permits": 137,
+      "shape": {
+        "withDescription": 137,
+        "emptyDescriptions": 0,
+        "distinctShapes": 99,
+        "shapesPerPermit": 0.723,
+        "topShapeShare": 8.8,
+        "top3ShapeShare": 14.6
+      },
+      "verdict": {
+        "trailingTopShare": 12.9,
+        "trailingShapesPerPermit": 0.673,
+        "concentrationRatio": 0.684,
+        "diversityRatio": 1.074,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "roofing",
+      "month": "2026-03",
+      "permits": 129,
+      "shape": {
+        "withDescription": 129,
+        "emptyDescriptions": 0,
+        "distinctShapes": 96,
+        "shapesPerPermit": 0.744,
+        "topShapeShare": 7,
+        "top3ShapeShare": 15.5
+      },
+      "verdict": {
+        "trailingTopShare": 13.2,
+        "trailingShapesPerPermit": 0.69,
+        "concentrationRatio": 0.529,
+        "diversityRatio": 1.078,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "roofing",
+      "month": "2026-04",
+      "permits": 148,
+      "shape": {
+        "withDescription": 148,
+        "emptyDescriptions": 0,
+        "distinctShapes": 105,
+        "shapesPerPermit": 0.709,
+        "topShapeShare": 6.1,
+        "top3ShapeShare": 14.2
+      },
+      "verdict": {
+        "trailingTopShare": 12.2,
+        "trailingShapesPerPermit": 0.687,
+        "concentrationRatio": 0.501,
+        "diversityRatio": 1.032,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "roofing",
+      "month": "2026-05",
+      "permits": 114,
+      "shape": {
+        "withDescription": 114,
+        "emptyDescriptions": 0,
+        "distinctShapes": 91,
+        "shapesPerPermit": 0.798,
+        "topShapeShare": 3.5,
+        "top3ShapeShare": 8.8
+      },
+      "verdict": {
+        "trailingTopShare": 7.3,
+        "trailingShapesPerPermit": 0.725,
+        "concentrationRatio": 0.479,
+        "diversityRatio": 1.1,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "roofing",
+      "month": "2026-06",
+      "permits": 191,
+      "shape": {
+        "withDescription": 191,
+        "emptyDescriptions": 0,
+        "distinctShapes": 131,
+        "shapesPerPermit": 0.686,
+        "topShapeShare": 14.1,
+        "top3ShapeShare": 18.8
+      },
+      "verdict": {
+        "trailingTopShare": 5.5,
+        "trailingShapesPerPermit": 0.75,
+        "concentrationRatio": 2.548,
+        "diversityRatio": 0.914,
+        "passed": [
+          "concentration"
+        ],
+        "flagged": false
+      }
+    },
+    {
+      "category": "roofing",
+      "month": "2026-07",
+      "permits": 150,
+      "shape": {
+        "withDescription": 150,
+        "emptyDescriptions": 0,
+        "distinctShapes": 114,
+        "shapesPerPermit": 0.76,
+        "topShapeShare": 3.3,
+        "top3ShapeShare": 8
+      },
+      "verdict": {
+        "trailingTopShare": 7.9,
+        "trailingShapesPerPermit": 0.731,
+        "concentrationRatio": 0.418,
+        "diversityRatio": 1.04,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "roofing",
+      "month": "2026-08",
+      "permits": 144,
+      "shape": {
+        "withDescription": 144,
+        "emptyDescriptions": 0,
+        "distinctShapes": 114,
+        "shapesPerPermit": 0.792,
+        "topShapeShare": 4.2,
+        "top3ShapeShare": 10.4
+      },
+      "verdict": {
+        "trailingTopShare": 7,
+        "trailingShapesPerPermit": 0.748,
+        "concentrationRatio": 0.603,
+        "diversityRatio": 1.059,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "roofing",
+      "month": "2026-09",
+      "permits": 167,
+      "shape": {
+        "withDescription": 167,
+        "emptyDescriptions": 0,
+        "distinctShapes": 121,
+        "shapesPerPermit": 0.725,
+        "topShapeShare": 7.2,
+        "top3ShapeShare": 13.2
+      },
+      "verdict": {
+        "trailingTopShare": 7.2,
+        "trailingShapesPerPermit": 0.746,
+        "concentrationRatio": 1,
+        "diversityRatio": 0.972,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "roofing",
+      "month": "2026-10",
+      "permits": 74,
+      "shape": {
+        "withDescription": 74,
+        "emptyDescriptions": 0,
+        "distinctShapes": 57,
+        "shapesPerPermit": 0.77,
+        "topShapeShare": 10.8,
+        "top3ShapeShare": 20.3
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "incomplete-month"
+      }
+    },
+    {
+      "category": "solar",
+      "month": "2025-09",
+      "permits": 140,
+      "shape": {
+        "withDescription": 140,
+        "emptyDescriptions": 0,
+        "distinctShapes": 87,
+        "shapesPerPermit": 0.621,
+        "topShapeShare": 11.4,
+        "top3ShapeShare": 17.9
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "solar",
+      "month": "2025-10",
+      "permits": 156,
+      "shape": {
+        "withDescription": 156,
+        "emptyDescriptions": 0,
+        "distinctShapes": 105,
+        "shapesPerPermit": 0.673,
+        "topShapeShare": 8.3,
+        "top3ShapeShare": 16
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "solar",
+      "month": "2025-11",
+      "permits": 123,
+      "shape": {
+        "withDescription": 123,
+        "emptyDescriptions": 0,
+        "distinctShapes": 81,
+        "shapesPerPermit": 0.659,
+        "topShapeShare": 10.6,
+        "top3ShapeShare": 22.8
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "no-trailing-baseline"
+      }
+    },
+    {
+      "category": "solar",
+      "month": "2025-12",
+      "permits": 88,
+      "shape": {
+        "withDescription": 88,
+        "emptyDescriptions": 0,
+        "distinctShapes": 70,
+        "shapesPerPermit": 0.795,
+        "topShapeShare": 12.5,
+        "top3ShapeShare": 22.7
+      },
+      "verdict": {
+        "trailingTopShare": 10.1,
+        "trailingShapesPerPermit": 0.651,
+        "concentrationRatio": 1.238,
+        "diversityRatio": 1.221,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "solar",
+      "month": "2026-01",
+      "permits": 43,
+      "shape": {
+        "withDescription": 43,
+        "emptyDescriptions": 0,
+        "distinctShapes": 39,
+        "shapesPerPermit": 0.907,
+        "topShapeShare": 7,
+        "top3ShapeShare": 16.3
+      },
+      "verdict": {
+        "trailingTopShare": 10.5,
+        "trailingShapesPerPermit": 0.709,
+        "concentrationRatio": 0.669,
+        "diversityRatio": 1.279,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "solar",
+      "month": "2026-02",
+      "permits": 51,
+      "shape": {
+        "withDescription": 51,
+        "emptyDescriptions": 0,
+        "distinctShapes": 42,
+        "shapesPerPermit": 0.824,
+        "topShapeShare": 7.8,
+        "top3ShapeShare": 17.6
+      },
+      "verdict": {
+        "trailingTopShare": 10,
+        "trailingShapesPerPermit": 0.787,
+        "concentrationRatio": 0.777,
+        "diversityRatio": 1.047,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "solar",
+      "month": "2026-03",
+      "permits": 32,
+      "shape": {
+        "withDescription": 32,
+        "emptyDescriptions": 0,
+        "distinctShapes": 29,
+        "shapesPerPermit": 0.906,
+        "topShapeShare": 9.4,
+        "top3ShapeShare": 18.8
+      },
+      "verdict": {
+        "trailingTopShare": 9.1,
+        "trailingShapesPerPermit": 0.842,
+        "concentrationRatio": 1.033,
+        "diversityRatio": 1.076,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "solar",
+      "month": "2026-04",
+      "permits": 72,
+      "shape": {
+        "withDescription": 72,
+        "emptyDescriptions": 0,
+        "distinctShapes": 64,
+        "shapesPerPermit": 0.889,
+        "topShapeShare": 5.6,
+        "top3ShapeShare": 13.9
+      },
+      "verdict": {
+        "trailingTopShare": 8.1,
+        "trailingShapesPerPermit": 0.879,
+        "concentrationRatio": 0.694,
+        "diversityRatio": 1.011,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "solar",
+      "month": "2026-05",
+      "permits": 46,
+      "shape": {
+        "withDescription": 46,
+        "emptyDescriptions": 0,
+        "distinctShapes": 38,
+        "shapesPerPermit": 0.826,
+        "topShapeShare": 8.7,
+        "top3ShapeShare": 17.4
+      },
+      "verdict": {
+        "trailingTopShare": 7.6,
+        "trailingShapesPerPermit": 0.873,
+        "concentrationRatio": 1.145,
+        "diversityRatio": 0.946,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "solar",
+      "month": "2026-06",
+      "permits": 74,
+      "shape": {
+        "withDescription": 74,
+        "emptyDescriptions": 0,
+        "distinctShapes": 66,
+        "shapesPerPermit": 0.892,
+        "topShapeShare": 5.4,
+        "top3ShapeShare": 10.8
+      },
+      "verdict": {
+        "trailingTopShare": 7.9,
+        "trailingShapesPerPermit": 0.874,
+        "concentrationRatio": 0.684,
+        "diversityRatio": 1.021,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "solar",
+      "month": "2026-07",
+      "permits": 72,
+      "shape": {
+        "withDescription": 72,
+        "emptyDescriptions": 0,
+        "distinctShapes": 59,
+        "shapesPerPermit": 0.819,
+        "topShapeShare": 4.2,
+        "top3ShapeShare": 9.7
+      },
+      "verdict": {
+        "trailingTopShare": 6.6,
+        "trailingShapesPerPermit": 0.869,
+        "concentrationRatio": 0.64,
+        "diversityRatio": 0.942,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "solar",
+      "month": "2026-08",
+      "permits": 80,
+      "shape": {
+        "withDescription": 80,
+        "emptyDescriptions": 0,
+        "distinctShapes": 71,
+        "shapesPerPermit": 0.887,
+        "topShapeShare": 6.3,
+        "top3ShapeShare": 12.5
+      },
+      "verdict": {
+        "trailingTopShare": 6.1,
+        "trailingShapesPerPermit": 0.846,
+        "concentrationRatio": 1.033,
+        "diversityRatio": 1.049,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "solar",
+      "month": "2026-09",
+      "permits": 62,
+      "shape": {
+        "withDescription": 62,
+        "emptyDescriptions": 0,
+        "distinctShapes": 57,
+        "shapesPerPermit": 0.919,
+        "topShapeShare": 3.2,
+        "top3ShapeShare": 9.7
+      },
+      "verdict": {
+        "trailingTopShare": 5.3,
+        "trailingShapesPerPermit": 0.866,
+        "concentrationRatio": 0.604,
+        "diversityRatio": 1.061,
+        "passed": [],
+        "flagged": false
+      }
+    },
+    {
+      "category": "solar",
+      "month": "2026-10",
+      "permits": 20,
+      "shape": {
+        "withDescription": 20,
+        "emptyDescriptions": 0,
+        "distinctShapes": 19,
+        "shapesPerPermit": 0.95,
+        "topShapeShare": 10,
+        "top3ShapeShare": 20
+      },
+      "verdict": {
+        "trailingTopShare": null,
+        "trailingShapesPerPermit": null,
+        "concentrationRatio": null,
+        "diversityRatio": null,
+        "passed": [],
+        "flagged": false,
+        "notEvaluated": "incomplete-month"
+      }
+    }
+  ]
+}

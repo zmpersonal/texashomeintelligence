@@ -1,0 +1,92 @@
+{
+  "offenders": [
+    {
+      "path": "$.flags[0].nextStep",
+      "length": 405,
+      "spaces": 67
+    },
+    {
+      "path": "$.flags[1].nextStep",
+      "length": 405,
+      "spaces": 67
+    },
+    {
+      "path": "$.flagLines[0]",
+      "length": 237,
+      "spaces": 35
+    },
+    {
+      "path": "$.flagLines[1]",
+      "length": 242,
+      "spaces": 35
+    },
+    {
+      "path": "$.nearMisses[0].declined",
+      "length": 206,
+      "spaces": 32
+    },
+    {
+      "path": "$.nearMisses[1].declined",
+      "length": 206,
+      "spaces": 32
+    },
+    {
+      "path": "$.nearMisses[2].declined",
+      "length": 72,
+      "spaces": 10
+    },
+    {
+      "path": "$.nearMisses[3].declined",
+      "length": 72,
+      "spaces": 10
+    },
+    {
+      "path": "$.nearMisses[4].declined",
+      "length": 206,
+      "spaces": 32
+    },
+    {
+      "path": "$.nearMisses[5].declined",
+      "length": 206,
+      "spaces": 32
+    },
+    {
+      "path": "$.margin.round53.measuredOn",
+      "length": 64,
+      "spaces": 11
+    },
+    {
+      "path": "$.margin.note",
+      "length": 395,
+      "spaces": 72
+    },
+    {
+      "path": "$.round53.measuredOn",
+      "length": 64,
+      "spaces": 11
+    },
+    {
+      "path": "$.reach.sanAntonio",
+      "length": 266,
+      "spaces": 47
+    },
+    {
+      "path": "$.reach.detectsOnly",
+      "length": 176,
+      "spaces": 26
+    },
+    {
+      "path": "$.reach.blindSpotMeasured",
+      "length": 418,
+      "spaces": 69
+    },
+    {
+      "path": "$.reach.earliest",
+      "length": 133,
+      "spaces": 21
+    }
+  ],
+  "guardCanFire": true,
+  "plantedOffenderPath": "$.cells[0].plantedForTheGuard",
+  "note": "paths and shapes only; the matched text is deliberately absent. `guardCanFire` is this same guard run against the measurement with one description-shaped string planted in it."
+}
