@@ -286,14 +286,16 @@ export function toObservations(
           `${evaluation.nearMisses.length} near miss(es).`,
       );
     }
+    const m = evaluation.margin;
     console.log(
-      `[shape-flag] margin: closest flagged ${evaluation.margin.closestFlagged?.cell ?? "none"} ` +
-        `at ${evaluation.margin.closestFlagged?.diversityRatio ?? "n/a"}, closest declined ` +
-        `${evaluation.margin.closestDeclined?.cell ?? "none"} at ` +
-        `${evaluation.margin.closestDeclined?.diversityRatio ?? "n/a"} — gap ` +
-        `${evaluation.margin.diversityGap ?? "n/a"} against Round 53's ` +
-        `${evaluation.margin.round53.diversityGap}` +
-        (evaluation.margin.tighterThanRound53 ? "  *** TIGHTER THAN WHEN MEASURED ***" : ""),
+      `[shape-flag] margin: closest to being missed ${m.closestToMissed?.cell ?? "nothing flagged"} ` +
+        `(inside diversity by ${m.closestToMissed?.insideDiversityBy ?? "n/a"}, Round 53: ` +
+        `${m.round53.flaggedAtTheTime.insideDiversityBy}); nearest declined on diversity ` +
+        `${m.nearestDeclinedOnDiversity?.cell ?? "none"} (outside by ` +
+        `${m.nearestDeclinedOnDiversity?.outsideBy ?? "n/a"}, Round 53: ` +
+        `${m.round53.nearestDeclinedOnDiversity.outsideBy}); separation ` +
+        `${m.diversitySeparation ?? "n/a"} vs ${m.round53.diversitySeparation}` +
+        (m.tighterThanRound53 ? "  *** TIGHTER THAN WHEN MEASURED ***" : ""),
     );
   }
 

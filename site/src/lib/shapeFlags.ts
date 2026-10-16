@@ -35,41 +35,57 @@ import type { DescriptionShape } from "../ingest/descriptionShape";
  * ══ THE THRESHOLDS, AND WHAT THEY ARE COMPENSATING FOR ══════════════════════
  *
  * This project's standing rule is that a tuned number says what it is compensating for. These
- * two are worse than tuned: they are a boundary that **nearly did not separate**, and the next
- * person to touch them is adjusting that boundary rather than rounding a number.
+ * two are worse than tuned: one of them is a boundary the real break cleared by **0.016**, and
+ * the next person to touch it is adjusting that rather than rounding a number.
  *
- * The arithmetic, measured over 60 evaluable cells — 6 Austin categories × 10 complete months,
- * 47,599 rows (`round-53-rules.json`):
+ * The arithmetic, over 60 evaluable cells — 6 Austin categories × 10 complete months, 47,599
+ * rows (`round-53-rules.json`), plus the reconstructed pre-Round-50 bucket that is what the
+ * detector would actually have been watching when the break happened:
  *
- *   the break, on today's categories   energy_storage/2026-07   4.12×   0.41×   FLAGGED
- *   the break, as it was visible THEN  v2_solar/2026-07         2.97×   0.78×   FLAGGED
- *   the nearest declined cell          hvac/2026-07             1.25×   0.79×   declined
- *   declined, concentration only       roofing/2026-01          2.55×   0.86×   declined
- *   declined, concentration only       roofing/2026-06          2.55×   0.91×   declined
- *   declined, concentration only       electrical/2026-08       5.24×   0.96×   declined
- *   declined, concentration only       electrical/2026-09       2.49×   0.91×   declined
+ *                                        concentration   diversity    verdict
+ *   the break, today's categories          4.12×          0.414       FLAGGED, comfortably
+ *   the break, as visible AT THE TIME      2.97×          0.784       FLAGGED by 0.016
+ *   nearest declined, diversity axis       2.55×          0.861       declined by 0.061
+ *     (roofing/2026-01 — passed concentration, failed diversity)
+ *   also declined there                    2.49×          0.911       electrical/2026-09
+ *                                          2.55×          0.914       roofing/2026-06
+ *                                          5.24×          0.955       electrical/2026-08
+ *   nearest declined, concentration axis   1.25×          0.793       declined by 0.75
+ *     (hvac/2026-07 — passed diversity, failed concentration)
  *
- * Read the first three rows together. On today's categories the break clears the diversity test
- * with room to spare — 0.41 against 0.80. On the mapping that was actually live when it
- * happened, it cleared by **0.78 against 0.80, with an innocent cell sitting at 0.79.** One
- * percentage point of separation, on one of the two axes, in the one case that mattered.
+ * ── A CORRECTION I OWE THIS FILE ────────────────────────────────────────────
+ * Round 53's report said the separation was "0.78 against 0.80 with an innocent cell at 0.79".
+ * That compared two cells that were not competing on the same test: hvac/2026-07's 0.793 never
+ * threatened to become a flag, because its concentration was 1.25× and nothing below 2× is
+ * flagged whatever its diversity. The cell that actually competes on the diversity axis — the
+ * nearest one that cleared concentration and then failed diversity — is roofing/2026-01 at
+ * 0.861. So the two margins are different numbers and both matter:
  *
- * So:
+ *   SENSITIVITY  the break cleared the diversity threshold by **0.016**. A break 2% less
+ *                templated than Austin's would have been missed in July. This is the thin one.
+ *   SPECIFICITY  the nearest innocent cell sat **0.061** outside it, and the gap between the
+ *                two populations on that axis is **0.077** — seven times what the earlier
+ *                framing implied, and the reason the conjunction holds at all.
  *
+ * ── WHAT FOLLOWS FROM IT ────────────────────────────────────────────────────
  *  1. **It is a conjunction or it is nothing.** Concentration alone fires on roofing twice and
- *     electrical twice; diversity alone fires on HVAC. Every declined cell in thirteen months
- *     fails exactly one of the two tests, several of them narrowly. Loosening either half does
- *     not make this more sensitive — it makes it a different, noisier detector.
+ *     electrical twice; diversity alone fires on HVAC. Loosening either half does not make this
+ *     more sensitive — it makes it a different, noisier detector.
  *  2. **`MIN_PERMITS` must stay at or below 29.** The break month held 29 permits. All 153 swept
- *     rules with an n floor of 30 miss it. 0, 10 and 20 were identical on this window; 10 is
+ *     rules with an n floor of 30 miss it. 0, 10 and 20 were identical on that window; 10 is
  *     here only to keep a two-permit month from producing arithmetic nobody should read.
- *  3. **The margin is reported on every run and is not to be absorbed.** `evaluateShapeFlags`
- *     returns `margin`, which names the flagged cell closest to the boundary and the declined
- *     cell closest to it, and compares the gap between them against `ROUND_53_SEPARATION`.
- *     `tighterThanRound53` going true means a later month has crowded the boundary, and the
- *     answer to that is to re-measure and say so — not to nudge a threshold until it reads
- *     clean. Round 53's own numbers are frozen here precisely so a later run can be set against
+ *  3. **Both margins are reported every run and neither is to be absorbed.**
+ *     `evaluateShapeFlags` returns `margin` with the flagged cell closest to being MISSED, the
+ *     declined cell closest to being FLAGGED on each axis, the separation between them, and
+ *     `tighterThanRound53` — which trips when either margin is thinner than it was when
+ *     measured. The answer to that is to re-measure and say so, not to nudge a threshold until
+ *     it reads clean. Round 53's numbers are frozen below so a later run can be set against
  *     them.
+ *  4. **A flag marks the TRANSITION, not the state.** By the third templated month the trailing
+ *     baseline has absorbed the template and the cell stops flagging — measured:
+ *     energy_storage/2026-09 reads 1.7× and is declined. So a flag is visible for a month or
+ *     two and then goes quiet, which is why it is raised durably, once, as an issue rather than
+ *     shown on a surface where it would simply disappear.
  */
 export const CONCENTRATION_RATIO = 2;
 export const DIVERSITY_RATIO = 0.8;
@@ -77,14 +93,40 @@ export const MIN_PERMITS = 10;
 /** Months of the same category that form the baseline. Three, as measured. */
 export const TRAILING_MONTHS = 3;
 
-/** Round 53's measured separation, frozen. The comparison a later run is read against. */
+/**
+ * Round 53's measured margins, frozen — the comparison a later run is read against.
+ *
+ * Both numbers, because they answer different questions: how nearly the break was MISSED, and
+ * how nearly an ordinary month was FLAGGED. See the correction in the comment above.
+ */
 export const ROUND_53_SEPARATION = {
   measuredOn: "60 cells — 6 Austin categories × 10 complete months, 47,599 rows",
-  break: { cell: "energy_storage/2026-07", concentration: 4.12, diversity: 0.41 },
-  breakAsSeenAtTheTime: { cell: "v2_solar/2026-07", concentration: 2.97, diversity: 0.78 },
-  nearestDeclined: { cell: "hvac/2026-07", concentration: 1.25, diversity: 0.79 },
-  /** 0.79 − 0.78. The whole separation, on the axis that carried it, at the time. */
-  diversityGap: 0.01,
+  /** The break on today's categories. Comfortable, and not the case that matters. */
+  break: { cell: "energy_storage/2026-07", concentration: 4.12, diversity: 0.414 },
+  /** The break as the detector would have met it in August 2026, under `trades-v2`. */
+  flaggedAtTheTime: {
+    cell: "v2_solar/2026-07",
+    concentration: 2.97,
+    diversity: 0.784,
+    insideDiversityBy: 0.016,
+    insideConcentrationBy: 0.97,
+  },
+  /** Closest to becoming a flag on the diversity axis: cleared concentration, failed diversity. */
+  nearestDeclinedOnDiversity: {
+    cell: "roofing/2026-01",
+    concentration: 2.55,
+    diversity: 0.861,
+    outsideBy: 0.061,
+  },
+  /** Closest on the concentration axis: cleared diversity, failed concentration. */
+  nearestDeclinedOnConcentration: {
+    cell: "hvac/2026-07",
+    concentration: 1.25,
+    diversity: 0.793,
+    outsideBy: 0.75,
+  },
+  /** 0.861 − 0.784. The gap between the two populations on the axis that competed. */
+  diversitySeparation: 0.077,
 } as const;
 
 /**
@@ -177,14 +219,34 @@ export interface ShapeNearMiss {
 
 export interface MarginReport {
   thresholds: { concentrationRatio: number; diversityRatio: number; minPermits: number };
-  /** The flagged cell closest to the boundary on the diversity axis. */
-  closestFlagged: { cell: string; concentrationRatio: number; diversityRatio: number } | null;
-  /** The declined cell closest to the boundary on the diversity axis. */
-  closestDeclined: { cell: string; concentrationRatio: number; diversityRatio: number } | null;
-  /** closestDeclined.diversity − closestFlagged.diversity, when both exist. */
-  diversityGap: number | null;
+  /**
+   * SENSITIVITY — the flagged cell that came closest to being MISSED, and by how little on
+   * each axis. This is the thin one: the break cleared diversity by 0.016 at the time.
+   */
+  closestToMissed: {
+    cell: string;
+    concentrationRatio: number;
+    diversityRatio: number;
+    insideDiversityBy: number;
+    insideConcentrationBy: number;
+  } | null;
+  /**
+   * SPECIFICITY, per axis, and CONDITIONED ON THE OTHER TEST PASSING — which is the whole
+   * correction. A cell that failed concentration cannot become a flag however low its
+   * diversity, so it is not competing on the diversity axis and must not be compared there.
+   * `nearestDeclinedOnDiversity` is the closest cell that cleared concentration and then
+   * failed diversity; `nearestDeclinedOnConcentration` is its mirror.
+   */
+  nearestDeclinedOnDiversity: { cell: string; diversityRatio: number; outsideBy: number } | null;
+  nearestDeclinedOnConcentration: {
+    cell: string;
+    concentrationRatio: number;
+    outsideBy: number;
+  } | null;
+  /** The gap between the two populations on the axis that competed, or null. */
+  diversitySeparation: number | null;
   round53: typeof ROUND_53_SEPARATION;
-  /** True when this window separates the two populations by LESS than Round 53 did. */
+  /** True when EITHER margin is thinner than it was when measured. */
   tighterThanRound53: boolean;
   note: string;
 }
@@ -364,33 +426,59 @@ export function evaluateShapeFlags(
     });
   }
 
-  // ── THE MARGIN, REPORTED EVERY RUN ──────────────────────────────────────
-  // Both populations' closest approach to the boundary on the axis that carried the separation
-  // in the one case that mattered. Surfaced rather than absorbed: see the thresholds comment.
-  const evaluatedCells = [...byCell.entries()].filter(([, v]) => v.notEvaluated === undefined);
-  const flaggedCells = evaluatedCells.filter(([, v]) => v.flagged);
-  const declinedCells = evaluatedCells.filter(([, v]) => !v.flagged && v.diversityRatio !== null);
-  const closest = (
-    list: [string, ShapeVerdict][],
-    pick: (a: number, b: number) => number,
-  ): { cell: string; concentrationRatio: number; diversityRatio: number } | null => {
-    if (list.length === 0) return null;
-    const best = list.reduce((acc, cur) =>
-      pick(cur[1].diversityRatio ?? 0, acc[1].diversityRatio ?? 0) === (cur[1].diversityRatio ?? 0)
-        ? cur
-        : acc,
-    );
-    return {
-      cell: best[0].replace(" ", "/"),
-      concentrationRatio: best[1].concentrationRatio ?? 0,
-      diversityRatio: best[1].diversityRatio ?? 0,
-    };
-  };
-  const closestFlagged = closest(flaggedCells, Math.max);
-  const closestDeclined = closest(declinedCells, Math.min);
-  const diversityGap =
-    closestFlagged && closestDeclined
-      ? round(closestDeclined.diversityRatio - closestFlagged.diversityRatio)
+  /*
+   * ── THE MARGIN, REPORTED EVERY RUN, PER AXIS ────────────────────────────
+   * Each axis is read only among the cells that could actually cross it: a cell that failed
+   * concentration is not competing on diversity, because nothing under 2× is flagged whatever
+   * its diversity. The first version of this compared every declined cell on the diversity
+   * axis and reported a NEGATIVE gap on live data — energy_storage/2026-09 sits at 0.193 and
+   * is declined on concentration — which read as "tighter than when measured" on a window with
+   * no false positive in it at all. A margin metric that cries wolf is how a real narrowing
+   * gets ignored.
+   */
+  const evaluated = [...byCell.entries()].filter(([, v]) => v.notEvaluated === undefined);
+  const flaggedCells = evaluated.filter(([, v]) => v.flagged);
+  const cellId = (key: string): string => key.replace(" ", "/");
+
+  const closestToMissed = flaggedCells.length
+    ? flaggedCells
+        .map(([key, v]) => ({
+          cell: cellId(key),
+          concentrationRatio: v.concentrationRatio ?? 0,
+          diversityRatio: v.diversityRatio ?? 0,
+          insideDiversityBy: round(DIVERSITY_RATIO - (v.diversityRatio ?? 0)),
+          insideConcentrationBy: round((v.concentrationRatio ?? 0) - CONCENTRATION_RATIO),
+        }))
+        .reduce((a, b) => (b.insideDiversityBy < a.insideDiversityBy ? b : a))
+    : null;
+
+  // Declined, but it cleared concentration — so diversity is the only thing keeping it out.
+  const onDiversity = evaluated
+    .filter(([, v]) => !v.flagged && v.passed.includes("concentration") && v.diversityRatio !== null)
+    .map(([key, v]) => ({
+      cell: cellId(key),
+      diversityRatio: v.diversityRatio as number,
+      outsideBy: round((v.diversityRatio as number) - DIVERSITY_RATIO),
+    }));
+  const nearestDeclinedOnDiversity = onDiversity.length
+    ? onDiversity.reduce((a, b) => (b.outsideBy < a.outsideBy ? b : a))
+    : null;
+
+  // Declined, but it cleared diversity — so concentration is the only thing keeping it out.
+  const onConcentration = evaluated
+    .filter(([, v]) => !v.flagged && v.passed.includes("diversity") && v.concentrationRatio !== null)
+    .map(([key, v]) => ({
+      cell: cellId(key),
+      concentrationRatio: v.concentrationRatio as number,
+      outsideBy: round(CONCENTRATION_RATIO - (v.concentrationRatio as number)),
+    }));
+  const nearestDeclinedOnConcentration = onConcentration.length
+    ? onConcentration.reduce((a, b) => (b.outsideBy < a.outsideBy ? b : a))
+    : null;
+
+  const diversitySeparation =
+    closestToMissed && nearestDeclinedOnDiversity
+      ? round(nearestDeclinedOnDiversity.diversityRatio - closestToMissed.diversityRatio)
       : null;
 
   const margin: MarginReport = {
@@ -399,17 +487,25 @@ export function evaluateShapeFlags(
       diversityRatio: DIVERSITY_RATIO,
       minPermits: MIN_PERMITS,
     },
-    closestFlagged,
-    closestDeclined,
-    diversityGap,
+    closestToMissed,
+    nearestDeclinedOnDiversity,
+    nearestDeclinedOnConcentration,
+    diversitySeparation,
     round53: ROUND_53_SEPARATION,
-    tighterThanRound53: diversityGap !== null && diversityGap < ROUND_53_SEPARATION.diversityGap,
+    tighterThanRound53:
+      (closestToMissed !== null &&
+        closestToMissed.insideDiversityBy < ROUND_53_SEPARATION.flaggedAtTheTime.insideDiversityBy) ||
+      (nearestDeclinedOnDiversity !== null &&
+        nearestDeclinedOnDiversity.outsideBy < ROUND_53_SEPARATION.nearestDeclinedOnDiversity.outsideBy) ||
+      (diversitySeparation !== null &&
+        diversitySeparation < ROUND_53_SEPARATION.diversitySeparation),
     note:
-      "The diversity axis carried the whole separation in the only case that mattered: the break " +
-      "as it was visible at the time cleared at 0.78 with an innocent cell at 0.79. " +
-      "`diversityGap` is this window's version of that 0.01. If it narrows, the detector is " +
-      "closer to firing on an ordinary month than it was when it was measured — re-measure and " +
-      "say so; do not move the threshold until it reads clean.",
+      "Two margins, because they answer different questions. SENSITIVITY: the break cleared the " +
+      "diversity threshold by 0.016 when it was visible at the time, so a break 2% less " +
+      "templated would have been missed. SPECIFICITY: the nearest cell that cleared " +
+      "concentration and then failed diversity sat 0.061 outside, giving a 0.077 separation on " +
+      "the axis that competed. Either narrowing trips `tighterThanRound53`, and the answer is " +
+      "to re-measure and say so — not to move a threshold until it reads clean.",
   };
 
   return { byCell, flags, nearMisses, margin, coverage, reach: REACH };

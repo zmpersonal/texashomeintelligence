@@ -49,63 +49,84 @@ jobs:
 
       - name: No permit description may appear in the measurement
         # The standing line from Round 50: a probe writes the measurement, not the material.
-        # Asserted rather than trusted, and it is the whole design constraint of this round — a
-        # fingerprint that turned out to carry text would be a worse answer than "no".
         #
-        # It reports the JSON PATH of any offender and never the offending text: a guard against
-        # publishing free text must not publish it to complain, and an Actions log this session
-        # cannot read is not a record either, so the paths are written to a file that gets
-        # committed whether or not the check passes.
+        # INVERTED, after the first run of this workflow failed on its own prose. The earlier
+        # guard flagged any long, spacey string outside `$.notes.*`, and the detector's output
+        # carries sentences by design — a flag's `nextStep`, the near-miss explanations, the
+        # reach. Those are literals from `src/lib/shapeFlags.ts` with numbers interpolated, not
+        # anything read from the source.
         #
-        # `$.notes.*` is skipped, and only that prefix: the probe puts every sentence I wrote
-        # under it, so the guard still covers every measured field without an allowlist that
-        # grows a path per round.
+        # So instead of hunting for bad strings, this ALLOWS a named set of prose paths and
+        # requires every other string in the file to be short and plain. A new free-text field
+        # anywhere else fails the run, which is the direction that cannot fail open: forgetting
+        # to add a path to the list breaks the build, while forgetting to exclude one would
+        # have published it.
+        #
+        # It reports the JSON PATH of any offender and never the offending text, and writes the
+        # result to a file that gets committed whether or not the check passes — an Actions log
+        # this session cannot read is not a record.
         if: always()
         run: |
           python3 - <<'PY'
-          import json, pathlib, sys
+          import json, pathlib, re, sys
 
           SRC = pathlib.Path("docs/audits/round-54-detector-live.json")
           if not SRC.exists():
               print("no measurement written; nothing to check"); sys.exit(0)
 
-          def suspicious(s):
-              return len(s) >= 60 and s.count(" ") >= 6
+          # Paths whose value is a SENTENCE WRITTEN IN THE SOURCE, with only numbers and
+          # category/month names interpolated. Each one is a literal in shapeFlags.ts or in
+          # scripts/audits/round-54-detector-live.ts.
+          PROSE = {
+              "$.flagLines[*]",
+              "$.flags[*].nextStep",
+              "$.nearMisses[*].declined",
+              "$.margin.note",
+              "$.margin.round53.measuredOn",
+              "$.round53.measuredOn",
+              "$.reach.sanAntonio",
+              "$.reach.detectsOnly",
+              "$.reach.blindSpotMeasured",
+              "$.reach.earliest",
+          }
+          PROSE_PREFIXES = ("$.notes.",)
+          # Everything else: a category, a month, a cell id, an enum, a timestamp, a short note.
+          DATA = re.compile(r"^[A-Za-z0-9 ._/:+×−@()'-]{0,64}$")
+
+          def norm(path):
+              return re.sub(r"\[\d+\]", "[*]", path)
 
           def offenders(o, path="$", found=None):
-              """Paths of every long, spacey string, walking the STRUCTURE rather than
-              regexing the serialised JSON — Round 50's first guard regexed the text and
-              produced a false positive on its own punctuation."""
+              """Walks the STRUCTURE rather than regexing the serialised JSON — Round 50's first
+              guard regexed the text and produced a false positive on its own punctuation."""
               found = [] if found is None else found
               if isinstance(o, dict):
                   for k, v in o.items():
-                      # A KEY can be free text too (a permit type is fine; a description is not).
-                      if isinstance(k, str) and suspicious(k):
-                          found.append({"path": f"{path}.<key>", "length": len(k),
-                                        "spaces": k.count(" ")})
+                      if isinstance(k, str) and not DATA.match(k):
+                          found.append({"path": f"{norm(path)}.<key>", "length": len(k)})
                       offenders(v, f"{path}.{k}", found)
               elif isinstance(o, list):
                   for i, v in enumerate(o):
                       offenders(v, f"{path}[{i}]", found)
-              elif isinstance(o, str) and suspicious(o):
-                  found.append({"path": path, "length": len(o), "spaces": o.count(" ")})
-              return [h for h in found if not h["path"].startswith("$.notes.")]
+              elif isinstance(o, str):
+                  n = norm(path)
+                  if n in PROSE or n.startswith(PROSE_PREFIXES):
+                      return found
+                  if not DATA.match(o):
+                      found.append({"path": n, "length": len(o), "spaces": o.count(" ")})
+              return found
 
           measurement = json.loads(SRC.read_text())
           hits = offenders(measurement)
 
           # NON-VACUITY. A guard that has never fired is a guard nobody has checked, and this
-          # one is the whole design constraint of the round. So it is run a second time against
-          # the same measurement with one description-shaped string planted in it, and the
-          # result is recorded: if `guardCanFire` is false, the empty `offenders` above means
-          # nothing.
-          PLANTED_AT = "$.cells[0].plantedForTheGuard"
+          # one is the round's design constraint. Planted at a DATA path, which is where a
+          # description would actually leak: a field somebody added to a cell.
+          PLANTED_AT = "$.cells[*].plantedForTheGuard"
           planted = json.loads(SRC.read_text())
           planted["cells"][0]["plantedForTheGuard"] = (
               "INSTALL BATTERY BACKUP SYSTEM AND ADDITIONAL METER SOCKET AT SINGLE FAMILY RESIDENCE"
           )
-          # By PATH, not by count: a real offender elsewhere in the file would make a
-          # count-based check read as "the guard cannot fire" at exactly the moment it had.
           can_fire = any(h["path"] == PLANTED_AT for h in offenders(planted))
 
           pathlib.Path("docs/audits/round-54-textcheck.json").write_text(
@@ -113,9 +134,12 @@ jobs:
                   "offenders": hits,
                   "guardCanFire": can_fire,
                   "plantedOffenderPath": PLANTED_AT if can_fire else None,
-                  "note": "paths and shapes only; the matched text is deliberately absent. "
-                          "`guardCanFire` is this same guard run against the measurement with "
-                          "one description-shaped string planted in it.",
+                  "prosePathsAllowed": sorted(PROSE) + [p + "*" for p in PROSE_PREFIXES],
+                  "note": "paths and shapes only; the matched text is deliberately absent. Every "
+                          "string outside the listed prose paths must be <=64 plain characters, so "
+                          "a NEW free-text field anywhere else fails this check. `guardCanFire` is "
+                          "this same guard run against the measurement with one "
+                          "description-shaped string planted at a data path.",
               }, indent=2) + "\n")
           for h in hits[:10]:
               print("  offender:", h)

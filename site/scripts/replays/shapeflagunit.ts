@@ -138,46 +138,72 @@ console.log("\n══ 1 · THE RULE, AND THE MARGIN IT IS REPORTED WITH ══\n
 }
 
 {
-  // THE MARGIN. Condition 1: a narrowing must surface, not be absorbed.
-  const base = months(1, 9).map((m) => cell("solar", m, 40, 4));
-  const flagged = cell("solar", "2026-10", 40, 34);
-  const wide = evaluateShapeFlags([...base, flagged]);
-  A("the margin names the closest flagged and closest declined cells",
-    wide.margin.closestFlagged !== null || wide.margin.closestDeclined !== null,
-    JSON.stringify({ f: wide.margin.closestFlagged?.cell, d: wide.margin.closestDeclined?.cell }));
-  A("…and freezes Round 53's own separation to be read against",
-    wide.margin.round53.diversityGap === ROUND_53_SEPARATION.diversityGap &&
-      wide.margin.round53.breakAsSeenAtTheTime.diversity === 0.78);
-
   /*
-   * Now crowd the boundary, exactly. This is Round 53's situation reproduced to the decimal:
-   * a flagged cell whose diversity sits at 0.78 and a declined cell at 0.785 — a gap of 0.005
-   * where Round 53 measured 0.01. It must come back as `tighterThanRound53`, because absorbing
-   * that is the failure the owner's first condition is about.
+   * THE MARGIN. Condition 1: a narrowing must surface, not be absorbed — and it must not cry
+   * wolf, or a real narrowing gets ignored. Both halves are asserted here.
+   *
+   * The axes are read separately and each only among the cells that could cross it: a cell
+   * that failed concentration is not competing on diversity. The first version of this
+   * compared every declined cell on the diversity axis and reported a NEGATIVE gap against
+   * live data (energy_storage/2026-09 sits at 0.193, declined on concentration), i.e. "tighter
+   * than when measured" on a window with no false positive in it.
    */
-  const crowdedRows: ShapeRow[] = [
+  const base = [
     ...months(1, 9).map((m) => raw("storage", m, 100, 10, 1)),
-    raw("storage", "2026-10", 100, 30, 0.78), // 3.0× and 0.78 → flagged
+    raw("storage", "2026-10", 100, 30, 0.6), // 3.0× and 0.60 → flagged, comfortably
+    ...months(1, 9).map((m) => raw("roofing", m, 100, 10, 1)),
+    raw("roofing", "2026-10", 100, 25, 0.9), // 2.5× and 0.90 → declined ON DIVERSITY
     ...months(1, 9).map((m) => raw("hvac", m, 100, 10, 1)),
-    raw("hvac", "2026-10", 100, 12, 0.785), // 1.2× and 0.785 → declined, just outside
+    raw("hvac", "2026-10", 100, 12, 0.2), // 1.2× and 0.20 → declined ON CONCENTRATION
   ];
-  const crowded = evaluateShapeFlags(crowdedRows);
-  A("the crowded boundary is reported as a gap, not hidden",
-    crowded.margin.diversityGap === 0.005,
-    `gap ${crowded.margin.diversityGap}, flagged ${crowded.margin.closestFlagged?.cell}, ` +
-      `declined ${crowded.margin.closestDeclined?.cell}`);
-  A("…and a gap tighter than Round 53's trips `tighterThanRound53`",
-    crowded.margin.tighterThanRound53 === true);
-  // Non-vacuous: widen the declined cell and the flag goes quiet again.
-  const roomy = evaluateShapeFlags(
-    crowdedRows.map((r) =>
-      r.category === "hvac" && r.month === "2026-10" ? raw("hvac", "2026-10", 100, 12, 0.95) : r,
+  const e = evaluateShapeFlags(base);
+  A("the margin names the flagged cell closest to being missed",
+    e.margin.closestToMissed?.cell === "storage/2026-10",
+    JSON.stringify(e.margin.closestToMissed));
+  A("…the nearest declined cell ON THE DIVERSITY AXIS cleared concentration first",
+    e.margin.nearestDeclinedOnDiversity?.cell === "roofing/2026-10",
+    JSON.stringify(e.margin.nearestDeclinedOnDiversity));
+  A("…the nearest declined cell ON THE CONCENTRATION AXIS cleared diversity first",
+    e.margin.nearestDeclinedOnConcentration?.cell === "hvac/2026-10",
+    JSON.stringify(e.margin.nearestDeclinedOnConcentration));
+  A("…a cell declined on the OTHER axis is not compared on this one",
+    e.margin.nearestDeclinedOnDiversity?.cell !== "hvac/2026-10" &&
+      (e.margin.diversitySeparation ?? 0) > 0,
+    `separation ${e.margin.diversitySeparation}`);
+  A("…and that window is NOT reported as tighter than when it was measured",
+    e.margin.tighterThanRound53 === false,
+    `separation ${e.margin.diversitySeparation} vs ${ROUND_53_SEPARATION.diversitySeparation}`);
+  A("…and Round 53's own margins are frozen to be read against",
+    e.margin.round53.flaggedAtTheTime.insideDiversityBy === 0.016 &&
+      e.margin.round53.nearestDeclinedOnDiversity.outsideBy === 0.061 &&
+      e.margin.round53.diversitySeparation === 0.077);
+
+  // NOW CROWD IT, exactly: a flagged cell 0.005 inside the threshold where Round 53's was
+  // 0.016 inside. Sensitivity has narrowed and it must say so.
+  const thin = evaluateShapeFlags(
+    base.map((r) =>
+      r.category === "storage" && r.month === "2026-10" ? raw("storage", "2026-10", 100, 30, 0.795) : r,
     ),
   );
-  A("…and does not trip when the boundary is roomy",
-    roomy.margin.tighterThanRound53 === false, `gap ${roomy.margin.diversityGap}`);
-  A("…and the note says not to move the threshold until it reads clean",
-    /do not move the threshold/i.test(wide.margin.note));
+  A("a flagged cell closer to the threshold than Round 53's trips `tighterThanRound53`",
+    thin.margin.tighterThanRound53 === true &&
+      (thin.margin.closestToMissed?.insideDiversityBy ?? 1) === 0.005,
+    JSON.stringify(thin.margin.closestToMissed));
+
+  // And the specificity half: an innocent cell that clears concentration and lands closer to
+  // the boundary than roofing/2026-01 did.
+  const crowded = evaluateShapeFlags(
+    base.map((r) =>
+      r.category === "roofing" && r.month === "2026-10" ? raw("roofing", "2026-10", 100, 25, 0.83) : r,
+    ),
+  );
+  A("an innocent cell crowding the boundary trips it too",
+    crowded.margin.tighterThanRound53 === true &&
+      (crowded.margin.nearestDeclinedOnDiversity?.outsideBy ?? 1) === 0.03,
+    JSON.stringify(crowded.margin.nearestDeclinedOnDiversity));
+  A("…and the note names both margins and says not to move the threshold",
+    /SENSITIVITY/.test(e.margin.note) && /SPECIFICITY/.test(e.margin.note) &&
+      /not to move a threshold/.test(e.margin.note));
 }
 
 {
@@ -368,8 +394,10 @@ console.log("\n══ 6 · THE LIVE DATASET, AND THE STORED VERDICT ══\n");
       current.every((v) => !v.shapeFlag || v.shape !== undefined));
     for (const f of fresh.flags) console.log(`  live flag: ${describeFlag(f)}`);
     console.log(
-      `  live margin: gap ${fresh.margin.diversityGap} vs Round 53's ` +
-        `${ROUND_53_SEPARATION.diversityGap}` +
+      `  live margin: closest to missed ${fresh.margin.closestToMissed?.cell ?? "none"} inside ` +
+        `by ${fresh.margin.closestToMissed?.insideDiversityBy ?? "n/a"} (Round 53: ` +
+        `${ROUND_53_SEPARATION.flaggedAtTheTime.insideDiversityBy}); separation ` +
+        `${fresh.margin.diversitySeparation ?? "n/a"} vs ${ROUND_53_SEPARATION.diversitySeparation}` +
         (fresh.margin.tighterThanRound53 ? "  *** TIGHTER ***" : ""),
     );
   }

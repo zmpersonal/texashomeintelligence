@@ -109,7 +109,13 @@ async function main(): Promise<void> {
     console.log(`  near  ${m.category}/${m.month} passed ${m.passed} (${m.concentrationRatio}× / ${m.diversityRatio}×)`);
   }
   console.log(
-    `  margin gap ${evaluation.margin.diversityGap} vs Round 53's ${ROUND_53_SEPARATION.diversityGap}` +
+    `  margin — closest to missed ${evaluation.margin.closestToMissed?.cell ?? "none"} ` +
+      `(inside diversity by ${evaluation.margin.closestToMissed?.insideDiversityBy ?? "n/a"}, ` +
+      `Round 53: ${ROUND_53_SEPARATION.flaggedAtTheTime.insideDiversityBy}); nearest declined on ` +
+      `diversity ${evaluation.margin.nearestDeclinedOnDiversity?.cell ?? "none"} ` +
+      `(outside by ${evaluation.margin.nearestDeclinedOnDiversity?.outsideBy ?? "n/a"}, Round 53: ` +
+      `${ROUND_53_SEPARATION.nearestDeclinedOnDiversity.outsideBy}); separation ` +
+      `${evaluation.margin.diversitySeparation ?? "n/a"} vs ${ROUND_53_SEPARATION.diversitySeparation}` +
       (evaluation.margin.tighterThanRound53 ? "  *** TIGHTER ***" : ""),
   );
   if (mismatched > 0) {

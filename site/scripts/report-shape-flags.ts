@@ -113,11 +113,19 @@ for (const location of LOCATIONS) {
   nearMisses += e.nearMisses.length;
   tighter = tighter || e.margin.tighterThanRound53;
   margins.push(
-    `- **${location}** — closest flagged ${e.margin.closestFlagged?.cell ?? "none"} at ` +
-      `${e.margin.closestFlagged?.diversityRatio ?? "n/a"}×, closest declined ` +
-      `${e.margin.closestDeclined?.cell ?? "none"} at ` +
-      `${e.margin.closestDeclined?.diversityRatio ?? "n/a"}× — gap **${e.margin.diversityGap ?? "n/a"}** ` +
-      `against Round 53's ${ROUND_53_SEPARATION.diversityGap}` +
+    `- **${location}** — closest to being missed: ` +
+      `${e.margin.closestToMissed?.cell ?? "nothing flagged"}` +
+      (e.margin.closestToMissed
+        ? ` (inside the diversity threshold by **${e.margin.closestToMissed.insideDiversityBy}**, ` +
+          `Round 53: ${ROUND_53_SEPARATION.flaggedAtTheTime.insideDiversityBy})`
+        : "") +
+      `; nearest declined on diversity: ${e.margin.nearestDeclinedOnDiversity?.cell ?? "none"}` +
+      (e.margin.nearestDeclinedOnDiversity
+        ? ` (outside by **${e.margin.nearestDeclinedOnDiversity.outsideBy}**, Round 53: ` +
+          `${ROUND_53_SEPARATION.nearestDeclinedOnDiversity.outsideBy})`
+        : "") +
+      `; separation **${e.margin.diversitySeparation ?? "n/a"}** against Round 53's ` +
+      `${ROUND_53_SEPARATION.diversitySeparation}` +
       (e.margin.tighterThanRound53 ? " ⚠️ **TIGHTER THAN WHEN MEASURED**" : ""),
   );
   if (e.coverage.withoutDescriptionColumn > 0) {
@@ -192,11 +200,15 @@ lines.push("");
 lines.push(...margins);
 lines.push("");
 lines.push(
-  `The diversity axis carried the whole separation in the only case that mattered: the break as ` +
-    `it was visible at the time cleared at ${ROUND_53_SEPARATION.breakAsSeenAtTheTime.diversity}× ` +
-    `with an innocent cell (${ROUND_53_SEPARATION.nearestDeclined.cell}) at ` +
-    `${ROUND_53_SEPARATION.nearestDeclined.diversity}×. If the gap narrows, re-measure and say ` +
-    `so — do not move the threshold until it reads clean.`,
+  `Two margins, because they answer different questions. **Sensitivity**: the break, as it was ` +
+    `visible at the time (${ROUND_53_SEPARATION.flaggedAtTheTime.cell}), cleared the diversity ` +
+    `threshold by only **${ROUND_53_SEPARATION.flaggedAtTheTime.insideDiversityBy}** — a break ` +
+    `2% less templated would have been missed. **Specificity**: the nearest cell that cleared ` +
+    `concentration and then failed diversity (${ROUND_53_SEPARATION.nearestDeclinedOnDiversity.cell}) ` +
+    `sat **${ROUND_53_SEPARATION.nearestDeclinedOnDiversity.outsideBy}** outside, so the two ` +
+    `populations are separated by ${ROUND_53_SEPARATION.diversitySeparation} on the axis that ` +
+    `competed. If either narrows, re-measure and say so — do not move the threshold until it ` +
+    `reads clean.`,
 );
 if (explained.length > 0) {
   lines.push("");
