@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-15T15:54:27+00:00",
+  "generated_at": "2026-10-16T13:57:49+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -36,8 +36,10 @@
           "value": 188.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 159.5,
-          "mom": 42.0
+          "mom": 42.0,
+          "withheld": [
+            "vs_baseline: 3 complete periods since the source change recorded at 2026-07 (2026-07 to 2026-09) — under the 6-period minimum a half-over-half comparison needs to put three on each side"
+          ]
         },
         "permit_activity_hvac": {
           "value": 1097.0,
@@ -168,18 +170,6 @@
     {
       "rank": 2,
       "area_id": "austin_metro",
-      "metric": "permit_activity_energy_storage",
-      "angle": "reveal",
-      "surprise_score": 0.491,
-      "why": "at a level well outside this area's own range",
-      "figure": "188 battery-storage permits in 2026-09, +29% month over month",
-      "source": "City of Austin Issued Construction Permits (Socrata)",
-      "as_of": "2026-09-01",
-      "suppressed": false
-    },
-    {
-      "rank": 3,
-      "area_id": "austin_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
       "surprise_score": 0.455,
@@ -190,7 +180,7 @@
       "suppressed": false
     },
     {
-      "rank": 4,
+      "rank": 3,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_foundation",
       "angle": "reveal",
@@ -202,7 +192,7 @@
       "suppressed": false
     },
     {
-      "rank": 5,
+      "rank": 4,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
@@ -214,7 +204,7 @@
       "suppressed": false
     },
     {
-      "rank": 6,
+      "rank": 5,
       "area_id": "austin_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
@@ -226,11 +216,11 @@
       "suppressed": false
     },
     {
-      "rank": 7,
+      "rank": 6,
       "area_id": "san_antonio_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.267,
+      "surprise_score": 0.266,
       "why": "a modest move against its own history",
       "figure": "689 cooling degree-days in 2026-09, -2% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -238,7 +228,7 @@
       "suppressed": false
     },
     {
-      "rank": 8,
+      "rank": 7,
       "area_id": "austin_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
@@ -250,7 +240,7 @@
       "suppressed": false
     },
     {
-      "rank": 9,
+      "rank": 8,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_solar",
       "angle": "reveal",
@@ -262,7 +252,7 @@
       "suppressed": false
     },
     {
-      "rank": 10,
+      "rank": 9,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
@@ -274,7 +264,7 @@
       "suppressed": false
     },
     {
-      "rank": 11,
+      "rank": 10,
       "area_id": "austin_metro",
       "metric": "permit_activity_solar",
       "angle": "reveal",
@@ -286,11 +276,11 @@
       "suppressed": false
     },
     {
-      "rank": 12,
+      "rank": 11,
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.188,
+      "surprise_score": 0.187,
       "why": "a cost signal",
       "figure": "15.88¢ per kWh (2026-07), -0.4% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
@@ -298,7 +288,7 @@
       "suppressed": false
     },
     {
-      "rank": 13,
+      "rank": 12,
       "area_id": "austin_metro",
       "metric": "permit_activity_roofing",
       "angle": "reveal",
@@ -310,7 +300,7 @@
       "suppressed": false
     },
     {
-      "rank": 14,
+      "rank": 13,
       "area_id": "austin_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
@@ -322,7 +312,7 @@
       "suppressed": false
     },
     {
-      "rank": 15,
+      "rank": 14,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_roofing",
       "angle": "reveal",
@@ -334,7 +324,7 @@
       "suppressed": false
     },
     {
-      "rank": 16,
+      "rank": 15,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
