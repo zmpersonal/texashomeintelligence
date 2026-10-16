@@ -1,5 +1,5 @@
 {
-  "measuredAt": "2026-10-16T01:52:29.180Z",
+  "measuredAt": "2026-10-16T01:57:32.416Z",
   "notes": {
     "question": "run the real ingest path against the live source: does the detector store what it should, flag what Round 53 said it would, and leave the published figures alone?",
     "policy": "VERIFICATION. The dataset is not written; the workflow asserts src/data/generated is untouched. Counts, shares and verdicts only — no description and no hash of one.",
@@ -125,57 +125,82 @@
       "diversityRatio": 0.8,
       "minPermits": 10
     },
-    "closestFlagged": {
+    "closestToMissed": {
       "cell": "energy_storage/2026-07",
       "concentrationRatio": 4.117,
-      "diversityRatio": 0.414
+      "diversityRatio": 0.414,
+      "insideDiversityBy": 0.386,
+      "insideConcentrationBy": 2.117
     },
-    "closestDeclined": {
+    "nearestDeclinedOnDiversity": {
+      "cell": "roofing/2026-01",
+      "diversityRatio": 0.861,
+      "outsideBy": 0.061
+    },
+    "nearestDeclinedOnConcentration": {
       "cell": "energy_storage/2026-09",
       "concentrationRatio": 1.696,
-      "diversityRatio": 0.193
+      "outsideBy": 0.304
     },
-    "diversityGap": -0.221,
+    "diversitySeparation": 0.447,
     "round53": {
       "measuredOn": "60 cells — 6 Austin categories × 10 complete months, 47,599 rows",
       "break": {
         "cell": "energy_storage/2026-07",
         "concentration": 4.12,
-        "diversity": 0.41
+        "diversity": 0.414
       },
-      "breakAsSeenAtTheTime": {
+      "flaggedAtTheTime": {
         "cell": "v2_solar/2026-07",
         "concentration": 2.97,
-        "diversity": 0.78
+        "diversity": 0.784,
+        "insideDiversityBy": 0.016,
+        "insideConcentrationBy": 0.97
       },
-      "nearestDeclined": {
+      "nearestDeclinedOnDiversity": {
+        "cell": "roofing/2026-01",
+        "concentration": 2.55,
+        "diversity": 0.861,
+        "outsideBy": 0.061
+      },
+      "nearestDeclinedOnConcentration": {
         "cell": "hvac/2026-07",
         "concentration": 1.25,
-        "diversity": 0.79
+        "diversity": 0.793,
+        "outsideBy": 0.75
       },
-      "diversityGap": 0.01
+      "diversitySeparation": 0.077
     },
-    "tighterThanRound53": true,
-    "note": "The diversity axis carried the whole separation in the only case that mattered: the break as it was visible at the time cleared at 0.78 with an innocent cell at 0.79. `diversityGap` is this window's version of that 0.01. If it narrows, the detector is closer to firing on an ordinary month than it was when it was measured — re-measure and say so; do not move the threshold until it reads clean."
+    "tighterThanRound53": false,
+    "note": "Two margins, because they answer different questions. SENSITIVITY: the break cleared the diversity threshold by 0.016 when it was visible at the time, so a break 2% less templated would have been missed. SPECIFICITY: the nearest cell that cleared concentration and then failed diversity sat 0.061 outside, giving a 0.077 separation on the axis that competed. Either narrowing trips `tighterThanRound53`, and the answer is to re-measure and say so — not to move a threshold until it reads clean."
   },
   "round53": {
     "measuredOn": "60 cells — 6 Austin categories × 10 complete months, 47,599 rows",
     "break": {
       "cell": "energy_storage/2026-07",
       "concentration": 4.12,
-      "diversity": 0.41
+      "diversity": 0.414
     },
-    "breakAsSeenAtTheTime": {
+    "flaggedAtTheTime": {
       "cell": "v2_solar/2026-07",
       "concentration": 2.97,
-      "diversity": 0.78
+      "diversity": 0.784,
+      "insideDiversityBy": 0.016,
+      "insideConcentrationBy": 0.97
     },
-    "nearestDeclined": {
+    "nearestDeclinedOnDiversity": {
+      "cell": "roofing/2026-01",
+      "concentration": 2.55,
+      "diversity": 0.861,
+      "outsideBy": 0.061
+    },
+    "nearestDeclinedOnConcentration": {
       "cell": "hvac/2026-07",
       "concentration": 1.25,
-      "diversity": 0.79
+      "diversity": 0.793,
+      "outsideBy": 0.75
     },
-    "diversityGap": 0.01
+    "diversitySeparation": 0.077
   },
   "reach": {
     "metros": [
