@@ -46,6 +46,8 @@ import {
  * valuation field appears here or ever should - permit valuation is unusable
  * in both metros (CLAUDE.md; docs/audits/round-6-permit-measurement.md).
  */
+import { ShapeAccumulator, type DescriptionShape } from "../descriptionShape";
+import { evaluateShapeFlags, describeFlag, type ShapeVerdict } from "../../lib/shapeFlags";
 
 export interface TradeActivityValue {
   /**
@@ -81,6 +83,24 @@ export interface TradeActivityValue {
    * right total is stored next to the parts that must not be added.
    */
   scope?: "all-trades";
+  /**
+   * Round 53. The shape of this category-month's permit DESCRIPTIONS, as counts and shares —
+   * never the descriptions. Austin only: San Antonio's export has no description column, so
+   * its rows carry no `shape` and a reader must state that reach rather than reading the
+   * absence as "no templating" (`lib/shapeFlags.ts`, REACH).
+   */
+  shape?: DescriptionShape;
+  /**
+   * The detector's verdict for this cell, computed at ingest where the whole thirteen-month
+   * window is in memory. Stored rather than re-derived so the autoposter reads a verdict
+   * instead of re-implementing the rule in Python — one rule, one implementation, the lesson
+   * of Round 45's reading half and Round 52's JSON twin. `shapeflagunit.ts` asserts that
+   * re-evaluating the stored rows reproduces this exactly.
+   *
+   * A SUSPICION, never a record: see `lib/shapeFlags.ts`. Nothing reads it to decide what
+   * publishes.
+   */
+  shapeFlag?: ShapeVerdict;
 }
 
 /**
@@ -186,6 +206,12 @@ export function toObservations(
   ingestedAt: string,
   /** Round 50: distinct permit ids per month, across every category. */
   permitsByMonth?: Map<string, Set<string>>,
+  /**
+   * Round 53: the description fingerprint per `${category} ${month}`, keyed exactly as
+   * `bump()` keys its buckets so the two cannot drift. Austin passes one; San Antonio has no
+   * description column and passes nothing, which is why every field below is optional.
+   */
+  shapes?: Map<string, DescriptionShape>,
 ): Observation<TradeActivityValue>[] {
   const out: Observation<TradeActivityValue>[] = [];
   for (const [month, permits] of permitsByMonth ?? []) {
@@ -224,9 +250,53 @@ export function toObservations(
         sourceValues: [...b.sources.entries()]
           .map(([value, ids]) => ({ value, count: ids.size }))
           .sort((a, b2) => b2.count - a.count || a.value.localeCompare(b2.value)),
+        ...(shapes?.get(key) ? { shape: shapes.get(key) } : {}),
       },
     });
   }
+
+  /*
+   * ── THE DETECTOR RUNS HERE, ONCE ──────────────────────────────────────
+   * Round 53. The rule needs each category's three preceding months, and this is the one place
+   * that holds the whole window — which is the structural reason the trailing baseline needs
+   * nothing retained between runs (`RECOUNT_MONTHS = 13`: every ingest re-reads all of it).
+   *
+   * It is stored, not re-derived, so the autoposter reads a verdict rather than re-implementing
+   * the rule in Python. And it is a SUSPICION: no page, no builder and no publishing decision
+   * reads it — `shapeflagunit.ts` asserts that, and asserts that re-evaluating the stored rows
+   * reproduces these verdicts exactly.
+   */
+  if (shapes && shapes.size > 0) {
+    const evaluation = evaluateShapeFlags(
+      out.map((o) => o.value),
+      // The month this run is in: its cell is incomplete by definition and is not evaluated.
+      ingestedAt.slice(0, 7),
+    );
+    for (const o of out) {
+      if (o.value.category === null) continue;
+      const verdict = evaluation.byCell.get(`${o.value.category} ${o.value.month}`);
+      if (verdict && verdict.notEvaluated !== "no-description-column") {
+        o.value.shapeFlag = verdict;
+      }
+    }
+    for (const flag of evaluation.flags) console.log(`[shape-flag] ${describeFlag(flag)}`);
+    if (evaluation.flags.length === 0) {
+      console.log(
+        `[shape-flag] no flags: ${evaluation.coverage.evaluated} cell(s) evaluated, ` +
+          `${evaluation.nearMisses.length} near miss(es).`,
+      );
+    }
+    console.log(
+      `[shape-flag] margin: closest flagged ${evaluation.margin.closestFlagged?.cell ?? "none"} ` +
+        `at ${evaluation.margin.closestFlagged?.diversityRatio ?? "n/a"}, closest declined ` +
+        `${evaluation.margin.closestDeclined?.cell ?? "none"} at ` +
+        `${evaluation.margin.closestDeclined?.diversityRatio ?? "n/a"} — gap ` +
+        `${evaluation.margin.diversityGap ?? "n/a"} against Round 53's ` +
+        `${evaluation.margin.round53.diversityGap}` +
+        (evaluation.margin.tighterThanRound53 ? "  *** TIGHTER THAN WHEN MEASURED ***" : ""),
+    );
+  }
+
   return out.sort(
     (a, b2) => a.observedAt.localeCompare(b2.observedAt) || a.key.localeCompare(b2.key),
   );
@@ -590,6 +660,7 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
     let rowsWithoutId = 0;
     const seenPermits = new Set<string>();
     const permitsByMonth = new Map<string, Set<string>>();
+    const shapes = new ShapeAccumulator();
     for (const row of rows) {
       if (!row.issue_date) continue;
       const observedAt = new Date(row.issue_date).toISOString();
@@ -620,6 +691,10 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
       permitsByMonth.set(month, forMonth);
       for (const c of classifications) {
         bump(buckets, c.category, month, c.mechanism, c.sourceValue, permitId);
+        // Round 53. Same key, same loop, same rows — the fingerprint costs no extra request and
+        // no extra pass over the data: `description` is already on the wire because the
+        // classifier above needs it. Measured at 315 ms of CPU for a whole window.
+        shapes.record(c.category, month, permitId, row.description ?? "");
       }
     }
     console.log(
@@ -632,6 +707,6 @@ export const permitTradeActivityAustin: FetcherModule<TradeActivityValue> = {
         `row(s); count(1) agreed exactly.`,
     );
     reportCounts("austin", retained, dropped, unknown);
-    return toObservations(buckets, new Date().toISOString(), permitsByMonth);
+    return toObservations(buckets, new Date().toISOString(), permitsByMonth, shapes.summarise());
   },
 };

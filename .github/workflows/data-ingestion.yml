@@ -23,6 +23,11 @@ on:
 
 permissions:
   contents: write
+  # Round 54: the description-shape detector raises a flag as an ISSUE, once per newly flagged
+  # cell. An issue is addressed to a person, carries the investigation rather than a number, and
+  # is de-duplicated by its own marker — see site/scripts/report-shape-flags.ts for why this
+  # surface and not the dataset or the weekly Slack notice.
+  issues: write
 
 concurrency:
   group: data-ingestion
@@ -61,6 +66,68 @@ jobs:
 
       - name: Fetch current U.S. Drought Monitor Texas map
         run: npm run fetch-drought-map
+
+      # ── ROUND 54: THE DESCRIPTION-SHAPE DETECTOR, SURFACED ─────────────────
+      # Runs AFTER the ingest and BEFORE the commit, so the report describes the data this run
+      # produced. It is NOT A GATE: `|| true` everywhere, `continue-on-error`, and no step here
+      # can fail the ingestion. A detector that could stop the pipeline would be a gate nobody
+      # asked for, and the owner's line is that nothing about this changes what publishes.
+      - name: Description-shape detector — report
+        id: shapeflags
+        continue-on-error: true
+        run: |
+          npx tsx scripts/report-shape-flags.ts --json > /tmp/shape-flags.json || {
+            echo "::warning::the shape-flag reporter failed; the ingest itself is unaffected"
+            exit 0
+          }
+          node -e '
+            const r = JSON.parse(require("fs").readFileSync("/tmp/shape-flags.json", "utf8"));
+            require("fs").appendFileSync(process.env.GITHUB_STEP_SUMMARY, r.markdown);
+            const n = r.unexplained.length;
+            console.log(`unexplained flags: ${n}; evaluated ${r.evaluated}; near misses ${r.nearMisses}`);
+            if (r.marginTighterThanRound53) {
+              console.log("::warning::the shape detector margin is TIGHTER than when it was measured — re-measure before trusting a flag");
+            }
+            for (const f of r.unexplained) console.log(`::warning::${f.title}`);
+          ' || true
+
+      - name: Description-shape detector — raise each new flag once, as an issue
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          [ -s /tmp/shape-flags.json ] || exit 0
+          # The label is created idempotently; a 422 for "already exists" is the normal case.
+          gh api -X POST "repos/$GITHUB_REPOSITORY/labels" -f name=shape-flag \
+            -f color=d4a72c -f description="A description-shape suspicion, not a finding" \
+            >/dev/null 2>&1 || true
+          # Every issue ever raised this way, open or closed, so a flag is raised ONCE EVER.
+          gh api "repos/$GITHUB_REPOSITORY/issues?state=all&labels=shape-flag&per_page=100" \
+            --jq '.[].body' > /tmp/shape-flag-issues.txt 2>/dev/null || : > /tmp/shape-flag-issues.txt
+          node -e '
+            const fs = require("fs");
+            const r = JSON.parse(fs.readFileSync("/tmp/shape-flags.json", "utf8"));
+            const seen = fs.readFileSync("/tmp/shape-flag-issues.txt", "utf8");
+            const fresh = r.unexplained.filter((f) => !seen.includes(f.marker));
+            fs.writeFileSync("/tmp/shape-flag-new.json", JSON.stringify(fresh));
+            console.log(`${fresh.length} of ${r.unexplained.length} flag(s) not yet raised`);
+          ' || exit 0
+          node -e '
+            const fs = require("fs"), { execFileSync } = require("child_process");
+            const fresh = JSON.parse(fs.readFileSync("/tmp/shape-flag-new.json", "utf8"));
+            const report = JSON.parse(fs.readFileSync("/tmp/shape-flags.json", "utf8")).markdown;
+            for (const f of fresh) {
+              const body = `${f.marker}\n\n${report}`;
+              fs.writeFileSync("/tmp/shape-flag-body.md", body);
+              try {
+                execFileSync("gh", ["api", "-X", "POST", `repos/${process.env.GITHUB_REPOSITORY}/issues`,
+                  "-f", `title=${f.title}`, "-F", "body=@/tmp/shape-flag-body.md",
+                  "-f", "labels[]=shape-flag"], { stdio: "inherit" });
+              } catch (e) {
+                console.log(`::warning::could not raise the flag for ${f.cell}: ${e.message}`);
+              }
+            }
+          ' || true
 
       - name: Commit generated data if it changed
         run: |

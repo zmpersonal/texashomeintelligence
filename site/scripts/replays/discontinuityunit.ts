@@ -72,6 +72,53 @@ for (const d of DISCONTINUITIES) {
   // which is exactly what happened to the thing this break records.
   A(`${id}: at least one evidence entry is a REPO PATH, not only a link`,
     d.evidence.some((e) => Boolean(e.path)));
+
+  /*
+   * ── ROUND 54: A DETECTOR'S OUTPUT IS NOT ADMISSIBLE AS EVIDENCE ────────
+   * The owner's condition on the shape detector: a flag is a suspicion and only an
+   * investigation with evidence produces a record. The type already makes a flag
+   * unassignable to a record (`shapeflagunit.ts` §2 carries the compiler's own words). This
+   * closes the other route — a hand-written record that cites the detector's own output and
+   * so launders a suspicion into a finding.
+   *
+   * The rule: at least one evidence path must be something a HUMAN put in the repo. Generated
+   * datasets, the detector's live-path verification and the fingerprint measurements are all
+   * machine output, and none of them establishes what a source did; what does is an audit
+   * someone wrote or an archived copy of the source's own document. Today's entry cites the
+   * Round 51 audit and the archived permitting manual, so it passes on both.
+   */
+  const machineOutput = (path: string): boolean =>
+    path.startsWith("site/src/data/generated/") ||
+    /round-5[34]-(fingerprint|rules|detector-live|textcheck)\.json$/.test(path);
+  A(`${id}: evidence includes something a human put in the repo`,
+    d.evidence.some((e) => e.path && !machineOutput(e.path)),
+    d.evidence.map((e) => e.path ?? e.url ?? "?").join(" · "));
+  for (const [i, e] of d.evidence.entries()) {
+    if (e.path && machineOutput(e.path)) {
+      A(`  evidence[${i}] is machine output and is not the only evidence`,
+        d.evidence.some((o) => o.path && !machineOutput(o.path)), e.path);
+    }
+  }
+}
+
+/*
+ * NON-VACUOUS. The admissibility rule above has to be able to refuse, so it is run against a
+ * record whose only evidence is the detector's own output — the exact laundering it exists to
+ * stop — and against one that cites a generated dataset.
+ */
+{
+  const machineOutput = (path: string): boolean =>
+    path.startsWith("site/src/data/generated/") ||
+    /round-5[34]-(fingerprint|rules|detector-live|textcheck)\.json$/.test(path);
+  const admissible = (paths: string[]): boolean => paths.some((p) => !machineOutput(p));
+  A("a record evidenced only by the detector's output is refused",
+    !admissible(["docs/audits/round-54-detector-live.json"]));
+  A("a record evidenced only by a generated dataset is refused",
+    !admissible(["site/src/data/generated/permit-trade-activity/austin.json"]));
+  A("a record evidenced by an audit a human wrote is admitted",
+    admissible(["docs/audits/round-51-storage-series.md"]));
+  A("…and the detector's output alongside it is fine",
+    admissible(["docs/audits/round-54-detector-live.json", "docs/audits/round-51-storage-series.md"]));
 }
 
 console.log("\n══ 2 · THE SPAN TEST, AT EVERY BOUNDARY ══\n");
