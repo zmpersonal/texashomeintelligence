@@ -3,8 +3,8 @@
   "location": "new-braunfels",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-16T13:57:17.801Z",
-  "lastSuccessAt": "2026-10-16T13:57:17.801Z",
+  "lastAttemptAt": "2026-10-17T12:58:42.515Z",
+  "lastSuccessAt": "2026-10-17T12:58:42.515Z",
   "lastError": null,
   "source": {
     "name": "Census ACS",
@@ -27,7 +27,7 @@
     },
     {
       "observedAt": "2024-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-16T13:57:18.304Z",
+      "ingestedAt": "2026-10-17T12:58:43.094Z",
       "key": "acs5-2024",
       "value": {
         "medianHomeAgeYears": 20,
