@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-16T13:57:49+00:00",
+  "generated_at": "2026-10-17T12:59:07+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -26,11 +26,11 @@
           "mom": -60.0
         },
         "permit_activity_electrical": {
-          "value": 1634.0,
+          "value": 1633.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 311.4167,
-          "mom": 122.0
+          "vs_baseline": 310.8333,
+          "mom": 121.0
         },
         "permit_activity_energy_storage": {
           "value": 188.0,
@@ -52,15 +52,15 @@
           "value": 1296.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 65.5833,
+          "vs_baseline": 65.75,
           "mom": -45.0
         },
         "permit_activity_roofing": {
-          "value": 167.0,
+          "value": 166.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 11.3333,
-          "mom": 23.0
+          "vs_baseline": 10.3333,
+          "mom": 22.0
         },
         "permit_activity_solar": {
           "value": 62.0,
@@ -174,7 +174,7 @@
       "angle": "reveal",
       "surprise_score": 0.455,
       "why": "at a level well outside this area's own range",
-      "figure": "1,634 electrical permits in 2026-09, +8% month over month",
+      "figure": "1,633 electrical permits in 2026-09, +8% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
       "as_of": "2026-09-01",
       "suppressed": false
@@ -208,7 +208,7 @@
       "area_id": "austin_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.283,
+      "surprise_score": 0.282,
       "why": "a modest move against its own history",
       "figure": "695 cooling degree-days in 2026-09, -8% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -280,7 +280,7 @@
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.187,
+      "surprise_score": 0.186,
       "why": "a cost signal",
       "figure": "15.88¢ per kWh (2026-07), -0.4% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
@@ -292,9 +292,9 @@
       "area_id": "austin_metro",
       "metric": "permit_activity_roofing",
       "angle": "reveal",
-      "surprise_score": 0.183,
+      "surprise_score": 0.177,
       "why": "a modest move against its own history",
-      "figure": "167 roofing permits in 2026-09, +16% month over month",
+      "figure": "166 roofing permits in 2026-09, +15% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
       "as_of": "2026-09-01",
       "suppressed": false
