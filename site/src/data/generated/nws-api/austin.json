@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-17T12:58:37.573Z",
-  "lastSuccessAt": "2026-10-17T12:58:37.573Z",
+  "lastAttemptAt": "2026-10-18T13:18:02.854Z",
+  "lastSuccessAt": "2026-10-18T13:18:02.854Z",
   "lastError": null,
   "source": {
     "name": "National Weather Service API",
@@ -689,6 +689,15 @@
       "value": {
         "forecastHighF": 70,
         "forecastLowF": 49
+      }
+    },
+    {
+      "observedAt": "2026-10-18T12:00:00.000Z",
+      "ingestedAt": "2026-10-18T13:18:03.167Z",
+      "key": "2026-10-18T07:00:00-05:00",
+      "value": {
+        "forecastHighF": 75,
+        "forecastLowF": 54
       }
     }
   ]
