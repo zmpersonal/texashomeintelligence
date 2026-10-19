@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-18T13:18:40+00:00",
+  "generated_at": "2026-10-19T16:40:32+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -17,6 +17,13 @@
           "as_of": "2026-10-13",
           "vs_baseline": -0.35,
           "wow": 0.0
+        },
+        "cooling_degree_days": {
+          "value": 695.0,
+          "source": "NOAA NCEI Global Summary of the Month",
+          "as_of": "2026-09-01",
+          "vs_baseline": 364.5,
+          "mom": -60.0
         },
         "permit_activity_electrical": {
           "value": 1633.0,
@@ -74,6 +81,13 @@
           "as_of": "2026-10-13",
           "vs_baseline": -0.6333,
           "wow": 0.0
+        },
+        "cooling_degree_days": {
+          "value": 689.0,
+          "source": "NOAA NCEI Global Summary of the Month",
+          "as_of": "2026-09-01",
+          "vs_baseline": 352.1667,
+          "mom": -11.0
         },
         "permit_activity_electrical": {
           "value": 819.0,
@@ -192,6 +206,30 @@
     {
       "rank": 5,
       "area_id": "austin_metro",
+      "metric": "cooling_degree_days",
+      "angle": "reveal",
+      "surprise_score": 0.281,
+      "why": "a modest move against its own history",
+      "figure": "695 cooling degree-days in 2026-09, -8% vs the prior month",
+      "source": "NOAA NCEI Global Summary of the Month",
+      "as_of": "2026-09-01",
+      "suppressed": false
+    },
+    {
+      "rank": 6,
+      "area_id": "san_antonio_metro",
+      "metric": "cooling_degree_days",
+      "angle": "reveal",
+      "surprise_score": 0.264,
+      "why": "a modest move against its own history",
+      "figure": "689 cooling degree-days in 2026-09, -2% vs the prior month",
+      "source": "NOAA NCEI Global Summary of the Month",
+      "as_of": "2026-09-01",
+      "suppressed": false
+    },
+    {
+      "rank": 7,
+      "area_id": "austin_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
       "surprise_score": 0.239,
@@ -202,7 +240,7 @@
       "suppressed": false
     },
     {
-      "rank": 6,
+      "rank": 8,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_solar",
       "angle": "reveal",
@@ -214,7 +252,7 @@
       "suppressed": false
     },
     {
-      "rank": 7,
+      "rank": 9,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
@@ -226,7 +264,7 @@
       "suppressed": false
     },
     {
-      "rank": 8,
+      "rank": 10,
       "area_id": "austin_metro",
       "metric": "permit_activity_solar",
       "angle": "reveal",
@@ -238,11 +276,11 @@
       "suppressed": false
     },
     {
-      "rank": 9,
+      "rank": 11,
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.186,
+      "surprise_score": 0.185,
       "why": "a cost signal",
       "figure": "15.88¢ per kWh (2026-07), -0.4% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
@@ -250,7 +288,7 @@
       "suppressed": false
     },
     {
-      "rank": 10,
+      "rank": 12,
       "area_id": "austin_metro",
       "metric": "permit_activity_roofing",
       "angle": "reveal",
@@ -262,7 +300,7 @@
       "suppressed": false
     },
     {
-      "rank": 11,
+      "rank": 13,
       "area_id": "austin_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
@@ -274,7 +312,7 @@
       "suppressed": false
     },
     {
-      "rank": 12,
+      "rank": 14,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_roofing",
       "angle": "reveal",
@@ -286,7 +324,7 @@
       "suppressed": false
     },
     {
-      "rank": 13,
+      "rank": 15,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
