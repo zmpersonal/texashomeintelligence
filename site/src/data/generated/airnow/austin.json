@@ -3,7 +3,7 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "stale",
-  "lastAttemptAt": "2026-10-19T16:27:46.223Z",
+  "lastAttemptAt": "2026-10-20T14:19:04.993Z",
   "lastSuccessAt": "2026-09-30T22:31:22.621Z",
   "lastError": "AirNow fetch failed: HTTP 410 from https://www.airnowapi.org/aq/observation/zipCode/current/?format=application%2Fjson&zipCode=78701&distance=25&API_KEY=[redacted]",
   "source": {
