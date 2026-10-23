@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-22T14:31:31.289Z",
-  "lastSuccessAt": "2026-10-22T14:31:31.289Z",
+  "lastAttemptAt": "2026-10-23T14:14:51.756Z",
+  "lastSuccessAt": "2026-10-23T14:14:51.756Z",
   "lastError": null,
   "source": {
     "name": "Austin Resource Recovery",
@@ -12,8 +12,8 @@
   },
   "observations": [
     {
-      "observedAt": "2026-10-22T14:31:41.328Z",
-      "ingestedAt": "2026-10-22T14:31:41.328Z",
+      "observedAt": "2026-10-23T14:14:55.537Z",
+      "ingestedAt": "2026-10-23T14:14:55.537Z",
       "key": "arr-8340739e",
       "value": {
         "rowCount": 178060,
