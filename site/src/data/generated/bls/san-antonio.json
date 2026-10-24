@@ -2,10 +2,10 @@
   "datasetId": "bls",
   "location": "san-antonio",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-10-23T14:14:22.720Z",
+  "status": "stale",
+  "lastAttemptAt": "2026-10-24T13:19:30.513Z",
   "lastSuccessAt": "2026-10-23T14:14:22.720Z",
-  "lastError": null,
+  "lastError": "BLS OEWS fetch failed: HTTP 503 from https://api.bls.gov/publicAPI/v2/timeseries/data/OEUM004170000000047215208?startyear=2024&endyear=2026&registrationkey=[redacted]",
   "source": {
     "name": "BLS Occupational Employment and Wage Statistics",
     "url": "https://www.bls.gov/oes/"
