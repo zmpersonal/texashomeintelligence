@@ -3,7 +3,7 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "stale",
-  "lastAttemptAt": "2026-10-24T13:19:30.513Z",
+  "lastAttemptAt": "2026-10-25T13:43:05.072Z",
   "lastSuccessAt": "2026-10-23T14:14:22.720Z",
   "lastError": "BLS OEWS fetch failed: HTTP 503 from https://api.bls.gov/publicAPI/v2/timeseries/data/OEUM004170000000047215208?startyear=2024&endyear=2026&registrationkey=[redacted]",
   "source": {

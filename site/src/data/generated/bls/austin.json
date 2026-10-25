@@ -3,7 +3,7 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "stale",
-  "lastAttemptAt": "2026-10-24T13:19:29.927Z",
+  "lastAttemptAt": "2026-10-25T13:43:04.756Z",
   "lastSuccessAt": "2026-10-23T14:14:22.392Z",
   "lastError": "BLS OEWS fetch failed: HTTP 503 from https://api.bls.gov/publicAPI/v2/timeseries/data/OEUM001242000000047215208?startyear=2024&endyear=2026&registrationkey=[redacted]",
   "source": {
