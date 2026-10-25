@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-24T13:19:55+00:00",
+  "generated_at": "2026-10-25T13:43:33+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -93,29 +93,29 @@
           "value": 819.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-09-01",
-          "vs_baseline": 21.4167,
+          "vs_baseline": 21.5,
           "mom": 31.0
         },
         "permit_activity_foundation": {
           "value": 229.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-09-01",
-          "vs_baseline": -40.0833,
+          "vs_baseline": -40.0,
           "mom": -50.0
         },
         "permit_activity_hvac": {
           "value": 1067.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-09-01",
-          "vs_baseline": 158.0833,
+          "vs_baseline": 158.5833,
           "mom": -63.0
         },
         "permit_activity_plumbing": {
-          "value": 1731.0,
+          "value": 1728.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-09-01",
-          "vs_baseline": -192.0833,
-          "mom": -252.0
+          "vs_baseline": -193.9167,
+          "mom": -254.0
         },
         "permit_activity_roofing": {
           "value": 370.0,
@@ -184,7 +184,7 @@
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_foundation",
       "angle": "reveal",
-      "surprise_score": 0.361,
+      "surprise_score": 0.36,
       "why": "a modest move against its own history",
       "figure": "229 foundation permits in 2026-09, -18% month over month",
       "source": "City of San Antonio Permits Open Data",
@@ -196,9 +196,9 @@
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
-      "surprise_score": 0.332,
+      "surprise_score": 0.336,
       "why": "a modest move against its own history",
-      "figure": "1,731 plumbing permits in 2026-09, -13% month over month",
+      "figure": "1,728 plumbing permits in 2026-09, -13% month over month",
       "source": "City of San Antonio Permits Open Data",
       "as_of": "2026-09-01",
       "suppressed": false
@@ -256,7 +256,7 @@
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.205,
+      "surprise_score": 0.204,
       "why": "a cost signal",
       "figure": "15.91¢ per kWh (2026-08), +0.2% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
@@ -268,7 +268,7 @@
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
-      "surprise_score": 0.2,
+      "surprise_score": 0.201,
       "why": "a modest move against its own history",
       "figure": "1,067 HVAC permits in 2026-09, -6% month over month",
       "source": "City of San Antonio Permits Open Data",
