@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-25T13:42:59.559Z",
-  "lastSuccessAt": "2026-10-25T13:42:59.559Z",
+  "lastAttemptAt": "2026-10-26T16:11:05.837Z",
+  "lastSuccessAt": "2026-10-26T16:11:05.837Z",
   "lastError": null,
   "source": {
     "name": "National Weather Service API",
@@ -763,6 +763,15 @@
         "forecastHighF": 84,
         "forecastLowF": 58,
         "activeAlert": "Special Weather Statement issued October 25 at 7:49AM CDT by NWS Austin/San Antonio TX"
+      }
+    },
+    {
+      "observedAt": "2026-10-26T15:00:00.000Z",
+      "ingestedAt": "2026-10-26T16:11:06.232Z",
+      "key": "2026-10-26T10:00:00-05:00",
+      "value": {
+        "forecastHighF": 84,
+        "forecastLowF": 64
       }
     }
   ]

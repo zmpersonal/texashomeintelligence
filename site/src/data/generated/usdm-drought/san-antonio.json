@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-25T13:43:00.567Z",
-  "lastSuccessAt": "2026-10-25T13:43:00.567Z",
+  "lastAttemptAt": "2026-10-26T16:11:07.525Z",
+  "lastSuccessAt": "2026-10-26T16:11:07.525Z",
   "lastError": null,
   "source": {
     "name": "U.S. Drought Monitor",
@@ -557,7 +557,7 @@
     },
     {
       "observedAt": "2026-09-22T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.646Z",
+      "ingestedAt": "2026-10-26T16:11:07.651Z",
       "key": "48029-2026-09-22T00:00:00",
       "value": {
         "droughtIndex": "D1 — Moderate Drought (61% of county)",
@@ -567,7 +567,7 @@
     },
     {
       "observedAt": "2026-09-22T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.732Z",
+      "ingestedAt": "2026-10-26T16:11:07.748Z",
       "key": "48091-2026-09-22T00:00:00",
       "value": {
         "droughtIndex": "D1 — Moderate Drought (50% of county)",
@@ -577,7 +577,7 @@
     },
     {
       "observedAt": "2026-09-22T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.818Z",
+      "ingestedAt": "2026-10-26T16:11:07.843Z",
       "key": "48187-2026-09-22T00:00:00",
       "value": {
         "droughtIndex": "D1 — Moderate Drought (100% of county)",
@@ -587,7 +587,7 @@
     },
     {
       "observedAt": "2026-09-29T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.646Z",
+      "ingestedAt": "2026-10-26T16:11:07.651Z",
       "key": "48029-2026-09-29T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (45% of county)",
@@ -597,7 +597,7 @@
     },
     {
       "observedAt": "2026-09-29T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.732Z",
+      "ingestedAt": "2026-10-26T16:11:07.748Z",
       "key": "48091-2026-09-29T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (19% of county)",
@@ -607,7 +607,7 @@
     },
     {
       "observedAt": "2026-09-29T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.818Z",
+      "ingestedAt": "2026-10-26T16:11:07.843Z",
       "key": "48187-2026-09-29T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (72% of county)",
@@ -617,7 +617,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.646Z",
+      "ingestedAt": "2026-10-26T16:11:07.651Z",
       "key": "48029-2026-10-06T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (47% of county)",
@@ -627,7 +627,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.732Z",
+      "ingestedAt": "2026-10-26T16:11:07.748Z",
       "key": "48091-2026-10-06T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (19% of county)",
@@ -637,7 +637,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.818Z",
+      "ingestedAt": "2026-10-26T16:11:07.843Z",
       "key": "48187-2026-10-06T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (72% of county)",
@@ -647,7 +647,7 @@
     },
     {
       "observedAt": "2026-10-13T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.646Z",
+      "ingestedAt": "2026-10-26T16:11:07.651Z",
       "key": "48029-2026-10-13T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (47% of county)",
@@ -657,7 +657,7 @@
     },
     {
       "observedAt": "2026-10-13T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.732Z",
+      "ingestedAt": "2026-10-26T16:11:07.748Z",
       "key": "48091-2026-10-13T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (19% of county)",
@@ -667,7 +667,7 @@
     },
     {
       "observedAt": "2026-10-13T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.818Z",
+      "ingestedAt": "2026-10-26T16:11:07.843Z",
       "key": "48187-2026-10-13T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (72% of county)",
@@ -677,7 +677,7 @@
     },
     {
       "observedAt": "2026-10-20T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.646Z",
+      "ingestedAt": "2026-10-26T16:11:07.651Z",
       "key": "48029-2026-10-20T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (47% of county)",
@@ -687,7 +687,7 @@
     },
     {
       "observedAt": "2026-10-20T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.732Z",
+      "ingestedAt": "2026-10-26T16:11:07.748Z",
       "key": "48091-2026-10-20T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (19% of county)",
@@ -697,7 +697,7 @@
     },
     {
       "observedAt": "2026-10-20T00:00:00.000Z",
-      "ingestedAt": "2026-10-25T13:43:00.818Z",
+      "ingestedAt": "2026-10-26T16:11:07.843Z",
       "key": "48187-2026-10-20T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (72% of county)",

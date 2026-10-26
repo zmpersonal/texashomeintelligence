@@ -2,10 +2,10 @@
   "datasetId": "permit-trade-activity",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-10-25T13:43:05.369Z",
+  "status": "stale",
+  "lastAttemptAt": "2026-10-26T16:11:12.756Z",
   "lastSuccessAt": "2026-10-25T13:43:05.369Z",
-  "lastError": null,
+  "lastError": "fetch failed",
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
     "url": "https://data.austintexas.gov/"

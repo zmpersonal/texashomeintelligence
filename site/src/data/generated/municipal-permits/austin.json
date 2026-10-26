@@ -2,10 +2,10 @@
   "datasetId": "municipal-permits",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-10-25T13:42:25.661Z",
+  "status": "stale",
+  "lastAttemptAt": "2026-10-26T16:06:48.853Z",
   "lastSuccessAt": "2026-10-25T13:42:25.661Z",
-  "lastError": null,
+  "lastError": "fetch failed",
   "source": {
     "name": "City of Austin Issued Construction Permits (Socrata)",
     "url": "https://data.austintexas.gov/"
