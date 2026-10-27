@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-26T16:06:38.097Z",
-  "lastSuccessAt": "2026-10-26T16:06:38.097Z",
+  "lastAttemptAt": "2026-10-27T15:20:29.421Z",
+  "lastSuccessAt": "2026-10-27T15:20:29.421Z",
   "lastError": null,
   "source": {
     "name": "NOAA Storm Events Database",
@@ -101,7 +101,7 @@
     },
     {
       "observedAt": "2025-10-24T22:10:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:45.077Z",
+      "ingestedAt": "2026-10-27T15:20:35.190Z",
       "key": "1297370",
       "value": {
         "eventType": "Wind",
@@ -112,7 +112,7 @@
     },
     {
       "observedAt": "2025-10-24T22:35:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:45.076Z",
+      "ingestedAt": "2026-10-27T15:20:35.190Z",
       "key": "1297320",
       "value": {
         "eventType": "Tornado",
@@ -123,7 +123,7 @@
     },
     {
       "observedAt": "2025-10-24T22:46:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:45.077Z",
+      "ingestedAt": "2026-10-27T15:20:35.190Z",
       "key": "1297322",
       "value": {
         "eventType": "Tornado",
@@ -134,7 +134,7 @@
     },
     {
       "observedAt": "2025-10-24T23:01:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:45.077Z",
+      "ingestedAt": "2026-10-27T15:20:35.190Z",
       "key": "1297371",
       "value": {
         "eventType": "Wind",
@@ -145,7 +145,7 @@
     },
     {
       "observedAt": "2025-10-24T23:01:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:45.077Z",
+      "ingestedAt": "2026-10-27T15:20:35.190Z",
       "key": "1297372",
       "value": {
         "eventType": "Wind",
@@ -156,7 +156,7 @@
     },
     {
       "observedAt": "2025-10-24T23:02:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:45.076Z",
+      "ingestedAt": "2026-10-27T15:20:35.190Z",
       "key": "1297494",
       "value": {
         "eventType": "Wind",
@@ -167,7 +167,7 @@
     },
     {
       "observedAt": "2025-10-24T23:02:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:45.077Z",
+      "ingestedAt": "2026-10-27T15:20:35.190Z",
       "key": "1297495",
       "value": {
         "eventType": "Wind",
@@ -178,7 +178,7 @@
     },
     {
       "observedAt": "2025-10-25T03:24:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:45.077Z",
+      "ingestedAt": "2026-10-27T15:20:35.190Z",
       "key": "1297374",
       "value": {
         "eventType": "Hail",
@@ -189,7 +189,7 @@
     },
     {
       "observedAt": "2025-10-25T03:33:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:45.077Z",
+      "ingestedAt": "2026-10-27T15:20:35.190Z",
       "key": "1297375",
       "value": {
         "eventType": "Hail",
@@ -200,7 +200,7 @@
     },
     {
       "observedAt": "2025-11-01T16:26:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:45.078Z",
+      "ingestedAt": "2026-10-27T15:20:35.191Z",
       "key": "1300629",
       "value": {
         "eventType": "Hail",
@@ -211,7 +211,7 @@
     },
     {
       "observedAt": "2026-01-25T04:00:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.836Z",
+      "ingestedAt": "2026-10-27T15:20:38.833Z",
       "key": "1314443",
       "value": {
         "eventType": "Wind",
@@ -222,7 +222,7 @@
     },
     {
       "observedAt": "2026-01-25T04:00:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.835Z",
+      "ingestedAt": "2026-10-27T15:20:38.833Z",
       "key": "1314445",
       "value": {
         "eventType": "Wind",
@@ -233,7 +233,7 @@
     },
     {
       "observedAt": "2026-01-25T04:00:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.835Z",
+      "ingestedAt": "2026-10-27T15:20:38.833Z",
       "key": "1314451",
       "value": {
         "eventType": "Wind",
@@ -244,7 +244,7 @@
     },
     {
       "observedAt": "2026-01-26T04:00:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.833Z",
+      "ingestedAt": "2026-10-27T15:20:38.830Z",
       "key": "1314428",
       "value": {
         "eventType": "Wind",
@@ -255,7 +255,7 @@
     },
     {
       "observedAt": "2026-01-26T04:00:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.833Z",
+      "ingestedAt": "2026-10-27T15:20:38.830Z",
       "key": "1314430",
       "value": {
         "eventType": "Wind",
@@ -266,7 +266,7 @@
     },
     {
       "observedAt": "2026-01-26T04:00:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.833Z",
+      "ingestedAt": "2026-10-27T15:20:38.830Z",
       "key": "1314436",
       "value": {
         "eventType": "Wind",
@@ -277,7 +277,7 @@
     },
     {
       "observedAt": "2026-02-14T16:05:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.833Z",
+      "ingestedAt": "2026-10-27T15:20:38.831Z",
       "key": "1319326",
       "value": {
         "eventType": "Wind",
@@ -288,7 +288,7 @@
     },
     {
       "observedAt": "2026-03-07T15:51:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.840Z",
+      "ingestedAt": "2026-10-27T15:20:38.840Z",
       "key": "1325737",
       "value": {
         "eventType": "Hail",
@@ -299,7 +299,7 @@
     },
     {
       "observedAt": "2026-03-07T16:21:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.840Z",
+      "ingestedAt": "2026-10-27T15:20:38.840Z",
       "key": "1325738",
       "value": {
         "eventType": "Hail",
@@ -310,7 +310,7 @@
     },
     {
       "observedAt": "2026-03-08T06:50:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.841Z",
+      "ingestedAt": "2026-10-27T15:20:38.841Z",
       "key": "1325740",
       "value": {
         "eventType": "Flood",
@@ -321,7 +321,7 @@
     },
     {
       "observedAt": "2026-03-10T18:40:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.835Z",
+      "ingestedAt": "2026-10-27T15:20:38.832Z",
       "key": "1319780",
       "value": {
         "eventType": "Hail",
@@ -332,7 +332,7 @@
     },
     {
       "observedAt": "2026-03-10T19:30:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.835Z",
+      "ingestedAt": "2026-10-27T15:20:38.832Z",
       "key": "1319783",
       "value": {
         "eventType": "Hail",
@@ -343,7 +343,7 @@
     },
     {
       "observedAt": "2026-04-20T13:10:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.841Z",
+      "ingestedAt": "2026-10-27T15:20:38.841Z",
       "key": "1333705",
       "value": {
         "eventType": "Flood",
@@ -354,7 +354,7 @@
     },
     {
       "observedAt": "2026-04-20T16:16:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.840Z",
+      "ingestedAt": "2026-10-27T15:20:38.840Z",
       "key": "1333711",
       "value": {
         "eventType": "Flood",
@@ -365,7 +365,7 @@
     },
     {
       "observedAt": "2026-04-20T16:17:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.840Z",
+      "ingestedAt": "2026-10-27T15:20:38.840Z",
       "key": "1333706",
       "value": {
         "eventType": "Flood",
@@ -376,7 +376,7 @@
     },
     {
       "observedAt": "2026-04-20T16:25:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.840Z",
+      "ingestedAt": "2026-10-27T15:20:38.840Z",
       "key": "1333707",
       "value": {
         "eventType": "Flood",
@@ -387,7 +387,7 @@
     },
     {
       "observedAt": "2026-04-20T16:38:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.840Z",
+      "ingestedAt": "2026-10-27T15:20:38.840Z",
       "key": "1333722",
       "value": {
         "eventType": "Flood",
@@ -398,7 +398,7 @@
     },
     {
       "observedAt": "2026-04-20T17:22:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.840Z",
+      "ingestedAt": "2026-10-27T15:20:38.840Z",
       "key": "1333709",
       "value": {
         "eventType": "Flood",
@@ -409,7 +409,7 @@
     },
     {
       "observedAt": "2026-04-21T06:00:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.845Z",
+      "ingestedAt": "2026-10-27T15:20:38.845Z",
       "key": "1333730",
       "value": {
         "eventType": "Flood",
@@ -420,7 +420,7 @@
     },
     {
       "observedAt": "2026-05-01T06:35:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.838Z",
+      "ingestedAt": "2026-10-27T15:20:38.835Z",
       "key": "1338427",
       "value": {
         "eventType": "Flood",
@@ -431,7 +431,7 @@
     },
     {
       "observedAt": "2026-05-01T06:54:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.840Z",
+      "ingestedAt": "2026-10-27T15:20:38.840Z",
       "key": "1338428",
       "value": {
         "eventType": "Flood",
@@ -442,7 +442,7 @@
     },
     {
       "observedAt": "2026-05-01T08:15:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.844Z",
+      "ingestedAt": "2026-10-27T15:20:38.844Z",
       "key": "1338671",
       "value": {
         "eventType": "Flood",
@@ -453,7 +453,7 @@
     },
     {
       "observedAt": "2026-05-01T11:15:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.840Z",
+      "ingestedAt": "2026-10-27T15:20:38.840Z",
       "key": "1338435",
       "value": {
         "eventType": "Flood",
@@ -464,7 +464,7 @@
     },
     {
       "observedAt": "2026-05-01T12:30:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.844Z",
+      "ingestedAt": "2026-10-27T15:20:38.844Z",
       "key": "1340807",
       "value": {
         "eventType": "Flood",
@@ -475,7 +475,7 @@
     },
     {
       "observedAt": "2026-05-09T16:12:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.838Z",
+      "ingestedAt": "2026-10-27T15:20:38.836Z",
       "key": "1340643",
       "value": {
         "eventType": "Hail",
@@ -486,7 +486,7 @@
     },
     {
       "observedAt": "2026-05-09T16:18:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.839Z",
+      "ingestedAt": "2026-10-27T15:20:38.836Z",
       "key": "1340644",
       "value": {
         "eventType": "Hail",
@@ -497,7 +497,7 @@
     },
     {
       "observedAt": "2026-05-09T16:21:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.839Z",
+      "ingestedAt": "2026-10-27T15:20:38.836Z",
       "key": "1340646",
       "value": {
         "eventType": "Hail",
@@ -508,7 +508,7 @@
     },
     {
       "observedAt": "2026-05-10T21:00:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.839Z",
+      "ingestedAt": "2026-10-27T15:20:38.836Z",
       "key": "1335015",
       "value": {
         "eventType": "Wind",
@@ -519,7 +519,7 @@
     },
     {
       "observedAt": "2026-05-10T21:01:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.839Z",
+      "ingestedAt": "2026-10-27T15:20:38.836Z",
       "key": "1335017",
       "value": {
         "eventType": "Wind",
@@ -530,7 +530,7 @@
     },
     {
       "observedAt": "2026-05-10T21:05:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.839Z",
+      "ingestedAt": "2026-10-27T15:20:38.839Z",
       "key": "1335018",
       "value": {
         "eventType": "Wind",
@@ -541,7 +541,7 @@
     },
     {
       "observedAt": "2026-05-10T21:15:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.839Z",
+      "ingestedAt": "2026-10-27T15:20:38.839Z",
       "key": "1335006",
       "value": {
         "eventType": "Wind",
@@ -552,7 +552,7 @@
     },
     {
       "observedAt": "2026-05-10T22:05:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.840Z",
+      "ingestedAt": "2026-10-27T15:20:38.840Z",
       "key": "1335010",
       "value": {
         "eventType": "Wind",
@@ -563,7 +563,7 @@
     },
     {
       "observedAt": "2026-05-19T23:00:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.838Z",
+      "ingestedAt": "2026-10-27T15:20:38.836Z",
       "key": "1335036",
       "value": {
         "eventType": "Wind",
@@ -574,7 +574,7 @@
     },
     {
       "observedAt": "2026-05-26T09:20:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.839Z",
+      "ingestedAt": "2026-10-27T15:20:38.839Z",
       "key": "1340662",
       "value": {
         "eventType": "Tornado",
@@ -585,7 +585,7 @@
     },
     {
       "observedAt": "2026-05-26T18:30:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.838Z",
+      "ingestedAt": "2026-10-27T15:20:38.836Z",
       "key": "1340776",
       "value": {
         "eventType": "Flood",
@@ -596,7 +596,7 @@
     },
     {
       "observedAt": "2026-05-26T18:42:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.838Z",
+      "ingestedAt": "2026-10-27T15:20:38.836Z",
       "key": "1340761",
       "value": {
         "eventType": "Hail",
@@ -607,7 +607,7 @@
     },
     {
       "observedAt": "2026-05-26T20:40:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.838Z",
+      "ingestedAt": "2026-10-27T15:20:38.836Z",
       "key": "1340770",
       "value": {
         "eventType": "Wind",
@@ -618,7 +618,7 @@
     },
     {
       "observedAt": "2026-05-26T20:45:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.838Z",
+      "ingestedAt": "2026-10-27T15:20:38.836Z",
       "key": "1340771",
       "value": {
         "eventType": "Wind",
@@ -629,7 +629,7 @@
     },
     {
       "observedAt": "2026-05-26T20:55:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.839Z",
+      "ingestedAt": "2026-10-27T15:20:38.839Z",
       "key": "1340675",
       "value": {
         "eventType": "Wind",
@@ -640,7 +640,7 @@
     },
     {
       "observedAt": "2026-05-26T20:57:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.838Z",
+      "ingestedAt": "2026-10-27T15:20:38.836Z",
       "key": "1340772",
       "value": {
         "eventType": "Wind",
@@ -651,7 +651,7 @@
     },
     {
       "observedAt": "2026-05-26T21:00:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.839Z",
+      "ingestedAt": "2026-10-27T15:20:38.839Z",
       "key": "1340781",
       "value": {
         "eventType": "Flood",
@@ -662,7 +662,7 @@
     },
     {
       "observedAt": "2026-05-26T21:06:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.838Z",
+      "ingestedAt": "2026-10-27T15:20:38.836Z",
       "key": "1340773",
       "value": {
         "eventType": "Wind",
@@ -673,7 +673,7 @@
     },
     {
       "observedAt": "2026-05-26T21:25:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.838Z",
+      "ingestedAt": "2026-10-27T15:20:38.836Z",
       "key": "1340774",
       "value": {
         "eventType": "Wind",
@@ -684,7 +684,7 @@
     },
     {
       "observedAt": "2026-05-26T22:30:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.844Z",
+      "ingestedAt": "2026-10-27T15:20:38.844Z",
       "key": "1340782",
       "value": {
         "eventType": "Flood",
@@ -695,7 +695,7 @@
     },
     {
       "observedAt": "2026-05-26T23:00:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.844Z",
+      "ingestedAt": "2026-10-27T15:20:38.844Z",
       "key": "1340783",
       "value": {
         "eventType": "Flood",
@@ -706,7 +706,7 @@
     },
     {
       "observedAt": "2026-06-02T18:46:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.837Z",
+      "ingestedAt": "2026-10-27T15:20:38.835Z",
       "key": "1349512",
       "value": {
         "eventType": "Wind",
@@ -717,7 +717,7 @@
     },
     {
       "observedAt": "2026-06-05T05:00:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.843Z",
+      "ingestedAt": "2026-10-27T15:20:38.843Z",
       "key": "1350093",
       "value": {
         "eventType": "Flood",
@@ -728,7 +728,7 @@
     },
     {
       "observedAt": "2026-06-05T06:00:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.843Z",
+      "ingestedAt": "2026-10-27T15:20:38.843Z",
       "key": "1350100",
       "value": {
         "eventType": "Flood",
@@ -739,7 +739,7 @@
     },
     {
       "observedAt": "2026-06-05T06:37:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.843Z",
+      "ingestedAt": "2026-10-27T15:20:38.843Z",
       "key": "1350109",
       "value": {
         "eventType": "Flood",
@@ -750,7 +750,7 @@
     },
     {
       "observedAt": "2026-06-15T04:30:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.844Z",
+      "ingestedAt": "2026-10-27T15:20:38.844Z",
       "key": "1350816",
       "value": {
         "eventType": "Flood",
@@ -761,7 +761,7 @@
     },
     {
       "observedAt": "2026-06-15T04:33:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.843Z",
+      "ingestedAt": "2026-10-27T15:20:38.843Z",
       "key": "1350789",
       "value": {
         "eventType": "Flood",
@@ -772,7 +772,7 @@
     },
     {
       "observedAt": "2026-06-15T04:59:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.843Z",
+      "ingestedAt": "2026-10-27T15:20:38.843Z",
       "key": "1350791",
       "value": {
         "eventType": "Flood",
@@ -783,7 +783,7 @@
     },
     {
       "observedAt": "2026-06-15T05:20:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.843Z",
+      "ingestedAt": "2026-10-27T15:20:38.843Z",
       "key": "1350792",
       "value": {
         "eventType": "Flood",
@@ -794,7 +794,7 @@
     },
     {
       "observedAt": "2026-06-15T05:25:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.843Z",
+      "ingestedAt": "2026-10-27T15:20:38.843Z",
       "key": "1350794",
       "value": {
         "eventType": "Flood",
@@ -805,7 +805,7 @@
     },
     {
       "observedAt": "2026-06-15T05:33:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.843Z",
+      "ingestedAt": "2026-10-27T15:20:38.843Z",
       "key": "1350795",
       "value": {
         "eventType": "Flood",
@@ -816,7 +816,7 @@
     },
     {
       "observedAt": "2026-06-15T05:40:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.843Z",
+      "ingestedAt": "2026-10-27T15:20:38.843Z",
       "key": "1350796",
       "value": {
         "eventType": "Flood",
@@ -827,7 +827,7 @@
     },
     {
       "observedAt": "2026-06-15T05:55:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.843Z",
+      "ingestedAt": "2026-10-27T15:20:38.843Z",
       "key": "1350799",
       "value": {
         "eventType": "Flood",
@@ -838,7 +838,7 @@
     },
     {
       "observedAt": "2026-06-15T05:55:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.843Z",
+      "ingestedAt": "2026-10-27T15:20:38.843Z",
       "key": "1350801",
       "value": {
         "eventType": "Flood",
@@ -849,7 +849,7 @@
     },
     {
       "observedAt": "2026-06-15T06:30:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.844Z",
+      "ingestedAt": "2026-10-27T15:20:38.844Z",
       "key": "1350808",
       "value": {
         "eventType": "Flood",
@@ -860,7 +860,7 @@
     },
     {
       "observedAt": "2026-06-15T07:03:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.844Z",
+      "ingestedAt": "2026-10-27T15:20:38.844Z",
       "key": "1350811",
       "value": {
         "eventType": "Flood",
@@ -871,7 +871,7 @@
     },
     {
       "observedAt": "2026-06-15T07:03:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.844Z",
+      "ingestedAt": "2026-10-27T15:20:38.844Z",
       "key": "1350812",
       "value": {
         "eventType": "Flood",
@@ -882,7 +882,7 @@
     },
     {
       "observedAt": "2026-06-15T07:03:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.844Z",
+      "ingestedAt": "2026-10-27T15:20:38.844Z",
       "key": "1350813",
       "value": {
         "eventType": "Flood",
@@ -893,7 +893,7 @@
     },
     {
       "observedAt": "2026-06-15T07:30:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.844Z",
+      "ingestedAt": "2026-10-27T15:20:38.844Z",
       "key": "1350819",
       "value": {
         "eventType": "Flood",
@@ -904,7 +904,7 @@
     },
     {
       "observedAt": "2026-06-20T00:22:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.844Z",
+      "ingestedAt": "2026-10-27T15:20:38.844Z",
       "key": "1350900",
       "value": {
         "eventType": "Flood",
@@ -915,7 +915,7 @@
     },
     {
       "observedAt": "2026-06-20T00:33:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.844Z",
+      "ingestedAt": "2026-10-27T15:20:38.844Z",
       "key": "1350901",
       "value": {
         "eventType": "Flood",
@@ -926,7 +926,7 @@
     },
     {
       "observedAt": "2026-06-20T00:47:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.844Z",
+      "ingestedAt": "2026-10-27T15:20:38.844Z",
       "key": "1350902",
       "value": {
         "eventType": "Flood",
@@ -937,7 +937,7 @@
     },
     {
       "observedAt": "2026-06-20T01:00:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.842Z",
+      "ingestedAt": "2026-10-27T15:20:38.842Z",
       "key": "1350903",
       "value": {
         "eventType": "Wind",
@@ -948,7 +948,7 @@
     },
     {
       "observedAt": "2026-06-20T01:05:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.837Z",
+      "ingestedAt": "2026-10-27T15:20:38.834Z",
       "key": "1350904",
       "value": {
         "eventType": "Flood",
@@ -959,7 +959,7 @@
     },
     {
       "observedAt": "2026-06-20T01:06:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.842Z",
+      "ingestedAt": "2026-10-27T15:20:38.842Z",
       "key": "1350905",
       "value": {
         "eventType": "Flood",
@@ -970,7 +970,7 @@
     },
     {
       "observedAt": "2026-06-20T01:15:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.842Z",
+      "ingestedAt": "2026-10-27T15:20:38.842Z",
       "key": "1350907",
       "value": {
         "eventType": "Flood",
@@ -981,7 +981,7 @@
     },
     {
       "observedAt": "2026-06-20T01:20:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.842Z",
+      "ingestedAt": "2026-10-27T15:20:38.842Z",
       "key": "1350906",
       "value": {
         "eventType": "Flood",
@@ -992,7 +992,7 @@
     },
     {
       "observedAt": "2026-06-20T01:23:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.842Z",
+      "ingestedAt": "2026-10-27T15:20:38.842Z",
       "key": "1350909",
       "value": {
         "eventType": "Flood",
@@ -1003,7 +1003,7 @@
     },
     {
       "observedAt": "2026-06-20T01:25:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.842Z",
+      "ingestedAt": "2026-10-27T15:20:38.842Z",
       "key": "1350908",
       "value": {
         "eventType": "Flood",
@@ -1014,7 +1014,7 @@
     },
     {
       "observedAt": "2026-06-20T03:30:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.842Z",
+      "ingestedAt": "2026-10-27T15:20:38.842Z",
       "key": "1350910",
       "value": {
         "eventType": "Flood",
@@ -1025,7 +1025,7 @@
     },
     {
       "observedAt": "2026-06-20T04:30:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.842Z",
+      "ingestedAt": "2026-10-27T15:20:38.842Z",
       "key": "1350912",
       "value": {
         "eventType": "Flood",
@@ -1036,13 +1036,486 @@
     },
     {
       "observedAt": "2026-06-20T04:30:00.000Z",
-      "ingestedAt": "2026-10-26T16:06:48.842Z",
+      "ingestedAt": "2026-10-27T15:20:38.842Z",
       "key": "1350913",
       "value": {
         "eventType": "Flood",
         "magnitude": "unknown",
         "county": "Bexar",
         "narrative": "Thunderstorms produced heavy rain that led to flash flooding. A broadcast media partner shared pictures of a low crossing of Leon Creek with a few feet of flowing water at Hwy  151 and Pinn Rd."
+      }
+    },
+    {
+      "observedAt": "2026-07-11T11:50:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1366843",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced 3-6 inches of rain over the northern part of Leon Creek. This sent a flood wave down the creek and there was a 9-10 foot rise near Joint Base San Antonio-Lackland. A vehicle was trapped in the flood water on Hall St. at Leon Creek, and one person died."
+      }
+    },
+    {
+      "observedAt": "2026-07-11T12:29:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.845Z",
+      "key": "1354846",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Leon Creek flooded streets near the University of Texas at San Antonio."
+      }
+    },
+    {
+      "observedAt": "2026-07-11T12:30:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.845Z",
+      "key": "1354850",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Bexar Flood reported numerous low water crossings closed in western Bexar County along Culebra and Leon Creeks."
+      }
+    },
+    {
+      "observedAt": "2026-07-11T12:42:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.845Z",
+      "key": "1354852",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Babcock Rd. was flooded  along Maverick Creek near the University of Texas at San Antonio."
+      }
+    },
+    {
+      "observedAt": "2026-07-13T21:11:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357755",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding northwest of Pipe Creek. Privilege Creek flooded the low water crossing at Old School Rd. and Privilege Creek Rd."
+      }
+    },
+    {
+      "observedAt": "2026-07-14T01:30:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1358905",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Medina",
+        "narrative": "Numerous county roads were flooded and closed across Medina County following heavy rainfall. US90 became impassable between Hondo and Uvalde in both directions. TX173 became impassable along Middle Verde Creek.  At least 4 high water rescues occurred across the county before 0700CST, including at least two rescues involving motorists swept off in low water crossings."
+      }
+    },
+    {
+      "observedAt": "2026-07-14T04:00:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1358911",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Medina",
+        "narrative": "Public reports and radar estimates indicated around 8 to 12 inches of rain fell in the D'Hanis area on the morning of July 14. Widespread flooding occurred in D'Hanis due to a combination of riverine flooding along Seco and Parker creeks and poor drainage following torrential rains. All roads in D'Hanis south of US90 had standing water and water was observed surrounding homes and businesses. However, no structures sustained floodwater inundation. The CR429 crossing over Seco Creek was flooded."
+      }
+    },
+    {
+      "observedAt": "2026-07-14T05:40:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.846Z",
+      "key": "1357759",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding on the Bexar/Comal County line. FM 1863 at Cibolo Creek was flooded and impassable."
+      }
+    },
+    {
+      "observedAt": "2026-07-14T06:00:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1366059",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced 5-10 inches of rain that led to flash flooding. Flooding from Red Bluff Creek caused major damage to Backhaus Rd. near Hwy 16 south of Pipe Creek. The sheriff's office estimated that the road would be closed for a month."
+      }
+    },
+    {
+      "observedAt": "2026-07-14T07:00:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1366064",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced 5-10 inches of rain that led to flash flooding. El Jacinto Restaurant in Bandera had about a foot of water in its kitchen."
+      }
+    },
+    {
+      "observedAt": "2026-07-14T08:00:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1366068",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced 5-10 inches of rain on the 14th and another 5-8 inches on the 15th leading to flash flooding. River Ranch Dr. was flooded near the confluence of Privilege Creek and the Medina River east of Bandera."
+      }
+    },
+    {
+      "observedAt": "2026-07-14T18:13:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.846Z",
+      "key": "1357766",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding in Leon Valley. A video on social media showed Raymond Rimkus Park flooded."
+      }
+    },
+    {
+      "observedAt": "2026-07-14T18:25:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.846Z",
+      "key": "1357767",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding in Leon Valley where numerous low water crossings were flooded."
+      }
+    },
+    {
+      "observedAt": "2026-07-14T19:00:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.846Z",
+      "key": "1357768",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Comal",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding along the Comal/Bexar County line. Obst Rd. was flooded along Cibolo Creek."
+      }
+    },
+    {
+      "observedAt": "2026-07-14T19:25:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357775",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Kendall",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Cibolo Creek flooded parts of Fair Oaks Ranch."
+      }
+    },
+    {
+      "observedAt": "2026-07-14T19:48:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357783",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Comal",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding in Bulverde. There was a water rescue near the Indian Creek water crossing on E. Ammann Rd. near Cibolo Way."
+      }
+    },
+    {
+      "observedAt": "2026-07-14T22:25:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357818",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding in the Tarpley area. Ross Rd. was flooded at Hondo Creek."
+      }
+    },
+    {
+      "observedAt": "2026-07-14T22:25:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357820",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding in the Tarpley area. Williams Creek Rd. was flooded at Williams Creek."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T04:20:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1365241",
+      "value": {
+        "eventType": "Tornado",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Security camera footage, pictures, and radar data indicate a brief EF-0 tornado occurred just northeast of downtown San Antonio, near the Dignowity Hill district. The weak tornado traveled from near the intersection of Burleson St. and N. Olive St., |northwest to near the intersection of Milam and N. Mesquite St. More notable damage included a tin roof to a business partially peeled up as well as a brick facade partially |collapsed. Maximum winds were estimated to be 65 mph."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T06:00:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1366827",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Kendall",
+        "narrative": "After receiving 2-6 inches of rain on the 14th, the Boerne area had another 6-10 inches early on the 15th. This led to severe flooding in Boerne. Water rescues were reported, and neighborhoods were cut off by flooded roads. Boerne police responded to 109 calls for service, of which 36 were high-water calls including a boat rescue of a stranded SUV at Herff Rd. and River Rd. Swift-water rescue teams extracted three people trapped in vehicles, including two walkout rescues and one boat rescue. Two"
+      }
+    },
+    {
+      "observedAt": "2026-07-15T06:44:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1365243",
+      "value": {
+        "eventType": "Tornado",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "A National Weather Service team surveyed tornado damage in northwest San Antonio. The survey team found evidence of EF-1 damage with peak winds estimated at 100 mph. The tornado began roughly two miles southwest of the I-10 and Loop 1604 interchange, near Capeswood St. where tree damage was observed, including a large tree uprooted. The tornado continued north, crossing De Zavala Rd. and W. Hausman Rd., producing damage to trees. The tornado struck an apartment complex at UTSA Blvd. and Utex Blv"
+      }
+    },
+    {
+      "observedAt": "2026-07-15T08:20:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1366116",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced multiple rounds of heavy rain sending the Medina River out of its banks in Bandera. The Riverside RV Park was evacuated as flood water approached."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T08:43:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357836",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Guadalupe",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding in Schertz. Street flooding was reported near Cibolo Creek."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T09:40:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357837",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Kendall",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding in Boerne. There were pictures on social media of floodwater impacting apartment buildings, homes, and parked  vehicles around the city."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T09:45:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357839",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding south of Pipe Creek. Flood water was running 1.5 feet deep over Bump Gate Rd."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T09:55:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357840",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Kendall",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding in Boerne. River Rd. between S. Main St. and S. Esser Rd. was closed due to severe flooding. Emergency management reported voluntary  evacuations and shelter in place orders due to the flooding."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T10:14:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357842",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Kendall",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding in Boerne. The Emergency Manager reported multiple water rescues, evacuations, and road closures in the city."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T10:25:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357845",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding in Bandera. Numerous roads were closed due to high water."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T10:45:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357971",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced locally heavy rain that led to flash flooding closing numerous roads in Bandera County."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T11:00:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357847",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Comal",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding in and around New Braunfels. Numerous low water crossings were including FM 1101 at Alligator Creek."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T12:00:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357853",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Guadalupe",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding in New Braunfels. There was significant flooding at the Long Creek RV Park. Water was up past the bottom of the doors of numerous RVs and people waists."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T15:06:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1358388",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Thunderstorms produced heavy rain that led to flooding. A vehicle stalled in water on FM 1863 at Cibolo Creek where up to four feet of water was flowing over the road."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T15:25:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1365245",
+      "value": {
+        "eventType": "Tornado",
+        "magnitude": "unknown",
+        "county": "Bexar",
+        "narrative": "Storm chaser video confirmed a tornado briefly touched down north of Burshard Rd. and west of Gardner Rd. in east Bexar County. The tornado remained over open land, however a fence was reported damaged. The damage was rated EF-0 with maximum winds estimated at 65 mph."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T15:51:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357975",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced locally heavy rain that led to flash flooding near Bandera Falls. There was significant flooding over FM 1283 near Red Bluff Creek. Water topped the bridge over the creek and swept away the bridge's guardrails."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T15:51:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1357980",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced locally heavy rain that led to flash flooding near Bandera Falls.  English Crossing Rd. was flooded at the Medina River. A picture showed the Medina River sign on the side of the road nearly underwater."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T15:59:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1370034",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Comal",
+        "narrative": "Mandatory evacuations were ordered along the Guadalupe River from the Comal/Kendall County line to FM 311 near Spring Branch due to flooding."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T16:32:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1370035",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Comal",
+        "narrative": "Schertz ordered mandatory evacuations for all residents of the Pecan Grove RV Park and voluntary evacuations for Lone Oak, Rio Vista, Buffalo Valley South, and areas along southern FM 78 and FM 1518 to Lisa Meadows, followed by the 200-300 block of Aviation Heights. Several roads were closed in the Schertz area along Cibolo Creek. An RV was observed stranded along Aztec Way, apparently moved and damaged by floodwaters. A water rescue was reported at 6:30 PM CST on West Schaefer Rd. in Cibolo on "
+      }
+    },
+    {
+      "observedAt": "2026-07-15T18:30:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1358389",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Comal",
+        "narrative": "Thunderstorms produced heavy rain that led to flooding closing Hwy 281 at Cibolo Creek."
+      }
+    },
+    {
+      "observedAt": "2026-07-15T19:30:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1358390",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Wilson",
+        "narrative": "Thunderstorms produced heavy rain that led to flooding. Scull Crossing was partially washed out at Cibolo Creek."
+      }
+    },
+    {
+      "observedAt": "2026-07-16T09:00:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1365227",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Kendall",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. The Guadalupe River rose over the Sisterdale Rd. bridge."
+      }
+    },
+    {
+      "observedAt": "2026-07-16T09:22:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1365229",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Bandera",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Red Bluff Creek flooded Hwy 16 east of Pipe Creek."
+      }
+    },
+    {
+      "observedAt": "2026-07-16T10:48:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.846Z",
+      "key": "1365231",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Kendall",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. Aerial video footage showed widespread flood inundation in Comfort along Cypress Creek with water surrounding homes. Comfort VFD crews responded to numerous calls with flooded homes and stranded motorists, conducting evacuations and water rescues including one woman trapped in her attic."
+      }
+    },
+    {
+      "observedAt": "2026-07-16T15:00:00.000Z",
+      "ingestedAt": "2026-10-27T15:20:38.847Z",
+      "key": "1365233",
+      "value": {
+        "eventType": "Flood",
+        "magnitude": "unknown",
+        "county": "Kendall",
+        "narrative": "Thunderstorms produced heavy rain that led to flash flooding. The Guadalupe River reached just below the RM 474 bridge, and a storage container was swept down stream into the bridge."
       }
     }
   ]
