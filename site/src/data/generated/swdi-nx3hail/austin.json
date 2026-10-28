@@ -2,10 +2,10 @@
   "datasetId": "swdi-nx3hail",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-10-27T15:20:45.605Z",
+  "status": "stale",
+  "lastAttemptAt": "2026-10-28T15:59:54.342Z",
   "lastSuccessAt": "2026-10-27T15:20:45.605Z",
-  "lastError": null,
+  "lastError": "fetch failed",
   "source": {
     "name": "NOAA Severe Weather Data Inventory — nx3hail (NEXRAD radar-derived hail signatures, not confirmed hail reports)",
     "url": "https://www.ncei.noaa.gov/swdiws/"
