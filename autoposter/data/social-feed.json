@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-27T15:21:26+00:00",
+  "generated_at": "2026-10-28T16:01:04+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -29,8 +29,8 @@
           "value": 1631.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 309.6667,
-          "mom": 120.0
+          "vs_baseline": 309.8333,
+          "mom": 121.0
         },
         "permit_activity_energy_storage": {
           "value": 188.0,
@@ -172,7 +172,7 @@
       "area_id": "austin_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
-      "surprise_score": 0.452,
+      "surprise_score": 0.454,
       "why": "at a level well outside this area's own range",
       "figure": "1,631 electrical permits in 2026-09, +8% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
@@ -220,7 +220,7 @@
       "area_id": "san_antonio_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.26,
+      "surprise_score": 0.259,
       "why": "a modest move against its own history",
       "figure": "689 cooling degree-days in 2026-09, -2% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -256,7 +256,7 @@
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.203,
+      "surprise_score": 0.202,
       "why": "a cost signal",
       "figure": "15.91¢ per kWh (2026-08), +0.2% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
