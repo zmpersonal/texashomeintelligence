@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-28T16:01:04+00:00",
+  "generated_at": "2026-10-29T16:07:27+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -14,8 +14,8 @@
         "drought_stage": {
           "value": 2.0,
           "source": "U.S. Drought Monitor",
-          "as_of": "2026-10-20",
-          "vs_baseline": -0.3443,
+          "as_of": "2026-10-27",
+          "vs_baseline": -0.3387,
           "wow": 0.0
         },
         "cooling_degree_days": {
@@ -29,7 +29,7 @@
           "value": 1631.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 309.8333,
+          "vs_baseline": 309.9167,
           "mom": 121.0
         },
         "permit_activity_energy_storage": {
@@ -78,8 +78,8 @@
         "drought_stage": {
           "value": 2.0,
           "source": "U.S. Drought Monitor",
-          "as_of": "2026-10-20",
-          "vs_baseline": -0.623,
+          "as_of": "2026-10-27",
+          "vs_baseline": -0.6129,
           "wow": 0.0
         },
         "cooling_degree_days": {
@@ -172,7 +172,7 @@
       "area_id": "austin_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
-      "surprise_score": 0.454,
+      "surprise_score": 0.453,
       "why": "at a level well outside this area's own range",
       "figure": "1,631 electrical permits in 2026-09, +8% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
@@ -208,7 +208,7 @@
       "area_id": "austin_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.276,
+      "surprise_score": 0.275,
       "why": "a modest move against its own history",
       "figure": "695 cooling degree-days in 2026-09, -8% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
