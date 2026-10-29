@@ -3,8 +3,8 @@
   "location": "san-antonio",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-28T16:00:28.029Z",
-  "lastSuccessAt": "2026-10-28T16:00:28.029Z",
+  "lastAttemptAt": "2026-10-29T16:06:44.011Z",
+  "lastSuccessAt": "2026-10-29T16:06:44.011Z",
   "lastError": null,
   "source": {
     "name": "U.S. Drought Monitor",
@@ -587,7 +587,7 @@
     },
     {
       "observedAt": "2026-09-29T00:00:00.000Z",
-      "ingestedAt": "2026-10-28T16:00:28.088Z",
+      "ingestedAt": "2026-10-29T16:06:44.350Z",
       "key": "48029-2026-09-29T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (45% of county)",
@@ -597,7 +597,7 @@
     },
     {
       "observedAt": "2026-09-29T00:00:00.000Z",
-      "ingestedAt": "2026-10-28T16:00:28.159Z",
+      "ingestedAt": "2026-10-29T16:06:44.677Z",
       "key": "48091-2026-09-29T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (19% of county)",
@@ -607,7 +607,7 @@
     },
     {
       "observedAt": "2026-09-29T00:00:00.000Z",
-      "ingestedAt": "2026-10-28T16:00:28.217Z",
+      "ingestedAt": "2026-10-29T16:06:44.846Z",
       "key": "48187-2026-09-29T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (72% of county)",
@@ -617,7 +617,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-10-28T16:00:28.088Z",
+      "ingestedAt": "2026-10-29T16:06:44.350Z",
       "key": "48029-2026-10-06T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (47% of county)",
@@ -627,7 +627,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-10-28T16:00:28.159Z",
+      "ingestedAt": "2026-10-29T16:06:44.677Z",
       "key": "48091-2026-10-06T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (19% of county)",
@@ -637,7 +637,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-10-28T16:00:28.217Z",
+      "ingestedAt": "2026-10-29T16:06:44.846Z",
       "key": "48187-2026-10-06T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (72% of county)",
@@ -647,7 +647,7 @@
     },
     {
       "observedAt": "2026-10-13T00:00:00.000Z",
-      "ingestedAt": "2026-10-28T16:00:28.088Z",
+      "ingestedAt": "2026-10-29T16:06:44.350Z",
       "key": "48029-2026-10-13T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (47% of county)",
@@ -657,7 +657,7 @@
     },
     {
       "observedAt": "2026-10-13T00:00:00.000Z",
-      "ingestedAt": "2026-10-28T16:00:28.159Z",
+      "ingestedAt": "2026-10-29T16:06:44.677Z",
       "key": "48091-2026-10-13T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (19% of county)",
@@ -667,7 +667,7 @@
     },
     {
       "observedAt": "2026-10-13T00:00:00.000Z",
-      "ingestedAt": "2026-10-28T16:00:28.217Z",
+      "ingestedAt": "2026-10-29T16:06:44.846Z",
       "key": "48187-2026-10-13T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (72% of county)",
@@ -677,7 +677,7 @@
     },
     {
       "observedAt": "2026-10-20T00:00:00.000Z",
-      "ingestedAt": "2026-10-28T16:00:28.088Z",
+      "ingestedAt": "2026-10-29T16:06:44.350Z",
       "key": "48029-2026-10-20T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (47% of county)",
@@ -687,7 +687,7 @@
     },
     {
       "observedAt": "2026-10-20T00:00:00.000Z",
-      "ingestedAt": "2026-10-28T16:00:28.159Z",
+      "ingestedAt": "2026-10-29T16:06:44.677Z",
       "key": "48091-2026-10-20T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (19% of county)",
@@ -697,8 +697,38 @@
     },
     {
       "observedAt": "2026-10-20T00:00:00.000Z",
-      "ingestedAt": "2026-10-28T16:00:28.217Z",
+      "ingestedAt": "2026-10-29T16:06:44.846Z",
       "key": "48187-2026-10-20T00:00:00",
+      "value": {
+        "droughtIndex": "D2 — Severe Drought (72% of county)",
+        "county": "Guadalupe",
+        "countyFips": "48187"
+      }
+    },
+    {
+      "observedAt": "2026-10-27T00:00:00.000Z",
+      "ingestedAt": "2026-10-29T16:06:44.350Z",
+      "key": "48029-2026-10-27T00:00:00",
+      "value": {
+        "droughtIndex": "D2 — Severe Drought (47% of county)",
+        "county": "Bexar",
+        "countyFips": "48029"
+      }
+    },
+    {
+      "observedAt": "2026-10-27T00:00:00.000Z",
+      "ingestedAt": "2026-10-29T16:06:44.677Z",
+      "key": "48091-2026-10-27T00:00:00",
+      "value": {
+        "droughtIndex": "D2 — Severe Drought (19% of county)",
+        "county": "Comal",
+        "countyFips": "48091"
+      }
+    },
+    {
+      "observedAt": "2026-10-27T00:00:00.000Z",
+      "ingestedAt": "2026-10-29T16:06:44.846Z",
+      "key": "48187-2026-10-27T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (72% of county)",
         "county": "Guadalupe",
