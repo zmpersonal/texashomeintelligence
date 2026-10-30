@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-29T16:07:27+00:00",
+  "generated_at": "2026-10-30T15:56:51+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -29,7 +29,7 @@
           "value": 1631.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 309.9167,
+          "vs_baseline": 310.25,
           "mom": 121.0
         },
         "permit_activity_energy_storage": {
@@ -52,7 +52,7 @@
           "value": 1296.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-09-01",
-          "vs_baseline": 66.0833,
+          "vs_baseline": 66.1667,
           "mom": -44.0
         },
         "permit_activity_roofing": {
@@ -220,7 +220,7 @@
       "area_id": "san_antonio_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.259,
+      "surprise_score": 0.258,
       "why": "a modest move against its own history",
       "figure": "689 cooling degree-days in 2026-09, -2% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -253,18 +253,6 @@
     },
     {
       "rank": 9,
-      "area_id": "texas",
-      "metric": "energy_price_cents_kwh",
-      "angle": "reveal",
-      "surprise_score": 0.202,
-      "why": "a cost signal",
-      "figure": "15.91¢ per kWh (2026-08), +0.2% month over month",
-      "source": "EIA Electricity Data (Texas, residential)",
-      "as_of": "2026-08-01",
-      "suppressed": false
-    },
-    {
-      "rank": 10,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
@@ -273,6 +261,18 @@
       "figure": "1,067 HVAC permits in 2026-09, -6% month over month",
       "source": "City of San Antonio Permits Open Data",
       "as_of": "2026-09-01",
+      "suppressed": false
+    },
+    {
+      "rank": 10,
+      "area_id": "texas",
+      "metric": "energy_price_cents_kwh",
+      "angle": "reveal",
+      "surprise_score": 0.201,
+      "why": "a cost signal",
+      "figure": "15.91¢ per kWh (2026-08), +0.2% month over month",
+      "source": "EIA Electricity Data (Texas, residential)",
+      "as_of": "2026-08-01",
       "suppressed": false
     },
     {
