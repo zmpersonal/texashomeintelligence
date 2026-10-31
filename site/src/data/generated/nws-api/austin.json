@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-30T15:56:18.909Z",
-  "lastSuccessAt": "2026-10-30T15:56:18.909Z",
+  "lastAttemptAt": "2026-10-31T15:19:12.405Z",
+  "lastSuccessAt": "2026-10-31T15:19:12.405Z",
   "lastError": null,
   "source": {
     "name": "National Weather Service API",
@@ -808,6 +808,16 @@
       "value": {
         "forecastHighF": 71,
         "forecastLowF": 63
+      }
+    },
+    {
+      "observedAt": "2026-10-31T14:00:00.000Z",
+      "ingestedAt": "2026-10-31T15:19:12.709Z",
+      "key": "2026-10-31T09:00:00-05:00",
+      "value": {
+        "forecastHighF": 80,
+        "forecastLowF": 65,
+        "activeAlert": "Dense Fog Advisory issued October 31 at 8:05AM CDT until October 31 at 11:00AM CDT by NWS Austin/San Antonio TX"
       }
     }
   ]

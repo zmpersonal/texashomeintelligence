@@ -3,7 +3,7 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "stale",
-  "lastAttemptAt": "2026-10-30T15:55:48.491Z",
+  "lastAttemptAt": "2026-10-31T15:19:12.175Z",
   "lastSuccessAt": "2026-10-27T15:20:45.605Z",
   "lastError": "SWDI nx3hail response is missing expected column(s) ZTIME, LON, LAT, WSR_ID, CELL_ID, PROB, SEVPROB, MAXSIZE. Columns returned: summary. The product's shape has changed — read the response before changing this fetcher.",
   "source": {
