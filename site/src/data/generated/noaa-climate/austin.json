@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-10-31T15:19:10.580Z",
-  "lastSuccessAt": "2026-10-31T15:19:10.580Z",
+  "lastAttemptAt": "2026-11-01T16:00:30.459Z",
+  "lastSuccessAt": "2026-11-01T16:00:30.459Z",
   "lastError": null,
   "source": {
     "name": "NOAA NCEI U.S. Climate Normals 1991-2020 (station CSV) and Global Summary of the Month",
@@ -13,7 +13,7 @@
   "observations": [
     {
       "observedAt": "2020-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "normal-1991-2020-01",
       "value": {
         "kind": "normal-1991-2020",
@@ -30,7 +30,7 @@
     },
     {
       "observedAt": "2020-02-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "normal-1991-2020-02",
       "value": {
         "kind": "normal-1991-2020",
@@ -47,7 +47,7 @@
     },
     {
       "observedAt": "2020-03-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "normal-1991-2020-03",
       "value": {
         "kind": "normal-1991-2020",
@@ -64,7 +64,7 @@
     },
     {
       "observedAt": "2020-04-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "normal-1991-2020-04",
       "value": {
         "kind": "normal-1991-2020",
@@ -81,7 +81,7 @@
     },
     {
       "observedAt": "2020-05-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "normal-1991-2020-05",
       "value": {
         "kind": "normal-1991-2020",
@@ -98,7 +98,7 @@
     },
     {
       "observedAt": "2020-06-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "normal-1991-2020-06",
       "value": {
         "kind": "normal-1991-2020",
@@ -115,7 +115,7 @@
     },
     {
       "observedAt": "2020-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "normal-1991-2020-07",
       "value": {
         "kind": "normal-1991-2020",
@@ -132,7 +132,7 @@
     },
     {
       "observedAt": "2020-08-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "normal-1991-2020-08",
       "value": {
         "kind": "normal-1991-2020",
@@ -149,7 +149,7 @@
     },
     {
       "observedAt": "2020-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "normal-1991-2020-09",
       "value": {
         "kind": "normal-1991-2020",
@@ -166,7 +166,7 @@
     },
     {
       "observedAt": "2020-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "normal-1991-2020-10",
       "value": {
         "kind": "normal-1991-2020",
@@ -183,7 +183,7 @@
     },
     {
       "observedAt": "2020-11-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "normal-1991-2020-11",
       "value": {
         "kind": "normal-1991-2020",
@@ -200,7 +200,7 @@
     },
     {
       "observedAt": "2020-12-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "normal-1991-2020-12",
       "value": {
         "kind": "normal-1991-2020",
@@ -217,7 +217,7 @@
     },
     {
       "observedAt": "2025-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "actual-2025-09",
       "value": {
         "kind": "monthly-actual",
@@ -232,7 +232,7 @@
     },
     {
       "observedAt": "2025-10-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "actual-2025-10",
       "value": {
         "kind": "monthly-actual",
@@ -247,7 +247,7 @@
     },
     {
       "observedAt": "2025-11-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "actual-2025-11",
       "value": {
         "kind": "monthly-actual",
@@ -262,7 +262,7 @@
     },
     {
       "observedAt": "2025-12-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "actual-2025-12",
       "value": {
         "kind": "monthly-actual",
@@ -277,7 +277,7 @@
     },
     {
       "observedAt": "2026-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "actual-2026-01",
       "value": {
         "kind": "monthly-actual",
@@ -292,7 +292,7 @@
     },
     {
       "observedAt": "2026-02-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "actual-2026-02",
       "value": {
         "kind": "monthly-actual",
@@ -307,7 +307,7 @@
     },
     {
       "observedAt": "2026-03-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "actual-2026-03",
       "value": {
         "kind": "monthly-actual",
@@ -322,7 +322,7 @@
     },
     {
       "observedAt": "2026-04-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "actual-2026-04",
       "value": {
         "kind": "monthly-actual",
@@ -337,7 +337,7 @@
     },
     {
       "observedAt": "2026-05-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "actual-2026-05",
       "value": {
         "kind": "monthly-actual",
@@ -352,7 +352,7 @@
     },
     {
       "observedAt": "2026-06-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "actual-2026-06",
       "value": {
         "kind": "monthly-actual",
@@ -367,7 +367,7 @@
     },
     {
       "observedAt": "2026-07-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "actual-2026-07",
       "value": {
         "kind": "monthly-actual",
@@ -382,7 +382,7 @@
     },
     {
       "observedAt": "2026-08-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "actual-2026-08",
       "value": {
         "kind": "monthly-actual",
@@ -397,7 +397,7 @@
     },
     {
       "observedAt": "2026-09-01T00:00:00.000Z",
-      "ingestedAt": "2026-10-31T15:19:11.668Z",
+      "ingestedAt": "2026-11-01T16:00:31.258Z",
       "key": "actual-2026-09",
       "value": {
         "kind": "monthly-actual",
