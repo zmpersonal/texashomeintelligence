@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-03T17:01:47+00:00",
+  "generated_at": "2026-11-04T17:14:49+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -49,11 +49,11 @@
           "mom": -206.0
         },
         "permit_activity_plumbing": {
-          "value": 1241.0,
+          "value": 1240.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-10-01",
-          "vs_baseline": 6.0769,
-          "mom": -55.0
+          "vs_baseline": 5.0769,
+          "mom": -56.0
         },
         "permit_activity_roofing": {
           "value": 193.0,
@@ -232,7 +232,7 @@
       "area_id": "san_antonio_metro",
       "metric": "cooling_degree_days",
       "angle": "reveal",
-      "surprise_score": 0.256,
+      "surprise_score": 0.255,
       "why": "a modest move against its own history",
       "figure": "689 cooling degree-days in 2026-09, -2% vs the prior month",
       "source": "NOAA NCEI Global Summary of the Month",
@@ -280,7 +280,7 @@
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.199,
+      "surprise_score": 0.198,
       "why": "a cost signal",
       "figure": "15.91¢ per kWh (2026-08), +0.2% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
@@ -318,7 +318,7 @@
       "angle": "reveal",
       "surprise_score": 0.133,
       "why": "a modest move against its own history",
-      "figure": "1,241 plumbing permits in 2026-10, -4% month over month",
+      "figure": "1,240 plumbing permits in 2026-10, -4% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
       "as_of": "2026-10-01",
       "suppressed": false
