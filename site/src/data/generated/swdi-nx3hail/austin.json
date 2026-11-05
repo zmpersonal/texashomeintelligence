@@ -2,10 +2,10 @@
   "datasetId": "swdi-nx3hail",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "stale",
-  "lastAttemptAt": "2026-11-04T17:13:08.550Z",
-  "lastSuccessAt": "2026-10-27T15:20:45.605Z",
-  "lastError": "SWDI nx3hail response is missing expected column(s) ZTIME, LON, LAT, WSR_ID, CELL_ID, PROB, SEVPROB, MAXSIZE. Columns returned: summary. The product's shape has changed — read the response before changing this fetcher.",
+  "status": "live",
+  "lastAttemptAt": "2026-11-05T17:23:23.983Z",
+  "lastSuccessAt": "2026-11-05T17:23:23.983Z",
+  "lastError": null,
   "source": {
     "name": "NOAA Severe Weather Data Inventory — nx3hail (NEXRAD radar-derived hail signatures, not confirmed hail reports)",
     "url": "https://www.ncei.noaa.gov/swdiws/"
@@ -5403,6 +5403,226 @@
         "areaBasis": "box-around-metro-reference-point-not-a-county",
         "countCheck": "agrees",
         "countCheckReported": 20
+      }
+    },
+    {
+      "observedAt": "2026-11-03T08:38:28.000Z",
+      "ingestedAt": "2026-11-05T17:23:54.418Z",
+      "key": "2026-11-03T08:38:28Z-KDYX-C6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDYX",
+        "cellId": "C6",
+        "lat": 30.732,
+        "lon": -98.237,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 11
+      }
+    },
+    {
+      "observedAt": "2026-11-03T08:42:13.000Z",
+      "ingestedAt": "2026-11-05T17:23:54.418Z",
+      "key": "2026-11-03T08:42:13Z-KSJT-I2",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KSJT",
+        "cellId": "I2",
+        "lat": 30.711,
+        "lon": -98.212,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 11
+      }
+    },
+    {
+      "observedAt": "2026-11-03T08:43:06.000Z",
+      "ingestedAt": "2026-11-05T17:23:54.418Z",
+      "key": "2026-11-03T08:43:06Z-KDYX-C6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDYX",
+        "cellId": "C6",
+        "lat": 30.687,
+        "lon": -98.212,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 11
+      }
+    },
+    {
+      "observedAt": "2026-11-03T08:43:47.000Z",
+      "ingestedAt": "2026-11-05T17:23:54.418Z",
+      "key": "2026-11-03T08:43:47Z-KEWX-D5",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "D5",
+        "lat": 30.68,
+        "lon": -98.188,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 11
+      }
+    },
+    {
+      "observedAt": "2026-11-03T08:44:35.000Z",
+      "ingestedAt": "2026-11-05T17:23:54.418Z",
+      "key": "2026-11-03T08:44:35Z-KFWS-L2",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KFWS",
+        "cellId": "L2",
+        "lat": 30.709,
+        "lon": -98.217,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 40,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 11
+      }
+    },
+    {
+      "observedAt": "2026-11-03T08:48:02.000Z",
+      "ingestedAt": "2026-11-05T17:23:54.418Z",
+      "key": "2026-11-03T08:48:02Z-KDYX-C6",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KDYX",
+        "cellId": "C6",
+        "lat": 30.688,
+        "lon": -98.166,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 11
+      }
+    },
+    {
+      "observedAt": "2026-11-03T08:48:40.000Z",
+      "ingestedAt": "2026-11-05T17:23:54.418Z",
+      "key": "2026-11-03T08:48:40Z-KFWS-L2",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KFWS",
+        "cellId": "L2",
+        "lat": 30.683,
+        "lon": -98.141,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 30,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 11
+      }
+    },
+    {
+      "observedAt": "2026-11-03T08:48:51.000Z",
+      "ingestedAt": "2026-11-05T17:23:54.418Z",
+      "key": "2026-11-03T08:48:51Z-KGRK-J1",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KGRK",
+        "cellId": "J1",
+        "lat": 30.686,
+        "lon": -98.136,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 0,
+        "maxSize": 0.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 11
+      }
+    },
+    {
+      "observedAt": "2026-11-03T08:50:50.000Z",
+      "ingestedAt": "2026-11-05T17:23:54.418Z",
+      "key": "2026-11-03T08:50:50Z-KEWX-D5",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KEWX",
+        "cellId": "D5",
+        "lat": 30.669,
+        "lon": -98.127,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 11
+      }
+    },
+    {
+      "observedAt": "2026-11-03T08:52:44.000Z",
+      "ingestedAt": "2026-11-05T17:23:54.418Z",
+      "key": "2026-11-03T08:52:44Z-KFWS-L2",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KFWS",
+        "cellId": "L2",
+        "lat": 30.636,
+        "lon": -98.161,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 10,
+        "maxSize": 0.5,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 11
+      }
+    },
+    {
+      "observedAt": "2026-11-03T09:00:51.000Z",
+      "ingestedAt": "2026-11-05T17:23:54.418Z",
+      "key": "2026-11-03T09:00:51Z-KFWS-O4",
+      "value": {
+        "observationType": "radar-derived-hail-signature",
+        "sourceProduct": "SWDI nx3hail",
+        "radarStationId": "KFWS",
+        "cellId": "O4",
+        "lat": 30.628,
+        "lon": -98.076,
+        "probabilityOfHail": 100,
+        "probabilityOfSevereHail": 20,
+        "maxSize": 0.75,
+        "maxSizeUnit": null,
+        "areaBasis": "box-around-metro-reference-point-not-a-county",
+        "countCheck": "agrees",
+        "countCheckReported": 11
       }
     }
   ]

@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-11-04T17:14:09.549Z",
-  "lastSuccessAt": "2026-11-04T17:14:09.549Z",
+  "lastAttemptAt": "2026-11-05T17:23:55.057Z",
+  "lastSuccessAt": "2026-11-05T17:23:55.057Z",
   "lastError": null,
   "source": {
     "name": "U.S. Drought Monitor",
@@ -617,7 +617,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-11-04T17:14:09.788Z",
+      "ingestedAt": "2026-11-05T17:23:55.476Z",
       "key": "48453-2026-10-06T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (79% of county)",
@@ -627,7 +627,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-11-04T17:14:09.917Z",
+      "ingestedAt": "2026-11-05T17:23:55.730Z",
       "key": "48491-2026-10-06T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (80% of county)",
@@ -637,7 +637,7 @@
     },
     {
       "observedAt": "2026-10-06T00:00:00.000Z",
-      "ingestedAt": "2026-11-04T17:14:09.987Z",
+      "ingestedAt": "2026-11-05T17:23:56.011Z",
       "key": "48209-2026-10-06T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (85% of county)",
@@ -647,7 +647,7 @@
     },
     {
       "observedAt": "2026-10-13T00:00:00.000Z",
-      "ingestedAt": "2026-11-04T17:14:09.788Z",
+      "ingestedAt": "2026-11-05T17:23:55.476Z",
       "key": "48453-2026-10-13T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (79% of county)",
@@ -657,7 +657,7 @@
     },
     {
       "observedAt": "2026-10-13T00:00:00.000Z",
-      "ingestedAt": "2026-11-04T17:14:09.917Z",
+      "ingestedAt": "2026-11-05T17:23:55.730Z",
       "key": "48491-2026-10-13T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (80% of county)",
@@ -667,7 +667,7 @@
     },
     {
       "observedAt": "2026-10-13T00:00:00.000Z",
-      "ingestedAt": "2026-11-04T17:14:09.987Z",
+      "ingestedAt": "2026-11-05T17:23:56.011Z",
       "key": "48209-2026-10-13T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (85% of county)",
@@ -677,7 +677,7 @@
     },
     {
       "observedAt": "2026-10-20T00:00:00.000Z",
-      "ingestedAt": "2026-11-04T17:14:09.788Z",
+      "ingestedAt": "2026-11-05T17:23:55.476Z",
       "key": "48453-2026-10-20T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (79% of county)",
@@ -687,7 +687,7 @@
     },
     {
       "observedAt": "2026-10-20T00:00:00.000Z",
-      "ingestedAt": "2026-11-04T17:14:09.917Z",
+      "ingestedAt": "2026-11-05T17:23:55.730Z",
       "key": "48491-2026-10-20T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (78% of county)",
@@ -697,7 +697,7 @@
     },
     {
       "observedAt": "2026-10-20T00:00:00.000Z",
-      "ingestedAt": "2026-11-04T17:14:09.987Z",
+      "ingestedAt": "2026-11-05T17:23:56.011Z",
       "key": "48209-2026-10-20T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (85% of county)",
@@ -707,7 +707,7 @@
     },
     {
       "observedAt": "2026-10-27T00:00:00.000Z",
-      "ingestedAt": "2026-11-04T17:14:09.788Z",
+      "ingestedAt": "2026-11-05T17:23:55.476Z",
       "key": "48453-2026-10-27T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (79% of county)",
@@ -717,7 +717,7 @@
     },
     {
       "observedAt": "2026-10-27T00:00:00.000Z",
-      "ingestedAt": "2026-11-04T17:14:09.917Z",
+      "ingestedAt": "2026-11-05T17:23:55.730Z",
       "key": "48491-2026-10-27T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (78% of county)",
@@ -727,10 +727,40 @@
     },
     {
       "observedAt": "2026-10-27T00:00:00.000Z",
-      "ingestedAt": "2026-11-04T17:14:09.987Z",
+      "ingestedAt": "2026-11-05T17:23:56.011Z",
       "key": "48209-2026-10-27T00:00:00",
       "value": {
         "droughtIndex": "D2 — Severe Drought (85% of county)",
+        "county": "Hays",
+        "countyFips": "48209"
+      }
+    },
+    {
+      "observedAt": "2026-11-03T00:00:00.000Z",
+      "ingestedAt": "2026-11-05T17:23:55.476Z",
+      "key": "48453-2026-11-03T00:00:00",
+      "value": {
+        "droughtIndex": "D2 — Severe Drought (79% of county)",
+        "county": "Travis",
+        "countyFips": "48453"
+      }
+    },
+    {
+      "observedAt": "2026-11-03T00:00:00.000Z",
+      "ingestedAt": "2026-11-05T17:23:55.730Z",
+      "key": "48491-2026-11-03T00:00:00",
+      "value": {
+        "droughtIndex": "D2 — Severe Drought (78% of county)",
+        "county": "Williamson",
+        "countyFips": "48491"
+      }
+    },
+    {
+      "observedAt": "2026-11-03T00:00:00.000Z",
+      "ingestedAt": "2026-11-05T17:23:56.011Z",
+      "key": "48209-2026-11-03T00:00:00",
+      "value": {
+        "droughtIndex": "D2 — Severe Drought (46% of county)",
         "county": "Hays",
         "countyFips": "48209"
       }
