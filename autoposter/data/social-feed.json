@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-05T17:24:59+00:00",
+  "generated_at": "2026-11-06T16:46:13+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -19,17 +19,17 @@
           "wow": 0.0
         },
         "cooling_degree_days": {
-          "value": 695.0,
+          "value": 291.0,
           "source": "NOAA NCEI Global Summary of the Month",
-          "as_of": "2026-09-01",
-          "vs_baseline": 364.5,
-          "mom": -60.0
+          "as_of": "2026-10-01",
+          "vs_baseline": -67.5385,
+          "mom": -404.0
         },
         "permit_activity_electrical": {
           "value": 1528.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-10-01",
-          "vs_baseline": 183.4615,
+          "vs_baseline": 183.5385,
           "mom": -103.0
         },
         "permit_activity_energy_storage": {
@@ -42,10 +42,10 @@
           ]
         },
         "permit_activity_hvac": {
-          "value": 891.0,
+          "value": 890.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-10-01",
-          "vs_baseline": -16.1538,
+          "vs_baseline": -16.9231,
           "mom": -206.0
         },
         "permit_activity_plumbing": {
@@ -83,11 +83,11 @@
           "wow": 0.0
         },
         "cooling_degree_days": {
-          "value": 689.0,
+          "value": 324.0,
           "source": "NOAA NCEI Global Summary of the Month",
-          "as_of": "2026-09-01",
-          "vs_baseline": 352.1667,
-          "mom": -11.0
+          "as_of": "2026-10-01",
+          "vs_baseline": -39.9231,
+          "mom": -365.0
         },
         "permit_activity_electrical": {
           "value": 819.0,
@@ -218,41 +218,17 @@
     {
       "rank": 6,
       "area_id": "austin_metro",
-      "metric": "cooling_degree_days",
-      "angle": "reveal",
-      "surprise_score": 0.271,
-      "why": "a modest move against its own history",
-      "figure": "695 cooling degree-days in 2026-09, -8% vs the prior month",
-      "source": "NOAA NCEI Global Summary of the Month",
-      "as_of": "2026-09-01",
-      "suppressed": false
-    },
-    {
-      "rank": 7,
-      "area_id": "san_antonio_metro",
-      "metric": "cooling_degree_days",
-      "angle": "reveal",
-      "surprise_score": 0.254,
-      "why": "a modest move against its own history",
-      "figure": "689 cooling degree-days in 2026-09, -2% vs the prior month",
-      "source": "NOAA NCEI Global Summary of the Month",
-      "as_of": "2026-09-01",
-      "suppressed": false
-    },
-    {
-      "rank": 8,
-      "area_id": "austin_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
-      "surprise_score": 0.235,
+      "surprise_score": 0.236,
       "why": "a modest move against its own history",
-      "figure": "891 HVAC permits in 2026-10, -19% month over month",
+      "figure": "890 HVAC permits in 2026-10, -19% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
       "as_of": "2026-10-01",
       "suppressed": false
     },
     {
-      "rank": 9,
+      "rank": 7,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_solar",
       "angle": "reveal",
@@ -264,7 +240,7 @@
       "suppressed": false
     },
     {
-      "rank": 10,
+      "rank": 8,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
@@ -276,7 +252,7 @@
       "suppressed": false
     },
     {
-      "rank": 11,
+      "rank": 9,
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
@@ -288,7 +264,7 @@
       "suppressed": false
     },
     {
-      "rank": 12,
+      "rank": 10,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_roofing",
       "angle": "reveal",
@@ -300,7 +276,7 @@
       "suppressed": false
     },
     {
-      "rank": 13,
+      "rank": 11,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
@@ -312,7 +288,7 @@
       "suppressed": false
     },
     {
-      "rank": 14,
+      "rank": 12,
       "area_id": "austin_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
@@ -324,7 +300,7 @@
       "suppressed": false
     },
     {
-      "rank": 15,
+      "rank": 13,
       "area_id": "austin_metro",
       "metric": "permit_activity_solar",
       "angle": "reveal",
