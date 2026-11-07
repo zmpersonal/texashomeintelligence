@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-06T16:46:13+00:00",
+  "generated_at": "2026-11-07T15:41:10+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -26,11 +26,11 @@
           "mom": -404.0
         },
         "permit_activity_electrical": {
-          "value": 1528.0,
+          "value": 1527.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-10-01",
-          "vs_baseline": 183.5385,
-          "mom": -103.0
+          "vs_baseline": 182.5385,
+          "mom": -104.0
         },
         "permit_activity_energy_storage": {
           "value": 267.0,
@@ -52,7 +52,7 @@
           "value": 1240.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-10-01",
-          "vs_baseline": 5.1538,
+          "vs_baseline": 5.2308,
           "mom": -56.0
         },
         "permit_activity_roofing": {
@@ -198,7 +198,7 @@
       "angle": "reveal",
       "surprise_score": 0.3,
       "why": "a modest move against its own history",
-      "figure": "1,528 electrical permits in 2026-10, -6% month over month",
+      "figure": "1,527 electrical permits in 2026-10, -6% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
       "as_of": "2026-10-01",
       "suppressed": false
@@ -256,7 +256,7 @@
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.197,
+      "surprise_score": 0.196,
       "why": "a cost signal",
       "figure": "15.91¢ per kWh (2026-08), +0.2% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
