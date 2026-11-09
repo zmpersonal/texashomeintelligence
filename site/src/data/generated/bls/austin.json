@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-11-08T15:58:14.332Z",
-  "lastSuccessAt": "2026-11-08T15:58:14.332Z",
+  "lastAttemptAt": "2026-11-09T19:47:29.552Z",
+  "lastSuccessAt": "2026-11-09T19:47:29.552Z",
   "lastError": null,
   "source": {
     "name": "BLS Occupational Employment and Wage Statistics",
@@ -13,7 +13,7 @@
   "observations": [
     {
       "observedAt": "2025-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-11-08T15:58:14.842Z",
+      "ingestedAt": "2026-11-09T19:47:29.843Z",
       "key": "OEUM001242000000047215208-2025",
       "value": {
         "trade": "Plumbers, Pipefitters, and Steamfitters (Austin-Round Rock-Georgetown MSA)",
