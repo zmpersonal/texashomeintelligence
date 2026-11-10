@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T15:58:40+00:00",
+  "generated_at": "2026-11-10T17:02:16+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -244,7 +244,7 @@
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.195,
+      "surprise_score": 0.194,
       "why": "a cost signal",
       "figure": "15.91¢ per kWh (2026-08), +0.2% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
