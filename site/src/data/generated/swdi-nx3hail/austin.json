@@ -2,10 +2,10 @@
   "datasetId": "swdi-nx3hail",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-11-10T17:00:54.057Z",
+  "status": "stale",
+  "lastAttemptAt": "2026-11-11T17:06:14.648Z",
   "lastSuccessAt": "2026-11-10T17:00:54.057Z",
-  "lastError": null,
+  "lastError": "SWDI nx3hail fetch failed: HTTP 500 from https://www.ncei.noaa.gov/swdiws/csv/nx3hail/20261011:20261111?bbox=-98.2431%2C29.7672%2C-97.2431%2C30.7672 — server said: error,An error occured. Please check the documentation or contact the system administrator at swdi.ncdc@noaa.gov",
   "source": {
     "name": "NOAA Severe Weather Data Inventory — nx3hail (NEXRAD radar-derived hail signatures, not confirmed hail reports)",
     "url": "https://www.ncei.noaa.gov/swdiws/"
