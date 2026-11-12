@@ -2,10 +2,10 @@
   "datasetId": "swdi-nx3hail",
   "location": "austin",
   "methodologyVersion": "v1",
-  "status": "stale",
-  "lastAttemptAt": "2026-11-11T17:06:14.648Z",
-  "lastSuccessAt": "2026-11-10T17:00:54.057Z",
-  "lastError": "SWDI nx3hail fetch failed: HTTP 500 from https://www.ncei.noaa.gov/swdiws/csv/nx3hail/20261011:20261111?bbox=-98.2431%2C29.7672%2C-97.2431%2C30.7672 — server said: error,An error occured. Please check the documentation or contact the system administrator at swdi.ncdc@noaa.gov",
+  "status": "live",
+  "lastAttemptAt": "2026-11-12T17:34:44.558Z",
+  "lastSuccessAt": "2026-11-12T17:34:44.558Z",
+  "lastError": null,
   "source": {
     "name": "NOAA Severe Weather Data Inventory — nx3hail (NEXRAD radar-derived hail signatures, not confirmed hail reports)",
     "url": "https://www.ncei.noaa.gov/swdiws/"
@@ -5407,7 +5407,7 @@
     },
     {
       "observedAt": "2026-11-03T08:38:28.000Z",
-      "ingestedAt": "2026-11-10T17:01:24.225Z",
+      "ingestedAt": "2026-11-12T17:34:44.789Z",
       "key": "2026-11-03T08:38:28Z-KDYX-C6",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5427,7 +5427,7 @@
     },
     {
       "observedAt": "2026-11-03T08:42:13.000Z",
-      "ingestedAt": "2026-11-10T17:01:24.225Z",
+      "ingestedAt": "2026-11-12T17:34:44.789Z",
       "key": "2026-11-03T08:42:13Z-KSJT-I2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5447,7 +5447,7 @@
     },
     {
       "observedAt": "2026-11-03T08:43:06.000Z",
-      "ingestedAt": "2026-11-10T17:01:24.225Z",
+      "ingestedAt": "2026-11-12T17:34:44.789Z",
       "key": "2026-11-03T08:43:06Z-KDYX-C6",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5467,7 +5467,7 @@
     },
     {
       "observedAt": "2026-11-03T08:43:47.000Z",
-      "ingestedAt": "2026-11-10T17:01:24.225Z",
+      "ingestedAt": "2026-11-12T17:34:44.789Z",
       "key": "2026-11-03T08:43:47Z-KEWX-D5",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5487,7 +5487,7 @@
     },
     {
       "observedAt": "2026-11-03T08:44:35.000Z",
-      "ingestedAt": "2026-11-10T17:01:24.225Z",
+      "ingestedAt": "2026-11-12T17:34:44.789Z",
       "key": "2026-11-03T08:44:35Z-KFWS-L2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5507,7 +5507,7 @@
     },
     {
       "observedAt": "2026-11-03T08:48:02.000Z",
-      "ingestedAt": "2026-11-10T17:01:24.225Z",
+      "ingestedAt": "2026-11-12T17:34:44.789Z",
       "key": "2026-11-03T08:48:02Z-KDYX-C6",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5527,7 +5527,7 @@
     },
     {
       "observedAt": "2026-11-03T08:48:40.000Z",
-      "ingestedAt": "2026-11-10T17:01:24.225Z",
+      "ingestedAt": "2026-11-12T17:34:44.789Z",
       "key": "2026-11-03T08:48:40Z-KFWS-L2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5547,7 +5547,7 @@
     },
     {
       "observedAt": "2026-11-03T08:48:51.000Z",
-      "ingestedAt": "2026-11-10T17:01:24.225Z",
+      "ingestedAt": "2026-11-12T17:34:44.789Z",
       "key": "2026-11-03T08:48:51Z-KGRK-J1",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5567,7 +5567,7 @@
     },
     {
       "observedAt": "2026-11-03T08:50:50.000Z",
-      "ingestedAt": "2026-11-10T17:01:24.225Z",
+      "ingestedAt": "2026-11-12T17:34:44.789Z",
       "key": "2026-11-03T08:50:50Z-KEWX-D5",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5587,7 +5587,7 @@
     },
     {
       "observedAt": "2026-11-03T08:52:44.000Z",
-      "ingestedAt": "2026-11-10T17:01:24.225Z",
+      "ingestedAt": "2026-11-12T17:34:44.789Z",
       "key": "2026-11-03T08:52:44Z-KFWS-L2",
       "value": {
         "observationType": "radar-derived-hail-signature",
@@ -5607,7 +5607,7 @@
     },
     {
       "observedAt": "2026-11-03T09:00:51.000Z",
-      "ingestedAt": "2026-11-10T17:01:24.225Z",
+      "ingestedAt": "2026-11-12T17:34:44.789Z",
       "key": "2026-11-03T09:00:51Z-KFWS-O4",
       "value": {
         "observationType": "radar-derived-hail-signature",
