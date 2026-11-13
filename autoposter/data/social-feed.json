@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T17:36:16+00:00",
+  "generated_at": "2026-11-13T17:13:00+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -29,7 +29,7 @@
           "value": 1526.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-10-01",
-          "vs_baseline": 181.5385,
+          "vs_baseline": 181.6923,
           "mom": -105.0
         },
         "permit_activity_energy_storage": {
@@ -45,7 +45,7 @@
           "value": 890.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-10-01",
-          "vs_baseline": -16.9231,
+          "vs_baseline": -16.8462,
           "mom": -206.0
         },
         "permit_activity_plumbing": {
@@ -59,7 +59,7 @@
           "value": 193.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-10-01",
-          "vs_baseline": 36.6154,
+          "vs_baseline": 36.6923,
           "mom": 27.0
         },
         "permit_activity_solar": {
@@ -164,7 +164,7 @@
       "county": "Bexar",
       "metric": "drought_stage",
       "angle": "warning",
-      "surprise_score": 0.807,
+      "surprise_score": 0.802,
       "why": "fell back out of Severe Drought (D2); a large move against its own history",
       "figure": "fell back out of Severe Drought (D2) — now D1",
       "source": "U.S. Drought Monitor",
@@ -212,7 +212,7 @@
       "area_id": "austin_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
-      "surprise_score": 0.3,
+      "surprise_score": 0.301,
       "why": "a modest move against its own history",
       "figure": "1,526 electrical permits in 2026-10, -6% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
@@ -224,7 +224,7 @@
       "area_id": "austin_metro",
       "metric": "permit_activity_roofing",
       "angle": "reveal",
-      "surprise_score": 0.285,
+      "surprise_score": 0.286,
       "why": "a modest move against its own history",
       "figure": "193 roofing permits in 2026-10, +16% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
@@ -257,18 +257,6 @@
     },
     {
       "rank": 9,
-      "area_id": "texas",
-      "metric": "energy_price_cents_kwh",
-      "angle": "reveal",
-      "surprise_score": 0.193,
-      "why": "a cost signal",
-      "figure": "15.91¢ per kWh (2026-08), +0.2% month over month",
-      "source": "EIA Electricity Data (Texas, residential)",
-      "as_of": "2026-08-01",
-      "suppressed": false
-    },
-    {
-      "rank": 10,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
@@ -277,6 +265,18 @@
       "figure": "848 electrical permits in 2026-10, +4% month over month",
       "source": "City of San Antonio Permits Open Data",
       "as_of": "2026-10-01",
+      "suppressed": false
+    },
+    {
+      "rank": 10,
+      "area_id": "texas",
+      "metric": "energy_price_cents_kwh",
+      "angle": "reveal",
+      "surprise_score": 0.192,
+      "why": "a cost signal",
+      "figure": "15.91¢ per kWh (2026-08), +0.2% month over month",
+      "source": "EIA Electricity Data (Texas, residential)",
+      "as_of": "2026-08-01",
       "suppressed": false
     },
     {
