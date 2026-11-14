@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-13T17:13:00+00:00",
+  "generated_at": "2026-11-14T15:48:44+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -29,7 +29,7 @@
           "value": 1526.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-10-01",
-          "vs_baseline": 181.6923,
+          "vs_baseline": 181.7692,
           "mom": -105.0
         },
         "permit_activity_energy_storage": {
@@ -52,7 +52,7 @@
           "value": 1239.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-10-01",
-          "vs_baseline": 4.3077,
+          "vs_baseline": 4.3846,
           "mom": -56.0
         },
         "permit_activity_roofing": {
@@ -66,7 +66,7 @@
           "value": 67.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-10-01",
-          "vs_baseline": -12.5385,
+          "vs_baseline": -12.4615,
           "mom": 5.0
         }
       }
@@ -164,7 +164,7 @@
       "county": "Bexar",
       "metric": "drought_stage",
       "angle": "warning",
-      "surprise_score": 0.802,
+      "surprise_score": 0.797,
       "why": "fell back out of Severe Drought (D2); a large move against its own history",
       "figure": "fell back out of Severe Drought (D2) — now D1",
       "source": "U.S. Drought Monitor",
@@ -272,7 +272,7 @@
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.192,
+      "surprise_score": 0.191,
       "why": "a cost signal",
       "figure": "15.91¢ per kWh (2026-08), +0.2% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
