@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-14T15:48:44+00:00",
+  "generated_at": "2026-11-15T16:21:54+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -96,8 +96,8 @@
           "value": 848.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-10-01",
-          "vs_baseline": 49.1538,
-          "mom": 30.0
+          "vs_baseline": 49.8462,
+          "mom": 37.0
         },
         "permit_activity_foundation": {
           "value": 344.0,
@@ -110,28 +110,28 @@
           "value": 776.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-10-01",
-          "vs_baseline": -144.4615,
-          "mom": -290.0
+          "vs_baseline": -144.3846,
+          "mom": -288.0
         },
         "permit_activity_plumbing": {
-          "value": 1902.0,
+          "value": 1903.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-10-01",
-          "vs_baseline": -4.2308,
-          "mom": 174.0
+          "vs_baseline": -2.6923,
+          "mom": 178.0
         },
         "permit_activity_roofing": {
           "value": 374.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-10-01",
-          "vs_baseline": -36.7692,
+          "vs_baseline": -36.6923,
           "mom": 4.0
         },
         "permit_activity_solar": {
           "value": 64.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-10-01",
-          "vs_baseline": 7.5385,
+          "vs_baseline": 7.6154,
           "mom": 13.0
         },
         "permit_activity_trees": {
@@ -164,7 +164,7 @@
       "county": "Bexar",
       "metric": "drought_stage",
       "angle": "warning",
-      "surprise_score": 0.797,
+      "surprise_score": 0.792,
       "why": "fell back out of Severe Drought (D2); a large move against its own history",
       "figure": "fell back out of Severe Drought (D2) — now D1",
       "source": "U.S. Drought Monitor",
@@ -200,7 +200,7 @@
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
-      "surprise_score": 0.311,
+      "surprise_score": 0.31,
       "why": "a modest move against its own history",
       "figure": "776 HVAC permits in 2026-10, -27% month over month",
       "source": "City of San Antonio Permits Open Data",
@@ -248,7 +248,7 @@
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_solar",
       "angle": "reveal",
-      "surprise_score": 0.2,
+      "surprise_score": 0.201,
       "why": "a modest move against its own history",
       "figure": "64 solar permits in 2026-10, +25% month over month",
       "source": "City of San Antonio Permits Open Data",
@@ -260,9 +260,9 @@
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
-      "surprise_score": 0.192,
+      "surprise_score": 0.2,
       "why": "a modest move against its own history",
-      "figure": "848 electrical permits in 2026-10, +4% month over month",
+      "figure": "848 electrical permits in 2026-10, +5% month over month",
       "source": "City of San Antonio Permits Open Data",
       "as_of": "2026-10-01",
       "suppressed": false
@@ -284,9 +284,9 @@
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
-      "surprise_score": 0.179,
+      "surprise_score": 0.18,
       "why": "a modest move against its own history",
-      "figure": "1,902 plumbing permits in 2026-10, +10% month over month",
+      "figure": "1,903 plumbing permits in 2026-10, +10% month over month",
       "source": "City of San Antonio Permits Open Data",
       "as_of": "2026-10-01",
       "suppressed": false
