@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-15T16:21:54+00:00",
+  "generated_at": "2026-11-16T19:35:35+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -164,7 +164,7 @@
       "county": "Bexar",
       "metric": "drought_stage",
       "angle": "warning",
-      "surprise_score": 0.792,
+      "surprise_score": 0.787,
       "why": "fell back out of Severe Drought (D2); a large move against its own history",
       "figure": "fell back out of Severe Drought (D2) — now D1",
       "source": "U.S. Drought Monitor",
@@ -272,7 +272,7 @@
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.191,
+      "surprise_score": 0.19,
       "why": "a cost signal",
       "figure": "15.91¢ per kWh (2026-08), +0.2% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
