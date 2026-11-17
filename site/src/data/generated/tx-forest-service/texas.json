@@ -3,9 +3,9 @@
   "location": "texas",
   "methodologyVersion": "v1",
   "status": "sample",
-  "lastAttemptAt": "2026-11-16T19:35:11.174Z",
+  "lastAttemptAt": "2026-11-17T18:33:06.845Z",
   "lastSuccessAt": null,
-  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"tx-forest-service/texas\" is not implemented yet. Requested window 2025-11-16T19:35:11.174Z .. 2026-11-16T19:35:11.174Z.",
+  "lastError": "TODO(HANDOFF.md Seam 1): fetchRaw() for \"tx-forest-service/texas\" is not implemented yet. Requested window 2025-11-17T18:33:06.845Z .. 2026-11-17T18:33:06.845Z.",
   "source": {
     "name": "Texas A&M Forest Service",
     "url": "https://tfsweb.tamu.edu/"

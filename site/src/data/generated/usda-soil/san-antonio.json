@@ -2,10 +2,10 @@
   "datasetId": "usda-soil",
   "location": "san-antonio",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-11-16T19:34:53.181Z",
+  "status": "stale",
+  "lastAttemptAt": "2026-11-17T18:32:50.549Z",
   "lastSuccessAt": "2026-11-16T19:34:53.181Z",
-  "lastError": null,
+  "lastError": "USDA Soil Data Access query failed: HTTP 502 from https://sdmdataaccess.nrcs.usda.gov/Tabular/post.rest",
   "source": {
     "name": "USDA Soil Data Access",
     "url": "https://sdmdataaccess.nrcs.usda.gov"
