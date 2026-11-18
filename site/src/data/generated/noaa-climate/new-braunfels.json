@@ -2,10 +2,10 @@
   "datasetId": "noaa-climate",
   "location": "new-braunfels",
   "methodologyVersion": "v1",
-  "status": "live",
-  "lastAttemptAt": "2026-11-17T18:32:47.898Z",
+  "status": "stale",
+  "lastAttemptAt": "2026-11-18T18:02:25.889Z",
   "lastSuccessAt": "2026-11-17T18:32:47.898Z",
-  "lastError": null,
+  "lastError": "ghcnd-stations.txt fetch failed: HTTP 503 from https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt",
   "source": {
     "name": "NOAA NCEI U.S. Climate Normals 1991-2020 (station CSV) and Global Summary of the Month",
     "url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly-1991-2020"
