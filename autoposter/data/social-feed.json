@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-21T16:46:56+00:00",
+  "generated_at": "2026-11-22T17:09:24+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -93,35 +93,35 @@
           "value": 848.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-10-01",
-          "vs_baseline": 49.8462,
-          "mom": 37.0
+          "vs_baseline": 50.0769,
+          "mom": 38.0
         },
         "permit_activity_foundation": {
-          "value": 344.0,
+          "value": 343.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-10-01",
-          "vs_baseline": 78.9231,
-          "mom": 115.0
+          "vs_baseline": 77.9231,
+          "mom": 114.0
         },
         "permit_activity_hvac": {
           "value": 776.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-10-01",
-          "vs_baseline": -144.3846,
+          "vs_baseline": -144.0769,
           "mom": -288.0
         },
         "permit_activity_plumbing": {
-          "value": 1903.0,
+          "value": 1901.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-10-01",
-          "vs_baseline": -2.6923,
-          "mom": 178.0
+          "vs_baseline": -4.1538,
+          "mom": 177.0
         },
         "permit_activity_roofing": {
           "value": 374.0,
           "source": "City of San Antonio Permits Open Data",
           "as_of": "2026-10-01",
-          "vs_baseline": -36.6923,
+          "vs_baseline": -36.6154,
           "mom": 4.0
         },
         "permit_activity_solar": {
@@ -160,9 +160,9 @@
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_foundation",
       "angle": "reveal",
-      "surprise_score": 0.658,
+      "surprise_score": 0.656,
       "why": "a large move against its own history; at a level well outside this area's own range",
-      "figure": "344 foundation permits in 2026-10, +50% month over month",
+      "figure": "343 foundation permits in 2026-10, +50% month over month",
       "source": "City of San Antonio Permits Open Data",
       "as_of": "2026-10-01",
       "suppressed": false
@@ -230,6 +230,18 @@
     {
       "rank": 7,
       "area_id": "san_antonio_metro",
+      "metric": "permit_activity_electrical",
+      "angle": "reveal",
+      "surprise_score": 0.201,
+      "why": "a modest move against its own history",
+      "figure": "848 electrical permits in 2026-10, +5% month over month",
+      "source": "City of San Antonio Permits Open Data",
+      "as_of": "2026-10-01",
+      "suppressed": false
+    },
+    {
+      "rank": 8,
+      "area_id": "san_antonio_metro",
       "metric": "permit_activity_solar",
       "angle": "reveal",
       "surprise_score": 0.201,
@@ -240,23 +252,11 @@
       "suppressed": false
     },
     {
-      "rank": 8,
-      "area_id": "san_antonio_metro",
-      "metric": "permit_activity_electrical",
-      "angle": "reveal",
-      "surprise_score": 0.2,
-      "why": "a modest move against its own history",
-      "figure": "848 electrical permits in 2026-10, +5% month over month",
-      "source": "City of San Antonio Permits Open Data",
-      "as_of": "2026-10-01",
-      "suppressed": false
-    },
-    {
       "rank": 9,
       "area_id": "texas",
       "metric": "energy_price_cents_kwh",
       "angle": "reveal",
-      "surprise_score": 0.187,
+      "surprise_score": 0.186,
       "why": "a cost signal",
       "figure": "15.91¢ per kWh (2026-08), +0.2% month over month",
       "source": "EIA Electricity Data (Texas, residential)",
@@ -270,7 +270,7 @@
       "angle": "reveal",
       "surprise_score": 0.18,
       "why": "a modest move against its own history",
-      "figure": "1,903 plumbing permits in 2026-10, +10% month over month",
+      "figure": "1,901 plumbing permits in 2026-10, +10% month over month",
       "source": "City of San Antonio Permits Open Data",
       "as_of": "2026-10-01",
       "suppressed": false
