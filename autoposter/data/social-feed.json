@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-22T17:09:24+00:00",
+  "generated_at": "2026-11-24T20:09:37+00:00",
   "coverage": [
     "austin_metro",
     "san_antonio_metro",
@@ -147,9 +147,9 @@
         "energy_price_cents_kwh": {
           "value": 15.91,
           "source": "EIA Electricity Data (Texas, residential)",
-          "as_of": "2026-08-01",
-          "vs_baseline": 0.3121,
-          "mom": 0.03
+          "as_of": "2026-09-01",
+          "vs_baseline": 0.2996,
+          "mom": 0.0
         }
       }
     }
@@ -253,18 +253,6 @@
     },
     {
       "rank": 9,
-      "area_id": "texas",
-      "metric": "energy_price_cents_kwh",
-      "angle": "reveal",
-      "surprise_score": 0.186,
-      "why": "a cost signal",
-      "figure": "15.91¢ per kWh (2026-08), +0.2% month over month",
-      "source": "EIA Electricity Data (Texas, residential)",
-      "as_of": "2026-08-01",
-      "suppressed": false
-    },
-    {
-      "rank": 10,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
@@ -276,7 +264,7 @@
       "suppressed": false
     },
     {
-      "rank": 11,
+      "rank": 10,
       "area_id": "austin_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
@@ -288,7 +276,7 @@
       "suppressed": false
     },
     {
-      "rank": 12,
+      "rank": 11,
       "area_id": "austin_metro",
       "metric": "permit_activity_solar",
       "angle": "reveal",
@@ -300,7 +288,7 @@
       "suppressed": false
     },
     {
-      "rank": 13,
+      "rank": 12,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_roofing",
       "angle": "reveal",
