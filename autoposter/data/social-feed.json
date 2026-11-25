@@ -1,9 +1,8 @@
 {
-  "generated_at": "2026-11-24T20:09:37+00:00",
+  "generated_at": "2026-11-25T19:16:18+00:00",
   "coverage": [
     "austin_metro",
-    "san_antonio_metro",
-    "texas"
+    "san_antonio_metro"
   ],
   "week_mode": "live",
   "areas": [
@@ -12,11 +11,14 @@
       "type": "metro",
       "metrics": {
         "drought_stage": {
-          "value": 2.0,
+          "value": 1.0,
           "source": "U.S. Drought Monitor",
-          "as_of": "2026-11-17",
-          "vs_baseline": -0.3231,
-          "wow": 0.0
+          "as_of": "2026-11-24",
+          "vs_baseline": -1.3182,
+          "wow": -1.0,
+          "crossed": [
+            "fell back out of Severe Drought (D2)"
+          ]
         },
         "cooling_degree_days": {
           "value": 291.0,
@@ -29,8 +31,8 @@
           "value": 1525.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-10-01",
-          "vs_baseline": 181.2308,
-          "mom": -106.0
+          "vs_baseline": 181.3077,
+          "mom": -105.0
         },
         "permit_activity_energy_storage": {
           "value": 267.0,
@@ -42,17 +44,17 @@
           ]
         },
         "permit_activity_hvac": {
-          "value": 890.0,
+          "value": 889.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-10-01",
-          "vs_baseline": -16.7692,
-          "mom": -206.0
+          "vs_baseline": -17.7692,
+          "mom": -207.0
         },
         "permit_activity_plumbing": {
           "value": 1239.0,
           "source": "City of Austin Issued Construction Permits (Socrata)",
           "as_of": "2026-10-01",
-          "vs_baseline": 4.7692,
+          "vs_baseline": 4.8462,
           "mom": -56.0
         },
         "permit_activity_roofing": {
@@ -78,8 +80,8 @@
         "drought_stage": {
           "value": 1.0,
           "source": "U.S. Drought Monitor",
-          "as_of": "2026-11-17",
-          "vs_baseline": -1.5692,
+          "as_of": "2026-11-24",
+          "vs_baseline": -1.5455,
           "wow": 0.0
         },
         "cooling_degree_days": {
@@ -139,24 +141,24 @@
           "mom": -111.0
         }
       }
-    },
-    {
-      "id": "texas",
-      "type": "state",
-      "metrics": {
-        "energy_price_cents_kwh": {
-          "value": 15.91,
-          "source": "EIA Electricity Data (Texas, residential)",
-          "as_of": "2026-09-01",
-          "vs_baseline": 0.2996,
-          "mom": 0.0
-        }
-      }
     }
   ],
   "stories": [
     {
       "rank": 1,
+      "area_id": "austin_metro",
+      "county": "Travis",
+      "metric": "drought_stage",
+      "angle": "warning",
+      "surprise_score": 0.865,
+      "why": "fell back out of Severe Drought (D2); a large move against its own history; at a level well outside this area's own range",
+      "figure": "fell back out of Severe Drought (D2) — now D1",
+      "source": "U.S. Drought Monitor",
+      "as_of": "2026-11-24",
+      "suppressed": false
+    },
+    {
+      "rank": 2,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_foundation",
       "angle": "reveal",
@@ -168,7 +170,7 @@
       "suppressed": false
     },
     {
-      "rank": 2,
+      "rank": 3,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_trees",
       "angle": "reveal",
@@ -180,7 +182,7 @@
       "suppressed": false
     },
     {
-      "rank": 3,
+      "rank": 4,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
@@ -192,11 +194,11 @@
       "suppressed": false
     },
     {
-      "rank": 4,
+      "rank": 5,
       "area_id": "austin_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
-      "surprise_score": 0.301,
+      "surprise_score": 0.3,
       "why": "a modest move against its own history",
       "figure": "1,525 electrical permits in 2026-10, -6% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
@@ -204,7 +206,7 @@
       "suppressed": false
     },
     {
-      "rank": 5,
+      "rank": 6,
       "area_id": "austin_metro",
       "metric": "permit_activity_roofing",
       "angle": "reveal",
@@ -216,19 +218,19 @@
       "suppressed": false
     },
     {
-      "rank": 6,
+      "rank": 7,
       "area_id": "austin_metro",
       "metric": "permit_activity_hvac",
       "angle": "reveal",
-      "surprise_score": 0.236,
+      "surprise_score": 0.237,
       "why": "a modest move against its own history",
-      "figure": "890 HVAC permits in 2026-10, -19% month over month",
+      "figure": "889 HVAC permits in 2026-10, -19% month over month",
       "source": "City of Austin Issued Construction Permits (Socrata)",
       "as_of": "2026-10-01",
       "suppressed": false
     },
     {
-      "rank": 7,
+      "rank": 8,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_electrical",
       "angle": "reveal",
@@ -240,7 +242,7 @@
       "suppressed": false
     },
     {
-      "rank": 8,
+      "rank": 9,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_solar",
       "angle": "reveal",
@@ -252,7 +254,7 @@
       "suppressed": false
     },
     {
-      "rank": 9,
+      "rank": 10,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
@@ -264,7 +266,7 @@
       "suppressed": false
     },
     {
-      "rank": 10,
+      "rank": 11,
       "area_id": "austin_metro",
       "metric": "permit_activity_plumbing",
       "angle": "reveal",
@@ -276,7 +278,7 @@
       "suppressed": false
     },
     {
-      "rank": 11,
+      "rank": 12,
       "area_id": "austin_metro",
       "metric": "permit_activity_solar",
       "angle": "reveal",
@@ -288,7 +290,7 @@
       "suppressed": false
     },
     {
-      "rank": 12,
+      "rank": 13,
       "area_id": "san_antonio_metro",
       "metric": "permit_activity_roofing",
       "angle": "reveal",
