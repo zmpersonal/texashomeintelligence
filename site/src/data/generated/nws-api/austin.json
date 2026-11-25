@@ -3,8 +3,8 @@
   "location": "austin",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-11-24T20:08:42.792Z",
-  "lastSuccessAt": "2026-11-24T20:08:42.792Z",
+  "lastAttemptAt": "2026-11-25T19:15:40.931Z",
+  "lastSuccessAt": "2026-11-25T19:15:40.931Z",
   "lastError": null,
   "source": {
     "name": "National Weather Service API",
@@ -1034,6 +1034,16 @@
       "value": {
         "forecastHighF": 54,
         "forecastLowF": 34
+      }
+    },
+    {
+      "observedAt": "2026-11-25T19:00:00.000Z",
+      "ingestedAt": "2026-11-25T19:15:41.673Z",
+      "key": "2026-11-25T13:00:00-06:00",
+      "value": {
+        "forecastHighF": 59,
+        "forecastLowF": 33,
+        "activeAlert": "Freeze Warning issued November 25 at 11:15AM CST until November 26 at 9:00AM CST by NWS Austin/San Antonio TX"
       }
     }
   ]
