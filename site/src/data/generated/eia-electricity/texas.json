@@ -3,7 +3,7 @@
   "location": "texas",
   "methodologyVersion": "v1",
   "status": "stale",
-  "lastAttemptAt": "2026-11-25T19:14:37.564Z",
+  "lastAttemptAt": "2026-11-26T18:59:27.613Z",
   "lastSuccessAt": "2026-11-24T20:08:40.371Z",
   "lastError": "EIA electricity price fetch failed: HTTP 504 from https://api.eia.gov/v2/electricity/retail-sales/data/?api_key=[redacted]&frequency=monthly&data[]=price&facets%5Bstateid%5D[]=TX&facets%5Bsectorid%5D[]=RES&start=2024-09&end=2026-11&sort%5B0%5D%5Bcolumn%5D=period&sort%5B0%5D%5Bdirection%5D=asc&length=5000",
   "source": {
