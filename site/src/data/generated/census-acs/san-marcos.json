@@ -3,8 +3,8 @@
   "location": "san-marcos",
   "methodologyVersion": "v1",
   "status": "live",
-  "lastAttemptAt": "2026-11-26T19:00:38.049Z",
-  "lastSuccessAt": "2026-11-26T19:00:38.049Z",
+  "lastAttemptAt": "2026-11-27T18:56:52.173Z",
+  "lastSuccessAt": "2026-11-27T18:56:52.173Z",
   "lastError": null,
   "source": {
     "name": "Census ACS",
@@ -27,7 +27,7 @@
     },
     {
       "observedAt": "2024-01-01T00:00:00.000Z",
-      "ingestedAt": "2026-11-26T19:00:38.694Z",
+      "ingestedAt": "2026-11-27T18:56:52.792Z",
       "key": "acs5-2024",
       "value": {
         "medianHomeAgeYears": 25,
